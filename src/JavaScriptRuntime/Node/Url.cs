@@ -495,6 +495,7 @@ namespace JavaScriptRuntime.Node
             {
                 _entries = entries;
                 _kind = kind;
+                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
             public bool HasReturn => true;

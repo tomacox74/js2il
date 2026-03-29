@@ -3617,6 +3617,7 @@ namespace JavaScriptRuntime
             public ArrayIterator(JavaScriptRuntime.Array arr)
             {
                 _arr = arr;
+                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
             public bool HasReturn => true;
@@ -3647,6 +3648,7 @@ namespace JavaScriptRuntime
             public StringIterator(string s)
             {
                 _s = s;
+                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
             public bool HasReturn => true;
@@ -3676,6 +3678,7 @@ namespace JavaScriptRuntime
             public EnumerableIterator(System.Collections.IEnumerable en)
             {
                 _enumerator = en.GetEnumerator();
+                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
             public bool HasReturn => true;
@@ -3724,6 +3727,7 @@ namespace JavaScriptRuntime
                 _next = nextDel;
 
                 _return = GetProperty(_iterator, "return");
+                JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
             public bool HasReturn => _return != null;
@@ -3787,6 +3791,7 @@ namespace JavaScriptRuntime
             public AsyncFromSyncIterator(IJavaScriptIterator sync)
             {
                 _sync = sync;
+                JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
             }
 
             public bool HasReturn => _sync.HasReturn;
@@ -3801,8 +3806,7 @@ namespace JavaScriptRuntime
             public object? Return()
             {
                 _sync.Return();
-                // Async iterator close awaits the return() result, so return a resolved promise.
-                return JavaScriptRuntime.Promise.resolve(null);
+                return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
             }
         }
 
@@ -3824,6 +3828,7 @@ namespace JavaScriptRuntime
                 _next = nextDel;
 
                 _return = GetProperty(_iterator, "return");
+                JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
             }
 
             public bool HasReturn => _return != null;
@@ -3845,7 +3850,7 @@ namespace JavaScriptRuntime
             {
                 if (_return is null)
                 {
-                    return null;
+                    return JavaScriptRuntime.Promise.resolve(IteratorResult.Create(null, done: true));
                 }
 
                 if (_return is not Delegate del)

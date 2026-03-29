@@ -81,6 +81,12 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.Error(message);
         };
 
+        private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
+            throw new TypeError("Iterator is not directly constructible in js2il.");
+
+        private static readonly Func<object[], object?[], object?> _asyncIteratorConstructorValue = static (_, __) =>
+            throw new TypeError("AsyncIterator is not directly constructible in js2il.");
+
         private static readonly Func<object[], object?, object> _errorIsErrorValue = static (_, arg) =>
             arg is JavaScriptRuntime.Error;
 
@@ -130,6 +136,9 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _booleanPrototypeValue
             });
+
+            JavaScriptRuntime.Iterator.ConfigureIntrinsicSurface(_iteratorConstructorValue);
+            JavaScriptRuntime.AsyncIterator.ConfigureIntrinsicSurface(_asyncIteratorConstructorValue);
 
             // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
@@ -384,6 +393,12 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
 
+            dict.TryAdd(nameof(GlobalThis.Iterator), Iterator);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Iterator), dict[nameof(GlobalThis.Iterator)]);
+
+            dict.TryAdd(nameof(GlobalThis.AsyncIterator), AsyncIterator);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.AsyncIterator), dict[nameof(GlobalThis.AsyncIterator)]);
+
             dict.TryAdd(nameof(GlobalThis.AbortController), AbortController);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.AbortController), dict[nameof(GlobalThis.AbortController)]);
 
@@ -483,6 +498,10 @@ namespace JavaScriptRuntime
         /// access <c>Error.prototype</c>.
         /// </summary>
         public static Func<object[], object?[], object?> Error => _errorConstructorValue;
+
+        public static Func<object[], object?[], object?> Iterator => _iteratorConstructorValue;
+
+        public static Func<object[], object?[], object?> AsyncIterator => _asyncIteratorConstructorValue;
 
         public static Type AbortController => typeof(JavaScriptRuntime.AbortController);
 

@@ -30,6 +30,7 @@ public sealed class GeneratorObject
         _step = step ?? throw new ArgumentNullException(nameof(step));
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
         _args = args ?? throw new ArgumentNullException(nameof(args));
+        JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
     }
 
     /// <summary>

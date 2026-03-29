@@ -1,6 +1,6 @@
 # ECMA-262 Top Missing Features Backlog
 
-> **Last Updated**: 2026-03-16
+> **Last Updated**: 2026-03-29
 > Purpose: capture the highest-impact ECMA-262 gaps still marked missing or materially incomplete in `docs\ECMA262`.
 > Source basis: current `docs\ECMA262\**\Section*.json` tracking only; this pass intentionally avoids stale issue / PR history.
 
@@ -19,8 +19,7 @@
 | 3 | [#862](https://github.com/tomacox74/js2il/issues/862) | Map/Set iterable construction and prototype completion | [`24.1 Map`](../ECMA262/24/Section24_1.md) - `24.1.1.1`, `24.1.3.5`, `24.1.3.14`; [`24.2 Set`](../ECMA262/24/Section24_2.md) - `24.2.2.1`, `24.2.4.2`, `24.2.4.4`, `24.2.4.5` | `new Map(iterable)`, `new Set(iterable)`, `Map.prototype.forEach`, `Map.prototype[@@iterator]`, the missing core Set members, and the ES2025 Set algebra methods are all still not supported. |
 | 4 | [#863](https://github.com/tomacox74/js2il/issues/863) | Advanced proxy traps and revocation | [`10.5 Proxy internal methods`](../ECMA262/10/Section10_5.md) - `10.5.10`; [`28.2 Proxy Objects`](../ECMA262/28/Section28_2.md) - `28.2.2.1` | JS2IL currently supports the get/set/has happy path, but delete/ownKeys/apply/construct/prototype traps and `Proxy.revocable` are still missing. |
 | 5 | [#864](https://github.com/tomacox74/js2il/issues/864) | String prototype object, string iterator, and missing modern string APIs | [`22.1 String Objects`](../ECMA262/22/Section22_1.md) - `22.1.2.3`, `22.1.3.1`, `22.1.3.14`, `22.1.3.20`, `22.1.3.36`, `22.1.5` | The docs still mark the real `String.prototype` object, string iteration, and many common APIs (`fromCodePoint`, `raw`, `at`, `codePointAt`, `matchAll`, `padStart` / `padEnd`, `replaceAll`, well-formed Unicode helpers) as missing. |
-| 6 | [#865](https://github.com/tomacox74/js2il/issues/865) | Iterator helpers plus the `Iterator` / `AsyncIterator` constructor surfaces | [`27.1 Iteration`](../ECMA262/27/Section27_1.md) - `27.1.2`, `27.1.3`, `27.1.4` | `for..of` and `for await..of` work, but the new iterator-helper family and the public `Iterator` / `AsyncIterator` objects are still entirely marked `Not Yet Supported`. |
-| 7 | [#866](https://github.com/tomacox74/js2il/issues/866) | Arguments exotic objects / mapped `arguments` semantics | [`10.4 Built-in Exotic Objects`](../ECMA262/10/Section10_4.md) - `10.4.4` | Functions currently materialize `arguments` as plain arrays, so mapped/unmapped arguments objects and their aliasing semantics are still missing. |
+| 6 | [#866](https://github.com/tomacox74/js2il/issues/866) | Arguments exotic objects / mapped `arguments` semantics | [`10.4 Built-in Exotic Objects`](../ECMA262/10/Section10_4.md) - `10.4.4` | Functions currently materialize `arguments` as plain arrays, so mapped/unmapped arguments objects and their aliasing semantics are still missing. |
 
 ## Notable next-tier gaps
 
