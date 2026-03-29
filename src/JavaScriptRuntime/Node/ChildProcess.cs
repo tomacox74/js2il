@@ -313,11 +313,6 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"modulePath\" argument must be a non-empty string");
             }
 
-            if (IsHostedRuntime())
-            {
-                throw new Error("child_process.fork is not supported when running under JsEngine hosting yet. See issue #914 for hosted fork support.");
-            }
-
             if (TryGetBoolOption(options, "detached"))
             {
                 throw new Error("child_process.fork does not support detached child processes in the current runtime.");
@@ -332,17 +327,26 @@ namespace JavaScriptRuntime.Node
 
             var serviceProvider = GlobalThis.ServiceProvider
                 ?? throw new InvalidOperationException("GlobalThis.ServiceProvider is not available for child_process.fork.");
-            var assemblyPath = CommonJS.ModuleContext.CreateModuleContext(serviceProvider).__filename;
+            serviceProvider.TryResolve<RuntimeExecutionContext>(out var runtimeContext);
+            var assemblyPath = ResolveForkAssemblyPath(serviceProvider, runtimeContext);
             if (string.IsNullOrWhiteSpace(assemblyPath) || !File.Exists(assemblyPath))
             {
+                if (runtimeContext?.IsHosted == true)
+                {
+                    throw new Error(
+                        "child_process.fork requires a compiled assembly path when running under JsEngine hosting. " +
+                        "Pass JsModuleLoadOptions.CompiledAssemblyPath when calling JsEngine.LoadModule(...) so hosted children know which compiled assembly to launch.");
+                }
+
                 throw new Error("child_process.fork requires the current compiled assembly path to be available.");
             }
 
-            var childArgs = new List<string>(capacity: 1 + CoerceArgs(args).Count)
+            var moduleArgs = CoerceArgs(args);
+            var childArgs = new List<string>(capacity: 1 + moduleArgs.Count)
             {
                 assemblyPath
             };
-            childArgs.AddRange(CoerceArgs(args));
+            childArgs.AddRange(moduleArgs);
 
             var cwd = TryGetStringOption(options, "cwd");
             var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.ForkDefault, allowIpc: true, apiName: "child_process.fork");
@@ -373,7 +377,16 @@ namespace JavaScriptRuntime.Node
                     envOverrides);
 
                 var completion = CreateCompletionPromise(child, assemblyPath, callback: null, suppressUnhandledError: false);
-                var process = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
+                var launchRequest = new ChildProcessLaunchRequest
+                {
+                    CompiledAssemblyPath = assemblyPath,
+                    EntryModule = entryModule,
+                    ModuleArguments = moduleArgs,
+                    HostedParent = runtimeContext?.IsHosted == true,
+                    StartInfo = psi
+                };
+                var launcher = serviceProvider.Resolve<IChildProcessLauncher>();
+                var process = launcher.Start(launchRequest);
                 try
                 {
                     child.Attach(process);
@@ -649,12 +662,21 @@ namespace JavaScriptRuntime.Node
             NodeNetworkingCommon.ScheduleImmediateOnEventLoop(NodeScheduler, action);
         }
 
-        private static bool IsHostedRuntime()
+        private static string? ResolveForkAssemblyPath(
+            DependencyInjection.ServiceContainer serviceProvider,
+            RuntimeExecutionContext? runtimeContext)
         {
-            return GlobalThis.ServiceProvider != null
-                && GlobalThis.ServiceProvider.TryResolve<RuntimeExecutionContext>(out var executionContext)
-                && executionContext != null
-                && executionContext.IsHosted;
+            if (!string.IsNullOrWhiteSpace(runtimeContext?.CompiledAssemblyPath))
+            {
+                return runtimeContext.CompiledAssemblyPath!;
+            }
+
+            if (runtimeContext?.IsHosted == true)
+            {
+                return null;
+            }
+
+            return CommonJS.ModuleContext.CreateModuleContext(serviceProvider).__filename;
         }
 
         private static string CreateIpcAuthenticationToken()
