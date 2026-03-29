@@ -625,7 +625,87 @@ namespace JavaScriptRuntime
 
         private static List<string> GetOrderedOwnKeys(object obj, bool includeEncodedSymbolKeys)
         {
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("ownKeys", "ownKeys", new object?[] { proxy.GetTarget("ownKeys") }, out var trapResult))
+                {
+                    return ReorderOwnKeys(CoerceOwnKeys(trapResult, includeEncodedSymbolKeys), includeEncodedSymbolKeys);
+                }
+
+                obj = proxy.GetTarget("ownKeys");
+            }
+
             return ReorderOwnKeys(CollectOwnKeysInEncounterOrder(obj), includeEncodedSymbolKeys);
+        }
+
+        private static IEnumerable<string> CoerceOwnKeys(object? trapResult, bool includeEncodedSymbolKeys)
+        {
+            if (!JavaScriptRuntime.Proxy.IsObjectLikeValue(trapResult))
+            {
+                throw new TypeError("Proxy ownKeys trap must return an object");
+            }
+
+            foreach (var key in EnumerateProxyOwnKeysResult(trapResult!, includeEncodedSymbolKeys))
+            {
+                yield return key;
+            }
+        }
+
+        private static IEnumerable<string> EnumerateProxyOwnKeysResult(object trapResult, bool includeEncodedSymbolKeys)
+        {
+            if (trapResult is JavaScriptRuntime.Array arrayResult)
+            {
+                foreach (var key in arrayResult)
+                {
+                    var propertyKey = CoerceProxyOwnKey(key);
+                    if (includeEncodedSymbolKeys || !IsEncodedSymbolKey(propertyKey))
+                    {
+                        yield return propertyKey;
+                    }
+                }
+
+                yield break;
+            }
+
+            if (trapResult is System.Collections.IList listResult)
+            {
+                for (int i = 0; i < listResult.Count; i++)
+                {
+                    var propertyKey = CoerceProxyOwnKey(listResult[i]);
+                    if (includeEncodedSymbolKeys || !IsEncodedSymbolKey(propertyKey))
+                    {
+                        yield return propertyKey;
+                    }
+                }
+
+                yield break;
+            }
+
+            var lengthValue = ObjectRuntime.GetItem(trapResult, "length");
+            if (lengthValue is null || lengthValue is JsNull)
+            {
+                throw new TypeError("Proxy ownKeys trap must return an array-like object");
+            }
+
+            var length = global::System.Math.Max(0, TypeUtilities.ToInt32(lengthValue));
+            for (int i = 0; i < length; i++)
+            {
+                var propertyKey = CoerceProxyOwnKey(ObjectRuntime.GetItem(trapResult, (double)i));
+                if (includeEncodedSymbolKeys || !IsEncodedSymbolKey(propertyKey))
+                {
+                    yield return propertyKey;
+                }
+            }
+        }
+
+        private static string CoerceProxyOwnKey(object? key)
+        {
+            if (key is not string && key is not Symbol)
+            {
+                throw new TypeError("Proxy ownKeys trap entries must be strings or symbols");
+            }
+
+            return ToPropertyKeyString(key);
         }
 
         internal static List<string> GetOwnEnumerableKeysInOrder(object obj, bool includeEncodedSymbolKeys = false)
@@ -816,6 +896,26 @@ namespace JavaScriptRuntime
             {
                 throw new TypeError("Cannot convert undefined or null to object");
             }
+
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("getPrototypeOf", "getPrototypeOf", new object?[] { proxy.GetTarget("getPrototypeOf") }, out var trapResult))
+                {
+                    if (trapResult is JsNull)
+                    {
+                        return trapResult;
+                    }
+
+                    if (trapResult is not null && IsObjectLikeForPrototype(trapResult))
+                    {
+                        return trapResult;
+                    }
+
+                    throw new TypeError("Proxy getPrototypeOf trap must return an object or null");
+                }
+
+                obj = proxy.GetTarget("getPrototypeOf");
+            }
             if (!IsObjectLikeForPrototype(obj))
             {
                 throw new TypeError("Object.getPrototypeOf called on non-object");
@@ -841,6 +941,21 @@ namespace JavaScriptRuntime
             if (obj is null || obj is JsNull)
             {
                 throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("setPrototypeOf", "setPrototypeOf", new object?[] { proxy.GetTarget("setPrototypeOf"), prototype }, out var trapResult))
+                {
+                    if (!TypeUtilities.ToBoolean(trapResult))
+                    {
+                        throw new TypeError("Proxy setPrototypeOf trap returned false");
+                    }
+
+                    return obj;
+                }
+
+                obj = proxy.GetTarget("setPrototypeOf");
             }
             if (!IsObjectLikeForPrototype(obj))
             {
@@ -1838,6 +1953,37 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object? ConstructValue(object constructor, object[]? args)
         {
+            return ConstructValue(constructor, args, constructor);
+        }
+
+        internal static bool IsConstructibleValue(object? constructor)
+        {
+            if (constructor is null || constructor is JsNull)
+            {
+                return false;
+            }
+
+            if (constructor is JavaScriptRuntime.Proxy proxy)
+            {
+                return IsConstructibleValue(proxy.GetTarget("construct"));
+            }
+
+            if (constructor is Type or Delegate)
+            {
+                return true;
+            }
+
+            if (constructor is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                return dict.TryGetValue("Construct", out var constructValue) && constructValue is Delegate;
+            }
+
+            return constructor.GetType().GetMethod("Construct", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null;
+        }
+
+        internal static object? ConstructValue(object constructor, object[]? args, object? newTarget)
+        {
             // In JavaScript, `new` on null/undefined throws a TypeError (not a host exception).
             // Libraries often probe for constructor availability inside try/catch (e.g., turndown).
             if (constructor is null || constructor is JsNull)
@@ -1846,6 +1992,28 @@ namespace JavaScriptRuntime
             }
 
             var callArgs = args ?? System.Array.Empty<object>();
+
+            if (constructor is JavaScriptRuntime.Proxy proxy)
+            {
+                var proxyTarget = proxy.GetTarget("construct");
+                if (!IsConstructibleValue(proxyTarget))
+                {
+                    throw new TypeError("Value is not a constructor");
+                }
+
+                var trapArgs = new JavaScriptRuntime.Array(callArgs);
+                if (proxy.TryInvokeTrap("construct", "construct", new object?[] { proxyTarget, trapArgs, newTarget }, out var trapResult))
+                {
+                    if (!JavaScriptRuntime.Proxy.IsObjectLikeValue(trapResult))
+                    {
+                        throw new TypeError("Proxy construct trap must return an object");
+                    }
+
+                    return trapResult;
+                }
+
+                return ConstructValue(proxyTarget, callArgs, newTarget);
+            }
 
             if (constructor is Type type)
             {
@@ -1902,7 +2070,7 @@ namespace JavaScriptRuntime
 
             if (constructor is Delegate del)
             {
-                return JavaScriptRuntime.Function.Construct(del, callArgs);
+                return JavaScriptRuntime.Function.Construct(del, callArgs, newTarget);
             }
 
             if (constructor is System.Dynamic.ExpandoObject exp)
@@ -4366,13 +4534,12 @@ namespace JavaScriptRuntime
             // Proxy get trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                var getTrap = GetProperty(proxy.Handler, "get");
-                if (getTrap is not null && getTrap is not JsNull)
+                if (proxy.TryInvokeTrap("get", "get", new object?[] { proxy.GetTarget("get"), name, obj }, out var trapResult))
                 {
-                    return InvokeCallable(getTrap, proxy.Handler, new object?[] { proxy.Target, name, obj });
+                    return trapResult;
                 }
 
-                return GetProperty(proxy.Target, name);
+                return GetProperty(proxy.GetTarget("get"), name);
             }
 
             // Legacy __proto__ accessor (opt-in)
@@ -4459,14 +4626,12 @@ namespace JavaScriptRuntime
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                var setTrap = GetProperty(proxy.Handler, "set");
-                if (setTrap is not null && setTrap is not JsNull)
+                if (proxy.TryInvokeTrap("set", "set", new object?[] { proxy.GetTarget("set"), name, value, obj }, out _))
                 {
-                    _ = InvokeCallable(setTrap, proxy.Handler, new object?[] { proxy.Target, name, value, obj });
                     return value;
                 }
 
-                return SetProperty(proxy.Target, name, value);
+                return SetProperty(proxy.GetTarget("set"), name, value);
             }
 
             // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]

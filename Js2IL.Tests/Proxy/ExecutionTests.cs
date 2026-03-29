@@ -17,5 +17,20 @@ namespace Js2IL.Tests.Proxy
 
         [Fact]
         public Task Proxy_HasTrap_AffectsInOperator() { var testName = nameof(Proxy_HasTrap_AffectsInOperator); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_DeletePropertyTrap_And_Fallback() { var testName = nameof(Proxy_DeletePropertyTrap_And_Fallback); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_OwnKeys_And_PrototypeTraps_WithFallback() { var testName = nameof(Proxy_OwnKeys_And_PrototypeTraps_WithFallback); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_ApplyAndConstructTraps_WithFallback() { var testName = nameof(Proxy_ApplyAndConstructTraps_WithFallback); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_Revocable_ThrowsAfterRevoke() { var testName = nameof(Proxy_Revocable_ThrowsAfterRevoke); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_Validation_EdgeCases() { var testName = nameof(Proxy_Validation_EdgeCases); return ExecutionTest(testName); }
     }
 }

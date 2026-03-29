@@ -180,7 +180,7 @@ namespace JavaScriptRuntime
             return Construct(constructor, args, constructor);
         }
 
-        private static object? Construct(Delegate constructor, object?[]? args, object? newTarget)
+        internal static object? Construct(Delegate constructor, object?[]? args, object? newTarget)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));
             // JS `new` semantics for function constructors:
