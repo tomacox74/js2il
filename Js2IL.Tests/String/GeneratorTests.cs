@@ -235,5 +235,26 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_Repeat_Basic);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_Prototype_Iterator_Surface()
+        {
+            var testName = nameof(String_Prototype_Iterator_Surface);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_NewApis_Basic()
+        {
+            var testName = nameof(String_NewApis_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_MatchAll_Basic()
+        {
+            var testName = nameof(String_MatchAll_Basic);
+            return GenerateTest(testName);
+        }
     }
 }
