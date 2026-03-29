@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:36:31Z
+> Last generated (UTC): 2026-03-29T06:55:11Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,13 +22,13 @@
 | 24.2.1.5 | SetDataSize ( setData ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-setdatasize) |
 | 24.2.2 | The Set Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set-constructor) |
 | 24.2.2.1 | Set ( [ iterable ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set-iterable) |
-| 24.2.3 | Properties of the Set Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-constructor) |
-| 24.2.3.1 | Set.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype) |
+| 24.2.3 | Properties of the Set Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-constructor) |
+| 24.2.3.1 | Set.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype) |
 | 24.2.3.2 | get Set [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-set-%symbol.species%) |
 | 24.2.4 | Properties of the Set Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object) |
 | 24.2.4.1 | Set.prototype.add ( value ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.add) |
 | 24.2.4.2 | Set.prototype.clear ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.clear) |
-| 24.2.4.3 | Set.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.constructor) |
+| 24.2.4.3 | Set.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.constructor) |
 | 24.2.4.4 | Set.prototype.delete ( value ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.delete) |
 | 24.2.4.5 | Set.prototype.difference ( other ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.difference) |
 | 24.2.4.6 | Set.prototype.entries ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.entries) |
@@ -60,20 +60,20 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| new Set() | Supported | [`Require_Util_Types_Expanded.js`](../../../Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js) | Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize. |
+| new Set() | Supported | [`Set_Constructor_Prototype_Surface.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js)<br>[`Require_Util_Types_Expanded.js`](../../../Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js) | Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize. |
 | new Set(iterable) | Supported | [`Set_Constructor_Iterable.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js) | JavaScriptRuntime.Set now accepts a single iterable argument and consumes it with the runtime iterator protocol, preserving insertion order and ignoring duplicates. |
 
 ### 24.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Set constructor value and Set.prototype surface | Not Yet Supported |  | Like Map, Set is compiler-recognized in new expressions but is not currently exposed as a first-class global constructor value with readable prototype properties. |
+| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) | JS2IL now exposes globalThis.Set as a constructor value, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete. |
 
 ### 24.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator | Supported | [`Set_Core_Methods.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) | JavaScriptRuntime.Set now exposes the core prototype method family on an internal Set prototype surface and returns native iterator objects for keys/values/entries. |
+| Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator | Supported | [`Set_Core_Methods.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) | JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries. |
 
 ### 24.2.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype.clear))
 

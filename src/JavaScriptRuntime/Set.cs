@@ -31,6 +31,13 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "isSupersetOf", PrototypeIsSupersetOf);
             DefinePrototypeMethod(exp, "symmetricDifference", PrototypeSymmetricDifference);
             DefinePrototypeMethod(exp, "union", PrototypeUnion);
+            PropertyDescriptorStore.DefineOrUpdate(exp, "size", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+            });
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -166,6 +173,11 @@ namespace JavaScriptRuntime
             var set = GetSetReceiver("union");
             var other = args != null && args.Length > 0 ? args[0] : null;
             return set.union(other);
+        }
+
+        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+        {
+            return GetSetReceiver("size").size;
         }
 
         private void InitializeIntrinsicSurface()
@@ -407,7 +419,6 @@ namespace JavaScriptRuntime
 
         public IEnumerator<object> GetEnumerator() => _items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
-
         private enum SetIteratorKind
         {
             Values,

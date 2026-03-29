@@ -30,7 +30,7 @@
     {
       "clause": "24.1.2",
       "title": "Properties of the Map Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-map-constructor"
     },
     {
@@ -42,7 +42,7 @@
     {
       "clause": "24.1.2.2",
       "title": "Map.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-map.prototype"
     },
     {
@@ -66,7 +66,7 @@
     {
       "clause": "24.1.3.2",
       "title": "Map.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-map.prototype.constructor"
     },
     {
@@ -209,9 +209,12 @@
       {
         "clause": "24.1.2.2",
         "feature": "Map constructor value and Map.prototype surface",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-map.prototype",
-        "notes": "Map is recognized by the compiler in new expressions, but JS2IL does not currently expose a first-class global Map constructor value on globalThis, so properties like Map.prototype cannot be read."
+        "testScripts": [
+          "Js2IL.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js"
+        ],
+        "notes": "JS2IL now exposes globalThis.Map as a constructor value, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are now implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete."
       },
       {
         "clause": "24.1.3",
@@ -240,7 +243,7 @@
           "Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js",
           "Js2IL.Tests/Map/JavaScript/Map_Symbol_Iterator.js"
         ],
-        "notes": "The methods are exposed on the internal Map prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete."
+        "notes": "The methods are exposed on the public Map.prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete."
       },
       {
         "clause": "24.1.3.5",

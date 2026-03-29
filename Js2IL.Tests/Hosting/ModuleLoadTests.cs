@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using ChildProcessLaunchRequest = JavaScriptRuntime.Node.ChildProcessLaunchRequest;
+using IChildProcessLauncher = JavaScriptRuntime.Node.IChildProcessLauncher;
 using Js2IL.Runtime;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +24,17 @@ public class ModuleLoadTests
     {
         private readonly string _outputDir;
         private readonly string _uniqueAssemblyPath;
+        private readonly string _launchableAssemblyPath;
         private readonly AssemblyLoadContext _alc;
 
         public Assembly Assembly { get; }
+        public string AssemblyPath => _launchableAssemblyPath;
 
-        public CompiledModuleAssembly(string outputDir, string uniqueAssemblyPath, AssemblyLoadContext alc, Assembly assembly)
+        public CompiledModuleAssembly(string outputDir, string uniqueAssemblyPath, string launchableAssemblyPath, AssemblyLoadContext alc, Assembly assembly)
         {
             _outputDir = outputDir;
             _uniqueAssemblyPath = uniqueAssemblyPath;
+            _launchableAssemblyPath = launchableAssemblyPath;
             _alc = alc;
             Assembly = assembly;
         }
@@ -86,23 +91,60 @@ public class ModuleLoadTests
     }
 
     [Fact]
-    public void JsEngine_LoadModule_WhenHostedModuleCallsFork_ThrowsExplicitUnsupportedError()
+    public void JsEngine_LoadModule_WhenHostedForkNotConfigured_ThrowsExplicitConfigurationError()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingForkUnsupported", "Hosting_ForkUnsupported.js");
+        AssertHostedForkConfigurationError(module);
+    }
 
-        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
-        dynamic exports = exportsObj;
+    [Fact]
+    public void JsEngine_LoadModule_WhenHostedForkAssemblyLoadedFromPathWithoutExplicitConfig_ThrowsExplicitConfigurationError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostingForkUnsupported",
+            "Hosting_ForkUnsupported.js",
+            loadAssemblyFromPath: true);
+        AssertHostedForkConfigurationError(module);
+    }
 
-        var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());
-        Assert.Equal("hostingForkUnsupported", ex.ModuleId);
-        Assert.Equal("attemptFork", ex.MemberName);
+    public interface IHostedForkExports : IDisposable
+    {
+        Task<string> StartFork();
+    }
 
-        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
-        Assert.Equal("Error", jsError.JsName);
-        Assert.Contains(
-            "child_process.fork is not supported when running under JsEngine hosting yet",
-            jsError.JsMessage ?? jsError.Message,
-            StringComparison.OrdinalIgnoreCase);
+    [Fact]
+    public async Task JsEngine_LoadModule_WhenHostedForkConfigured_AllowsChildProcessFork()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResources(
+            rootModuleName: "hostingForkSupported",
+            rootScriptResourcePath: "Hosting_ForkSupported.js",
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["Hosting_ForkSupported_Child.js"] = "Hosting_ForkSupported_Child.js"
+            });
+
+        var launcher = new RecordingChildProcessLauncher();
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IHostedForkExports>(
+            module.Assembly,
+            "hostingForkSupported",
+            new JsModuleLoadOptions
+            {
+                CompiledAssemblyPath = module.AssemblyPath,
+                ChildProcessLauncher = launcher
+            });
+
+        var result = await exports.StartFork();
+
+        Assert.NotNull(launcher.LastRequest);
+        Assert.Equal(module.AssemblyPath, launcher.LastRequest!.CompiledAssemblyPath);
+        Assert.Equal("./Hosting_ForkSupported_Child", launcher.LastRequest.EntryModule);
+        Assert.True(launcher.LastRequest.HostedParent);
+        Assert.Equal(new[] { "from-host" }, launcher.LastRequest.ModuleArguments);
+
+        Assert.Contains("ready:from-host:env-ok", result, StringComparison.Ordinal);
+        Assert.Contains("reply:42", result, StringComparison.Ordinal);
+        Assert.Contains("disconnect:true", result, StringComparison.Ordinal);
+        Assert.Contains("close:0:", result, StringComparison.Ordinal);
     }
 
     public interface IImmutableExports : IDisposable
@@ -368,18 +410,44 @@ public class ModuleLoadTests
         return reader.ReadToEnd();
     }
 
-    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(string moduleName, string scriptResourcePath)
+    private static void AssertHostedForkConfigurationError(CompiledModuleAssembly module)
+    {
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());
+        Assert.Equal("hostingForkUnsupported", ex.ModuleId);
+        Assert.Equal("attemptFork", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains(
+            "child_process.fork requires a compiled assembly path when running under JsEngine hosting",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(
+            "Pass JsModuleLoadOptions.CompiledAssemblyPath",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(
+        string moduleName,
+        string scriptResourcePath,
+        bool loadAssemblyFromPath = false)
     {
         return CompileAndLoadModuleAssemblyFromResources(
             rootModuleName: moduleName,
             rootScriptResourcePath: scriptResourcePath,
-            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal));
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal),
+            loadAssemblyFromPath: loadAssemblyFromPath);
     }
 
     private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResources(
         string rootModuleName,
         string rootScriptResourcePath,
-        IReadOnlyDictionary<string, string> additionalFiles)
+        IReadOnlyDictionary<string, string> additionalFiles,
+        bool loadAssemblyFromPath = false)
     {
         var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "ModuleLoad", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(outputDir);
@@ -413,12 +481,20 @@ public class ModuleLoadTests
 
         var alc = new HostingTestAssemblyLoadContext(jsRuntimeAsm, outputDir);
         Assembly compiledAssembly;
-        using (var stream = File.OpenRead(uniquePath))
+        string launchableAssemblyPath;
+        if (loadAssemblyFromPath)
         {
+            compiledAssembly = alc.LoadFromAssemblyPath(uniquePath);
+            launchableAssemblyPath = uniquePath;
+        }
+        else
+        {
+            using var stream = File.OpenRead(uniquePath);
             compiledAssembly = alc.LoadFromStream(stream);
+            launchableAssemblyPath = compiledPath;
         }
 
-        return new CompiledModuleAssembly(outputDir, uniquePath, alc, compiledAssembly);
+        return new CompiledModuleAssembly(outputDir, uniquePath, launchableAssemblyPath, alc, compiledAssembly);
     }
 
     private sealed class HostingTestAssemblyLoadContext : AssemblyLoadContext
@@ -447,6 +523,20 @@ public class ModuleLoadTests
             }
 
             return null;
+        }
+    }
+
+    private sealed class RecordingChildProcessLauncher : IChildProcessLauncher
+    {
+        public ChildProcessLaunchRequest? LastRequest { get; private set; }
+
+        public System.Diagnostics.Process Start(ChildProcessLaunchRequest request)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request.StartInfo);
+            LastRequest = request;
+            return System.Diagnostics.Process.Start(request.StartInfo)
+                ?? throw new InvalidOperationException("Failed to start hosted child process.");
         }
     }
 }

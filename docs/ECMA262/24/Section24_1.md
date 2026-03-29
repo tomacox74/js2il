@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:36:31Z
+> Last generated (UTC): 2026-03-29T06:55:11Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -17,13 +17,13 @@
 | 24.1.1 | The Map Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map-constructor) |
 | 24.1.1.1 | Map ( [ iterable ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map-iterable) |
 | 24.1.1.2 | AddEntriesFromIterable ( target , iterable , adder ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-add-entries-from-iterable) |
-| 24.1.2 | Properties of the Map Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-constructor) |
+| 24.1.2 | Properties of the Map Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-constructor) |
 | 24.1.2.1 | Map.groupBy ( items , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.groupby) |
-| 24.1.2.2 | Map.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype) |
+| 24.1.2.2 | Map.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype) |
 | 24.1.2.3 | get Map [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-map-%symbol.species%) |
 | 24.1.3 | Properties of the Map Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-prototype-object) |
 | 24.1.3.1 | Map.prototype.clear ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.clear) |
-| 24.1.3.2 | Map.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.constructor) |
+| 24.1.3.2 | Map.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.constructor) |
 | 24.1.3.3 | Map.prototype.delete ( key ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.delete) |
 | 24.1.3.4 | Map.prototype.entries ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.entries) |
 | 24.1.3.5 | Map.prototype.forEach ( callback [ , thisArg ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach) |
@@ -59,7 +59,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Map constructor value and Map.prototype surface | Not Yet Supported |  | Map is recognized by the compiler in new expressions, but JS2IL does not currently expose a first-class global Map constructor value on globalThis, so properties like Map.prototype cannot be read. |
+| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) | JS2IL now exposes globalThis.Map as a constructor value, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are now implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete. |
 
 ### 24.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-prototype-object))
 
@@ -71,7 +71,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Map.prototype.keys / values / entries | Supported with Limitations | [`Map_Keys_Values_Entries.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js)<br>[`Map_Symbol_Iterator.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Symbol_Iterator.js) | The methods are exposed on the internal Map prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete. |
+| Map.prototype.keys / values / entries | Supported with Limitations | [`Map_Keys_Values_Entries.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js)<br>[`Map_Symbol_Iterator.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Symbol_Iterator.js) | The methods are exposed on the public Map.prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete. |
 
 ### 24.1.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach))
 

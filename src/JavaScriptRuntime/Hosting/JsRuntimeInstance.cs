@@ -4,6 +4,7 @@ using JavaScriptRuntime;
 using JavaScriptRuntime.CommonJS;
 using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
+using JavaScriptRuntime.Node;
 
 namespace Js2IL.Runtime;
 
@@ -44,14 +45,16 @@ internal sealed class JsRuntimeInstance : IDisposable
 
     // 0 -> not disposed, 1 -> dispose requested (used to guard multiple Dispose calls).
     private int _disposeSignaled;
+    private readonly JsModuleLoadOptions? _options;
 
-    public JsRuntimeInstance(Assembly compiledAssembly, string moduleId)
+    public JsRuntimeInstance(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
 
         ModuleId = moduleId.Trim();
         CompiledAssemblyName = compiledAssembly.GetName().Name;
+        _options = options;
 
         // Treat bare specifiers as local modules by default ("foo" -> "./foo").
         var normalized = NormalizeLocalModuleSpecifier(ModuleId);
@@ -230,8 +233,17 @@ internal sealed class JsRuntimeInstance : IDisposable
             }
 
             // Configure engine services *for this thread*; the sync context/event loop are thread-affine.
-            var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(compiledAssembly, isHostedExecution: true);
+            var serviceProvider = Engine.ConfigureServiceProviderForCurrentThread(
+                compiledAssembly,
+                isHostedExecution: true,
+                compiledAssemblyPath: _options?.CompiledAssemblyPath);
             _serviceProvider = serviceProvider;
+
+            if (_options?.ChildProcessLauncher != null)
+            {
+                serviceProvider.RegisterInstance<IChildProcessLauncher>(_options.ChildProcessLauncher);
+            }
+
             _eventLoop = serviceProvider.Resolve<NodeEventLoopPump>();
 
             // Load/evaluate the entry module (CommonJS require) and capture its exports.

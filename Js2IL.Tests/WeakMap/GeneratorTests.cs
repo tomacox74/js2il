@@ -20,5 +20,8 @@ namespace Js2IL.Tests.WeakMap
 
         [Fact]
         public Task WeakMap_Object_Keys() { var testName = nameof(WeakMap_Object_Keys); return GenerateTest(testName); }
+
+        [Fact]
+        public Task WeakMap_Constructor_Prototype_Surface() { var testName = nameof(WeakMap_Constructor_Prototype_Surface); return GenerateTest(testName); }
     }
 }

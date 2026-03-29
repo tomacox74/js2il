@@ -7,6 +7,9 @@ namespace Js2IL.Tests.Set
         public ExecutionTests() : base("Set") { }
 
         [Fact]
+        public Task Set_Constructor_Prototype_Surface() { var testName = nameof(Set_Constructor_Prototype_Surface); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Set_Constructor_Iterable() { var testName = nameof(Set_Constructor_Iterable); return ExecutionTest(testName); }
 
         [Fact]

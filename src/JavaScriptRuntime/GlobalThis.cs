@@ -49,10 +49,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, string> _stringFunctionValue = static (_, value) =>
             JavaScriptRuntime.DotNet2JSConversions.ToString(value);
 
-        // String.fromCharCode(...codeUnits)
-        private static readonly Func<object[], object?[]?, object?> _stringFromCharCodeValue = static (_, args) =>
-            JavaScriptRuntime.String.FromCharCode(args);
-
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
@@ -64,6 +60,18 @@ namespace JavaScriptRuntime
         // access `Array.prototype.*` members.
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
+
+        private static readonly Delegate _mapConstructorValue =
+            CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
+
+        private static readonly Delegate _setConstructorValue =
+            CreateCollectionConstructorValue("Set", static () => new JavaScriptRuntime.Set());
+
+        private static readonly Delegate _weakMapConstructorValue =
+            CreateCollectionConstructorValue("WeakMap", static () => new JavaScriptRuntime.WeakMap());
+
+        private static readonly Delegate _weakSetConstructorValue =
+            CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
@@ -122,6 +130,10 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
             });
+            ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
+            ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
+            ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
+            ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -211,15 +223,7 @@ namespace JavaScriptRuntime
                 Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
             });
 
-            // Provide String.fromCharCode for parsers/libraries.
-            PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _stringFromCharCodeValue
-            });
+            JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
 
         private static object? ErrorPrototypeToString(object[] scopes, object?[] args)
@@ -378,6 +382,18 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Array), Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
 
+            dict.TryAdd(nameof(GlobalThis.Map), Map);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Map), dict[nameof(GlobalThis.Map)]);
+
+            dict.TryAdd(nameof(GlobalThis.Set), Set);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Set), dict[nameof(GlobalThis.Set)]);
+
+            dict.TryAdd(nameof(GlobalThis.WeakMap), WeakMap);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakMap), dict[nameof(GlobalThis.WeakMap)]);
+
+            dict.TryAdd(nameof(GlobalThis.WeakSet), WeakSet);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakSet), dict[nameof(GlobalThis.WeakSet)]);
+
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
@@ -474,6 +490,14 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        public static Delegate Map => _mapConstructorValue;
+
+        public static Delegate Set => _setConstructorValue;
+
+        public static Delegate WeakMap => _weakMapConstructorValue;
+
+        public static Delegate WeakSet => _weakSetConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
@@ -724,6 +748,44 @@ namespace JavaScriptRuntime
         private static Timers GetTimers()
         {
             return _serviceProvider.Value!.Resolve<Timers>();
+        }
+
+        private static JsFuncNoScopes1 CreateCollectionConstructorValue(string name, Func<object> factory)
+        {
+            return (newTarget, iterable) =>
+            {
+                if (newTarget is null)
+                {
+                    throw new TypeError($"Constructor {name} requires 'new'");
+                }
+
+                if (iterable is not null && iterable is not JsNull)
+                {
+                    throw new NotSupportedException($"The {name} constructor only supports zero arguments in js2il.");
+                }
+
+                return factory();
+            };
+        }
+
+        private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
         }
     }
 }

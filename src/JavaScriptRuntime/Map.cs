@@ -34,6 +34,13 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _prototypeEntriesValue
             });
+            PropertyDescriptorStore.DefineOrUpdate(exp, "size", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+            });
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -125,6 +132,11 @@ namespace JavaScriptRuntime
             var thisArg = args != null && args.Length > 1 ? args[1] : null;
             map.forEach(callback, thisArg);
             return null;
+        }
+
+        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+        {
+            return GetMapReceiver("size").size;
         }
 
         private void InitializeIntrinsicSurface()

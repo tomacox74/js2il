@@ -60,13 +60,13 @@
     {
       "clause": "24.2.3",
       "title": "Properties of the Set Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-set-constructor"
     },
     {
       "clause": "24.2.3.1",
       "title": "Set.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype"
     },
     {
@@ -96,7 +96,7 @@
     {
       "clause": "24.2.4.3",
       "title": "Set.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.constructor"
     },
     {
@@ -240,6 +240,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-set-iterable",
         "testScripts": [
+          "Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js",
           "Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js"
         ],
         "notes": "Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize."
@@ -257,9 +258,12 @@
       {
         "clause": "24.2.3.1",
         "feature": "Set constructor value and Set.prototype surface",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-set.prototype",
-        "notes": "Like Map, Set is compiler-recognized in new expressions but is not currently exposed as a first-class global constructor value with readable prototype properties."
+        "testScripts": [
+          "Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js"
+        ],
+        "notes": "JS2IL now exposes globalThis.Set as a constructor value, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete."
       },
       {
         "clause": "24.2.4",
@@ -272,7 +276,7 @@
           "Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js",
           "Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js"
         ],
-        "notes": "JavaScriptRuntime.Set now exposes the core prototype method family on an internal Set prototype surface and returns native iterator objects for keys/values/entries."
+        "notes": "JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries."
       },
       {
         "clause": "24.2.4.2",
