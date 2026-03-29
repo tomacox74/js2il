@@ -96,7 +96,14 @@ namespace JavaScriptRuntime
 
         public static void ConfigureIntrinsicSurface(object stringConstructorValue)
         {
-            DefinePrototypeMethod(stringConstructorValue, "prototype", Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(stringConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = Prototype
+            });
             DefinePrototypeMethod(stringConstructorValue, "fromCharCode", (Func<object[], object?[]?, object?>)ConstructorFromCharCode);
             DefinePrototypeMethod(stringConstructorValue, "fromCodePoint", (Func<object[], object?[]?, object?>)ConstructorFromCodePoint);
             DefinePrototypeMethod(stringConstructorValue, "raw", (Func<object[], object?[]?, object?>)ConstructorRaw);
@@ -1109,6 +1116,11 @@ namespace JavaScriptRuntime
             for (int i = 0; i < literalCount; i++)
             {
                 builder.Append(DotNet2JSConversions.ToString(JavaScriptRuntime.ObjectRuntime.GetItem(raw, (double)i)));
+                if (i + 1 >= literalCount)
+                {
+                    break;
+                }
+
                 if (substitutions != null && i < substitutions.Length)
                 {
                     builder.Append(DotNet2JSConversions.ToString(substitutions[i]));

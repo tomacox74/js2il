@@ -2,6 +2,7 @@
 
 console.log(String.fromCodePoint(0x41, 0x1F600));
 console.log(String.raw({ raw: ["a", "b", "c"] }, 1, 2));
+console.log(String.raw({ raw: ["a", "b"] }, 1, 2));
 console.log("abc".at(0));
 console.log("abc".at(-1));
 console.log(String("abc".at(99)));

@@ -2,6 +2,10 @@
 
 console.log(typeof String.prototype);
 console.log(String.prototype.constructor === String);
+const stringPrototypeDescriptor = Object.getOwnPropertyDescriptor(String, "prototype");
+console.log(stringPrototypeDescriptor.writable);
+console.log(stringPrototypeDescriptor.configurable);
+console.log(stringPrototypeDescriptor.enumerable);
 console.log(String.prototype.toString.call("abc"));
 console.log(String.prototype.valueOf.call("abc"));
 
