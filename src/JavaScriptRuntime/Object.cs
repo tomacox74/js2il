@@ -2610,10 +2610,18 @@ namespace JavaScriptRuntime
                         : JavaScriptRuntime.String.CharAt(input, a0);
                     return true;
 
+                case "at":
+                    result = JavaScriptRuntime.String.At(input, a0);
+                    return true;
+
                 case "charCodeAt":
                     result = argCount <= 0
                         ? JavaScriptRuntime.String.CharCodeAt(input)
                         : JavaScriptRuntime.String.CharCodeAt(input, a0);
+                    return true;
+
+                case "codePointAt":
+                    result = JavaScriptRuntime.String.CodePointAt(input, a0);
                     return true;
 
                 case "substring":
@@ -2706,8 +2714,21 @@ namespace JavaScriptRuntime
                     result = JavaScriptRuntime.String.ToLowerCase(input);
                     return true;
 
+                case "toString":
+                case "valueOf":
+                    result = input;
+                    return true;
+
                 case "toUpperCase":
                     result = JavaScriptRuntime.String.ToUpperCase(input);
+                    return true;
+
+                case "isWellFormed":
+                    result = JavaScriptRuntime.String.IsWellFormed(input);
+                    return true;
+
+                case "toWellFormed":
+                    result = JavaScriptRuntime.String.ToWellFormed(input);
                     return true;
 
                 case "split":
@@ -2742,10 +2763,26 @@ namespace JavaScriptRuntime
 
                     break;
 
+                case "matchAll":
+                    result = JavaScriptRuntime.String.MatchAll(input, a0);
+                    return true;
+
                 case "search":
                     result = argCount <= 0
                         ? JavaScriptRuntime.String.Search(input, null)
                         : JavaScriptRuntime.String.Search(input, a0);
+                    return true;
+
+                case "padStart":
+                    result = JavaScriptRuntime.String.PadStart(input, a0, a1);
+                    return true;
+
+                case "padEnd":
+                    result = JavaScriptRuntime.String.PadEnd(input, a0, a1);
+                    return true;
+
+                case "replaceAll":
+                    result = JavaScriptRuntime.String.ReplaceAll(input, a0, a1);
                     return true;
 
                 case "localeCompare":
@@ -3006,6 +3043,11 @@ namespace JavaScriptRuntime
             }
 
             if (HasOwnPropertyForPropertyLookup(target, name))
+            {
+                return true;
+            }
+
+            if (target is string && JavaScriptRuntime.String.TryGetPrototypeProperty(target, name, out _))
             {
                 return true;
             }
@@ -3430,7 +3472,7 @@ namespace JavaScriptRuntime
             // Built-ins without an exposed Symbol.iterator surface fall back here.
             if (iterable is string s)
             {
-                return new StringIterator(s);
+                return JavaScriptRuntime.String.CreateIterator(s);
             }
 
             if (iterable is JavaScriptRuntime.Array arr)
@@ -4429,6 +4471,11 @@ namespace JavaScriptRuntime
             if (TryGetOwnPropertyValue(obj, name, out var ownValue))
             {
                 return ownValue;
+            }
+
+            if (obj is string && JavaScriptRuntime.String.TryGetPrototypeProperty(obj, name, out var stringPrototypeValue))
+            {
+                return stringPrototypeValue;
             }
 
             return TryGetInheritedPropertyValue(obj, name, out var inherited) ? inherited : null;

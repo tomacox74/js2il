@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -13,10 +15,112 @@ namespace JavaScriptRuntime
     {
         private const int MaxRepeatResultLength = 50_000_000;
         private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
+        private static readonly string MatchAllSymbolPropertyKey = Symbol.matchAll.DebugId;
         private static readonly string ReplaceSymbolPropertyKey = Symbol.replace.DebugId;
         private static readonly string SearchSymbolPropertyKey = Symbol.search.DebugId;
         private static readonly string SplitSymbolPropertyKey = Symbol.split.DebugId;
+        private static readonly string IteratorSymbolPropertyKey = Symbol.iterator.DebugId;
+        private static readonly string ToStringTagSymbolPropertyKey = Symbol.toStringTag.DebugId;
         private static readonly string[] Latin1CharStrings = CreateLatin1CharStrings();
+        internal static readonly ExpandoObject Prototype = CreatePrototype();
+        internal static readonly ExpandoObject StringIteratorPrototype = CreateStringIteratorPrototype();
+
+        private static ExpandoObject CreatePrototype()
+        {
+            var prototype = new ExpandoObject();
+
+            DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt);
+            DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt);
+            DefinePrototypeMethod(prototype, "charCodeAt", (Func<object[], object?[]?, object?>)PrototypeCharCodeAt);
+            DefinePrototypeMethod(prototype, "codePointAt", (Func<object[], object?[]?, object?>)PrototypeCodePointAt);
+            DefinePrototypeMethod(prototype, "endsWith", (Func<object[], object?[]?, object?>)PrototypeEndsWith);
+            DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes);
+            DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf);
+            DefinePrototypeMethod(prototype, "isWellFormed", (Func<object[], object?[]?, object?>)PrototypeIsWellFormed);
+            DefinePrototypeMethod(prototype, "lastIndexOf", (Func<object[], object?[]?, object?>)PrototypeLastIndexOf);
+            DefinePrototypeMethod(prototype, "localeCompare", (Func<object[], object?[]?, object?>)PrototypeLocaleCompare);
+            DefinePrototypeMethod(prototype, "match", (Func<object[], object?[]?, object?>)PrototypeMatch);
+            DefinePrototypeMethod(prototype, "matchAll", (Func<object[], object?[]?, object?>)PrototypeMatchAll);
+            DefinePrototypeMethod(prototype, "padEnd", (Func<object[], object?[]?, object?>)PrototypePadEnd);
+            DefinePrototypeMethod(prototype, "padStart", (Func<object[], object?[]?, object?>)PrototypePadStart);
+            DefinePrototypeMethod(prototype, "repeat", (Func<object[], object?[]?, object?>)PrototypeRepeat);
+            DefinePrototypeMethod(prototype, "replace", (Func<object[], object?[]?, object?>)PrototypeReplace);
+            DefinePrototypeMethod(prototype, "replaceAll", (Func<object[], object?[]?, object?>)PrototypeReplaceAll);
+            DefinePrototypeMethod(prototype, "search", (Func<object[], object?[]?, object?>)PrototypeSearch);
+            DefinePrototypeMethod(prototype, "slice", (Func<object[], object?[]?, object?>)PrototypeSlice);
+            DefinePrototypeMethod(prototype, "split", (Func<object[], object?[]?, object?>)PrototypeSplit);
+            DefinePrototypeMethod(prototype, "startsWith", (Func<object[], object?[]?, object?>)PrototypeStartsWith);
+            DefinePrototypeMethod(prototype, "substring", (Func<object[], object?[]?, object?>)PrototypeSubstring);
+            DefinePrototypeMethod(prototype, "toLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLowerCase);
+            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
+            DefinePrototypeMethod(prototype, "toUpperCase", (Func<object[], object?[]?, object?>)PrototypeToUpperCase);
+            DefinePrototypeMethod(prototype, "toWellFormed", (Func<object[], object?[]?, object?>)PrototypeToWellFormed);
+            DefinePrototypeMethod(prototype, "trim", (Func<object[], object?[]?, object?>)PrototypeTrim);
+            DefinePrototypeMethod(prototype, "trimEnd", (Func<object[], object?[]?, object?>)PrototypeTrimEnd);
+            DefinePrototypeMethod(prototype, "trimLeft", (Func<object[], object?[]?, object?>)PrototypeTrimStart);
+            DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)PrototypeTrimEnd);
+            DefinePrototypeMethod(prototype, "trimStart", (Func<object[], object?[]?, object?>)PrototypeTrimStart);
+            DefinePrototypeMethod(prototype, "valueOf", (Func<object[], object?[]?, object?>)PrototypeValueOf);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator);
+
+            return prototype;
+        }
+
+        private static ExpandoObject CreateStringIteratorPrototype()
+        {
+            var prototype = new ExpandoObject();
+            DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "String Iterator"
+            });
+            return prototype;
+        }
+
+        private static void DefinePrototypeMethod(object target, string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
+
+        public static void ConfigureIntrinsicSurface(object stringConstructorValue)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(stringConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = Prototype
+            });
+            DefinePrototypeMethod(stringConstructorValue, "fromCharCode", (Func<object[], object?[]?, object?>)ConstructorFromCharCode);
+            DefinePrototypeMethod(stringConstructorValue, "fromCodePoint", (Func<object[], object?[]?, object?>)ConstructorFromCodePoint);
+            DefinePrototypeMethod(stringConstructorValue, "raw", (Func<object[], object?[]?, object?>)ConstructorRaw);
+            DefinePrototypeMethod(Prototype, "constructor", stringConstructorValue);
+        }
+
+        internal static bool TryGetPrototypeProperty(object receiver, string propertyKey, out object? value)
+        {
+            value = null;
+
+            if (!TryGetDescriptorValue(Prototype, propertyKey, receiver, out value))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         private static string[] CreateLatin1CharStrings()
         {
@@ -145,6 +249,294 @@ namespace JavaScriptRuntime
             }
 
             return end < 0 ? string.Empty : s.Substring(0, end + 1);
+        }
+
+        private static object? GetArg(object?[]? args, int index)
+        {
+            return args != null && index < args.Length ? args[index] : null;
+        }
+
+        private static string ThisStringValue(object? value)
+        {
+            return value switch
+            {
+                string s => s,
+                char[] chars => new string(chars),
+                StringBuilder builder => builder.ToString(),
+                _ => throw new TypeError("String.prototype method called on incompatible receiver")
+            };
+        }
+
+        private static double ToIntegerOrInfinity(object? value, double defaultValue)
+        {
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            double number;
+            try
+            {
+                number = TypeUtilities.ToNumber(value);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+
+            if (double.IsNaN(number))
+            {
+                return 0d;
+            }
+
+            if (double.IsInfinity(number))
+            {
+                return number;
+            }
+
+            return global::System.Math.Truncate(number);
+        }
+
+        private static int ToLength(object? value, int defaultValue = 0)
+        {
+            var number = ToIntegerOrInfinity(value, defaultValue);
+            if (double.IsNaN(number) || number <= 0)
+            {
+                return 0;
+            }
+
+            if (double.IsPositiveInfinity(number))
+            {
+                return int.MaxValue;
+            }
+
+            return number >= int.MaxValue ? int.MaxValue : (int)number;
+        }
+
+        private static bool TryGetDescriptorValue(object target, string propertyKey, object receiver, out object? value)
+        {
+            value = null;
+            if (!PropertyDescriptorStore.TryGetOwn(target, propertyKey, out var descriptor))
+            {
+                return false;
+            }
+
+            if (descriptor.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                if (descriptor.Get is null || descriptor.Get is JsNull)
+                {
+                    value = null;
+                    return true;
+                }
+
+                if (descriptor.Get is not Delegate getter)
+                {
+                    throw new TypeError("Property accessor is not a function");
+                }
+
+                var previousThis = RuntimeServices.SetCurrentThis(receiver);
+                try
+                {
+                    value = Closure.InvokeWithArgs(getter, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    return true;
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+            }
+
+            value = descriptor.Value;
+            return true;
+        }
+
+        private static string BuildPadding(string fillString, int totalCount)
+        {
+            if (totalCount <= 0 || fillString.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder(totalCount);
+            while (builder.Length < totalCount)
+            {
+                var remaining = totalCount - builder.Length;
+                if (fillString.Length <= remaining)
+                {
+                    builder.Append(fillString);
+                }
+                else
+                {
+                    builder.Append(fillString, 0, remaining);
+                }
+            }
+
+            return builder.ToString();
+        }
+
+        private static object? PrototypeAt(object[] scopes, object?[]? args)
+            => At(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
+        private static object? PrototypeCharAt(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            return args == null || args.Length == 0 ? CharAt(input) : CharAt(input, args[0]);
+        }
+
+        private static object? PrototypeCharCodeAt(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            return args == null || args.Length == 0 ? CharCodeAt(input) : CharCodeAt(input, args[0]);
+        }
+
+        private static object? PrototypeCodePointAt(object[] scopes, object?[]? args)
+            => CodePointAt(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
+        private static object? PrototypeEndsWith(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
+            return EndsWith(input, searchString, GetArg(args, 1));
+        }
+
+        private static object? PrototypeIncludes(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
+            return Includes(input, searchString, GetArg(args, 1));
+        }
+
+        private static object? PrototypeIndexOf(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
+            return args == null || args.Length < 2
+                ? IndexOf(input, searchString)
+                : IndexOf(input, searchString, args[1]);
+        }
+
+        private static object? PrototypeIsWellFormed(object[] scopes, object?[]? args)
+            => IsWellFormed(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeIterator(object[] scopes, object?[]? args)
+            => CreateIterator(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeLastIndexOf(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
+            return args == null || args.Length < 2
+                ? LastIndexOf(input, searchString)
+                : LastIndexOf(input, searchString, args[1]);
+        }
+
+        private static object? PrototypeLocaleCompare(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            var other = DotNet2JSConversions.ToString(GetArg(args, 0));
+            return LocaleCompare(input, other, GetArg(args, 1), GetArg(args, 2));
+        }
+
+        private static object? PrototypeMatch(object[] scopes, object?[]? args)
+            => Match(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
+        private static object? PrototypeMatchAll(object[] scopes, object?[]? args)
+            => MatchAll(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
+        private static object? PrototypePadEnd(object[] scopes, object?[]? args)
+            => PadEnd(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+
+        private static object? PrototypePadStart(object[] scopes, object?[]? args)
+            => PadStart(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+
+        private static object? PrototypeRepeat(object[] scopes, object?[]? args)
+            => Repeat(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
+        private static object? PrototypeReplace(object[] scopes, object?[]? args)
+            => Replace(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+
+        private static object? PrototypeReplaceAll(object[] scopes, object?[]? args)
+            => ReplaceAll(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
+
+        private static object? PrototypeSearch(object[] scopes, object?[]? args)
+            => Search(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
+
+        private static object? PrototypeSlice(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            return args == null || args.Length < 2
+                ? Slice(input, GetArg(args, 0))
+                : Slice(input, GetArg(args, 0), args[1]);
+        }
+
+        private static object? PrototypeSplit(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            return Split(input, GetArg(args, 0), GetArg(args, 1));
+        }
+
+        private static object? PrototypeStartsWith(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            var searchString = DotNet2JSConversions.ToString(GetArg(args, 0));
+            return StartsWith(input, searchString, GetArg(args, 1));
+        }
+
+        private static object? PrototypeSubstring(object[] scopes, object?[]? args)
+        {
+            var input = ThisStringValue(RuntimeServices.GetCurrentThis());
+            return args == null || args.Length < 2
+                ? Substring(input, GetArg(args, 0))
+                : Substring(input, GetArg(args, 0), args[1]);
+        }
+
+        private static object? PrototypeToLowerCase(object[] scopes, object?[]? args)
+            => ToLowerCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+            => ThisStringValue(RuntimeServices.GetCurrentThis());
+
+        private static object? PrototypeToUpperCase(object[] scopes, object?[]? args)
+            => ToUpperCase(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeToWellFormed(object[] scopes, object?[]? args)
+            => ToWellFormed(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeTrim(object[] scopes, object?[]? args)
+            => Trim(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeTrimEnd(object[] scopes, object?[]? args)
+            => TrimEnd(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeTrimStart(object[] scopes, object?[]? args)
+            => TrimStart(ThisStringValue(RuntimeServices.GetCurrentThis()));
+
+        private static object? PrototypeValueOf(object[] scopes, object?[]? args)
+            => ThisStringValue(RuntimeServices.GetCurrentThis());
+
+        private static object? ConstructorFromCharCode(object[] scopes, object?[]? args)
+            => FromCharCode(args);
+
+        private static object? ConstructorFromCodePoint(object[] scopes, object?[]? args)
+            => FromCodePoint(args);
+
+        private static object? ConstructorRaw(object[] scopes, object?[]? args)
+        {
+            var template = GetArg(args, 0);
+            var substitutions = args == null || args.Length <= 1
+                ? System.Array.Empty<object?>()
+                : args[1..];
+            return Raw(template, substitutions);
+        }
+
+        private static object? StringIteratorPrototypeIterator(object[] scopes, object?[]? args)
+            => RuntimeServices.GetCurrentThis();
+
+        private static object? StringIteratorPrototypeNext(object[] scopes, object?[]? args)
+        {
+            var iterator = RuntimeServices.GetCurrentThis() as PublicStringIterator
+                ?? throw new TypeError("String Iterator.prototype.next called on incompatible receiver");
+            return iterator.next();
         }
 
         /// <summary>
@@ -514,6 +906,45 @@ namespace JavaScriptRuntime
             return SearchWithRegExp(input, re);
         }
 
+        public static object MatchAll(string input, object? regexp)
+        {
+            input ??= string.Empty;
+
+            if (TryInvokeWellKnownSymbol(regexp, Symbol.matchAll, MatchAllSymbolPropertyKey, input, out var symbolResult))
+            {
+                return symbolResult!;
+            }
+
+            RegExp matcher;
+            if (regexp is RegExp regExp)
+            {
+                if (!regExp.global)
+                {
+                    throw new TypeError("String.prototype.matchAll requires a global RegExp");
+                }
+
+                matcher = new RegExp(regExp, regExp.flags);
+            }
+            else
+            {
+                matcher = new RegExp(regexp, "g");
+            }
+
+            var matches = new JavaScriptRuntime.Array();
+            while (true)
+            {
+                var step = matcher.exec(input);
+                if (step is JsNull)
+                {
+                    break;
+                }
+
+                matches.Add(step);
+            }
+
+            return matches;
+        }
+
         /// <summary>
         /// Implements String.prototype.charAt([index]).
         /// Returns a one-code-unit string, or the empty string when out of range.
@@ -646,6 +1077,105 @@ namespace JavaScriptRuntime
             return (char)u16;
         }
 
+        public static string FromCodePoint(object?[]? codePoints)
+        {
+            if (codePoints == null || codePoints.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder();
+            foreach (var codePoint in codePoints)
+            {
+                builder.Append(CodePointToString(codePoint));
+            }
+
+            return builder.ToString();
+        }
+
+        public static string Raw(object? template, object?[]? substitutions)
+        {
+            if (template is null || template is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var raw = JavaScriptRuntime.ObjectRuntime.GetItem(template, "raw");
+            if (raw is null || raw is JsNull)
+            {
+                throw new TypeError("String.raw requires a template.raw property");
+            }
+
+            int literalCount = ToLength(JavaScriptRuntime.Object.GetLength(raw));
+            if (literalCount == 0)
+            {
+                return string.Empty;
+            }
+
+            var builder = new StringBuilder();
+            for (int i = 0; i < literalCount; i++)
+            {
+                builder.Append(DotNet2JSConversions.ToString(JavaScriptRuntime.ObjectRuntime.GetItem(raw, (double)i)));
+                if (i + 1 >= literalCount)
+                {
+                    break;
+                }
+
+                if (substitutions != null && i < substitutions.Length)
+                {
+                    builder.Append(DotNet2JSConversions.ToString(substitutions[i]));
+                }
+            }
+
+            return builder.ToString();
+        }
+
+        public static object? At(string input, object? index)
+        {
+            input ??= string.Empty;
+
+            var relativeIndex = ToIntegerOrInfinity(index, 0d);
+            if (double.IsNegativeInfinity(relativeIndex))
+            {
+                return null;
+            }
+
+            var actualIndex = relativeIndex < 0 ? input.Length + (int)relativeIndex : (int)relativeIndex;
+            if (actualIndex < 0 || actualIndex >= input.Length)
+            {
+                return null;
+            }
+
+            return CharToStringFast(input[actualIndex]);
+        }
+
+        public static object? CodePointAt(string input, object? index)
+        {
+            input ??= string.Empty;
+
+            var position = ToIntegerOrInfinity(index, 0d);
+            if (double.IsInfinity(position))
+            {
+                return null;
+            }
+
+            if (position < 0 || position >= input.Length)
+            {
+                return null;
+            }
+
+            int actualIndex = (int)position;
+            char first = input[actualIndex];
+            if (char.IsHighSurrogate(first)
+                && actualIndex + 1 < input.Length
+                && char.IsLowSurrogate(input[actualIndex + 1]))
+            {
+                return (double)char.ConvertToUtf32(first, input[actualIndex + 1]);
+            }
+
+            return (double)first;
+        }
+
         /// <summary>
         /// Implements a subset of String.prototype.startsWith(searchString[, position]).
         /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
@@ -703,7 +1233,7 @@ namespace JavaScriptRuntime
         /// Only replaces the first occurrence, matching JS behavior for string patterns.
         /// When a custom @@replace override is present its return value is forwarded as-is.
         /// </summary>
-        public static object Replace(string input, object patternOrString, object replacement)
+        public static object Replace(string input, object? patternOrString, object? replacement)
         {
             input ??= string.Empty;
 
@@ -816,6 +1346,91 @@ namespace JavaScriptRuntime
             return input.IndexOf(searchString, pos, StringComparison.Ordinal) >= 0;
         }
 
+        public static bool IsWellFormed(string input)
+        {
+            input ??= string.Empty;
+            for (int i = 0; i < input.Length; i++)
+            {
+                var ch = input[i];
+                if (char.IsHighSurrogate(ch))
+                {
+                    if (i + 1 >= input.Length || !char.IsLowSurrogate(input[i + 1]))
+                    {
+                        return false;
+                    }
+
+                    i++;
+                    continue;
+                }
+
+                if (char.IsLowSurrogate(ch))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static string ToWellFormed(string input)
+        {
+            input ??= string.Empty;
+            if (input.Length == 0)
+            {
+                return input;
+            }
+
+            StringBuilder? builder = null;
+            for (int i = 0; i < input.Length; i++)
+            {
+                var ch = input[i];
+                if (char.IsHighSurrogate(ch))
+                {
+                    if (i + 1 < input.Length && char.IsLowSurrogate(input[i + 1]))
+                    {
+                        builder?.Append(ch).Append(input[i + 1]);
+                        i++;
+                        continue;
+                    }
+
+                    builder ??= new StringBuilder(input.Length);
+                    if (i > 0 && builder.Length == 0)
+                    {
+                        builder.Append(input, 0, i);
+                    }
+
+                    builder.Append('\uFFFD');
+                    continue;
+                }
+
+                if (char.IsLowSurrogate(ch))
+                {
+                    builder ??= new StringBuilder(input.Length);
+                    if (i > 0 && builder.Length == 0)
+                    {
+                        builder.Append(input, 0, i);
+                    }
+
+                    builder.Append('\uFFFD');
+                    continue;
+                }
+
+                builder?.Append(ch);
+            }
+
+            return builder?.ToString() ?? input;
+        }
+
+        public static string PadEnd(string input, object? maxLength, object? fillString)
+        {
+            return Pad(input, maxLength, fillString, padStart: false);
+        }
+
+        public static string PadStart(string input, object? maxLength, object? fillString)
+        {
+            return Pad(input, maxLength, fillString, padStart: true);
+        }
+
         /// <summary>
         /// Implements a subset of String.prototype.replace when the pattern is a regular expression literal
         /// and the replacement is a string. Supports global and ignoreCase flags.
@@ -848,6 +1463,74 @@ namespace JavaScriptRuntime
                 // Replace only the first occurrence
                 return re.Replace(input, replacement, 1);
             }
+        }
+
+        public static object ReplaceAll(string input, object? searchValue, object? replaceValue)
+        {
+            input ??= string.Empty;
+
+            if (searchValue is RegExp regExp)
+            {
+                if (!regExp.global)
+                {
+                    throw new TypeError("String.prototype.replaceAll called with a non-global RegExp argument");
+                }
+
+                return ReplaceWithRegExp(input, regExp, replaceValue);
+            }
+
+            if (TryInvokeWellKnownSymbol(searchValue, Symbol.replace, ReplaceSymbolPropertyKey, input, replaceValue, out var symbolResult))
+            {
+                return symbolResult!;
+            }
+
+            var pattern = DotNet2JSConversions.ToString(searchValue);
+            if (replaceValue is Func<object[], object, object> callback1)
+            {
+                if (pattern.Length == 0)
+                {
+                    return ReplaceEmptyPattern(input, match => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
+                }
+
+                return ReplaceLiteralWithCallback(input, pattern, global: true, match => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
+            }
+
+            if (replaceValue is Func<object[], object> callback0)
+            {
+                if (pattern.Length == 0)
+                {
+                    return ReplaceEmptyPattern(input, _ => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
+                }
+
+                return ReplaceLiteralWithCallback(input, pattern, global: true, _ => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
+            }
+
+            var replacementText = DotNet2JSConversions.ToString(replaceValue) ?? string.Empty;
+            if (pattern.Length == 0)
+            {
+                return ReplaceEmptyPattern(input, _ => replacementText);
+            }
+
+            return input.Replace(pattern, replacementText, StringComparison.Ordinal);
+        }
+
+        private static string Pad(string input, object? maxLength, object? fillString, bool padStart)
+        {
+            input ??= string.Empty;
+            int targetLength = ToLength(maxLength, input.Length);
+            if (targetLength <= input.Length)
+            {
+                return input;
+            }
+
+            var filler = fillString == null ? " " : DotNet2JSConversions.ToString(fillString);
+            if (filler.Length == 0)
+            {
+                return input;
+            }
+
+            var padding = BuildPadding(filler, targetLength - input.Length);
+            return padStart ? padding + input : input + padding;
         }
 
         /// <summary>
@@ -1390,6 +2073,101 @@ namespace JavaScriptRuntime
                 arr.Add(parts[i] ?? string.Empty);
             }
             return arr;
+        }
+
+        private static string CodePointToString(object? codePoint)
+        {
+            double numericCodePoint;
+            try
+            {
+                numericCodePoint = TypeUtilities.ToNumber(codePoint);
+            }
+            catch
+            {
+                throw new RangeError("Invalid code point");
+            }
+
+            if (!double.IsFinite(numericCodePoint)
+                || !double.IsInteger(numericCodePoint)
+                || numericCodePoint < 0
+                || numericCodePoint > 0x10FFFF)
+            {
+                throw new RangeError("Invalid code point");
+            }
+
+            try
+            {
+                return char.ConvertFromUtf32((int)numericCodePoint);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new RangeError("Invalid code point");
+            }
+        }
+
+        private static string ReplaceEmptyPattern(string input, Func<string, string> replacementFactory)
+        {
+            var builder = new StringBuilder();
+            builder.Append(replacementFactory(string.Empty));
+            for (int i = 0; i < input.Length; i++)
+            {
+                builder.Append(input[i]);
+                builder.Append(replacementFactory(string.Empty));
+            }
+
+            return builder.ToString();
+        }
+
+        internal static IJavaScriptIterator CreateIterator(string input)
+        {
+            return new PublicStringIterator(input);
+        }
+
+        /// <summary>
+        /// Public iterator object returned by <c>String.prototype[@@iterator]</c>.
+        /// Iterates JavaScript strings by Unicode code point while implementing the runtime iterator protocol.
+        /// </summary>
+        public sealed class PublicStringIterator : IJavaScriptIterator
+        {
+            private readonly string _input;
+            private int _index;
+            private bool _isClosed;
+
+            public PublicStringIterator(string input)
+            {
+                _input = input ?? string.Empty;
+                PrototypeChain.SetPrototype(this, StringIteratorPrototype);
+            }
+
+            public bool HasReturn => true;
+
+            public IteratorResultObject Next()
+            {
+                return Advance();
+            }
+
+            public IteratorResultObject next()
+            {
+                return Advance();
+            }
+
+            public void Return()
+            {
+                _isClosed = true;
+            }
+
+            internal IteratorResultObject Advance()
+            {
+                if (_isClosed || _index >= _input.Length)
+                {
+                    return new IteratorResultObject(null, done: true);
+                }
+
+                int nextIndex = AdvanceSplitIndex(_input, _index, unicode: true);
+                var value = _input.Substring(_index, nextIndex - _index);
+                _index = nextIndex;
+                return new IteratorResultObject(value, done: false);
+            }
         }
 
         private static bool TryInvokeWellKnownSymbol(object? target, Symbol symbol, string symbolPropertyKey, string input, out object? result)
