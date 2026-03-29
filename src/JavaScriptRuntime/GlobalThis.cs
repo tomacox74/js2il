@@ -49,10 +49,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, string> _stringFunctionValue = static (_, value) =>
             JavaScriptRuntime.DotNet2JSConversions.ToString(value);
 
-        // String.fromCharCode(...codeUnits)
-        private static readonly Func<object[], object?[]?, object?> _stringFromCharCodeValue = static (_, args) =>
-            JavaScriptRuntime.String.FromCharCode(args);
-
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
@@ -227,15 +223,7 @@ namespace JavaScriptRuntime
                 Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
             });
 
-            // Provide String.fromCharCode for parsers/libraries.
-            PropertyDescriptorStore.DefineOrUpdate(_stringFunctionValue, "fromCharCode", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _stringFromCharCodeValue
-            });
+            JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
 
         private static object? ErrorPrototypeToString(object[] scopes, object?[] args)
