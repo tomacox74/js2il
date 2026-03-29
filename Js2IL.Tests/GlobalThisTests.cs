@@ -55,40 +55,13 @@ public class GlobalThisTests
 
             var globalObject = (GlobalThis)GlobalThis.globalThis;
 
-            Assert.Collection(
+            Assert.All(
                 new (string Name, object Constructor)[]
                 {
                     (nameof(GlobalThis.Map), GlobalThis.Map),
                     (nameof(GlobalThis.Set), GlobalThis.Set),
                     (nameof(GlobalThis.WeakMap), GlobalThis.WeakMap),
                     (nameof(GlobalThis.WeakSet), GlobalThis.WeakSet)
-                },
-                pair =>
-                {
-                    Assert.True(globalObject.ContainsKey(pair.Name));
-                    Assert.Same(pair.Constructor, globalObject[pair.Name]);
-
-                    var prototype = ObjectRuntime.GetItem(pair.Constructor, "prototype");
-                    Assert.NotNull(prototype);
-                    Assert.Same(pair.Constructor, ObjectRuntime.GetItem(prototype!, "constructor"));
-                },
-                pair =>
-                {
-                    Assert.True(globalObject.ContainsKey(pair.Name));
-                    Assert.Same(pair.Constructor, globalObject[pair.Name]);
-
-                    var prototype = ObjectRuntime.GetItem(pair.Constructor, "prototype");
-                    Assert.NotNull(prototype);
-                    Assert.Same(pair.Constructor, ObjectRuntime.GetItem(prototype!, "constructor"));
-                },
-                pair =>
-                {
-                    Assert.True(globalObject.ContainsKey(pair.Name));
-                    Assert.Same(pair.Constructor, globalObject[pair.Name]);
-
-                    var prototype = ObjectRuntime.GetItem(pair.Constructor, "prototype");
-                    Assert.NotNull(prototype);
-                    Assert.Same(pair.Constructor, ObjectRuntime.GetItem(prototype!, "constructor"));
                 },
                 pair =>
                 {
