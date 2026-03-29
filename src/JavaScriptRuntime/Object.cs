@@ -1629,6 +1629,7 @@ namespace JavaScriptRuntime
 
             // Built-in type tags.
             if (thisVal is JavaScriptRuntime.Array) return "[object Array]";
+            if (thisVal is JavaScriptRuntime.ArgumentsObject) return "[object Arguments]";
             if (thisVal is string) return "[object String]";
             if (thisVal is bool) return "[object Boolean]";
             if (thisVal is double or float or int or long) return "[object Number]";
@@ -4303,6 +4304,10 @@ namespace JavaScriptRuntime
                     return JavaScriptRuntime.Function.GetLength(del);
                 case Array arr:
                     return arr.length;
+                case ArgumentsObject argumentsObject:
+                    return argumentsObject.TryGetValue("length", out var argumentsLength)
+                        ? TypeUtilities.ToNumber(argumentsLength)
+                        : 0.0;
                 case TypedArrayBase typedArray:
                     return typedArray.length;
                 case JavaScriptRuntime.Node.Buffer buffer:

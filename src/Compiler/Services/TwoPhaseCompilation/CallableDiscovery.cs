@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.Services;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities;
+using System;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -79,8 +80,10 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = funcName,
                 JsParamCount = paramCount,
-                NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                NeedsArgumentsObject = HasImplicitArgumentsBinding(functionScope),
                 HasRestParameters = functionScope.HasRestParameters,
+                UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+                ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                 AstNode = funcDecl
             };
             
@@ -104,8 +107,10 @@ public sealed class CallableDiscovery
                 Name = funcName, // May be null for anonymous
                 Location = location,
                 JsParamCount = paramCount,
-                NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                NeedsArgumentsObject = HasImplicitArgumentsBinding(functionScope),
                 HasRestParameters = functionScope.HasRestParameters,
+                UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+                ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                 AstNode = funcExpr
             };
             
@@ -135,6 +140,7 @@ public sealed class CallableDiscovery
                 JsParamCount = paramCount,
                 NeedsArgumentsObject = false,
                 HasRestParameters = functionScope.HasRestParameters,
+                UsesMappedArgumentsObject = false,
                 AstNode = arrowExpr
             };
             
@@ -184,14 +190,18 @@ public sealed class CallableDiscovery
             var ctorParamCount = ctorFunc != null ? CountJsParameters(ctorFunc.Params) : 0;
             var ctorScope = FindMethodScope(classScope, ctor);
             var hasRestParams = ctorScope?.HasRestParameters ?? false;
-            
+            var ctorNeedsArgumentsObject = ctorScope != null && HasImplicitArgumentsBinding(ctorScope);
+             
             var ctorId = new CallableId
             {
                 Kind = CallableKind.ClassConstructor,
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = ctorParamCount,
+                NeedsArgumentsObject = ctorNeedsArgumentsObject,
                 HasRestParameters = hasRestParams,
+                UsesMappedArgumentsObject = ctorScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(ctorScope),
+                ArgumentsParameterNames = ctorScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(ctorScope) : Array.Empty<string>(),
                 AstNode = ctor
             };
             
@@ -206,7 +216,9 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
+                NeedsArgumentsObject = false,
                 HasRestParameters = false,
+                UsesMappedArgumentsObject = false,
                 // For synthetic callables we still want a stable AST node for indexing,
                 // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
                 // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
@@ -229,7 +241,9 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
+                NeedsArgumentsObject = false,
                 HasRestParameters = false,
+                UsesMappedArgumentsObject = false,
                 AstNode = classNodeForCctor!
             };
             _discovered.Add(cctorId);
@@ -254,6 +268,7 @@ public sealed class CallableDiscovery
                     var computedMethodParamCount = CountJsParameters(computedFunc.Params);
                     var dynamicMethodScope = FindMethodScope(classScope, member);
                     var dynamicMethodHasRestParams = dynamicMethodScope?.HasRestParameters ?? false;
+                    var dynamicMethodNeedsArgumentsObject = dynamicMethodScope != null && HasImplicitArgumentsBinding(dynamicMethodScope);
 
                     _discovered.Add(new CallableId
                     {
@@ -262,8 +277,10 @@ public sealed class CallableDiscovery
                         Name = (computedFunc.Id as Identifier)?.Name,
                         Location = methodLocation,
                         JsParamCount = computedMethodParamCount,
-                        NeedsArgumentsObject = dynamicMethodScope?.NeedsArgumentsObject ?? false,
+                        NeedsArgumentsObject = dynamicMethodNeedsArgumentsObject,
                         HasRestParameters = dynamicMethodHasRestParams,
+                        UsesMappedArgumentsObject = dynamicMethodScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(dynamicMethodScope),
+                        ArgumentsParameterNames = dynamicMethodScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(dynamicMethodScope) : Array.Empty<string>(),
                         AstNode = computedFunc
                     });
                 }
@@ -320,7 +337,8 @@ public sealed class CallableDiscovery
             
             var methodScope = FindMethodScope(classScope, member);
             var methodHasRestParams = methodScope?.HasRestParameters ?? false;
-            
+            var methodNeedsArgumentsObject = methodScope != null && HasImplicitArgumentsBinding(methodScope);
+             
             var methodId = new CallableId
             {
                 Kind = kind,
@@ -328,7 +346,10 @@ public sealed class CallableDiscovery
                 Name = callableName,
                 Location = location,
                 JsParamCount = methodParamCount,
+                NeedsArgumentsObject = methodNeedsArgumentsObject,
                 HasRestParameters = methodHasRestParams,
+                UsesMappedArgumentsObject = methodScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(methodScope),
+                ArgumentsParameterNames = methodScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(methodScope) : Array.Empty<string>(),
                 AstNode = member
             };
             
@@ -384,6 +405,12 @@ public sealed class CallableDiscovery
             }
         }
         return null;
+    }
+
+    private static bool HasImplicitArgumentsBinding(Scope functionScope)
+    {
+        return functionScope.Bindings.TryGetValue("arguments", out var binding)
+            && ReferenceEquals(binding.DeclarationNode, functionScope.AstNode);
     }
     
     /// <summary>

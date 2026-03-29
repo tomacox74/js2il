@@ -1,4 +1,6 @@
 using Acornima.Ast;
+using System;
+using System.Collections.Generic;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -117,6 +119,17 @@ public sealed record CallableId
     /// Rest parameters require the ambient arguments array to be set at runtime.
     /// </summary>
     public bool HasRestParameters { get; init; }
+
+    /// <summary>
+    /// True when this callable should create a mapped arguments object that aliases simple parameters.
+    /// </summary>
+    public bool UsesMappedArgumentsObject { get; init; }
+
+    /// <summary>
+    /// Ordered simple parameter names used to build mapped arguments aliases.
+    /// Duplicate names are preserved so runtime duplicate-parameter rules can be applied.
+    /// </summary>
+    public IReadOnlyList<string> ArgumentsParameterNames { get; init; } = Array.Empty<string>();
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

@@ -1565,7 +1565,7 @@ namespace Js2IL.SymbolTables
             var binding = new BindingInfo("arguments", BindingKind.Var, functionScope, functionScope.AstNode)
             {
                 // Inform downstream analysis/normalization; still emit as object field/local.
-                ClrType = typeof(JavaScriptRuntime.Array),
+                ClrType = typeof(JavaScriptRuntime.ArgumentsObject),
                 IsStableType = false,
                 // Force backing storage as a scope field so reads/writes are representable without
                 // synthesizing an explicit JS var declaration.
@@ -1573,6 +1573,19 @@ namespace Js2IL.SymbolTables
             };
 
             functionScope.Bindings["arguments"] = binding;
+
+            if (!Js2IL.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope))
+            {
+                return;
+            }
+
+            foreach (var parameterName in Js2IL.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(functionScope))
+            {
+                if (functionScope.Bindings.TryGetValue(parameterName, out var parameterBinding))
+                {
+                    parameterBinding.IsCaptured = true;
+                }
+            }
         }
 
         private static void MarkNearestArgumentsOwnerScopeAsNeedingArguments(Scope currentScope)

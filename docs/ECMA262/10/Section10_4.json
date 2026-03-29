@@ -103,61 +103,61 @@
     {
       "clause": "10.4.4",
       "title": "Arguments Exotic Objects",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects"
     },
     {
       "clause": "10.4.4.1",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-getownproperty-p"
     },
     {
       "clause": "10.4.4.2",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Not Yet Supported",
+      "status": "Incomplete",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc"
     },
     {
       "clause": "10.4.4.3",
       "title": "[[Get]] ( P , Receiver )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-get-p-receiver"
     },
     {
       "clause": "10.4.4.4",
       "title": "[[Set]] ( P , V , Receiver )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver"
     },
     {
       "clause": "10.4.4.5",
       "title": "[[Delete]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects-delete-p"
     },
     {
       "clause": "10.4.4.6",
       "title": "CreateUnmappedArgumentsObject ( argumentsList )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createunmappedargumentsobject"
     },
     {
       "clause": "10.4.4.7",
       "title": "CreateMappedArgumentsObject ( func , formals , argumentsList , env )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createmappedargumentsobject"
     },
     {
       "clause": "10.4.4.7.1",
       "title": "MakeArgGetter ( name , env )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-makearggetter"
     },
     {
       "clause": "10.4.4.7.2",
       "title": "MakeArgSetter ( name , env )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-makeargsetter"
     },
     {
@@ -405,14 +405,16 @@
       },
       {
         "clause": "10.4.4",
-        "feature": "Arguments objects are plain arrays, not Arguments Exotic Objects",
-        "status": "Not Yet Supported",
+        "feature": "Arguments objects materialize with mapped/unmapped exotic-object basics",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects",
         "testScripts": [
           "Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js"
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js",
+          "Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js"
         ],
-        "notes": "When referenced, non-arrow functions materialize a JavaScriptRuntime.Array snapshot of the runtime arguments list. Mapped-arguments aliasing, Arguments Exotic Object internal methods, and the accessor helpers from 10.4.4.7 are not implemented."
+        "notes": "When referenced, non-arrow functions now materialize a dedicated arguments object. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped snapshot semantics. Basic length/indexed access, deletion, and own-key enumeration now work for the covered cases, but full [[DefineOwnProperty]] invariants, callee/caller legacy details, and the exact accessor-helper machinery from 10.4.4.7 remain incomplete."
       },
       {
         "clause": "10.4.5",
