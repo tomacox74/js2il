@@ -74,13 +74,19 @@ public static class JsEngine
     /// Dynamic / reflection-friendly form: returns a dynamic exports proxy (also <see cref="IDisposable"/>).
     /// </summary>
     public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId)
+        => LoadModule(compiledAssembly, moduleId, options: null);
+
+    /// <summary>
+    /// Dynamic / reflection-friendly form: returns a dynamic exports proxy (also <see cref="IDisposable"/>).
+    /// </summary>
+    public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options)
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleId);
 
         try
         {
-            var runtime = new JsRuntimeInstance(compiledAssembly, moduleId);
+            var runtime = new JsRuntimeInstance(compiledAssembly, moduleId, options);
             return new JsDynamicExports(runtime);
         }
         catch (Exception ex)
@@ -92,6 +98,10 @@ public static class JsEngine
     }
 
     public static TExports LoadModule<TExports>(Assembly compiledAssembly, string moduleId)
+        where TExports : class
+        => LoadModule<TExports>(compiledAssembly, moduleId, options: null);
+
+    public static TExports LoadModule<TExports>(Assembly compiledAssembly, string moduleId, JsModuleLoadOptions? options)
         where TExports : class
     {
         ArgumentNullException.ThrowIfNull(compiledAssembly);
@@ -108,7 +118,7 @@ public static class JsEngine
 
         try
         {
-            var runtime = new JsRuntimeInstance(compiledAssembly, moduleId);
+            var runtime = new JsRuntimeInstance(compiledAssembly, moduleId, options);
             var proxy = DispatchProxy.Create<TExports, JsExportsProxy>();
             ((JsExportsProxy)(object)proxy).Initialize(runtime);
             return proxy;

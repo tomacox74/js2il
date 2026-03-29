@@ -59,7 +59,10 @@ public class Engine
         }
     }
 
-    internal static ServiceContainer ConfigureServiceProviderForCurrentThread(Assembly modulesAssembly, bool isHostedExecution = false)
+    internal static ServiceContainer ConfigureServiceProviderForCurrentThread(
+        Assembly modulesAssembly,
+        bool isHostedExecution = false,
+        string? compiledAssemblyPath = null)
     {
         ArgumentNullException.ThrowIfNull(modulesAssembly);
 
@@ -75,7 +78,12 @@ public class Engine
         // Use the test override if present; otherwise construct the default runtime container.
         var serviceProvider = _serviceProviderOverride.Value ?? RuntimeServices.BuildServiceProvider();
 
-        serviceProvider.RegisterInstance(new RuntimeExecutionContext(isHostedExecution));
+        serviceProvider.RegisterInstance(new RuntimeExecutionContext(
+            isHostedExecution,
+            CompiledAssemblyPathResolver.Resolve(
+                modulesAssembly,
+                compiledAssemblyPath,
+                allowAssemblyLocationFallback: !isHostedExecution)));
 
         // Resolve scheduler/event-loop singletons via DI so other services can depend on them.
         // Note: ServiceContainer manages singleton instances per-container.
