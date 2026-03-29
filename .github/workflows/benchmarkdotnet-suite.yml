@@ -12,6 +12,10 @@ on:
         description: 'Benchmark mode (default/phased/all)'
         required: false
         default: 'all'
+      js2il_package_version:
+        description: 'Published Js2IL package version to benchmark (for example 0.9.5)'
+        required: false
+        default: ''
   release:
     types: [published]
 
@@ -36,9 +40,72 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       
-      - name: Build Projects
+      - name: Determine js2il benchmark package mode
+        shell: bash
+        env:
+          INPUT_JS2IL_PACKAGE_VERSION: ${{ github.event.inputs.js2il_package_version || '' }}
         run: |
-          dotnet build -c Release
+          set -euo pipefail
+
+          package_version=""
+
+          if [ "${{ github.event_name }}" = "release" ]; then
+            package_version="${{ github.event.release.tag_name }}"
+          elif [ -n "$INPUT_JS2IL_PACKAGE_VERSION" ]; then
+            package_version="$INPUT_JS2IL_PACKAGE_VERSION"
+          elif [ "${GITHUB_REF_TYPE:-}" = "tag" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            package_version="${GITHUB_REF_NAME}"
+          fi
+
+          package_version="${package_version#v}"
+
+          if [ -n "$package_version" ]; then
+            echo "Using published Js2IL packages version: $package_version"
+            echo "USE_PUBLISHED_JS2IL_PACKAGES=true" >> "$GITHUB_ENV"
+            echo "JS2IL_PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
+          else
+            echo "Using checked-out source tree projects for Js2IL benchmarks"
+            echo "USE_PUBLISHED_JS2IL_PACKAGES=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Restore benchmark project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+            tries=20
+            delay=30
+
+            for i in $(seq 1 $tries); do
+              if dotnet restore tests/performance/Benchmarks/Benchmarks.csproj \
+                -p:UsePublishedJs2ILPackages=true \
+                -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}"; then
+                echo "Restored Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION}"
+                exit 0
+              fi
+
+              echo "Attempt $i/$tries: Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION} not available yet on NuGet; waiting ${delay}s..."
+              sleep $delay
+            done
+
+            echo "Failed to restore Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION} from NuGet after $tries attempts" >&2
+            exit 1
+          fi
+
+          dotnet restore tests/performance/Benchmarks/Benchmarks.csproj
+
+      - name: Build benchmark project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          MSBUILD_ARGS=()
+          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+            MSBUILD_ARGS+=(-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}")
+          fi
+
+          dotnet build tests/performance/Benchmarks/Benchmarks.csproj -c Release --no-restore "${MSBUILD_ARGS[@]}"
       
       - name: Shutdown build server
         run: |
@@ -47,12 +114,13 @@ jobs:
       
       - name: Run BenchmarkDotNet Suite
         id: benchmark
+        shell: bash
         env:
           BENCHMARK_MODE: ${{ github.event.inputs.mode || 'all' }}
           BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
         run: |
-          cd tests/performance/Benchmarks
-          
+          set -euo pipefail
+
           MODE_ARG=""
           if [ "$BENCHMARK_MODE" = "phased" ]; then
             MODE_ARG="--phased"
@@ -66,9 +134,14 @@ jobs:
           fi
           DOTNET_ARGS+=(--filter "$BENCHMARK_FILTER" --exporters json)
 
-          dotnet run -c Release -- "${DOTNET_ARGS[@]}"
+          MSBUILD_ARGS=()
+          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+            MSBUILD_ARGS+=(-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}")
+          fi
 
-          if [ ! -d "BenchmarkDotNet.Artifacts/results" ] || ! compgen -G "BenchmarkDotNet.Artifacts/results/*.json" > /dev/null; then
+          dotnet run --project tests/performance/Benchmarks/Benchmarks.csproj -c Release --no-build "${MSBUILD_ARGS[@]}" -- "${DOTNET_ARGS[@]}"
+
+          if [ ! -d "tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results" ] || ! compgen -G "tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.json" > /dev/null; then
             echo "BenchmarkDotNet produced no result artifacts; failing workflow."
             exit 1
           fi

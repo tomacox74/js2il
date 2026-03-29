@@ -78,6 +78,8 @@ cd tests/performance/Benchmarks
 dotnet build -c Release
 ```
 
+By default this project references the checked-out `src\Js2IL.Core` and `src\JavaScriptRuntime` projects so local benchmark runs measure your current working tree. To benchmark a published package set instead, pass `-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion=<version>` to `dotnet restore`, `dotnet build`, or `dotnet run`.
+
 ### Run Benchmarks
 
 #### Default: Cross-Runtime Comparison
@@ -220,14 +222,11 @@ Both are maintained for different use cases:
 
 ## CI Integration
 
-(To be implemented in Phase 5)
+The repository ships a `BenchmarkDotNet Performance Suite` workflow for CI benchmarking:
 
-The BenchmarkDotNet suite will be integrated into CI as informational-only:
-
-- Run reduced scenario set in CI
-- Upload structured artifacts
-- No hard PR gating initially
-- Optional nightly extended runs
+- Release-triggered runs restore `Js2IL.Core` and `Js2IL.Runtime` from NuGet using the published release version, with retry logic to wait for NuGet indexing.
+- Manual `workflow_dispatch` runs use the checked-out source tree by default, but can benchmark a published package version by setting the `js2il_package_version` input.
+- Structured BenchmarkDotNet artifacts are uploaded, and the JSON results can be ingested into Supabase for historical tracking.
 
 ## Future Enhancements
 
