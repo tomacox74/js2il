@@ -4,7 +4,7 @@ Defines scripts and modules, including module records, loading/linking, and eval
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T07:34:42Z
+> Last generated (UTC): 2026-03-29T04:36:42Z
 
 _This section is split into subsection documents for readability._
 
@@ -18,5 +18,5 @@ _This section is split into subsection documents for readability._
 
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
-| 16.1 | Scripts | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-scripts) | [Section16_1.md](Section16_1.md) |
+| 16.1 | Scripts | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-scripts) | [Section16_1.md](Section16_1.md) |
 | 16.2 | Modules | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-modules) | [Section16_2.md](Section16_2.md) |

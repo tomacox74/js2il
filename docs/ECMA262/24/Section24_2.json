@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "24.2",
   "title": "Set Objects",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-set-objects",
   "parent": {
     "clause": "24"
@@ -54,7 +54,7 @@
     {
       "clause": "24.2.2.1",
       "title": "Set ( [ iterable ] )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set-iterable"
     },
     {
@@ -78,7 +78,7 @@
     {
       "clause": "24.2.4",
       "title": "Properties of the Set Prototype Object",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object"
     },
     {
@@ -90,7 +90,7 @@
     {
       "clause": "24.2.4.2",
       "title": "Set.prototype.clear ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.clear"
     },
     {
@@ -102,25 +102,25 @@
     {
       "clause": "24.2.4.4",
       "title": "Set.prototype.delete ( value )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.delete"
     },
     {
       "clause": "24.2.4.5",
       "title": "Set.prototype.difference ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.difference"
     },
     {
       "clause": "24.2.4.6",
       "title": "Set.prototype.entries ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.entries"
     },
     {
       "clause": "24.2.4.7",
       "title": "Set.prototype.forEach ( callback [ , thisArg ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.foreach"
     },
     {
@@ -132,31 +132,31 @@
     {
       "clause": "24.2.4.9",
       "title": "Set.prototype.intersection ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.intersection"
     },
     {
       "clause": "24.2.4.10",
       "title": "Set.prototype.isDisjointFrom ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.isdisjointfrom"
     },
     {
       "clause": "24.2.4.11",
       "title": "Set.prototype.isSubsetOf ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.issubsetof"
     },
     {
       "clause": "24.2.4.12",
       "title": "Set.prototype.isSupersetOf ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.issupersetof"
     },
     {
       "clause": "24.2.4.13",
       "title": "Set.prototype.keys ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.keys"
     },
     {
@@ -168,31 +168,31 @@
     {
       "clause": "24.2.4.15",
       "title": "Set.prototype.symmetricDifference ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.symmetricdifference"
     },
     {
       "clause": "24.2.4.16",
       "title": "Set.prototype.union ( other )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.union"
     },
     {
       "clause": "24.2.4.17",
       "title": "Set.prototype.values ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.values"
     },
     {
       "clause": "24.2.4.18",
       "title": "Set.prototype [ %Symbol.iterator% ] ( )",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype-%symbol.iterator%"
     },
     {
       "clause": "24.2.4.19",
       "title": "Set.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-set.prototype-%symbol.tostringtag%"
     },
     {
@@ -247,9 +247,12 @@
       {
         "clause": "24.2.2.1",
         "feature": "new Set(iterable)",
-        "status": "Not Yet Supported",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-set-iterable",
-        "notes": "JavaScriptRuntime.Set exposes only a parameterless constructor, so iterable initialization is not available."
+        "testScripts": [
+          "Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js"
+        ],
+        "notes": "JavaScriptRuntime.Set now accepts a single iterable argument and consumes it with the runtime iterator protocol, preserving insertion order and ignoring duplicates."
       },
       {
         "clause": "24.2.3.1",
@@ -260,31 +263,46 @@
       },
       {
         "clause": "24.2.4",
-        "feature": "Implemented Set members: add, has, size",
+        "feature": "Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object",
-        "notes": "JavaScriptRuntime.Set supports insertion-ordered storage with add/has methods and a size property. There is currently no dedicated Js2IL.Tests/Set suite covering these members."
+        "testScripts": [
+          "Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js",
+          "Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js",
+          "Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js",
+          "Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js"
+        ],
+        "notes": "JavaScriptRuntime.Set now exposes the core prototype method family on an internal Set prototype surface and returns native iterator objects for keys/values/entries."
       },
       {
         "clause": "24.2.4.2",
-        "feature": "Missing core Set prototype members (clear, delete, entries, forEach, keys, values, @@iterator)",
-        "status": "Not Yet Supported",
+        "feature": "Core Set prototype members (clear, delete, entries, forEach, keys, values, @@iterator)",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.clear",
-        "notes": "These prototype members are not implemented on JavaScriptRuntime.Set. The Set object itself is still iterable in runtime control-flow helpers via IEnumerable fallback."
+        "testScripts": [
+          "Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js",
+          "Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js",
+          "Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js",
+          "Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js"
+        ],
+        "notes": "These members are available on Set instances and use native iterator objects for keys/values/entries."
       },
       {
         "clause": "24.2.4.5",
         "feature": "New Set methods (difference, intersection, isDisjointFrom, isSubsetOf, isSupersetOf, symmetricDifference, union)",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-set.prototype.difference",
-        "notes": "The ES2025 Set operation methods are not implemented."
+        "testScripts": [
+          "Js2IL.Tests/Set/JavaScript/Set_Algebra_Methods.js"
+        ],
+        "notes": "The ES2025 Set operation methods are implemented, but non-Set operands are normalized through new Set(iterable) rather than the full spec set-like-object protocol."
       },
       {
         "clause": "24.2.6.1",
         "feature": "Set iteration in for-of and other runtime iterator consumers",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createsetiterator",
-        "notes": "Set implements System.Collections.IEnumerable, so JavaScriptRuntime.Object.GetIterator can wrap it for runtime iteration. Direct JS-visible Set iterator methods and prototype surface remain incomplete."
+        "notes": "Set instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %SetIteratorPrototype%[@@toStringTag] remains incomplete."
       }
     ]
   }

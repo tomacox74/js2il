@@ -4,7 +4,7 @@ Defines the ECMAScript memory model, including SharedArrayBuffer and atomic oper
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-15T19:43:49Z
+> Last generated (UTC): 2026-03-29T04:36:42Z
 
 _This section is split into subsection documents for readability._
 

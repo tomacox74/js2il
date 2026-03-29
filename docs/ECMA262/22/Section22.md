@@ -4,7 +4,7 @@ Covers text-processing built-ins, including strings and regular expressions.
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T23:10:54Z
+> Last generated (UTC): 2026-03-29T04:36:42Z
 
 _This section is split into subsection documents for readability._
 

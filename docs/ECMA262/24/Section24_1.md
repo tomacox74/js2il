@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-29T04:36:31Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -15,8 +15,8 @@
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
 | 24.1.1 | The Map Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map-constructor) |
-| 24.1.1.1 | Map ( [ iterable ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map-iterable) |
-| 24.1.1.2 | AddEntriesFromIterable ( target , iterable , adder ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-add-entries-from-iterable) |
+| 24.1.1.1 | Map ( [ iterable ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map-iterable) |
+| 24.1.1.2 | AddEntriesFromIterable ( target , iterable , adder ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-add-entries-from-iterable) |
 | 24.1.2 | Properties of the Map Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-constructor) |
 | 24.1.2.1 | Map.groupBy ( items , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.groupby) |
 | 24.1.2.2 | Map.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype) |
@@ -26,7 +26,7 @@
 | 24.1.3.2 | Map.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.constructor) |
 | 24.1.3.3 | Map.prototype.delete ( key ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.delete) |
 | 24.1.3.4 | Map.prototype.entries ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.entries) |
-| 24.1.3.5 | Map.prototype.forEach ( callback [ , thisArg ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach) |
+| 24.1.3.5 | Map.prototype.forEach ( callback [ , thisArg ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach) |
 | 24.1.3.6 | Map.prototype.get ( key ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.get) |
 | 24.1.3.7 | Map.prototype.getOrInsert ( key , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsert) |
 | 24.1.3.8 | Map.prototype.getOrInsertComputed ( key , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsertcomputed) |
@@ -35,8 +35,8 @@
 | 24.1.3.11 | Map.prototype.set ( key , value ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.set) |
 | 24.1.3.12 | get Map.prototype.size | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-map.prototype.size) |
 | 24.1.3.13 | Map.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.values) |
-| 24.1.3.14 | Map.prototype [ %Symbol.iterator% ] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.iterator%) |
-| 24.1.3.15 | Map.prototype [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%) |
+| 24.1.3.14 | Map.prototype [ %Symbol.iterator% ] ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.iterator%) |
+| 24.1.3.15 | Map.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.tostringtag%) |
 | 24.1.4 | Properties of Map Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-map-instances) |
 | 24.1.5 | Map Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map-iterator-objects) |
 | 24.1.5.1 | CreateMapIterator ( map , kind ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createmapiterator) |
@@ -53,7 +53,7 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | new Map() | Supported | [`Map_Constructor_Empty.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js) | Zero-argument construction lowers to JavaScriptRuntime.Map() and produces an insertion-ordered keyed collection. |
-| new Map(iterable) | Not Yet Supported |  | Intrinsic construction only resolves 0/1/2-argument CLR constructors, and JavaScriptRuntime.Map currently exposes only a parameterless constructor; iterable initialization and AddEntriesFromIterable are therefore unavailable. |
+| new Map(iterable) | Supported | [`Map_Constructor_Iterable.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Constructor_Iterable.js) | JavaScriptRuntime.Map now accepts a single iterable argument, consumes it via the runtime iterator protocol, and inserts each [key, value] pair in order. |
 
 ### 24.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype))
 
@@ -71,17 +71,29 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Map.prototype.keys / values / entries | Supported with Limitations | [`Map_Keys_Values_Entries.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js) | The methods are exposed and work with consumers like Array.from, but they return CLR IEnumerable-backed sequences rather than spec-visible JS iterator objects with .next() and @@iterator. The current test directly covers keys() and values(); entries() is implemented on the same model. |
+| Map.prototype.keys / values / entries | Supported with Limitations | [`Map_Keys_Values_Entries.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js)<br>[`Map_Symbol_Iterator.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Symbol_Iterator.js) | The methods are exposed on the internal Map prototype surface and return native iterator objects with .next(). Iterator prototype metadata remains incomplete. |
 
 ### 24.1.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype.foreach))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Map.prototype.forEach / getOrInsert / getOrInsertComputed | Not Yet Supported |  | Callback iteration and the newer getOrInsert APIs are not implemented on JavaScriptRuntime.Map. |
+| Map.prototype.forEach | Supported | [`Map_ForEach_Basic.js`](../../../Js2IL.Tests/Map/JavaScript/Map_ForEach_Basic.js) | forEach invokes the callback in insertion order with (value, key, map) arguments and honors the optional thisArg. |
+
+### 24.1.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype.getorinsert))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Map.prototype.getOrInsert / getOrInsertComputed | Not Yet Supported |  | The newer getOrInsert APIs are still not implemented on JavaScriptRuntime.Map. |
+
+### 24.1.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype-%symbol.iterator%))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Map.prototype[@@iterator] | Supported | [`Map_Symbol_Iterator.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Symbol_Iterator.js) | Map instances now expose a Symbol.iterator method that returns the same entry iterator shape as entries(). |
 
 ### 24.1.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-createmapiterator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Map iteration in for-of and other runtime iterator consumers | Supported with Limitations |  | JavaScriptRuntime.Object.GetIterator falls back to System.Collections.IEnumerable, so Map instances and the enumerable results of keys/values/entries can be consumed by runtime iterator-based operations even though Map.prototype[@@iterator] and JS-visible iterator prototype objects are incomplete. |
+| Map iteration in for-of and other runtime iterator consumers | Supported with Limitations |  | Map instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %MapIteratorPrototype%[@@toStringTag] remains incomplete. |
 
