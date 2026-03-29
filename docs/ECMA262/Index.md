@@ -19,7 +19,7 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md).
 
-> Last generated (UTC): 2026-03-29T04:36:42Z
+> Last generated (UTC): 2026-03-09T23:42:36Z
 
 ## Summary
 - Total clauses indexed: **2176**
@@ -58,6 +58,6 @@ Notes:
 | 26 | Managing Memory | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-managing-memory) | [Section26.md](26/Section26.md) |
 | 27 | Control Abstraction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |
 | 28 | Reflection | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-reflection) | [Section28.md](28/Section28.md) |
-| 29 | Memory Model | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-memory-model) | [Section29.md](29/Section29.md) |
+| 29 | Memory Model | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-memory-model) | [Section29.md](29/Section29.md) |
 
 
