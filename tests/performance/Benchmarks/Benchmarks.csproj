@@ -6,7 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <UsePublishedJs2ILPackages Condition="'$(UsePublishedJs2ILPackages)' == ''">false</UsePublishedJs2ILPackages>
   </PropertyGroup>
+
+  <Target Name="ValidatePublishedJs2ILPackageVersion"
+          BeforeTargets="CollectPackageReferences"
+          Condition="'$(UsePublishedJs2ILPackages)' == 'true' and '$(Js2ILPackageVersion)' == ''">
+    <Error Text="Set Js2ILPackageVersion when UsePublishedJs2ILPackages=true." />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
@@ -17,9 +24,19 @@
     <None Include="Scenarios\**\*.js" CopyToOutputDirectory="PreserveNewest" LinkBase="Scenarios" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Js2IL.Core\Js2IL.Core.csproj" />
-    <ProjectReference Include="..\..\..\src\JavaScriptRuntime\JavaScriptRuntime.csproj" />
-  </ItemGroup>
+  <Choose>
+    <When Condition="'$(UsePublishedJs2ILPackages)' == 'true'">
+      <ItemGroup>
+        <PackageReference Include="Js2IL.Core" Version="$(Js2ILPackageVersion)" />
+        <PackageReference Include="Js2IL.Runtime" Version="$(Js2ILPackageVersion)" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\src\Js2IL.Core\Js2IL.Core.csproj" />
+        <ProjectReference Include="..\..\..\src\JavaScriptRuntime\JavaScriptRuntime.csproj" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 
 </Project>
