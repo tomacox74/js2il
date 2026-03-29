@@ -204,6 +204,7 @@ namespace JavaScriptRuntime
         private void AddValuesFromIterable(object iterable)
         {
             var iterator = ObjectRuntime.GetIterator(iterable);
+            var completedNormally = false;
             try
             {
                 while (true)
@@ -216,10 +217,15 @@ namespace JavaScriptRuntime
 
                     add(JavaScriptRuntime.Object.IteratorResultValue(step));
                 }
+
+                completedNormally = true;
             }
             finally
             {
-                JavaScriptRuntime.Object.IteratorClose(iterator);
+                if (!completedNormally)
+                {
+                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                }
             }
         }
 

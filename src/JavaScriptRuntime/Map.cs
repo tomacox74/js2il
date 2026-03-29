@@ -163,6 +163,7 @@ namespace JavaScriptRuntime
         private void AddEntriesFromIterable(object iterable)
         {
             var iterator = ObjectRuntime.GetIterator(iterable);
+            var completedNormally = false;
             try
             {
                 while (true)
@@ -176,10 +177,15 @@ namespace JavaScriptRuntime
                     var (key, value) = ExtractEntry(JavaScriptRuntime.Object.IteratorResultValue(step));
                     set(key, value);
                 }
+
+                completedNormally = true;
             }
             finally
             {
-                JavaScriptRuntime.Object.IteratorClose(iterator);
+                if (!completedNormally)
+                {
+                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                }
             }
         }
 
@@ -190,24 +196,26 @@ namespace JavaScriptRuntime
                 throw new TypeError("Iterator value must be an object");
             }
 
+            var entryType = TypeUtilities.Typeof(entry);
+            if (entryType != "object" && entryType != "function")
+            {
+                throw new TypeError("Iterator value is not an entry object");
+            }
+
             if (entry is JavaScriptRuntime.Array arrayEntry)
             {
-                if (arrayEntry.Count < 2)
-                {
-                    throw new TypeError("Iterator value must have at least 2 elements");
-                }
-
-                return (arrayEntry[0], arrayEntry[1]);
+                return (
+                    arrayEntry.Count > 0 ? arrayEntry[0] : null,
+                    arrayEntry.Count > 1 ? arrayEntry[1] : null
+                );
             }
 
             if (entry is System.Collections.IList listEntry)
             {
-                if (listEntry.Count < 2)
-                {
-                    throw new TypeError("Iterator value must have at least 2 elements");
-                }
-
-                return (listEntry[0], listEntry[1]);
+                return (
+                    listEntry.Count > 0 ? listEntry[0] : null,
+                    listEntry.Count > 1 ? listEntry[1] : null
+                );
             }
 
             return (ObjectRuntime.GetItem(entry, 0.0), ObjectRuntime.GetItem(entry, 1.0));
