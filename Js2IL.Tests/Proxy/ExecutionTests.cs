@@ -29,5 +29,8 @@ namespace Js2IL.Tests.Proxy
 
         [Fact]
         public Task Proxy_Revocable_ThrowsAfterRevoke() { var testName = nameof(Proxy_Revocable_ThrowsAfterRevoke); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Proxy_Validation_EdgeCases() { var testName = nameof(Proxy_Validation_EdgeCases); return ExecutionTest(testName); }
     }
 }

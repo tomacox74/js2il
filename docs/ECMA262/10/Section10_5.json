@@ -144,9 +144,10 @@
           "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
           "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
           "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js"
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
         ],
-        "notes": "ProxyCreate stores the target/handler and routes get, set, has, deleteProperty, ownKeys, apply, construct, getPrototypeOf, and setPrototypeOf through handler traps when present. Absent traps fall back to the target/default runtime behavior, but full Proxy invariant enforcement and descriptor-heavy traps remain unimplemented."
+        "notes": "ProxyCreate validates object targets/handlers and routes get, set, has, deleteProperty, ownKeys, apply, construct, getPrototypeOf, and setPrototypeOf through handler traps when present. Absent traps fall back to the target/default runtime behavior, and the supported trap surface now enforces basic result-shape checks (for example ownKeys/getPrototypeOf/construct) plus callable/constructible target gating for apply/construct. Full Proxy invariant enforcement and descriptor-heavy traps remain unimplemented."
       },
       {
         "clause": "10.5.10",
@@ -157,7 +158,8 @@
           "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
           "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
           "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js"
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
+          "Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
         ],
         "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, construct, and revocation now route through proxy handlers and throw once revoked. isExtensible, preventExtensions, getOwnProperty, defineProperty, and full spec invariant validation are still not modeled."
       }

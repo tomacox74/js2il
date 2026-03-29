@@ -616,34 +616,40 @@ namespace JavaScriptRuntime
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
             try
             {
-            if (target is global::JavaScriptRuntime.Proxy proxy)
-            {
-                var trapArgs = new global::JavaScriptRuntime.Array(args);
-                if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxy.GetTarget("apply"), RuntimeServices.GetCurrentThis(), trapArgs }, out var trapResult))
+                if (target is global::JavaScriptRuntime.Proxy proxy)
                 {
-                    return trapResult!;
+                    var proxyTarget = proxy.GetTarget("apply");
+                    if (!global::JavaScriptRuntime.Proxy.IsCallableValue(proxyTarget))
+                    {
+                        throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(proxyTarget)}.");
+                    }
+
+                    var trapArgs = new global::JavaScriptRuntime.Array(args);
+                    if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxyTarget, RuntimeServices.GetCurrentThis(), trapArgs }, out var trapResult))
+                    {
+                        return trapResult!;
+                    }
+
+                    return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
                 }
 
-                target = proxy.GetTarget("apply");
-            }
 
+                // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
+                // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(args.Length > 0 ? args[0] : null)!;
+                }
 
-            // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
-            // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-            {
-                return require(args.Length > 0 ? args[0] : null)!;
-            }
+                if (target is Delegate del)
+                {
+                    // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget);
+                }
 
-            if (target is Delegate del)
-            {
-                // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
-                return InvokeDelegateWithArgs(del, scopes, args, newTarget);
-            }
-
-            // JavaScript/Node semantics: calling a non-callable throws a TypeError.
-            // Use a stable, type-based message since we don't always have the identifier name available here.
-            throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+                // JavaScript/Node semantics: calling a non-callable throws a TypeError.
+                // Use a stable, type-based message since we don't always have the identifier name available here.
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
             }
             finally
             {

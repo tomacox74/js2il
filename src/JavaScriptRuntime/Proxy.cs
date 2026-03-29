@@ -11,10 +11,41 @@ namespace JavaScriptRuntime
         private object? _target;
         private object? _handler;
 
+        internal static bool IsObjectLikeValue(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return false;
+            }
+
+            var valueType = TypeUtilities.Typeof(value);
+            return valueType == "object" || valueType == "function";
+        }
+
+        internal static bool IsCallableValue(object? value)
+        {
+            if (value is JavaScriptRuntime.Proxy proxy)
+            {
+                return IsCallableValue(proxy.GetTarget("apply"));
+            }
+
+            return value is Delegate;
+        }
+
         public Proxy(object target, object handler)
         {
-            _target = target ?? throw new ArgumentNullException(nameof(target));
-            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            if (!IsObjectLikeValue(target))
+            {
+                throw new TypeError("Proxy target must be an object");
+            }
+
+            if (!IsObjectLikeValue(handler))
+            {
+                throw new TypeError("Proxy handler must be an object");
+            }
+
+            _target = target;
+            _handler = handler;
         }
 
         internal object Target => _target!;
@@ -39,14 +70,20 @@ namespace JavaScriptRuntime
         {
             EnsureNotRevoked(operation);
 
-            var trap = ObjectRuntime.GetProperty(_handler!, trapName);
+            var handler = _handler;
+            if (handler is null)
+            {
+                throw new TypeError($"Cannot perform '{operation}' on a proxy that has been revoked");
+            }
+
+            var trap = ObjectRuntime.GetProperty(handler, trapName);
             if (trap is null || trap is JsNull)
             {
                 result = null;
                 return false;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(_handler);
+            var previousThis = RuntimeServices.SetCurrentThis(handler);
             try
             {
                 result = Closure.InvokeWithArgs(trap, System.Array.Empty<object>(), args);

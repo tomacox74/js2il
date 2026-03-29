@@ -4,7 +4,7 @@
 
 [Back to Section28](Section28.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:47:28Z
+> Last generated (UTC): 2026-03-29T08:04:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -27,11 +27,11 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Proxy (target, handler) (constructor) | Supported with Limitations | [`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js)<br>[`Proxy_SetTrap_InterceptsWrites.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js)<br>[`Proxy_HasTrap_AffectsInOperator.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js)<br>[`Proxy_DeletePropertyTrap_And_Fallback.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js)<br>[`Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js)<br>[`Proxy_ApplyAndConstructTraps_WithFallback.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js)<br>[`Proxy_Revocable_ThrowsAfterRevoke.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js) | Supports creating Proxy instances via new Proxy(target, handler) with get/set/has/deleteProperty/ownKeys/apply/construct/getPrototypeOf/setPrototypeOf routing and fallback-to-target behavior when a trap is absent. Full spec invariants plus descriptor-oriented traps (e.g., getOwnPropertyDescriptor, defineProperty) are still missing. |
+| Proxy (target, handler) (constructor) | Supported with Limitations | [`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js)<br>[`Proxy_SetTrap_InterceptsWrites.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js)<br>[`Proxy_HasTrap_AffectsInOperator.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js)<br>[`Proxy_DeletePropertyTrap_And_Fallback.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js)<br>[`Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js)<br>[`Proxy_ApplyAndConstructTraps_WithFallback.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js)<br>[`Proxy_Revocable_ThrowsAfterRevoke.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js)<br>[`Proxy_Validation_EdgeCases.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js) | Supports creating Proxy instances via new Proxy(target, handler) with object target/handler validation, get/set/has/deleteProperty/ownKeys/apply/construct/getPrototypeOf/setPrototypeOf routing, and fallback-to-target behavior when a trap is absent. The supported trap surface now also enforces callable/constructible target gating plus basic getPrototypeOf/ownKeys/construct result validation. Full spec invariants plus descriptor-oriented traps (e.g., getOwnPropertyDescriptor, defineProperty) are still missing. |
 
 ### 28.2.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-proxy.revocable))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Proxy.revocable | Supported with Limitations | [`Proxy_Revocable_ThrowsAfterRevoke.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js) | Proxy.revocable(target, handler) returns { proxy, revoke }. Once revoked, subsequent property access, deletion, ownKeys, prototype operations, calls, and construction throw a TypeError. |
+| Proxy.revocable | Supported with Limitations | [`Proxy_Revocable_ThrowsAfterRevoke.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js)<br>[`Proxy_Validation_EdgeCases.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js) | Proxy.revocable(target, handler) validates object target/handler values, returns { proxy, revoke }, and makes subsequent property access, deletion, ownKeys, prototype operations, calls, and construction throw TypeError once revoked. |
 
