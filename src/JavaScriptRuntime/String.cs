@@ -446,7 +446,7 @@ namespace JavaScriptRuntime
             => Repeat(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0));
 
         private static object? PrototypeReplace(object[] scopes, object?[]? args)
-            => Replace(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0)!, GetArg(args, 1)!);
+            => Replace(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
 
         private static object? PrototypeReplaceAll(object[] scopes, object?[]? args)
             => ReplaceAll(ThisStringValue(RuntimeServices.GetCurrentThis()), GetArg(args, 0), GetArg(args, 1));
@@ -1221,7 +1221,7 @@ namespace JavaScriptRuntime
         /// Only replaces the first occurrence, matching JS behavior for string patterns.
         /// When a custom @@replace override is present its return value is forwarded as-is.
         /// </summary>
-        public static object Replace(string input, object patternOrString, object replacement)
+        public static object Replace(string input, object? patternOrString, object? replacement)
         {
             input ??= string.Empty;
 
@@ -2111,6 +2111,10 @@ namespace JavaScriptRuntime
             return new PublicStringIterator(input);
         }
 
+        /// <summary>
+        /// Public iterator object returned by <c>String.prototype[@@iterator]</c>.
+        /// Iterates JavaScript strings by Unicode code point while implementing the runtime iterator protocol.
+        /// </summary>
         public sealed class PublicStringIterator : IJavaScriptIterator
         {
             private readonly string _input;
