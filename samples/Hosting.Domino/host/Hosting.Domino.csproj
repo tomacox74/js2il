@@ -7,7 +7,6 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <DominoCompilerDir>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler'))))</DominoCompilerDir>
     <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\js2il\domino</ModuleOutputDirectory>
     <Js2ILStrictMode>Ignore</Js2ILStrictMode>
   </PropertyGroup>
@@ -22,7 +21,6 @@
 
     <Js2ILCompile Include="@mixmark-io/domino"
                   OutputDirectory="$(ModuleOutputDirectory)"
-                  ModuleResolutionBaseDirectory="$(DominoCompilerDir)"
                   CopyToOutputDirectory="true" 
                   EmitPdb="true" />
   </ItemGroup>
@@ -30,7 +28,7 @@
   <Target Name="NpmRestore"
           BeforeTargets="Js2ILCompile"
           Condition="'$(SkipNpmRestore)' != 'true'">
-    <Exec WorkingDirectory="$(DominoCompilerDir)" Command="npm ci" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm ci" />
   </Target>
 
 </Project>

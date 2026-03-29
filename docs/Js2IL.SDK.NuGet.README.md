@@ -53,11 +53,10 @@ By default:
 
 That means a host project can compile against the generated exports contracts with no extra custom `.proj` file or CLI invocation.
 
-Package/module-id entrypoints work too. For example, to compile a restored npm package from a sibling `compiler\` directory:
+Package/module-id entrypoints work too. For example, if the host project restores the npm package in its own directory:
 
 ```xml
 <Js2ILCompile Include="@mixmark-io/domino"
-              ModuleResolutionBaseDirectory="..\compiler"
               CopyToOutputDirectory="true" />
 ```
 
@@ -70,7 +69,7 @@ You can set metadata per item or apply defaults with properties:
 - `OutputDirectory` / `Js2ILOutputRoot`
   - Where generated files are written.
 - `ModuleResolutionBaseDirectory` / `Js2ILModuleResolutionBaseDirectory`
-  - Base directory used when `Include` is a package/module id instead of a file path. Defaults to `$(MSBuildProjectDirectory)`.
+  - Base directory used when `Include` is a package/module id instead of a file path. Defaults to `$(MSBuildProjectDirectory)`. Set the project property once for the common case, or use per-item metadata only when a specific item needs an override.
 - `RootModuleId` / `Js2ILRootModuleId`
   - Optional module id override for the root entry module. For package-style inputs such as `@mixmark-io/domino`, you usually do not need to set this because the SDK will use the module id automatically.
 - `ReferenceOutputAssembly` / `Js2ILReferenceOutputAssembly`
@@ -124,7 +123,7 @@ If you are validating a locally packed prerelease feed instead of NuGet.org, pac
 - `samples\Hosting.Basic` and `samples\Hosting.Typed`
   - The host project references `Js2IL.SDK` directly and declares a `Js2ILCompile` item that points at `compiler\JavaScript\*.js`.
 - `samples\Hosting.Domino`
-  - The host project keeps `npm ci`, then compiles `@mixmark-io/domino` directly while setting `ModuleResolutionBaseDirectory` to the sibling `compiler\` directory so `JsEngine.LoadModule(..., "@mixmark-io/domino")` continues to work.
+  - The host project keeps `package.json` / `package-lock.json` next to the `.csproj`, runs `npm ci` in place, and compiles `@mixmark-io/domino` directly using the default module-resolution base.
 
 ## Links
 

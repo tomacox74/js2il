@@ -40,9 +40,10 @@ public class Js2ILSdkPackageTests
             Assert.Contains("samples/Hosting.Typed/compiler/JavaScript/HostedCounterModule.js", entryNames);
             Assert.DoesNotContain("samples/Hosting.Typed/compiler/HostedCounterModule.proj", entryNames);
             Assert.Contains("samples/Hosting.Domino/host/Hosting.Domino.csproj", entryNames);
-            Assert.Contains("samples/Hosting.Domino/compiler/package.json", entryNames);
-            Assert.Contains("samples/Hosting.Domino/compiler/package-lock.json", entryNames);
-            Assert.DoesNotContain("samples/Hosting.Domino/compiler/HostedDomino.proj", entryNames);
+            Assert.Contains("samples/Hosting.Domino/host/package.json", entryNames);
+            Assert.Contains("samples/Hosting.Domino/host/package-lock.json", entryNames);
+            Assert.DoesNotContain("samples/Hosting.Domino/compiler/package.json", entryNames);
+            Assert.DoesNotContain("samples/Hosting.Domino/compiler/package-lock.json", entryNames);
             Assert.DoesNotContain(entryNames, name => name.Contains("/js2il/", StringComparison.OrdinalIgnoreCase));
 
             AssertPackagePageMetadata(
@@ -86,7 +87,9 @@ public class Js2ILSdkPackageTests
             using var dominoSampleReader = new StreamReader(dominoSampleEntry!.Open());
             var dominoSampleText = dominoSampleReader.ReadToEnd();
             Assert.Contains("<Js2ILCompile Include=\"@mixmark-io/domino\"", dominoSampleText, StringComparison.Ordinal);
-            Assert.Contains("ModuleResolutionBaseDirectory=\"$(DominoCompilerDir)\"", dominoSampleText, StringComparison.Ordinal);
+            Assert.DoesNotContain("DominoCompilerDir", dominoSampleText, StringComparison.Ordinal);
+            Assert.DoesNotContain("Js2ILModuleResolutionBaseDirectory", dominoSampleText, StringComparison.Ordinal);
+            Assert.DoesNotContain("ModuleResolutionBaseDirectory=", dominoSampleText, StringComparison.Ordinal);
             Assert.DoesNotContain("node_modules','@mixmark-io','domino','lib','index.js", dominoSampleText, StringComparison.Ordinal);
         }
         finally
@@ -287,13 +290,11 @@ public class Js2ILSdkPackageTests
             var repoRoot = FindRepoRoot();
             var feedDir = Path.Combine(tempRoot, "feed");
             var projectDir = Path.Combine(tempRoot, "consumer");
-            var compilerDir = Path.Combine(tempRoot, "compiler");
             Directory.CreateDirectory(feedDir);
             Directory.CreateDirectory(projectDir);
-            Directory.CreateDirectory(compilerDir);
 
             var packageVersion = PackLocalFeed(repoRoot, feedDir);
-            WriteModuleIdConsumerProject(projectDir, compilerDir, feedDir, packageVersion);
+            WriteModuleIdConsumerProject(projectDir, feedDir, packageVersion);
 
             var build = RunProcess(
                 fileName: "dotnet",
@@ -502,11 +503,11 @@ public class Js2ILSdkPackageTests
             """);
     }
 
-    private static void WriteModuleIdConsumerProject(string projectDir, string compilerDir, string feedDir, string packageVersion)
+    private static void WriteModuleIdConsumerProject(string projectDir, string feedDir, string packageVersion)
     {
         WriteNuGetConfig(projectDir, feedDir);
 
-        var packageRoot = Path.Combine(compilerDir, "node_modules", "@scope", "pkg");
+        var packageRoot = Path.Combine(projectDir, "node_modules", "@scope", "pkg");
         Directory.CreateDirectory(Path.Combine(packageRoot, "lib"));
 
         File.WriteAllText(
@@ -546,7 +547,6 @@ public class Js2ILSdkPackageTests
 
                 <Js2ILCompile Include="@scope/pkg"
                               OutputDirectory="$(BaseIntermediateOutputPath)\js2il-custom\pkg"
-                              ModuleResolutionBaseDirectory="..\compiler"
                               CopyToOutputDirectory="true" />
               </ItemGroup>
             </Project>
