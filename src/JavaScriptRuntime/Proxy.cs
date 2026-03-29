@@ -70,7 +70,7 @@ namespace JavaScriptRuntime
             var result = new ExpandoObject();
             var dict = (IDictionary<string, object?>)result;
             dict["proxy"] = proxy;
-            dict["revoke"] = (Func<object[], object?[]?, object?>)((_, __) =>
+            dict["revoke"] = (Func<object[], object?[]?, object?>)((object[] scopes, object?[]? args) =>
             {
                 proxy.Revoke();
                 return null;

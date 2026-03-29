@@ -665,6 +665,18 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
+        private static bool TryInvokeProxyCallFastPath(object target, object[] scopes, object?[] args, out object result)
+        {
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                result = InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return true;
+            }
+
+            result = null!;
+            return false;
+        }
+
         // Arity-specific overloads for common cases (0-5 args).
         // These directly invoke the delegate while also setting RuntimeServices.CurrentArguments.
 
@@ -673,9 +685,9 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is global::JavaScriptRuntime.Proxy)
+            if (TryInvokeProxyCallFastPath(target, scopes, System.Array.Empty<object>(), out var proxyResult))
             {
-                return InvokeWithArgsCore(target, scopes, newTarget: null, System.Array.Empty<object>());
+                return proxyResult;
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
@@ -714,9 +726,9 @@ namespace JavaScriptRuntime
 
             var args = new object?[] { a0 };
 
-            if (target is global::JavaScriptRuntime.Proxy)
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
             {
-                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return proxyResult;
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
@@ -755,9 +767,9 @@ namespace JavaScriptRuntime
 
             var args = new object?[] { a0, a1 };
 
-            if (target is global::JavaScriptRuntime.Proxy)
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
             {
-                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return proxyResult;
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
@@ -796,9 +808,9 @@ namespace JavaScriptRuntime
 
             var args = new object?[] { a0, a1, a2 };
 
-            if (target is global::JavaScriptRuntime.Proxy)
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
             {
-                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return proxyResult;
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
@@ -837,9 +849,9 @@ namespace JavaScriptRuntime
 
             var args = new object?[] { a0, a1, a2, a3 };
 
-            if (target is global::JavaScriptRuntime.Proxy)
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
             {
-                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return proxyResult;
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
@@ -878,9 +890,9 @@ namespace JavaScriptRuntime
 
             var args = new object?[] { a0, a1, a2, a3, a4 };
 
-            if (target is global::JavaScriptRuntime.Proxy)
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
             {
-                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return proxyResult;
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
