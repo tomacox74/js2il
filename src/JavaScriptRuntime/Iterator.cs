@@ -336,6 +336,11 @@ public static class Iterator
             return iterator;
         }
 
+        if (thisValue is GeneratorObject generator)
+        {
+            return new GeneratorIteratorAdapter(generator);
+        }
+
         if (TryCreateIteratorLikeWrapper(thisValue, out var iteratorLike))
         {
             return iteratorLike;
@@ -737,6 +742,26 @@ public static class Iterator
             {
                 RuntimeServices.SetCurrentThis(previousThis);
             }
+        }
+    }
+
+    private sealed class GeneratorIteratorAdapter : IJavaScriptIterator
+    {
+        private readonly GeneratorObject _generator;
+
+        public GeneratorIteratorAdapter(GeneratorObject generator)
+        {
+            _generator = generator;
+        }
+
+        public bool HasReturn => true;
+
+        public IteratorResultObject Next()
+            => (IteratorResultObject)_generator.next();
+
+        public void Return()
+        {
+            _ = _generator.@return(null);
         }
     }
 
