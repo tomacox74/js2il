@@ -1,0 +1,2391 @@
+using Acornima.Ast;
+using System.Reflection;
+using System.Linq;
+using Js2IL.Services;
+using Js2IL.Utilities;
+
+namespace Js2IL.SymbolTables
+{
+    /// <summary>
+    /// Builds a SymbolTable from a JavaScript AST.
+    /// </summary>
+    public partial class SymbolTableBuilder
+    {
+        public const string DefaultClassesNamespace = "Classes";
+
+        // Track visited function expression nodes to avoid duplicating scopes when traversal
+        // reaches the same AST node via multiple paths (explicit handling + reflective walk).
+        private readonly HashSet<Node> _visitedArrowFunctions = new();
+        private readonly HashSet<Node> _visitedFunctionExpressions = new();
+        private readonly JavaScriptParser _parser = new();
+
+        private int _closureCounter = 0;
+        private string? _currentAssignmentTarget = null;
+        private string _currentModulePath = string.Empty;
+
+        private static BindingInfo? TryResolveBinding(Scope scope, string name)
+        {
+            var current = scope;
+            while (current != null)
+            {
+                if (current.Bindings.TryGetValue(name, out var binding))
+                {
+                    return binding;
+                }
+                current = current.UsesGlobalScopeSemantics ? null : current.Parent;
+            }
+
+            return null;
+        }
+
+        private static void MarkWritten(Scope scope, string name)
+        {
+            var binding = TryResolveBinding(scope, name);
+            if (binding != null)
+            {
+                binding.HasWrite = true;
+            }
+        }
+
+        public void Build(ModuleDefinition module)
+        {
+            _currentModulePath = module.Path;
+            var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast)
+            {
+                ModuleId = module.ModuleId
+            };
+
+            AddModuleBuiltInParameters(globalScope, module.Ast);
+
+            BuildScopeRecursive(globalScope,module.Ast, globalScope);
+            AnalyzeFreeVariables(globalScope);
+            MarkCapturedVariables(globalScope);
+            AnalyzeRuntimeTemporalDeadZoneChecks(globalScope);
+
+            // Inference pass ordering matters:
+            // - We infer globals/locals first to seed obvious primitives.
+            // - Then infer stable class instance field CLR types (e.g., this.wordArray = new Int32Array(n)).
+            // - Then re-run variable inference so locals can use inferred field types in expressions
+            //   like: let wordValue = this.wordArray[wordOffset];
+            InferVariableClrTypes(globalScope);
+            InferClassInstanceFieldClrTypes(globalScope);
+            InferVariableClrTypes(globalScope);
+            InferCallableReturnClrTypes(globalScope);
+
+            // Finally, re-run variable inference so locals can benefit from stable callable return types
+            // (e.g., factor = this.bitArray.searchBitFalse(...) stays numeric).
+            InferVariableClrTypes(globalScope);
+
+            // One additional callable+variable refinement pass allows return element-type metadata
+            // (e.g., stable array<string> returns) to propagate after late variable discoveries.
+            InferCallableReturnClrTypes(globalScope);
+            InferVariableClrTypes(globalScope);
+            module.SymbolTable = new SymbolTable(globalScope);
+        }
+
+        private void AddModuleBuiltInParameters(Scope globalScope, Node astNode)
+        {
+            // Add built-in parameters for module system using shared ModuleParameters definition
+            foreach (var param in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
+            {
+                var bindingKind = param.IsConst ? BindingKind.Const : BindingKind.Var;
+                globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, globalScope, astNode);
+                globalScope.Parameters.Add(param.Name);
+            }
+        }
+
+        private static bool IsDirectGlobalFunctionConstructor(Scope currentScope, Identifier calleeId)
+        {
+            return string.Equals(calleeId.Name, "Function", StringComparison.Ordinal)
+                && TryResolveBinding(currentScope, calleeId.Name) == null;
+        }
+
+        private void TryCreateDynamicFunctionScope(
+            Scope globalScope,
+            Scope currentScope,
+            Node siteNode,
+            Identifier calleeId,
+            IEnumerable<Node> arguments)
+        {
+            if (!IsDirectGlobalFunctionConstructor(currentScope, calleeId))
+            {
+                return;
+            }
+
+            if (currentScope.Children.Any(child => ReferenceEquals(child.SyntheticOriginatingNode, siteNode)))
+            {
+                return;
+            }
+
+            if (!DynamicFunctionSupport.TryGetStringLiteralArguments(arguments, out var literalArgs))
+            {
+                return;
+            }
+
+            var loc = siteNode.Location.Start;
+            if (!DynamicFunctionSupport.TryParseFunctionExpression(
+                    _parser,
+                    _currentModulePath,
+                    literalArgs,
+                    loc.Line,
+                    loc.Column,
+                    out var parsedFunctionExpr,
+                    out _)
+                || parsedFunctionExpr == null)
+            {
+                return;
+            }
+
+            _visitedFunctionExpressions.Add(parsedFunctionExpr);
+
+            var baseScopeName = DynamicFunctionSupport.GetScopeName(siteNode);
+            var scopeName = baseScopeName;
+            var suffix = 2;
+            while (currentScope.Children.Any(child => string.Equals(child.Name, scopeName, StringComparison.Ordinal)))
+            {
+                scopeName = $"{baseScopeName}_{suffix++}";
+            }
+
+            var dynamicScope = new Scope(scopeName, ScopeKind.Function, currentScope, parsedFunctionExpr)
+            {
+                SyntheticOriginatingNode = siteNode,
+                UsesGlobalScopeSemantics = true,
+                IsAsync = parsedFunctionExpr.Async,
+                IsGenerator = parsedFunctionExpr.Generator
+            };
+
+            if (dynamicScope.IsAsync)
+            {
+                dynamicScope.AwaitPointCount = CountAwaitExpressions(parsedFunctionExpr.Body);
+            }
+
+            if (dynamicScope.IsGenerator)
+            {
+                dynamicScope.YieldPointCount = CountYieldExpressions(parsedFunctionExpr.Body);
+            }
+
+            BindObjectPatternParameters(parsedFunctionExpr.Params, dynamicScope);
+
+            if (dynamicScope.IsGenerator)
+            {
+                foreach (var p in dynamicScope.Parameters.Where(dynamicScope.Bindings.ContainsKey))
+                {
+                    dynamicScope.Bindings[p].IsCaptured = true;
+                }
+
+                foreach (var p in dynamicScope.DestructuredParameters.Where(dynamicScope.Bindings.ContainsKey))
+                {
+                    dynamicScope.Bindings[p].IsCaptured = true;
+                }
+            }
+
+            if (parsedFunctionExpr.Body is BlockStatement functionBlock)
+            {
+                foreach (var statement in functionBlock.Body)
+                {
+                    BuildScopeRecursive(globalScope, statement, dynamicScope);
+                }
+            }
+            else
+            {
+                BuildScopeRecursive(globalScope, parsedFunctionExpr.Body, dynamicScope);
+            }
+
+            AddImplicitArgumentsBinding(dynamicScope);
+        }
+
+        /// <summary>
+        /// Recursively checks if an AST node contains any identifier that isn't in the local variables set.
+        /// Stops at nested function boundaries.
+        /// </summary>
+        private static bool ContainsFreeVariable(Node? node, HashSet<string> localVariables)
+        {
+            if (node == null) return false;
+
+            switch (node)
+            {
+                case Identifier id:
+                    // Check if this identifier is not local and not a known global intrinsic
+                    return !localVariables.Contains(id.Name) && !IsKnownGlobalIntrinsic(id.Name);
+
+                case VariableDeclaration vd:
+                    // Add declared variables to local set for subsequent analysis
+                    var newLocals = new HashSet<string>(localVariables);
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (decl.Id is Identifier vid)
+                        {
+                            newLocals.Add(vid.Name);
+                        }
+                    }
+                    // Check initializers with updated local set
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (ContainsFreeVariable(decl.Init, newLocals)) return true;
+                    }
+                    return false;
+
+                case BlockStatement bs:
+                    return bs.Body.Any(stmt => ContainsFreeVariable(stmt, localVariables));
+
+                case ExpressionStatement es:
+                    return ContainsFreeVariable(es.Expression, localVariables);
+
+                case ReturnStatement rs:
+                    return ContainsFreeVariable(rs.Argument, localVariables);
+
+                case ThrowStatement ts:
+                    return ContainsFreeVariable(ts.Argument, localVariables);
+
+                case TryStatement ts:
+                    return ContainsFreeVariable(ts.Block, localVariables) ||
+                           ContainsFreeVariable(ts.Handler, localVariables) ||
+                           ContainsFreeVariable(ts.Finalizer, localVariables);
+
+                case CatchClause cc:
+                    // catch (e) { ... } introduces a new local binding for the catch parameter.
+                    var catchLocals = new HashSet<string>(localVariables);
+                    if (cc.Param is Identifier catchId)
+                    {
+                        catchLocals.Add(catchId.Name);
+                    }
+                    return ContainsFreeVariable(cc.Body, catchLocals);
+
+                case IfStatement ifs:
+                    return ContainsFreeVariable(ifs.Test, localVariables) ||
+                           ContainsFreeVariable(ifs.Consequent, localVariables) ||
+                           ContainsFreeVariable(ifs.Alternate, localVariables);
+
+                case ForStatement fs:
+                    return ContainsFreeVariable(fs.Init as Node, localVariables) ||
+                           ContainsFreeVariable(fs.Test, localVariables) ||
+                           ContainsFreeVariable(fs.Update, localVariables) ||
+                           ContainsFreeVariable(fs.Body, localVariables);
+
+                case ForOfStatement forOf:
+                {
+                    // for (const x of iterable) { ... }
+                    // The iteration variable is in scope for the loop body.
+                    var loopLocals = new HashSet<string>(localVariables);
+                    if (forOf.Left is VariableDeclaration forOfDecl)
+                    {
+                        foreach (var decl in forOfDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                loopLocals.Add(vid.Name);
+                            }
+                        }
+                        // For-of decl doesn't have initializer; still scan the iterable (in the outer locals).
+                        return ContainsFreeVariable(forOf.Right, localVariables) ||
+                               ContainsFreeVariable(forOf.Body, loopLocals);
+                    }
+
+                    return ContainsFreeVariable(forOf.Left as Node, localVariables) ||
+                           ContainsFreeVariable(forOf.Right, localVariables) ||
+                           ContainsFreeVariable(forOf.Body, localVariables);
+                }
+
+                case ForInStatement forIn:
+                {
+                    // for (const k in obj) { ... }
+                    var loopLocals = new HashSet<string>(localVariables);
+                    if (forIn.Left is VariableDeclaration forInDecl)
+                    {
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                loopLocals.Add(vid.Name);
+                            }
+                        }
+                        return ContainsFreeVariable(forIn.Right, localVariables) ||
+                               ContainsFreeVariable(forIn.Body, loopLocals);
+                    }
+
+                    return ContainsFreeVariable(forIn.Left as Node, localVariables) ||
+                           ContainsFreeVariable(forIn.Right, localVariables) ||
+                           ContainsFreeVariable(forIn.Body, localVariables);
+                }
+
+                case WhileStatement ws:
+                    return ContainsFreeVariable(ws.Test, localVariables) ||
+                           ContainsFreeVariable(ws.Body, localVariables);
+
+                case DoWhileStatement dws:
+                    return ContainsFreeVariable(dws.Body, localVariables) ||
+                           ContainsFreeVariable(dws.Test, localVariables);
+
+                case SwitchStatement ss:
+                    return ContainsFreeVariable(ss.Discriminant, localVariables) ||
+                           ss.Cases.Any(c => ContainsFreeVariable(c, localVariables));
+
+                case SwitchCase sc:
+                    if (ContainsFreeVariable(sc.Test, localVariables))
+                    {
+                        return true;
+                    }
+                    return sc.Consequent.Any(stmt => ContainsFreeVariable(stmt, localVariables));
+
+                case LabeledStatement labeled:
+                    // Labels do not introduce bindings; traverse into the labeled body.
+                    return ContainsFreeVariable(labeled.Body, localVariables);
+
+                case BinaryExpression be:
+                    return ContainsFreeVariable(be.Left, localVariables) ||
+                           ContainsFreeVariable(be.Right, localVariables);
+
+                case UpdateExpression upe:
+                    return ContainsFreeVariable(upe.Argument, localVariables);
+
+                case UnaryExpression ue:
+                    return ContainsFreeVariable(ue.Argument, localVariables);
+
+                case CallExpression ce:
+                    return ContainsFreeVariable(ce.Callee, localVariables) ||
+                           ce.Arguments.Any(arg => ContainsFreeVariable(arg as Node, localVariables));
+
+                case NewExpression ne:
+                    return ContainsFreeVariable(ne.Callee, localVariables) ||
+                           ne.Arguments.Any(arg => ContainsFreeVariable(arg as Node, localVariables));
+
+                case MemberExpression me:
+                    return ContainsFreeVariable(me.Object, localVariables) ||
+                           (me.Computed && ContainsFreeVariable(me.Property as Node, localVariables));
+
+                case AssignmentExpression ae:
+                    return ContainsFreeVariable(ae.Left, localVariables) ||
+                           ContainsFreeVariable(ae.Right, localVariables);
+
+                case ConditionalExpression ce:
+                    return ContainsFreeVariable(ce.Test, localVariables) ||
+                           ContainsFreeVariable(ce.Consequent, localVariables) ||
+                           ContainsFreeVariable(ce.Alternate, localVariables);
+
+                case ArrayExpression arr:
+                    return arr.Elements.Any(elem => ContainsFreeVariable(elem as Node, localVariables));
+
+                case ObjectExpression obj:
+                    return obj.Properties.Any(prop => ContainsFreeVariable(prop, localVariables));
+
+                case Property prop:
+                    return ContainsFreeVariable(prop.Key as Node, localVariables) ||
+                           ContainsFreeVariable(prop.Value as Node, localVariables);
+
+                case SpreadElement se:
+                    return ContainsFreeVariable(se.Argument, localVariables);
+
+                case MethodDefinition md:
+                    return ContainsFreeVariable(md.Key as Node, localVariables) ||
+                           ContainsFreeVariable(md.Value as Node, localVariables);
+
+                case TemplateLiteral tl:
+                    // Template strings: only expressions can reference variables (quasis are raw text)
+                    return tl.Expressions.Any(expr => ContainsFreeVariable(expr as Node, localVariables));
+
+                case TaggedTemplateExpression tte:
+                    return ContainsFreeVariable(tte.Tag, localVariables) ||
+                           ContainsFreeVariable(tte.Quasi, localVariables);
+
+                // Classes: check method bodies for free variable references
+                case ClassDeclaration classDecl:
+                    // Iterate through class methods and check their bodies
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Build local variables set for this method (includes parameters)
+                            var methodLocals = new HashSet<string>(localVariables);
+                            foreach (var param in mfunc.Params)
+                            {
+                                if (param is Identifier pid)
+                                {
+                                    methodLocals.Add(pid.Name);
+                                }
+                            }
+                            
+                            // Check method body for free variables
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    if (ContainsFreeVariable(stmt, methodLocals))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            // Check field initializer expressions (instance or static fields)
+                            if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+
+                case ClassExpression classExpr:
+                    foreach (var element in classExpr.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            var methodLocals = new HashSet<string>(localVariables);
+                            foreach (var param in mfunc.Params)
+                            {
+                                if (param is Identifier pid)
+                                {
+                                    methodLocals.Add(pid.Name);
+                                }
+                            }
+
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    if (ContainsFreeVariable(stmt, methodLocals))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+
+                // Stop at nested function boundaries - they have their own scope
+                case FunctionExpression:
+                case FunctionDeclaration:
+                case ArrowFunctionExpression:
+                    return false;
+
+                default:
+                    // For unknown node types, conservatively return false
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if an identifier is a known global intrinsic that doesn't require scope access.
+        /// </summary>
+        private static bool IsKnownGlobalIntrinsic(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+
+            // These are not real "variables" but can appear as Identifier nodes.
+            if (string.Equals(name, "undefined", StringComparison.Ordinal) ||
+                string.Equals(name, "null", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            return KnownGlobalIntrinsicNames.Value.Contains(name);
+        }
+
+        private static readonly Lazy<HashSet<string>> KnownGlobalIntrinsicNames =
+            new(BuildKnownGlobalIntrinsicNameSet, LazyThreadSafetyMode.ExecutionAndPublication);
+
+        private static HashSet<string> BuildKnownGlobalIntrinsicNameSet()
+        {
+            var intrinsicNames = new HashSet<string>(StringComparer.Ordinal)
+            {
+                // Keep these in the set too, in case a caller checks membership directly.
+                "undefined",
+                "null",
+            };
+
+            // Surface globals exposed via the runtime GlobalThis (Node-like today).
+            var globalThisType = typeof(JavaScriptRuntime.GlobalThis);
+            foreach (var prop in globalThisType.GetProperties(BindingFlags.Public | BindingFlags.Static))
+            {
+                intrinsicNames.Add(prop.Name);
+            }
+
+            foreach (var method in globalThisType.GetMethods(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (method.IsSpecialName) continue;
+                if (!ReferenceEquals(method.DeclaringType, globalThisType)) continue;
+                if (string.Equals(method.Name, "Get", StringComparison.Ordinal)) continue;
+
+                intrinsicNames.Add(method.Name);
+            }
+
+            // Surface intrinsic constructors/helpers via [IntrinsicObject("...")] on runtime types.
+            var runtimeAssembly = typeof(JavaScriptRuntime.IntrinsicObjectAttribute).Assembly;
+            foreach (var t in runtimeAssembly.GetTypes())
+            {
+                var attr = (JavaScriptRuntime.IntrinsicObjectAttribute?)
+                    t.GetCustomAttributes(typeof(JavaScriptRuntime.IntrinsicObjectAttribute), inherit: false)
+                        .FirstOrDefault();
+
+                if (attr != null && !string.IsNullOrWhiteSpace(attr.Name))
+                {
+                    intrinsicNames.Add(attr.Name);
+                }
+            }
+
+            return intrinsicNames;
+        }
+
+        private static string NormalizeModuleName(string s)
+        {
+            return JavaScriptRuntime.Node.NodeModuleRegistry.NormalizeModuleName(s);
+        }
+
+        private static Type? ResolveNodeModuleType(string key)
+        {
+            return JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleType(key, out var type) ? type : null;
+        }
+
+        private static string SanitizeForMetadata(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "_";
+            var chars = name.Select(ch => char.IsLetterOrDigit(ch) || ch == '_' ? ch : '_').ToArray();
+            var result = new string(chars);
+            if (char.IsDigit(result[0])) result = "_" + result;
+            return result;
+        }
+
+        private static void TryAssignClrTypeForRequireInit(VariableDeclarator decl, BindingInfo binding)
+        {
+            // Pattern: const name = require('path') or require("path")
+            var init = decl.Init;
+            if (init is CallExpression call && call.Callee is Identifier calleeId && calleeId.Name == "require")
+            {
+                if (call.Arguments.Count == 1 && call.Arguments[0] is Literal lit && lit.Value is string s)
+                {
+                    var moduleKey = NormalizeModuleName(s);
+                    var t = ResolveNodeModuleType(moduleKey);
+                    binding.ClrType = t;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Analyzes all scopes to determine which ones reference variables from parent scopes.
+        /// This is used to determine if classes need _scopes fields and if functions need scope arrays.
+        /// </summary>
+        private void AnalyzeFreeVariables(Scope scope)
+        {
+            // Process children first (bottom-up)
+            foreach (var child in scope.Children)
+            {
+                AnalyzeFreeVariables(child);
+            }
+
+            if (scope.UsesGlobalScopeSemantics)
+            {
+                scope.ReferencesParentScopeVariables = false;
+            }
+            // For class scopes, check if any method child references parent variables
+            else if (scope.Kind == ScopeKind.Class)
+            {
+                foreach (var methodScope in scope.Children.Where(c => c.Kind == ScopeKind.Function))
+                {
+                    if (methodScope.ReferencesParentScopeVariables)
+                    {
+                        scope.ReferencesParentScopeVariables = true;
+                        break;
+                    }
+                }
+                
+                // Also check class field initializers directly
+                if (!scope.ReferencesParentScopeVariables && scope.AstNode is ClassDeclaration classDecl)
+                {
+                    var localVariables = new HashSet<string>(scope.Bindings.Keys);
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is PropertyDefinition propDef && propDef.Value != null)
+                        {
+                            if (ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                scope.ReferencesParentScopeVariables = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // For function scopes, check if the function body references any non-local variables
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionExpression funcExpr)
+            {
+                scope.ReferencesParentScopeVariables = CheckFunctionReferencesParentVariables(funcExpr, scope);
+            }
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionDeclaration funcDecl)
+            {
+                // Convert FunctionDeclaration to use its body like FunctionExpression
+                if (funcDecl.Body is BlockStatement body)
+                {
+                    scope.ReferencesParentScopeVariables = CheckBodyReferencesParentVariables(body, scope);
+                }
+            }
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is ArrowFunctionExpression arrowExpr)
+            {
+                scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
+            }
+
+            var hasDescendantCallableReferencingParentScopeVariables = scope.Children.Any(child =>
+                ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class) && child.ReferencesParentScopeVariables)
+                || child.HasDescendantCallableReferencingParentScopeVariables);
+            scope.HasDescendantCallableReferencingParentScopeVariables = hasDescendantCallableReferencingParentScopeVariables;
+
+            // IMPORTANT: for function scopes, also propagate child-scope parent references.
+            // Nested functions may reference globals/parent scopes even when the immediate
+            // parent function body does not. Closures still require the parent scope slot(s)
+            // in the scopes array to exist to avoid IndexOutOfRange at runtime.
+            if (scope.Kind == ScopeKind.Function
+                && !scope.ReferencesParentScopeVariables
+                && !scope.UsesGlobalScopeSemantics)
+            {
+                scope.ReferencesParentScopeVariables = hasDescendantCallableReferencingParentScopeVariables;
+            }
+        }
+
+        private void BuildScopeRecursive(Scope globalScope, Node node, Scope currentScope)
+        {
+            switch (node)
+            {
+                case Acornima.Ast.Program program:
+                    foreach (var statement in program.Body)
+                        BuildScopeRecursive(globalScope, statement, currentScope);
+                    break;
+                case ClassDeclaration classDecl:
+                    var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
+                    var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
+                    // Author authoritative .NET naming for classes here
+                    classScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name; 
+                    // Per user guidance, keep type name same as scope name for now
+                    classScope.DotNetTypeName = SanitizeForMetadata(className);
+                    currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, currentScope, classDecl);
+                    // Process class body members for nested functions or fields later if needed
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        // Methods are represented as MethodDefinition (not to be confused with IL). We can capture their keys if needed later.
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Create a pseudo-scope for the method if we compile methods as functions later
+                            var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
+                            var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
+
+                            // Class methods can be async/generators; propagate these flags so type generation
+                            // and IL lowering can emit the correct state-machine fields.
+                            methodScope.IsAsync = mfunc.Async;
+                            if (mfunc.Async)
+                            {
+                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body);
+                            }
+                            methodScope.IsGenerator = mfunc.Generator;
+                            if (mfunc.Generator)
+                            {
+                                methodScope.YieldPointCount = CountYieldExpressions(mfunc.Body);
+                            }
+
+                            // Author a distinct CLR type name for class member scopes so nested types don't collide.
+                            // Examples:
+                            // - constructor -> Scope_ctor
+                            // - get x() -> Scope_get_x
+                            // - set x(v) -> Scope_set_x
+                            // - foo() -> Scope_foo
+                            var sanitizedMemberName = SanitizeForMetadata(mname);
+                            if (string.Equals(mname, "constructor", StringComparison.Ordinal))
+                            {
+                                methodScope.DotNetTypeName = "Scope_ctor";
+                            }
+                            else if (mdef.Kind == PropertyKind.Get)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_get_{sanitizedMemberName}";
+                            }
+                            else if (mdef.Kind == PropertyKind.Set)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_set_{sanitizedMemberName}";
+                            }
+                            else
+                            {
+                                methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
+                            }
+
+                            foreach (var p in mfunc.Params)
+                            {
+                                if (p is Identifier pid)
+                                {
+                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, methodScope, pid);
+                                    methodScope.Parameters.Add(pid.Name);
+                                }
+                                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
+                                {
+                                    // Parameter with default value (e.g., a = 10)
+                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, methodScope, apId);
+                                    methodScope.Parameters.Add(apId.Name);
+                                }
+                                else if (p is ObjectPattern op)
+                                {
+                                    // Destructuring parameter - register bindings for each property
+                                    foreach (var prop in op.Properties.OfType<Property>())
+                                    {
+                                        // Handle default values: {a = 10} where Value is AssignmentPattern
+                                        Identifier? bindId = null;
+                                        if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                                        {
+                                            bindId = apLeftId;
+                                        }
+                                        else
+                                        {
+                                            bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                        }
+
+                                        if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
+                                        {
+                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, methodScope, bindId);
+                                            // Mark as parameter so TypeGenerator creates fields/locals for them
+                                            methodScope.Parameters.Add(bindId.Name);
+                                        }
+                                        // Track that this is a destructured parameter (needs field for storage)
+                                        if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
+                                        {
+                                            methodScope.DestructuredParameters.Add(bindId.Name);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
+                            }
+
+                            AddImplicitArgumentsBinding(methodScope);
+                        }
+                    }
+                    break;
+
+                case ClassExpression classExpr:
+                    // Model class expressions as a class scope so the IR pipeline and class emitters can
+                    // treat `module.exports = class Foo { ... }` as exporting the compiled class type.
+                    // NOTE: The class name (if present) is a binding within the class body, not the
+                    // enclosing scope.
+                    var classExprName = (classExpr.Id as Identifier)?.Name;
+                    if (string.IsNullOrWhiteSpace(classExprName))
+                    {
+                        // Deterministic naming for anonymous class expressions.
+                        var classCol1Based = classExpr.Location.Start.Column + 1;
+                        classExprName = $"ClassExpression_L{classExpr.Location.Start.Line}C{classCol1Based}";
+                    }
+
+                    var classExprScope = new Scope(classExprName!, ScopeKind.Class, currentScope, classExpr);
+                    classExprScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name;
+                    classExprScope.DotNetTypeName = SanitizeForMetadata(classExprName!);
+
+                    // Named class expressions create an internal binding for the class name that is only
+                    // visible inside the class body.
+                    if (!classExprScope.Bindings.ContainsKey(classExprName!))
+                    {
+                        classExprScope.Bindings[classExprName!] = new BindingInfo(classExprName!, BindingKind.Let, classExprScope, classExpr);
+                    }
+
+                    foreach (var element in classExpr.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
+                            var methodScope = new Scope(mname, ScopeKind.Function, classExprScope, mfunc);
+
+                            methodScope.IsAsync = mfunc.Async;
+                            if (mfunc.Async)
+                            {
+                                methodScope.AwaitPointCount = CountAwaitExpressions(mfunc.Body);
+                            }
+                            methodScope.IsGenerator = mfunc.Generator;
+                            if (mfunc.Generator)
+                            {
+                                methodScope.YieldPointCount = CountYieldExpressions(mfunc.Body);
+                            }
+
+                            var sanitizedMemberName = SanitizeForMetadata(mname);
+                            if (string.Equals(mname, "constructor", StringComparison.Ordinal))
+                            {
+                                methodScope.DotNetTypeName = "Scope_ctor";
+                            }
+                            else if (mdef.Kind == PropertyKind.Get)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_get_{sanitizedMemberName}";
+                            }
+                            else if (mdef.Kind == PropertyKind.Set)
+                            {
+                                methodScope.DotNetTypeName = $"Scope_set_{sanitizedMemberName}";
+                            }
+                            else
+                            {
+                                methodScope.DotNetTypeName = $"Scope_{sanitizedMemberName}";
+                            }
+
+                            foreach (var p in mfunc.Params)
+                            {
+                                if (p is Identifier pid)
+                                {
+                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, methodScope, pid);
+                                    methodScope.Parameters.Add(pid.Name);
+                                }
+                                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
+                                {
+                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, methodScope, apId);
+                                    methodScope.Parameters.Add(apId.Name);
+                                }
+                                else if (p is ObjectPattern op)
+                                {
+                                    foreach (var prop in op.Properties.OfType<Property>())
+                                    {
+                                        Identifier? bindId = null;
+                                        if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                                        {
+                                            bindId = apLeftId;
+                                        }
+                                        else
+                                        {
+                                            bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                        }
+
+                                        if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
+                                        {
+                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, methodScope, bindId);
+                                            methodScope.Parameters.Add(bindId.Name);
+                                        }
+                                        if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
+                                        {
+                                            methodScope.DestructuredParameters.Add(bindId.Name);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
+                            }
+
+                            AddImplicitArgumentsBinding(methodScope);
+                        }
+                    }
+                    break;
+                case FunctionDeclaration funcDecl:
+                    var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
+                    var funcScope = new Scope(funcName, ScopeKind.Function, currentScope, funcDecl);
+                    funcScope.IsAsync = funcDecl.Async;
+                    if (funcDecl.Async)
+                    {
+                        funcScope.AwaitPointCount = CountAwaitExpressions(funcDecl.Body);
+                    }
+                    funcScope.IsGenerator = funcDecl.Generator;
+                    if (funcDecl.Generator)
+                    {
+                        funcScope.YieldPointCount = CountYieldExpressions(funcDecl.Body);
+                    }
+                    // Function declarations are hoisted like `var` and assign a function value to the binding.
+                    // If there is an injected module parameter with the same name, do not create a new binding;
+                    // treat this as a write to the existing binding.
+                    if (currentScope.Parameters.Contains(funcName)
+                        && currentScope.Bindings.TryGetValue(funcName, out var existingParamBinding)
+                        && ReferenceEquals(existingParamBinding.DeclarationNode, currentScope.AstNode))
+                    {
+                        existingParamBinding.HasWrite = true;
+                    }
+                    else
+                    {
+                        currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, currentScope, funcDecl)
+                        {
+                            HasWrite = true
+                        };
+                    }
+                        // Register parameters (identifiers + object pattern properties) via helper
+                        BindObjectPatternParameters(funcDecl.Params, funcScope);
+
+                        if (funcScope.IsGenerator)
+                        {
+                            // Generator frames suspend/resume; parameter bindings must live on the leaf scope.
+                            // Mark parameters as captured so they are backed by scope fields.
+                            foreach (var p in funcScope.Parameters.Where(funcScope.Bindings.ContainsKey))
+                            {
+                                funcScope.Bindings[p].IsCaptured = true;
+                            }
+                            foreach (var p in funcScope.DestructuredParameters.Where(funcScope.Bindings.ContainsKey))
+                            {
+                                funcScope.Bindings[p].IsCaptured = true;
+                            }
+                        }
+                        if (funcDecl.Body is BlockStatement fblock)
+                        {
+                            foreach (var statement in fblock.Body)
+                                BuildScopeRecursive(globalScope, statement, funcScope);
+                        }
+                        else
+                        {
+                            BuildScopeRecursive(globalScope, funcDecl.Body, funcScope);
+                        }
+
+                        AddImplicitArgumentsBinding(funcScope);
+                        break;
+                case FunctionExpression funcExpr:
+                    // Global de-duplication: if we've already processed this exact FunctionExpression node,
+                    // skip creating another scope for it.
+                    if (_visitedFunctionExpressions.Contains(funcExpr))
+                    {
+                        break;
+                    }
+                    _visitedFunctionExpressions.Add(funcExpr);
+                    // Naming must align with function-expression naming: FunctionExpression_<assignmentTarget> OR FunctionExpression_L{line}C{col}
+                    // Additionally, scope names must be unique among siblings; duplicate names can cause type/metadata collisions.
+                    var baseFuncExprName = (funcExpr.Id as Identifier)?.Name ??
+                        (!string.IsNullOrEmpty(_currentAssignmentTarget)
+                            ? $"FunctionExpression_{_currentAssignmentTarget}"
+                            : $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}");
+
+                    var funcExprName = baseFuncExprName;
+                    if (currentScope.Children.Any(c => c.Name == baseFuncExprName))
+                    {
+                        funcExprName = $"{baseFuncExprName}_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                    }
+                    // Create the scope (constructor links it to the parent); no manual add to avoid duplicates
+                    var funcExprScope = new Scope(funcExprName, ScopeKind.Function, currentScope, funcExpr);
+                    funcExprScope.IsAsync = funcExpr.Async;
+                    if (funcExpr.Async)
+                    {
+                        funcExprScope.AwaitPointCount = CountAwaitExpressions(funcExpr.Body);
+                    }
+                    funcExprScope.IsGenerator = funcExpr.Generator;
+                    if (funcExpr.Generator)
+                    {
+                        funcExprScope.YieldPointCount = CountYieldExpressions(funcExpr.Body);
+                    }
+                    // Named function expressions create an internal binding for the function name that is
+                    // only visible inside the function body (used for recursion). It must not leak to the
+                    // outer scope. Authoritative binding here so downstream codegen can allocate a field.
+                    if (funcExpr.Id is Identifier internalId && !funcExprScope.Bindings.ContainsKey(internalId.Name))
+                    {
+                        funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExprScope, funcExpr);
+                    }
+                    BindObjectPatternParameters(funcExpr.Params, funcExprScope);
+
+                    if (funcExprScope.IsGenerator)
+                    {
+                        foreach (var p in funcExprScope.Parameters.Where(funcExprScope.Bindings.ContainsKey))
+                        {
+                            funcExprScope.Bindings[p].IsCaptured = true;
+                        }
+                        foreach (var p in funcExprScope.DestructuredParameters.Where(funcExprScope.Bindings.ContainsKey))
+                        {
+                            funcExprScope.Bindings[p].IsCaptured = true;
+                        }
+                    }
+                    if (funcExpr.Body is BlockStatement funcExprBlock)
+                    {
+                        // For function bodies, process statements directly in function scope without creating a block scope
+                        foreach (var statement in funcExprBlock.Body)
+                            BuildScopeRecursive(globalScope, statement, funcExprScope);
+                    }
+                    else
+                    {
+                        // Non-block body (expression body)
+                        BuildScopeRecursive(globalScope, funcExpr.Body, funcExprScope);
+                    }
+
+                    AddImplicitArgumentsBinding(funcExprScope);
+                    break;
+                case VariableDeclaration varDecl:
+                    foreach (var decl in varDecl.Declarations)
+                    {
+                        // Support simple identifier declarations
+                        if (decl.Id is Identifier id)
+                        {
+                            var kind = varDecl.Kind switch
+                            {
+                                VariableDeclarationKind.Var => BindingKind.Var,
+                                VariableDeclarationKind.Let => BindingKind.Let,
+                                VariableDeclarationKind.Const => BindingKind.Const,
+                                _ => BindingKind.Var
+                            };
+
+                            // Hoist `var` declared inside block statements to the nearest function/global scope
+                            // per JavaScript semantics. `let`/`const` remain block-scoped.
+                            Scope targetScope = currentScope;
+                            if (kind == BindingKind.Var && currentScope.Kind == ScopeKind.Block)
+                            {
+                                var ancestor = currentScope.Parent;
+                                while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+                                {
+                                    ancestor = ancestor.Parent;
+                                }
+                                if (ancestor != null)
+                                {
+                                    targetScope = ancestor;
+                                }
+                            }
+
+                                // If this scope already has an injected module parameter with this name,
+                                // `var <name>` must not create a new binding (JavaScript semantics).
+                                // An initializer still represents a write to the existing binding.
+                                if (kind == BindingKind.Var
+                                    && targetScope.Parameters.Contains(id.Name)
+                                    && targetScope.Bindings.TryGetValue(id.Name, out var existingModuleParamBinding)
+                                    && ReferenceEquals(existingModuleParamBinding.DeclarationNode, targetScope.AstNode))
+                                {
+                                    if (decl.Init != null)
+                                    {
+                                        existingModuleParamBinding.HasWrite = true;
+                                    }
+                                }
+                                else
+                                {
+                                    var binding = new BindingInfo(id.Name, kind, targetScope, decl);
+                                    // Attempt early CLR type resolution for: const x = require('<module>')
+                                    TryAssignClrTypeForRequireInit(decl, binding);
+                                    if (decl.Init != null)
+                                    {
+                                        binding.HasWrite = true;
+                                    }
+                                    targetScope.Bindings[id.Name] = binding;
+                                }
+
+                            // Track assignment target for naming nested functions
+                            if (decl.Init != null)
+                            {
+                                var previousTarget = _currentAssignmentTarget;
+                                _currentAssignmentTarget = id.Name;
+                                BuildScopeRecursive(globalScope, decl.Init, currentScope);
+                                _currentAssignmentTarget = previousTarget;
+                            }
+                            continue;
+                        }
+
+                        // Handle object destructuring patterns, e.g., const { performance } = require('perf_hooks');
+                        if (decl.Id is ObjectPattern objPattern)
+                        {
+                            var kind = varDecl.Kind switch
+                            {
+                                VariableDeclarationKind.Var => BindingKind.Var,
+                                VariableDeclarationKind.Let => BindingKind.Let,
+                                VariableDeclarationKind.Const => BindingKind.Const,
+                                _ => BindingKind.Var
+                            };
+
+                            // Determine hoisting target for `var` declarations made inside blocks
+                            Scope targetScope = currentScope;
+                            if (kind == BindingKind.Var && currentScope.Kind == ScopeKind.Block)
+                            {
+                                var ancestor = currentScope.Parent;
+                                while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+                                {
+                                    ancestor = ancestor.Parent;
+                                }
+                                if (ancestor != null)
+                                {
+                                    targetScope = ancestor;
+                                }
+                            }
+
+                            // Synthetic temporary binding to hold the initializer object so IL can mirror snapshots
+                            // Name policy: use "perf" when destructuring a perf_hooks require; otherwise a generic name.
+                            string tempName = "__obj";
+                            if (decl.Init is CallExpression call && call.Callee is Identifier calleeId && calleeId.Name == "require"
+                                && call.Arguments.Count == 1 && call.Arguments[0] is Literal lit && lit.Value is string s && NormalizeModuleName(s) == "perf_hooks")
+                            {
+                                tempName = "perf";
+                            }
+                            if (!targetScope.Bindings.ContainsKey(tempName))
+                            {
+                                var tempBinding = new BindingInfo(tempName, kind, targetScope, decl);
+                                TryAssignClrTypeForRequireInit(decl, tempBinding);
+                                targetScope.Bindings[tempName] = tempBinding;
+                            }
+
+                            // Create bindings for each property in the pattern (only simple identifiers for now)
+                            foreach (var prop in objPattern.Properties.OfType<Property>())
+                            {
+                                // The binding identifier is in prop.Value for patterns like { performance }
+                                if (prop.Value is Identifier bid)
+                                {
+                                    if (!targetScope.Bindings.ContainsKey(bid.Name))
+                                    {
+                                        targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, targetScope, decl);
+                                    }
+                                }
+                            }
+
+                            // Visit initializer expression to record any nested references
+                            if (decl.Init != null)
+                            {
+                                var previousTarget = _currentAssignmentTarget;
+                                _currentAssignmentTarget = tempName;
+                                BuildScopeRecursive(globalScope, decl.Init, currentScope);
+                                _currentAssignmentTarget = previousTarget;
+                            }
+
+                            continue;
+                        }
+
+                        // Fallback: just visit the initializer if present
+                        if (decl.Init != null)
+                        {
+                            BuildScopeRecursive(globalScope, decl.Init, currentScope);
+                        }
+                    }
+                    break;
+                case BlockStatement blockStmt:
+                    // Compute deterministic block scope name (must match codegen expectations)
+                    var blockName = $"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}";
+                    // Guard: reflection-based traversal may encounter the same BlockStatement twice (e.g., via multiple properties).
+                    // Avoid creating duplicate scopes by checking for an existing child with the same name under the current scope.
+                    var existingBlock = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == blockName);
+                    if (existingBlock != null)
+                    {
+                        // Already processed this block; skip to avoid duplicate nested types
+                        break;
+                    }
+
+                    var blockScope = new Scope(blockName, ScopeKind.Block, currentScope, blockStmt);
+                    foreach (var statement in blockStmt.Body)
+                        BuildScopeRecursive(globalScope, statement, blockScope);
+                    break;
+                case ExpressionStatement exprStmt:
+                    BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
+                    break;
+                case AssignmentExpression assignExpr:
+                    if (assignExpr.Left is Identifier assignId)
+                    {
+                        MarkWritten(currentScope, assignId.Name);
+                    }
+                    BuildScopeRecursive(globalScope, assignExpr.Right, currentScope);
+                    BuildScopeRecursive(globalScope, assignExpr.Left, currentScope);
+                    break;
+                case UpdateExpression updateExpr:
+                    if (updateExpr.Argument is Identifier updateId)
+                    {
+                        MarkWritten(currentScope, updateId.Name);
+                    }
+                    BuildScopeRecursive(globalScope, updateExpr.Argument, currentScope);
+                    break;
+                case ArrowFunctionExpression arrowFunc:
+                    // Avoid duplicate scopes for the same ArrowFunctionExpression node
+                    if (_visitedArrowFunctions.Contains(arrowFunc))
+                    {
+                        break;
+                    }
+                    _visitedArrowFunctions.Add(arrowFunc);
+                    // Stable arrow-function naming: ArrowFunction_L{line}C{col1Based}
+                    // (use 1-based column to match SourceLocation conventions and tests)
+                    var col1Based = arrowFunc.Location.Start.Column + 1;
+                    var arrowName = $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{col1Based}";
+                    var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
+                    arrowScope.IsAsync = arrowFunc.Async;
+                    if (arrowFunc.Async)
+                    {
+                        arrowScope.AwaitPointCount = CountAwaitExpressions(arrowFunc.Body);
+                    }
+                    
+                    // Check if the last parameter is a rest parameter
+                    var paramList = arrowFunc.Params.ToList();
+                    if (paramList.Count > 0 && paramList[^1] is RestElement)
+                    {
+                        arrowScope.HasRestParameters = true;
+                    }
+                    
+                    int syntheticIndex = 0;
+                    foreach (var param in arrowFunc.Params)
+                    {
+                        if (param is Identifier id)
+                        {
+                            arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, arrowScope, id);
+                            arrowScope.Parameters.Add(id.Name);
+                        }
+                        else if (param is AssignmentPattern ap && ap.Left is Identifier apId)
+                        {
+                            // Parameter with default value (e.g., a = 10)
+                            arrowScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, arrowScope, apId);
+                            arrowScope.Parameters.Add(apId.Name);
+                        }
+                        else if (param is ObjectPattern op)
+                        {
+                            // Destructured parameter: bind each property identifier as a local binding in arrow function scope
+                            foreach (var prop in op.Properties.OfType<Property>())
+                            {
+                                // Handle default values: {a = 10} where Value is AssignmentPattern
+                                // Extract the binding identifier
+                                Identifier? bindId = null;
+                                if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                                {
+                                    bindId = apLeftId;
+                                }
+                                else
+                                {
+                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
+                                    bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                }
+
+                                if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
+                                {
+                                    arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, arrowScope, bindId);
+                                    // Mark as parameter so TypeGenerator creates fields for them
+                                    arrowScope.Parameters.Add(bindId.Name);
+                                }
+
+                                // Track that this is a destructured parameter (needs field/local storage; not an IL argument)
+                                if (bindId != null && !arrowScope.DestructuredParameters.Contains(bindId.Name))
+                                {
+                                    arrowScope.DestructuredParameters.Add(bindId.Name);
+                                }
+                            }
+                            // Parameter list will still receive a synthetic name during codegen; no binding needed for it.
+                        }
+                        else if (param is RestElement rest)
+                        {
+                            // Rest parameter: bind the identifier inside the RestElement
+                            if (rest.Argument is Identifier restId)
+                            {
+                                if (!arrowScope.Bindings.ContainsKey(restId.Name))
+                                {
+                                    arrowScope.Bindings[restId.Name] = new BindingInfo(restId.Name, BindingKind.Var, arrowScope, restId);
+                                }
+                                // Note: Rest parameters are NOT added to arrowScope.Parameters because they don't become IL parameters
+                                // They are initialized from the ambient arguments array at runtime
+                            }
+                        }
+                        else
+                        {
+                            // Fallback: attempt to read a 'Name' property via reflection to support alternate AST shapes
+                            try
+                            {
+                                var prop = param.GetType().GetProperty("Name");
+                                var name = prop?.GetValue(param) as string;
+                                if (!string.IsNullOrEmpty(name))
+                                {
+                                    arrowScope.Bindings[name!] = new BindingInfo(name!, BindingKind.Var, arrowScope, param);
+                                    arrowScope.Parameters.Add(name!);
+                                }
+                                else
+                                {
+                                    var syn = $"p{syntheticIndex++}";
+                                    arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, arrowScope, param);
+                                    arrowScope.Parameters.Add(syn);
+                                }
+                            }
+                            catch
+                            {
+                                var syn = $"p{syntheticIndex++}";
+                                arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, arrowScope, param);
+                                arrowScope.Parameters.Add(syn);
+                            }
+                        }
+                    }
+                    if (arrowFunc.Body is BlockStatement arrowBlock)
+                    {
+                        // For function bodies, process statements directly in function scope without creating a block scope
+                        foreach (var statement in arrowBlock.Body)
+                            BuildScopeRecursive(globalScope, statement, arrowScope);
+                    }
+                    else
+                    {
+                        // Arrow function with expression body
+                        BuildScopeRecursive(globalScope, arrowFunc.Body, arrowScope);
+                    }
+                    break;
+
+                case ObjectExpression objExpr:
+                    // Object literal keys are not identifier references unless computed.
+                    // Handle explicitly so ProcessChildNodes doesn't walk non-computed keys and
+                    // accidentally treat `{ arguments: 1 }` as a reference to the intrinsic `arguments`.
+                    foreach (var prop in objExpr.Properties)
+                    {
+                        BuildScopeRecursive(globalScope, prop as Node, currentScope);
+                    }
+                    break;
+
+                case Property prop:
+                    if (prop.Computed)
+                    {
+                        BuildScopeRecursive(globalScope, prop.Key as Node, currentScope);
+                    }
+                    BuildScopeRecursive(globalScope, prop.Value as Node, currentScope);
+                    break;
+
+                case MethodDefinition methodDef:
+                    // Class method keys are not identifier references unless computed.
+                    if (methodDef.Computed)
+                    {
+                        BuildScopeRecursive(globalScope, methodDef.Key as Node, currentScope);
+                    }
+                    BuildScopeRecursive(globalScope, methodDef.Value as Node, currentScope);
+                    break;
+
+                case Identifier id:
+                    if (string.Equals(id.Name, "arguments", StringComparison.Ordinal))
+                    {
+                        MarkNearestArgumentsOwnerScopeAsNeedingArguments(currentScope);
+                    }
+                    break;
+                case CallExpression callExpr:
+                    if (callExpr.Callee is Identifier callCalleeId)
+                    {
+                        TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callCalleeId, callExpr.Arguments.Cast<Node>());
+                    }
+
+                    // Process callee and arguments but don't create scopes for call expressions themselves
+                    BuildScopeRecursive(globalScope, callExpr.Callee, currentScope);
+                    foreach (var arg in callExpr.Arguments)
+                    {
+                        BuildScopeRecursive(globalScope, arg, currentScope);
+                    }
+                    break;
+                case NewExpression newExpr:
+                    if (newExpr.Callee is Identifier newCalleeId)
+                    {
+                        TryCreateDynamicFunctionScope(globalScope, currentScope, newExpr, newCalleeId, newExpr.Arguments.Cast<Node>());
+                    }
+
+                    BuildScopeRecursive(globalScope, newExpr.Callee, currentScope);
+                    foreach (var arg in newExpr.Arguments)
+                    {
+                        BuildScopeRecursive(globalScope, arg, currentScope);
+                    }
+                    break;
+                case MemberExpression memberExpr:
+                    BuildScopeRecursive(globalScope, memberExpr.Object, currentScope);
+                    if (memberExpr.Computed)
+                    {
+                        BuildScopeRecursive(globalScope, memberExpr.Property, currentScope);
+                    }
+                    break;
+                case ArrayExpression arrayExpr:
+                    foreach (var element in arrayExpr.Elements)
+                    {
+                        if (element != null)
+                        {
+                            BuildScopeRecursive(globalScope, element, currentScope);
+                        }
+                    }
+                    break;
+                case ForStatement forStmt:
+                    // Per ECMA-262, `for (let/const ...)` introduces a lexical environment for
+                    // the loop head bindings. Model that as a dedicated block-like scope so
+                    // captured loop-head bindings can be materialized per iteration.
+                    var forScope = currentScope;
+                    if (forStmt.Init is VariableDeclaration forInitDecl &&
+                        (forInitDecl.Kind == VariableDeclarationKind.Let || forInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        var loc = forInitDecl.Location.Start;
+                        var forScopeName = $"For_L{loc.Line}C{loc.Column}";
+                        var existingForScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == forScopeName);
+                        forScope = existingForScope ?? new Scope(forScopeName, ScopeKind.Block, currentScope, forInitDecl);
+                    }
+
+                    // Process init, test, and update expressions
+                    if (forStmt.Init != null)
+                        BuildScopeRecursive(globalScope, forStmt.Init, forScope);
+                    if (forStmt.Test != null)
+                        BuildScopeRecursive(globalScope, forStmt.Test, forScope);
+                    if (forStmt.Update != null)
+                        BuildScopeRecursive(globalScope, forStmt.Update, forScope);
+                    
+                    // Process the body statement (which may be a block or a single statement)
+                    if (forStmt.Body != null)
+                        BuildScopeRecursive(globalScope, forStmt.Body, forScope);
+                    break;
+                case ForOfStatement forOf:
+                    // Per ECMA-262, `for (let/const ... of ...)` introduces a lexical environment for
+                    // the loop head bindings. Model that as a dedicated block-like scope so captured
+                    // loop-head bindings can be materialized per iteration.
+                    var forOfScope = currentScope;
+                    if (forOf.Left is VariableDeclaration forOfInitDecl &&
+                        (forOfInitDecl.Kind == VariableDeclarationKind.Let || forOfInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        var loc = forOfInitDecl.Location.Start;
+                        var forScopeName = $"ForOf_L{loc.Line}C{loc.Column}";
+                        var existingForScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == forScopeName);
+                        forOfScope = existingForScope ?? new Scope(forScopeName, ScopeKind.Block, currentScope, forOfInitDecl);
+                    }
+
+                    // Register loop variable bindings if declared (e.g., for (const x of arr), for (let {a} of arr))
+                    if (forOf.Left is VariableDeclaration forOfDecl)
+                    {
+                        var kind = forOfDecl.Kind switch
+                        {
+                            VariableDeclarationKind.Var => BindingKind.Var,
+                            VariableDeclarationKind.Let => BindingKind.Let,
+                            VariableDeclarationKind.Const => BindingKind.Const,
+                            _ => BindingKind.Var
+                        };
+
+                        // Hoist `var` declared inside blocks to the nearest function/global scope.
+                        Scope targetScope = kind == BindingKind.Var
+                            ? GetVarHoistingTarget(currentScope)
+                            : forOfScope;
+
+                        foreach (var decl in forOfDecl.Declarations)
+                        {
+                            BindPatternBindings(decl.Id, kind, targetScope, decl);
+                        }
+                    }
+
+                    // Visit the iterable expression in the outer scope (matches current runtime semantics).
+                    BuildScopeRecursive(globalScope, forOf.Right, currentScope);
+
+                    // Visit loop body within the loop-head scope when present.
+                    if (forOf.Body != null)
+                        BuildScopeRecursive(globalScope, forOf.Body, forOfScope);
+                    break;
+                case ForInStatement forIn:
+                    // Per ECMA-262, `for (let/const ... in ...)` introduces a lexical environment for
+                    // the loop head bindings. Model that as a dedicated block-like scope so captured
+                    // loop-head bindings can be materialized per iteration.
+                    var forInScope = currentScope;
+                    if (forIn.Left is VariableDeclaration forInInitDecl &&
+                        (forInInitDecl.Kind == VariableDeclarationKind.Let || forInInitDecl.Kind == VariableDeclarationKind.Const))
+                    {
+                        var loc = forInInitDecl.Location.Start;
+                        var forScopeName = $"ForIn_L{loc.Line}C{loc.Column}";
+                        var existingForScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == forScopeName);
+                        forInScope = existingForScope ?? new Scope(forScopeName, ScopeKind.Block, currentScope, forInInitDecl);
+                    }
+
+                    // Register loop variable bindings if declared (e.g., for (const k in obj), for (let {a} in obj))
+                    if (forIn.Left is VariableDeclaration forInDecl)
+                    {
+                        var kind = forInDecl.Kind switch
+                        {
+                            VariableDeclarationKind.Var => BindingKind.Var,
+                            VariableDeclarationKind.Let => BindingKind.Let,
+                            VariableDeclarationKind.Const => BindingKind.Const,
+                            _ => BindingKind.Var
+                        };
+
+                        Scope targetScope = kind == BindingKind.Var
+                            ? GetVarHoistingTarget(currentScope)
+                            : forInScope;
+
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            BindPatternBindings(decl.Id, kind, targetScope, decl);
+                        }
+                    }
+
+                    // Visit the object expression in the outer scope (matches current runtime semantics).
+                    BuildScopeRecursive(globalScope, forIn.Right, currentScope);
+
+                    // Visit loop body within the loop-head scope when present.
+                    if (forIn.Body != null)
+                        BuildScopeRecursive(globalScope, forIn.Body, forInScope);
+                    break;
+
+                case TryStatement tryStmt:
+                    // Process try block
+                    BuildScopeRecursive(globalScope, tryStmt.Block, currentScope);
+
+                    // Process catch handler with catch-param binding scoped to the catch block
+                    if (tryStmt.Handler != null)
+                    {
+                        var handler = tryStmt.Handler;
+                        if (handler.Body is BlockStatement catchBlock)
+                        {
+                            var catchBlockName = $"Block_L{catchBlock.Location.Start.Line}C{catchBlock.Location.Start.Column}";
+                            var existingCatchScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == catchBlockName);
+                            var catchScope = existingCatchScope ?? new Scope(catchBlockName, ScopeKind.Block, currentScope, catchBlock);
+
+                            if (handler.Param is Identifier cid)
+                            {
+                                if (!catchScope.Bindings.ContainsKey(cid.Name))
+                                {
+                                    catchScope.Bindings[cid.Name] = new BindingInfo(cid.Name, BindingKind.Let, catchScope, cid);
+                                }
+                            }
+                            else if (handler.Param != null)
+                            {
+                                // Destructured catch parameters not supported.
+                                break;
+                            }
+
+                            foreach (var stmt in catchBlock.Body)
+                            {
+                                BuildScopeRecursive(globalScope, stmt, catchScope);
+                            }
+                        }
+                        else
+                        {
+                            BuildScopeRecursive(globalScope, handler.Body, currentScope);
+                        }
+                    }
+
+                    // Process finally
+                    if (tryStmt.Finalizer != null)
+                    {
+                        BuildScopeRecursive(globalScope, tryStmt.Finalizer, currentScope);
+                    }
+                    break;
+                default:
+                    // For other node types, recursively process their children
+                    ProcessChildNodes(globalScope, node, currentScope);
+                    break;
+                // Add more cases as needed for other node types
+            }
+        }
+
+        private static void AddImplicitArgumentsBinding(Scope functionScope)
+        {
+            // Only non-arrow function scopes have an implicit `arguments` binding.
+            if (functionScope.Kind != ScopeKind.Function)
+            {
+                return;
+            }
+
+            if (functionScope.AstNode is ArrowFunctionExpression)
+            {
+                return;
+            }
+
+            // Don't force an arguments binding unless it is actually referenced.
+            // This matches typical engine behavior (lazy arguments materialization) and
+            // prevents every function from requiring a scope instance/field.
+            if (!functionScope.NeedsArgumentsObject)
+            {
+                return;
+            }
+
+            // Do not override a user-declared binding named 'arguments' (parameters/vars/etc).
+            if (functionScope.Bindings.ContainsKey("arguments"))
+            {
+                return;
+            }
+
+            // Use the function node as the declaration node so we can distinguish this implicit binding.
+            var binding = new BindingInfo("arguments", BindingKind.Var, functionScope, functionScope.AstNode)
+            {
+                // Inform downstream analysis/normalization; still emit as object field/local.
+                ClrType = typeof(JavaScriptRuntime.Array),
+                IsStableType = false,
+                // Force backing storage as a scope field so reads/writes are representable without
+                // synthesizing an explicit JS var declaration.
+                IsCaptured = true
+            };
+
+            functionScope.Bindings["arguments"] = binding;
+        }
+
+        private static void MarkNearestArgumentsOwnerScopeAsNeedingArguments(Scope currentScope)
+        {
+            // Walk upward to the nearest *non-arrow* function scope.
+            var scope = currentScope;
+            while (scope != null)
+            {
+                if (scope.Kind == ScopeKind.Function && scope.AstNode is not ArrowFunctionExpression)
+                {
+                    scope.NeedsArgumentsObject = true;
+                    return;
+                }
+
+                scope = scope.Parent;
+            }
+        }
+
+        /// <summary>
+        /// Checks if an arrow function references variables not declared locally or in parameters.
+        /// </summary>
+        private bool CheckArrowFunctionReferencesParentVariables(ArrowFunctionExpression arrowExpr, Scope functionScope)
+        {
+            if (arrowExpr.Body is BlockStatement body)
+            {
+                return CheckBodyReferencesParentVariables(body, functionScope);
+            }
+            else
+            {
+                // Expression body - check the expression directly
+                var localVariables = new HashSet<string>(functionScope.Bindings.Keys);
+                localVariables.UnionWith(functionScope.Parameters);
+                return ContainsFreeVariable(arrowExpr.Body, localVariables);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a block statement references variables not declared in the given scope or its parameters.
+        /// </summary>
+        private bool CheckBodyReferencesParentVariables(BlockStatement body, Scope scope)
+        {
+            var localVariables = new HashSet<string>(scope.Bindings.Keys);
+            localVariables.UnionWith(scope.Parameters);
+            return ContainsFreeVariable(body, localVariables);
+        }
+
+        /// <summary>
+        /// Checks if a function expression references variables not declared locally or in parameters.
+        /// </summary>
+        private bool CheckFunctionReferencesParentVariables(FunctionExpression funcExpr, Scope functionScope)
+        {
+            if (funcExpr.Body is not BlockStatement body) return false;
+            return CheckBodyReferencesParentVariables(body, functionScope);
+        }
+
+        /// <summary>
+        /// Recursively collects identifiers that are not in localVariables but are in targetVariables.
+        /// </summary>
+        private void CollectFreeVariables(Node? node, HashSet<string> localVariables, HashSet<string> targetVariables, HashSet<string> result)
+        {
+            if (node == null) return;
+
+            switch (node)
+            {
+                case Identifier id:
+                    // If this identifier is not local, not a global intrinsic, and is in target scope
+                    if (!localVariables.Contains(id.Name) && 
+                        !IsKnownGlobalIntrinsic(id.Name) && 
+                        targetVariables.Contains(id.Name))
+                    {
+                        result.Add(id.Name);
+                    }
+                    break;
+
+                case VariableDeclaration vd:
+                    // Add declared variables to local set
+                    var newLocals = new HashSet<string>(localVariables);
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (decl.Id is Identifier vid)
+                        {
+                            newLocals.Add(vid.Name);
+                        }
+                    }
+                    // Check initializers with updated local set
+                    foreach (var decl in vd.Declarations)
+                    {
+                        CollectFreeVariables(decl.Init, newLocals, targetVariables, result);
+                    }
+                    break;
+
+                case BlockStatement bs:
+                    foreach (var stmt in bs.Body)
+                    {
+                        CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ExpressionStatement es:
+                    CollectFreeVariables(es.Expression, localVariables, targetVariables, result);
+                    break;
+
+                case ReturnStatement rs:
+                    CollectFreeVariables(rs.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case ThrowStatement ts:
+                    CollectFreeVariables(ts.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case TryStatement ts:
+                    CollectFreeVariables(ts.Block, localVariables, targetVariables, result);
+                    CollectFreeVariables(ts.Handler, localVariables, targetVariables, result);
+                    CollectFreeVariables(ts.Finalizer, localVariables, targetVariables, result);
+                    break;
+
+                case CatchClause cc:
+                    // catch (e) { ... } introduces a new local binding for the catch parameter.
+                    var catchLocals = new HashSet<string>(localVariables);
+                    if (cc.Param is Identifier catchId)
+                    {
+                        catchLocals.Add(catchId.Name);
+                    }
+                    CollectFreeVariables(cc.Body, catchLocals, targetVariables, result);
+                    break;
+
+                case IfStatement ifs:
+                    CollectFreeVariables(ifs.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ifs.Consequent, localVariables, targetVariables, result);
+                    CollectFreeVariables(ifs.Alternate, localVariables, targetVariables, result);
+                    break;
+
+                case ForStatement fs:
+                    CollectFreeVariables(fs.Init as Node, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Update, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Body, localVariables, targetVariables, result);
+                    break;
+
+                case ForOfStatement forOf:
+                {
+                    // The iteration variable is in scope for the loop body.
+                    var loopLocals = localVariables;
+                    if (forOf.Left is VariableDeclaration forOfDecl)
+                    {
+                        var forOfLocals = new HashSet<string>(localVariables);
+                        foreach (var decl in forOfDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                forOfLocals.Add(vid.Name);
+                            }
+                        }
+                        loopLocals = forOfLocals;
+                    }
+                    else
+                    {
+                        CollectFreeVariables(forOf.Left as Node, localVariables, targetVariables, result);
+                    }
+
+                    CollectFreeVariables(forOf.Right, localVariables, targetVariables, result);
+                    CollectFreeVariables(forOf.Body, loopLocals, targetVariables, result);
+                    break;
+                }
+
+                case ForInStatement forIn:
+                {
+                    var loopLocals = localVariables;
+                    if (forIn.Left is VariableDeclaration forInDecl)
+                    {
+                        var forInLocals = new HashSet<string>(localVariables);
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                forInLocals.Add(vid.Name);
+                            }
+                        }
+                        loopLocals = forInLocals;
+                    }
+                    else
+                    {
+                        CollectFreeVariables(forIn.Left as Node, localVariables, targetVariables, result);
+                    }
+
+                    CollectFreeVariables(forIn.Right, localVariables, targetVariables, result);
+                    CollectFreeVariables(forIn.Body, loopLocals, targetVariables, result);
+                    break;
+                }
+
+                case WhileStatement ws:
+                    CollectFreeVariables(ws.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ws.Body, localVariables, targetVariables, result);
+                    break;
+
+                case DoWhileStatement dws:
+                    CollectFreeVariables(dws.Body, localVariables, targetVariables, result);
+                    CollectFreeVariables(dws.Test, localVariables, targetVariables, result);
+                    break;
+
+                case SwitchStatement ss:
+                    CollectFreeVariables(ss.Discriminant, localVariables, targetVariables, result);
+                    foreach (var c in ss.Cases)
+                    {
+                        CollectFreeVariables(c, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case SwitchCase sc:
+                    CollectFreeVariables(sc.Test, localVariables, targetVariables, result);
+                    foreach (var stmt in sc.Consequent)
+                    {
+                        CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case LabeledStatement labeled:
+                    // Labels do not introduce bindings; traverse the labeled body.
+                    CollectFreeVariables(labeled.Body, localVariables, targetVariables, result);
+                    break;
+
+                case BinaryExpression be:
+                    CollectFreeVariables(be.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(be.Right, localVariables, targetVariables, result);
+                    break;
+
+                case UpdateExpression upe:
+                    CollectFreeVariables(upe.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case UnaryExpression ue:
+                    CollectFreeVariables(ue.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case CallExpression ce:
+                    CollectFreeVariables(ce.Callee, localVariables, targetVariables, result);
+                    foreach (var arg in ce.Arguments)
+                    {
+                        CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case NewExpression ne:
+                    CollectFreeVariables(ne.Callee, localVariables, targetVariables, result);
+                    foreach (var arg in ne.Arguments)
+                    {
+                        CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case MemberExpression me:
+                    CollectFreeVariables(me.Object, localVariables, targetVariables, result);
+                    if (me.Computed)
+                    {
+                        CollectFreeVariables(me.Property as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case TemplateLiteral template:
+                    // Only expressions can reference identifiers; quasis are static strings.
+                    foreach (var expr in template.Expressions)
+                    {
+                        CollectFreeVariables(expr, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case TaggedTemplateExpression tagged:
+                    CollectFreeVariables(tagged.Tag, localVariables, targetVariables, result);
+                    CollectFreeVariables(tagged.Quasi, localVariables, targetVariables, result);
+                    break;
+
+                case AssignmentExpression ae:
+                    CollectFreeVariables(ae.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(ae.Right, localVariables, targetVariables, result);
+                    break;
+
+                case ConditionalExpression ce:
+                    CollectFreeVariables(ce.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ce.Consequent, localVariables, targetVariables, result);
+                    CollectFreeVariables(ce.Alternate, localVariables, targetVariables, result);
+                    break;
+
+                case ArrayExpression arr:
+                    foreach (var elem in arr.Elements)
+                    {
+                        CollectFreeVariables(elem as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ObjectExpression obj:
+                    foreach (var prop in obj.Properties)
+                    {
+                        CollectFreeVariables(prop, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case Property prop:
+                    CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
+                    CollectFreeVariables(prop.Value as Node, localVariables, targetVariables, result);
+                    break;
+
+                case FunctionDeclaration funcDecl:
+                    // Process the function body with the function's local variables
+                    if (funcDecl.Body is BlockStatement funcBody)
+                    {
+                        foreach (var stmt in funcBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    break;
+
+                case FunctionExpression funcExpr:
+                    // Process the function body with the function's local variables
+                    if (funcExpr.Body is BlockStatement funcExprBody)
+                    {
+                        foreach (var stmt in funcExprBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    break;
+
+                case ArrowFunctionExpression arrowExpr:
+                    // Process the arrow function body
+                    if (arrowExpr.Body is BlockStatement arrowBody)
+                    {
+                        foreach (var stmt in arrowBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    else
+                    {
+                        // Expression body
+                        CollectFreeVariables(arrowExpr.Body, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ClassDeclaration classDecl:
+                    // Process class methods and field initializers
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            if (mdef.Computed)
+                            {
+                                CollectFreeVariables(mdef.Key, localVariables, targetVariables, result);
+                            }
+
+                            // Process method body
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            if (propDef.Computed)
+                            {
+                                CollectFreeVariables(propDef.Key, localVariables, targetVariables, result);
+                            }
+
+                            // Process field initializer expression
+                            if (propDef.Value != null)
+                            {
+                                CollectFreeVariables(propDef.Value, localVariables, targetVariables, result);
+                            }
+                        }
+                    }
+                    break;
+
+                case ClassExpression classExpr:
+                    foreach (var element in classExpr.Body.Body)
+                    {
+                        if (element is MethodDefinition classExprMethod && classExprMethod.Value is FunctionExpression classExprFunc)
+                        {
+                            if (classExprMethod.Computed)
+                            {
+                                CollectFreeVariables(classExprMethod.Key, localVariables, targetVariables, result);
+                            }
+
+                            if (classExprFunc.Body is BlockStatement classExprBlock)
+                            {
+                                foreach (var stmt in classExprBlock.Body)
+                                {
+                                    CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition classExprProperty)
+                        {
+                            if (classExprProperty.Computed)
+                            {
+                                CollectFreeVariables(classExprProperty.Key, localVariables, targetVariables, result);
+                            }
+
+                            if (classExprProperty.Value != null)
+                            {
+                                CollectFreeVariables(classExprProperty.Value, localVariables, targetVariables, result);
+                            }
+                        }
+                    }
+                    break;
+
+                default:
+                    // For unknown node types, do nothing
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Collects the names of variables from targetScope (and its ancestors) that are referenced in childScope's AST node.
+        /// </summary>
+        private HashSet<string> CollectReferencedParentVariables(Scope childScope, Scope targetScope)
+        {
+            var result = new HashSet<string>();
+            if (childScope.UsesGlobalScopeSemantics)
+            {
+                return result;
+            }
+
+            var childLocals = new HashSet<string>(childScope.Bindings.Keys);
+            childLocals.UnionWith(childScope.Parameters);
+            
+            // Collect all ancestor variables, not just immediate parent
+            var ancestorVariables = new HashSet<string>();
+            var currentAncestor = targetScope;
+            while (currentAncestor != null)
+            {
+                foreach (var key in currentAncestor.Bindings.Keys)
+                {
+                    ancestorVariables.Add(key);
+                }
+                currentAncestor = currentAncestor.UsesGlobalScopeSemantics ? null : currentAncestor.Parent;
+            }
+            
+            if (childScope.AstNode != null)
+            {
+                // IMPORTANT: For function/arrow scopes, analyze the body, not the function node.
+                // The free-variable collector intentionally stops at nested function boundaries,
+                // so passing the FunctionDeclaration/FunctionExpression node would yield no results.
+                switch (childScope.AstNode)
+                {
+                    case FunctionDeclaration fd when fd.Body is BlockStatement fdb:
+                        CollectFreeVariables(fdb, childLocals, ancestorVariables, result);
+                        break;
+                    case FunctionExpression fe when fe.Body is BlockStatement feb:
+                        CollectFreeVariables(feb, childLocals, ancestorVariables, result);
+                        break;
+                    case ArrowFunctionExpression af:
+                        if (af.Body is BlockStatement ab)
+                        {
+                            CollectFreeVariables(ab, childLocals, ancestorVariables, result);
+                        }
+                        else
+                        {
+                            CollectFreeVariables(af.Body, childLocals, ancestorVariables, result);
+                        }
+                        break;
+                    default:
+                        CollectFreeVariables(childScope.AstNode, childLocals, ancestorVariables, result);
+                        break;
+                }
+            }
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Marks variables as captured if they are referenced by any child scope.
+        /// This enables optimization: uncaptured variables can use local variables instead of fields.
+        /// </summary>
+        private void MarkCapturedVariables(Scope scope)
+        {
+            // For each child scope that references parent variables
+            foreach (var child in scope.Children)
+            {
+                // Only mark variables as captured if the child scope is a function or class scope
+                // Block scopes don't create closures, so variables referenced from block scopes
+                // don't need to be captured (they can use locals)
+                // Function scopes create closures, class scopes have field initializers that may reference outer variables
+                if (child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class)
+                {
+                    // Find which specific variables from this scope (and ancestors) are referenced by the child
+                    var capturedVars = CollectReferencedParentVariables(child, scope);
+                    foreach (var varName in capturedVars)
+                    {
+                        // Mark the variable in whichever ancestor scope it's declared
+                        var searchScope = scope;
+                        while (searchScope != null)
+                        {
+                            if (searchScope.Bindings.TryGetValue(varName, out var binding))
+                            {
+                                binding.IsCaptured = true;
+                                break;
+                            }
+                            searchScope = searchScope.Parent;
+                        }
+                    }
+                }
+                
+                // Recurse into child scopes
+                MarkCapturedVariables(child);
+            }
+        }
+
+        private void ProcessChildNodes(Scope globalScope, Node node, Scope currentScope)
+        {
+            // Use reflection to get all node properties and recursively process them
+            var properties = node.GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(node);
+                if (value is Node childNode)
+                {
+                    BuildScopeRecursive(globalScope, childNode, currentScope);
+                }
+                else if (value is System.Collections.IEnumerable enumerable && 
+                         !(value is string))
+                {
+                    foreach (var item in enumerable)
+                    {
+                        if (item is Node childNodeInList)
+                        {
+                            BuildScopeRecursive(globalScope, childNodeInList, currentScope);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+namespace Js2IL.SymbolTables
+{
+    public partial class SymbolTableBuilder
+    {
+        /// <summary>
+        /// Helper to bind identifier parameters and object pattern property identifiers uniformly.
+        /// </summary>
+        private static void BindObjectPatternParameters(IEnumerable<Node> parameters, Scope scope)
+        {
+            var paramList = parameters.ToList();
+            
+            // Check if the last parameter is a rest parameter
+            if (paramList.Count > 0 && paramList[^1] is RestElement)
+            {
+                scope.HasRestParameters = true;
+            }
+            
+            foreach (var p in paramList)
+            {
+                if (p is Identifier id)
+                {
+                    if (!scope.Bindings.ContainsKey(id.Name))
+                    {
+                        scope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, scope, id);
+                    }
+                    if (!scope.Parameters.Contains(id.Name))
+                    {
+                        scope.Parameters.Add(id.Name);
+                    }
+                }
+                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
+                {
+                    // Parameter with default value (e.g., a = 10)
+                    // Extract the identifier from the left side and register it as a parameter
+                    if (!scope.Bindings.ContainsKey(apId.Name))
+                    {
+                        scope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, scope, apId);
+                    }
+                    if (!scope.Parameters.Contains(apId.Name))
+                    {
+                        scope.Parameters.Add(apId.Name);
+                    }
+                }
+                else if (p is RestElement rest)
+                {
+                    // Rest parameter: bind the identifier inside the RestElement
+                    if (rest.Argument is Identifier restId)
+                    {
+                        if (!scope.Bindings.ContainsKey(restId.Name))
+                        {
+                            scope.Bindings[restId.Name] = new BindingInfo(restId.Name, BindingKind.Var, scope, restId);
+                        }
+                        // Note: Rest parameters are NOT added to scope.Parameters because they don't become IL parameters
+                        // They are initialized from the ambient arguments array at runtime
+                    }
+                }
+                else if (p is ObjectPattern op)
+                {
+                    foreach (var pnode in op.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            // Handle default values: {a = 10} where Value is AssignmentPattern
+                            Identifier? bindId = null;
+                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                            {
+                                bindId = apLeftId;
+                            }
+                            else
+                            {
+                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                            }
+                            
+                            if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
+                            {
+                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
+                            }
+                            // Add destructured properties to Parameters set so TypeGenerator creates fields/locals
+                            if (bindId != null && !scope.Parameters.Contains(bindId.Name))
+                            {
+                                scope.Parameters.Add(bindId.Name);
+                            }
+                            // Track that this is a destructured parameter (needs field for storage)
+                            if (bindId != null && !scope.DestructuredParameters.Contains(bindId.Name))
+                            {
+                                scope.DestructuredParameters.Add(bindId.Name);
+                            }
+                        }
+                    }
+                }
+                else if (p is AssignmentPattern ap2 && ap2.Left is ObjectPattern opWithDefault)
+                {
+                    // Handle destructured parameter with default value: { x, y } = { x: 0, y: 0 }
+                    foreach (var pnode in opWithDefault.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            // Handle nested default values: {a = 10} = {...} where Value is AssignmentPattern
+                            Identifier? bindId = null;
+                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                            {
+                                bindId = apLeftId;
+                            }
+                            else
+                            {
+                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                            }
+                            
+                            if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
+                            {
+                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, scope, bindId);
+                            }
+                            // Add destructured properties to Parameters set
+                            if (bindId != null && !scope.Parameters.Contains(bindId.Name))
+                            {
+                                scope.Parameters.Add(bindId.Name);
+                            }
+                            // Track that this is a destructured parameter (needs field for storage)
+                            if (bindId != null && !scope.DestructuredParameters.Contains(bindId.Name))
+                            {
+                                scope.DestructuredParameters.Add(bindId.Name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static Scope GetVarHoistingTarget(Scope currentScope)
+        {
+            if (currentScope.Kind != ScopeKind.Block)
+            {
+                return currentScope;
+            }
+
+            var ancestor = currentScope.Parent;
+            while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+            {
+                ancestor = ancestor.Parent;
+            }
+
+            return ancestor ?? currentScope;
+        }
+
+        private static void BindPatternBindings(Node pattern, BindingKind kind, Scope targetScope, Node declarationNode)
+        {
+            switch (pattern)
+            {
+                case Identifier id:
+                    targetScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, targetScope, declarationNode);
+                    return;
+
+                case AssignmentPattern ap:
+                    BindPatternBindings(ap.Left, kind, targetScope, declarationNode);
+                    return;
+
+                case RestElement re:
+                    BindPatternBindings(re.Argument, kind, targetScope, declarationNode);
+                    return;
+
+                case ObjectPattern op:
+                    foreach (var pnode in op.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            // For pattern properties, the binding pattern is in prop.Value.
+                            BindPatternBindings(prop.Value, kind, targetScope, declarationNode);
+                        }
+                        else if (pnode is RestElement rest)
+                        {
+                            BindPatternBindings(rest.Argument, kind, targetScope, declarationNode);
+                        }
+                    }
+                    return;
+
+                case ArrayPattern arr:
+                    foreach (var el in arr.Elements.Where(el => el != null))
+                    {
+                        BindPatternBindings(el!, kind, targetScope, declarationNode);
+                    }
+                    return;
+
+                default:
+                    // Unsupported pattern node kinds are ignored here. Validation + HIR parsing
+                    // will reject patterns we cannot lower.
+                    return;
+            }
+        }
+
+        /// <summary>
+        /// Counts the number of await expressions in a function body.
+        /// Does not descend into nested functions (each gets its own count).
+        /// </summary>
+        private static int CountAwaitExpressions(Node? node)
+        {
+            if (node == null) return 0;
+
+            int count = 0;
+
+            // Count this node if it's an await expression
+            if (node is AwaitExpression)
+            {
+                count = 1;
+            }
+
+            // for-await-of introduces implicit awaits:
+            //  - await IteratorNext(nextResult)
+            //  - await AsyncIteratorClose(return()) on abrupt completion
+            if (node is ForOfStatement forOf && forOf.Await)
+            {
+                count += 2;
+            }
+
+            // Don't descend into nested functions - they have their own await counts
+            if (node is FunctionDeclaration || node is FunctionExpression || node is ArrowFunctionExpression)
+            {
+                return count;
+            }
+
+            // Recursively count in child nodes using reflection
+            foreach (var prop in node.GetType().GetProperties())
+            {
+                if (!prop.CanRead) continue;
+                var propType = prop.PropertyType;
+
+                // Check for single Node child
+                if (typeof(Node).IsAssignableFrom(propType))
+                {
+                    var childNode = prop.GetValue(node) as Node;
+                    if (childNode != null)
+                    {
+                        count += CountAwaitExpressions(childNode);
+                    }
+                }
+                // Check for IEnumerable<Node> children (NodeList, etc.)
+                else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(propType) 
+                    && propType != typeof(string))
+                {
+                    var enumerable = prop.GetValue(node) as System.Collections.IEnumerable;
+                    if (enumerable != null)
+                    {
+                        foreach (var item in enumerable)
+                        {
+                            if (item is Node childItem)
+                            {
+                                count += CountAwaitExpressions(childItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        private static int CountYieldExpressions(Node? node)
+        {
+            if (node == null) return 0;
+
+            // Yield counting is for the current function body only; do not descend into nested functions.
+            if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+            {
+                return 0;
+            }
+
+            int count = node is YieldExpression ? 1 : 0;
+
+            foreach (var child in node.ChildNodes)
+            {
+                if (child is not null)
+                {
+                    count += CountYieldExpressions(child);
+                }
+            }
+
+            return count;
+        }
+    }
+}

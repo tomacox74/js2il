@@ -1,3 +1,5 @@
+"use strict";
+
 const p1 = Promise.resolve(1);
 const p2 = Promise.reject("Error in p2");
 const p3 = Promise.resolve(3);

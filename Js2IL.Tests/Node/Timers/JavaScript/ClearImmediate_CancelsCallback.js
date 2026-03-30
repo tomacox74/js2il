@@ -1,0 +1,6 @@
+"use strict";
+
+const handle = setImmediate(() => console.log("should not run"));
+console.log("setImmediate scheduled.");
+clearImmediate(handle);
+console.log("clearImmediate called.");

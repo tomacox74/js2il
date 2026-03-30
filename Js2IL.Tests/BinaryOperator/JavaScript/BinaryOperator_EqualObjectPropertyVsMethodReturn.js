@@ -1,3 +1,5 @@
+"use strict";
+
 // Test equality comparison between object property value and method return value
 // This reproduces the bug found in PrimeJavaScript.js where validation fails
 

@@ -14,6 +14,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_AddDynamicThenToNumber_StringPreserved() { var testName = nameof(BinaryOperator_AddDynamicThenToNumber_StringPreserved); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_AddObjectObject() { var testName = nameof(BinaryOperator_AddObjectObject); return GenerateTest(testName); }
 
         [Fact]
@@ -21,6 +24,9 @@ namespace Js2IL.Tests.BinaryOperator
 
         [Fact]
         public Task BinaryOperator_AddStringString() { var testName = nameof(BinaryOperator_AddStringString); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_BigInt_Operators() { var testName = nameof(BinaryOperator_BigInt_Operators); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_BitwiseAndNumberNumber() { var testName = nameof(BinaryOperator_BitwiseAndNumberNumber); return GenerateTest(testName); }
@@ -63,6 +69,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_GreaterThanOrEqual() { var testName = nameof(BinaryOperator_GreaterThanOrEqual); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_InstanceOf_Basic() { var testName = nameof(BinaryOperator_InstanceOf_Basic); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return GenerateTest(testName); }
 
         [Fact]
@@ -103,13 +112,34 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_NotEqual() { var testName = nameof(BinaryOperator_NotEqual); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_NullishCoalescing_Basic() { var testName = nameof(BinaryOperator_NullishCoalescing_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_OptionalChaining_PropertyAccess() { var testName = nameof(BinaryOperator_OptionalChaining_PropertyAccess); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit() { var testName = nameof(BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName); } // captured variables not yet in IR pipeline
 
         [Fact]
+        public Task BinaryOperator_TypeofFunctionStrictEqual() { var testName = nameof(BinaryOperator_TypeofFunctionStrictEqual); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_TypeofFunctionStrictEqual_CallableShapes() { var testName = nameof(BinaryOperator_TypeofFunctionStrictEqual_CallableShapes); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_NumericRefinement_ParameterReuseCSE() { var testName = nameof(BinaryOperator_NumericRefinement_ParameterReuseCSE); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_NumericRefinement_ExplicitNumberAssignment() { var testName = nameof(BinaryOperator_NumericRefinement_ExplicitNumberAssignment); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return GenerateTest(testName); }

@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using ChildProcessLaunchRequest = JavaScriptRuntime.Node.ChildProcessLaunchRequest;
+using IChildProcessLauncher = JavaScriptRuntime.Node.IChildProcessLauncher;
+using Js2IL.Runtime;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -21,14 +24,17 @@ public class ModuleLoadTests
     {
         private readonly string _outputDir;
         private readonly string _uniqueAssemblyPath;
+        private readonly string _launchableAssemblyPath;
         private readonly AssemblyLoadContext _alc;
 
         public Assembly Assembly { get; }
+        public string AssemblyPath => _launchableAssemblyPath;
 
-        public CompiledModuleAssembly(string outputDir, string uniqueAssemblyPath, AssemblyLoadContext alc, Assembly assembly)
+        public CompiledModuleAssembly(string outputDir, string uniqueAssemblyPath, string launchableAssemblyPath, AssemblyLoadContext alc, Assembly assembly)
         {
             _outputDir = outputDir;
             _uniqueAssemblyPath = uniqueAssemblyPath;
+            _launchableAssemblyPath = launchableAssemblyPath;
             _alc = alc;
             Assembly = assembly;
         }
@@ -64,14 +70,195 @@ public class ModuleLoadTests
     }
 
     [Fact]
-    public void JsEngine_LoadModule_AllowsCallingExports_FromAnotherThread()
+    public void JsEngine_LoadModule_Dynamic_AllowsMutatingExportsObject()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        dynamic exports = exportsObj;
+
+        Assert.Equal(0.0, (double)exports.mutableValue);
+
+        exports.mutableValue = 12;
+
+        Assert.Equal(12.0, (double)exports.mutableValue);
+        Assert.Equal(12.0, (double)exports.readMutableValue());
+
+        exports.hostValue = 27;
+
+        Assert.Equal(27.0, (double)exports.hostValue);
+        Assert.Equal(27.0, (double)exports.readExport("hostValue"));
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenHostedForkNotConfigured_ThrowsExplicitConfigurationError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingForkUnsupported", "Hosting_ForkUnsupported.js");
+        AssertHostedForkConfigurationError(module);
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenHostedForkAssemblyLoadedFromPathWithoutExplicitConfig_ThrowsExplicitConfigurationError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource(
+            "hostingForkUnsupported",
+            "Hosting_ForkUnsupported.js",
+            loadAssemblyFromPath: true);
+        AssertHostedForkConfigurationError(module);
+    }
+
+    public interface IHostedForkExports : IDisposable
+    {
+        Task<string> StartFork();
+    }
+
+    [Fact]
+    public async Task JsEngine_LoadModule_WhenHostedForkConfigured_AllowsChildProcessFork()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResources(
+            rootModuleName: "hostingForkSupported",
+            rootScriptResourcePath: "Hosting_ForkSupported.js",
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["Hosting_ForkSupported_Child.js"] = "Hosting_ForkSupported_Child.js"
+            });
+
+        var launcher = new RecordingChildProcessLauncher();
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IHostedForkExports>(
+            module.Assembly,
+            "hostingForkSupported",
+            new JsModuleLoadOptions
+            {
+                CompiledAssemblyPath = module.AssemblyPath,
+                ChildProcessLauncher = launcher
+            });
+
+        var result = await exports.StartFork();
+
+        Assert.NotNull(launcher.LastRequest);
+        Assert.Equal(module.AssemblyPath, launcher.LastRequest!.CompiledAssemblyPath);
+        Assert.Equal("./Hosting_ForkSupported_Child", launcher.LastRequest.EntryModule);
+        Assert.True(launcher.LastRequest.HostedParent);
+        Assert.Equal(new[] { "from-host" }, launcher.LastRequest.ModuleArguments);
+
+        Assert.Contains("ready:from-host:env-ok", result, StringComparison.Ordinal);
+        Assert.Contains("reply:42", result, StringComparison.Ordinal);
+        Assert.Contains("disconnect:true", result, StringComparison.Ordinal);
+        Assert.Contains("close:0:", result, StringComparison.Ordinal);
+    }
+
+    public interface IImmutableExports : IDisposable
+    {
+        double LockedValue { get; set; }
+        double ReadLockedValue();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Typed_WhenHostMutatesImmutableExport_ThrowsJsInvocationException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IImmutableExports>(module.Assembly, "immutableExports");
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.LockedValue = 2);
+        Assert.Equal("immutableExports", ex.ModuleId);
+        Assert.Equal("LockedValue", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("TypeError", jsError.JsName);
+        Assert.Contains("read only property", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(1.0, exports.LockedValue);
+        Assert.Equal(1.0, exports.ReadLockedValue());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_WhenHostMutatesImmutableExport_ThrowsJsInvocationException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("immutableExports", "immutableExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "immutableExports");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() =>
+        {
+            exports.lockedValue = 2;
+        });
+
+        Assert.Equal("immutableExports", ex.ModuleId);
+        Assert.Equal("lockedValue", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("TypeError", jsError.JsName);
+        Assert.Contains("read only property", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(1.0, (double)exports.lockedValue);
+        Assert.Equal(1.0, (double)exports.readLockedValue());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsNestedMemberAccess_OnReturnedObjects()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("nestedReturn", "nestedReturn.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "nestedReturn");
+        dynamic exports = exportsObj;
+
+        dynamic win = exports.getWindow();
+        Assert.Equal("Hello", (string)win.document.title);
+        Assert.Equal("Hello", (string)exports.getTitle(win));
+        Assert.Equal("Hello", (string)exports.getTitleViaHost());
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsInvokingReturnedFunctionValues()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("functionReturn", "functionReturn.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "functionReturn");
+        dynamic exports = exportsObj;
+
+        dynamic inc = exports.getIncrementer();
+        Assert.Equal(2.0, (double)inc(1));
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_NewOnValue_PadsMissingArgsWithUndefined()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("ctorPadding", "ctorPadding.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "ctorPadding");
+        dynamic exports = exportsObj;
+
+        Assert.True((bool)exports.undefinedWhenMissingArgs());
+    }
+
+    [Fact]
+    public async Task JsEngine_LoadModule_AllowsCallingExports_FromAnotherThread()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
         using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMathExports>(module.Assembly, "math");
 
         // Validate cross-thread marshalling: calls from any host thread should execute on the script thread.
-        var result = Task.Run(() => exports.Add(1, 2)).GetAwaiter().GetResult();
+        var result = await Task.Run(() => exports.Add(1, 2));
         Assert.Equal(3.0, result);
+    }
+
+    [Fact]
+    public async Task JsEngine_LoadModule_Dynamic_AllowsMutatingExports_FromAnotherThread()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
+
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingMutable");
+        dynamic exports = exportsObj;
+
+        var result = await Task.Run(() =>
+        {
+            exports.mutableValue = 19;
+            return (double)exports.readMutableValue();
+        });
+
+        Assert.Equal(19.0, result);
+        Assert.Equal(19.0, (double)exports.mutableValue);
     }
 
     [Fact]
@@ -120,8 +307,82 @@ public class ModuleLoadTests
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("boom", "boom.js");
 
-        var ex = Assert.ThrowsAny<Exception>(() => Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "boom"));
-        Assert.Contains("boom", ex.ToString(), StringComparison.OrdinalIgnoreCase);
+        var ex = Assert.Throws<Js2IL.Runtime.JsModuleLoadException>(() => Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "boom"));
+        Assert.Equal("boom", ex.ModuleId);
+
+        var jsError = Assert.IsType<Js2IL.Runtime.JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains("boom", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public interface IMissingMemberExports : IDisposable
+    {
+        string DoesNotExist { get; }
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenExportMemberMissing_ThrowsJsContractProjectionException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IMissingMemberExports>(module.Assembly, "math");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsContractProjectionException>(() => _ = exports.DoesNotExist);
+        Assert.Equal("math", ex.ModuleId);
+        Assert.Equal("DoesNotExist", ex.MemberName);
+    }
+
+    public interface IWrongShapeExports : IDisposable
+    {
+        double Version();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenExportExpectedFunctionButWasNot_ThrowsJsContractProjectionException()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IWrongShapeExports>(module.Assembly, "math");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsContractProjectionException>(() => _ = exports.Version());
+        Assert.Equal("math", ex.ModuleId);
+        Assert.Equal("Version", ex.MemberName);
+    }
+
+    public interface IThrowingExports : IDisposable
+    {
+        void Boom();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenInvocationThrowsJsError_ThrowsJsInvocationExceptionWithInnerJsError()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("throws", "throws.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IThrowingExports>(module.Assembly, "throws");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsInvocationException>(() => exports.Boom());
+        Assert.Equal("throws", ex.ModuleId);
+        Assert.Equal("Boom", ex.MemberName);
+
+        var jsError = Assert.IsType<Js2IL.Runtime.JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains("boom", jsError.JsMessage ?? jsError.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public interface IThrowValueExports : IDisposable
+    {
+        void ThrowValue();
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_WhenInvocationThrowsNonErrorValue_ThrowsJsInvocationExceptionWithThrownValue()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("throwValue", "throwValue.js");
+        using var exports = Js2IL.Runtime.JsEngine.LoadModule<IThrowValueExports>(module.Assembly, "throwValue");
+
+        var ex = Assert.Throws<Js2IL.Runtime.JsInvocationException>(() => exports.ThrowValue());
+        var jsError = Assert.IsType<Js2IL.Runtime.JsErrorException>(ex.InnerException);
+
+        Assert.NotNull(jsError.ThrownValue);
+        Assert.Equal(123.0, Convert.ToDouble(jsError.ThrownValue));
     }
 
     private static string LoadHostingJavaScript(string resourcePath)
@@ -149,18 +410,44 @@ public class ModuleLoadTests
         return reader.ReadToEnd();
     }
 
-    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(string moduleName, string scriptResourcePath)
+    private static void AssertHostedForkConfigurationError(CompiledModuleAssembly module)
+    {
+        using var exportsObj = Js2IL.Runtime.JsEngine.LoadModule(module.Assembly, "hostingForkUnsupported");
+        dynamic exports = exportsObj;
+
+        var ex = Assert.Throws<JsInvocationException>(() => exports.attemptFork());
+        Assert.Equal("hostingForkUnsupported", ex.ModuleId);
+        Assert.Equal("attemptFork", ex.MemberName);
+
+        var jsError = Assert.IsType<JsErrorException>(ex.InnerException);
+        Assert.Equal("Error", jsError.JsName);
+        Assert.Contains(
+            "child_process.fork requires a compiled assembly path when running under JsEngine hosting",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(
+            "Pass JsModuleLoadOptions.CompiledAssemblyPath",
+            jsError.JsMessage ?? jsError.Message,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResource(
+        string moduleName,
+        string scriptResourcePath,
+        bool loadAssemblyFromPath = false)
     {
         return CompileAndLoadModuleAssemblyFromResources(
             rootModuleName: moduleName,
             rootScriptResourcePath: scriptResourcePath,
-            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal));
+            additionalFiles: new Dictionary<string, string>(StringComparer.Ordinal),
+            loadAssemblyFromPath: loadAssemblyFromPath);
     }
 
     private static CompiledModuleAssembly CompileAndLoadModuleAssemblyFromResources(
         string rootModuleName,
         string rootScriptResourcePath,
-        IReadOnlyDictionary<string, string> additionalFiles)
+        IReadOnlyDictionary<string, string> additionalFiles,
+        bool loadAssemblyFromPath = false)
     {
         var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "ModuleLoad", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(outputDir);
@@ -194,12 +481,20 @@ public class ModuleLoadTests
 
         var alc = new HostingTestAssemblyLoadContext(jsRuntimeAsm, outputDir);
         Assembly compiledAssembly;
-        using (var stream = File.OpenRead(uniquePath))
+        string launchableAssemblyPath;
+        if (loadAssemblyFromPath)
         {
+            compiledAssembly = alc.LoadFromAssemblyPath(uniquePath);
+            launchableAssemblyPath = uniquePath;
+        }
+        else
+        {
+            using var stream = File.OpenRead(uniquePath);
             compiledAssembly = alc.LoadFromStream(stream);
+            launchableAssemblyPath = compiledPath;
         }
 
-        return new CompiledModuleAssembly(outputDir, uniquePath, alc, compiledAssembly);
+        return new CompiledModuleAssembly(outputDir, uniquePath, launchableAssemblyPath, alc, compiledAssembly);
     }
 
     private sealed class HostingTestAssemblyLoadContext : AssemblyLoadContext
@@ -228,6 +523,20 @@ public class ModuleLoadTests
             }
 
             return null;
+        }
+    }
+
+    private sealed class RecordingChildProcessLauncher : IChildProcessLauncher
+    {
+        public ChildProcessLaunchRequest? LastRequest { get; private set; }
+
+        public System.Diagnostics.Process Start(ChildProcessLaunchRequest request)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(request.StartInfo);
+            LastRequest = request;
+            return System.Diagnostics.Process.Start(request.StartInfo)
+                ?? throw new InvalidOperationException("Failed to start hosted child process.");
         }
     }
 }

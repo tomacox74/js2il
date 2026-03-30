@@ -1,3 +1,5 @@
+"use strict";
+
 const a = new Int32Array(5);
 const src = [10.9, -3.4, 2];
 a.set(src, 1);

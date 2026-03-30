@@ -4,13 +4,15 @@ Specifies the semantics of expressions, operators, and expression evaluation.
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-09T07:34:42Z
+
 _This section is split into subsection documents for readability._
 
 ## Section Entry
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 13 | ECMAScript Language: Expressions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) |
+| 13 | ECMAScript Language: Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) |
 
 ## Subsections
 
@@ -18,7 +20,7 @@ _This section is split into subsection documents for readability._
 |---:|---|---|---|---|
 | 13.1 | Identifiers | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-identifiers) | [Section13_1.md](Section13_1.md) |
 | 13.2 | Primary Expression | Supported | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression) | [Section13_2.md](Section13_2.md) |
-| 13.3 | Left-Hand-Side Expressions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) | [Section13_3.md](Section13_3.md) |
+| 13.3 | Left-Hand-Side Expressions | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-left-hand-side-expressions) | [Section13_3.md](Section13_3.md) |
 | 13.4 | Update Expressions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-update-expressions) | [Section13_4.md](Section13_4.md) |
 | 13.5 | Unary Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-unary-operators) | [Section13_5.md](Section13_5.md) |
 | 13.6 | Exponentiation Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-exp-operator) | [Section13_6.md](Section13_6.md) |
@@ -32,4 +34,3 @@ _This section is split into subsection documents for readability._
 | 13.14 | Conditional Operator ( ? : ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-conditional-operator) | [Section13_14.md](Section13_14.md) |
 | 13.15 | Assignment Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-assignment-operators) | [Section13_15.md](Section13_15.md) |
 | 13.16 | Comma Operator ( , ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-comma-operator) | [Section13_16.md](Section13_16.md) |
-

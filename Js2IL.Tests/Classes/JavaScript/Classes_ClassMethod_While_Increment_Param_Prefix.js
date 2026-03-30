@@ -1,3 +1,5 @@
+"use strict";
+
 class Counter {
   run(n) {
     while (n < 3) {

@@ -1,3 +1,5 @@
+"use strict";
+
 // Destructuring assignment expression
 let x = 0;
 let y = 0;

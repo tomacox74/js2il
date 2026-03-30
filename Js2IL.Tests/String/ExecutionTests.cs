@@ -14,6 +14,12 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_LastIndexOf_Basic()
+        {
+            return ExecutionTest(nameof(String_LastIndexOf_Basic));
+        }
+
+        [Fact]
         public Task String_PlusEquals_Append()
         {
             return ExecutionTest(nameof(String_PlusEquals_Append));
@@ -34,9 +40,81 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Match_NonGlobal()
+        {
+            return ExecutionTest(nameof(String_Match_NonGlobal));
+        }
+
+        [Fact]
+        public Task String_Match_Global()
+        {
+            return ExecutionTest(nameof(String_Match_Global));
+        }
+
+        [Fact]
+        public Task String_Search_Basic()
+        {
+            return ExecutionTest(nameof(String_Search_Basic));
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_Global()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Global));
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_EmptyMatch_Global()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_EmptyMatch_Global));
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_Sticky()
+        {
+            return ExecutionTest(nameof(String_RegExp_Exec_LastIndex_Sticky));
+        }
+
+        [Fact]
+        public Task String_Substring()
+        {
+            return ExecutionTest(nameof(String_Substring));
+        }
+
+        [Fact]
         public Task String_Split_Basic()
         {
             return ExecutionTest(nameof(String_Split_Basic));
+        }
+
+        [Fact]
+        public Task String_Split_Regex_Basic()
+        {
+            return ExecutionTest(nameof(String_Split_Regex_Basic));
+        }
+
+        [Fact]
+        public Task String_Split_Regex_Empty()
+        {
+            return ExecutionTest(nameof(String_Split_Regex_Empty));
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_Custom()
+        {
+            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_Custom));
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_RegExpOverride()
+        {
+            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_RegExpOverride));
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_RegExpPrototypeOverride()
+        {
+            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_RegExpPrototypeOverride));
         }
 
         [Fact]
@@ -63,6 +141,90 @@ namespace Js2IL.Tests.String
         {
             var testName = nameof(String_New_Sugar);
             return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task String_CharCodeAt_Basic()
+        {
+            return ExecutionTest(nameof(String_CharCodeAt_Basic));
+        }
+
+        [Fact]
+        public Task String_CharAt_Basic()
+        {
+            return ExecutionTest(nameof(String_CharAt_Basic));
+        }
+
+        [Fact]
+        public Task String_FromCharCode_Basic()
+        {
+            return ExecutionTest(nameof(String_FromCharCode_Basic));
+        }
+
+        [Fact]
+        public Task String_ToLowerCase_ToUpperCase_Basic()
+        {
+            return ExecutionTest(nameof(String_ToLowerCase_ToUpperCase_Basic));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_Basic()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_Basic));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_RawStrings()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_RawStrings));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_EvaluationOrder()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_EvaluationOrder));
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_NoSubstitutions()
+        {
+            return ExecutionTest(nameof(String_TaggedTemplate_NoSubstitutions));
+        }
+
+        [Fact]
+        public Task String_MemberCall_Arity2_Substring() { var testName = nameof(String_MemberCall_Arity2_Substring); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task String_MemberCall_Arity3_Replace() { var testName = nameof(String_MemberCall_Arity3_Replace); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task String_MemberCall_FastPath_CommonMethods()
+        {
+            return ExecutionTest(nameof(String_MemberCall_FastPath_CommonMethods));
+        }
+
+        [Fact]
+        public Task String_Repeat_Basic()
+        {
+            return ExecutionTest(nameof(String_Repeat_Basic));
+        }
+
+        [Fact]
+        public Task String_Prototype_Iterator_Surface()
+        {
+            return ExecutionTest(nameof(String_Prototype_Iterator_Surface));
+        }
+
+        [Fact]
+        public Task String_NewApis_Basic()
+        {
+            return ExecutionTest(nameof(String_NewApis_Basic));
+        }
+
+        [Fact]
+        public Task String_MatchAll_Basic()
+        {
+            return ExecutionTest(nameof(String_MatchAll_Basic));
         }
     }
 }

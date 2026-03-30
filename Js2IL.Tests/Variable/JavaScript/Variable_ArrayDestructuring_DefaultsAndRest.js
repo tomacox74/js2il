@@ -1,3 +1,5 @@
+"use strict";
+
 // Array destructuring with defaults and rest
 const arr = [10];
 const [a = 1, b = 2, ...rest] = arr;

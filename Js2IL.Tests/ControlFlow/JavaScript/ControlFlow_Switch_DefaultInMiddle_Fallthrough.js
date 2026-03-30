@@ -1,3 +1,5 @@
+"use strict";
+
 // Default is not "last"; it executes based on source order.
 switch (1) {
   case 1:

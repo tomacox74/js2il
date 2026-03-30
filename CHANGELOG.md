@@ -4,15 +4,331 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- runtime/spec/tests/docs: close issue #861 by exposing `Map`, `Set`, `WeakMap`, and `WeakSet` as global constructor values, wiring keyed-collection constructor/prototype back-references plus instance prototype stamping, requiring `new` across first-class constructor call paths, tightening built-in `.prototype` descriptor flags, adding focused execution/generator coverage, and refreshing keyed-collection ECMA-262 tracking; broader built-in constructor-function object fidelity remains tracked separately in issue #935.
+- node/child_process/hosting/tests/docs: close issue #914 by adding hosted `JsEngine` support for `child_process.fork()` through explicit `JsModuleLoadOptions.CompiledAssemblyPath` configuration, host-overridable `IChildProcessLauncher` process creation, deterministic hosted misconfiguration errors instead of implicit launch-path fallback, focused hosting/child_process regression coverage, and refreshed hosting plus Node child_process docs.
+- runtime/spec/tests/docs: close issue #864 by exposing the public `String.prototype` / `%StringIteratorPrototype%` surface, wiring `String.prototype[Symbol.iterator]`, adding `String.fromCodePoint`, `String.raw`, `at`, `codePointAt`, `matchAll`, `padStart`, `padEnd`, `replaceAll`, `isWellFormed`, and `toWellFormed`, tightening the `String.prototype` constructor descriptor flags, fixing `String.raw` final-segment substitution handling, adding focused execution/generator coverage, and refreshing ECMA-262 string tracking/backlog docs.
+- runtime/spec/tests/docs: close issue #862 by completing `Map`/`Set` iterable construction, `Map.prototype.forEach`, `Map.prototype[Symbol.iterator]`, the missing `Set.prototype` core methods, and the ES2025 Set algebra surface; align iterable-constructor closing semantics with normal-vs-abrupt completion, reject primitive `Map` entry values while preserving short object entries as `undefined`, add focused constructor regression coverage, and refresh the keyed-collection ECMA-262 tracking/backlog docs.
+- runtime/spec/tests/docs: close issue #863 by extending Proxy support with `deleteProperty`, `ownKeys`, `apply`, `construct`, `getPrototypeOf`, `setPrototypeOf`, and `Proxy.revocable`, while tightening supported-surface semantics around object target/handler validation, callable/constructible target gating, and `ownKeys` / `getPrototypeOf` / `construct` trap result checks; add focused Proxy regression coverage and refresh the ECMA-262 backlog/docs.
+
+## v0.9.5 - 2026-03-29
+
+- packaging/hosting/samples/tests: support npm/module-id entrypoints in `Js2IL.SDK` with Node-style package resolution, keep `ModuleResolutionBaseDirectory` / `Js2ILModuleResolutionBaseDirectory` available only for non-default layouts, and simplify `Hosting.Domino` so the host project restores domino in place without a separate `compiler/` directory.
+- compiler/perf/tests: refine captured lexical TDZ lowering by separating semantic TDZ participation from runtime field guards so safe captured `let`/`const` bindings keep typed scope fields and direct loads, while conservatively preserving runtime guards for captures that can still be observed before initialization; this recovers the PR #909 benchmark-adjacent regressions and refreshes the affected generator coverage.
+- tests/node/child_process: stabilize the `fork(...)` message-passing coverage under full-suite load by widening the child fallback exit window and refreshing the paired execution/generator expectations.
+
+## v0.9.4 - 2026-03-16
+
+- compiler/runtime/tests: fix computed class elements follow-up gaps by treating non-literal computed names as runtime keys, preserving receiver semantics for `obj[key]()`, and aligning private accessor edge cases for class expressions plus getter-only/setter-only access.
+- compiler/runtime/spec/tests/docs: close issue #772 by lowering dynamic `import()` against canonical compiled-module ids, aligning the entry-module `require` context with the emitted module manifest, returning the same pragmatic ESM/CJS namespace-default projection from dynamic `import()` as the static ESM lowering, adding focused Import execution/generator coverage, and refreshing ECMA-262 tracking while leaving full module-record semantics to issue #857.
+- compiler/spec/tests: finish the issue #857 follow-up on the PR #908 module-record work by restricting `RequestedModules` and evaluation planning to static ESM imports/re-exports (instead of mixed runtime dependencies), preventing `.js` source-text modules with static syntax from silently falling back to dynamic CommonJS export validation, marking evaluation metadata as planned rather than already evaluated, and adding focused ModuleLoader/import regressions for the corrected graph semantics.
+- node/net/tests/docs: close issue #874 by emitting `Buffer` socket reads by default, keeping UTF-8 text mode opt-in via `setEncoding()`, adding `setTimeout()` / `setKeepAlive()` baselines plus `allowHalfOpen` delayed-response handling, keeping `setNoDelay()` as a compatibility no-op, and refreshing focused Node `net` coverage and tracking docs.
+- node/http/tests/docs: close issue #871 by streaming `IncomingMessage` bodies incrementally as `Buffer` chunks, adding chunked transfer encoding/decoding for request and response flows, introducing a sequential keep-alive `http.Agent` baseline plus forwarded server `connection` events, surfacing explicit diagnostics for deferred CONNECT/upgrade/Expect behavior, and refreshing focused Node HTTP coverage/tracking docs.
+- node/zlib/tests/docs: close issue #876 by adding a focused `node:zlib` baseline with `gzipSync(...)` / `gunzipSync(...)`, `createGzip(...)` / `createGunzip(...)` stream composition over the current Transform implementation, Node-like `level` coercion in the `-1..9` range, corrected finish/end ordering for the delivered gzip/gunzip pipeline, explicit deferred-option diagnostics, focused execution/generator coverage, and refreshed Node tracking/docs.
+- node/timers/tests/docs: close issue #875 by adding a `node:timers/promises` baseline with Promise-based `setTimeout(...)` / `setImmediate(...)`, `options.signal` cancellation that rejects with `AbortError`, focused ordering coverage against `process.nextTick` and Promise microtasks, and explicit deferred `setInterval(...)` diagnostics plus module docs/tracking updates.
+- node/https/tls/tests/docs: close issue #870 by adding a PEM-backed loopback/local TLS baseline over `SslStream` (`tls.createSecureContext`, `tls.createServer`, `tls.connect`, `TLSSocket`) plus HTTPS client/server flows (`https.createServer`, `https.request`, `https.get`) reusing the existing streamed/chunked HTTP pipeline, with focused execution/generator coverage and explicit diagnostics for deferred advanced TLS options.
+- node/crypto/tests/docs: complete issue #790 by adding `createHmac(...)` plus a practical `webcrypto.subtle` HMAC slice (`digest`, `importKey`, `sign`, `verify`), tightening Node/WebCrypto input validation, extending focused execution/generator coverage, and refreshing the Node crypto docs.
+- node/fs/tests/docs: close issue #873 by adding a documented `fs.open(...)` / `fs.promises.open(...)` `FileHandle` baseline, `createReadStream(...)` / `createWriteStream(...)`, `appendFile(...)` / `rename(...)` / `unlink(...)`, Node-like Windows sharing and explicit-position parity fixes, focused execution/generator coverage, and refreshed Node fs tracking docs.
+- node/child_process/hosting/tests/docs: harden the `fork(...)` baseline from issue #877 by authenticating the loopback IPC channel, stopping the listener after the intended child connects, emitting `disconnect` before `exit`/`close`, replacing the brittle fixed IPC connect timeout with child-exit-aware waiting, and throwing an explicit hosted-`JsEngine` `fork()` diagnostic while hosted support is tracked separately in issue #914.
+- compiler/tests: optimize branch-only `typeof x === "function"` / `!== "function"` checks by lowering them to direct `isinst Delegate` tests in the LIR/IL pipeline, with focused BinaryOperator and normalization coverage for bound and CommonJS callable shapes.
+
+## v0.9.3 - 2026-03-15
+
+- node/stream/tests/docs: close issue #872 by expanding the stream baseline with `pause()` / `resume()`, UTF-8 `setEncoding()`, `destroy()` / `destroyed`, callback-oriented `pipeline(...)` / `finished(...)`, deterministic writable drain/finish teardown, and focused execution/generator coverage plus refreshed Node tracking.
+- compiler/runtime/spec/tests/docs: close issue #858 by supporting getter/setter method definitions in object literals and classes, lowering complex object literals through descriptor-backed property helpers, dispatching class instance/static accessors through the existing runtime property surface with correct `this` binding, adding focused execution/generator/validator coverage, and refreshing ECMA-262 tracking.
+- docs/samples/workflows: close issue #850 and umbrella #439 by aligning the hosting sample docs and release smoke workflows with the `Js2IL.Runtime` package name and documenting the coordinated restore/build/post-publish validation matrix for the packaged hosting flow.
+- node/esm/tests/docs: close issue #869 by resolving static ESM package requests with import-aware `package.json` `exports` / `imports` conditions, preserving require-mode package aliases for CommonJS parity, adding mixed CJS/ESM `node_modules` coverage plus resolver diagnostics, and refreshing the Node loader docs/triage snapshot (PR #888).
+
+## v0.9.2 - 2026-03-14
+
+- packaging/runtime/docs/tests: rename the runtime NuGet package from `JavaScriptRuntime` to `Js2IL.Runtime`, add first-class package metadata/readme coverage for its package page, and update the SDK samples/docs/workflow/package tests to reference the new package ID while keeping the runtime assembly name `JavaScriptRuntime.dll`.
+
+## v0.9.1 - 2026-03-14
+
+- packaging/hosting/tests/docs: add the new `Js2IL.SDK` NuGet package for issue #846, shipping an in-process MSBuild task plus `build\Js2IL.SDK.props` / `.targets` so host projects can declare `Js2ILCompile` items, compile JavaScript during `dotnet build`, and consume the generated module assembly without shelling out to the `js2il` tool.
+- packaging/hosting/samples/docs: migrate the hosting samples for issue #847 from the legacy `compiler\*.proj` shell-out flow onto direct `Js2IL.SDK` usage, move packaged sample content from the `js2il` tool nupkg into the `Js2IL.SDK` nupkg, and clarify when to use `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
+- release/tooling/docs: close issue #848 by teaching tagged release builds to pack and publish coordinated `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` packages, adding a `npm run release:validate` gate that pairs packed-tool canaries with local SDK package-consumption tests, and staging `samples/Directory.Build.props` so release commits preserve aligned package versions.
+- packaging/nuget/docs/tests: close issue #849 by expanding the packaged `Js2IL.Core` / `Js2IL.SDK` README copy, cross-linking the `js2il`, `Js2IL.Core`, and `Js2IL.SDK` package pages, adding package-project URLs/tags for discoverability, and asserting the shipped nuspec/readme metadata in focused package tests before first publish.
+- release/tooling: fix `scripts/bumpVersion.js` so release cuts still update `samples/Directory.Build.props` after the shared `Js2ILPackageVersion` property gained a `Condition=...` attribute.
+
+## v0.9.0 - 2026-03-13
+
+- packaging/compiler/layout: implement issue #845 by extracting the reusable compiler into `Js2IL.Compiler.dll`, adding the referenceable `Js2IL.Core` package, wiring the `js2il` tool to consume the new compiler assembly while staying self-contained, splitting the repo layout into `src\Compiler\` sources plus a thin `src\Cli\` tool project, and updating solution/tests/workflows/scripts/samples to follow the new paths.
+- release/tooling/workflows: strengthen pre-release confidence for the repackaged `js2il` tool by teaching version bumps to update `Js2IL.Core`, adding packaged-tool canary commands that pack and locally install `js2il` before running smoke suites, and wiring the release automation plus `canary-smoke` workflow to validate the actual nupkg instead of a source-run build.
+- hosting/runtime/tests/docs: add issue #419 mutable CommonJS exports support by making typed and dynamic hosting exports proxies write through to `module.exports` on the owning script thread, adding focused hosting coverage for root-exports mutation, and updating the hosting docs to reflect the new read/write behavior.
+- runtime/spec/tests/docs: complete the issue #728 bound-function baseline by tracking `Function.prototype.bind` metadata for `length` / `name`, routing `new` on bound constructors through target/new-target semantics and target prototypes, suppressing bound-function own `prototype`, adding focused Function execution/generator coverage, and refreshing ECMA-262 tracking.
+- runtime/spec/tests/docs: make delegate-backed function `length`/`name` behave as descriptor-backed own properties for issue #727 so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` share the same metadata path; add focused Function execution/generator coverage and refresh ECMA-262 §20.2 tracking.
+- runtime/tests/docs: add the issue #791 Node ESM interop baseline by normalizing compiled-module `import.meta.url` to deterministic `file://` URLs, adding focused CommonJS/Import coverage for cross-module URL resolution, and refreshing the related Node and ECMA-262 tracking docs (PR #839).
+- runtime/tests/docs: add the issue #792 networking baseline by implementing minimal `node:net` TCP loopback primitives (`createServer`, `connect`, `Socket`/`Server`) plus a narrow `node:http` HTTP/1.1 server/client slice (`createServer`, `request`, `get`, `IncomingMessage`, `ServerResponse`) with focused execution/generator coverage and explicit `node:https` / `node:tls` runtime diagnostics.
+
+## v0.8.30 - 2026-03-10
+
+- perf/runtime/benchmarks: recover issue #833's `dromaeo-object-regexp` regression by caching hot symbol/property-key lookups, fast-pathing intrinsic RegExp `@@match`/`@@search`/`@@replace`/`@@split` dispatch behind instance/prototype override invalidation, moving well-known symbol methods onto a shared RegExp prototype, and adding a JS-correct empty-RegExp split fast path with lighter result construction; local non-modern phased execute results improved from about `671.7 ms` to `239.6 ms`.
+
+## v0.8.29 - 2026-03-10
+
+- runtime/spec/tests/docs: add a host-safe WeakRef / FinalizationRegistry baseline for issue #781 with `WeakRef.deref()` kept-object semantics, `FinalizationRegistry.register` / `unregister` cleanup queue integration, a non-standard deterministic `gc()` test hook, focused execution/generator coverage, and refreshed ECMA-262 tracking.
+- quality/tooling/workflows: expand the nightly real-world canary smoke corpus for issue #583 with additional bounded benchmark cases (`dromaeo-object-string-modern`, `dromaeo-object-regexp-modern`, `dromaeo-3d-cube-modern`, `dromaeo-core-eval-modern`) while keeping the fast PR gate unchanged.
+- runtime/tests/docs: add a focused Node `crypto` baseline for issue #790 by implementing synchronous `createHash(...)` hashing (md5/sha1/sha256/sha384/sha512), `randomBytes(size)` returning `Buffer`, a minimal `crypto.getRandomValues` / `crypto.webcrypto.getRandomValues` bridge for supported buffer/typed-array shapes, focused execution/generator coverage, and refreshed Node tracking/module docs.
+- runtime/tests/docs: add a focused Node `url` / `querystring` baseline for issue #789 by implementing WHATWG-style `URL` / `URLSearchParams` parsing for common http(s)/file cases, `fileURLToPath` / `pathToFileURL`, legacy `querystring.parse` / `querystring.stringify`, focused execution/generator coverage, and refreshed Node tracking/module docs.
+- runtime/tests/docs: expand Node `child_process` support for issue #788 by adding minimal async `spawn`, `exec`, and `execFile` flows with EventEmitter-backed child handles, piped stdout/stderr capture, callback completion/error shapes, focused Node child_process execution/generator coverage, and refreshed module/triage docs.
+- runtime/tests/docs: expand Node `util` essentials for issue #787 by adding runtime-backed `util.types` checks for ArrayBuffer/DataView/common typed arrays, exposing compatibility shims for unsupported typed-array flavors, improving `util.inspect` formatting for typed arrays and binary views, and adding focused Node util coverage plus refreshed module/backlog docs.
+- runtime/spec/tests/docs: expose `Array.prototype.entries` / `keys` / `values` / `%Symbol.iterator%` for issue #780, reuse that iterator surface for `for..of` and array spread, extend `Array.from(...)` coverage for iterator sources, add focused Array execution/generator coverage, and refresh ECMA-262 §23.1 tracking.
+- runtime/tests/docs: audit symbol ecosystem coverage for issue #779 by honoring `Symbol.isConcatSpreadable` in `Array.prototype.concat`, adding symbol-key descriptor/enumeration coverage, documenting ordinary-object symbol reflection ordering, and adding custom `Symbol.toStringTag` coverage.
+- compiler/runtime/spec/tests/docs: add Stage 1 `Function(...)` / `new Function(...)` support for compile-time string-literal sources by parsing and compiling synthetic callables with isolated global-scope semantics, wiring `anonymous`/`.length` defaults, surfacing runtime `Error`/`SyntaxError` for unsupported or invalid sources, adding focused Function execution/generator coverage, and updating ECMA-262 tracking for issue #778.
+- runtime/spec/tests/docs: audit object integrity APIs for issue #777 by enforcing strict-mode `TypeError` behavior for adding properties to non-extensible objects, writing read-only or getter-only properties, deleting non-configurable properties, and assigning through inherited frozen/getter-only prototype descriptors; add focused integrity/`Object.defineProperty` coverage; and refresh ECMA-262 §20.1 tracking plus issue triage.
+- runtime/spec/tests/docs: tighten ordinary-object descriptor invariants for issue #776 by preserving existing attributes on partial `Object.defineProperty` redefinitions, rejecting mixed data/accessor descriptors and invalid non-configurable rewrites, synthesizing implicit own descriptors for dictionary-backed properties, normalizing ordinary own-key ordering across `Object.keys`/`values`/`entries`/`getOwnPropertyNames`/`getOwnPropertySymbols` and `for...in`, adding focused Object execution/generator coverage, and refreshing ECMA-262 §10.1 tracking plus issue triage.
+- quality/tooling/workflows: add a bounded real-world canary smoke lane built on the differential-test harness, with documented PR (`dromaeo-object-array-modern`, `dromaeo-object-regexp`) and nightly-expanded (`array-stress`, `stopwatch-modern`) suites, a dedicated `canary-smoke` workflow, failure artifacts, and npm entry points for local runs.
+- runtime/spec/tests/docs: broaden RegExp modern compatibility for issue #775 by adding sticky (`/y`) `exec()` / `test()` / `lastIndex` semantics, parsing and reflecting `s` / `u` / `d` flags with limited unicode rewriting and `d` indices results, rejecting unsupported `v` flags with `SyntaxError`, routing `String.prototype.match/replace/search/split` through RegExp well-known symbol dispatch (including custom symbol overrides), adding focused execution/generator coverage, and refreshing ECMA-262 §22.2 tracking plus issue triage.
+- runtime/spec/compiler/tests/docs: broaden `%TypedArray%` support with a shared ArrayBuffer-backed `TypedArrayBase`, convert `Int32Array` to real buffer views while preserving existing compiler fast paths, add `Uint8Array` and `Float64Array`, implement shared constructors/properties/methods (`from`, `of`, `at`, `includes`, `indexOf`, `lastIndexOf`, `set`, `slice`, `subarray`, `values`, `keys`, `entries`, `fill`, `reverse`, `join`, `map`, `filter`, `reduce`, `every`, `some`, `find`, `findIndex`, `forEach`, plus `%Symbol.iterator%`/`%Symbol.toStringTag%` basics), recognize typed arrays in `ArrayBuffer.isView`/iterator/runtime helper paths, fix unused intrinsic-constructor expression statements so constructor side effects and RangeErrors are preserved, and add focused execution/generator coverage plus refreshed ECMA-262 §23.2 tracking for issue #774.
+
+## v0.8.28 - 2026-03-08
+
+- perf/runtime/benchmarks: speed up stopwatch-style constructor-function hot paths by fast-pathing dictionary-backed delegate member calls/property reads in `JavaScriptRuntime.Object` and caching delegate invoke metadata in `Closure`, improving local `stopwatch-modern` execute-lane Dry benchmark results from about `1.144 s / 191,391.58 KB` to `442.4 ms / 87,508.57 KB`.
+
+## v0.8.27 - 2026-03-07
+
+- runtime/spec/docs: implement ArrayBuffer and DataView primitives (fixed-length ArrayBuffer backing store, ArrayBuffer.isView for current DataView/Int32Array views, DataView numeric getters/setters with endianness and bounds checks), add focused typed-array execution/generator coverage, and update ECMA-262 §25 support tracking plus issue triage docs (#773).
+- perf/abi/runtime/tests/docs: introduce explicit callable scope ABI metadata via `JsCallableScopeAbiAttribute` (`NoScopes`, `SingleScope`, `ScopeArray`), emit it from single-phase and two-phase compilation, route runtime/hosting invocation through metadata-first ABI resolution with compatibility fallbacks for older assemblies, refresh affected generator snapshots, and document the rollout design (closes #812).
+- Node/path: add `path.posix` and `path.win32` variant APIs (fixes #784).
+- Node/fs: add callback-style async APIs (`readFile`, `writeFile`, `copyFile`, `readdir`, `mkdir`, `stat`, `rm`, `access`, `realpath`) with execution coverage (#785).
+- Node/stream: expand baseline with `Duplex`, `Transform`, and `PassThrough` plus basic `pipe()` backpressure (`write()==false` → pause until `drain`) and a minimal `highWaterMark` knob (#786).
+- Node/util: expand `util` essentials with `util.format`, custom inspect hook support (`util.inspect.custom`), and broader `util.types` checks (#787).
+- spec/esm: improve static import/export lowering with live import bindings and safer cyclic graphs (partial #772).
+- commonjs/node: document and add execution coverage for compile-time npm package resolution via `node_modules` + `package.json` (`main` and minimal `exports`) (#783).
+
+## v0.8.26 - 2026-03-02
+
+- perf/runtime/spec: add `String.prototype.search` support (`JavaScriptRuntime.String.Search`) and route string member-call normalization to early-bind safe `search`/zero-arg `match`/`split` calls to direct `JavaScriptRuntime.String::*` intrinsic calls, reducing fallback `Object.CallMember*` dispatch in regexp-heavy string paths (closes #749).
+- perf(prime): avoid redundant global-only scopes array allocations by passing through the existing scopes argument at safe call sites.
+- perf(prime): reduce allocation churn at no-scopes call sites by reusing a singleton empty-scopes array.
+
+## v0.8.25 - 2026-03-01
+
+- perf/call-lowering: reduce `Closure.Bind` churn by emitting closed `JsFuncNoScopesN` delegates for non-arrow function values and normalize safe `LIRCallFunction` sites into direct `LIRCallDeclaredCallable` dispatch (preserving `arguments`/rest-sensitive paths), plus runtime `Closure` no-scopes invoke fast paths and refreshed generator snapshots (closes #750).
+- benchmarks/phased: temporarily exclude `evaluation`, `evaluation-modern`, and `linq-js` from `Js2ILPhasedBenchmarks` scenario discovery while those scenarios are investigated for fix-or-remove follow-up.
+- perf/type-inference: infer stable `JavaScriptRuntime.Array` returns for eligible non-class callables (including `generateTestStrings` in `dromaeo-object-regexp`), propagate that type through captured-binding writes/call-site inference, and unlock additional early-bound array field/index/member access patterns in generated IL (fixes #751).
+- compiler/IL/runtime: harden `LIRConvertToObject` emission to use temp-storage type information when boxing and preserve reference/object values without invalid `box`, fixing crashes/invalid casts in tagged-template and typed-reference paths.
+- tests/integration: add `Compile_Performance_Dromaeo_Object_Regexp` integration execution coverage, add `Function_VariableDeclaration_UndefinedInit_TypedReferenceAssignment` execution regression coverage, and refresh affected generator snapshots.
+- benchmarks/tooling: add `scripts/runPhasedBenchmarkScenario.js` for single-scenario phased runs, apply a shared BenchmarkDotNet summary config with max parameter width `200` to phased/runtime benchmark suites, and update BenchmarkDotNet to `0.15.8`.
+- docs/copilot: refresh `.github/copilot-instructions.md` compiler architecture/service guidance and document the recommended local phased benchmark workflow via `node scripts/runPhasedBenchmarkScenario.js <scenario>` (with BenchmarkDotNet docs/source references).
+
+## v0.8.24 - 2026-02-25
+
+- benchmarks/workflows: enforce BenchmarkDotNet JSON output by annotating benchmark suites with `JsonExporterAttribute.FullCompressed`, so release/workflow ingestion reliably uses JSON artifacts (preserving full script-name fidelity instead of markdown-abbreviated labels).
+- perf(array)/codegen: internalize `JavaScriptRuntime.Array` storage (composition over `List<object?>` inheritance), add/retain array fast paths (including `ToArray()` compatibility for spread/apply call paths), and lower proven array operations (including `arr.length = value`) to early-bound calls to reduce late-bound runtime dispatch in hot paths.
+
+## v0.8.23 - 2026-02-25
+
+- runtime/spec/docs: expand ECMA-262 §20.2 (Function Objects) coverage with `Function.prototype.bind`/`toString` wiring on the intrinsic prototype object, `Function.prototype.constructor` exposure, delegate-backed function `length`/`name` properties, focused execution+generator coverage, and updated `docs/ECMA262/20/Section20_2.{json,md}` support tracking.
+- commonjs/lowering: emit safe injected module-scope `require` fields as strongly typed `JavaScriptRuntime.CommonJS.RequireDelegate` and preserve typed reads so `require("...")` lowers to direct `RequireDelegate::Invoke` instead of late-bound `Closure.InvokeWithArgs*`; updated affected Node FS generator snapshots.
+
+## v0.8.22 - 2026-02-24
+
+- benchmarks/perf: fix `Js2ILPhasedBenchmarks` scenario keying to use plain script names (matching BenchmarkDotNet `ScriptName`) so phased runs no longer hit dictionary `KeyNotFoundException` and produce `NA`-only results.
+
+## v0.8.21 - 2026-02-24
+
+- perf(array): add a single-item `JavaScriptRuntime.Array::push(object)` overload and update typed instance-call lowering to prefer it for arity-1 `push(...)` calls, eliminating per-call `object[]` allocations in the common path; refresh affected generator snapshots.
+- perf/type-inference/tests: infer stable captured `let` array bindings across closure writes (e.g., `ret` in `dromaeo-object-array-modern`) as `JavaScriptRuntime.Array` so generated scope fields are array-typed instead of `object` in hot paths; add `Compile_Performance_Dromaeo_Object_Array_Modern` integration generator coverage using the original benchmark script as an embedded resource and refresh affected generator snapshots.
+- runtime/object-model: consolidate plain-object materialization onto `JsObject` across `Object.create`, `Object.fromEntries`, `Object.groupBy`, descriptor-object creation, and lazy function `prototype` allocation; add `ObjectRuntime` as the descriptive runtime surface alias and migrate runtime call sites to it while preserving compatibility with existing `JavaScriptRuntime.Object` intrinsic references.
+- runtime/spec/docs: complete ECMA-262 §20.1 (Object Objects) clause coverage with new `Object.*` APIs (`groupBy`, `hasOwn`, `getOwnPropertyDescriptors`, `getOwnPropertySymbols`, integrity methods), `Object.prototype.*` additions (constructor/isPrototypeOf/propertyIsEnumerable/toLocaleString/toString/valueOf and legacy accessor helpers), centralized Object intrinsic surface wiring in `JavaScriptRuntime.Object`, new Object execution/generator tests, and updated `docs/ECMA262/20/Section20_1.{json,md}` support tracking.
+
+## v0.8.20 - 2026-02-24
+
+- perf: Reduce boxing in object literals (#351). Replace `ExpandoObject` backing store for JavaScript object literals with a new `JsObject` class backed by `Dictionary<string, JsValue>`. The `JsValue` struct stores number and boolean values inline without heap allocation. New typed property setter methods (`SetPropertyNumber`, `SetPropertyBoolean`, `SetPropertyString`) are called from generated IL instead of the generic `SetItem(object, object, object)` overload, eliminating the `box` instruction for numeric/bool/string property values in object literal initialization. Runtime compatibility with all existing `ExpandoObject` consumers is maintained via the `IDictionary<string, object?>` interface. Also fixes `for-in` enumeration and object spread for descriptor-defined properties on the new JsObject type.
+- perf: optimize bracket reads/writes for proven string keys by adding string-specific runtime overload paths (`Object.GetItem(object, string)`, `SetItem(object, string, object)`, `GetItemAsNumber(object, string)`), plus string-specialized LIR normalization/emission to reduce key-normalization overhead in hot property-access paths (PR #696, fixes #310).
+- perf: add flow-sensitive numeric refinement propagation in HIR→LIR lowering to reuse proven unboxed-number temps and reduce redundant `TypeUtilities.ToNumber(object)` calls, with conservative invalidation at assignments/control-flow labels and safe tracking limited to non-captured/non-global bindings (PR #697, fixes #315).
+- runtime/spec: expand ECMA-262 §20.5 Error Objects coverage with callable global `Error(...)`, `Error.isError(arg)`, and baseline `Error.prototype` surface (`constructor`, `name`, `message`, `toString`) plus execution/generator coverage and updated section tracking docs.
+- Runtime/spec: complete ECMA-262 §20.3 Boolean Objects support by implementing Boolean wrapper construction for `new Boolean(value)`, `Boolean.prototype` wiring (`constructor`, `toString`, `valueOf`), and `ThisBooleanValue` semantics for primitive and wrapper receivers.
+- runtime/spec: expand ECMA-262 §20.4 Symbol Objects coverage with global registry APIs (`Symbol.for`, `Symbol.keyFor`), full well-known symbol constructor properties, and Symbol prototype basics (`description`, `toString`, `valueOf`) plus execution/generator test coverage.
+- docs(ecma262): mark §20.1 `Object.is` as supported and link existing execution/generator coverage in `docs/ECMA262/20/Section20_1.{json,md}`.
+
+## v0.8.19 - 2026-02-23
+
+- CommonJS/LIR: normalize `RequireDelegate` call emission during LIR intrinsic normalization for consistent module `require(...)` lowering and generator snapshots (PR #690).
+
+## v0.8.18 - 2026-02-23
+
+- IR/runtime perf: collapse dynamic `+` followed by immediate numeric coercion into `Operators.AddAndToNumber(...)` overloads in assignment/update hot paths, reducing emitted Add→ToNumber roundtrips while preserving JavaScript `+` semantics, mixed double/object no-boxing paths, and numeric-result no-boxing fast paths.
+- CLI/diagnostics: split user-facing compiler output from internal diagnostics, route verbose pipeline traces through `Microsoft.Extensions.Logging`, keep `--verbose` as diagnostics-to-console, and add `--diagnostic-file <path>` for opt-in diagnostics file logging.
+- Runtime/spec: implement `%GeneratorPrototype%[@@toStringTag]` so `Object.prototype.toString.call(gen) === "[object Generator]"`, add `Symbol.toStringTag` as a well-known symbol, implement `Object.prototype.toString` with type-tag dispatch, and expose `%GeneratorPrototype%.constructor` as a stable function object. Upgrades §27.5 Generator Objects from "Supported with Limitations" to "Supported" (closes #576).
+
+## v0.8.17 - 2026-02-22
+
+- Modules/interop: add MVP static ESM syntax support by lowering top-level `import`/`export` declarations onto the existing CommonJS runtime model.
+- Node-style mixed module behavior: support `.js`/`.mjs`/`.cjs` resolution in module loading and runtime module-id normalization to improve CJS/ESM interop parity.
+- Tests: add import/export mixed-module coverage (`Import_StaticImport_FromCjs`, `Import_RequireEsmModule`) with execution and generator snapshots.
+- Async/performance: add a typed await-continuation path that avoids per-await reflection (`GetField`/`SetValue`) on async state-machine hot paths, with temporary fallback to the reflective path during rollout.
+
+## v0.8.16 - 2026-02-21
+
+- ECMA-262 §6.1: expand runtime coverage with BigInt-capable arithmetic/bitwise/shift/relational operators, `String.prototype.lastIndexOf`, and `Object.is` SameValue semantics, with corresponding execution + generator coverage.
+- IR/IL operator lowering: introduce dedicated dynamic operator LIR instructions (`LIRBinaryDynamicOperator`, `LIRNegateNumberDynamic`, `LIRBitwiseNotDynamic`) so dynamic paths call `JavaScriptRuntime.Operators` directly; remove now-unused `JavaScriptRuntime.Object` operator bridge methods.
+- Performance telemetry: add Supabase ingestion for benchmark workflows (`performance-comparison`, `benchmarkdotnet-suite`, `linux-smoke`, `windows-smoke`) via `tests/performance/ingestPerfToSupabase.js`, including host/runtime metadata capture and BenchmarkDotNet markdown-summary fallback parsing.
+- Performance/regression: recover `PrimeJavaScript.js` throughput after BigInt-era operator changes by restoring numeric fast-path lowering for statically non-BigInt binary/relational/bitwise/shift flows, while preserving dynamic BigInt-safe semantics where needed.
+- Runtime/performance: optimize `JavaScriptRuntime.Operators` hot paths for numeric-double operands and keep BigInt behavior/spec guards intact.
+
+## v0.8.15 - 2026-02-21
+
+
+
+
+## v0.8.14 - 2026-02-19
+
+- Node/process: expand process documentation with `cwd()` and broaden `process.versions` to include `v8` (12.4.254.21-node.22), `modules` (127), `js2il` (runtime assembly version), and `dotnet` (runtime description). Added coverage (`Process_Versions_Expanded`, `Process_NextTick_Queue_Semantics`) for versions and current next-tick scheduling behavior.
+- Node/stream: add initial `stream` module baseline with minimal `Readable` and `Writable` classes extending `EventEmitter`. `Readable` supports `push()`, `read()`, `pipe()`, and the `readable` property, emitting 'data', 'end', and 'error' events. `Writable` supports `write()`, `end()`, the `writable` property, and a user-settable `_write` field for custom write behavior, emitting 'drain', 'finish', and 'error' events. Includes execution/generator test coverage for basic stream operations and pipe functionality.
+- Node/util: add `util` module with essential APIs (`promisify` for callback-to-Promise conversion, `inherits` for prototype chain setup, `types` property with 15 type-checking functions including `isArray`/`isPromise`/`isFunction`, and `inspect` for object debugging with depth limits and circular reference handling) plus execution/generator test coverage.
+- Node/events: complete EventEmitter implementation with core instance methods (`eventNames`, `listeners`, `rawListeners`, `prependListener`, `prependOnceListener`, `setMaxListeners`, `getMaxListeners`), plus module-level advanced helpers (`events.errorMonitor`, `events.on`, `events.once`) to support full event-driven programming patterns; status changed from "partial" to "completed".
+- Node/runtime: complete global `Buffer` support with comprehensive APIs (`Buffer.from`, `Buffer.isBuffer`, `Buffer.alloc`, `Buffer.allocUnsafe`, `Buffer.byteLength`, `Buffer.concat`, `Buffer.compare`) and instance methods (`slice`, `copy`, `write`, `toString`, array-like indexing with `buffer[i]`), binary read/write methods (`readInt8/16/32BE/LE`, `writeInt8/16/32BE/LE`, `readUInt8/16/32BE/LE`, `writeUInt8/16/32BE/LE`), and string encoding support for `utf8`/`hex`/`base64`. Buffer is now marked as `supported` in documentation and covers common use cases for binary data manipulation and I/O operations.
+- Node/events: add initial `events` module baseline with `EventEmitter` and core listener lifecycle APIs (`on`/`addListener`, `once`, `off`/`removeListener`, `emit`, `listenerCount`, `removeAllListeners`) plus execution/generator coverage.
+- Node/fs: extend `fs.readFileSync`/`fs.writeFileSync` to support Buffer binary roundtrips (default read now returns Buffer; UTF-8 text mode remains supported via encoding options).
+- Node/fs/promises: complete breadth expansion with `readFile`, `writeFile`, `stat`, `lstat`, and `realpath` methods. All methods follow Promise pattern (resolve on success, reject on error). `readFile` returns Buffer by default or string with UTF-8 encoding option. `writeFile` accepts Buffer, byte array, or string content. `stat`/`lstat` return Stats object with size property (lstat currently aliases stat due to .NET limitations). `realpath` returns absolute path. Includes execution and generator test coverage.
+- Node/path compatibility: added support for `path.extname`, `path.isAbsolute`, `path.normalize`, `path.parse`, `path.format`, `path.sep`, `path.delimiter`, and `path.toNamespacedPath`, and aligned `path.relative(from, to)` same-path behavior with Node (returns empty string).
+- Node tests/docs reorganization: split monolithic Node tests into focused subfolders (`Node/FS`, `Node/Path`, `Node/Process`, `Node/Timers`) with migrated JavaScript fixtures, snapshots, and updated docs references.
+- Node docs synchronization: refreshed `docs/nodejs/*.json` and generated markdown pages to reflect current API coverage and moved test locations.
+- Planning/triage continuity: added `docs/tracking-issues/NodeGapPopularityBacklog.md`, promoted `docs/tracking-issues/TriageScoreboard.md` as active prioritization source, and linked tracking docs for interruption-safe handoff.
+
+## v0.8.13 - 2026-02-16
+
+- src/Compiler/TwoPhase: fix Linux Domino regression introduced by scopes-ABI optimization where nested function-expression callbacks could fail scope-slot mapping (`callerScopesSource=None`) during HIR→LIR lowering.
+- src/Compiler/design: make symbol-table free-variable analysis the resilient source of truth for callable scopes requirements (recursive descendant callable/class propagation), and simplify TwoPhase `ComputeRequiresScopesParameter` to consume that semantic signal plus ABI policy.
+
+## v0.8.12 - 2026-02-16
+
+- Runtime/spec: improve `RegExp` behavior by implementing `test()` lastIndex semantics for global regexes, adding `toString()`, and exposing `flags` plus related flag getters (`dotAll`, `sticky`, `unicode`, `unicodeSets`, `hasIndices`) with canonical flag ordering (closes #630).
+- Runtime/spec: implement ECMA-262 core keyed collections: `Map`, `WeakMap`, and `WeakSet` constructors with essential prototype methods (`Map`: set/get/has/delete/clear/size/keys/values/entries with SameValueZero key semantics; `WeakMap`: set/get/has/delete; `WeakSet`: add/has/delete). Uses ConditionalWeakTable for weak collections to enable garbage collection of unused keys/values. `Map.delete()` currently preserves insertion-order behavior via compaction/reindex (O(n) in current MVP). Includes comprehensive execution and generator tests (closes #629).
+- Runtime/spec: implement `Object.keys`, `Object.values`, `Object.entries`, `Object.assign`, and `Object.fromEntries` with own-enumerable property semantics and descriptor-aware enumeration behavior (fixes #627).
+- Documentation/tests: Document async generator function support (ECMA-262 §15.6, `async function*`). Async generators were already implemented via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. Added test coverage for yield/await interaction and for-await-of consumption. Updated documentation from "Not Yet Supported" to "Supported with Limitations" with known limitations documented (throw()/return() protocol methods, try/catch/finally edge cases) (closes #628).
+- IR/runtime: implement ECMA-262 meta properties with CommonJS-hosted semantics — `new.target` (function call/new plumbing + lexical arrow inheritance) and `import.meta` (host object with stable identity and `url` when available), with execution/generator coverage (closes #612).
+- IR/Runtime/spec: implement tagged template expressions (ECMA-262 §13.3.11) with template object caching, cooked/raw string arrays, and correct evaluation order (fixes #611).
+- Runtime/spec: complete object literal spread semantics by copying enumerable own properties (including symbol-keyed properties) and add execution + generator coverage for multiple spreads, cloning, empty objects, nested spreads, and non-enumerable filtering (fixes #593).
+- IR/runtime: complete spread in array literals (mixed elements + multiple spreads) using iterator-protocol semantics and add execution + generator coverage (fixes #592).
+- IR/runtime: support spread elements in CallExpression argument lists (e.g., `f(...arr)`, `f(1, ...arr, 2)`) with iterator-protocol semantics and add execution + generator coverage (fixes #591).
+
+## v0.8.11 - 2026-02-15
+
+- **Dynamic import() expressions (ECMA-262 §13.3.10)**: Add initial `import(specifier)` support for dynamic module loading.
+  - Returns a Promise that resolves to CommonJS module.exports
+  - Only string literal specifiers are supported (compile-time dependency discovery)
+  - Non-literal specifiers are allowed (may require explicit module inclusion at compile time)
+  - Rejects options parameter during validation
+  - Uses existing CommonJS module loader for synchronous resolution
+  - New runtime: `JavaScriptRuntime.CommonJS.DynamicImport.Import()`
+  - New compiler infrastructure: `HIRImportExpression`, `LIRCallImport`
+
+## v0.8.10 - 2026-02-13
+
+- IL/Performance: stackify typed numeric arithmetic ops (`LIR*Number`) when operands are inlineable, reducing temp-local materialization and emitted IL noise in arithmetic-heavy code.
+- src/Compiler/type-inference: improve Prime sieve numeric inference (typed-array reads + numeric locals like `q`/`step`/`start`) to keep hot-loop values unboxed and reduce `ToNumber(object)` overhead.
+- Credits: @tomacox74.
+
+## v0.8.9 - 2026-02-13
+
+- Performance: restore Int32Array element-set fast-path when index/value are boxed doubles (avoids `Object.SetItem` in hot loops; improves prime sieve performance).
+
+## v0.8.8 - 2026-02-13
+
+- Quality: add IL verification gate using `ilverify` to catch IL emission regressions (closes #580). Tests verify loops, control flow, exception handling, closures, and class methods.
+- Compiler: remove `--prototypeChain` CLI option; prototype-chain behavior is now always automatically enabled when code uses prototype-related features (e.g., `__proto__`, `Object.getPrototypeOf`, `Object.setPrototypeOf`) to ensure ECMAScript compliance.
+- Runtime/spec: support `Array.prototype.{reduce,reduceRight,indexOf}.call(arrayLike, ...)` for array-like receivers (e.g., DOM NodeList) (unblocks turndown/domino).
+- Runtime/spec: implement `String.prototype.repeat`, `trim`, `trimStart`, `trimEnd`, `slice`, and `indexOf` (unblocks turndown/domino).
+- IR/codegen: fix boxed-number arithmetic lowering/materialization (notably `-`, `*`, `/`, `%`) to prevent numeric corruption in real-world parsers.
+- CommonJS/runtime: set `require.main` to the entry module for Node-compatible `require.main === module` checks.
+- src/Compiler/type-inference: add type inference for `Array.prototype.some()` return values, enabling proper unboxed boolean comparisons (completes fix for #358).
+
+## v0.8.7 - 2026-02-11
+
+- Performance/CommonJS: invoke module-scoped `require` delegate directly (avoid `Closure.InvokeWithArgs` dispatcher and unnecessary argument packing).
+- Generators/spec: unwind `throw()`/`return()` through `try/finally` while suspended at `yield` (fixes #390).
+- Generators/spec: support `try/catch/finally` containing `yield`, including `.throw()`/`.return()` routing while suspended (fixes #574).
+- Runtime: unwrap `TargetInvocationException` for reflected instance member calls so JS `try/catch` can observe thrown values.
+
+## v0.8.6 - 2026-02-09
+
+- IL: fix maxstack estimation for inlined indexed get/set/length operations (prevents InvalidProgramException in some generated modules).
+- Hosting: wrap dynamic return values so nested `dynamic` member access and method calls route through JS runtime semantics.
+- Runtime: allow missing constructor arguments for dynamic `new` patterns (missing args treated as undefined/null for activation).
+- Samples: default `samples/**` to build with local repo `Js2IL`/`JavaScriptRuntime` projects when available (with global tool/NuGet fallback).
+- Tests: add regressions for maxstack (inlined get/set) and hosting dynamic nested return values + missing-arg construction.
+
+## v0.8.5 - 2026-02-07
+
+- CI: run performance comparison before samples in the Linux smoke workflow.
+
+## v0.8.4 - 2026-02-07
+
+- Runtime/spec: support `Function.prototype.apply` and `Function.prototype.bind` for delegate-backed function values (fixes #536).
+- Docs(ecma262): update Section 20.2 and 7.3 status/notes for `apply`/`bind`.
+- Runtime/spec: expose global `Object` as a first-class value (including `Object.prototype`) and support Domino-style `Fn.prototype = Object.create(Object.prototype, descriptors)` patterns (fixes #546).
+- Docs(ecma262): update Sections 19.3, 20.1, and 20.2 for `Object.prototype` and function-instance `prototype` behavior.
+- Runtime/spec: expose global `Error` as a first-class value (including `Error.prototype`) for CommonJS/polyfill compatibility (fixes #550).
+- Docs(ecma262): update Section 20.5 status/notes for `Error.prototype`.
+- IR/CommonJS: compile `module.exports = class ... extends Array { ... }` without crashing (fixes #552).
+- IR/CommonJS: compile chained exports assignments (`exports = module.exports = ...`) without crashing (fixes #558).
+- IR: support unary `void` operator (`void 0`) lowering (fixes #554).
+
+## v0.8.2 - 2026-02-04
+
+- Runtime/spec: implement minimal `Proxy` support (constructor + `get`/`set`/`has` traps) (fixes #502).
+- Runtime/spec: expose standard global builtins and numeric helpers (`String`, `Number`, `Function`, `parseFloat`, `isFinite`) (fixes #528).
+- Runtime/spec: support `globalThis` identifier (ECMA-262 §19.1.1) as a first-class global value (fixes #532).
+- Runtime/validator: expose host timer APIs as first-class global function values (`setTimeout`, `clearTimeout`, `setInterval`, `clearInterval`) so DOM polyfills (e.g., domino WindowTimers) validate and compile successfully (fixes #534).
+- src/Compiler/validator: add `--strictMode=Warn|Ignore` to relax missing top-level `"use strict";` directive prologues for CommonJS modules (fixes #531).
+- Functions/spec: implement minimal implicit `arguments` binding for non-arrow functions (including lexical capture from nested arrow functions) and preserve full call-site arguments only when needed; mapped-arguments aliasing and full Arguments Exotic Object behaviors are not implemented.
+- Docs(ecma262): update Sections 10.2 and 13.2 status/notes for `arguments` binding and arrow lexical capture.
+
+## v0.8.1 - 2026-02-03
+
+- Runtime/spec: add opt-in prototype-chain behavior (side-table [[Prototype]] storage) with `__proto__`, `Object.getPrototypeOf`, `Object.setPrototypeOf`, prototype-walking lookup, and prototype-aware `in` (fixes #504).
+- Runtime/spec: implement descriptor-based Object APIs: `Object.create`, `Object.defineProperty`, `Object.defineProperties`, and `Object.getOwnPropertyDescriptor`, including accessor descriptors and enumerable filtering for `for...in` (fixes #503).
+- Docs(ecma262): update Sections 7.3, 10.1, 13.5, and 20.1 status/notes for prototype-chain support.
+- Classes/spec: support `class X extends Array` (intrinsic base class) and `super(...)` Array constructor initialization semantics (fixes #505).
+- Functions/runtime: support simple parameter lists up to 32 parameters (validator + codegen delegate arity) (fixes #506).
+- Runtime: simplify unknown-callable dispatch via `Delegate.DynamicInvoke` fallback (fixes #513).
+
+## v0.8.0 - 2026-02-01
+
+- IR: support `?.` (optional chaining) lowering in the new IR pipeline (fixes #500).
+- IR: support `??` (nullish coalescing) lowering in the new IR pipeline (fixes #501).
+- Runtime: expose global `Boolean` as a callable function value (enables patterns like `array.filter(Boolean)`) (fixes #511).
+- Validator: report references to missing global identifiers/functions as validation errors (fixes #511).
+- AsyncGenerators/spec: support `async function*` (async generator functions) and async generator objects, including consumption via `for await..of` (fixes #342).
+- Debugging: optionally emit Portable PDBs (sequence points + local variable names) for stepping and improved VS Code debugging (fixes #325).
+
+## v0.7.4 - 2026-01-30
+
+- Hosting: project JavaScript `Promise` return values to C# `Task`/`Task<T>` for typed exports and handles (enables `await` without deadlocks).
+- Hosting: compiler-generated contracts now project `async` exports as `Task`/`Task<T>`.
+- Samples: add .NET library hosting samples (`samples/Hosting.Basic` and `samples/Hosting.Typed`) showing `JsEngine.LoadModule<TExports>()` with generated contracts only (fixes #406).
+- Packaging/docs: ship `samples/**` inside the `js2il` tool NuGet and document how to extract and run them.
+- Runtime/spec: implement ECMA-262 §9.5.1–§9.5.3 JobCallback host operations and integrate them into Promise job scheduling (fixes #435).
+- Classes/spec: support `class B extends A { ... }`, `super(...)` in derived constructors, and `super.m(...)` base method calls (fixes #293, #294).
+- Generators/spec: support `yield*` delegation for synchronous generators (fixes #389).
+- Validator/spec: enforce and consistently surface iteration-statement early errors (break/continue targets and for-in/of head constraints) and fix labeled-statement AST traversal (fixes #463).
+- Validator/spec: require a directive prologue containing `"use strict";` at the start of every module/script (PR #478).
+- ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ...)` loops so closures capture iteration values (fixes #461).
+- ControlFlow/spec: implement per-iteration lexical environments for `for (let/const ... of ...)` and `for (let/const ... in ...)`, including destructuring loop heads (fixes #462).
+- ControlFlow/spec: implement iterator-protocol `for..of` (Symbol.iterator + IteratorClose on abrupt completion) and add custom iterable compliance tests (fixes #458).
+- Async/spec: implement `for await...of` using the async iterator protocol (including awaited AsyncIteratorClose on abrupt completion) and add conformance tests (fixes #341).
+- ArrowFunction/spec: implement lexical `this` for arrow functions (including async arrows across `await`) (fixes #219).
+- Module loading: aggregate parse/validation diagnostics across the full dependency graph and include module/file context in error output (fixes #488) (PR #509).
+- Docs: add prototype-chain support strategy and document domino blocker requirements for descriptor/prototype APIs (PR #477, #508).
+- Docs(ecma262): audit Sections 15 and 27 and sync coverage/status taxonomy for spec documentation (PR #475, #476).
+
+## v0.7.3 - 2026-01-23
+
 ### Added
 - Object literal enhancements: spread properties (`{ ...x }`), computed keys (`{ [expr]: value }`), shorthand properties (`{ a }`), and method definitions (`{ m() { ... } }`) (fixes #290, #291, #292).
 - Synchronous generators (MVP): `function*` + `yield` lowered to a state machine with iterator-style `next()` semantics. Limitations: `yield*` and `async function*` are not supported yet; `throw/return` propagation through `try/finally` is not fully implemented (PR #388).
 - Hosting: initial library hosting API scaffold (`JsEngine.LoadModule(...)`) with one dedicated script thread per runtime instance, cross-thread marshalling, and deterministic disposal boundaries (fixes #402).
 - Hosting: compiled-module discovery via a compiler-emitted manifest (`JsCompiledModuleAttribute`) plus runtime discovery API and tests covering discovery and module init failure propagation (fixes #403).
-
+- Hosting: compiler-generated strongly-typed contracts for CommonJS `module.exports` (including nested exports objects and exported classes via `IJsConstructor<T>`), enabling `JsEngine.LoadModule<TExports>()` without passing an assembly or module id (fixes #426).
 ### Changed
 - Hosting: reduced public API surface for module discovery and dynamic exports projection (kept internal for now).
 - Hosting: dynamic `JsEngine.LoadModule(Assembly, string)` now returns `IDisposable` to encourage deterministic cleanup.
+### Performance
+- Reduced allocations in early-bound member calls by normalizing eligible dynamic member calls into direct typed calls (avoids building `object[]` args on the fast path) (PR #433).
+- Reduced casts/guards for user-class `new` expressions by emitting strongly-typed locals for `newobj` results when constructor return override is not possible (PR #433).
 
 ## v0.7.2 - 2026-01-17
 
@@ -387,7 +703,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
   - Test infrastructure updated to use `ServiceContainer` with per-test `ConsoleOutputSinks` instead of static setters
   - Enables thread-safe per-test Console isolation, removing static state blocking parallel execution
   - **Breaking Change**: Tests must configure Console via dependency injection rather than static methods
-- **CommonJS module identity**: Compiler/runtime now use stable path-based module ids for generated type names to avoid basename collisions (e.g., `./b` vs `./helpers/b`).
+- **CommonJS module identity**: src/Compiler/runtime now use stable path-based module ids for generated type names to avoid basename collisions (e.g., `./b` vs `./helpers/b`).
 - **Console array formatting**: Strings in console arrays now quoted with single quotes and special characters escaped to match Node.js output.
 ### Added
 - **CommonJS regression tests**: Added execution + generator coverage for nested name conflicts, relative-from-module requires, and shared-dependency caching.
@@ -458,7 +774,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 - **Binary operator type coercion**: Fixed strict equality (`===`) comparisons in logical OR patterns (e.g., `id === 1024 || id === 2047`) when comparing captured/boxed variables to numeric literals. The IL generator now correctly applies `ToNumber` conversion when the variable type is `Unknown` (boxed in scope fields), preventing incorrect direct `object`-to-`double` `ceq` comparisons that would always fail. Added regression test `BinaryOperator_StrictEqualCapturedVariable`.
 
 ### Changed
-- **Runtime organization**: Reordered members in `JavaScriptRuntime/Promise.cs` to follow StyleCop conventions (nested types, fields, constructors, public methods, private methods)
+- **Runtime organization**: Reordered members in `src/JavaScriptRuntime/Promise.cs` to follow StyleCop conventions (nested types, fields, constructors, public methods, private methods)
 - **Test organization**: Alphabetically sorted test methods in `BinaryOperator` and `Promise` test classes for consistency
 
 ### Documentation
@@ -504,7 +820,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 - **Runtime Organization**: Renamed `GlobalVariables` to `GlobalThis` and introduced `ModuleIntrinsics` class for better separation of global scope vs module-level intrinsics
 - **Event Loop Foundation**: Added scaffolding for future async/event loop support:
   - `Engine.Execute()` method as placeholder for event loop integration
-  - `SynchronizationContext` infrastructure for async execution coordination
+  - Thread-safe scheduler state + single-threaded event loop pump for async coordination
 ### Fixed
 - **Metadata Generation**: Generic method signatures now correctly use generic type parameters (!0, !1, !2) instead of concrete types, fixing `System.MissingMethodException` for `Func<...>.Invoke` methods
 - **IL Correctness**: Eliminated potential metadata corruption from duplicate assembly/type/member references
@@ -564,7 +880,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 ### Fixed
 - Functions: recursive IIFE crash when function pre-registered in registry with nil handle. Implemented three-way branch logic:
   1. Registered function with valid handle → compile-time ldftn + newobj Func
-  2. Pre-registered function with nil handle → runtime GetCurrentMethod() + CreateSelfDelegate()
+  2. Pre-registered function with nil handle → direct delegate construction (ldftn + newobj) and closure binding
   3. Not registered → ldnull (uses InvokeWithArgs for dynamic calls)
 - Functions: eliminated TypeLoadException when emitting ldftn with nil method handles by adding runtime self-binding path for pre-registered functions.
 - Classes: constructor calls now support fewer arguments than parameters when defaults are present (e.g., `new Person("Alice")` for constructor with 2 params).
@@ -608,8 +924,7 @@ Fixed
 ## v0.1.7 - 2025-11-12
 
 Added
-- Functions: internal self-binding for named function expressions to enable recursion (e.g., const f = function g(){ return g(); }). Implemented via a small prologue that binds the internal name on first entry using a new runtime helper `JavaScriptRuntime.Closure.CreateSelfDelegate`.
-- Runtime: `Closure.CreateSelfDelegate(MethodBase, int paramCount)` to construct the correct `Func<object[], ... , object>` delegate shape for self-calls across arities.
+- Functions: internal self-binding for named function expressions to enable recursion (e.g., const f = function g(){ return g(); }). Implemented by constructing the function delegate directly (ldftn + newobj) and binding the internal name to that delegate on first entry.
 - Tests: generator and execution coverage for classic IIFE and recursive IIFE; new SymbolTable tests for IIFE scopes (anonymous and named) and internal self-binding visibility.
 Changed
 - Hoisting: ensure local function variables are initialized before top-level statement emission so functions can reference each other by variable name prior to IIFE invocation.
@@ -630,7 +945,7 @@ Added
 	Notes: JS ToNumber coercion, correct NaN/±Infinity propagation, and signed zero (-0) preservation where applicable.
 	- GetItem(object, double index): indexer for Int32Array
 	- GetLength(object): length for Int32Array
-	- Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
+	- src/Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
 	- Compiler: object literals now support Identifier, StringLiteral, and NumericLiteral property keys. Numeric keys are coerced to strings using invariant culture (JS ToPropertyKey semantics) during IL emission.
 	- Runtime Object: GetItem(object, double index) supports ExpandoObject (object literal) by coercing the numeric index to a string property name and returning its value (null to model undefined when absent).
 	- Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:
@@ -672,7 +987,7 @@ Docs
 Changed
 - Runtime: qualify BCL Math usages to global::System.Math in String/Array to avoid name collision with JavaScriptRuntime.Math.
 - IL generation diagnostics: centralized all NotSupportedException throwing through ILEmitHelpers (BinaryOperators, ILMethodGenerator, ILExpressionGenerator, JavaScriptFunctionGenerator) to enrich messages with source file:line:column when AST node info is available.
-- Tooling/docs: compiled scripts/generateFeatureCoverage.js with js2il and used the generated DLL to update docs.
+- Tooling/docs: compiled scripts/ECMA262/generateFeatureCoverage.js with js2il and used the generated DLL to update docs.
 - Class scope architecture: all class method scope types are now generated; instantiation controlled by a lightweight heuristic to avoid unnecessary objects while enabling closures.
 - IL generation: removed experimental class / method scope warnings; snapshots updated accordingly.
 - Dispatch: unified dynamic instance member calls through the generic dispatcher (string/array/host) reducing special-cases; refined call-on-expression handling (e.g., obj.method() where obj is an expression).
@@ -712,7 +1027,7 @@ Changed
 
 Fixed
 - Node perf_hooks: stabilized PerfHooks_PerformanceNow_Basic (generator + execution). Direct typed calls to PerfHooks.get_performance() and Performance.now(); elapsed time check matches runtime semantics. Updated generator snapshot to align with current IL.
-- Metadata: deduplicate JavaScriptRuntime AssemblyReference entries by caching a single AssemblyReferenceHandle per emitted assembly (per MetadataBuilder). This eliminates multiple runtime AssemblyRef rows in generated DLLs and reduces metadata bloat. Verified on a compiled sample (scripts/generateFeatureCoverage.js) via a small Reflection.Metadata checker.
+- Metadata: deduplicate JavaScriptRuntime AssemblyReference entries by caching a single AssemblyReferenceHandle per emitted assembly (per MetadataBuilder). This eliminates multiple runtime AssemblyRef rows in generated DLLs and reduces metadata bloat. Verified on a compiled sample (scripts/ECMA262/generateFeatureCoverage.js) via a small Reflection.Metadata checker.
 - Generator: avoid AccessViolation at CastHelpers.StelemRef by fixing once-only boxing before Stelem_ref when constructing object[] for call sites.
 - Tests: resolved Verify newline mismatch in Date execution snapshots.
 
@@ -723,7 +1038,7 @@ Docs
 - Updated ECMAScript 2025 feature coverage to include Date constructor, Date.now, Date.parse, Date.prototype.getTime, and Date.prototype.toISOString; regenerated docs/ECMA262/FeatureCoverage.md.
 
 Tooling
-- Compiled scripts/generateFeatureCoverage.js with js2il; emitted generateFeatureCoverage.dll and runtimeconfig.json next to the script for faster local runs.
+- Compiled scripts/ECMA262/generateFeatureCoverage.js with js2il; emitted generateFeatureCoverage.dll and runtimeconfig.json next to the script for faster local runs.
 
 Tests
 - Added/updated Node generator and execution tests around perf_hooks performance.now; snapshots aligned with typed-call IL.
@@ -788,7 +1103,7 @@ Added
 - Control flow: for-of over arrays and strings using JavaScriptRuntime.Object.GetLength and GetItem; execution and generator tests.
 - Operators: compound assignment "+=" for identifiers via runtime Operators.Add (full JS coercion); execution and generator tests.
 - Node interop: process.argv exposure and enumeration in execution environment; added Environment_EnumerateProcessArgV test.
-- Integration: long-running compile test that parses and emits scripts/generateFeatureCoverage.js (skipped in CI by default).
+- Integration: long-running compile test that parses and emits scripts/ECMA262/generateFeatureCoverage.js (skipped in CI by default).
 
 Changed
 - Codegen: centralized call emission in ILExpressionGenerator; it now dispatches member/host/intrinsic calls.
@@ -813,7 +1128,7 @@ Tests
 - New Array subgroup with execution and generator tests: length, empty length, sort basic, map basic. Targeted isEven test remains green.
 - Added execution and generator tests for: array spread literal copy, String.startsWith, String.localeCompare, string "+=" append, and ControlFlow for-of over arrays/strings. Updated verified snapshots accordingly.
 - Added Node execution test for process argv enumeration (Environment_EnumerateProcessArgV).
- - Added Integration test (Compile_Scripts_GenerateFeatureCoverage) that compiles scripts/generateFeatureCoverage.js; marked [Skip] to avoid CI runtime cost.
+ - Added Integration test (Compile_Scripts_GenerateFeatureCoverage) that compiles scripts/ECMA262/generateFeatureCoverage.js; marked [Skip] to avoid CI runtime cost.
 
 ## v0.1.1 - 2025-08-29
 
@@ -906,4 +1221,3 @@ CI/NuGet
 ## v0.1.0-preview.3 - 2025-07-18
 
 - Initial preview release.
-

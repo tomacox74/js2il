@@ -5,7 +5,7 @@
     {
       "name": "child_process",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/ChildProcess.cs",
+      "implementation": "src/JavaScriptRuntime/Node/ChildProcess.cs",
       "docs": "https://nodejs.org/api/child_process.html",
       "apis": [
         {
@@ -27,7 +27,7 @@
     {
       "name": "fs/promises",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/FSPromises.cs",
+      "implementation": "src/JavaScriptRuntime/Node/FSPromises.cs",
       "docs": "https://nodejs.org/api/fs.html#fspromisesapi",
       "apis": [
         {
@@ -63,7 +63,7 @@
     {
       "name": "os",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/OS.cs",
+      "implementation": "src/JavaScriptRuntime/Node/OS.cs",
       "docs": "https://nodejs.org/api/os.html",
       "apis": [
         {
@@ -83,7 +83,7 @@
     {
       "name": "fs",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/FS.cs",
+      "implementation": "src/JavaScriptRuntime/Node/FS.cs",
       "docs": "https://nodejs.org/api/fs.html",
       "apis": [
         {
@@ -206,7 +206,7 @@
     {
       "name": "path",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/Path.cs",
+      "implementation": "src/JavaScriptRuntime/Node/Path.cs",
       "docs": "https://nodejs.org/api/path.html",
       "apis": [
         {
@@ -289,7 +289,7 @@
     {
       "name": "perf_hooks",
       "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/PerfHooks.cs",
+      "implementation": "src/JavaScriptRuntime/Node/PerfHooks.cs",
       "docs": "https://nodejs.org/api/perf_hooks.html",
       "apis": [
         {
@@ -320,8 +320,8 @@
       "name": "process",
       "status": "partial",
       "implementation": [
-        "JavaScriptRuntime/Node/Process.cs",
-        "JavaScriptRuntime/GlobalVariables.cs"
+        "src/JavaScriptRuntime/Node/Process.cs",
+        "src/JavaScriptRuntime/GlobalVariables.cs"
       ],
       "docs": "https://nodejs.org/api/process.html",
       "apis": [
@@ -379,6 +379,136 @@
               "file": "Js2IL.Tests/Node/ProcessExitCodeTests.cs"
             }
           ]
+        },
+        {
+          "name": "platform",
+          "kind": "property",
+          "status": "supported",
+          "notes": "Returns a Node-compatible platform identifier: win32, linux, darwin, or unknown.",
+          "docs": "https://nodejs.org/api/process.html#processplatform",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "versions.node",
+          "kind": "property",
+          "status": "supported",
+          "notes": "Exposes a minimal process.versions object with node version identity.",
+          "docs": "https://nodejs.org/api/process.html#processversions",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "versions.v8",
+          "kind": "property",
+          "status": "supported",
+          "notes": "V8 version string compatible with Node.js 22.x for compatibility checks.",
+          "docs": "https://nodejs.org/api/process.html#processversions",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "versions.modules",
+          "kind": "property",
+          "status": "supported",
+          "notes": "Node modules ABI version (127) for Node.js 22.x compatibility.",
+          "docs": "https://nodejs.org/api/process.html#processversions",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "versions.js2il",
+          "kind": "property",
+          "status": "supported",
+          "notes": "JS2IL compiler version. JS2IL-specific extension to process.versions.",
+          "docs": "https://nodejs.org/api/process.html#processversions",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "versions.dotnet",
+          "kind": "property",
+          "status": "supported",
+          "notes": ".NET runtime version description. JS2IL-specific extension to process.versions.",
+          "docs": "https://nodejs.org/api/process.html#processversions",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "env",
+          "kind": "property",
+          "status": "supported",
+          "notes": "Returns a cached snapshot object of host environment variables as string values for the current runtime instance. Values are exposed as-is from the host process environment.",
+          "docs": "https://nodejs.org/api/process.html#processenv",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "chdir(directory)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Changes the current working directory for the running process.",
+          "docs": "https://nodejs.org/api/process.html#processchdirdirectory",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "cwd()",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Returns the current working directory of the Node.js process.",
+          "docs": "https://nodejs.org/api/process.html#processcwd",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "nextTick(callback, ...args)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Queues a callback for next-turn execution using the immediate queue. This is an approximation and does not implement full Node nextTick queue semantics.",
+          "docs": "https://nodejs.org/api/process.html#processnexttickcallback-args",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics",
+              "file": "Js2IL.Tests/Node/Process/ExecutionTests.cs"
+            }
+          ]
         }
       ]
     }
@@ -387,7 +517,7 @@
     {
       "name": "__dirname",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+      "implementation": "src/JavaScriptRuntime/Node/GlobalVariables.cs",
       "docs": "https://nodejs.org/api/modules.html#dirname",
       "tests": [
         {
@@ -403,7 +533,7 @@
     {
       "name": "__filename",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+      "implementation": "src/JavaScriptRuntime/Node/GlobalVariables.cs",
       "docs": "https://nodejs.org/api/modules.html#filename",
       "tests": [
         {
@@ -419,9 +549,9 @@
     {
       "name": "require(id)",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs, JavaScriptRuntime/CommonJS/Module.cs",
+      "implementation": "src/JavaScriptRuntime/CommonJS/Require.cs, src/JavaScriptRuntime/CommonJS/ModuleContext.cs, src/JavaScriptRuntime/CommonJS/ModuleName.cs, src/JavaScriptRuntime/CommonJS/Module.cs",
       "docs": "https://nodejs.org/api/modules.html#requireid",
-      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution.",
+      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Also supports compile-time resolution of npm packages via node_modules discovery, .js/.mjs/.cjs files, package.json main, package.json type=module entry graphs, conditional exports/imports with import/require/node/default conditions, and single-* subpath patterns for the supported slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different entries from the same package graph. Runtime require does not probe the file system; packages must be discovered at compile time. package.json imports targets are currently limited to package-local relative paths (./...). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require).",
       "tests": [
         {
           "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_Basic",
@@ -470,13 +600,29 @@
         {
           "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_ParentChildren",
           "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.NodeModulesExecutionTests.CommonJS_Require_NodeModules_PackageJson_Exports_And_NestedDependency",
+          "file": "Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.NodeModulesExecutionTests.CommonJS_Require_NodeModules_DualMode_Exports_Imports_TypeModule_And_MjsEntry",
+          "file": "Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.NodeModulesExecutionTests.CommonJS_Require_NodeModules_UnsupportedConditions_ReportDiagnostic",
+          "file": "Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.NodeModulesGeneratorTests.CommonJS_NodeModules_DualMode_Exports_Imports_TypeModule_And_MjsEntry_EmitsManifest",
+          "file": "Js2IL.Tests/CommonJS/NodeModulesGeneratorTests.cs"
         }
       ]
     },
     {
       "name": "console.log",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Console.cs",
+      "implementation": "src/JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consolelogdata-args",
       "tests": [
         {
@@ -488,7 +634,7 @@
     {
       "name": "console.error",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Console.cs",
+      "implementation": "src/JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consoleerrordata-args",
       "notes": "Writes to stderr.",
       "tests": [
@@ -501,7 +647,7 @@
     {
       "name": "console.warn",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Console.cs",
+      "implementation": "src/JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consolewarndata-args",
       "notes": "Writes to stderr.",
       "tests": [
@@ -514,7 +660,7 @@
     {
       "name": "setTimeout",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs",
       "docs": "https://nodejs.org/api/timers.html#settimeoutcallback-delay-args",
       "notes": "Schedules a callback to be executed after a specified delay in milliseconds. Returns a timer handle that can be used with clearTimeout.",
       "tests": [
@@ -535,7 +681,7 @@
     {
       "name": "clearTimeout",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs",
       "docs": "https://nodejs.org/api/timers.html#cleartimeouttimeout",
       "notes": "Cancels a timer that was previously created with setTimeout. Returns undefined (null in .NET).",
       "tests": [
@@ -552,7 +698,7 @@
     {
       "name": "setImmediate",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#setimmediatecallback-args",
       "notes": "Schedules a callback to run on the next event loop iteration. Callbacks execute in FIFO order. Nested setImmediate calls run on the next iteration. Returns a handle that can be used with clearImmediate.",
       "tests": [
@@ -581,7 +727,7 @@
     {
       "name": "clearImmediate",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#clearimmediateimmediate",
       "notes": "Cancels an immediate that was previously created with setImmediate. Returns undefined (null in .NET).",
       "tests": [
@@ -594,7 +740,7 @@
     {
       "name": "setInterval",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#setintervalcallback-delay-args",
       "notes": "Schedules a callback to run repeatedly with the specified delay in milliseconds. Returns a handle that can be used with clearInterval. Supports additional arguments passed to the callback.",
       "tests": [
@@ -607,7 +753,7 @@
     {
       "name": "clearInterval",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "implementation": "src/JavaScriptRuntime/GlobalThis.cs, src/JavaScriptRuntime/Timers.cs, src/JavaScriptRuntime/Engine/NodeSchedulerState.cs, src/JavaScriptRuntime/Engine/NodeEventLoopPump.cs",
       "docs": "https://nodejs.org/api/timers.html#clearintervaltimeout",
       "notes": "Cancels a repeating timer that was previously created with setInterval. Returns undefined (null in .NET).",
       "tests": [
@@ -620,7 +766,7 @@
     {
       "name": "Promise",
       "status": "supported",
-      "implementation": "JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs",
+      "implementation": "src/JavaScriptRuntime/Promise.cs, src/JavaScriptRuntime/Engine/EngineCore.cs",
       "docs": "https://nodejs.org/api/globals.html#promise",
       "notes": "Promise/A+ compliant implementation with microtask scheduling via IMicrotaskScheduler. Supports constructor, Promise.resolve(), Promise.reject(), then(), catch(), and finally(). Includes proper handling of returned Promises in handlers and chaining semantics.",
       "tests": [
@@ -689,7 +835,7 @@
   ],
   "limitations": [
     "No Buffer support yet; fs APIs operate on UTF-8 text only.",
-    "CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.",
+    "CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules discovery across .js/.mjs/.cjs files, package.json type=module entry graphs, and package exports/imports condition selection for import/require/node/default in the supported slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different package entries in one graph, and import.meta.url is available for compiled modules as a deterministic file:// URL. Runtime probing, package imports targets outside package-local relative paths (./...), custom loaders/hooks, and broader Node loader semantics beyond the documented slice remain unsupported.",
     "Only a small subset of Node is implemented to support tests; many APIs are unimplemented."
   ]
 }

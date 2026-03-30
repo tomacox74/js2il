@@ -40,7 +40,7 @@ Non-goals (initially):
   - ensure PE includes the correct debug directory entry
 
 Expected code touchpoints (names may vary):
-- `Js2IL/Compiler.cs`, `Js2IL/CompilerOptions.cs`, possibly `Js2IL/Program.cs`
+- `src/Compiler/Compiler.cs`, `src/Compiler/CompilerOptions.cs`, possibly `src/Compiler/Program.cs`
 - IL/metadata writer services (the stage that currently creates `PEBuilder`)
 
 ### 3) Mapping JavaScript Source Locations
@@ -174,3 +174,4 @@ Suggested approach:
 - How should we represent “scope-as-class” variables in debugger locals?
 - Should the default document path be relative to input file directory or current working directory?
 - Do we want deterministic PDBs for reproducible builds?
+

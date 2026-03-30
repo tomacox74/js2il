@@ -1,3 +1,5 @@
+"use strict";
+
 class Adder {
     constructor(a, b) {
         this.a = a;

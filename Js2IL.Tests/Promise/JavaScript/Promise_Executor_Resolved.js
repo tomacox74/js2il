@@ -1,3 +1,5 @@
+"use strict";
+
 const p = new Promise((resolve) => {
     resolve("Hello World");
 });

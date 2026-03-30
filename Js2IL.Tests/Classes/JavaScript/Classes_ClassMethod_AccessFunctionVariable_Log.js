@@ -1,3 +1,5 @@
+"use strict";
+
 function testFunction() {
 	const FUNCTION_VALUE = "Hello from function";
 	

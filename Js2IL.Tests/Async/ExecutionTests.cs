@@ -25,6 +25,9 @@ namespace Js2IL.Tests.Async
         public Task Async_ArrowFunction_SimpleAwait() { var testName = nameof(Async_ArrowFunction_SimpleAwait); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Async_ArrowFunction_LexicalThis() { var testName = nameof(Async_ArrowFunction_LexicalThis); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Async_FunctionExpression_SimpleAwait() { var testName = nameof(Async_FunctionExpression_SimpleAwait); return ExecutionTest(testName); }
 
         [Fact]
@@ -44,5 +47,32 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_TryFinally_ReturnPreservedThroughAwait() { var testName = nameof(Async_TryFinally_ReturnPreservedThroughAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_SimpleAwait() { var testName = nameof(Async_ClassMethod_SimpleAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_WithThis() { var testName = nameof(Async_ClassMethod_WithThis); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_StaticMethod_SimpleAwait() { var testName = nameof(Async_StaticMethod_SimpleAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_MultipleAwaits() { var testName = nameof(Async_ClassMethod_MultipleAwaits); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ClassMethod_CallsOtherAsync() { var testName = nameof(Async_ClassMethod_CallsOtherAsync); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_Inheritance_SuperAsyncMethod() { var testName = nameof(Async_Inheritance_SuperAsyncMethod); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForAwaitOf_Array() { var testName = nameof(Async_ForAwaitOf_Array); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForAwaitOf_AsyncIterator_BreakCloses() { var testName = nameof(Async_ForAwaitOf_AsyncIterator_BreakCloses); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForAwaitOf_SyncIteratorFallback_BreakCloses() { var testName = nameof(Async_ForAwaitOf_SyncIteratorFallback_BreakCloses); return ExecutionTest(testName); }
     }
 }

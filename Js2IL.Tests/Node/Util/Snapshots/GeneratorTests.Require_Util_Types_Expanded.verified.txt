@@ -1,0 +1,194 @@
+﻿// IL code: Require_Util_Types_Expanded
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_Util_Types_Expanded
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21d9
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 381 (0x17d)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_Util_Types_Expanded/Scope,
+			[1] object,
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Map,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Set,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
+		)
+
+		IL_0000: newobj instance void Modules.Require_Util_Types_Expanded/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "util"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.2
+		IL_0012: ldloc.2
+		IL_0013: stloc.1
+		IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Map::.ctor()
+		IL_0019: stloc.3
+		IL_001a: ldloc.1
+		IL_001b: ldstr "types"
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0025: ldstr "isMap"
+		IL_002a: ldloc.3
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0030: stloc.2
+		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0036: ldloc.2
+		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003c: pop
+		IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Set::.ctor()
+		IL_0042: stloc.s 4
+		IL_0044: ldloc.1
+		IL_0045: ldstr "types"
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_004f: ldstr "isSet"
+		IL_0054: ldloc.s 4
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005b: stloc.2
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: ldloc.2
+		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0067: pop
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0072: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_0077: stloc.s 5
+		IL_0079: ldloc.1
+		IL_007a: ldstr "types"
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0084: ldstr "isProxy"
+		IL_0089: ldloc.s 5
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0090: stloc.2
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0096: ldloc.2
+		IL_0097: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009c: pop
+		IL_009d: ldloc.1
+		IL_009e: ldstr "types"
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a8: stloc.2
+		IL_00a9: ldc.r8 3
+		IL_00b2: box [System.Runtime]System.Double
+		IL_00b7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_00bc: stloc.s 6
+		IL_00be: ldloc.2
+		IL_00bf: ldstr "isTypedArray"
+		IL_00c4: ldloc.s 6
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00cb: stloc.2
+		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d1: ldloc.2
+		IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d7: pop
+		IL_00d8: ldloc.1
+		IL_00d9: ldstr "types"
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e3: stloc.2
+		IL_00e4: ldc.i4.3
+		IL_00e5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00ea: dup
+		IL_00eb: ldc.r8 1
+		IL_00f4: box [System.Runtime]System.Double
+		IL_00f9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00fe: dup
+		IL_00ff: ldc.r8 2
+		IL_0108: box [System.Runtime]System.Double
+		IL_010d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0112: dup
+		IL_0113: ldc.r8 3
+		IL_011c: box [System.Runtime]System.Double
+		IL_0121: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0126: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_012b: stloc.s 7
+		IL_012d: ldloc.2
+		IL_012e: ldstr "isTypedArray"
+		IL_0133: ldloc.s 7
+		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_013a: stloc.2
+		IL_013b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0140: ldloc.2
+		IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0146: pop
+		IL_0147: ldstr "abc"
+		IL_014c: ldstr ""
+		IL_0151: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0156: stloc.s 8
+		IL_0158: ldloc.1
+		IL_0159: ldstr "types"
+		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0163: ldstr "isRegExp"
+		IL_0168: ldloc.s 8
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_016f: stloc.2
+		IL_0170: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0175: ldloc.2
+		IL_0176: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_017b: pop
+		IL_017c: ret
+	} // end of method Require_Util_Types_Expanded::__js_module_init__
+
+} // end of class Modules.Require_Util_Types_Expanded
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21e2
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_Util_Types_Expanded::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

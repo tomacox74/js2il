@@ -17,17 +17,17 @@ public class DependencyPlannerTests
         {
             Ast = ast,
             Name = "TestModule",
-            Path = "test.js"
+            Path = "test.js",
+            ModuleId = "TestModule"
         };
 
         var builder = new SymbolTableBuilder();
         builder.Build(module);
         var symbolTable = module.SymbolTable ?? throw new InvalidOperationException("Symbol table was not built.");
 
-        var logger = new TestLogger();
         var options = new CompilerOptions { Verbose = true };
         var registry = new CallableRegistry();
-        var coordinator = new TwoPhaseCompilationCoordinator(logger, options, registry);
+        var coordinator = new TwoPhaseCompilationCoordinator(options, registry);
         coordinator.RunPhase1Discovery(symbolTable);
 
         return (symbolTable, coordinator);

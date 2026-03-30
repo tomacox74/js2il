@@ -1,51 +1,63 @@
 #!/usr/bin/env node
+"use strict";
+
 /**
- * Build a Release nupkg of js2il and install it as the global dotnet tool.
+ * Build a Release nupkg of js2il and install it as either:
+ * 1. The global dotnet tool (default)
+ * 2. A local isolated tool path (`--tool-path`)
+ *
  * This script ensures the newest version is installed by:
  * 1. Using dotnet pack (not publish) to create a proper nupkg
- * 2. Removing the tool store cache to force fresh extraction
- * Usage: node scripts/installLocalTool.js
+ * 2. Removing the target install location before installing
+ * 3. Removing the global tool store cache before global installs
+ *
+ * Usage:
+ *   node scripts/installLocalTool.js
+ *   node scripts/installLocalTool.js --tool-path artifacts/local-js2il
  */
+const {
+  defaultPackDir,
+  installPackagedTool,
+  packToolPackage,
+  resolveRepoPath,
+} = require('./localToolUtils');
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+function parseArgs(argv) {
+  const args = {
+    packDir: defaultPackDir,
+    toolPath: null,
+  };
 
-const repoRoot = path.resolve(__dirname, '..');
-const packDir = path.join(repoRoot, 'out_publish');
-const toolStorePath = path.join(os.homedir(), '.dotnet', 'tools', '.store', 'js2il');
+  for (let i = 2; i < argv.length; i++) {
+    const arg = argv[i];
 
-function run(cmd, opts = {}) {
-  execSync(cmd, { stdio: 'inherit', cwd: repoRoot, ...opts });
-}
+    if (arg === '--pack-dir' && argv[i + 1]) {
+      args.packDir = resolveRepoPath(argv[++i]);
+      continue;
+    }
 
-function removeDir(dirPath) {
-  if (fs.existsSync(dirPath)) {
-    fs.rmSync(dirPath, { recursive: true, force: true });
-    console.log(`Removed: ${dirPath}`);
+    if (arg === '--tool-path' && argv[i + 1]) {
+      args.toolPath = resolveRepoPath(argv[++i]);
+      continue;
+    }
+
+    if (arg === '--help' || arg === '-h') {
+      console.log('Usage: node scripts/installLocalTool.js [--pack-dir <dir>] [--tool-path <dir>]');
+      process.exit(0);
+    }
+
+    throw new Error(`Unknown arg: ${arg}`);
   }
+
+  return args;
 }
 
 try {
-  console.log(`Packing js2il to ${packDir} ...`);
-  run('dotnet pack Js2IL -c Release -o "' + packDir + '"');
+  const args = parseArgs(process.argv);
+  const packDir = packToolPackage({ packDir: args.packDir });
+  const installResult = installPackagedTool({ packDir, toolPath: args.toolPath });
 
-  console.log('Uninstalling existing global js2il (if any)...');
-  try {
-    run('dotnet tool uninstall js2il -g');
-  } catch (err) {
-    // Ignore failures (not installed)
-  }
-
-  // Remove tool store cache to ensure fresh install
-  console.log('Clearing tool store cache...');
-  removeDir(toolStorePath);
-
-  console.log('Installing js2il from local pack directory...');
-  run('dotnet tool install --global --add-source "' + packDir + '" js2il');
-
-  console.log('Done. Run "js2il --version" to verify.');
+  console.log(`Done. Run "${installResult.executable} --version" to verify.`);
 } catch (err) {
   console.error('Failed to build/install local js2il:', err.message || err);
   process.exit(1);

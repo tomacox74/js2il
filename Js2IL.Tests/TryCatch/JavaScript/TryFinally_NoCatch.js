@@ -1,3 +1,5 @@
+"use strict";
+
 try {
     console.log("in try");
 } finally {

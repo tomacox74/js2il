@@ -1,3 +1,5 @@
+"use strict";
+
 function thenImpl(resolve, reject) {
   reject("err");
 }

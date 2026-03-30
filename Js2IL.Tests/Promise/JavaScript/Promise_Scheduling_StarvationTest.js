@@ -1,3 +1,5 @@
+"use strict";
+
 // the maximum number of microtasks that can execute sequentially is 1024 before the next macrotask is executed
 // we test this by enquening 2048 promises and 1 setTimer
 console.log("Creating 2048 Promises")

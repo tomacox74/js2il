@@ -1,0 +1,222 @@
+name: BenchmarkDotNet Performance Suite
+run-name: BenchmarkDotNet suite (${{ github.event.release.tag_name || github.ref_name }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark_filter:
+        description: 'BenchmarkDotNet filter (e.g., *minimal*, *Jint*)'
+        required: false
+        default: '*'
+      mode:
+        description: 'Benchmark mode (default/phased/all)'
+        required: false
+        default: 'all'
+      js2il_package_version:
+        description: 'Published Js2IL package version to benchmark (for example 0.9.5)'
+        required: false
+        default: ''
+  release:
+    types: [published]
+
+jobs:
+  benchmarkdotnet-suite:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Determine js2il benchmark package mode
+        shell: bash
+        env:
+          INPUT_JS2IL_PACKAGE_VERSION: ${{ github.event.inputs.js2il_package_version || '' }}
+        run: |
+          set -euo pipefail
+
+          package_version=""
+
+          if [ "${{ github.event_name }}" = "release" ]; then
+            package_version="${{ github.event.release.tag_name }}"
+          elif [ -n "$INPUT_JS2IL_PACKAGE_VERSION" ]; then
+            package_version="$INPUT_JS2IL_PACKAGE_VERSION"
+          elif [ "${GITHUB_REF_TYPE:-}" = "tag" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            package_version="${GITHUB_REF_NAME}"
+          fi
+
+          package_version="${package_version#v}"
+
+          if [ -n "$package_version" ]; then
+            echo "Using published Js2IL packages version: $package_version"
+            echo "USE_PUBLISHED_JS2IL_PACKAGES=true" >> "$GITHUB_ENV"
+            echo "JS2IL_PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
+          else
+            echo "Using checked-out source tree projects for Js2IL benchmarks"
+            echo "USE_PUBLISHED_JS2IL_PACKAGES=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Restore benchmark project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+            tries=20
+            delay=30
+
+            for i in $(seq 1 $tries); do
+              if dotnet restore tests/performance/Benchmarks/Benchmarks.csproj \
+                -p:UsePublishedJs2ILPackages=true \
+                -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}"; then
+                echo "Restored Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION}"
+                exit 0
+              fi
+
+              echo "Attempt $i/$tries: Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION} not available yet on NuGet; waiting ${delay}s..."
+              sleep $delay
+            done
+
+            echo "Failed to restore Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION} from NuGet after $tries attempts" >&2
+            exit 1
+          fi
+
+          dotnet restore tests/performance/Benchmarks/Benchmarks.csproj
+
+      - name: Build benchmark project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          MSBUILD_ARGS=()
+          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+            MSBUILD_ARGS+=(-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}")
+          fi
+
+          dotnet build tests/performance/Benchmarks/Benchmarks.csproj -c Release --no-restore "${MSBUILD_ARGS[@]}"
+      
+      - name: Shutdown build server
+        run: |
+          # Free up resources before running benchmarks
+          dotnet build-server shutdown
+      
+      - name: Run BenchmarkDotNet Suite
+        id: benchmark
+        shell: bash
+        env:
+          BENCHMARK_MODE: ${{ github.event.inputs.mode || 'all' }}
+          BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
+        run: |
+          set -euo pipefail
+
+          MODE_ARG=""
+          if [ "$BENCHMARK_MODE" = "phased" ]; then
+            MODE_ARG="--phased"
+          elif [ "$BENCHMARK_MODE" = "all" ]; then
+            MODE_ARG="--all"
+          fi
+
+          DOTNET_ARGS=()
+          if [ -n "$MODE_ARG" ]; then
+            DOTNET_ARGS+=("$MODE_ARG")
+          fi
+          DOTNET_ARGS+=(--filter "$BENCHMARK_FILTER" --exporters json)
+
+          MSBUILD_ARGS=()
+          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+            MSBUILD_ARGS+=(-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}")
+          fi
+
+          dotnet run --project tests/performance/Benchmarks/Benchmarks.csproj -c Release --no-build "${MSBUILD_ARGS[@]}" -- "${DOTNET_ARGS[@]}"
+
+          if [ ! -d "tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results" ] || ! compgen -G "tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.json" > /dev/null; then
+            echo "BenchmarkDotNet produced no result artifacts; failing workflow."
+            exit 1
+          fi
+
+      - name: Ingest Benchmark Results to Supabase
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js --source benchmarkdotnet --input tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results
+      
+      - name: Upload BenchmarkDotNet Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmarkdotnet-results
+          path: |
+            tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/**/*
+          retention-days: 90
+      
+      - name: Upload Summary Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-summary
+          path: |
+            tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.md
+            tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.html
+            tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.json
+          retention-days: 90
+      
+      - name: Comment Summary on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Find the markdown summary
+            const artifactsDir = 'tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results';
+            
+            if (!fs.existsSync(artifactsDir)) {
+              console.log('No benchmark results found');
+              return;
+            }
+            
+            const files = fs.readdirSync(artifactsDir);
+            const mdFile = files.find(f => f.endsWith('-report.md'));
+            
+            if (!mdFile) {
+              console.log('No markdown report found');
+              return;
+            }
+            
+            const mdPath = path.join(artifactsDir, mdFile);
+            const summary = fs.readFileSync(mdPath, 'utf8');
+            
+            const comment = `## 📊 BenchmarkDotNet Performance Results
+            
+            ${summary}
+            
+            ---
+            *Run on: ${new Date().toISOString()}*
+            *Mode: ${{ github.event.inputs.mode || 'default' }}*
+            *Filter: ${{ github.event.inputs.benchmark_filter || 'all' }}*
+            *Full results: [Download artifacts](${context.payload.repository.html_url}/actions/runs/${context.runId})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            }).catch(err => {
+              console.log('Failed to post comment:', err);
+            });

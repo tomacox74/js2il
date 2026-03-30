@@ -8,6 +8,7 @@ using System.Text;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
 using System.Runtime.ExceptionServices;
+using Js2IL.IR;
 
 namespace Js2IL.Tests
 {
@@ -16,6 +17,7 @@ namespace Js2IL.Tests
         private readonly JavaScriptParser _parser;
         private readonly JavaScriptAstValidator _validator;
         private readonly string _outputPath;
+        private readonly string _testCategory;
         private readonly VerifySettings _verifySettings = new();
 
         protected ExecutionTestsBase(string testCategory)
@@ -23,58 +25,42 @@ namespace Js2IL.Tests
             _parser = new JavaScriptParser();
             _validator = new JavaScriptAstValidator();
             _verifySettings.DisableDiff();
+            _testCategory = testCategory;
 
-            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", $"{testCategory}.ExecutionTests");
+            // Use a unique per-run directory to avoid file locks from in-proc AssemblyLoadContext
+            // execution causing intermittent failures when re-running tests on Windows.
+            var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
+            var runId = Guid.NewGuid().ToString("N");
+            _outputPath = Path.Combine(root, $"{testCategory}.ExecutionTests", runId);
             Directory.CreateDirectory(_outputPath);
         }
 
-        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
+        protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
-            var js = GetJavaScript(testName);
-            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
+            // Use shared compilation to avoid compiling the same JS twice for ExecutionTests and GeneratorTests
+            var compiled = SharedTestCompilation.GetOrCompile(
+                _testCategory,
+                testName,
+                additionalScripts,
+                outputDir => TestCompiler.Compile(
+                    testName,
+                    _testCategory,
+                    outputDir,
+                    name => GetJavaScriptAndSourcePath(name, sourceFilePath),
+                    additionalScripts,
+                    enableIRMetrics: true));
 
-            var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, js);
+            var expectedPath = compiled.AssemblyPath;
 
-            // Add additional scripts to the mock file system
-            if (additionalScripts != null)
+            string il;
+            if (preferOutOfProc)
             {
-                foreach (var scriptName in additionalScripts)
-                {
-                    var scriptContent = GetJavaScript(scriptName);
-                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                    mockFileSystem.AddFile(scriptPath, scriptContent);
-                }
+                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
             }
-
-            var options = new CompilerOptions
+            else
             {
-                OutputDirectory = _outputPath
-            };
-
-            var testLogger = new TestLogger();
-            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
-            var compiler = serviceProvider.GetRequiredService<Compiler>();
-            
-            if (!compiler.Compile(testFilePath))
-            {
-                var details = string.IsNullOrWhiteSpace(testLogger.Errors)
-                    ? string.Empty
-                    : $"\nErrors:\n{testLogger.Errors}";
-                var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
-                    ? string.Empty
-                    : $"\nWarnings:\n{testLogger.Warnings}";
-                throw new InvalidOperationException($"Compilation failed for test {testName}.{details}{warnings}");
+                il = await ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, allowUnhandledException: allowUnhandledException, addMocks: addMocks);
             }
-
-            // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
-            // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
-            var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
-
-            var il = preferOutOfProc
-                ? ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName)
-                : ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
 
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -85,7 +71,7 @@ namespace Js2IL.Tests
                 settings.UseDirectory(snapshotsDirectory);
             }
             configureSettings?.Invoke(settings);
-            return Verify(il, settings);
+            await Verify(il, settings);
         }
 
         private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException, string? testName = null, int timeoutMs = 30000)
@@ -134,7 +120,7 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
+        private async Task<string> ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, bool allowUnhandledException = false, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
             ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
             ArgumentNullException.ThrowIfNull(testName, nameof(testName));
@@ -172,6 +158,15 @@ namespace Js2IL.Tests
                 {
                     File.Copy(assemblyPath, uniquePath, overwrite: true);
 
+                    // Copy PDB alongside the copied DLL so we can load symbols from a stream.
+                    // This enables source/line info even when the assembly itself is loaded from bytes.
+                    var sourcePdbPath = Path.ChangeExtension(assemblyPath, ".pdb");
+                    var uniquePdbPath = Path.ChangeExtension(uniquePath, ".pdb");
+                    if (File.Exists(sourcePdbPath))
+                    {
+                        File.Copy(sourcePdbPath, uniquePdbPath, overwrite: true);
+                    }
+
                     // Load the generated assembly into an isolated collectible ALC per test to avoid
                     // collisions when multiple tests compile to the same assembly name (e.g., many
                     // CommonJS tests have an entry module named "a").
@@ -181,7 +176,15 @@ namespace Js2IL.Tests
                     // Load from stream so we can delete the copied DLL without relying on GC.Collect
                     // to release file locks.
                     using var stream = File.OpenRead(uniquePath);
-                    assembly = alc.LoadFromStream(stream);
+                    if (File.Exists(uniquePdbPath))
+                    {
+                        using var pdbStream = File.OpenRead(uniquePdbPath);
+                        assembly = alc.LoadFromStream(stream, pdbStream);
+                    }
+                    else
+                    {
+                        assembly = alc.LoadFromStream(stream);
+                    }
                 }
                 else
                 {
@@ -219,6 +222,7 @@ namespace Js2IL.Tests
 
                 // Run the entry point in a separate thread with timeout to prevent infinite hangs
                 ExceptionDispatchInfo? threadException = null;
+                var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 var executionThread = new Thread(() =>
                 {
                     setupMocks();
@@ -234,10 +238,13 @@ namespace Js2IL.Tests
                     finally
                     {
                         JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
+                        completion.TrySetResult();
                     }
                 });
                 executionThread.Start();
-                bool completed = executionThread.Join(timeoutMs);
+                var timeoutTask = Task.Delay(timeoutMs);
+                var completedTask = await Task.WhenAny(completion.Task, timeoutTask);
+                bool completed = completedTask == completion.Task;
                 if (!completed)
                 {
                     // Cannot safely abort managed threads, but we can at least fail the test
@@ -245,7 +252,10 @@ namespace Js2IL.Tests
                 }
                 if (threadException != null)
                 {
-                    threadException.Throw();
+                    if (!allowUnhandledException)
+                    {
+                        threadException.Throw();
+                    }
                 }
                 
                 postTestProcessingAction?.Invoke(captured);
@@ -264,7 +274,8 @@ namespace Js2IL.Tests
                     alc.Unload();
                 }
 
-                try { File.Delete(uniquePath); } catch { }
+                TryDeleteFile(uniquePath);
+                TryDeleteFile(Path.ChangeExtension(uniquePath, ".pdb"));
             }
 
             return outText;
@@ -308,16 +319,56 @@ namespace Js2IL.Tests
             public string GetOutput() => _sb.ToString();
         }
 
-        private string GetJavaScript(string testName)
+        private static void TryDeleteFile(string path)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to delete temp file '{path}': {ex.Message}");
+            }
+        }
+
+        private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
         {
             var assembly = Assembly.GetExecutingAssembly();
             // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
             // Embedded resource names use '.' separators, so normalize path separators to '.'.
             var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
 
-            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{resourceKey}.js";
+            var category = GetCategoryFromNamespace();
+            var categorySpecific = $"Js2IL.Tests.{category}.JavaScript.{resourceKey}.js";
             var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
-            using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
+
+            Stream? stream = assembly.GetManifestResourceStream(categorySpecific);
+            var resolvedResourceName = categorySpecific;
+            if (stream == null)
+            {
+                stream = assembly.GetManifestResourceStream(legacy);
+                resolvedResourceName = legacy;
+            }
+
+            if (stream == null)
+            {
+                // Some build configurations produce manifest resource names with different casing
+                // (e.g., "JS2IL.Tests" vs "Js2IL.Tests"). Resolve case-insensitively.
+                var names = assembly.GetManifestResourceNames();
+                var match = names.FirstOrDefault(n => string.Equals(n, categorySpecific, StringComparison.OrdinalIgnoreCase))
+                    ?? names.FirstOrDefault(n => string.Equals(n, legacy, StringComparison.OrdinalIgnoreCase));
+
+                if (match != null)
+                {
+                    stream = assembly.GetManifestResourceStream(match);
+                    resolvedResourceName = match;
+                }
+            }
+
+            using (stream)
             {
                 if (stream == null)
                 {
@@ -325,9 +376,109 @@ namespace Js2IL.Tests
                 }
                 using (var reader = new StreamReader(stream))
                 {
-                    return reader.ReadToEnd();
+                    var script = reader.ReadToEnd();
+                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(assembly, resolvedResourceName, callerSourceFilePath);
+                    if (string.IsNullOrWhiteSpace(sourcePath))
+                    {
+                        // Fallback: derive the repo path from known test layout:
+                        // Js2IL.Tests/<Category>/JavaScript/<testName>.js
+                        if (!string.IsNullOrWhiteSpace(category))
+                        {
+                            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+                            if (projectRoot != null)
+                            {
+                                var categoryPath = category.Replace('.', Path.DirectorySeparatorChar);
+                                var relative = Path.Combine(
+                                    categoryPath,
+                                    "JavaScript",
+                                    testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
+
+                                var candidate = Path.GetFullPath(Path.Combine(projectRoot, relative));
+                                if (File.Exists(candidate))
+                                {
+                                    sourcePath = candidate;
+                                }
+                            }
+                        }
+                    }
+                    return (script, sourcePath);
                 }
             }
+        }
+
+        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Assembly assembly, string jsResourceName, string callerSourceFilePath)
+        {
+            // For each embedded "*.js" test script, we also embed a "*.path" text resource
+            // containing the project-relative path to the original on-disk JS file.
+            var pathResourceName = jsResourceName.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                ? jsResourceName.Substring(0, jsResourceName.Length - 3) + ".path"
+                : jsResourceName + ".path";
+
+            using var pathStream = assembly.GetManifestResourceStream(pathResourceName);
+            if (pathStream == null)
+            {
+                return null;
+            }
+
+            using var reader = new StreamReader(pathStream);
+            var relativePath = reader.ReadToEnd().Trim();
+            if (string.IsNullOrWhiteSpace(relativePath))
+            {
+                return null;
+            }
+
+            if (Path.IsPathRooted(relativePath))
+            {
+                return relativePath;
+            }
+
+            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+            if (projectRoot == null)
+            {
+                return null;
+            }
+
+            // Normalize separators to current OS.
+            relativePath = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            return Path.GetFullPath(Path.Combine(projectRoot, relativePath));
+        }
+
+        private static string? FindDirectoryContainingFile(string startDirectory, string fileName)
+        {
+            var current = startDirectory;
+            while (!string.IsNullOrWhiteSpace(current))
+            {
+                var candidate = Path.Combine(current, fileName);
+                if (File.Exists(candidate))
+                {
+                    return current;
+                }
+
+                var parent = Directory.GetParent(current);
+                if (parent == null)
+                {
+                    break;
+                }
+                current = parent.FullName;
+            }
+
+            return null;
+        }
+
+        private string GetCategoryFromNamespace()
+        {
+            var ns = GetType().Namespace ?? string.Empty;
+            const string rootNs = "Js2IL.Tests.";
+            if (ns.StartsWith(rootNs, StringComparison.Ordinal))
+            {
+                var category = ns.Substring(rootNs.Length);
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    return category;
+                }
+            }
+
+            return ns.Split('.').LastOrDefault() ?? string.Empty;
         }
     }
 }

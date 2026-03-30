@@ -1,0 +1,5 @@
+"use strict";
+
+const path = require('path');
+
+console.log(path.delimiter === ':' || path.delimiter === ';');

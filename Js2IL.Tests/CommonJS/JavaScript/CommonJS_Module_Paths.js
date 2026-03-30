@@ -1,3 +1,5 @@
+"use strict";
+
 // Test module.paths - the search paths for the module
 // This is an array of directories where require() looks for modules
 

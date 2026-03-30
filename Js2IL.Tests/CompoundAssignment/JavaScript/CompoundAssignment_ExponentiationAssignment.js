@@ -1,3 +1,5 @@
+"use strict";
+
 // Test exponentiation assignment operator **=
 var x = 2;
 x **= 3;

@@ -22,6 +22,8 @@ public class IRPipelineParentScopeTests
             Directory.CreateDirectory(outputPath);
 
             var js = """
+                "use strict";
+
                 function makeCounter() {
                     var x = 0;
                     function inc() {
@@ -89,6 +91,8 @@ public class IRPipelineParentScopeTests
             Directory.CreateDirectory(outputPath);
 
             var js = """
+                "use strict";
+
                 function makeCounter() {
                     var x = 0;
                     function f() {

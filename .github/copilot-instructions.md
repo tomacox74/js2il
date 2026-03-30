@@ -2,14 +2,25 @@
 
 JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to native .NET assemblies using System.Reflection.Metadata for direct IL emission. 
 
+## Project goals are sorted by priority
+* JS2IL should be easy to to use for both library authors and end users.  This means good documentation, good error messages, and a good developer experience.  It should be low friction.
+* JS2IL completely conform to the JavaScript language specification (ECMA-262).  Currently we are targeting ES2025.
+* The JS2IL runtime behavior should be completely compatible with Node.js.  Any script that runs in Node.js should compile with run with js2il.
+* The JS2IL compiler and runtime should be NPM compatibale and have the same module resolution rules as node.js.
+* Given that js2il is a true compiler there is a very reasonable expectation that its output should be faster than other solutions. A lot of the performance comparisons are against jint with is a dotnet interpreted solution.
+* it is not expected to ever match node.js performance because that is a project that has had a decade of optimiizations but it should be able to run real world node applications with acceptable performance.
+
+These goals drive choices made.  And their ranking above should be clear. For example if I have a 10x perf inprovement but it breaks compatiblity with node or ECMA 262 it is a non-starter.
+
 ## Architecture Overview
 
-### Compilation Pipeline (5 Phases)
+### Compilation Pipeline (6 Phases)
 1. **Parse**: JavaScript → AST (Acornima parser)
 2. **Validate**: AST validation for supported features (`JavaScriptAstValidator`)
 3. **Symbol Table**: Build scope tree with variable bindings (`SymbolTableBuilder` → `SymbolTable`)
 4. **Type Generation**: Scopes → .NET types with fields (`TypeGenerator` → `VariableRegistry`)
-5. **IL Emission**: AST + metadata → IL bytes (`MainGenerator` orchestrates specialized generators)
+5. **Two-Phase Callable Planning**: `TwoPhaseCompilationCoordinator` runs `CallableDiscovery`, `CallableDependencyCollector`, `CompilationPlanner`, and `CallableRegistry` setup to discover callables, compute dependency order, and predeclare callable tokens.
+6. **Lowering + IL Emission**: `JsMethodCompiler` runs AST → HIR (`HIRBuilder`) → LIR (`HIRToLIRLowerer`), applies LIR normalization/optimization (`LIRIntrinsicNormalization`, `LIRMemberCallNormalization`, `LIRTypeNormalization`, `LIRCoercionCSE`), then emits IL via `LIRToILCompiler` and finalizes preallocated MethodDefs via `MethodDefinitionFinalizer`.
 
 ### Core Concepts
 
@@ -22,23 +33,25 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 
 **Strongly-Typed Scope Locals** (recent optimization): Local variables storing scope instances use `TypeDefinitionHandle` for their specific scope class instead of `System.Object`, eliminating `castclass` after `ldloc`. Only cast when loading from parameters or scope arrays.
 
-### Key Services
+### Key Compiler Services
 
-- **TypeGenerator**: Creates .NET types from `SymbolTable`, populates `VariableRegistry` with field handles
-- **MainGenerator**: Orchestrates IL emission for global scope, wires function/class generators
-- **ILMethodGenerator**: Statement-level IL emission (control flow, assignments, declarations)
-- **ILExpressionGenerator**: Expression-level IL emission (operators, calls, member access)
-- **JavaScriptFunctionGenerator**: Emits function declarations/expressions as static methods
-- **JavaScriptArrowFunctionGenerator**: Emits arrow functions (inherits parent `this`)
-- **ClassesGenerator**: Emits ES6 classes (constructors, methods, fields, private fields with name mangling)
-- **BinaryOperators**: Handles all binary operators including scope-aware variable loading
-- **Runtime**: Provides `MemberReferenceHandle` cache for JavaScriptRuntime helper methods
+- **MainGenerator**: Entry-point orchestrator that delegates callable planning/compilation to the two-phase pipeline before module-main compilation.
+- **TwoPhaseCompilationCoordinator**: Coordinates Phase 1 discovery/declaration and Phase 2 planned callable compilation/finalization.
+- **CallableDiscovery + CallableDependencyCollector + CompilationPlanner**: Discover callables, build dependency edges, and compute deterministic SCC/topological stage order.
+- **CallableRegistry**: Canonical `CallableId`-keyed callable signature/token registry with strict lookup mode during body compilation.
+- **ClassesGenerator**: Declares class TypeDefs/fields and two-phase class callable metadata needed for class body compilation.
+- **JavaScriptArrowFunctionGenerator**: Compiles/finalizes arrow callable bodies against preallocated MethodDefs in the two-phase flow.
+- **JsMethodCompiler**: Per-callable compiler that orchestrates AST → HIR → LIR → IL compilation.
+- **HIRBuilder + HIRToLIRLowerer**: Core lowering pipeline from AST semantics into SSA-friendly `MethodBodyIR`.
+- **LIRIntrinsicNormalization / LIRMemberCallNormalization / LIRTypeNormalization / LIRCoercionCSE**: Key LIR rewrite and optimization passes before IL emission.
+- **LIRToILCompiler + MethodDefinitionFinalizer**: Emit IL bodies and finalize deterministic MethodDef rows.
+- **TypeGenerator**: Creates .NET scope types from `SymbolTable` and populates `VariableRegistry` field bindings.
+- **Runtime**: Provides `MemberReferenceHandle` cache for JavaScriptRuntime helper methods.
 
 ### Critical Files
-- `Js2IL/Services/VariableBindings/Variable.cs`: Variable metadata with `GetLocalVariableType()` for typed locals
-- `Js2IL/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
-- `Js2IL/SymbolTable/`: Scope tree infrastructure with free variable analysis
-- `JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
+- `src/Compiler/Services/ILGenerators/MethodBuilder.cs`: `CreateLocalVariableSignature()` - centralizes local sig creation
+- `src/Compiler/SymbolTable/`: Scope tree infrastructure with free variable analysis
+- `src/JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
 
 ## Development Workflows
 - the typical pattern for adding support for javascript and node features is to add tests first under JS2IL.Tests/*area*/ExecutionTests and GeneratorTests
@@ -49,11 +62,40 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 - Confirm that all generator tests are now passing.
 - Commit the changes with a descriptive message.
 - Update changelog.md if necessary.
-- Update docs\ECMA262\FeatureCoverage.json if it is a new javascript feature supported. Run `node scripts/generateFeatureCoverage.js` to regenerate the markdown file with the same name as the JSON file.
-- Update docs\nodejs\NodeSupport.json if it is a new node feature supported. Run `node scripts/generateNodeSupportMd.js` to regenerate the markdown file with the same name as the JSON file.
+- Update the relevant `docs\ECMA262\**\Section*_*.json` subsection doc(s) (use `support.entries` for feature-level support details). Run `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section <section.subsection>` to regenerate the markdown.
+- Update Node.js documentation if it is a new node feature:
+  - For new modules: Create `docs/nodejs/<module_name>.json` (following `ModuleDoc.schema.json`)
+  - For new globals: Create `docs/nodejs/<global_name>.json` (following `ModuleDoc.schema.json`)
+  - For updates to existing modules/globals: Edit the corresponding JSON file
+  - Run `npm run generate:node-index` to update the Index.md
+  - Run `npm run generate:node-module-docs` to regenerate individual markdown files
+  - Alternatively, run `npm run generate:node-modules` to do both steps
+  - Legacy: You can also update `docs/nodejs/NodeSupport.json` and run `npm run generate:node-support` for the monolithic doc
 - Create and a coomit with the documentation updates.
 - Create a PR with all the changes back to master.
 - After the PR has been merged, confirm the changes are in master and delete the local and remote feature branches.
+
+### Documentation Structure
+
+#### Node.js Documentation (`/docs/nodejs`)
+- **Index.md**: Auto-generated index of all modules and globals with status
+- **Individual module/global files**: One JSON + MD pair per module/global (e.g., `path.json` + `path.md`)
+- **ModuleDoc.schema.json**: JSON schema for individual module/global documentation
+- **NodeLimitations.json**: Shared limitations across all Node.js features
+- **Scripts**:
+  - `npm run generate:node-modules`: Full regeneration (split → index → docs)
+  - `npm run generate:node-index`: Regenerate Index.md only
+  - `npm run generate:node-module-docs`: Regenerate individual markdown files only
+- **Legacy files** (maintained for compatibility):
+  - NodeSupport.json: Monolithic source (can be updated via `scripts/splitNodeSupportIntoModules.js`)
+  - NodeSupport.md: Generated monolithic documentation
+
+#### ECMA-262 Documentation (`/docs/ECMA262`)
+- **Index.md**: Coverage index for all ECMA-262 sections
+- **Section directories**: One per major section (e.g., `19/` for Global Object)
+- **Section files**: JSON + MD pairs for each section/subsection (e.g., `Section19_1.json` + `Section19_1.md`)
+- **SectionDoc.schema.json**: JSON schema for section documentation
+- **Scripts**: `npm run ecma262:generate-section-md -- <section>`
 
 
 
@@ -61,7 +103,7 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 ```powershell
 dotnet build                                    # Debug build
 dotnet publish -c Release                       # Release build
-dotnet run --project Js2IL -- input.js output  # Run from source
+dotnet run --project src/Cli -- input.js output  # Run from source
 js2il input.js output                           # Installed tool
 ```
 
@@ -73,6 +115,19 @@ js2il input.js output                           # Installed tool
 - Test categories: Array, BinaryOperator, Classes, CompoundAssignment, ControlFlow, Function, etc.
 - Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs js2il performance.
 - Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
+
+### Running Phased Benchmarks Locally (Single Scenario)
+- These phased benchmarks use the open-source BenchmarkDotNet project.
+- Documentation: https://benchmarkdotnet.org/
+- Source code: https://github.com/dotnet/BenchmarkDotNet
+- Scenario files are under `tests\performance\Benchmarks\Scenarios\` (for example `dromaeo-object-regexp.js`).
+- Run a phased benchmark for one scenario using the helper script:
+```powershell
+node scripts/runPhasedBenchmarkScenario.js dromaeo-object-regexp
+```
+- Replace `dromaeo-object-regexp` with the scenario filename (with or without `.js`).
+- The script runs: `dotnet run -c Release -- --phased --filter "*<scenario>*"` from `tests\performance\Benchmarks`.
+- Benchmark summaries are written to `tests\performance\Benchmarks\BenchmarkDotNet.Artifacts\results\`.
 
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
@@ -121,15 +176,20 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, Js2IL/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
 
-3. **Commit version bump** (on the release branch):
+3. **Validate the coordinated release package set** (on the release branch):
    ```powershell
-   git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+   npm run release:validate
+   ```
+
+4. **Commit version bump** (on the release branch):
+   ```powershell
+   git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 
-4. **Push release branch and create PR**:
+5. **Push release branch and create PR**:
    ```powershell
    git push -u origin release/0.x.y
    gh pr create --title "chore(release): Release v0.x.y" --body-file <release-notes.md> --base master --head release/0.x.y
@@ -144,7 +204,7 @@ Follow these steps IN ORDER:
    gh release create v0.x.y --title "v0.x.y" --notes-file release-notes.md --target master
    ```
 
-GitHub Actions (`.github/workflows/release.yml`) builds and publishes to NuGet when the release is created.
+GitHub Actions (`.github/workflows/publish-tool.yml`) builds, tests, packs, and publishes `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet when the release tag is created. The legacy `.github/workflows/release.yml` workflow still uploads the published binaries as an artifact bundle.
 
 ## Project Conventions
 
@@ -196,7 +256,7 @@ All `NotSupportedException` thrown via `ILEmitHelpers.ThrowNotSupported()` with 
 3. Add IL emission in appropriate generator (statement → `ILMethodGenerator`, expression → `ILExpressionGenerator`)
 4. Add execution + generator tests with snapshot
 
-**Debugging IL**: Use `scripts/decompileToIL.js` or inspect `.verified.txt` snapshots. Common issues: stack imbalance (track push/pop), incorrect metadata handles, missing type casts.
+**Debugging IL**: Use `scripts/decompileGeneratorTest.js` or inspect `.verified.txt` snapshots. Common issues: stack imbalance (track push/pop), incorrect metadata handles, missing type casts.
 
 ## External Dependencies
 - **Acornima**: JavaScript parser (ES2025 target)
@@ -210,7 +270,7 @@ All `NotSupportedException` thrown via `ILEmitHelpers.ThrowNotSupported()` with 
 - **v0.1.6**: Dynamic property access, Math intrinsic, Int32Array, compound assignments
 
 ## Node.js Interop
-Modules discovered via `[NodeModule]` attribute (e.g., `fs`, `path`, `perf_hooks`). Module instances typed via `RuntimeIntrinsicType` for direct callvirt (avoids reflection). See `JavaScriptRuntime/Node/` for implementations.
+Modules discovered via `[NodeModule]` attribute (e.g., `fs`, `path`, `perf_hooks`). Module instances typed via `RuntimeIntrinsicType` for direct callvirt (avoids reflection). See `src/JavaScriptRuntime/Node/` for implementations.
 
 ## Tools
 - use ilspycmd to inspect generated assemblies
@@ -263,3 +323,4 @@ Remove-Item body.json -ErrorAction SilentlyContinue
 - **BOM issues**: `Out-File -Encoding utf8` adds BOM which breaks JSON parsing
 - **`WriteAllText` works**: Writes UTF-8 without BOM, handles escaping correctly
 - Thread IDs have format `PRRT_kwDO...` (Pull Request Review Thread)
+

@@ -18,28 +18,10 @@
 			.class nested private auto ansi beforefieldinit Scope
 				extends [System.Runtime]System.Object
 			{
-				// Nested Types
-				.class nested private auto ansi beforefieldinit Block_L3C31
-					extends [System.Runtime]System.Object
-				{
-					// Methods
-					.method public hidebysig specialname rtspecialname 
-						instance void .ctor () cil managed 
-					{
-						// Method begins at RVA 0x21f2
-						// Header size: 1
-						// Code size: 8 (0x8)
-						.maxstack 8
-
-						IL_0000: ldarg.0
-						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-						IL_0006: nop
-						IL_0007: ret
-					} // end of method Block_L3C31::.ctor
-
-				} // end of class Block_L3C31
-
-
+				.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+					01 00 13 53 63 6f 70 65 20 69 6e 6e 65 72 3d 7b
+					69 6e 6e 65 72 7d 00 00
+				)
 				// Fields
 				.field public object inner
 
@@ -47,7 +29,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21e9
+					// Method begins at RVA 0x2206
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,25 +42,70 @@
 
 			} // end of class Scope
 
+			.class nested private auto ansi beforefieldinit Scope_ForOf_L5C9
+				extends [System.Runtime]System.Object
+			{
+				// Nested Types
+				.class nested private auto ansi beforefieldinit Block_L5C31
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x2218
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Block_L5C31::.ctor
+
+				} // end of class Block_L5C31
+
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x220f
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope_ForOf_L5C9::.ctor
+
+			} // end of class Scope_ForOf_L5C9
+
 
 			// Methods
 			.method public hidebysig static 
 				object __js_call__ (
-					object[] scopes
+					object[] scopes,
+					object newTarget
 				) cil managed 
 			{
-				// Method begins at RVA 0x2118
+				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Method begins at RVA 0x2114
 				// Header size: 12
-				// Code size: 179 (0xb3)
-				.maxstack 32
+				// Code size: 196 (0xc4)
+				.maxstack 8
 				.locals init (
-					[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-					[1] float64,
-					[2] float64,
+					[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
+					[1] bool,
+					[2] bool,
 					[3] object,
 					[4] object,
-					[5] object[],
-					[6] float64
+					[5] bool
 				)
 
 				IL_0000: ldc.i4.3
@@ -86,73 +113,88 @@
 				IL_0006: dup
 				IL_0007: ldc.r8 1
 				IL_0010: box [System.Runtime]System.Double
-				IL_0015: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+				IL_0015: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 				IL_001a: dup
 				IL_001b: ldc.r8 2
 				IL_0024: box [System.Runtime]System.Double
-				IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+				IL_0029: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 				IL_002e: dup
 				IL_002f: ldc.r8 3
 				IL_0038: box [System.Runtime]System.Double
-				IL_003d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-				IL_0042: stloc.0
-				IL_0043: ldloc.0
-				IL_0044: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+				IL_003d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+				IL_0047: stloc.0
+				IL_0048: ldc.i4.0
 				IL_0049: stloc.1
-				IL_004a: ldc.r8 0.0
-				IL_0053: stloc.2
-				// loop start (head: IL_0054)
-					IL_0054: ldloc.2
-					IL_0055: ldloc.1
-					IL_0056: clt
-					IL_0058: brfalse IL_00b1
+				IL_004a: ldc.i4.0
+				IL_004b: stloc.2
+				.try
+				{
+					// loop start (head: IL_004c)
+						IL_004c: ldloc.0
+						IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+						IL_0052: stloc.s 4
+						IL_0054: ldloc.s 4
+						IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+						IL_005b: stloc.s 5
+						IL_005d: ldloc.s 5
+						IL_005f: brtrue IL_00a8
 
-					IL_005d: ldloc.0
-					IL_005e: ldloc.2
-					IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-					IL_0064: stloc.3
-					IL_0065: ldarg.0
-					IL_0066: ldc.i4.1
-					IL_0067: ldelem.ref
-					IL_0068: castclass Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope
-					IL_006d: ldfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
-					IL_0072: stloc.s 4
-					IL_0074: ldc.i4.1
-					IL_0075: newarr [System.Runtime]System.Object
-					IL_007a: dup
-					IL_007b: ldc.i4.0
-					IL_007c: ldloc.3
-					IL_007d: stelem.ref
-					IL_007e: stloc.s 5
-					IL_0080: ldloc.s 4
-					IL_0082: ldc.i4.2
-					IL_0083: newarr [System.Runtime]System.Object
-					IL_0088: dup
-					IL_0089: ldc.i4.0
-					IL_008a: ldarg.0
-					IL_008b: ldc.i4.0
-					IL_008c: ldelem.ref
-					IL_008d: stelem.ref
-					IL_008e: dup
-					IL_008f: ldc.i4.1
-					IL_0090: ldarg.0
-					IL_0091: ldc.i4.1
-					IL_0092: ldelem.ref
-					IL_0093: stelem.ref
-					IL_0094: ldloc.s 5
-					IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-					IL_009b: pop
-					IL_009c: ldloc.2
-					IL_009d: ldc.r8 1
-					IL_00a6: add
-					IL_00a7: stloc.s 6
-					IL_00a9: ldloc.s 6
-					IL_00ab: stloc.2
-					IL_00ac: br IL_0054
-				// end loop
+						IL_0064: ldloc.s 4
+						IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+						IL_006b: stloc.s 4
+						IL_006d: ldloc.s 4
+						IL_006f: stloc.3
+						IL_0070: ldarg.0
+						IL_0071: ldc.i4.1
+						IL_0072: ldelem.ref
+						IL_0073: castclass Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope
+						IL_0078: ldfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
+						IL_007d: ldc.i4.2
+						IL_007e: newarr [System.Runtime]System.Object
+						IL_0083: dup
+						IL_0084: ldc.i4.0
+						IL_0085: ldarg.0
+						IL_0086: ldc.i4.0
+						IL_0087: ldelem.ref
+						IL_0088: stelem.ref
+						IL_0089: dup
+						IL_008a: ldc.i4.1
+						IL_008b: ldarg.0
+						IL_008c: ldc.i4.1
+						IL_008d: ldelem.ref
+						IL_008e: stelem.ref
+						IL_008f: ldloc.3
+						IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+						IL_0095: pop
+						IL_0096: br IL_004c
+					// end loop
+					IL_009b: ldloc.0
+					IL_009c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+					IL_00a1: ldc.i4.1
+					IL_00a2: stloc.2
+					IL_00a3: leave IL_00c2
 
-				IL_00b1: ldnull
-				IL_00b2: ret
+					IL_00a8: ldc.i4.1
+					IL_00a9: stloc.1
+					IL_00aa: leave IL_00c2
+				} // end .try
+				finally
+				{
+					IL_00af: ldloc.1
+					IL_00b0: brtrue IL_00c1
+
+					IL_00b5: ldloc.2
+					IL_00b6: brtrue IL_00c1
+
+					IL_00bb: ldloc.0
+					IL_00bc: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+
+					IL_00c1: endfinally
+				} // end handler
+
+				IL_00c2: ldnull
+				IL_00c3: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -160,6 +202,10 @@
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 19 53 63 6f 70 65 20 63 61 6c 6c 62 61 63
+				6b 3d 7b 63 61 6c 6c 62 61 63 6b 7d 00 00
+			)
 			// Fields
 			.field public object callback
 
@@ -167,7 +213,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e0
+				// Method begins at RVA 0x21fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -184,14 +230,20 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				class Modules.ControlFlow_ForOf_ClosureCallback/Scope scope,
+				object newTarget,
 				object callback
 			) cil managed 
 		{
-			// Method begins at RVA 0x209c
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 06 00 00 02
+			)
+			// Method begins at RVA 0x20b4
 			// Header size: 12
-			// Code size: 76 (0x4c)
-			.maxstack 32
+			// Code size: 66 (0x42)
+			.maxstack 8
 			.locals init (
 				[0] class Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope,
 				[1] object,
@@ -201,47 +253,41 @@
 			IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldarg.1
+			IL_0007: ldarg.2
 			IL_0008: stfld object Modules.ControlFlow_ForOf_ClosureCallback/outer/Scope::callback
-			IL_000d: ldnull
-			IL_000e: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer/inner::__js_call__(object[])
-			IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0019: ldc.i4.2
-			IL_001a: newarr [System.Runtime]System.Object
-			IL_001f: dup
-			IL_0020: ldc.i4.0
-			IL_0021: ldarg.0
-			IL_0022: ldc.i4.0
-			IL_0023: ldelem.ref
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.1
-			IL_0027: ldloc.0
-			IL_0028: stelem.ref
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_002e: stloc.1
-			IL_002f: ldc.i4.0
+			IL_000d: ldc.i4.2
+			IL_000e: newarr [System.Runtime]System.Object
+			IL_0013: dup
+			IL_0014: ldc.i4.0
+			IL_0015: ldarg.0
+			IL_0016: stelem.ref
+			IL_0017: dup
+			IL_0018: ldc.i4.1
+			IL_0019: ldloc.0
+			IL_001a: stelem.ref
+			IL_001b: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer/inner::__js_call__(object[], object)
+			IL_0021: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0026: stloc.1
+			IL_0027: ldc.i4.0
+			IL_0028: newarr [System.Runtime]System.Object
+			IL_002d: stloc.2
+			IL_002e: ldloc.1
+			IL_002f: ldc.i4.1
 			IL_0030: newarr [System.Runtime]System.Object
-			IL_0035: stloc.2
-			IL_0036: ldloc.1
-			IL_0037: ldc.i4.1
-			IL_0038: newarr [System.Runtime]System.Object
-			IL_003d: dup
-			IL_003e: ldc.i4.0
-			IL_003f: ldarg.0
-			IL_0040: ldc.i4.0
-			IL_0041: ldelem.ref
-			IL_0042: stelem.ref
-			IL_0043: ldloc.2
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0049: pop
-			IL_004a: ldnull
-			IL_004b: ret
+			IL_0035: dup
+			IL_0036: ldc.i4.0
+			IL_0037: ldarg.0
+			IL_0038: stelem.ref
+			IL_0039: ldloc.2
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_003f: pop
+			IL_0040: ldnull
+			IL_0041: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
 
-	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L9C6
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L11C6
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -252,7 +298,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21fb
+				// Method begins at RVA 0x2221
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -269,33 +315,35 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object v
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f4
-			// Header size: 12
-			// Code size: 23 (0x17)
-			.maxstack 32
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2102
+			// Header size: 1
+			// Code size: 14 (0xe)
+			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.1
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldarg.1
-			IL_000e: stelem.ref
-			IL_000f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0014: pop
-			IL_0015: ldnull
-			IL_0016: ret
-		} // end of method FunctionExpression_L9C6::__js_call__
+			IL_0005: ldarg.1
+			IL_0006: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_000b: pop
+			IL_000c: ldnull
+			IL_000d: ret
+		} // end of method FunctionExpression_L11C6::__js_call__
 
-	} // end of class FunctionExpression_L9C6
+	} // end of class FunctionExpression_L11C6
 
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 13 53 63 6f 70 65 20 6f 75 74 65 72 3d 7b
+			6f 75 74 65 72 7d 00 00
+		)
 		// Fields
 		.field public object outer
 
@@ -303,7 +351,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d7
+			// Method begins at RVA 0x21f4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -329,39 +377,50 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 64 (0x40)
-		.maxstack 32
+		// Code size: 87 (0x57)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_ClosureCallback/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/FunctionExpression_L9C6::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldnull
-		IL_0023: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(object[], object)
-		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: ldloc.1
-		IL_0039: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_003e: pop
-		IL_003f: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: ldc.i4.0
+		IL_0011: ldelem.ref
+		IL_0012: castclass Modules.ControlFlow_ForOf_ClosureCallback/Scope
+		IL_0017: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(class Modules.ControlFlow_ForOf_ClosureCallback/Scope, object, object)
+		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0022: stloc.2
+		IL_0023: ldloc.2
+		IL_0024: stloc.1
+		IL_0025: ldnull
+		IL_0026: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/FunctionExpression_L11C6::__js_call__(object, object)
+		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0031: stloc.2
+		IL_0032: ldc.i4.1
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: stelem.ref
+		IL_003c: ldc.i4.0
+		IL_003d: ldelem.ref
+		IL_003e: castclass Modules.ControlFlow_ForOf_ClosureCallback/Scope
+		IL_0043: ldftn object Modules.ControlFlow_ForOf_ClosureCallback/outer::__js_call__(class Modules.ControlFlow_ForOf_ClosureCallback/Scope, object, object)
+		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_004e: ldnull
+		IL_004f: ldloc.2
+		IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0055: pop
+		IL_0056: ret
 	} // end of method ControlFlow_ForOf_ClosureCallback::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_ClosureCallback
@@ -373,7 +432,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2204
+		// Method begins at RVA 0x222a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

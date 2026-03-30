@@ -1,0 +1,11 @@
+"use strict";
+
+const fns = [];
+
+for (var i = 0; i < 3; i++) {
+  fns.push(() => i);
+}
+
+console.log(fns[0]());
+console.log(fns[1]());
+console.log(fns[2]());

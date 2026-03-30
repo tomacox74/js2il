@@ -4,7 +4,13 @@ Introduces the standard built-in objects and shared conventions used by the buil
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-07T01:50:59Z
+
+_Note: In the current ECMA-262 spec, Section 18 is a single clause and does not have numbered subsections._
+
+## Section Entry
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 18 | ECMAScript Standard Built-in Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) |
+| 18 | ECMAScript Standard Built-in Objects | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) |
 

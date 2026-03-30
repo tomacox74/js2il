@@ -1,0 +1,682 @@
+﻿// IL code: Http_Response_Streaming_Chunked_ResponseBody
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Http_Response_Streaming_Chunked_ResponseBody
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_server
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23ca
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object req,
+				object res
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20e0
+			// Header size: 1
+			// Code size: 58 (0x3a)
+			.maxstack 8
+
+			IL_0000: ldarg.2
+			IL_0001: ldstr "setHeader"
+			IL_0006: ldstr "Content-Type"
+			IL_000b: ldstr "text/plain"
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0015: pop
+			IL_0016: ldarg.2
+			IL_0017: ldstr "write"
+			IL_001c: ldstr "alpha"
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0026: pop
+			IL_0027: ldarg.2
+			IL_0028: ldstr "end"
+			IL_002d: ldstr "beta"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0037: pop
+			IL_0038: ldnull
+			IL_0039: ret
+		} // end of method FunctionExpression_server::__js_call__
+
+	} // end of class FunctionExpression_server
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L11C30
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L20C4
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L26C21
+				extends [System.Runtime]System.Object
+			{
+				// Nested Types
+				.class nested private auto ansi beforefieldinit Scope
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x23e5
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Scope::.ctor
+
+				} // end of class Scope
+
+
+				// Methods
+				.method public hidebysig static 
+					object __js_call__ (
+						object[] scopes,
+						object newTarget,
+						object chunk
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+						01 00 02 00 00 00 00 00
+					)
+					// Method begins at RVA 0x2298
+					// Header size: 12
+					// Code size: 134 (0x86)
+					.maxstack 8
+					.locals init (
+						[0] object
+					)
+
+					IL_0000: ldarg.0
+					IL_0001: ldc.i4.2
+					IL_0002: ldelem.ref
+					IL_0003: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_0008: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::chunkCount
+					IL_000d: ldc.r8 1
+					IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+					IL_001b: stloc.0
+					IL_001c: ldarg.0
+					IL_001d: ldc.i4.2
+					IL_001e: ldelem.ref
+					IL_001f: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_0024: ldloc.0
+					IL_0025: stfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::chunkCount
+					IL_002a: ldstr "chunk"
+					IL_002f: ldarg.0
+					IL_0030: ldc.i4.2
+					IL_0031: ldelem.ref
+					IL_0032: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_0037: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::chunkCount
+					IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0041: stloc.0
+					IL_0042: ldloc.0
+					IL_0043: ldstr ":"
+					IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_004d: stloc.0
+					IL_004e: ldloc.0
+					IL_004f: ldarg.2
+					IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0055: stloc.0
+					IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_005b: ldloc.0
+					IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0061: pop
+					IL_0062: ldarg.0
+					IL_0063: ldc.i4.2
+					IL_0064: ldelem.ref
+					IL_0065: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_006a: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::body
+					IL_006f: ldarg.2
+					IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0075: stloc.0
+					IL_0076: ldarg.0
+					IL_0077: ldc.i4.2
+					IL_0078: ldelem.ref
+					IL_0079: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_007e: ldloc.0
+					IL_007f: stfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::body
+					IL_0084: ldnull
+					IL_0085: ret
+				} // end of method FunctionExpression_L26C21::__js_call__
+
+			} // end of class FunctionExpression_L26C21
+
+			.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L32C20
+				extends [System.Runtime]System.Object
+			{
+				// Nested Types
+				.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L35C21
+					extends [System.Runtime]System.Object
+				{
+					// Nested Types
+					.class nested private auto ansi beforefieldinit Scope
+						extends [System.Runtime]System.Object
+					{
+						// Methods
+						.method public hidebysig specialname rtspecialname 
+							instance void .ctor () cil managed 
+						{
+							// Method begins at RVA 0x23f7
+							// Header size: 1
+							// Code size: 8 (0x8)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+							IL_0006: nop
+							IL_0007: ret
+						} // end of method Scope::.ctor
+
+					} // end of class Scope
+
+
+					// Methods
+					.method public hidebysig static 
+						object __js_call__ (
+							object newTarget
+						) cil managed 
+					{
+						.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+							01 00 00 00 00 00 00 00
+						)
+						// Method begins at RVA 0x23ae
+						// Header size: 1
+						// Code size: 18 (0x12)
+						.maxstack 8
+
+						IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+						IL_0005: ldstr "done"
+						IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+						IL_000f: pop
+						IL_0010: ldnull
+						IL_0011: ret
+					} // end of method FunctionExpression_L35C21::__js_call__
+
+				} // end of class FunctionExpression_L35C21
+
+				.class nested private auto ansi beforefieldinit Scope
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x23ee
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Scope::.ctor
+
+				} // end of class Scope
+
+
+				// Methods
+				.method public hidebysig static 
+					object __js_call__ (
+						object[] scopes,
+						object newTarget
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+						01 00 02 00 00 00 00 00
+					)
+					// Method begins at RVA 0x232c
+					// Header size: 12
+					// Code size: 118 (0x76)
+					.maxstack 8
+					.locals init (
+						[0] class Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/FunctionExpression_L32C20/Scope,
+						[1] object,
+						[2] object
+					)
+
+					IL_0000: newobj instance void Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/FunctionExpression_L32C20/Scope::.ctor()
+					IL_0005: stloc.0
+					IL_0006: ldstr "chunkCount:"
+					IL_000b: ldarg.0
+					IL_000c: ldc.i4.2
+					IL_000d: ldelem.ref
+					IL_000e: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_0013: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::chunkCount
+					IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_001d: stloc.1
+					IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0023: ldloc.1
+					IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0029: pop
+					IL_002a: ldstr "body:"
+					IL_002f: ldarg.0
+					IL_0030: ldc.i4.2
+					IL_0031: ldelem.ref
+					IL_0032: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope
+					IL_0037: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::body
+					IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0041: stloc.1
+					IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0047: ldloc.1
+					IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_004d: pop
+					IL_004e: ldnull
+					IL_004f: ldftn object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/FunctionExpression_L32C20/FunctionExpression_L35C21::__js_call__(object)
+					IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+					IL_005a: stloc.2
+					IL_005b: ldarg.0
+					IL_005c: ldc.i4.0
+					IL_005d: ldelem.ref
+					IL_005e: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope
+					IL_0063: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::server
+					IL_0068: ldstr "close"
+					IL_006d: ldloc.2
+					IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_0073: pop
+					IL_0074: ldnull
+					IL_0075: ret
+				} // end of method FunctionExpression_L32C20::__js_call__
+
+			} // end of class FunctionExpression_L32C20
+
+			.class nested private auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+					01 00 2a 53 63 6f 70 65 20 63 68 75 6e 6b 43 6f
+					75 6e 74 3d 7b 63 68 75 6e 6b 43 6f 75 6e 74 7d
+					2c 20 62 6f 64 79 3d 7b 62 6f 64 79 7d 00 00
+				)
+				// Fields
+				.field public object chunkCount
+				.field public object body
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x23dc
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget,
+					object res
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Method begins at RVA 0x21c0
+				// Header size: 12
+				// Code size: 204 (0xcc)
+				.maxstack 8
+				.locals init (
+					[0] class Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope,
+					[1] object,
+					[2] object
+				)
+
+				IL_0000: newobj instance void Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldarg.2
+				IL_0007: ldstr "setEncoding"
+				IL_000c: ldstr "utf8"
+				IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0016: pop
+				IL_0017: ldstr "transfer:"
+				IL_001c: ldarg.2
+				IL_001d: ldstr "headers"
+				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0027: ldstr "transfer-encoding"
+				IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0036: stloc.1
+				IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_003c: ldloc.1
+				IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0042: pop
+				IL_0043: ldloc.0
+				IL_0044: ldc.r8 0.0
+				IL_004d: box [System.Runtime]System.Double
+				IL_0052: stfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::chunkCount
+				IL_0057: ldloc.0
+				IL_0058: ldstr ""
+				IL_005d: stfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/Scope::body
+				IL_0062: ldc.i4.3
+				IL_0063: newarr [System.Runtime]System.Object
+				IL_0068: dup
+				IL_0069: ldc.i4.0
+				IL_006a: ldarg.0
+				IL_006b: ldc.i4.0
+				IL_006c: ldelem.ref
+				IL_006d: stelem.ref
+				IL_006e: dup
+				IL_006f: ldc.i4.1
+				IL_0070: ldarg.0
+				IL_0071: ldc.i4.1
+				IL_0072: ldelem.ref
+				IL_0073: stelem.ref
+				IL_0074: dup
+				IL_0075: ldc.i4.2
+				IL_0076: ldloc.0
+				IL_0077: stelem.ref
+				IL_0078: ldftn object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/FunctionExpression_L26C21::__js_call__(object[], object, object)
+				IL_007e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+				IL_0083: stloc.2
+				IL_0084: ldarg.2
+				IL_0085: ldstr "on"
+				IL_008a: ldstr "data"
+				IL_008f: ldloc.2
+				IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0095: pop
+				IL_0096: ldc.i4.3
+				IL_0097: newarr [System.Runtime]System.Object
+				IL_009c: dup
+				IL_009d: ldc.i4.0
+				IL_009e: ldarg.0
+				IL_009f: ldc.i4.0
+				IL_00a0: ldelem.ref
+				IL_00a1: stelem.ref
+				IL_00a2: dup
+				IL_00a3: ldc.i4.1
+				IL_00a4: ldarg.0
+				IL_00a5: ldc.i4.1
+				IL_00a6: ldelem.ref
+				IL_00a7: stelem.ref
+				IL_00a8: dup
+				IL_00a9: ldc.i4.2
+				IL_00aa: ldloc.0
+				IL_00ab: stelem.ref
+				IL_00ac: ldftn object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4/FunctionExpression_L32C20::__js_call__(object[], object)
+				IL_00b2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+				IL_00b7: stloc.2
+				IL_00b8: ldarg.2
+				IL_00b9: ldstr "on"
+				IL_00be: ldstr "end"
+				IL_00c3: ldloc.2
+				IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_00c9: pop
+				IL_00ca: ldnull
+				IL_00cb: ret
+			} // end of method FunctionExpression_L20C4::__js_call__
+
+		} // end of class FunctionExpression_L20C4
+
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23d3
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 09 00 00 02
+			)
+			// Method begins at RVA 0x211c
+			// Header size: 12
+			// Code size: 150 (0x96)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/Scope,
+				[1] object,
+				[2] object,
+				[3] object,
+				[4] object,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			)
+
+			IL_0000: newobj instance void Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldarg.0
+			IL_0007: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::server
+			IL_000c: ldstr "address"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0016: stloc.2
+			IL_0017: ldloc.2
+			IL_0018: stloc.1
+			IL_0019: ldarg.0
+			IL_001a: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::http
+			IL_001f: stloc.2
+			IL_0020: ldloc.1
+			IL_0021: ldstr "address"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002b: stloc.3
+			IL_002c: ldloc.1
+			IL_002d: ldstr "port"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0037: stloc.s 4
+			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_003e: dup
+			IL_003f: ldstr "host"
+			IL_0044: ldloc.3
+			IL_0045: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_004a: dup
+			IL_004b: ldstr "port"
+			IL_0050: ldloc.s 4
+			IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0057: dup
+			IL_0058: ldstr "path"
+			IL_005d: ldstr "/stream"
+			IL_0062: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0067: stloc.s 5
+			IL_0069: ldc.i4.2
+			IL_006a: newarr [System.Runtime]System.Object
+			IL_006f: dup
+			IL_0070: ldc.i4.0
+			IL_0071: ldarg.0
+			IL_0072: stelem.ref
+			IL_0073: dup
+			IL_0074: ldc.i4.1
+			IL_0075: ldloc.0
+			IL_0076: stelem.ref
+			IL_0077: ldftn object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30/FunctionExpression_L20C4::__js_call__(object[], object, object)
+			IL_007d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0082: stloc.s 4
+			IL_0084: ldloc.2
+			IL_0085: ldstr "get"
+			IL_008a: ldloc.s 5
+			IL_008c: ldloc.s 4
+			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0093: pop
+			IL_0094: ldnull
+			IL_0095: ret
+		} // end of method FunctionExpression_L11C30::__js_call__
+
+	} // end of class FunctionExpression_L11C30
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 22 53 63 6f 70 65 20 68 74 74 70 3d 7b 68
+			74 74 70 7d 2c 20 73 65 72 76 65 72 3d 7b 73 65
+			72 76 65 72 7d 00 00
+		)
+		// Fields
+		.field public object http
+		.field public object server
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x23c1
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 132 (0x84)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "node:http"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.1
+		IL_0012: ldloc.0
+		IL_0013: ldloc.1
+		IL_0014: stfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::http
+		IL_0019: ldnull
+		IL_001a: ldftn object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_server::__js_call__(object, object, object)
+		IL_0020: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0025: stloc.1
+		IL_0026: ldloc.0
+		IL_0027: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::http
+		IL_002c: ldstr "createServer"
+		IL_0031: ldloc.1
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0037: stloc.1
+		IL_0038: ldloc.0
+		IL_0039: ldloc.1
+		IL_003a: stfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::server
+		IL_003f: ldloc.0
+		IL_0040: ldfld object Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope::server
+		IL_0045: stloc.1
+		IL_0046: ldc.i4.1
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldloc.0
+		IL_004f: stelem.ref
+		IL_0050: ldc.i4.0
+		IL_0051: ldelem.ref
+		IL_0052: castclass Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope
+		IL_0057: ldftn object Modules.Http_Response_Streaming_Chunked_ResponseBody/FunctionExpression_L11C30::__js_call__(class Modules.Http_Response_Streaming_Chunked_ResponseBody/Scope, object)
+		IL_005d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0062: stloc.2
+		IL_0063: ldloc.1
+		IL_0064: ldstr "listen"
+		IL_0069: ldc.r8 0.0
+		IL_0072: box [System.Runtime]System.Double
+		IL_0077: ldstr "127.0.0.1"
+		IL_007c: ldloc.2
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_0082: pop
+		IL_0083: ret
+	} // end of method Http_Response_Streaming_Chunked_ResponseBody::__js_module_init__
+
+} // end of class Modules.Http_Response_Streaming_Chunked_ResponseBody
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2400
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Http_Response_Streaming_Chunked_ResponseBody::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

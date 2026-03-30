@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /**
  * Finds and optionally deletes unused *.verified.txt snapshot files.
  * A snapshot is considered unused if its derived test name

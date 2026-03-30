@@ -1,3 +1,5 @@
+"use strict";
+
 // Nested destructuring with defaults
 const obj = { a: { b: 5 } };
 const { a: { b, c = 99 } } = obj;

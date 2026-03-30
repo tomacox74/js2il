@@ -1,3 +1,5 @@
+"use strict";
+
 // ECMA-262: https://tc39.es/ecma262/#sec-array.prototype.some
 
 const arr = [1, 2, 3];

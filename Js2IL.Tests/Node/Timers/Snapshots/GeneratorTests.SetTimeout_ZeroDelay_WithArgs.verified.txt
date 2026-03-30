@@ -1,0 +1,203 @@
+﻿// IL code: SetTimeout_ZeroDelay_WithArgs
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.SetTimeout_ZeroDelay_WithArgs
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C20
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 29 53 63 6f 70 65 20 6e 61 6d 65 3d 7b 6e
+				61 6d 65 7d 2c 20 61 67 65 3d 7b 61 67 65 7d 2c
+				20 63 69 74 79 3d 7b 63 69 74 79 7d 00 00
+			)
+			// Fields
+			.field public object name
+			.field public object age
+			.field public object city
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2133
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object name,
+				object age,
+				object city
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20d4
+			// Header size: 12
+			// Code size: 74 (0x4a)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldstr "Name: "
+			IL_0005: ldarg.1
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000b: stloc.0
+			IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0011: ldloc.0
+			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0017: pop
+			IL_0018: ldstr "Age: "
+			IL_001d: ldarg.2
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0023: stloc.0
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.0
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
+			IL_0030: ldstr "City: "
+			IL_0035: ldarg.3
+			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003b: stloc.0
+			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0041: ldloc.0
+			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0047: pop
+			IL_0048: ldnull
+			IL_0049: ret
+		} // end of method ArrowFunction_L3C20::__js_call__
+
+	} // end of class ArrowFunction_L3C20
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x212a
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 118 (0x76)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.SetTimeout_ZeroDelay_WithArgs/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.SetTimeout_ZeroDelay_WithArgs/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.SetTimeout_ZeroDelay_WithArgs/ArrowFunction_L3C20::__js_call__(object, object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0026: stloc.2
+		IL_0027: ldloc.2
+		IL_0028: stloc.1
+		IL_0029: ldloc.1
+		IL_002a: ldc.r8 0.0
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: ldc.i4.3
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldstr "Alice"
+		IL_0045: stelem.ref
+		IL_0046: dup
+		IL_0047: ldc.i4.1
+		IL_0048: ldc.r8 30
+		IL_0051: box [System.Runtime]System.Double
+		IL_0056: stelem.ref
+		IL_0057: dup
+		IL_0058: ldc.i4.2
+		IL_0059: ldstr "Seattle"
+		IL_005e: stelem.ref
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_0064: pop
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006a: ldstr "setTimeout with zero delay and arguments scheduled."
+		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0074: pop
+		IL_0075: ret
+	} // end of method SetTimeout_ZeroDelay_WithArgs::__js_module_init__
+
+} // end of class Modules.SetTimeout_ZeroDelay_WithArgs
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x213c
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.SetTimeout_ZeroDelay_WithArgs::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

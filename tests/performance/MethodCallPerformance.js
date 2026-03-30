@@ -1,3 +1,5 @@
+"use strict";
+
 // Performance test: Class method calling another method repeatedly
 class Counter {
     constructor() {

@@ -1,3 +1,5 @@
+"use strict";
+
 // Promises that resolve in different order should still return results in original order
 const p1 = new Promise((resolve) => {
     resolve("first");

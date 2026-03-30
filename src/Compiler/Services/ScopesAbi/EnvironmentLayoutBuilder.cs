@@ -1,0 +1,316 @@
+using Js2IL.IR;
+using Js2IL.Services.VariableBindings;
+using Js2IL.SymbolTables;
+using Js2IL.Utilities;
+
+namespace Js2IL.Services.ScopesAbi;
+
+/// <summary>
+/// Callable kind for determining ABI shape.
+/// </summary>
+public enum CallableKind
+{
+    /// <summary>User-defined function or arrow function.</summary>
+    Function,
+    /// <summary>Class constructor.</summary>
+    Constructor,
+    /// <summary>Class instance method.</summary>
+    ClassMethod,
+    /// <summary>Class static initializer (.cctor).</summary>
+    ClassStaticInitializer,
+    /// <summary>Module Main entry point.</summary>
+    ModuleMain
+}
+
+/// <summary>
+/// Builds EnvironmentLayout instances from SymbolTable/BindingInfo data.
+/// This facade provides a clean abstraction for both legacy and IR pipelines.
+/// </summary>
+public class EnvironmentLayoutBuilder
+{
+    private readonly ScopeMetadataRegistry _scopeMetadata;
+
+    public EnvironmentLayoutBuilder(ScopeMetadataRegistry scopeMetadata)
+    {
+        _scopeMetadata = scopeMetadata;
+    }
+
+    /// <summary>
+    /// Builds an EnvironmentLayout for a callable scope.
+    /// </summary>
+    /// <param name="scope">The callable's scope.</param>
+    /// <param name="kind">The kind of callable (function, constructor, method, main).</param>
+    /// <param name="layoutKind">The scopes layout convention to use.</param>
+    /// <returns>The computed EnvironmentLayout.</returns>
+    public EnvironmentLayout Build(
+        Scope scope,
+        CallableKind kind,
+        ScopesLayoutKind layoutKind = ScopesLayoutKind.GeneralizedScopesLayout,
+        bool? needsParentScopesOverride = null)
+    {
+        // Count JS parameters from the AST parameter list (includes destructuring patterns).
+        // This must be deterministic and reflect the actual callable signature.
+        int jsParameterCount = GetJsParameterCount(scope);
+
+        // Determine if this callable needs parent scopes.
+        // Note: for some callables (notably class constructors), the compiler may choose to
+        // include a scopes parameter even when the constructor body doesn't directly reference
+        // parent variables, so it can forward scopes to nested callables (e.g., new Inner()).
+        bool needsParentScopes = needsParentScopesOverride ?? scope.ReferencesParentScopeVariables;
+
+        // Build the callable ABI
+        var abi = kind switch
+        {
+            CallableKind.Function => CallableAbi.ForFunction(jsParameterCount, needsParentScopes),
+            CallableKind.Constructor => CallableAbi.ForConstructor(jsParameterCount, needsParentScopes),
+            CallableKind.ClassMethod => CallableAbi.ForClassMethod(jsParameterCount, needsParentScopes),
+            CallableKind.ClassStaticInitializer => CallableAbi.ForModuleMain(0),
+            CallableKind.ModuleMain => CallableAbi.ForModuleMain(jsParameterCount),
+            _ => throw new ArgumentException($"Unknown callable kind: {kind}", nameof(kind))
+        };
+
+        // Build scope chain layout (ancestor scopes from outermost to innermost)
+        var scopeChain = BuildScopeChainLayout(scope, layoutKind, abi);
+
+        // Build binding storage map
+        var storageByBinding = BuildStorageMap(scope, scopeChain, kind);
+
+        return new EnvironmentLayout(abi, scopeChain, storageByBinding, layoutKind);
+    }
+
+    // Must match the compiler's stable registry scope naming convention.
+    // - Global scope uses the module name directly.
+    // - Non-global scopes are module-qualified: {module}/{scopeName}
+    private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
+
+    /// <summary>
+    /// Builds the scope chain layout for a callable.
+    /// </summary>
+    private ScopeChainLayout BuildScopeChainLayout(Scope scope, ScopesLayoutKind layoutKind, CallableAbi abi)
+    {
+        // Only build a scope chain when the callable can access a scopes array at runtime.
+        // Functions always receive scopes (even if they don't reference parent variables),
+        // which is required so they can forward scopes to nested functions.
+        if (abi.ScopesSource == ScopesSource.None)
+        {
+            return ScopeChainLayout.Empty;
+        }
+
+        var ancestorScopes = new List<Scope>();
+        
+        // Walk ancestors from parent to root
+        var current = scope.Parent;
+        while (current != null)
+        {
+            // Only include ancestor scopes that can contribute bindings to the environment chain.
+            // Empty block scopes are elided since they have no runtime-observable bindings and
+            // the IR pipeline does not materialize instances for them.
+            if (current.Kind != ScopeKind.Block || current.Bindings.Count > 0)
+            {
+                ancestorScopes.Add(current);
+            }
+            current = current.Parent;
+        }
+
+        if (layoutKind == ScopesLayoutKind.GeneralizedScopesLayout)
+        {
+            // Generalized layout: outermost (global) first
+            ancestorScopes.Reverse();
+        }
+        else
+        {
+            // Legacy layout: for nested functions, typically just global + immediate parent
+            // We still reverse to get global first, but legacy may have fewer slots
+            ancestorScopes.Reverse();
+            // For legacy, we might want to limit to just required ancestors
+            // For now, use the same ordering but the IR pipeline uses GeneralizedScopesLayout
+        }
+
+        // Build slots
+        var slots = new List<ScopeSlot>();
+        for (int i = 0; i < ancestorScopes.Count; i++)
+        {
+            var ancestorScope = ancestorScopes[i];
+            
+            // Use ScopeId for IR-level abstraction (no direct handle references)
+            var registryName = GetRegistryScopeName(ancestorScope);
+            var scopeId = new ScopeId(registryName);
+
+            slots.Add(new ScopeSlot(i, registryName, scopeId));
+        }
+
+        return new ScopeChainLayout(slots);
+    }
+
+    /// <summary>
+    /// Builds the binding storage map for a callable.
+    /// </summary>
+    private Dictionary<BindingInfo, BindingStorage> BuildStorageMap(
+        Scope scope,
+        ScopeChainLayout scopeChain,
+        CallableKind kind)
+    {
+        var storage = new Dictionary<BindingInfo, BindingStorage>();
+
+        // Process bindings declared in this scope
+        foreach (var (name, binding) in scope.Bindings)
+        {
+            var bindingStorage = ComputeBindingStorage(scope, binding, name, scopeChain, kind);
+            storage[binding] = bindingStorage;
+        }
+
+        // Process free variables (bindings from parent scopes)
+        // Walk up the scope chain and find bindings referenced by this scope
+        var current = scope.Parent;
+        while (current != null)
+        {
+            foreach (var (name, binding) in current.Bindings)
+            {
+                // Check if this binding is captured (referenced by this or child scopes)
+                // and we haven't already added it
+                if (binding.IsCaptured && !storage.ContainsKey(binding))
+                {
+                    // This is a parent scope field
+                    var parentIndex = scopeChain.IndexOf(GetRegistryScopeName(current));
+                    if (parentIndex >= 0)
+                    {
+                        // Use ScopeId and FieldId for IR-level abstraction (no direct handle references)
+                        var registryName = GetRegistryScopeName(current);
+                        var scopeId = new ScopeId(registryName);
+                        var fieldId = new FieldId(registryName, name);
+
+                        storage[binding] = BindingStorage.ForParentScopeField(
+                            fieldId,
+                            scopeId,
+                            parentIndex
+                        );
+                    }
+                }
+            }
+            current = current.Parent;
+        }
+
+        return storage;
+    }
+
+    /// <summary>
+    /// Computes the storage location for a binding declared in the current scope.
+    /// </summary>
+    private BindingStorage ComputeBindingStorage(
+        Scope scope,
+        BindingInfo binding,
+        string name,
+        ScopeChainLayout scopeChain,
+        CallableKind kind)
+    {
+        // Check if it's a parameter (and not destructured)
+        if (scope.Parameters.Contains(name) && !scope.DestructuredParameters.Contains(name))
+        {
+            // Captured parameter - stored as a field on the leaf scope
+            // Non-captured parameter - use IL argument
+            var paramIndex = GetParameterIndex(scope, name);
+            return binding.IsCaptured
+                ? GetLeafScopeFieldStorage(scope, name)
+                : BindingStorage.ForArgument(paramIndex);
+        }
+
+        // Local variable or function declaration
+        return binding.IsCaptured
+            ? GetLeafScopeFieldStorage(scope, name)
+            : BindingStorage.ForLocal(-1);
+    }
+
+    private BindingStorage GetLeafScopeFieldStorage(Scope scope, string name)
+    {
+        // Use ScopeId and FieldId for IR-level abstraction (no direct handle references)
+        var registryName = GetRegistryScopeName(scope);
+        var scopeId = new ScopeId(registryName);
+        var fieldId = new FieldId(registryName, name);
+
+        return BindingStorage.ForLeafScopeField(fieldId, scopeId);
+    }
+
+    private int GetParameterIndex(Scope scope, string name)
+    {
+        // Parameters are stored as a HashSet on Scope; do NOT enumerate that for indices.
+        // Use the AST parameter list ordering.
+        var parameters = GetOrderedParameterNames(scope);
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            if (parameters[i] == name)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static int GetJsParameterCount(Scope scope)
+    {
+        return scope.AstNode switch
+        {
+            Acornima.Ast.FunctionDeclaration fd => fd.Params.Count,
+            Acornima.Ast.FunctionExpression fe => fe.Params.Count,
+            Acornima.Ast.ArrowFunctionExpression af => af.Params.Count,
+            _ => scope.Parameters.Count - scope.DestructuredParameters.Count
+        };
+    }
+
+    private static List<string> GetOrderedParameterNames(Scope scope)
+    {
+        // Only identifiers and identifier-with-default parameters map to IL arguments.
+        // Destructured bindings (e.g. {a, b}) are excluded and initialized from the incoming object.
+        var result = new List<string>();
+
+        Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
+        {
+            Acornima.Ast.FunctionDeclaration fd => fd.Params,
+            Acornima.Ast.FunctionExpression fe => fe.Params,
+            Acornima.Ast.ArrowFunctionExpression af => af.Params,
+            _ => null
+        };
+
+        if (!paramList.HasValue)
+        {
+            // Non-function scopes don't have an AST parameter list. This includes the module/global
+            // scope which gets CommonJS wrapper parameters injected.
+            //
+            // IMPORTANT: module parameters have a required ordering that must match the wrapper
+            // delegate signature: (exports, require, module, __filename, __dirname).
+            // Using HashSet iteration here can scramble indices and break require/module.exports.
+            foreach (var p in JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames)
+            {
+                if (scope.Parameters.Contains(p) && !scope.DestructuredParameters.Contains(p))
+                {
+                    result.Add(p);
+                }
+            }
+
+            // Any remaining parameters (unexpected for module scope) are appended best-effort.
+            foreach (var p in scope.Parameters)
+            {
+                if (!result.Contains(p) && !scope.DestructuredParameters.Contains(p))
+                {
+                    result.Add(p);
+                }
+            }
+            return result;
+        }
+
+        foreach (var node in paramList.Value)
+        {
+            switch (node)
+            {
+                case Acornima.Ast.Identifier id:
+                    result.Add(id.Name);
+                    break;
+                case Acornima.Ast.AssignmentPattern ap when ap.Left is Acornima.Ast.Identifier apId:
+                    result.Add(apId.Name);
+                    break;
+            }
+        }
+
+        return result;
+    }
+}

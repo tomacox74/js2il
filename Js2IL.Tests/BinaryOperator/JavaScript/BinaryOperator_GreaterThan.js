@@ -1,3 +1,5 @@
+"use strict";
+
 var x = 2 > 1;
 var y = 1 > 2;
 

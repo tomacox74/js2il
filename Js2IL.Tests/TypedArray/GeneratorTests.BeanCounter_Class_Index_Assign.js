@@ -1,3 +1,5 @@
+"use strict";
+
 class BeanCounter {
     constructor() {
         this.beanCounts = new Int32Array(3);

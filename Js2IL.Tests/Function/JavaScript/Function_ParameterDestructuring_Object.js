@@ -1,3 +1,5 @@
+"use strict";
+
 function show({a, b}) {
 	console.log(a, b);
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test parameter destructuring in class constructors
 class Point {
     constructor({ x, y }) {

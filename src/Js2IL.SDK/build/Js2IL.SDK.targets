@@ -1,0 +1,78 @@
+<Project>
+
+  <UsingTask TaskName="Js2IL.SDK.BuildTasks.Js2ILCompileTask"
+             AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\net10.0\Js2IL.SDK.dll" />
+
+  <Target Name="_ResolveJs2ILCompileItems"
+          Condition="'@(Js2ILCompile)' != ''">
+    <ItemGroup>
+      <_Js2ILCompile Include="@(Js2ILCompile)">
+        <ResolvedSourcePath>$([System.IO.Path]::GetFullPath('%(Js2ILCompile.Identity)'))</ResolvedSourcePath>
+        <ResolvedOutputDirectory Condition="'%(Js2ILCompile.OutputDirectory)' == ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(Js2ILOutputRoot)', '%(Js2ILCompile.Filename)'))))</ResolvedOutputDirectory>
+        <ResolvedOutputDirectory Condition="'%(Js2ILCompile.OutputDirectory)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(Js2ILCompile.OutputDirectory)'))))</ResolvedOutputDirectory>
+        <ResolvedModuleResolutionBaseDirectory Condition="'%(Js2ILCompile.ModuleResolutionBaseDirectory)' == ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(Js2ILModuleResolutionBaseDirectory)'))))</ResolvedModuleResolutionBaseDirectory>
+        <ResolvedModuleResolutionBaseDirectory Condition="'%(Js2ILCompile.ModuleResolutionBaseDirectory)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(Js2ILCompile.ModuleResolutionBaseDirectory)'))))</ResolvedModuleResolutionBaseDirectory>
+        <ResolvedDiagnosticFilePath Condition="'%(Js2ILCompile.DiagnosticFilePath)' == '' and '$(Js2ILDiagnosticFilePath)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(Js2ILDiagnosticFilePath)'))))</ResolvedDiagnosticFilePath>
+        <ResolvedDiagnosticFilePath Condition="'%(Js2ILCompile.DiagnosticFilePath)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(Js2ILCompile.DiagnosticFilePath)'))))</ResolvedDiagnosticFilePath>
+        <RootModuleId Condition="'%(Js2ILCompile.RootModuleId)' == '' and '$(Js2ILRootModuleId)' != ''">$(Js2ILRootModuleId)</RootModuleId>
+        <RootModuleId Condition="'%(Js2ILCompile.RootModuleId)' != ''">%(Js2ILCompile.RootModuleId)</RootModuleId>
+        <ReferenceOutputAssembly Condition="'%(Js2ILCompile.ReferenceOutputAssembly)' == ''">$(Js2ILReferenceOutputAssembly)</ReferenceOutputAssembly>
+        <ReferenceOutputAssembly Condition="'%(Js2ILCompile.ReferenceOutputAssembly)' != ''">%(Js2ILCompile.ReferenceOutputAssembly)</ReferenceOutputAssembly>
+        <CopyToOutputDirectory Condition="'%(Js2ILCompile.CopyToOutputDirectory)' == ''">$(Js2ILCopyToOutputDirectory)</CopyToOutputDirectory>
+        <CopyToOutputDirectory Condition="'%(Js2ILCompile.CopyToOutputDirectory)' != ''">%(Js2ILCompile.CopyToOutputDirectory)</CopyToOutputDirectory>
+        <EmitPdb Condition="'%(Js2ILCompile.EmitPdb)' == ''">$(Js2ILEmitPdb)</EmitPdb>
+        <EmitPdb Condition="'%(Js2ILCompile.EmitPdb)' != ''">%(Js2ILCompile.EmitPdb)</EmitPdb>
+        <AnalyzeUnused Condition="'%(Js2ILCompile.AnalyzeUnused)' == ''">$(Js2ILAnalyzeUnused)</AnalyzeUnused>
+        <AnalyzeUnused Condition="'%(Js2ILCompile.AnalyzeUnused)' != ''">%(Js2ILCompile.AnalyzeUnused)</AnalyzeUnused>
+        <Verbose Condition="'%(Js2ILCompile.Verbose)' == ''">$(Js2ILVerbose)</Verbose>
+        <Verbose Condition="'%(Js2ILCompile.Verbose)' != ''">%(Js2ILCompile.Verbose)</Verbose>
+        <StrictMode Condition="'%(Js2ILCompile.StrictMode)' == ''">$(Js2ILStrictMode)</StrictMode>
+        <StrictMode Condition="'%(Js2ILCompile.StrictMode)' != ''">%(Js2ILCompile.StrictMode)</StrictMode>
+      </_Js2ILCompile>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="Js2ILCompile"
+          DependsOnTargets="_ResolveJs2ILCompileItems"
+          BeforeTargets="ResolveAssemblyReferences"
+          Condition="'$(Js2ILCompileOnBuild)' == 'true' and '@(Js2ILCompile)' != ''">
+    <Js2IL.SDK.BuildTasks.Js2ILCompileTask Sources="@(_Js2ILCompile)">
+      <Output TaskParameter="GeneratedAssemblies" ItemName="_Js2ILGeneratedAssembly" />
+      <Output TaskParameter="GeneratedOutputs" ItemName="_Js2ILGeneratedOutput" />
+    </Js2IL.SDK.BuildTasks.Js2ILCompileTask>
+
+    <ItemGroup>
+      <Js2ILCompiledAssembly Include="@(_Js2ILGeneratedAssembly)" />
+      <Js2ILGeneratedOutput Include="@(_Js2ILGeneratedOutput)" />
+
+      <Reference Include="@(_Js2ILGeneratedAssembly)"
+                 Condition="'%(_Js2ILGeneratedAssembly.ReferenceOutputAssembly)' == 'true'">
+        <HintPath>%(_Js2ILGeneratedAssembly.Identity)</HintPath>
+        <Private>true</Private>
+      </Reference>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyJs2ILOutputsToOutputDirectory"
+          DependsOnTargets="Js2ILCompile"
+          AfterTargets="Build"
+          Condition="'$(Js2ILCompileOnBuild)' == 'true' and '@(Js2ILGeneratedOutput)' != '' and '$(TargetDir)' != ''">
+    <ItemGroup>
+      <_Js2ILFilesToCopy Include="@(Js2ILGeneratedOutput)"
+                         Condition="'%(Js2ILGeneratedOutput.CopyToOutputDirectory)' == 'true'" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_Js2ILFilesToCopy)"
+          DestinationFiles="@(_Js2ILFilesToCopy->'$(TargetDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="'@(_Js2ILFilesToCopy)' != ''" />
+  </Target>
+
+  <Target Name="CleanJs2ILOutputs"
+          DependsOnTargets="_ResolveJs2ILCompileItems"
+          AfterTargets="Clean"
+          Condition="'@(_Js2ILCompile)' != ''">
+    <RemoveDir Directories="@(_Js2ILCompile->'%(ResolvedOutputDirectory)')" />
+  </Target>
+
+</Project>

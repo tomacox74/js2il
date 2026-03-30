@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20b0
+				// Method begins at RVA 0x2095
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,25 +35,23 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2080
-			// Header size: 12
-			// Code size: 27 (0x1b)
-			.maxstack 32
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2079
+			// Header size: 1
+			// Code size: 18 (0x12)
+			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.1
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "Hello, World!"
-			IL_0012: stelem.ref
-			IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0018: pop
-			IL_0019: ldnull
-			IL_001a: ret
+			IL_0005: ldstr "Hello, World!"
+			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_000f: pop
+			IL_0010: ldnull
+			IL_0011: ret
 		} // end of method helloWorld::__js_call__
 
 	} // end of class helloWorld
@@ -61,6 +59,11 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 1d 53 63 6f 70 65 20 68 65 6c 6c 6f 57 6f
+			72 6c 64 3d 7b 68 65 6c 6c 6f 57 6f 72 6c 64 7d
+			00 00
+		)
 		// Fields
 		.field public object helloWorld
 
@@ -68,7 +71,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a7
+			// Method begins at RVA 0x208c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -94,26 +97,26 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 35 (0x23)
-		.maxstack 32
-		.locals (
-			[0] class Modules.Function_HelloWorld/Scope
+		// Code size: 29 (0x1d)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_HelloWorld/Scope,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_HelloWorld/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_HelloWorld/helloWorld::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0021: pop
-		IL_0022: ret
+		IL_0007: ldftn object Modules.Function_HelloWorld/helloWorld::__js_call__(object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0012: stloc.2
+		IL_0013: ldloc.2
+		IL_0014: stloc.1
+		IL_0015: ldnull
+		IL_0016: call object Modules.Function_HelloWorld/helloWorld::__js_call__(object)
+		IL_001b: pop
+		IL_001c: ret
 	} // end of method Function_HelloWorld::__js_module_init__
 
 } // end of class Modules.Function_HelloWorld
@@ -125,7 +128,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b9
+		// Method begins at RVA 0x209e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

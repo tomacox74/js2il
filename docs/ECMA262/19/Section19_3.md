@@ -1,10 +1,129 @@
-﻿<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->
 
 # Section 19.3: Constructor Properties of the Global Object
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-10T00:19:15Z
+
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 19.3 | Constructor Properties of the Global Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object) |
+| 19.3 | Constructor Properties of the Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object) |
+
+## Subclauses
+
+| Clause | Title | Status | Spec |
+|---:|---|---|---|
+| 19.3.1 | AggregateError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-aggregate-error) |
+| 19.3.2 | Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-array) |
+| 19.3.3 | ArrayBuffer ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-arraybuffer) |
+| 19.3.4 | BigInt ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint) |
+| 19.3.5 | BigInt64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-bigint64array) |
+| 19.3.6 | BigUint64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-biguint64array) |
+| 19.3.7 | Boolean ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean) |
+| 19.3.8 | DataView ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-dataview) |
+| 19.3.9 | Date ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-date) |
+| 19.3.10 | Error ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-error) |
+| 19.3.11 | EvalError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-evalerror) |
+| 19.3.12 | FinalizationRegistry ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry) |
+| 19.3.13 | Float16Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float16array) |
+| 19.3.14 | Float32Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float32array) |
+| 19.3.15 | Float64Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-float64array) |
+| 19.3.16 | Function ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function) |
+| 19.3.17 | Int8Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-int8array) |
+| 19.3.18 | Int16Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-int16array) |
+| 19.3.19 | Int32Array ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-int32array) |
+| 19.3.20 | Iterator ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-iterator) |
+| 19.3.21 | Map ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map) |
+| 19.3.22 | Number ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number) |
+| 19.3.23 | Object ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object) |
+| 19.3.24 | Promise ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-promise) |
+| 19.3.25 | Proxy ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy) |
+| 19.3.26 | RangeError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-rangeerror) |
+| 19.3.27 | ReferenceError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-referenceerror) |
+| 19.3.28 | RegExp ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-regexp) |
+| 19.3.29 | Set ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set) |
+| 19.3.30 | SharedArrayBuffer ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-sharedarraybuffer) |
+| 19.3.31 | String ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string) |
+| 19.3.32 | Symbol ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-symbol) |
+| 19.3.33 | SyntaxError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-syntaxerror) |
+| 19.3.34 | TypeError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-typeerror) |
+| 19.3.35 | Uint8Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-uint8array) |
+| 19.3.36 | Uint8ClampedArray ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8clampedarray) |
+| 19.3.37 | Uint16Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint16array) |
+| 19.3.38 | Uint32Array ( . . . ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint32array) |
+| 19.3.39 | URIError ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-urierror) |
+| 19.3.40 | WeakMap ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakmap) |
+| 19.3.41 | WeakRef ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref) |
+| 19.3.42 | WeakSet ( . . . ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset) |
+
+## Support
+
+Feature-level support tracking with test script references.
+
+### 19.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-boolean))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Boolean constructor is exposed as a callable function value (e.g., array.filter(Boolean)) | Supported with Limitations | `Js2IL.Tests/Integration/JavaScript/Compile_Scripts_DecompileGeneratorTest.js` | js2il supports calling Boolean(x) via primitive conversion lowering, and also supports using Boolean as a first-class function value by exposing it as JavaScriptRuntime.GlobalThis.Boolean (delegate). This is sufficient for common patterns like array.filter(Boolean), but does not implement full Boolean constructor/prototype semantics. |
+
+### 19.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-finalization-registry))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| FinalizationRegistry constructible global baseline | Supported with Limitations | [`FinalizationRegistry_Cleanup_Order.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Cleanup_Order.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | Supports `new FinalizationRegistry(cleanupCallback)` in construct positions plus register/unregister/toStringTag baseline behavior. js2il does not yet expose a full first-class `globalThis.FinalizationRegistry` constructor/prototype object, and deterministic cleanup in tests uses a host-opt-in non-standard global `gc()` helper. |
+
+### 19.3.16 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-function))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Function identifier is exposed as a constructor value | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js)<br>[`Function_Constructor_New_ConstantString_Basic.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js)<br>[`Function_Constructor_Call_Length_Name.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js) | Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Direct `Function(...)` / `new Function(...)` sites with string literal source are compiled ahead-of-time; non-literal runtime forms throw a documented `Error`. |
+
+### 19.3.21 ([tc39.es](https://tc39.es/ecma262/#sec-map))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Map constructor and core prototype methods | Supported with Limitations | [`Map_Constructor_Empty.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js)<br>[`Map_Set_Get_Basic.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Set_Get_Basic.js)<br>[`Map_Has_Basic.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Has_Basic.js)<br>[`Map_Delete_Basic.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Delete_Basic.js)<br>[`Map_Clear_Basic.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Clear_Basic.js)<br>[`Map_Size_Property.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Size_Property.js)<br>[`Map_Keys_Values_Entries.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js) | Implements new Map() constructor and core prototype methods: set, get, has, delete, clear, size property, keys, values, and entries. Uses SameValueZero semantics for key equality. Does not support constructor with iterable argument or forEach method. Iterator support is basic - does not implement full iterator protocol with Symbol.iterator. |
+
+### 19.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Number is available as a first-class value (e.g., x === Number, array.map(Number)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.Number as a delegate value. Direct calls Number(x) are lowered as primitive conversions. In js2il output, JavaScript Number values are represented as unboxed CLR double. Full Number constructor/prototype semantics are not implemented. |
+
+### 19.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-object))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global Object is available as a first-class value (e.g., Object.prototype, Object.create(Object.prototype, ...)) | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) | Exposes JavaScriptRuntime.GlobalThis.Object as a callable function value so libraries can reference Object as a global identifier and access Object.prototype. The exposed Object.prototype is a minimal placeholder object intended for Object.create/setPrototypeOf patterns; it does not implement the full set of Object.prototype methods or invariants. |
+
+### 19.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-proxy))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Proxy (global constructor property) | Supported with Limitations | [`Proxy_GetTrap_OverridesProperty.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js)<br>[`Proxy_SetTrap_InterceptsWrites.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js)<br>[`Proxy_HasTrap_AffectsInOperator.js`](../../../Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js) | Supports new Proxy(target, handler) and routes get/set/has behavior through handler traps for core property access and the in operator. Does not implement full Proxy constructor/function object semantics or Proxy.revocable. |
+
+### 19.3.31 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-string))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Global String is available as a first-class value (e.g., x === String, array.map(String)) | Supported with Limitations | [`IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalBuiltins_AsValues_Basic.js) | Exposes JavaScriptRuntime.GlobalThis.String as a delegate value. Direct calls String(x) are lowered as primitive conversions. In js2il output, JavaScript String values are represented as CLR string. Full String constructor/prototype semantics are not implemented. |
+
+### 19.3.40 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakmap))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| WeakMap constructor and core prototype methods | Supported with Limitations | [`WeakMap_Constructor_Empty.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js)<br>[`WeakMap_Set_Get_Basic.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js) | Implements new WeakMap() constructor and core prototype methods: set, get, has, delete. Keys must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of keys. Does not support constructor with iterable argument. Does not implement full object-type validation. |
+
+### 19.3.41 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| WeakRef constructible global baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions plus `deref()` and kept-object behavior. js2il does not yet expose a full first-class `globalThis.WeakRef` constructor/prototype object, and deterministic collection in tests uses a host-opt-in non-standard global `gc()` helper. |
+
+### 19.3.42 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakset))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| WeakSet constructor and core prototype methods | Supported with Limitations | [`WeakSet_Constructor_Empty.js`](../../../Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js)<br>[`WeakSet_Add_Has_Basic.js`](../../../Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js) | Implements new WeakSet() constructor and core prototype methods: add, has, delete. Values must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of values. Does not support constructor with iterable argument. Does not implement full object-type validation. |
 

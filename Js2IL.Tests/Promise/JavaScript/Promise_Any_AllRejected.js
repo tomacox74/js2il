@@ -1,3 +1,5 @@
+"use strict";
+
 const p1 = Promise.reject("Error 1");
 const p2 = Promise.reject("Error 2");
 const p3 = Promise.reject("Error 3");

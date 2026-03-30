@@ -1,3 +1,5 @@
+"use strict";
+
 // Test remainder/modulo assignment operator %=
 var x = 17;
 x %= 5;

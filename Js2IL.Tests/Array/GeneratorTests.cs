@@ -49,6 +49,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_Slice_FromCharCode_Apply() { var testName = nameof(Array_Slice_FromCharCode_Apply); return GenerateTest(testName); }
+
+        [Fact]
         public Task Array_Sort_Basic() { var testName = nameof(Array_Sort_Basic); return GenerateTest(testName); }
 
         [Fact]
@@ -79,13 +82,55 @@ namespace Js2IL.Tests.Array
         public Task Array_NonMutatingOps_Basic() { var testName = nameof(Array_NonMutatingOps_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_Concat_SymbolIsConcatSpreadable() { var testName = nameof(Array_Concat_SymbolIsConcatSpreadable); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_Iterator_Methods() { var testName = nameof(Array_Iterator_Methods); return GenerateTest(testName); }
+
+        [Fact]
         public Task Array_Static_Basic() { var testName = nameof(Array_Static_Basic); return GenerateTest(testName); }
 
         [Fact]
         public Task Array_Stringification_Basic() { var testName = nameof(Array_Stringification_Basic); return GenerateTest(testName); }
 
-    // Repro: computed index using (arr.length - 1)
-    [Fact]
-    public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return GenerateTest(testName); }
+        // Repro: computed index using (arr.length - 1)
+        [Fact]
+        public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_Canonical_Index_StringKeys() { var testName = nameof(Array_Canonical_Index_StringKeys); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_Length_Set_Fractional_ThrowsRangeError() { var testName = nameof(Array_Length_Set_Fractional_ThrowsRangeError); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_PrototypeMethods_ArrayLike_Call() { var testName = nameof(Array_PrototypeMethods_ArrayLike_Call); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_PrototypeMethods_ArrayLike_EdgeCases() { var testName = nameof(Array_PrototypeMethods_ArrayLike_EdgeCases); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Basic() { var testName = nameof(Array_LiteralSpread_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Multiple() { var testName = nameof(Array_LiteralSpread_Multiple); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Mixed() { var testName = nameof(Array_LiteralSpread_Mixed); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Empty() { var testName = nameof(Array_LiteralSpread_Empty); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Nested() { var testName = nameof(Array_LiteralSpread_Nested); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity1_Join() { var testName = nameof(Array_MemberCall_Arity1_Join); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity0_Reverse() { var testName = nameof(Array_MemberCall_Arity0_Reverse); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity2_Slice() { var testName = nameof(Array_MemberCall_Arity2_Slice); return GenerateTest(testName); }
     }
 }

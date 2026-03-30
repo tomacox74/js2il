@@ -1,6 +1,16 @@
 #!/usr/bin/env node
+"use strict";
+
 /*
  Generates docs/nodejs/NodeSupport.md from docs/nodejs/NodeSupport.json.
+
+ DEPRECATED: This script generates the legacy monolithic NodeSupport.md.
+ For new documentation, use the modular approach:
+   - npm run generate:node-modules    (splits JSON, generates Index.md and individual docs)
+   - npm run generate:node-index      (generates Index.md only)
+   - npm run generate:node-module-docs (generates individual module markdown files only)
+ 
+ The modular documentation is located in separate JSON/MD files per module/global.
 */
 const fs = require('fs');
 const path = require('path');

@@ -44,6 +44,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_Slice_FromCharCode_Apply() { var testName = nameof(Array_Slice_FromCharCode_Apply); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_Sort_Basic() { var testName = nameof(Array_Sort_Basic); return ExecutionTest(testName); }
 
         [Fact]
@@ -77,6 +80,12 @@ namespace Js2IL.Tests.Array
         public Task Array_NonMutatingOps_Basic() { var testName = nameof(Array_NonMutatingOps_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_Concat_SymbolIsConcatSpreadable() { var testName = nameof(Array_Concat_SymbolIsConcatSpreadable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Iterator_Methods() { var testName = nameof(Array_Iterator_Methods); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_Static_Basic() { var testName = nameof(Array_Static_Basic); return ExecutionTest(testName); }
 
         [Fact]
@@ -85,8 +94,44 @@ namespace Js2IL.Tests.Array
         [Fact]
         public Task Array_Callable_Construct() { var testName = nameof(Array_Callable_Construct); return ExecutionTest(testName); }
 
-    // Repro: computed index using (arr.length - 1) should be treated as numeric
-    [Fact]
-    public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return ExecutionTest(testName); }
+        // Repro: computed index using (arr.length - 1) should be treated as numeric
+        [Fact]
+        public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Canonical_Index_StringKeys() { var testName = nameof(Array_Canonical_Index_StringKeys); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Length_Set_Fractional_ThrowsRangeError() { var testName = nameof(Array_Length_Set_Fractional_ThrowsRangeError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_PrototypeMethods_ArrayLike_Call() { var testName = nameof(Array_PrototypeMethods_ArrayLike_Call); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_PrototypeMethods_ArrayLike_EdgeCases() { var testName = nameof(Array_PrototypeMethods_ArrayLike_EdgeCases); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Basic() { var testName = nameof(Array_LiteralSpread_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Multiple() { var testName = nameof(Array_LiteralSpread_Multiple); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Mixed() { var testName = nameof(Array_LiteralSpread_Mixed); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Empty() { var testName = nameof(Array_LiteralSpread_Empty); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_LiteralSpread_Nested() { var testName = nameof(Array_LiteralSpread_Nested); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity1_Join() { var testName = nameof(Array_MemberCall_Arity1_Join); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity0_Reverse() { var testName = nameof(Array_MemberCall_Arity0_Reverse); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MemberCall_Arity2_Slice() { var testName = nameof(Array_MemberCall_Arity2_Slice); return ExecutionTest(testName); }
     }
 }

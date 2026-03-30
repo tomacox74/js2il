@@ -7,13 +7,17 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C27
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L5C27
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
 			// Fields
 			.field public object 'value'
 
@@ -21,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fb
+				// Method begins at RVA 0x20e6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,35 +42,33 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object 'value'
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c0
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20b4
 			// Header size: 12
-			// Code size: 38 (0x26)
-			.maxstack 32
+			// Code size: 29 (0x1d)
+			.maxstack 8
 			.locals init (
 				[0] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.1
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldarg.1
-			IL_000e: ldstr "then"
-			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0018: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_001d: stelem.ref
-			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ret
-		} // end of method ArrowFunction_L3C27::__js_call__
+			IL_0005: ldarg.1
+			IL_0006: ldstr "then"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: ret
+		} // end of method ArrowFunction_L5C27::__js_call__
 
-	} // end of class ArrowFunction_L3C27
+	} // end of class ArrowFunction_L5C27
 
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
@@ -75,7 +77,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f2
+			// Method begins at RVA 0x20dd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,52 +103,44 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 99 (0x63)
-		.maxstack 32
+		// Code size: 86 (0x56)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_NonFunctionThen/Scope,
-			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
-			[3] object,
-			[4] object[]
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Promise_Thenable_NonFunctionThen/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_000b: dup
 		IL_000c: ldstr "then"
 		IL_0011: ldc.r8 123
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0024: stloc.1
-		IL_0025: ldloc.1
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_002b: stloc.2
-		IL_002c: ldnull
-		IL_002d: ldftn object Modules.Promise_Thenable_NonFunctionThen/ArrowFunction_L3C27::__js_call__(object[], object)
-		IL_0033: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.0
-		IL_0041: stelem.ref
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_0026: stloc.2
+		IL_0027: ldnull
+		IL_0028: ldftn object Modules.Promise_Thenable_NonFunctionThen/ArrowFunction_L5C27::__js_call__(object, object)
+		IL_002e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: stelem.ref
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
 		IL_0047: stloc.3
-		IL_0048: ldc.i4.1
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldloc.3
-		IL_0051: stelem.ref
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.2
-		IL_0055: ldstr "then"
-		IL_005a: ldloc.s 4
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0061: pop
-		IL_0062: ret
+		IL_0048: ldloc.2
+		IL_0049: ldstr "then"
+		IL_004e: ldloc.3
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0054: pop
+		IL_0055: ret
 	} // end of method Promise_Thenable_NonFunctionThen::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_NonFunctionThen
@@ -158,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x20ef
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

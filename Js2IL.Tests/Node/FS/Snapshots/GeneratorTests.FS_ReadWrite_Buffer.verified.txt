@@ -1,0 +1,190 @@
+﻿// IL code: FS_ReadWrite_Buffer
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.FS_ReadWrite_Buffer
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21ad
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 337 (0x151)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.FS_ReadWrite_Buffer/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[5] object,
+			[6] object,
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[9] bool,
+			[10] object
+		)
+
+		IL_0000: newobj instance void Modules.FS_ReadWrite_Buffer/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "fs"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 7
+		IL_0013: ldloc.s 7
+		IL_0015: stloc.1
+		IL_0016: ldarg.1
+		IL_0017: ldstr "path"
+		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0021: stloc.s 7
+		IL_0023: ldloc.s 7
+		IL_0025: stloc.2
+		IL_0026: ldloc.2
+		IL_0027: ldstr "join"
+		IL_002c: ldarg.s __dirname
+		IL_002e: ldstr "tmp-buffer.bin"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0038: stloc.s 7
+		IL_003a: ldloc.s 7
+		IL_003c: stloc.3
+		IL_003d: ldc.i4.3
+		IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0043: dup
+		IL_0044: ldc.r8 97
+		IL_004d: box [System.Runtime]System.Double
+		IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0057: dup
+		IL_0058: ldc.r8 98
+		IL_0061: box [System.Runtime]System.Double
+		IL_0066: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_006b: dup
+		IL_006c: ldc.r8 99
+		IL_0075: box [System.Runtime]System.Double
+		IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_0084: stloc.s 8
+		IL_0086: ldloc.s 8
+		IL_0088: stloc.s 4
+		IL_008a: ldloc.1
+		IL_008b: ldstr "writeFileSync"
+		IL_0090: ldloc.3
+		IL_0091: ldloc.s 4
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0098: pop
+		IL_0099: ldloc.1
+		IL_009a: ldstr "readFileSync"
+		IL_009f: ldloc.3
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a5: stloc.s 7
+		IL_00a7: ldloc.s 7
+		IL_00a9: stloc.s 5
+		IL_00ab: ldloc.s 5
+		IL_00ad: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_00b2: stloc.s 9
+		IL_00b4: ldloc.s 9
+		IL_00b6: box [System.Runtime]System.Boolean
+		IL_00bb: stloc.s 10
+		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c2: ldloc.s 10
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c9: pop
+		IL_00ca: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cf: ldloc.s 5
+		IL_00d1: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00d6: box [System.Runtime]System.Double
+		IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e0: pop
+		IL_00e1: ldloc.s 5
+		IL_00e3: ldstr "toString"
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00ed: stloc.s 7
+		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f4: ldloc.s 7
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fb: pop
+		IL_00fc: ldloc.1
+		IL_00fd: ldstr "readFileSync"
+		IL_0102: ldloc.3
+		IL_0103: ldstr "utf8"
+		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_010d: stloc.s 7
+		IL_010f: ldloc.s 7
+		IL_0111: stloc.s 6
+		IL_0113: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0118: ldloc.s 6
+		IL_011a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_011f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0124: pop
+		IL_0125: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012a: ldloc.s 6
+		IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0131: pop
+		IL_0132: ldloc.1
+		IL_0133: ldstr "rmSync"
+		IL_0138: ldloc.3
+		IL_0139: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_013e: dup
+		IL_013f: ldstr "force"
+		IL_0144: ldc.i4.1
+		IL_0145: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_014f: pop
+		IL_0150: ret
+	} // end of method FS_ReadWrite_Buffer::__js_module_init__
+
+} // end of class Modules.FS_ReadWrite_Buffer
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21b6
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.FS_ReadWrite_Buffer::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

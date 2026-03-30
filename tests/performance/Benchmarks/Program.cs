@@ -1,0 +1,53 @@
+﻿using BenchmarkDotNet.Running;
+using Benchmarks;
+
+// Run benchmarks based on command line arguments
+var programArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
+
+if (programArgs.Length > 0 && programArgs[0] == "--validate")
+{
+    // Run validation tests for runtime adapters
+    ValidationTest.RunValidation();
+}
+else
+{
+    if (programArgs.Length > 0 && programArgs[0] == "--dispatch")
+    {
+        // Run the focused late-bound dispatch microbenchmarks without interactive benchmark selection.
+        BenchmarkRunner.Run<LateBoundDispatchBenchmarks>(args: programArgs.Skip(1).ToArray());
+    }
+    else
+    {
+        BenchmarkSwitcher switcher;
+        var benchmarkArgs = programArgs;
+
+        if (programArgs.Length > 0 && programArgs[0] == "--phased")
+        {
+            // Run phased benchmarks (js2il compile/execute plus Jint prepare/prepared execution)
+            switcher = BenchmarkSwitcher.FromTypes([typeof(Js2ILPhasedBenchmarks)]);
+            benchmarkArgs = programArgs.Skip(1).ToArray();
+        }
+        else if (programArgs.Length > 0 && programArgs[0] == "--all")
+        {
+            // Run all benchmarks
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(LateBoundDispatchBenchmarks), typeof(Js2ILPhasedBenchmarks)]);
+            benchmarkArgs = programArgs.Skip(1).ToArray();
+        }
+        else
+        {
+            // Run cross-runtime comparison by default
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks)]);
+        }
+
+        switcher.Run(benchmarkArgs);
+    }
+}
+
+Console.WriteLine("\nBenchmark execution complete!");
+Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
+Console.WriteLine("\nFor more options:");
+Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
+Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
+Console.WriteLine("  dotnet run -c Release --phased # Run js2il phased + Jint prepared comparison");
+Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
+Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");

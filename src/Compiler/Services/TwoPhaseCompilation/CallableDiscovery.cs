@@ -1,0 +1,421 @@
+using Acornima.Ast;
+using Js2IL.Services;
+using Js2IL.SymbolTables;
+using Js2IL.Utilities;
+
+namespace Js2IL.Services.TwoPhaseCompilation;
+
+/// <summary>
+/// Discovers all callables in a module by walking the AST and symbol table.
+/// This is Phase 1 step 1: identify every callable that will need declaration.
+/// </summary>
+/// <remarks>
+/// CallableDiscovery produces a complete list of CallableIds without compiling anything.
+/// The discovery is deterministic: the same AST always produces the same set of CallableIds
+/// in the same order.
+/// </remarks>
+public sealed class CallableDiscovery
+{
+    private readonly SymbolTable _symbolTable;
+    private readonly string _moduleName;
+    private readonly List<CallableId> _discovered = new();
+
+    public CallableDiscovery(SymbolTable symbolTable)
+    {
+        _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
+        _moduleName = symbolTable.Root.Name;
+    }
+
+    /// <summary>
+    /// Discovers all callables in the module.
+    /// Returns callables in a deterministic order suitable for declaration.
+    /// </summary>
+    public IReadOnlyList<CallableId> DiscoverAll()
+    {
+        _discovered.Clear();
+        
+        // Discover callables from the symbol table scope tree
+        DiscoverFromScope(_symbolTable.Root, _moduleName);
+        
+        return _discovered.AsReadOnly();
+    }
+
+    private void DiscoverFromScope(Scope scope, string currentScopeName)
+    {
+        foreach (var child in scope.Children)
+        {
+            switch (child.Kind)
+            {
+                case ScopeKind.Function:
+                    DiscoverFunction(child, currentScopeName);
+                    break;
+                    
+                case ScopeKind.Class:
+                    DiscoverClass(child, currentScopeName);
+                    break;
+                    
+                case ScopeKind.Block:
+                    // Recurse into block scopes (may contain nested functions/classes)
+                    var blockScopeName = $"{currentScopeName}/{child.Name}";
+                    DiscoverFromScope(child, blockScopeName);
+                    break;
+            }
+        }
+    }
+
+    private void DiscoverFunction(Scope functionScope, string parentScopeName)
+    {
+        var astNode = functionScope.AstNode;
+        
+        if (astNode is FunctionDeclaration funcDecl)
+        {
+            var funcName = (funcDecl.Id as Identifier)?.Name ?? functionScope.Name;
+            // Count only regular parameters (excluding rest parameters)
+            var paramCount = CountJsParameters(funcDecl.Params);
+            
+            var callableId = new CallableId
+            {
+                Kind = CallableKind.FunctionDeclaration,
+                DeclaringScopeName = parentScopeName,
+                Name = funcName,
+                JsParamCount = paramCount,
+                NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                HasRestParameters = functionScope.HasRestParameters,
+                AstNode = funcDecl
+            };
+            
+            _discovered.Add(callableId);
+            
+            // Recurse into nested functions
+            var functionScopeName = $"{parentScopeName}/{funcName}";
+            DiscoverFromScope(functionScope, functionScopeName);
+        }
+        else if (astNode is FunctionExpression funcExpr)
+        {
+            var location = SourceLocation.FromNode(funcExpr);
+            var funcName = (funcExpr.Id as Identifier)?.Name;
+            // Count only regular parameters (excluding rest parameters)
+            var paramCount = CountJsParameters(funcExpr.Params);
+            
+            var callableId = new CallableId
+            {
+                Kind = CallableKind.FunctionExpression,
+                DeclaringScopeName = parentScopeName,
+                Name = funcName, // May be null for anonymous
+                Location = location,
+                JsParamCount = paramCount,
+                NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+                HasRestParameters = functionScope.HasRestParameters,
+                AstNode = funcExpr
+            };
+            
+            _discovered.Add(callableId);
+            
+            // Recurse into nested functions
+            // IMPORTANT: scope name must match SymbolTableBuilder naming so nested DeclaringScopeName
+            // values line up with Scope.GetQualifiedName() used across the pipeline.
+            // SymbolTableBuilder may name anonymous function-expression scopes using an assignment target.
+            var scopeName = funcName != null
+                ? $"{parentScopeName}/{funcName}"
+                : $"{parentScopeName}/{functionScope.Name}";
+            DiscoverFromScope(functionScope, scopeName);
+        }
+        else if (astNode is ArrowFunctionExpression arrowExpr)
+        {
+            var location = SourceLocation.FromNode(arrowExpr);
+            // Count only regular parameters (excluding rest parameters)
+            var paramCount = CountJsParameters(arrowExpr.Params);
+            
+            var callableId = new CallableId
+            {
+                Kind = CallableKind.Arrow,
+                DeclaringScopeName = parentScopeName,
+                Name = null,
+                Location = location,
+                JsParamCount = paramCount,
+                NeedsArgumentsObject = false,
+                HasRestParameters = functionScope.HasRestParameters,
+                AstNode = arrowExpr
+            };
+            
+            _discovered.Add(callableId);
+            
+            // Recurse into nested functions (arrows can contain nested arrows/functions)
+            // IMPORTANT: scope name must match SymbolTableBuilder naming (1-based column).
+            var col1Based = arrowExpr.Location.Start.Column + 1;
+            var scopeName = $"{parentScopeName}/ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
+            DiscoverFromScope(functionScope, scopeName);
+        }
+    }
+
+    private void DiscoverClass(Scope classScope, string parentScopeName)
+    {
+        var astNode = classScope.AstNode;
+
+        ClassBody? classBody = null;
+        Node? classNodeForCctor = null;
+        string className;
+
+        if (astNode is ClassDeclaration classDecl)
+        {
+            classBody = classDecl.Body;
+            classNodeForCctor = classDecl;
+            className = (classDecl.Id as Identifier)?.Name ?? classScope.Name;
+        }
+        else if (astNode is ClassExpression classExpr)
+        {
+            classBody = classExpr.Body;
+            classNodeForCctor = classExpr;
+            className = (classExpr.Id as Identifier)?.Name ?? classScope.Name;
+        }
+        else
+        {
+            return;
+        }
+        
+        // Discover constructor
+        var ctor = classBody.Body
+            .OfType<MethodDefinition>()
+            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+            
+        if (ctor != null)
+        {
+            var ctorFunc = ctor.Value as FunctionExpression;
+            var ctorParamCount = ctorFunc != null ? CountJsParameters(ctorFunc.Params) : 0;
+            var ctorScope = FindMethodScope(classScope, ctor);
+            var hasRestParams = ctorScope?.HasRestParameters ?? false;
+            
+            var ctorId = new CallableId
+            {
+                Kind = CallableKind.ClassConstructor,
+                DeclaringScopeName = parentScopeName,
+                Name = className,
+                JsParamCount = ctorParamCount,
+                HasRestParameters = hasRestParams,
+                AstNode = ctor
+            };
+            
+            _discovered.Add(ctorId);
+        }
+        else
+        {
+            // Default constructor (no parameters, no rest)
+            var ctorId = new CallableId
+            {
+                Kind = CallableKind.ClassConstructor,
+                DeclaringScopeName = parentScopeName,
+                Name = className,
+                JsParamCount = 0,
+                HasRestParameters = false,
+                // For synthetic callables we still want a stable AST node for indexing,
+                // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
+                // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
+                AstNode = classBody
+            };
+            
+            _discovered.Add(ctorId);
+        }
+        
+        // Check if the class has static fields with initializers -> needs a .cctor
+        bool hasStaticClassEvaluation = classBody.Body.Any(element =>
+            element is StaticBlock
+            || element is PropertyDefinition propertyDefinition && propertyDefinition.Static && (propertyDefinition.Value != null || propertyDefinition.Computed)
+            || element is MethodDefinition methodDefinition && methodDefinition.Static && methodDefinition.Computed);
+        if (hasStaticClassEvaluation)
+        {
+            var cctorId = new CallableId
+            {
+                Kind = CallableKind.ClassStaticInitializer,
+                DeclaringScopeName = parentScopeName,
+                Name = className,
+                JsParamCount = 0,
+                HasRestParameters = false,
+                AstNode = classNodeForCctor!
+            };
+            _discovered.Add(cctorId);
+        }
+        
+        // Discover methods
+        foreach (var member in classBody.Body.OfType<MethodDefinition>())
+        {
+            if (ClassElementNames.IsConstructor(member))
+            {
+                continue;
+            }
+
+            string? methodName = null;
+            var hasResolvedMethodName = ClassElementNames.TryGetPropertyName(member.Key, member.Computed, out methodName);
+
+            if (member.Computed && !hasResolvedMethodName)
+            {
+                if (member.Value is FunctionExpression computedFunc)
+                {
+                    var methodLocation = SourceLocation.FromNode(computedFunc);
+                    var computedMethodParamCount = CountJsParameters(computedFunc.Params);
+                    var dynamicMethodScope = FindMethodScope(classScope, member);
+                    var dynamicMethodHasRestParams = dynamicMethodScope?.HasRestParameters ?? false;
+
+                    _discovered.Add(new CallableId
+                    {
+                        Kind = CallableKind.FunctionExpression,
+                        DeclaringScopeName = $"{parentScopeName}/{className}",
+                        Name = (computedFunc.Id as Identifier)?.Name,
+                        Location = methodLocation,
+                        JsParamCount = computedMethodParamCount,
+                        NeedsArgumentsObject = dynamicMethodScope?.NeedsArgumentsObject ?? false,
+                        HasRestParameters = dynamicMethodHasRestParams,
+                        AstNode = computedFunc
+                    });
+                }
+
+                continue;
+            }
+
+            if (!hasResolvedMethodName || string.IsNullOrWhiteSpace(methodName))
+            {
+                continue;
+            }
+
+            // Count only regular parameters (excluding rest parameters)
+            var methodParamCount = (member.Value as FunctionExpression)?.Params.Count ?? 0;
+            if (member.Value is FunctionExpression mfe)
+            {
+                methodParamCount = CountJsParameters(mfe.Params);
+            }
+            var location = SourceLocation.FromNode(member);
+
+            // Distinguish methods vs accessors so CallableId keys remain unique.
+            // Acornima models class members as MethodDefinition with a Kind (PropertyKind).
+            // We keep CLR method naming concerns in the emitters; here we just classify callables.
+            CallableKind kind;
+            var memberKind = member.Kind;
+            if (memberKind == PropertyKind.Get)
+            {
+                kind = member.Static ? CallableKind.ClassStaticGetter : CallableKind.ClassGetter;
+            }
+            else if (memberKind == PropertyKind.Set)
+            {
+                kind = member.Static ? CallableKind.ClassStaticSetter : CallableKind.ClassSetter;
+            }
+            else
+            {
+                kind = member.Static ? CallableKind.ClassStaticMethod : CallableKind.ClassMethod;
+            }
+
+            var effectiveMethodName = member.Key is PrivateIdentifier
+                ? member.Kind switch
+                {
+                    PropertyKind.Get => ClassElementNames.ManglePrivateAccessorMethodName("get", methodName),
+                    PropertyKind.Set => ClassElementNames.ManglePrivateAccessorMethodName("set", methodName),
+                    _ => ClassElementNames.ManglePrivateMethodName(methodName)
+                }
+                : methodName;
+
+            var callableName = kind switch
+            {
+                CallableKind.ClassGetter or CallableKind.ClassStaticGetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "get", effectiveMethodName),
+                CallableKind.ClassSetter or CallableKind.ClassStaticSetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "set", effectiveMethodName),
+                _ => JavaScriptCallableNaming.MakeClassMethodCallableName(className, effectiveMethodName)
+            };
+            
+            var methodScope = FindMethodScope(classScope, member);
+            var methodHasRestParams = methodScope?.HasRestParameters ?? false;
+            
+            var methodId = new CallableId
+            {
+                Kind = kind,
+                DeclaringScopeName = parentScopeName,
+                Name = callableName,
+                Location = location,
+                JsParamCount = methodParamCount,
+                HasRestParameters = methodHasRestParams,
+                AstNode = member
+            };
+            
+            _discovered.Add(methodId);
+        }
+        
+        // Recurse into class scope for any nested callables in method bodies
+        // (e.g., arrows defined inside methods)
+        var classScopeName = $"{parentScopeName}/{className}";
+        foreach (var child in classScope.Children)
+        {
+            if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
+            {
+                // This is a method body scope - check for nested callables
+                // IMPORTANT: include the method scope name so nested callables end up with a
+                // DeclaringScopeName that matches Scope.GetQualifiedName() (e.g. "C/m" or "C/constructor").
+                var methodScopeName = $"{classScopeName}/{child.Name}";
+                DiscoverFromScope(child, methodScopeName);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets statistics about the discovered callables.
+    /// </summary>
+    public DiscoveryStats GetStats()
+    {
+        return new DiscoveryStats
+        {
+            TotalCallables = _discovered.Count,
+            FunctionDeclarations = _discovered.Count(c => c.Kind == CallableKind.FunctionDeclaration),
+            FunctionExpressions = _discovered.Count(c => c.Kind == CallableKind.FunctionExpression),
+            ArrowFunctions = _discovered.Count(c => c.Kind == CallableKind.Arrow),
+            ClassConstructors = _discovered.Count(c => c.Kind == CallableKind.ClassConstructor),
+            ClassMethods = _discovered.Count(c => c.Kind == CallableKind.ClassMethod),
+            ClassStaticMethods = _discovered.Count(c => c.Kind == CallableKind.ClassStaticMethod),
+            ClassStaticInitializers = _discovered.Count(c => c.Kind == CallableKind.ClassStaticInitializer)
+        };
+    }
+    
+    /// <summary>
+    /// Finds the scope for a class method definition.
+    /// </summary>
+    private Scope? FindMethodScope(Scope classScope, MethodDefinition methodDef)
+    {
+        foreach (var child in classScope.Children)
+        {
+            if (child.Kind == ScopeKind.Function && 
+                child.AstNode != null && 
+                ReferenceEquals(child.AstNode, methodDef.Value))
+            {
+                return child;
+            }
+        }
+        return null;
+    }
+    
+    /// <summary>
+    /// Counts the number of JavaScript parameters (excluding rest parameters).
+    /// Rest parameters don't become IL parameters; they're collected from the runtime arguments array.
+    /// </summary>
+    private static int CountJsParameters(NodeList<Node> parameters)
+    {
+        int count = 0;
+        foreach (var param in parameters)
+        {
+            // Rest parameters (e.g., ...args) are not counted as IL parameters
+            if (param is not RestElement)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+
+/// <summary>
+/// Statistics about discovered callables.
+/// </summary>
+public record struct DiscoveryStats
+{
+    public int TotalCallables { get; init; }
+    public int FunctionDeclarations { get; init; }
+    public int FunctionExpressions { get; init; }
+    public int ArrowFunctions { get; init; }
+    public int ClassConstructors { get; init; }
+    public int ClassMethods { get; init; }
+    public int ClassStaticMethods { get; init; }
+    public int ClassStaticInitializers { get; init; }
+}

@@ -1,3 +1,5 @@
+"use strict";
+
 // Bug repro: class method local variable initialized as number,
 // then reassigned from another method call.
 // The type inference marks 'factor' as stable double, but method calls return object.

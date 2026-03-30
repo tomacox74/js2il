@@ -10,33 +10,11 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
-		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L3C35
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2102
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Block_L3C35::.ctor
-
-		} // end of class Block_L3C35
-
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f9
+			// Method begins at RVA 0x211d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -48,6 +26,48 @@
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
+
+	.class nested private auto ansi beforefieldinit Scope_For_L5C5
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L5C35
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x212f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L5C35::.ctor
+
+		} // end of class Block_L5C35
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2126
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope_For_L5C5::.ctor
+
+	} // end of class Scope_For_L5C5
 
 
 	// Methods
@@ -62,13 +82,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 157 (0x9d)
-		.maxstack 32
+		// Code size: 193 (0xc1)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Spread_Copy/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] float64
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[5] float64,
+			[6] float64,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Spread_Copy/Scope::.ctor()
@@ -78,51 +102,62 @@
 		IL_000c: dup
 		IL_000d: ldc.r8 1
 		IL_0016: box [System.Runtime]System.Double
-		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_001b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0020: dup
 		IL_0021: ldc.r8 2
 		IL_002a: box [System.Runtime]System.Double
-		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0034: dup
 		IL_0035: ldc.r8 3
 		IL_003e: box [System.Runtime]System.Double
-		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0048: stloc.1
 		IL_0049: ldc.i4.0
 		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_004f: stloc.2
-		IL_0050: ldloc.2
-		IL_0051: ldloc.1
-		IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_0057: ldc.r8 0.0
-		IL_0060: stloc.3
-		// loop start (head: IL_0061)
-			IL_0061: ldloc.3
-			IL_0062: ldloc.2
-			IL_0063: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
-			IL_0068: conv.r8
-			IL_0069: clt
-			IL_006b: brfalse IL_009c
+		IL_004f: stloc.s 4
+		IL_0051: ldloc.s 4
+		IL_0053: ldloc.1
+		IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_0059: ldloc.s 4
+		IL_005b: stloc.2
+		IL_005c: ldc.r8 0.0
+		IL_0065: box [System.Runtime]System.Double
+		IL_006a: stloc.3
+		// loop start (head: IL_006b)
+			IL_006b: ldloc.2
+			IL_006c: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_0071: conv.r8
+			IL_0072: stloc.s 5
+			IL_0074: ldloc.3
+			IL_0075: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_007a: stloc.s 6
+			IL_007c: ldloc.s 6
+			IL_007e: ldloc.s 5
+			IL_0080: clt
+			IL_0082: brfalse IL_00c0
 
-			IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0075: ldc.i4.1
-			IL_0076: newarr [System.Runtime]System.Object
-			IL_007b: dup
-			IL_007c: ldc.i4.0
-			IL_007d: ldloc.2
-			IL_007e: ldloc.3
-			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0084: stelem.ref
-			IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_008a: pop
-			IL_008b: ldloc.3
-			IL_008c: ldc.r8 1
-			IL_0095: add
-			IL_0096: stloc.3
-			IL_0097: br IL_0061
+			IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008c: ldloc.2
+			IL_008d: ldloc.3
+			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0098: pop
+			IL_0099: ldloc.3
+			IL_009a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_009f: stloc.s 5
+			IL_00a1: ldloc.s 5
+			IL_00a3: ldc.r8 1
+			IL_00ac: add
+			IL_00ad: stloc.s 5
+			IL_00af: ldloc.s 5
+			IL_00b1: box [System.Runtime]System.Double
+			IL_00b6: stloc.s 7
+			IL_00b8: ldloc.s 7
+			IL_00ba: stloc.3
+			IL_00bb: br IL_006b
 		// end loop
 
-		IL_009c: ret
+		IL_00c0: ret
 	} // end of method Array_Spread_Copy::__js_module_init__
 
 } // end of class Modules.Array_Spread_Copy
@@ -134,7 +169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210b
+		// Method begins at RVA 0x2138
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

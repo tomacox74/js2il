@@ -1,3 +1,5 @@
+"use strict";
+
 let a = 0;
 function outer() {
   let a = 1;

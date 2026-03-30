@@ -1,4 +1,6 @@
-// Library module that exports a factory function and default instance
+"use strict";
+
+// Library module that exports a class constructor
 
 class Person {
     constructor(name, age) {
@@ -11,10 +13,5 @@ class Person {
     }
 }
 
-// Export both a factory function and a default instance
-module.exports = {
-    createPerson: function(name, age) {
-        return new Person(name, age);
-    },
-    defaultPerson: new Person("Default", 25)
-};
+// Export the class (the importing module should `new` it)
+module.exports = Person;

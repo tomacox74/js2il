@@ -1,3 +1,5 @@
+"use strict";
+
 // Arrow functions are not hoisted. Declare first, then call.
 const helloWorld = () => {
     console.log("Hello, World!", 2);

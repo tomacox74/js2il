@@ -1,3 +1,5 @@
+"use strict";
+
 const testArrowFunction = () => {
 	const FUNCTION_VALUE = "Hello from function";
 	

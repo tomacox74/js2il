@@ -1,3 +1,5 @@
+"use strict";
+
 class Greeter {
   helloWorld() {
     console.log("Hello world from Greeter");

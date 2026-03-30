@@ -1,3 +1,5 @@
+"use strict";
+
 // Validate imul 32-bit wrapping and clz32 counts
 const a = Math.imul(2, 3);
 const b = Math.imul((0 - 1), 2);

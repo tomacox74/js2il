@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2194
+				// Method begins at RVA 0x2153
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,14 +35,17 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x2144
-			// Header size: 12
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x211a
+			// Header size: 1
 			// Code size: 23 (0x17)
-			.maxstack 32
+			.maxstack 8
 
 			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -65,7 +68,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219d
+				// Method begins at RVA 0x215c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -82,14 +85,17 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object x
 			) cil managed 
 		{
-			// Method begins at RVA 0x2168
-			// Header size: 12
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2132
+			// Header size: 1
 			// Code size: 23 (0x17)
-			.maxstack 32
+			.maxstack 8
 
 			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -108,7 +114,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218b
+			// Method begins at RVA 0x214a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -134,8 +140,8 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 230 (0xe6)
-		.maxstack 32
+		// Code size: 190 (0xbe)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Find_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -151,79 +157,59 @@
 		IL_000c: dup
 		IL_000d: ldc.r8 1
 		IL_0016: box [System.Runtime]System.Double
-		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_001b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0020: dup
 		IL_0021: ldc.r8 5
 		IL_002a: box [System.Runtime]System.Double
-		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0034: dup
 		IL_0035: ldc.r8 10
 		IL_003e: box [System.Runtime]System.Double
-		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0043: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0048: dup
 		IL_0049: ldc.r8 20
 		IL_0052: box [System.Runtime]System.Double
-		IL_0057: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_005c: stloc.1
 		IL_005d: ldnull
-		IL_005e: ldftn object Modules.Array_Find_Basic/FunctionExpression_found::__js_call__(object[], object)
-		IL_0064: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0069: ldc.i4.1
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldloc.0
-		IL_0072: stelem.ref
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0078: stloc.s 4
-		IL_007a: ldloc.1
-		IL_007b: ldc.i4.1
-		IL_007c: newarr [System.Runtime]System.Object
-		IL_0081: dup
-		IL_0082: ldc.i4.0
-		IL_0083: ldloc.s 4
-		IL_0085: stelem.ref
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::find(object[])
-		IL_008b: stloc.2
-		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0091: ldc.i4.1
-		IL_0092: newarr [System.Runtime]System.Object
-		IL_0097: dup
-		IL_0098: ldc.i4.0
-		IL_0099: ldloc.2
-		IL_009a: stelem.ref
-		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a0: pop
-		IL_00a1: ldnull
-		IL_00a2: ldftn object Modules.Array_Find_Basic/FunctionExpression_notFound::__js_call__(object[], object)
-		IL_00a8: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00ad: ldc.i4.1
-		IL_00ae: newarr [System.Runtime]System.Object
-		IL_00b3: dup
-		IL_00b4: ldc.i4.0
-		IL_00b5: ldloc.0
-		IL_00b6: stelem.ref
-		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_00bc: stloc.s 4
-		IL_00be: ldloc.1
-		IL_00bf: ldc.i4.1
-		IL_00c0: newarr [System.Runtime]System.Object
-		IL_00c5: dup
-		IL_00c6: ldc.i4.0
-		IL_00c7: ldloc.s 4
-		IL_00c9: stelem.ref
-		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::find(object[])
-		IL_00cf: stloc.3
-		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d5: ldc.i4.1
-		IL_00d6: newarr [System.Runtime]System.Object
-		IL_00db: dup
-		IL_00dc: ldc.i4.0
-		IL_00dd: ldloc.3
-		IL_00de: stelem.ref
-		IL_00df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e4: pop
-		IL_00e5: ret
+		IL_005e: ldftn object Modules.Array_Find_Basic/FunctionExpression_found::__js_call__(object, object)
+		IL_0064: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0069: stloc.s 4
+		IL_006b: ldloc.1
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.s 4
+		IL_0076: stelem.ref
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::find(object[])
+		IL_007c: stloc.s 4
+		IL_007e: ldloc.s 4
+		IL_0080: stloc.2
+		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0086: ldloc.2
+		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008c: pop
+		IL_008d: ldnull
+		IL_008e: ldftn object Modules.Array_Find_Basic/FunctionExpression_notFound::__js_call__(object, object)
+		IL_0094: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0099: stloc.s 4
+		IL_009b: ldloc.1
+		IL_009c: ldc.i4.1
+		IL_009d: newarr [System.Runtime]System.Object
+		IL_00a2: dup
+		IL_00a3: ldc.i4.0
+		IL_00a4: ldloc.s 4
+		IL_00a6: stelem.ref
+		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::find(object[])
+		IL_00ac: stloc.s 4
+		IL_00ae: ldloc.s 4
+		IL_00b0: stloc.3
+		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b6: ldloc.3
+		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00bc: pop
+		IL_00bd: ret
 	} // end of method Array_Find_Basic::__js_module_init__
 
 } // end of class Modules.Array_Find_Basic
@@ -235,7 +221,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a6
+		// Method begins at RVA 0x2165
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

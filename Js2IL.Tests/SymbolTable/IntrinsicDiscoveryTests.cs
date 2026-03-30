@@ -33,13 +33,13 @@ public class IntrinsicDiscoveryTests
     [InlineData("Error")]
     [InlineData("TypeError")]
     [InlineData("Boolean")]
+    [InlineData("Buffer")]
     public void IsKnownGlobalIntrinsic_ReturnsTrue_ForRuntimeBackedIntrinsics(string name)
     {
         Assert.True(IsKnownGlobalIntrinsic(name));
     }
 
     [Theory]
-    [InlineData("Buffer")]
     [InlineData("NotARealIntrinsic")]
     public void IsKnownGlobalIntrinsic_ReturnsFalse_ForUnsupportedOrUnknownNames(string name)
     {

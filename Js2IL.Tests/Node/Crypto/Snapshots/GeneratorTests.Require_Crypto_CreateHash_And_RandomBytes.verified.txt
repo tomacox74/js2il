@@ -1,0 +1,199 @@
+﻿// IL code: Require_Crypto_CreateHash_And_RandomBytes
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_Crypto_CreateHash_And_RandomBytes
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21e1
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 389 (0x185)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_Crypto_CreateHash_And_RandomBytes/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] bool,
+			[7] object,
+			[8] float64,
+			[9] object
+		)
+
+		IL_0000: newobj instance void Modules.Require_Crypto_CreateHash_And_RandomBytes/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "crypto"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 5
+		IL_0013: ldloc.s 5
+		IL_0015: stloc.1
+		IL_0016: ldloc.1
+		IL_0017: ldstr "createHash"
+		IL_001c: ldstr "sha256"
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0026: stloc.s 5
+		IL_0028: ldloc.s 5
+		IL_002a: stloc.2
+		IL_002b: ldloc.2
+		IL_002c: ldstr "update"
+		IL_0031: ldstr "a"
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_003b: pop
+		IL_003c: ldloc.2
+		IL_003d: ldstr "update"
+		IL_0042: ldstr "bc"
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_004c: pop
+		IL_004d: ldloc.2
+		IL_004e: ldstr "digest"
+		IL_0053: ldstr "hex"
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005d: stloc.s 5
+		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0064: ldstr "sha256 hex:"
+		IL_0069: ldloc.s 5
+		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0070: pop
+		IL_0071: ldloc.1
+		IL_0072: ldstr "createHash"
+		IL_0077: ldstr "sha256"
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0081: stloc.s 5
+		IL_0083: ldloc.s 5
+		IL_0085: ldstr "update"
+		IL_008a: ldstr "abc"
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0094: stloc.s 5
+		IL_0096: ldloc.s 5
+		IL_0098: ldstr "digest"
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00a2: stloc.s 5
+		IL_00a4: ldloc.s 5
+		IL_00a6: stloc.3
+		IL_00a7: ldloc.3
+		IL_00a8: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_00ad: stloc.s 6
+		IL_00af: ldloc.s 6
+		IL_00b1: box [System.Runtime]System.Boolean
+		IL_00b6: stloc.s 7
+		IL_00b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bd: ldstr "digest buffer:"
+		IL_00c2: ldloc.s 7
+		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00c9: pop
+		IL_00ca: ldloc.3
+		IL_00cb: ldstr "toString"
+		IL_00d0: ldstr "hex"
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00da: stloc.s 5
+		IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e1: ldstr "digest buffer hex:"
+		IL_00e6: ldloc.s 5
+		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ed: pop
+		IL_00ee: ldloc.1
+		IL_00ef: ldstr "randomBytes"
+		IL_00f4: ldc.r8 8
+		IL_00fd: box [System.Runtime]System.Double
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0107: stloc.s 5
+		IL_0109: ldloc.s 5
+		IL_010b: stloc.s 4
+		IL_010d: ldloc.s 4
+		IL_010f: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_0114: stloc.s 6
+		IL_0116: ldloc.s 6
+		IL_0118: box [System.Runtime]System.Boolean
+		IL_011d: stloc.s 7
+		IL_011f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0124: ldstr "random buffer:"
+		IL_0129: ldloc.s 7
+		IL_012b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0130: pop
+		IL_0131: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0136: ldstr "random length:"
+		IL_013b: ldloc.s 4
+		IL_013d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0142: box [System.Runtime]System.Double
+		IL_0147: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_014c: pop
+		IL_014d: ldloc.s 4
+		IL_014f: ldstr "toString"
+		IL_0154: ldstr "hex"
+		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_015e: stloc.s 5
+		IL_0160: ldloc.s 5
+		IL_0162: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0167: stloc.s 8
+		IL_0169: ldloc.s 8
+		IL_016b: box [System.Runtime]System.Double
+		IL_0170: stloc.s 9
+		IL_0172: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0177: ldstr "random hex length:"
+		IL_017c: ldloc.s 9
+		IL_017e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0183: pop
+		IL_0184: ret
+	} // end of method Require_Crypto_CreateHash_And_RandomBytes::__js_module_init__
+
+} // end of class Modules.Require_Crypto_CreateHash_And_RandomBytes
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21ea
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_Crypto_CreateHash_And_RandomBytes::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test multiplication assignment operator *=
 var x = 5;
 x *= 3;

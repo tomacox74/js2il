@@ -1,3 +1,5 @@
+"use strict";
+
 class Subber {
     constructor(a, b) {
         this.a = a;

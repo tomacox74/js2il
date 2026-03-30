@@ -1,3 +1,5 @@
+"use strict";
+
 function thenImpl(resolve, reject) {
   function later() {
     resolve(42);

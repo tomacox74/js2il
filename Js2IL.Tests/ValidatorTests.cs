@@ -1,4 +1,6 @@
+using System;
 using Xunit;
+using Js2IL;
 using Js2IL.Services;
 using Js2IL.Validation;
 using Acornima.Ast;
@@ -16,6 +18,42 @@ public class ValidatorTests
         _validator = new JavaScriptAstValidator();
     }
 
+    private Acornima.Ast.Program ParseStrict(string js)
+        => _parser.ParseJavaScript("\"use strict\";\n" + js, "test.js");
+
+    [Fact]
+    public void Validate_MissingUseStrict_ReportsError()
+    {
+        var js = "var x = 1;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("requires strict mode", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Validate_MissingUseStrict_StrictModeWarn_ReportsWarning()
+    {
+        var js = "var x = 1;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var warnValidator = new JavaScriptAstValidator(StrictModeDirectivePrologueMode.Warn);
+        var result = warnValidator.Validate(ast);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Contains(result.Warnings, w => w.Contains("requires strict mode", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Validate_GlobalThisIdentifier_IsSupported()
+    {
+        var js = "var x = globalThis; console.log(x);";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
     [Fact]
     public void Validate_SimpleAddition_ReturnsValid()
     {
@@ -23,7 +61,7 @@ public class ValidatorTests
         var js = @"var x = 1 + 2;
             console.log('X is',x);
         ";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         // Act
         var result = _validator.Validate(ast);
         // Assert
@@ -37,7 +75,7 @@ public class ValidatorTests
     {
         // Arrange
         var js = "function add(a, b) { return a + b; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
 
         // Act
         var result = _validator.Validate(ast);
@@ -49,6 +87,36 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_ObjectLiteral_AccessorDefinitions_ReturnsValid()
+    {
+        var js = @"
+            const obj = {
+                get value() { return this._value; },
+                set value(v) { this._value = v; }
+            };
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_Class_AccessorDefinitions_ReturnsValid()
+    {
+        var js = @"
+            class Counter {
+                get value() { return this._value; }
+                set value(v) { this._value = v; }
+            }
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_MultipleIssues_ReturnsAllErrorsAndWarnings()
     {
         // Arrange
@@ -57,7 +125,7 @@ public class ValidatorTests
             const add = (a, b) => a + b;
             /* import { something } from 'module'; */
         ";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
 
         // Act
         var result = _validator.Validate(ast);
@@ -77,7 +145,7 @@ public class ValidatorTests
     public void Validate_Require_SupportedModule_NoError()
     {
         var js = "const p = require('path');";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -87,7 +155,27 @@ public class ValidatorTests
     public void Validate_Require_NodePath_Supported_NoError()
     {
         var js = "const p = require('node:path');";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_Require_NodeCrypto_Supported_NoError()
+    {
+        var js = "const c = require('node:crypto');";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_Require_NodeTls_Exposed_NoError()
+    {
+        var js = "const t = require('node:tls');";
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -96,18 +184,140 @@ public class ValidatorTests
     [Fact]
     public void Validate_Require_UnsupportedModule_ReportsError()
     {
-        var js = "const c = require('node:crypto');";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var js = "const t = require('node:dgram');";
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Module 'node:crypto' is not yet supported"));
+        Assert.Contains(result.Errors, e => e.Contains("Module 'node:dgram' is not yet supported"));
+    }
+
+    [Fact]
+    public void Validate_MissingGlobalFunction_ReportsError()
+    {
+        // A global function call that is not implemented/exposed by the runtime.
+        var js = "queueMicrotask(() => console.log('x'));";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Global function 'queueMicrotask'", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Validate_MissingGlobalIdentifier_ReportsError()
+    {
+        var js = "var x = window;";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Global identifier 'window'", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Validate_Typeof_UndeclaredGlobal_IsAllowed()
+    {
+        var js = "var t = typeof window;";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_TypeofGuardedConditional_AllowsGuardedGlobalReference()
+    {
+        var js = "var root = typeof window !== 'undefined' ? window : {};";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_TypeofGuardedLogicalAnd_AllowsGuardedGlobalReference()
+    {
+        var js = "var x = typeof window !== 'undefined' && window;";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_BooleanGlobalValue_AsPredicate_ReturnsValid()
+    {
+        // This pattern requires Boolean to be usable as a function value.
+        var js = @"
+            const a = [0, 1, 2, 3];
+            const b = a.filter(Boolean);
+            console.log(b.length);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_GlobalBuiltins_StringNumberFunction_AsValues_ReturnsValid()
+    {
+        var js = @"
+            const s = String;
+            const n = Number;
+            const f = Function;
+            console.log(s !== undefined);
+            console.log(n !== undefined);
+            console.log(f !== undefined);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_GlobalTimerFunctions_AsValues_ReturnsValid()
+    {
+        // Domino's WindowTimers polyfill pattern assigns host timer functions onto a window-like object.
+        // This requires timer APIs to be available as first-class global function values.
+        var js = @"
+            const window = {};
+            window.setTimeout = setTimeout;
+            window.clearTimeout = clearTimeout;
+            window.setInterval = setInterval;
+            window.clearInterval = clearInterval;
+
+            const st = window.setTimeout;
+            const ci = window.clearInterval;
+            console.log(typeof st);
+            console.log(typeof ci);
+        ";
+
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_GlobalFunctions_ParseFloat_IsFinite_ReturnsValid()
+    {
+        var js = @"
+            const x = parseFloat('1.25abc');
+            const y = isFinite(x);
+            console.log(x);
+            console.log(y);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
     public void Validate_Require_DynamicArgument_ReportsError()
     {
         var js = "const name = './b'; const m = require(name);";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Dynamic require() with non-literal argument is not supported"));
@@ -119,7 +329,7 @@ public class ValidatorTests
     public void Validate_AsyncFunctionDeclaration_IsValid()
     {
         var js = "async function f() { return 1; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -128,7 +338,7 @@ public class ValidatorTests
     public void Validate_AsyncArrowFunction_IsValid()
     {
         var js = "const f = async () => 1;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -137,7 +347,7 @@ public class ValidatorTests
     public void Validate_AwaitInsideAsyncFunction_IsValid()
     {
         var js = "async function f() { await 1; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -146,7 +356,7 @@ public class ValidatorTests
     public void Validate_AwaitInsideTryCatch_IsValid()
     {
         var js = "async function f() { try { await 1; } catch (e) { } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -155,7 +365,7 @@ public class ValidatorTests
     public void Validate_AwaitInsideFinally_IsValid()
     {
         var js = "async function f() { try { } finally { await 1; } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -170,7 +380,7 @@ public class ValidatorTests
         // We can't easily create an AST with await outside async using the parser,
         // so this test is more of a documentation of expected behavior.
         var js = "function f() { var x = 1; }"; // No await, just a control
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -180,7 +390,7 @@ public class ValidatorTests
     {
         // 'async' as an identifier is valid in non-strict mode
         var js = "var async = 1;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -190,7 +400,7 @@ public class ValidatorTests
     {
         // 'await' as an identifier is valid outside async functions
         var js = "var await = 1;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -199,7 +409,7 @@ public class ValidatorTests
     public void Validate_ClassAsyncMethod_IsValid()
     {
         var js = "class C { async m() { return 1; } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -209,26 +419,37 @@ public class ValidatorTests
     {
         // Property names can be 'await'
         var js = "const o = { await: 1 }; console.log(o.await);";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
 
     [Fact]
-    public void Validate_ForAwaitOf_ReportsError()
+    public void Validate_ForAwaitOf_IsValid()
     {
         var js = "async function f() { for await (const x of []) { console.log(x); } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("for await...of"));
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Validate_ForAwaitOf_OutsideAsync_ReportsError()
+    {
+        // The parser enforces this constraint: `for await...of` is only valid in async functions
+        // (and we keep AllowAwaitOutsideFunction = false).
+        var js = "function f() { for await (const x of []) { console.log(x); } }";
+
+        var ex = Assert.Throws<Exception>(() => _parser.ParseJavaScript(js, "test.js"));
+        Assert.Contains("Failed to parse JavaScript", ex.Message);
+        Assert.Contains("Unexpected reserved word", ex.Message);
     }
 
     [Fact]
     public void Validate_RegularForOf_IsValid()
     {
         var js = "async function f() { for (const x of [1,2,3]) { console.log(x); } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
     }
@@ -238,30 +459,28 @@ public class ValidatorTests
     #region Unsupported Feature Validation Tests
 
     [Fact]
-    public void Validate_RestParameters_ReportsError()
+    public void Validate_RestParameters_IsValid()
     {
         var js = "function foo(...args) { console.log(args); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Rest parameters"));
+        Assert.True(result.IsValid);
     }
 
     [Fact]
-    public void Validate_SpreadInFunctionCall_ReportsError()
+    public void Validate_SpreadInFunctionCall_IsValid()
     {
         var js = "const arr = [1, 2, 3]; console.log(...arr);";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Spread in function calls"));
+        Assert.True(result.IsValid);
     }
 
     [Fact]
     public void Validate_DestructuringAssignment_IsValid()
     {
         var js = "let x, y; [x, y] = [1, 2];";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -272,7 +491,7 @@ public class ValidatorTests
     public void Validate_ArrayDestructuring_IsValid()
     {
         var js = "const [a, b] = [1, 2];";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -283,7 +502,7 @@ public class ValidatorTests
     public void Validate_ForInLoop_IsValid()
     {
         var js = "const obj = {a: 1}; for (const k in obj) { console.log(k); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -293,7 +512,7 @@ public class ValidatorTests
     public void Validate_SwitchStatement_IsValid()
     {
         var js = "const x = 1; switch(x) { case 1: break; default: break; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -303,7 +522,7 @@ public class ValidatorTests
     public void Validate_ComputedPropertyNamesInObjectLiterals_IsValid()
     {
         var js = "const key = 'foo'; const obj = { [key]: 123 };";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -316,7 +535,7 @@ public class ValidatorTests
         // Note: ECMAScript allows computed keys in binding patterns, but js2il does not yet support
         // computed keys in object patterns/destructuring. Keep validator rejection for now.
         var js = "const key = 'foo'; const { [key]: v } = { foo: 123 };";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Computed property names"));
@@ -326,7 +545,7 @@ public class ValidatorTests
     public void Validate_ObjectRestProperties_IsValid()
     {
         var js = "const obj = {a: 1, b: 2, c: 3}; const {a, ...rest} = obj;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -336,19 +555,17 @@ public class ValidatorTests
     [Fact]
     public void Validate_WithStatement_ReportsError()
     {
-        // Note: 'with' only works in non-strict mode
+        // In strict mode, 'with' is a static syntax error.
         var js = "var obj = {a: 1}; with(obj) { console.log(a); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
-        var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'with' statement"));
+        var ex = Assert.Throws<Exception>(() => ParseStrict(js));
+        Assert.Contains("with statement", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
     public void Validate_LabeledStatement_IsValid()
     {
         var js = "outer: for (let i = 0; i < 3; i++) { break outer; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -358,7 +575,7 @@ public class ValidatorTests
     public void Validate_DebuggerStatement_ReportsError()
     {
         var js = "function test() { debugger; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("'debugger' statement"));
@@ -368,7 +585,7 @@ public class ValidatorTests
     public void Validate_NestedDestructuring_IsValid()
     {
         var js = "const obj = {inner: {x: 1}}; const {inner: {x}} = obj;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -376,53 +593,143 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_NewTarget_ReportsError()
+    public void Validate_NewTarget_InFunction_IsValid()
     {
         var js = "function Foo() { console.log(new.target); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("new.target"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_NewTarget_InConstructor_IsValid()
+    {
+        var js = "class Foo { constructor() { console.log(new.target); } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_NewTarget_InArrowFunction_IsValid()
+    {
+        var js = "function outer() { const arrow = () => console.log(new.target); }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_NewTarget_AtTopLevel_ReportsError()
+    {
+        var js = "console.log(new.target);";
+        var ex = Assert.Throws<Exception>(() => ParseStrict(js));
+        Assert.Contains("new.target", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Validate_ImportMeta_IsValid()
+    {
+        var js = "console.log(typeof import.meta);";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
     public void Validate_SuperExpression_ReportsError()
     {
-        var js = "class Parent { foo() {} } class Child extends Parent { foo() { super.foo(); } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        // super is only supported in derived class methods/constructors.
+        // Using it in a non-derived class should be rejected by validation.
+        var js = "class NotDerived { foo() { super.foo(); } }";
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("super"));
     }
 
     [Fact]
-    public void Validate_Getter_ReportsError()
+    public void Validate_Getter_ReturnsValid()
     {
         var js = "const obj = { get foo() { return 42; } };";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Getter"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_Setter_ReportsError()
+    public void Validate_Setter_ReturnsValid()
     {
         var js = "const obj = { set foo(v) { this._foo = v; } };";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Setter"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ClassGetter_ReportsError()
+    public void Validate_ClassGetter_ReturnsValid()
     {
         var js = "class Foo { get bar() { return 42; } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Getter"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ClassPrivateMethod_ReturnsValid()
+    {
+        var js = @"class Foo { #m() { return 1; } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ClassComputedMethodName_ReturnsValid()
+    {
+        var js = @"class Foo { ['m']() { return 1; } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ClassComputedFieldName_ReturnsValid()
+    {
+        var js = @"class Foo { ['x'] = 1; }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ClassStaticBlock_ReturnsValid()
+    {
+        var js = @"class Foo { static { console.log('hi'); } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ClassPrivateAccessor_ReturnsValid()
+    {
+        var js = @"class Foo { get #value() { return 1; } set #value(v) { this.x = v; } read() { return this.#value; } }";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -430,21 +737,23 @@ public class ValidatorTests
     {
         // 'this' is supported in non-arrow functions.
         var js = "function foo() { console.log(this); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ThisInArrowFunction_ReportsError()
+    public void Validate_ThisInArrowFunction_Valid()
     {
-        // Issue #218: 'this' in arrow functions (outside classes) is not yet supported
-        var js = "const foo = () => this.bar;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        // Issue #219: arrow functions support lexical 'this'
+        // Keep this inside a function so the validator doesn't need to assume
+        // any particular global/module `this` semantics.
+        var js = "function outer() { const foo = () => this.bar; }";
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -452,7 +761,7 @@ public class ValidatorTests
     {
         // Issue #218: 'this' IS supported in class methods
         var js = "class Foo { bar() { return this.x; } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -463,16 +772,16 @@ public class ValidatorTests
     {
         // Issue #218: 'this' IS supported in class constructors
         var js = "class Foo { constructor(x) { this.x = x; } }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ThisInArrowFunctionInsideClassConstructor_ReportsError()
+    public void Validate_ThisInArrowFunctionInsideClassConstructor_Valid()
     {
-        // Issue #244: 'this' in arrow function inside class constructor is not yet supported
+        // Issue #219: arrow functions inside class constructors inherit lexical 'this'
         var js = @"
 class Counter {
     constructor(initial) {
@@ -482,16 +791,16 @@ class Counter {
         };
     }
 }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_ThisInArrowFunctionInsideClassMethod_ReportsError()
+    public void Validate_ThisInArrowFunctionInsideClassMethod_Valid()
     {
-        // Issue #244: 'this' in arrow function inside class method is not yet supported
+        // Issue #219: arrow functions inside class methods inherit lexical 'this'
         var js = @"
 class Counter {
     doSomething() {
@@ -501,10 +810,10 @@ class Counter {
         return callback();
     }
 }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -520,32 +829,32 @@ class Counter {
         return callback();
     }
 }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_FunctionWithMoreThan6Parameters_ReportsError()
+    public void Validate_FunctionWithMoreThan32Parameters_ReportsError()
     {
-        // Issue #220: Functions with >6 parameters are not supported
-        var js = "function foo(a, b, c, d, e, f, g) { return a + b + c + d + e + f + g; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        // Functions with >32 parameters are not supported
+        var js = "function foo(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20,a21,a22,a23,a24,a25,a26,a27,a28,a29,a30,a31,a32,a33) { return a33; }";
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("more than 6 parameters"));
+        Assert.Contains(result.Errors, e => e.Contains("more than 32 parameters"));
     }
 
     [Fact]
-    public void Validate_ArrowFunctionWithMoreThan6Parameters_ReportsError()
+    public void Validate_ArrowFunctionWithMoreThan32Parameters_ReportsError()
     {
-        // Issue #220: Arrow functions with >6 parameters are not supported
-        var js = "const foo = (a, b, c, d, e, f, g) => a + b + c + d + e + f + g;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        // Arrow functions with >32 parameters are not supported
+        var js = "const foo = (a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16,a17,a18,a19,a20,a21,a22,a23,a24,a25,a26,a27,a28,a29,a30,a31,a32,a33) => a33;";
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("more than 6 parameters"));
+        Assert.Contains(result.Errors, e => e.Contains("more than 32 parameters"));
     }
 
     [Fact]
@@ -553,7 +862,7 @@ class Counter {
     {
         // Issue #220: Functions with exactly 6 parameters should be valid
         var js = "function foo(a, b, c, d, e, f) { return a + b + c + d + e + f; }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -564,7 +873,7 @@ class Counter {
     {
         // Issue #220: Call expressions with exactly 6 arguments should be valid
         var js = "function test() { console.log(1, 2, 3, 4, 5, 6); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
@@ -575,11 +884,11 @@ class Counter {
     {
         // Issue #220: Built-in functions like console.log can accept >6 arguments
         var js = "console.log(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);";
-        var ast = _parser.ParseJavaScript(js, "test.js");
+        var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
     }
 
     #endregion
-} 
+}

@@ -31,6 +31,15 @@ namespace Js2IL.Tests.ArrowFunction
         [Fact]
         public Task ArrowFunction_NestedFunctionAccessesMultipleScopes() { var testName = nameof(ArrowFunction_NestedFunctionAccessesMultipleScopes); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task ArrowFunction_LexicalThis_ConstructorAssigned() { var testName = nameof(ArrowFunction_LexicalThis_ConstructorAssigned); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_LexicalThis_CreatedInMethod() { var testName = nameof(ArrowFunction_LexicalThis_CreatedInMethod); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_LexicalThis_ObjectLiteralProperty() { var testName = nameof(ArrowFunction_LexicalThis_ObjectLiteralProperty); return ExecutionTest(testName); }
+
         // New: parameter destructuring (object)
         [Fact]
         public Task ArrowFunction_ParameterDestructuring_Object() { var testName = nameof(ArrowFunction_ParameterDestructuring_Object); return ExecutionTest(testName); }
@@ -40,5 +49,14 @@ namespace Js2IL.Tests.ArrowFunction
 
         [Fact]
         public Task ArrowFunction_ClosureMutatesOuterVariable() { var testName = nameof(ArrowFunction_ClosureMutatesOuterVariable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_MaxParameters_32() { var testName = nameof(ArrowFunction_MaxParameters_32); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestParameters_Basic() { var testName = nameof(ArrowFunction_RestParameters_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestParameters_WithNamedParams() { var testName = nameof(ArrowFunction_RestParameters_WithNamedParams); return ExecutionTest(testName); }
     }
 }

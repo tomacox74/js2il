@@ -1,3 +1,5 @@
+"use strict";
+
 let g = 0;
 
 function outer() {

@@ -1,0 +1,535 @@
+﻿// IL code: Generator_YieldStar_ArrayBasic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Generator_YieldStar_ArrayBasic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit g
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x24b7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object[] scopes,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 02 00 00 00 00 00
+			)
+			// Method begins at RVA 0x218c
+			// Header size: 12
+			// Code size: 790 (0x316)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Generator_YieldStar_ArrayBasic/g/Scope,
+				[1] bool,
+				[2] bool,
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[4] object,
+				[5] float64,
+				[6] float64,
+				[7] object,
+				[8] bool,
+				[9] object[],
+				[10] object,
+				[11] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: isinst Modules.Generator_YieldStar_ArrayBasic/g/Scope
+			IL_0008: dup
+			IL_0009: brtrue IL_003d
+
+			IL_000e: pop
+			IL_000f: newobj instance void Modules.Generator_YieldStar_ArrayBasic/g/Scope::.ctor()
+			IL_0014: stloc.0
+			IL_0015: ldloc.0
+			IL_0016: ldarg.0
+			IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
+			IL_001c: starg.s scopes
+			IL_001e: ldnull
+			IL_001f: ldftn object Modules.Generator_YieldStar_ArrayBasic/g::__js_call__(object[], object)
+			IL_0025: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_002a: ldarg.0
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0030: ldarg.0
+			IL_0031: ldc.i4.0
+			IL_0032: newarr [System.Runtime]System.Object
+			IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::.ctor(object, object[], object[])
+			IL_003c: ret
+
+			IL_003d: stloc.0
+			IL_003e: ldloc.0
+			IL_003f: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+			IL_0044: stloc.1
+			IL_0045: ldloc.1
+			IL_0046: brtrue IL_0052
+
+			IL_004b: ldloc.0
+			IL_004c: ldc.i4.1
+			IL_004d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+
+			IL_0052: ldloc.0
+			IL_0053: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_0058: switch (IL_0069, IL_0144, IL_02b3)
+
+			IL_0069: ldc.i4.3
+			IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_006f: dup
+			IL_0070: ldc.r8 1
+			IL_0079: box [System.Runtime]System.Double
+			IL_007e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0083: dup
+			IL_0084: ldc.r8 2
+			IL_008d: box [System.Runtime]System.Double
+			IL_0092: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_0097: dup
+			IL_0098: ldc.r8 3
+			IL_00a1: box [System.Runtime]System.Double
+			IL_00a6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+			IL_00ab: stloc.3
+			IL_00ac: ldloc.3
+			IL_00ad: isinst [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject
+			IL_00b2: stloc.s 4
+			IL_00b4: ldloc.s 4
+			IL_00b6: brtrue IL_01a1
+
+			IL_00bb: ldloc.0
+			IL_00bc: ldc.r8 1
+			IL_00c5: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarMode
+			IL_00ca: ldloc.0
+			IL_00cb: ldloc.3
+			IL_00cc: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarTarget
+			IL_00d1: ldloc.0
+			IL_00d2: ldc.r8 0.0
+			IL_00db: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarIndex
+			IL_00e0: ldloc.3
+			IL_00e1: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00e6: stloc.s 5
+			IL_00e8: ldloc.0
+			IL_00e9: ldloc.s 5
+			IL_00eb: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarLength
+
+			IL_00f0: ldloc.0
+			IL_00f1: ldfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarIndex
+			IL_00f6: stloc.s 5
+			IL_00f8: ldloc.0
+			IL_00f9: ldfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarLength
+			IL_00fe: stloc.s 6
+			IL_0100: ldloc.s 5
+			IL_0102: ldloc.s 6
+			IL_0104: clt
+			IL_0106: brfalse IL_0186
+
+			IL_010b: ldloc.0
+			IL_010c: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarTarget
+			IL_0111: stloc.s 7
+			IL_0113: ldloc.s 7
+			IL_0115: ldloc.s 5
+			IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_011c: stloc.s 7
+			IL_011e: ldloc.s 5
+			IL_0120: ldc.r8 1
+			IL_0129: add
+			IL_012a: stloc.s 5
+			IL_012c: ldloc.0
+			IL_012d: ldloc.s 5
+			IL_012f: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarIndex
+			IL_0134: ldloc.0
+			IL_0135: ldc.i4.1
+			IL_0136: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_013b: ldloc.s 7
+			IL_013d: ldc.i4.0
+			IL_013e: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0143: ret
+
+			IL_0144: ldloc.0
+			IL_0145: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_014a: brfalse IL_0163
+
+			IL_014f: ldloc.0
+			IL_0150: ldc.i4.1
+			IL_0151: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_0156: ldloc.0
+			IL_0157: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
+			IL_015c: ldc.i4.1
+			IL_015d: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0162: ret
+
+			IL_0163: ldloc.0
+			IL_0164: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_0169: brfalse IL_0181
+
+			IL_016e: ldloc.0
+			IL_016f: ldc.i4.0
+			IL_0170: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_0175: ldloc.0
+			IL_0176: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
+			IL_017b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0180: throw
+
+			IL_0181: br IL_00f0
+
+			IL_0186: ldloc.0
+			IL_0187: ldc.r8 0.0
+			IL_0190: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarMode
+			IL_0195: ldloc.0
+			IL_0196: ldc.i4.0
+			IL_0197: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarTarget
+			IL_019c: br IL_02fa
+
+			IL_01a1: ldloc.0
+			IL_01a2: ldc.r8 2
+			IL_01ab: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarMode
+			IL_01b0: ldloc.0
+			IL_01b1: ldloc.s 4
+			IL_01b3: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarTarget
+			IL_01b8: ldc.i4.0
+			IL_01b9: stloc.2
+
+			IL_01ba: ldloc.0
+			IL_01bb: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarTarget
+			IL_01c0: stloc.s 4
+			IL_01c2: ldloc.0
+			IL_01c3: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_01c8: stloc.s 8
+			IL_01ca: ldloc.s 8
+			IL_01cc: brtrue IL_01e5
+
+			IL_01d1: ldloc.0
+			IL_01d2: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_01d7: stloc.s 8
+			IL_01d9: ldloc.s 8
+			IL_01db: brtrue IL_0218
+
+			IL_01e0: br IL_024b
+
+			IL_01e5: ldc.i4.1
+			IL_01e6: stloc.2
+			IL_01e7: ldloc.0
+			IL_01e8: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
+			IL_01ed: stloc.s 7
+			IL_01ef: ldloc.0
+			IL_01f0: ldc.i4.0
+			IL_01f1: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_01f6: ldc.i4.1
+			IL_01f7: newarr [System.Runtime]System.Object
+			IL_01fc: dup
+			IL_01fd: ldc.i4.0
+			IL_01fe: ldloc.s 7
+			IL_0200: stelem.ref
+			IL_0201: stloc.s 9
+			IL_0203: ldloc.s 4
+			IL_0205: ldstr "return"
+			IL_020a: ldloc.s 9
+			IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0211: stloc.s 4
+			IL_0213: br IL_0277
+
+			IL_0218: ldc.i4.0
+			IL_0219: stloc.2
+			IL_021a: ldloc.0
+			IL_021b: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
+			IL_0220: stloc.s 10
+			IL_0222: ldloc.0
+			IL_0223: ldc.i4.0
+			IL_0224: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_0229: ldc.i4.1
+			IL_022a: newarr [System.Runtime]System.Object
+			IL_022f: dup
+			IL_0230: ldc.i4.0
+			IL_0231: ldloc.s 10
+			IL_0233: stelem.ref
+			IL_0234: stloc.s 9
+			IL_0236: ldloc.s 4
+			IL_0238: ldstr "throw"
+			IL_023d: ldloc.s 9
+			IL_023f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0244: stloc.s 4
+			IL_0246: br IL_0277
+
+			IL_024b: ldc.i4.0
+			IL_024c: stloc.2
+			IL_024d: ldloc.0
+			IL_024e: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeValue
+			IL_0253: stloc.s 11
+			IL_0255: ldc.i4.1
+			IL_0256: newarr [System.Runtime]System.Object
+			IL_025b: dup
+			IL_025c: ldc.i4.0
+			IL_025d: ldloc.s 11
+			IL_025f: stelem.ref
+			IL_0260: stloc.s 9
+			IL_0262: ldloc.s 4
+			IL_0264: ldstr "next"
+			IL_0269: ldloc.s 9
+			IL_026b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0270: stloc.s 4
+			IL_0272: br IL_0277
+
+			IL_0277: ldloc.s 4
+			IL_0279: ldstr "done"
+			IL_027e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0283: stloc.s 11
+			IL_0285: ldloc.s 11
+			IL_0287: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_028c: stloc.s 8
+			IL_028e: ldloc.s 8
+			IL_0290: brtrue IL_02b8
+
+			IL_0295: ldloc.s 4
+			IL_0297: ldstr "value"
+			IL_029c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02a1: stloc.s 11
+			IL_02a3: ldloc.0
+			IL_02a4: ldc.i4.2
+			IL_02a5: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_02aa: ldloc.s 11
+			IL_02ac: ldc.i4.0
+			IL_02ad: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_02b2: ret
+
+			IL_02b3: br IL_01ba
+
+			IL_02b8: ldloc.s 4
+			IL_02ba: ldstr "value"
+			IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02c4: stloc.s 4
+			IL_02c6: ldloc.0
+			IL_02c7: ldc.r8 0.0
+			IL_02d0: stfld float64 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarMode
+			IL_02d5: ldloc.0
+			IL_02d6: ldc.i4.0
+			IL_02d7: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_yieldStarTarget
+			IL_02dc: ldloc.2
+			IL_02dd: brtrue IL_02e7
+
+			IL_02e2: br IL_02f7
+
+			IL_02e7: ldloc.0
+			IL_02e8: ldc.i4.1
+			IL_02e9: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_02ee: ldloc.s 4
+			IL_02f0: ldc.i4.1
+			IL_02f1: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_02f6: ret
+
+			IL_02f7: ldloc.s 4
+			IL_02f9: pop
+
+			IL_02fa: ldloc.0
+			IL_02fb: ldc.i4.1
+			IL_02fc: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_0301: ldc.r8 99
+			IL_030a: box [System.Runtime]System.Double
+			IL_030f: ldc.i4.1
+			IL_0310: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0315: ret
+		} // end of method g::__js_call__
+
+	} // end of class g
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 0b 53 63 6f 70 65 20 67 3d 7b 67 7d 00 00
+		)
+		// Fields
+		.field public object g
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x24ae
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 303 (0x12f)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Generator_YieldStar_ArrayBasic/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] object,
+			[7] object
+		)
+
+		IL_0000: newobj instance void Modules.Generator_YieldStar_ArrayBasic/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: ldftn object Modules.Generator_YieldStar_ArrayBasic/g::__js_call__(object[], object)
+		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_001b: stloc.s 7
+		IL_001d: ldloc.s 7
+		IL_001f: stloc.1
+		IL_0020: ldc.i4.1
+		IL_0021: newarr [System.Runtime]System.Object
+		IL_0026: dup
+		IL_0027: ldc.i4.0
+		IL_0028: ldloc.0
+		IL_0029: stelem.ref
+		IL_002a: ldnull
+		IL_002b: call object Modules.Generator_YieldStar_ArrayBasic/g::__js_call__(object[], object)
+		IL_0030: stloc.s 7
+		IL_0032: ldloc.s 7
+		IL_0034: stloc.2
+		IL_0035: ldloc.2
+		IL_0036: ldstr "next"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0040: stloc.s 7
+		IL_0042: ldloc.s 7
+		IL_0044: stloc.3
+		IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004a: ldloc.3
+		IL_004b: ldstr "value"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005a: pop
+		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0060: ldloc.3
+		IL_0061: ldstr "done"
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0070: pop
+		IL_0071: ldloc.2
+		IL_0072: ldstr "next"
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_007c: stloc.s 7
+		IL_007e: ldloc.s 7
+		IL_0080: stloc.s 4
+		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0087: ldloc.s 4
+		IL_0089: ldstr "value"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0098: pop
+		IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009e: ldloc.s 4
+		IL_00a0: ldstr "done"
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00af: pop
+		IL_00b0: ldloc.2
+		IL_00b1: ldstr "next"
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00bb: stloc.s 7
+		IL_00bd: ldloc.s 7
+		IL_00bf: stloc.s 5
+		IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c6: ldloc.s 5
+		IL_00c8: ldstr "value"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d7: pop
+		IL_00d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00dd: ldloc.s 5
+		IL_00df: ldstr "done"
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ee: pop
+		IL_00ef: ldloc.2
+		IL_00f0: ldstr "next"
+		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00fa: stloc.s 7
+		IL_00fc: ldloc.s 7
+		IL_00fe: stloc.s 6
+		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0105: ldloc.s 6
+		IL_0107: ldstr "value"
+		IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0111: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0116: pop
+		IL_0117: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_011c: ldloc.s 6
+		IL_011e: ldstr "done"
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0128: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_012d: pop
+		IL_012e: ret
+	} // end of method Generator_YieldStar_ArrayBasic::__js_module_init__
+
+} // end of class Modules.Generator_YieldStar_ArrayBasic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x24c0
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Generator_YieldStar_ArrayBasic::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

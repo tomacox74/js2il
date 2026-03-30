@@ -14,6 +14,13 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_LastIndexOf_Basic()
+        {
+            var testName = nameof(String_LastIndexOf_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_PlusEquals_Append()
         {
             var testName = nameof(String_PlusEquals_Append);
@@ -35,9 +42,93 @@ namespace Js2IL.Tests.String
         }
 
         [Fact]
+        public Task String_Match_NonGlobal()
+        {
+            var testName = nameof(String_Match_NonGlobal);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Match_Global()
+        {
+            var testName = nameof(String_Match_Global);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Search_Basic()
+        {
+            var testName = nameof(String_Search_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_Global()
+        {
+            var testName = nameof(String_RegExp_Exec_LastIndex_Global);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_EmptyMatch_Global()
+        {
+            var testName = nameof(String_RegExp_Exec_LastIndex_EmptyMatch_Global);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_Exec_LastIndex_Sticky()
+        {
+            var testName = nameof(String_RegExp_Exec_LastIndex_Sticky);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Substring()
+        {
+            var testName = nameof(String_Substring);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Split_Basic()
         {
             var testName = nameof(String_Split_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Split_Regex_Basic()
+        {
+            var testName = nameof(String_Split_Regex_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Split_Regex_Empty()
+        {
+            var testName = nameof(String_Split_Regex_Empty);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_Custom()
+        {
+            var testName = nameof(String_RegExp_SymbolDispatch_Custom);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_RegExpOverride()
+        {
+            var testName = nameof(String_RegExp_SymbolDispatch_RegExpOverride);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_RegExp_SymbolDispatch_RegExpPrototypeOverride()
+        {
+            var testName = nameof(String_RegExp_SymbolDispatch_RegExpPrototypeOverride);
             return GenerateTest(testName);
         }
 
@@ -66,6 +157,103 @@ namespace Js2IL.Tests.String
         public Task String_New_Sugar()
         {
             var testName = nameof(String_New_Sugar);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_CharCodeAt_Basic()
+        {
+            var testName = nameof(String_CharCodeAt_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_CharAt_Basic()
+        {
+            var testName = nameof(String_CharAt_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_FromCharCode_Basic()
+        {
+            var testName = nameof(String_FromCharCode_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_ToLowerCase_ToUpperCase_Basic()
+        {
+            var testName = nameof(String_ToLowerCase_ToUpperCase_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_Basic()
+        {
+            var testName = nameof(String_TaggedTemplate_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_RawStrings()
+        {
+            var testName = nameof(String_TaggedTemplate_RawStrings);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_EvaluationOrder()
+        {
+            var testName = nameof(String_TaggedTemplate_EvaluationOrder);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_TaggedTemplate_NoSubstitutions()
+        {
+            var testName = nameof(String_TaggedTemplate_NoSubstitutions);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_MemberCall_Arity2_Substring() { var testName = nameof(String_MemberCall_Arity2_Substring); return GenerateTest(testName); }
+
+        [Fact]
+        public Task String_MemberCall_Arity3_Replace() { var testName = nameof(String_MemberCall_Arity3_Replace); return GenerateTest(testName); }
+
+        [Fact]
+        public Task String_MemberCall_FastPath_CommonMethods()
+        {
+            var testName = nameof(String_MemberCall_FastPath_CommonMethods);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Repeat_Basic()
+        {
+            var testName = nameof(String_Repeat_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_Prototype_Iterator_Surface()
+        {
+            var testName = nameof(String_Prototype_Iterator_Surface);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_NewApis_Basic()
+        {
+            var testName = nameof(String_NewApis_Basic);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task String_MatchAll_Basic()
+        {
+            var testName = nameof(String_MatchAll_Basic);
             return GenerateTest(testName);
         }
     }

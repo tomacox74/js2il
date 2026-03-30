@@ -1,3 +1,5 @@
+"use strict";
+
 [1].map((x) => x);
 
 require('./CommonJS_Require_Dependency');

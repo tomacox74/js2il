@@ -7,13 +7,17 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C22
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C22
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 17 53 63 6f 70 65 20 72 65 73 75 6c 74 73
+				3d 7b 72 65 73 75 6c 74 73 7d 00 00
+			)
 			// Fields
 			.field public object results
 
@@ -21,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e2
+				// Method begins at RVA 0x20c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,35 +42,30 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object results
 			) cil managed 
 		{
-			// Method begins at RVA 0x20a4
-			// Header size: 12
-			// Code size: 41 (0x29)
-			.maxstack 32
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x209d
+			// Header size: 1
+			// Code size: 29 (0x1d)
+			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.2
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "Empty array resolved with length:"
-			IL_0012: stelem.ref
-			IL_0013: dup
-			IL_0014: ldc.i4.1
-			IL_0015: ldarg.1
-			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_001b: box [System.Runtime]System.Double
-			IL_0020: stelem.ref
-			IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0026: pop
-			IL_0027: ldnull
-			IL_0028: ret
-		} // end of method ArrowFunction_L1C22::__js_call__
+			IL_0005: ldstr "Empty array resolved with length:"
+			IL_000a: ldarg.1
+			IL_000b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0010: box [System.Runtime]System.Double
+			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_001a: pop
+			IL_001b: ldnull
+			IL_001c: ret
+		} // end of method ArrowFunction_L3C22::__js_call__
 
-	} // end of class ArrowFunction_L1C22
+	} // end of class ArrowFunction_L3C22
 
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
@@ -75,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d9
+			// Method begins at RVA 0x20bb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,13 +100,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 71 (0x47)
-		.maxstack 32
+		// Code size: 65 (0x41)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_All_EmptyArray/Scope,
 			[1] object,
-			[2] object,
-			[3] object[]
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Promise_All_EmptyArray/Scope::.ctor()
@@ -117,29 +115,23 @@
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
 		IL_0011: stloc.1
 		IL_0012: ldnull
-		IL_0013: ldftn object Modules.Promise_All_EmptyArray/ArrowFunction_L1C22::__js_call__(object[], object)
-		IL_0019: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: ldftn object Modules.Promise_All_EmptyArray/ArrowFunction_L3C22::__js_call__(object, object)
+		IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
 		IL_001e: ldc.i4.1
 		IL_001f: newarr [System.Runtime]System.Object
 		IL_0024: dup
 		IL_0025: ldc.i4.0
 		IL_0026: ldloc.0
 		IL_0027: stelem.ref
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002d: stloc.2
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.2
-		IL_0037: stelem.ref
-		IL_0038: stloc.3
-		IL_0039: ldloc.1
-		IL_003a: ldstr "then"
-		IL_003f: ldloc.3
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0045: pop
-		IL_0046: ret
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0032: stloc.2
+		IL_0033: ldloc.1
+		IL_0034: ldstr "then"
+		IL_0039: ldloc.2
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_003f: pop
+		IL_0040: ret
 	} // end of method Promise_All_EmptyArray::__js_module_init__
 
 } // end of class Modules.Promise_All_EmptyArray
@@ -151,7 +143,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x20cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

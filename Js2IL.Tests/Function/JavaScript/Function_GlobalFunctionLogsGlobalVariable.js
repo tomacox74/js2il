@@ -1,3 +1,5 @@
+"use strict";
+
 var globalMessage = "Hello from global scope!";
 var globalNumber = 42;
 

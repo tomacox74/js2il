@@ -1,3 +1,5 @@
+"use strict";
+
 const p1 = Promise.resolve("promise");
 const value = "non-promise";
 

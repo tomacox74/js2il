@@ -72,7 +72,9 @@ x is  3
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
 - Two-phase compilation pipeline is always enabled. See `docs/compiler/TwoPhaseCompilationPipeline.md`.
-- See [JavaScript Feature Coverage](docs/ECMA262/FeatureCoverage.md) for a comprehensive breakdown of supported JavaScript language features organized by specification section.
+- Prototype-chain support design: see `docs/compiler/PrototypeChainSupport.md`.
+- See [.NET hosting (library mode)](docs/hosting/Index.md) for consuming compiled modules from C#.
+- See [ECMA-262 coverage index](docs/ECMA262/Index.md) for a spec-clause breakdown (with per-subsection support notes).
 - See [Node.js Feature Coverage](docs/nodejs/NodeSupport.md) for details on supported Node.js modules, APIs, and globals.
 
 ### Recent improvements (refactor/method-signature-builder branch)
@@ -118,13 +120,15 @@ dotnet publish -c Release
 ## Release pipeline
 
 
-When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/release.yml` to build the solution in Release mode and upload the published files as an artifact.
+When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build/test the solution, then pack and publish the coordinated NuGet package set: `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
+
+The legacy `.github/workflows/release.yml` workflow still produces a published artifact bundle, but NuGet publishing happens in `.github/workflows/publish-tool.yml`.
 
 Local development note
 - You can still run from source during development:
 
 ```powershell
-dotnet run --project .\Js2IL -- .\tests\simple.js .\out
+dotnet run --project .\src\Cli -- .\tests\simple.js .\out
 ```
 
 ## Release Workflow
@@ -149,6 +153,7 @@ What it does:
 - Validates you're on a clean, up-to-date `master`
 - Creates `release/<version>` branch
 - Runs the existing `scripts/bumpVersion.js` to update `CHANGELOG.md` + project versions
+- Runs `npm run release:validate` so the release candidate is validated as a coordinated package set before the release commit is created
 - Commits, pushes, and opens a PR
 - With `--merge`: waits for CI checks (if configured), merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
 
@@ -181,22 +186,39 @@ npm run release:major  # For major version (0.x.y -> x+1.0.0)
 ```
 
 What the script does:
-- Reads current version from `Js2IL/Js2IL.csproj`
+- Reads current version from `src/Cli/Js2IL.csproj`
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
-- Updates the `<Version>` in both `Js2IL.csproj` and `JavaScriptRuntime.csproj`
+- Updates `samples/Directory.Build.props` plus the `<Version>` in `src/Cli/Js2IL.csproj`, `src/Js2IL.Core/Js2IL.Core.csproj`, `src/Js2IL.SDK/Js2IL.SDK.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
 
-#### 3. Commit Version Bump
+#### 3. Validate the Release Package Set
+
+Before committing, validate the coordinated package set:
+
+```powershell
+npm run release:validate
+```
+
+This command currently does two things:
+
+- runs the PR canary suite against a freshly packed local `js2il` tool
+- runs the focused `Js2ILSdkPackageTests` suite, which packs `Js2IL.Runtime`, `Js2IL.Core`, and `Js2IL.SDK` into a local feed and verifies the SDK consumption path
+
+After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `js2il` tool from NuGet and build/run the `Hosting.Domino`, `Hosting.Basic`, and `Hosting.Typed` samples against the matching `Js2IL.SDK` / `Js2IL.Runtime` version.
+
+For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/hosting/PackagingValidation.md](docs/hosting/PackagingValidation.md).
+
+#### 4. Commit Version Bump
 
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 
-#### 4. Push and Create PR
+#### 5. Push and Create PR
 
 Push the release branch and create a pull request:
 
@@ -205,7 +227,7 @@ git push -u origin release/0.x.y
 gh pr create --title "chore(release): Release v0.x.y" --base master --head release/0.x.y
 ```
 
-#### 5. Merge and Create Release
+#### 6. Merge and Create Release
 
 After the PR is merged:
 
@@ -215,7 +237,7 @@ git pull
 gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
 ```
 
-This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
+This creates the tag and triggers the GitHub Actions release workflows. `.github/workflows/publish-tool.yml` builds/tests and publishes `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet, while `.github/workflows/release.yml` continues to upload the published binaries as an artifact bundle.
 
 ### Manual Version Override
 

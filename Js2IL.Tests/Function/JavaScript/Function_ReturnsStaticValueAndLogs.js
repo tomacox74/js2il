@@ -1,3 +1,5 @@
+"use strict";
+
 function returnsFive() {
     console.log("Returning value");
     return 5;

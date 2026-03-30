@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d7
+			// Method begins at RVA 0x20bf
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 123 (0x7b)
-		.maxstack 32
+		// Code size: 99 (0x63)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_NotEqual/Scope,
-			[1] bool,
-			[2] bool
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_NotEqual/Scope::.ctor()
@@ -55,42 +55,26 @@
 		IL_0018: ceq
 		IL_001a: ldc.i4.0
 		IL_001b: ceq
-		IL_001d: stloc.1
-		IL_001e: ldc.r8 2
-		IL_0027: ldc.r8 2
-		IL_0030: ceq
-		IL_0032: ldc.i4.0
-		IL_0033: ceq
-		IL_0035: stloc.2
-		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003b: ldc.i4.2
-		IL_003c: newarr [System.Runtime]System.Object
-		IL_0041: dup
-		IL_0042: ldc.i4.0
-		IL_0043: ldstr "x is"
-		IL_0048: stelem.ref
-		IL_0049: dup
-		IL_004a: ldc.i4.1
-		IL_004b: ldloc.1
-		IL_004c: box [System.Runtime]System.Boolean
-		IL_0051: stelem.ref
-		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0057: pop
-		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005d: ldc.i4.2
-		IL_005e: newarr [System.Runtime]System.Object
-		IL_0063: dup
-		IL_0064: ldc.i4.0
-		IL_0065: ldstr "y is"
-		IL_006a: stelem.ref
-		IL_006b: dup
-		IL_006c: ldc.i4.1
-		IL_006d: ldloc.2
-		IL_006e: box [System.Runtime]System.Boolean
-		IL_0073: stelem.ref
-		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0079: pop
-		IL_007a: ret
+		IL_001d: box [System.Runtime]System.Boolean
+		IL_0022: stloc.1
+		IL_0023: ldc.r8 2
+		IL_002c: ldc.r8 2
+		IL_0035: ceq
+		IL_0037: ldc.i4.0
+		IL_0038: ceq
+		IL_003a: box [System.Runtime]System.Boolean
+		IL_003f: stloc.2
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldstr "x is"
+		IL_004a: ldloc.1
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0050: pop
+		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0056: ldstr "y is"
+		IL_005b: ldloc.2
+		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0061: pop
+		IL_0062: ret
 	} // end of method BinaryOperator_NotEqual::__js_module_init__
 
 } // end of class Modules.BinaryOperator_NotEqual
@@ -102,7 +86,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x20c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

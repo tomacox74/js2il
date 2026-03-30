@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L5C29
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L7C29
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L9C24
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L11C24
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2237
+					// Method begins at RVA 0x2214
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -39,41 +39,43 @@
 			// Methods
 			.method public hidebysig static 
 				object __js_call__ (
-					object[] scopes
+					object newTarget
 				) cil managed 
 			{
-				// Method begins at RVA 0x21ec
-				// Header size: 12
-				// Code size: 27 (0x1b)
-				.maxstack 32
+				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+					01 00 00 00 00 00 00 00
+				)
+				// Method begins at RVA 0x21d4
+				// Header size: 1
+				// Code size: 18 (0x12)
+				.maxstack 8
 
 				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0005: ldc.i4.1
-				IL_0006: newarr [System.Runtime]System.Object
-				IL_000b: dup
-				IL_000c: ldc.i4.0
-				IL_000d: ldstr "setTimer executed"
-				IL_0012: stelem.ref
-				IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0018: pop
-				IL_0019: ldnull
-				IL_001a: ret
-			} // end of method ArrowFunction_L9C24::__js_call__
+				IL_0005: ldstr "setTimer executed"
+				IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_000f: pop
+				IL_0010: ldnull
+				IL_0011: ret
+			} // end of method ArrowFunction_L11C24::__js_call__
 
-		} // end of class ArrowFunction_L9C24
+		} // end of class ArrowFunction_L11C24
 
 		.class nested private auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 0d 53 63 6f 70 65 20 69 64 3d 7b 69 64 7d
+				00 00
+			)
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L7C8
+			.class nested private auto ansi beforefieldinit Block_L9C8
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x222e
+					// Method begins at RVA 0x220b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,18 +84,18 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L7C8::.ctor
+				} // end of method Block_L9C8::.ctor
 
-			} // end of class Block_L7C8
+			} // end of class Block_L9C8
 
-			.class nested private auto ansi beforefieldinit Block_L15C40
+			.class nested private auto ansi beforefieldinit Block_L17C40
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2240
+					// Method begins at RVA 0x221d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -102,9 +104,9 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L15C40::.ctor
+				} // end of method Block_L17C40::.ctor
 
-			} // end of class Block_L15C40
+			} // end of class Block_L17C40
 
 
 			// Fields
@@ -114,7 +116,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2225
+				// Method begins at RVA 0x2202
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -131,14 +133,17 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object id
 			) cil managed 
 		{
-			// Method begins at RVA 0x20f0
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20f4
 			// Header size: 12
-			// Code size: 238 (0xee)
-			.maxstack 32
+			// Code size: 212 (0xd4)
+			.maxstack 8
 			.locals init (
 				[0] bool,
 				[1] object,
@@ -154,127 +159,83 @@
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 			IL_0014: stloc.0
 			IL_0015: ldloc.0
-			IL_0016: brfalse IL_0071
+			IL_0016: brfalse IL_0063
 
 			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0020: ldc.i4.2
-			IL_0021: newarr [System.Runtime]System.Object
-			IL_0026: dup
-			IL_0027: ldc.i4.0
-			IL_0028: ldstr "[then] scheduling a timer at promise number:"
-			IL_002d: stelem.ref
-			IL_002e: dup
-			IL_002f: ldc.i4.1
-			IL_0030: ldarg.1
-			IL_0031: stelem.ref
-			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0037: pop
-			IL_0038: ldnull
-			IL_0039: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L5C29/ArrowFunction_L9C24::__js_call__(object[])
-			IL_003f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0044: ldc.i4.1
-			IL_0045: newarr [System.Runtime]System.Object
-			IL_004a: dup
-			IL_004b: ldc.i4.0
-			IL_004c: ldarg.0
-			IL_004d: ldc.i4.0
-			IL_004e: ldelem.ref
-			IL_004f: stelem.ref
-			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0055: stloc.1
-			IL_0056: ldloc.1
-			IL_0057: ldc.r8 0.0
-			IL_0060: box [System.Runtime]System.Double
-			IL_0065: ldc.i4.0
-			IL_0066: newarr [System.Runtime]System.Object
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-			IL_0070: pop
+			IL_0020: ldstr "[then] scheduling a timer at promise number:"
+			IL_0025: ldarg.1
+			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_002b: pop
+			IL_002c: ldnull
+			IL_002d: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29/ArrowFunction_L11C24::__js_call__(object)
+			IL_0033: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0038: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0047: stloc.1
+			IL_0048: ldloc.1
+			IL_0049: ldc.r8 0.0
+			IL_0052: box [System.Runtime]System.Double
+			IL_0057: ldc.i4.0
+			IL_0058: newarr [System.Runtime]System.Object
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+			IL_0062: pop
 
-			IL_0071: ldarg.1
-			IL_0072: ldc.r8 1023
-			IL_007b: box [System.Runtime]System.Double
-			IL_0080: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0063: ldarg.1
+			IL_0064: ldc.r8 1023
+			IL_006d: box [System.Runtime]System.Double
+			IL_0072: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0077: stloc.0
+			IL_0078: ldloc.0
+			IL_0079: box [System.Runtime]System.Boolean
+			IL_007e: stloc.2
+			IL_007f: ldloc.2
+			IL_0080: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_0085: stloc.0
 			IL_0086: ldloc.0
-			IL_0087: box [System.Runtime]System.Boolean
-			IL_008c: stloc.2
-			IL_008d: ldloc.2
-			IL_008e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0093: stloc.0
-			IL_0094: ldloc.0
-			IL_0095: brtrue IL_00be
+			IL_0087: brtrue IL_00b0
 
-			IL_009a: ldarg.1
-			IL_009b: ldc.r8 2047
-			IL_00a4: box [System.Runtime]System.Double
-			IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00ae: stloc.0
-			IL_00af: ldloc.0
-			IL_00b0: box [System.Runtime]System.Boolean
-			IL_00b5: stloc.3
-			IL_00b6: ldloc.3
-			IL_00b7: stloc.s 5
-			IL_00b9: br IL_00c1
+			IL_008c: ldarg.1
+			IL_008d: ldc.r8 2047
+			IL_0096: box [System.Runtime]System.Double
+			IL_009b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_00a0: stloc.0
+			IL_00a1: ldloc.0
+			IL_00a2: box [System.Runtime]System.Boolean
+			IL_00a7: stloc.3
+			IL_00a8: ldloc.3
+			IL_00a9: stloc.s 5
+			IL_00ab: br IL_00b3
 
-			IL_00be: ldloc.2
-			IL_00bf: stloc.s 5
+			IL_00b0: ldloc.2
+			IL_00b1: stloc.s 5
 
-			IL_00c1: ldloc.s 5
-			IL_00c3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00c8: stloc.0
-			IL_00c9: ldloc.0
-			IL_00ca: brfalse IL_00ec
+			IL_00b3: ldloc.s 5
+			IL_00b5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00ba: stloc.0
+			IL_00bb: ldloc.0
+			IL_00bc: brfalse IL_00d2
 
-			IL_00cf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d4: ldc.i4.2
-			IL_00d5: newarr [System.Runtime]System.Object
-			IL_00da: dup
-			IL_00db: ldc.i4.0
-			IL_00dc: ldstr "executed promise number:"
-			IL_00e1: stelem.ref
-			IL_00e2: dup
-			IL_00e3: ldc.i4.1
-			IL_00e4: ldarg.1
-			IL_00e5: stelem.ref
-			IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00eb: pop
+			IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00c6: ldstr "executed promise number:"
+			IL_00cb: ldarg.1
+			IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00d1: pop
 
-			IL_00ec: ldnull
-			IL_00ed: ret
-		} // end of method ArrowFunction_L5C29::__js_call__
+			IL_00d2: ldnull
+			IL_00d3: ret
+		} // end of method ArrowFunction_L7C29::__js_call__
 
-	} // end of class ArrowFunction_L5C29
+	} // end of class ArrowFunction_L7C29
 
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
-		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L4C31
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x221c
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Block_L4C31::.ctor
-
-		} // end of class Block_L4C31
-
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2213
+			// Method begins at RVA 0x21e7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -286,6 +247,48 @@
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
+
+	.class nested private auto ansi beforefieldinit Scope_For_L6C5
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Block_L6C31
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21f9
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L6C31::.ctor
+
+		} // end of class Block_L6C31
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21f0
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope_For_L6C5::.ctor
+
+	} // end of class Scope_For_L6C5
 
 
 	// Methods
@@ -300,73 +303,71 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 146 (0x92)
-		.maxstack 32
+		// Code size: 152 (0x98)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Scheduling_StarvationTest/Scope,
-			[1] float64,
-			[2] object,
+			[1] object,
+			[2] float64,
 			[3] object,
 			[4] object,
-			[5] object[]
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Promise_Scheduling_StarvationTest/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldc.i4.1
-		IL_000c: newarr [System.Runtime]System.Object
-		IL_0011: dup
-		IL_0012: ldc.i4.0
-		IL_0013: ldstr "Creating 2048 Promises"
-		IL_0018: stelem.ref
-		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001e: pop
-		IL_001f: ldc.r8 0.0
-		IL_0028: stloc.1
-		// loop start (head: IL_0029)
-			IL_0029: ldloc.1
-			IL_002a: ldc.r8 2048
-			IL_0033: clt
-			IL_0035: brfalse IL_0091
+		IL_000b: ldstr "Creating 2048 Promises"
+		IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0015: pop
+		IL_0016: ldc.r8 0.0
+		IL_001f: box [System.Runtime]System.Double
+		IL_0024: stloc.1
+		// loop start (head: IL_0025)
+			IL_0025: ldloc.1
+			IL_0026: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002b: stloc.2
+			IL_002c: ldloc.2
+			IL_002d: ldc.r8 2048
+			IL_0036: clt
+			IL_0038: brfalse IL_0097
 
-			IL_003a: ldloc.1
-			IL_003b: box [System.Runtime]System.Double
-			IL_0040: stloc.2
-			IL_0041: ldloc.2
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_0047: stloc.3
-			IL_0048: ldnull
-			IL_0049: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L5C29::__js_call__(object[], object)
-			IL_004f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-			IL_0054: ldc.i4.1
-			IL_0055: newarr [System.Runtime]System.Object
-			IL_005a: dup
-			IL_005b: ldc.i4.0
-			IL_005c: ldloc.0
-			IL_005d: stelem.ref
-			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_0063: stloc.s 4
-			IL_0065: ldc.i4.1
-			IL_0066: newarr [System.Runtime]System.Object
-			IL_006b: dup
-			IL_006c: ldc.i4.0
-			IL_006d: ldloc.s 4
-			IL_006f: stelem.ref
-			IL_0070: stloc.s 5
-			IL_0072: ldloc.3
-			IL_0073: ldstr "then"
-			IL_0078: ldloc.s 5
-			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_007f: pop
-			IL_0080: ldloc.1
-			IL_0081: ldc.r8 1
-			IL_008a: add
-			IL_008b: stloc.1
-			IL_008c: br IL_0029
+			IL_003d: ldloc.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_0043: stloc.3
+			IL_0044: ldnull
+			IL_0045: ldftn object Modules.Promise_Scheduling_StarvationTest/ArrowFunction_L7C29::__js_call__(object, object)
+			IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0050: ldc.i4.1
+			IL_0051: newarr [System.Runtime]System.Object
+			IL_0056: dup
+			IL_0057: ldc.i4.0
+			IL_0058: ldloc.0
+			IL_0059: stelem.ref
+			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0064: stloc.s 4
+			IL_0066: ldloc.3
+			IL_0067: ldstr "then"
+			IL_006c: ldloc.s 4
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0073: pop
+			IL_0074: ldloc.1
+			IL_0075: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_007a: stloc.2
+			IL_007b: ldloc.2
+			IL_007c: ldc.r8 1
+			IL_0085: add
+			IL_0086: stloc.2
+			IL_0087: ldloc.2
+			IL_0088: box [System.Runtime]System.Double
+			IL_008d: stloc.s 5
+			IL_008f: ldloc.s 5
+			IL_0091: stloc.1
+			IL_0092: br IL_0025
 		// end loop
 
-		IL_0091: ret
+		IL_0097: ret
 	} // end of method Promise_Scheduling_StarvationTest::__js_module_init__
 
 } // end of class Modules.Promise_Scheduling_StarvationTest
@@ -378,7 +379,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2249
+		// Method begins at RVA 0x2226
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

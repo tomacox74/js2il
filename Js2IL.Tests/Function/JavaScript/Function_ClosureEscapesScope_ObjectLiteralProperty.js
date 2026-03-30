@@ -1,3 +1,5 @@
+"use strict";
+
 // Issue #167 repro: a capturing function escapes its scope via object literal property.
 
 function createCalculator(factor) {

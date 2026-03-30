@@ -144,7 +144,7 @@ console.log(calc.getValue());
             Directory.CreateDirectory(outputDir);
             
             var inputFile = Path.Combine(outputDir, "test.js");
-            File.WriteAllText(inputFile, jsCode);
+            File.WriteAllText(inputFile, "\"use strict\";\n\n" + jsCode);
 
             try
             {

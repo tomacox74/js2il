@@ -1,3 +1,5 @@
+"use strict";
+
 require('./b');
 require('./helpers/b');
 

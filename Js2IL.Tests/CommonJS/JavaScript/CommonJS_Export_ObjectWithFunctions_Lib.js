@@ -1,3 +1,5 @@
+"use strict";
+
 // Library module that exports an object with function properties
 // This is the exact pattern from issue #156
 

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test default parameter values in class constructors
 class Person {
     constructor(name = "Unknown", age = 0) {

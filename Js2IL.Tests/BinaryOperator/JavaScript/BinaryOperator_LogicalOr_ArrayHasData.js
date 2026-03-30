@@ -1,3 +1,5 @@
+"use strict";
+
 function arrayHasData(arr) {
     if (!arr || !arr.length) {
         return false;

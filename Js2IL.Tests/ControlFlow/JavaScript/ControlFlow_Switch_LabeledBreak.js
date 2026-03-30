@@ -1,3 +1,5 @@
+"use strict";
+
 outer: {
   switch (2) {
     case 1:

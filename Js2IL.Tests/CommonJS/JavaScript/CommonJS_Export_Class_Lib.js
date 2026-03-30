@@ -1,4 +1,6 @@
-// Library module that exports an object instance with methods
+"use strict";
+
+// Library module that exports a class constructor
 
 class Calculator {
     add(a, b) {
@@ -10,5 +12,5 @@ class Calculator {
     }
 }
 
-// Export an instance of the class
-module.exports = new Calculator();
+// Export the class (the importing module should `new` it)
+module.exports = Calculator;

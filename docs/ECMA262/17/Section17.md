@@ -4,6 +4,8 @@ Describes error handling and related language extensions, including structured e
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-09T07:34:42Z
+
 _This section is split into subsection documents for readability._
 
 ## Section Entry
@@ -17,4 +19,3 @@ _This section is split into subsection documents for readability._
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
 | 17.1 | Forbidden Extensions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-forbidden-extensions) | [Section17_1.md](Section17_1.md) |
-

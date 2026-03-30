@@ -47,6 +47,20 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_EntryModule_ParentTraversal()
+        {
+            // Repro for packed canary entry wrappers that require("../shared/...") from the root entry module.
+            // The entry module must preserve parent-traversal ids when they already exist in the compiled manifest.
+            return ExecutionTest(
+                "CommonJS_Require_EntryModule_ParentTraversal/wrappers/entry",
+                preferOutOfProc: true,
+                additionalScripts: new[]
+                {
+                    "CommonJS_Require_EntryModule_ParentTraversal/shared/helper"
+                });
+        }
+
+        [Fact]
         public Task CommonJS_Require_SharedDependency_ExecutedOnce()
         {
             // a requires b and c
@@ -64,6 +78,27 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_Reassigned_Function()
+        {
+            // Node.js semantics: `require` is a mutable binding. Reassignment must be respected.
+            return ExecutionTest(nameof(CommonJS_Require_Reassigned_Function));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Reassigned_Number_ThrowsTypeError()
+        {
+            // Node.js semantics: calling a non-function throws a TypeError (not a CLR InvalidCastException).
+            return ExecutionTest(nameof(CommonJS_Require_Reassigned_Number_ThrowsTypeError));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Shadowed_Parameter()
+        {
+            // If a nested scope shadows `require`, calls must dispatch through normal JS call semantics.
+            return ExecutionTest(nameof(CommonJS_Require_Shadowed_Parameter));
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object
@@ -78,10 +113,27 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Module_Exports_ChainedAssignment()
+        {
+            // Issue #558 repro: chained assignment `exports = module.exports = {...}` must compile and behave.
+            return ExecutionTest(
+                nameof(CommonJS_Module_Exports_ChainedAssignment),
+                additionalScripts: new[] { "CommonJS_Module_Exports_ChainedAssignment_Lib" });
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Function()
         {
             // Test assigning a function to module.exports
             return ExecutionTest(nameof(CommonJS_Module_Exports_Function));
+        }
+
+        [Fact]
+        public Task CommonJS_FunctionDeclaration_Hoisting_BeforeUse()
+        {
+            // Function declarations must be hoisted/initialized before executable statements.
+            // Repro: `module.exports = greet; greet.answer = 42; function greet() {}`
+            return ExecutionTest(nameof(CommonJS_FunctionDeclaration_Hoisting_BeforeUse));
         }
 
         [Fact]
@@ -117,7 +169,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test module.parent and module.children relationships
             return ExecutionTest(
-                "CommonJS_Module_ParentChildren_Main",
+                nameof(CommonJS_Module_ParentChildren),
                 additionalScripts: new[]
                 {
                     "CommonJS_Module_ParentChildren_Child1",
@@ -130,7 +182,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and calling a function exported from another module
             return ExecutionTest(
-                "CommonJS_Export_Function_Main",
+                nameof(CommonJS_Export_Function),
                 additionalScripts: new[] { "CommonJS_Export_Function_Lib" });
         }
 
@@ -139,7 +191,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing an object with function properties (issue #156 repro)
             return ExecutionTest(
-                "CommonJS_Export_ObjectWithFunctions_Main",
+                nameof(CommonJS_Export_ObjectWithFunctions),
                 additionalScripts: new[] { "CommonJS_Export_ObjectWithFunctions_Lib" });
         }
 
@@ -148,7 +200,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and instantiating a class from another module
             return ExecutionTest(
-                "CommonJS_Export_Class_Main",
+                nameof(CommonJS_Export_Class),
                 additionalScripts: new[] { "CommonJS_Export_Class_Lib" });
         }
 
@@ -157,7 +209,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing a class with constructor parameters from another module
             return ExecutionTest(
-                "CommonJS_Export_ClassWithConstructor_Main",
+                nameof(CommonJS_Export_ClassWithConstructor),
                 additionalScripts: new[] { "CommonJS_Export_ClassWithConstructor_Lib" });
         }
 
@@ -166,7 +218,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing nested literal objects with fields and methods
             return ExecutionTest(
-                "CommonJS_Export_NestedObjects_Main",
+                nameof(CommonJS_Export_NestedObjects),
                 additionalScripts: new[] { "CommonJS_Export_NestedObjects_Lib" });
         }
 
@@ -175,8 +227,30 @@ namespace Js2IL.Tests.CommonJS
         {
             // Issue #167 repro: imported object contains functions that capture module/function scope.
             return ExecutionTest(
-                "CommonJS_Export_ObjectWithClosure_Main",
+                nameof(CommonJS_Export_ObjectWithClosure),
                 additionalScripts: new[] { "CommonJS_Export_ObjectWithClosure_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Global_ErrorPrototype_Read()
+        {
+            // Issue #550 repro: IR pipeline crash lowering `Error.prototype` property access in a CommonJS module.
+            return ExecutionTest(
+                nameof(CommonJS_Global_ErrorPrototype_Read),
+                additionalScripts: new[] { "CommonJS_Global_ErrorPrototype_Read_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_ClassExpression_ExtendsArray()
+        {
+            // Issue #552 repro: IR pipeline crash compiling a CommonJS module that exports a class expression.
+            return ExecutionTest(nameof(CommonJS_Module_Exports_ClassExpression_ExtendsArray));
+        }
+
+        [Fact]
+        public Task CommonJS_ImportMeta_Basic()
+        {
+            return ExecutionTest(nameof(CommonJS_ImportMeta_Basic));
         }
     }
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test async function expression with await
 const asyncFunc = async function() {
     console.log("Before await");

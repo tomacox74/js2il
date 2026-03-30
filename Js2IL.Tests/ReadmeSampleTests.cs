@@ -24,7 +24,7 @@ namespace Js2IL.Tests
             var repoRoot = dir!.FullName;
 
             // Paths used in the README
-            var projectPath = Path.Combine(repoRoot, "Js2IL");
+            var projectPath = Path.Combine(repoRoot, "src", "Cli");
             var jsPath = Path.Combine(repoRoot, "tests", "simple.js");
             var outDir = Path.Combine(repoRoot, "out");
 
@@ -36,7 +36,7 @@ namespace Js2IL.Tests
             Directory.CreateDirectory(outDir);
 
             // Step 1: Compile using the exact flow shown in README
-            // dotnet run --project .\\Js2IL -- .\\tests\\simple.js .\\out
+            // dotnet run --project .\\src\\Cli -- .\\tests\\simple.js .\\out
             var runResult = RunProcess(
                 fileName: "dotnet",
                 arguments: $"run --project \"{projectPath}\" -- \"{jsPath}\" \"{outDir}\"",

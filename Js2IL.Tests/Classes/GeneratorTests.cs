@@ -89,6 +89,7 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ReturnsThis_IsSelf_Log() { var testName = nameof(Classes_ClassMethod_ReturnsThis_IsSelf_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
+        [Fact] public Task Classes_AccessorMethods_InstanceAndStatic() { var testName = nameof(Classes_AccessorMethods_InstanceAndStatic); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
 
         // Test parameter destructuring in class methods
@@ -107,9 +108,15 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_While_Increment_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Prefix); return GenerateTest(testName); }
 
+        [Fact] public Task Classes_ClassComputedFieldAndMethod_DeclarationOrder() { var testName = nameof(Classes_ClassComputedFieldAndMethod_DeclarationOrder); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassComputedFieldAndMethod_DynamicKey_Log() { var testName = nameof(Classes_ClassComputedFieldAndMethod_DynamicKey_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassPrivateAccessor_ClassExpression_Log() { var testName = nameof(Classes_ClassPrivateAccessor_ClassExpression_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassPrivateAccessor_EdgeCases_Log() { var testName = nameof(Classes_ClassPrivateAccessor_EdgeCases_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassPrivateMethodAndAccessor_Log() { var testName = nameof(Classes_ClassPrivateMethodAndAccessor_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassProperty_DefaultAndLog() { var testName = nameof(Classes_ClassProperty_DefaultAndLog); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassStaticBlock_DeclarationOrder() { var testName = nameof(Classes_ClassStaticBlock_DeclarationOrder); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithMethod_HelloWorld() { var testName = nameof(Classes_ClassWithMethod_HelloWorld); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithMethod_NoInstantiation() { var testName = nameof(Classes_ClassWithMethod_NoInstantiation); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassWithStaticMethod_HelloWorld() { var testName = nameof(Classes_ClassWithStaticMethod_HelloWorld); return GenerateTest(testName); }
@@ -191,5 +198,23 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_Method_DefaultReturnUndefined);
             return GenerateTest(testName);
         }
+
+        // #293/#294: inheritance + super semantics
+        [Fact] public Task Classes_Inheritance_SuperConstructor_Args() { var testName = nameof(Classes_Inheritance_SuperConstructor_Args); return GenerateTest(testName); }
+        [Fact] public Task Classes_Inheritance_ThisBeforeSuper_Throws() { var testName = nameof(Classes_Inheritance_ThisBeforeSuper_Throws); return GenerateTest(testName); }
+        [Fact] public Task Classes_Inheritance_SuperMethodCall() { var testName = nameof(Classes_Inheritance_SuperMethodCall); return GenerateTest(testName); }
+
+        // Additional coverage: captured scopes and nested derived class
+        [Fact] public Task Classes_Inheritance_SuperCapturedScopeVar() { var testName = nameof(Classes_Inheritance_SuperCapturedScopeVar); return GenerateTest(testName); }
+        [Fact] public Task Classes_Inheritance_NestedClassExtendsGlobal() { var testName = nameof(Classes_Inheritance_NestedClassExtendsGlobal); return GenerateTest(testName); }
+
+        // #505: derived class extending intrinsic Array must compile.
+        [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperLength() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperLength); return GenerateTest(testName); }
+
+        // #505: super() with no args should compile and initialize Array correctly.
+        [Fact] public Task Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs() { var testName = nameof(Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Classes_ClassMethod_MaxParameters_32() { var testName = nameof(Classes_ClassMethod_MaxParameters_32); return GenerateTest(testName); }
     }
 }

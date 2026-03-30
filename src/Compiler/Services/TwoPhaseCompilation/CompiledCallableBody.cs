@@ -1,0 +1,52 @@
+using System;
+using System.Reflection;
+using System.Reflection.Metadata;
+using Js2IL.DebugSymbols;
+
+namespace Js2IL.Services.TwoPhaseCompilation;
+
+/// <summary>
+/// Output of Phase 2 body compilation for a single callable.
+/// The MethodDef row is emitted later (Phase 2 finalization) to preserve ECMA-335 ordering.
+/// </summary>
+public sealed record CompiledCallableBody
+{
+    public required CallableId Callable { get; init; }
+
+    public required string MethodName { get; init; }
+
+    /// <summary>Expected MethodDef token preallocated in Phase 1.</summary>
+    public required MethodDefinitionHandle ExpectedMethodDef { get; init; }
+
+    public required MethodAttributes Attributes { get; init; }
+
+    public required BlobHandle Signature { get; init; }
+
+    public Js2IL.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; } = Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
+
+    public int SingleScopeTypeMetadataToken { get; init; }
+
+    public bool EmitCallableScopeAbiAttribute { get; init; } = true;
+
+    /// <summary>
+    /// Offset into the MethodBodyStream where the method body was written.
+    /// Note: 0 is a valid offset.
+    /// </summary>
+    public required int BodyOffset { get; init; }
+
+    public required string[] ParameterNames { get; init; }
+
+    /// <summary>
+    /// IL offset → source span mappings for this method (statement-level for now).
+    /// Populated during IL emission and later consumed by Portable PDB generation.
+    /// </summary>
+    public MethodSequencePoint[] SequencePoints { get; init; } = Array.Empty<MethodSequencePoint>();
+
+    public void Validate()
+    {
+        if (ExpectedMethodDef.IsNil) throw new InvalidOperationException("ExpectedMethodDef cannot be nil.");
+        if (string.IsNullOrWhiteSpace(MethodName)) throw new InvalidOperationException("MethodName cannot be null or empty.");
+        if (BodyOffset < 0) throw new InvalidOperationException("BodyOffset must be a valid method body offset (0 is valid).");
+        if (ParameterNames == null) throw new InvalidOperationException("ParameterNames cannot be null.");
+    }
+}

@@ -64,6 +64,24 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_Reassigned_Function()
+        {
+            return GenerateTest(nameof(CommonJS_Require_Reassigned_Function));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Reassigned_Number_ThrowsTypeError()
+        {
+            return GenerateTest(nameof(CommonJS_Require_Reassigned_Number_ThrowsTypeError));
+        }
+
+        [Fact]
+        public Task CommonJS_Require_Shadowed_Parameter()
+        {
+            return GenerateTest(nameof(CommonJS_Require_Shadowed_Parameter));
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object
@@ -75,6 +93,15 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test that reassigning module.exports replaces the entire exports object
             return GenerateTest(nameof(CommonJS_Module_Exports_Reassign));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_ChainedAssignment()
+        {
+            // Issue #558 repro: chained assignment `exports = module.exports = {...}` must compile and decompile.
+            return GenerateTest(
+                nameof(CommonJS_Module_Exports_ChainedAssignment),
+                new[] { "CommonJS_Module_Exports_ChainedAssignment_Lib" });
         }
 
         [Fact]
@@ -117,7 +144,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test module.parent and module.children relationships
             return GenerateTest(
-                "CommonJS_Module_ParentChildren_Main",
+                nameof(CommonJS_Module_ParentChildren),
                 new[]
                 {
                     "CommonJS_Module_ParentChildren_Child1",
@@ -130,7 +157,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and calling a function exported from another module
             return GenerateTest(
-                "CommonJS_Export_Function_Main",
+                nameof(CommonJS_Export_Function),
                 new[] { "CommonJS_Export_Function_Lib" });
         }
 
@@ -139,7 +166,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing an object with function properties (issue #156 repro)
             return GenerateTest(
-                "CommonJS_Export_ObjectWithFunctions_Main",
+                nameof(CommonJS_Export_ObjectWithFunctions),
                 new[] { "CommonJS_Export_ObjectWithFunctions_Lib" });
         }
 
@@ -148,7 +175,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing and instantiating a class from another module
             return GenerateTest(
-                "CommonJS_Export_Class_Main",
+                nameof(CommonJS_Export_Class),
                 new[] { "CommonJS_Export_Class_Lib" });
         }
 
@@ -157,7 +184,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing a class with constructor parameters from another module
             return GenerateTest(
-                "CommonJS_Export_ClassWithConstructor_Main",
+                nameof(CommonJS_Export_ClassWithConstructor),
                 new[] { "CommonJS_Export_ClassWithConstructor_Lib" });
         }
 
@@ -166,7 +193,7 @@ namespace Js2IL.Tests.CommonJS
         {
             // Test importing nested literal objects with fields and methods
             return GenerateTest(
-                "CommonJS_Export_NestedObjects_Main",
+                nameof(CommonJS_Export_NestedObjects),
                 new[] { "CommonJS_Export_NestedObjects_Lib" });
         }
 
@@ -175,8 +202,30 @@ namespace Js2IL.Tests.CommonJS
         {
             // Issue #167 repro: imported object contains functions that capture module/function scope.
             return GenerateTest(
-                "CommonJS_Export_ObjectWithClosure_Main",
+                nameof(CommonJS_Export_ObjectWithClosure),
                 new[] { "CommonJS_Export_ObjectWithClosure_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Global_ErrorPrototype_Read()
+        {
+            // Issue #550 repro: IR pipeline crash lowering `Error.prototype` property access in a CommonJS module.
+            return GenerateTest(
+                nameof(CommonJS_Global_ErrorPrototype_Read),
+                new[] { "CommonJS_Global_ErrorPrototype_Read_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_ClassExpression_ExtendsArray()
+        {
+            // Issue #552 repro: IR pipeline crash compiling a CommonJS module that exports a class expression.
+            return GenerateTest(nameof(CommonJS_Module_Exports_ClassExpression_ExtendsArray));
+        }
+
+        [Fact]
+        public Task CommonJS_ImportMeta_Basic()
+        {
+            return GenerateTest(nameof(CommonJS_ImportMeta_Basic));
         }
     }
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 // Object literal spread properties
 
 const o1 = { ...{ a: 1 }, b: 2 };

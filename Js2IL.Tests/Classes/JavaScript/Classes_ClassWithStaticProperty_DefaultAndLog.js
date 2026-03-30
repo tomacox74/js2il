@@ -1,3 +1,5 @@
+"use strict";
+
 class Greeter {
   static message = "Hi from static";
 }

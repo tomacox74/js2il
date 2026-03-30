@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2133
+				// Method begins at RVA 0x2103
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,14 +35,17 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object name
 			) cil managed 
 		{
-			// Method begins at RVA 0x2104
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20d4
 			// Header size: 12
 			// Code size: 26 (0x1a)
-			.maxstack 32
+			.maxstack 8
 			.locals init (
 				[0] object
 			)
@@ -64,6 +67,10 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 13 53 63 6f 70 65 20 67 72 65 65 74 3d 7b
+			67 72 65 65 74 7d 00 00
+		)
 		// Fields
 		.field public object greet
 
@@ -71,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212a
+			// Method begins at RVA 0x20fa
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -97,84 +104,54 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 166 (0xa6)
-		.maxstack 32
+		// Code size: 117 (0x75)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_Function/Scope,
 			[1] object,
 			[2] object,
-			[3] object[]
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_Exports_Function/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CommonJS_Module_Exports_Function/greet::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.2
-		IL_0022: ldarg.2
-		IL_0023: ldstr "exports"
-		IL_0028: ldloc.2
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_002e: pop
-		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0034: ldc.i4.2
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldstr "typeof module.exports:"
-		IL_0041: stelem.ref
-		IL_0042: dup
-		IL_0043: ldc.i4.1
-		IL_0044: ldarg.2
-		IL_0045: ldstr "exports"
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_004f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0054: stelem.ref
-		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005a: pop
-		IL_005b: ldarg.2
-		IL_005c: ldstr "exports"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0066: stloc.1
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldstr "World"
-		IL_0074: stelem.ref
-		IL_0075: stloc.3
-		IL_0076: ldloc.1
-		IL_0077: ldc.i4.1
-		IL_0078: newarr [System.Runtime]System.Object
-		IL_007d: dup
-		IL_007e: ldc.i4.0
-		IL_007f: ldnull
-		IL_0080: stelem.ref
-		IL_0081: ldloc.3
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0087: stloc.2
-		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008d: ldc.i4.2
-		IL_008e: newarr [System.Runtime]System.Object
-		IL_0093: dup
-		IL_0094: ldc.i4.0
-		IL_0095: ldstr "result:"
-		IL_009a: stelem.ref
-		IL_009b: dup
-		IL_009c: ldc.i4.1
-		IL_009d: ldloc.2
-		IL_009e: stelem.ref
-		IL_009f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a4: pop
-		IL_00a5: ret
+		IL_0007: ldftn object Modules.CommonJS_Module_Exports_Function/greet::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0012: stloc.3
+		IL_0013: ldloc.3
+		IL_0014: stloc.1
+		IL_0015: ldarg.2
+		IL_0016: ldstr "exports"
+		IL_001b: ldloc.1
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+		IL_0021: pop
+		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0027: ldstr "typeof module.exports:"
+		IL_002c: ldarg.2
+		IL_002d: ldstr "exports"
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0037: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0041: pop
+		IL_0042: ldarg.2
+		IL_0043: ldstr "exports"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_004d: stloc.2
+		IL_004e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.2
+		IL_0056: ldloc.s 4
+		IL_0058: ldstr "World"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+		IL_0062: stloc.3
+		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0068: ldstr "result:"
+		IL_006d: ldloc.3
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0073: pop
+		IL_0074: ret
 	} // end of method CommonJS_Module_Exports_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Function
@@ -186,7 +163,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x210c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

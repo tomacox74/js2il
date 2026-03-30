@@ -1,3 +1,5 @@
+"use strict";
+
 // Test subtraction assignment operator -=
 var x = 10;
 x -= 3;

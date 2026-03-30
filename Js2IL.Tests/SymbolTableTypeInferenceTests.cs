@@ -2,6 +2,8 @@ using Acornima;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Services;
+using System.IO;
+using System.Reflection;
 using System.Linq;
 using Xunit;
 
@@ -19,7 +21,8 @@ public class SymbolTableTypeInferenceTests
         {
             Ast = ast,
             Path = fileName,
-            Name = Path.GetFileNameWithoutExtension(fileName)
+            Name = Path.GetFileNameWithoutExtension(fileName),
+            ModuleId = Path.GetFileNameWithoutExtension(fileName)
         };
         _scopeBuilder.Build(module);
         return module.SymbolTable!;
@@ -34,6 +37,8 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(JavaScriptRuntime.Array), "new Array()")]
     [InlineData(typeof(JavaScriptRuntime.Array), "Array.of(1, 2)")]
     [InlineData(typeof(JavaScriptRuntime.Array), "Array.from([1, 2])")]
+    [InlineData(typeof(JavaScriptRuntime.RegExp), "/a/")]
+    [InlineData(typeof(JavaScriptRuntime.RegExp), "new RegExp('a', 'g')")]
     [InlineData(null, "")]
     [InlineData(typeof(double), "1 + 2")]
     [InlineData(typeof(string), "'1' + '2'")]
@@ -47,6 +52,12 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(double), "5 >> 2")]      // Signed right shift
     [InlineData(typeof(double), "5 >>> 2")]     // Unsigned right shift
     [InlineData(typeof(double), "~5")]          // NOT (unary)
+    // Array static methods
+    [InlineData(typeof(bool), "Array.isArray([])")]
+    [InlineData(typeof(bool), "Array.isArray(null)")]
+    // Array instance methods that return boolean
+    [InlineData(typeof(bool), "[1, 2, 3].some(x => x === 2)")]
+    [InlineData(typeof(bool), "['a', 'b'].some(x => x === 'c')")]
     public void SymbolTable_InferType_Init(Type? expectedType, string initializer)
     {
         var variableName = "testVar";
@@ -196,6 +207,75 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_CapturedLetArray_WithClosureWrites_IsStableArray()
+    {
+        var code = @"
+                let ret = [];
+                function test(fn) { fn(); }
+
+                test(() => {
+                    ret = [];
+                    ret = new Array(8);
+                });
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var binding = symbolTable.GetBindingInfo("ret");
+        Assert.NotNull(binding);
+        Assert.Equal(BindingKind.Let, binding!.Kind);
+        Assert.True(binding.IsCaptured);
+        Assert.True(binding.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_CapturedLetArray_WithConflictingClosureWrite_IsNotStable()
+    {
+        var code = @"
+                let ret = [];
+                function test(fn) { fn(); }
+
+                test(() => {
+                    ret = 1;
+                });
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var binding = symbolTable.GetBindingInfo("ret");
+        Assert.NotNull(binding);
+        Assert.Equal(BindingKind.Let, binding!.Kind);
+        Assert.True(binding.IsCaptured);
+        Assert.False(binding.IsStableType);
+        Assert.Null(binding.ClrType);
+    }
+
+    [Fact]
+    public void Compiler_CapturedLetArray_EmitsObjectScopeFieldWhenTdzChecksRequired()
+    {
+        var source = @"
+                'use strict';
+                let read = () => ret;
+                let ret = [];
+
+                read();
+            ";
+
+        var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "CapturedLetArray", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputDir);
+
+        var compiled = TestCompiler.Compile(
+            testName: "CapturedLetArray",
+            testCategory: "SymbolTable",
+            outputDirectory: outputDir,
+            getJavaScriptAndSourcePath: _ => (source, null),
+            additionalScripts: null);
+
+        var il = Utilities.AssemblyToText.ConvertToText(compiled.AssemblyPath);
+        Assert.Contains("object 'ret'", il);
+        Assert.DoesNotContain("JavaScriptRuntime.Array 'ret'", il);
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_ClassInstanceFields_Primitives()
     {
         var code = @"
@@ -312,6 +392,18 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Theory]
+    [InlineData("const arr = [1, 2, 3]; const result = arr.some(x => x === 2);", "result", typeof(bool))]
+    [InlineData("const arr = ['a', 'b']; const result = arr.some(x => x === 'c');", "result", typeof(bool))]
+    [InlineData("let arr = [1, 2, 3]; let result = arr.some(x => x > 1);", "result", typeof(bool))]
+    public void SymbolTable_InferType_ArraySomeWithVariableReference(string source, string variableName, Type expectedType)
+    {
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo(variableName);
+        Assert.NotNull(binding);
+        Assert.Equal(expectedType, binding.ClrType);
+    }
+
+    [Theory]
     [InlineData("function f() { return 1 + 2; }", "f", typeof(double))]
     [InlineData("function f() { return true; }", "f", typeof(bool))]
     public void SymbolTable_InferTypes_StableReturn_FunctionDeclaration(string source, string functionName, Type expectedReturnType)
@@ -370,6 +462,316 @@ public class SymbolTableTypeInferenceTests
 
         Assert.NotNull(methodScope);
         Assert.Equal(expectedReturnType, methodScope!.StableReturnClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoGenerateTestStrings_ReturnType_IsArray()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "generateTestStrings", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), functionScope!.StableReturnClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoGenerateTestStrings_PropagatesArrayToTmp()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var tmpBinding = symbolTable.GetBindingInfo("tmp");
+        Assert.NotNull(tmpBinding);
+        Assert.True(tmpBinding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), tmpBinding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableReturnIsThis_PrimeJavaScript_RunSieve()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "runSieve", StringComparison.Ordinal));
+
+        Assert.NotNull(methodScope);
+        Assert.True(methodScope!.StableReturnIsThis);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoObjectRegexp_GenerateTestStrings_T_IsString()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "generateTestStrings", StringComparison.Ordinal)
+            && s.AstNode is FunctionDeclaration);
+
+        Assert.NotNull(functionScope);
+        Assert.True(functionScope!.Bindings.TryGetValue("t", out var tBinding));
+        Assert.True(tBinding.IsStableType);
+        Assert.Equal(typeof(string), tBinding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoObjectRegexp_TestStrings_ElementType_IsString()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("testStrings");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_DromaeoObjectRegexp_Tmp_ElementType_IsString()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("tmp");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArrayElementType_MixedWrites_IsNotStable()
+    {
+        var source = @"
+                var foo = [];
+                foo[0] = '1';
+                foo[1] = 1.1;
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("foo");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Null(binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArrayElementType_AliasedMixedWrite_IsNotStable()
+    {
+        var source = @"
+                var foo = [];
+                foo[0] = 'a';
+                foo[1] = 'b';
+                var foo2 = foo;
+                foo2[0] = 0.0;
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("foo");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Null(binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArrayElementType_AliasedConsistentWrite_RemainsStableString()
+    {
+        var source = @"
+                var foo = [];
+                foo[0] = 'a';
+                var foo2 = foo;
+                foo2[1] = 'b';
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("foo");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(JavaScriptRuntime.Array), binding.ClrType);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_StableElementClrType_Guard_RequiresStableArrayBinding()
+    {
+        var symbolTable = BuildSymbolTable("var x = 1;");
+        var binding = symbolTable.GetBindingInfo("x");
+        Assert.NotNull(binding);
+
+        binding!.IsStableType = true;
+        binding.ClrType = typeof(string);
+        binding.StableElementClrType = typeof(string);
+        Assert.Null(binding.StableElementClrType);
+
+        binding.ClrType = typeof(JavaScriptRuntime.Array);
+        binding.StableElementClrType = typeof(string);
+        Assert.Equal(typeof(string), binding.StableElementClrType);
+
+        binding.IsStableType = false;
+        Assert.Null(binding.StableElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_StableReturnArrayElementClrType_Guard_RequiresArrayReturn()
+    {
+        var symbolTable = BuildSymbolTable("function f() { return 1; }");
+        var scope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "f", StringComparison.Ordinal));
+        Assert.NotNull(scope);
+
+        scope!.StableReturnClrType = typeof(string);
+        scope.StableReturnArrayElementClrType = typeof(string);
+        Assert.Null(scope.StableReturnArrayElementClrType);
+
+        scope.StableReturnClrType = typeof(JavaScriptRuntime.Array);
+        scope.StableReturnArrayElementClrType = typeof(string);
+        Assert.Equal(typeof(string), scope.StableReturnArrayElementClrType);
+
+        scope.StableReturnClrType = typeof(double);
+        Assert.Null(scope.StableReturnArrayElementClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersQIsNumber()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("PrimeSieve/runSieve/q");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(double), binding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_RunSieve_InfersStepAndStartAreNumbers()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "PrimeSieve");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "runSieve", StringComparison.Ordinal));
+        Assert.NotNull(methodScope);
+
+        // step/start are declared inside the `while` body block scope.
+        var step = FindBindingByName(methodScope!, "step");
+        Assert.NotNull(step);
+        Assert.True(step!.IsStableType);
+        Assert.Equal(typeof(double), step.ClrType);
+
+        var start = FindBindingByName(methodScope!, "start");
+        Assert.NotNull(start);
+        Assert.True(start!.IsStableType);
+        Assert.Equal(typeof(double), start.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_PrimeStyle_TypedArrayElementRead_InfersWordValueIsNumber()
+    {
+        // This reproduces the PrimeJavaScript pattern:
+        // let wordValue = this.wordArray[wordOffset];
+        var source = @"
+                'use strict';
+
+                const WORD_SIZE = 32;
+
+                class BitArray {
+                    constructor(size) {
+                        this.wordArray = new Int32Array(1 + (size >>> 5));
+                    }
+
+                    setBitsTrue(range_start, step, range_stop) {
+                        let index = range_start;
+                        let wordOffset = index >>> 5;
+                        let wordValue = this.wordArray[wordOffset];
+
+                        while (index < range_stop) {
+                            const bitOffset = index & 31;
+                            wordValue |= (1 << bitOffset);
+                            index += step;
+                            const newwordOffset = index >>> 5;
+                            if (newwordOffset != wordOffset) {
+                                this.wordArray[wordOffset] = wordValue;
+                                wordOffset = newwordOffset;
+                                wordValue = this.wordArray[wordOffset];
+                            }
+                        }
+
+                        this.wordArray[wordOffset] = wordValue;
+                    }
+                }
+
+                new BitArray(64).setBitsTrue(4, 3, 64);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var binding = symbolTable.GetBindingInfo("BitArray/setBitsTrue/wordValue");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(double), binding.ClrType);
     }
 
     private static Js2IL.SymbolTables.Scope? FindFirstScope(Js2IL.SymbolTables.Scope scope, Func<Js2IL.SymbolTables.Scope, bool> predicate)

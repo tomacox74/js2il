@@ -1,3 +1,5 @@
+"use strict";
+
 const flag = false;
 if (!flag) {
   console.log("F");

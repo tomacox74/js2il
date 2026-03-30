@@ -23,6 +23,19 @@ Uninstall:
 dotnet tool uninstall --global js2il
 ```
 
+## Which package should I use?
+
+- [`js2il`](https://www.nuget.org/packages/js2il)
+  - The global CLI tool for ad-hoc/manual JavaScript compilation from a terminal.
+- [`Js2IL.SDK`](https://www.nuget.org/packages/Js2IL.SDK)
+  - The MSBuild/NuGet integration for host projects that should compile JavaScript during `dotnet build`.
+- [`Js2IL.Core`](https://www.nuget.org/packages/Js2IL.Core)
+  - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
+- [`Js2IL.Runtime`](https://www.nuget.org/packages/Js2IL.Runtime)
+  - The runtime support library used by generated assemblies and .NET hosting scenarios.
+
+Official releases publish `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
+
 ## Usage
 
 ```powershell
@@ -33,7 +46,8 @@ Options
 
 - -i, --input           The JavaScript file to convert (positional supported)
 - -o, --output          Output folder for the generated IL/assembly (created if missing; defaults to the input file directory)
-- -v, --verbose         Print AST and scope details
+- -v, --verbose         Print compiler diagnostics to the console
+- --diagnostic-file <path>  Write compiler diagnostics to a text file
 - -a, --analyzeunused   Report unused functions/properties/variables
 	--version         Show version information and exit
 
@@ -84,10 +98,21 @@ Notes:
 ## Troubleshooting
 
 - Ensure the .NET 10 SDK/runtime is on PATH: `dotnet --info`
-- Use `-V` to print extra diagnostics.
+- Use `-v` to print diagnostics to the console, or `--diagnostic-file <path>` to capture diagnostics to a file.
 - File an issue with a minimal JS sample if you suspect a bug.
+
+## Hosting samples
+
+The `js2il` tool package no longer carries the hosted C# samples. Those samples now ship with `Js2IL.SDK`, because they are intended to validate the MSBuild/NuGet integration path that hosting consumers use in real projects.
+
+See:
+
+- the repo `samples\` directory
+- `Js2IL.SDK` package page: `https://www.nuget.org/packages/Js2IL.SDK`
+- `Js2IL.Core` package page: `https://www.nuget.org/packages/Js2IL.Core`
 
 ## Links
 
+- Hosting (.NET library mode): https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md
 - Source, issues, docs: https://github.com/tomacox74/js2il
 - License: Apache-2.0

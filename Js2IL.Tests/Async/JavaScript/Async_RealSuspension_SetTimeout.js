@@ -1,3 +1,5 @@
+"use strict";
+
 console.log("Before calling async function");
 
 function run() {

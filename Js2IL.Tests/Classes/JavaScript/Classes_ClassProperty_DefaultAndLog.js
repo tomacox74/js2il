@@ -1,3 +1,5 @@
+"use strict";
+
 class Greeter {
   message = "Hi";
 }

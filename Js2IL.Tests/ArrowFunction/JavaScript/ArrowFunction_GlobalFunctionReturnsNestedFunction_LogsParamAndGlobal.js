@@ -1,3 +1,5 @@
+"use strict";
+
 var g = "Hello";
 
 const outer = (p) => {

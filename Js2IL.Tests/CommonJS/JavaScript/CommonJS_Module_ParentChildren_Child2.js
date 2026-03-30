@@ -1,3 +1,5 @@
+"use strict";
+
 // Child module 2 - tests module.parent
 
 // This module's parent should be the main module

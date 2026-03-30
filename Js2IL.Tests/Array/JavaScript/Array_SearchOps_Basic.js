@@ -1,3 +1,5 @@
+"use strict";
+
 // Search/position Array operations
 
 var arr = [1, 2, 3, 2];

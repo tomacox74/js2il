@@ -1,3 +1,5 @@
+"use strict";
+
 class Foo {}
 
 // no output expected

@@ -1,3 +1,5 @@
+"use strict";
+
 // Test division assignment operator /=
 var x = 20;
 x /= 4;

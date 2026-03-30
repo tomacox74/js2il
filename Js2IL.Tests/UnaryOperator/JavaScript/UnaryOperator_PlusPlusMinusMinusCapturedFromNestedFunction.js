@@ -1,3 +1,5 @@
+"use strict";
+
 function outer() {
     var x = 3;
 

@@ -1,0 +1,137 @@
+name: Differential Tests
+run-name: ${{ github.workflow }} - ${{ github.event_name }} - ${{ github.event.release.tag_name || github.event.inputs.branch || github.head_ref || github.ref_name }}
+
+# Bounded differential test suite – Node.js vs JS2IL
+#
+# Schedule : runs corpus + 50 generated programs (deterministic seed).
+# Manual   : workflow_dispatch can run corpus only (generate=0) or corpus + generated.
+
+on:
+  schedule:
+    # Weekly on Monday at 02:00 UTC
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: "RNG seed for generated programs"
+        required: false
+        default: "42"
+      generate:
+        description: "Number of generated programs (0 = corpus only)"
+        required: false
+        default: "0"
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  differential:
+    name: Differential (Node vs JS2IL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build JS2IL (Release)
+        run: dotnet build src/Cli/Js2IL.csproj --no-restore -c Release
+
+      - name: Run differential tests – corpus (+ optional generated)
+        run: |
+          SEED="${{ github.event.inputs.seed || '42' }}"
+          GENERATE="${{ github.event.inputs.generate || '50' }}"
+          node scripts/differential-test/run.js \
+            --timeout 30 \
+            --seed "$SEED" \
+            --generate "$GENERATE" \
+            --verbose
+
+  create-issue-on-weekly-failure:
+    name: Open issue on weekly failure
+    runs-on: ubuntu-latest
+    needs: [differential]
+    if: ${{ always() && github.event_name == 'schedule' && needs.differential.result == 'failure' }}
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+            const title = 'Differential weekly run failed';
+            const label = 'differential-weekly-failure';
+            const body = [
+              'The scheduled weekly differential test workflow failed.',
+              '',
+              `- Workflow run: ${runUrl}`,
+              `- Repository: ${owner}/${repo}`,
+              `- Branch: ${context.ref}`,
+              '',
+              'Please inspect logs and triage any semantic regression mismatches.'
+            ].join('\n');
+
+            // Best-effort: ensure the tracking label exists (ignore failures)
+            try {
+              const labels = await github.paginate(github.rest.issues.listLabelsForRepo, { owner, repo, per_page: 100 });
+              if (!labels.some(l => l.name === label)) {
+                await github.rest.issues.createLabel({
+                  owner,
+                  repo,
+                  name: label,
+                  color: 'B60205',
+                  description: 'Automated issues for Differential Tests weekly failures'
+                });
+              }
+            } catch (e) {
+              core.info(`Could not ensure label '${label}': ${e.message}`);
+            }
+
+            // Dedup: prefer commenting on an existing open tracking issue
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open',
+              labels: label,
+              per_page: 100
+            });
+
+            const existing = openIssues.find(issue => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: existing.number,
+                body: `Another scheduled differential workflow run has failed: ${runUrl}`
+              });
+              return;
+            }
+
+            // No existing open issue: create a new one
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title,
+              body,
+              labels: [label]
+            });

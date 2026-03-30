@@ -1,3 +1,5 @@
+"use strict";
+
 const { performance } = require('perf_hooks');
 const t1 = performance.now();
 

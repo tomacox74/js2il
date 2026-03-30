@@ -1,3 +1,5 @@
+"use strict";
+
 // Array stringification
 
 var arr = [1, 2, 3];

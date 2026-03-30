@@ -1,0 +1,516 @@
+using Js2IL.IR;
+using Js2IL.Services.ILGenerators;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+
+namespace Js2IL.IL;
+
+internal sealed partial class LIRToILCompiler
+{
+    #region Intrinsic Static Calls
+
+    private void EmitIntrinsicStaticCallWithArgsArray(
+        LIRCallIntrinsicStaticWithArgsArray instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var chosen = allMethods
+            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static params-array method found: {intrinsicType.FullName}.{instruction.MethodName}(object[])");
+        }
+
+        // Load the pre-built args array directly
+        EmitLoadTemp(instruction.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+        // Emit the static call
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            if (chosen.ReturnType == typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            if (chosen.ReturnType != typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Pop);
+            }
+        }
+    }
+
+    private void EmitIntrinsicStaticVoidCallWithArgsArray(
+        LIRCallIntrinsicStaticVoidWithArgsArray instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var chosen = allMethods
+            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
+            .FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static params-array method found: {intrinsicType.FullName}.{instruction.MethodName}(object[])");
+        }
+
+        EmitLoadTemp(instruction.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        if (chosen.ReturnType != typeof(void))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+    }
+
+    /// <summary>
+    /// Emits a static method call on an intrinsic type (e.g., Array.isArray, Math.abs).
+    /// Uses the same method resolution strategy as the legacy pipeline.
+    /// </summary>
+    private void EmitIntrinsicStaticCall(
+        LIRCallIntrinsicStatic instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        // Resolve the static method using the same heuristics as the legacy pipeline:
+        // 1. Exact arity match first
+        // 2. Fallback to params object[] signature
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var argCount = instruction.Arguments.Count;
+        var chosen = ResolveIntrinsicStaticMethod(methods, instruction.Arguments);
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static method found: {intrinsicType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            // Build an object[] array with all arguments
+            ilEncoder.LoadConstantI4(argCount);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int i = 0; i < argCount; i++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(i);
+                EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+        }
+        else
+        {
+            // Load each argument directly (boxing handled if needed based on target parameter type)
+            for (int i = 0; i < instruction.Arguments.Count; i++)
+            {
+                EmitLoadTempForParameter(instruction.Arguments[i], parameters[i].ParameterType, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        // Emit the static call
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        // Store or pop result
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            // If the method returns void, don't pop
+            if (chosen.ReturnType != typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Pop);
+            }
+        }
+    }
+
+    private void EmitIntrinsicStaticVoidCall(
+        LIRCallIntrinsicStaticVoid instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var argCount = instruction.Arguments.Count;
+        var chosen = ResolveIntrinsicStaticMethod(methods, instruction.Arguments);
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static method found: {intrinsicType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            ilEncoder.LoadConstantI4(argCount);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int i = 0; i < argCount; i++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(i);
+                EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < instruction.Arguments.Count; i++)
+            {
+                EmitLoadTempForParameter(instruction.Arguments[i], parameters[i].ParameterType, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        // Statement-level call: ensure no value is left on stack.
+        if (chosen.ReturnType != typeof(void))
+        {
+            ilEncoder.OpCode(ILOpCode.Pop);
+        }
+    }
+
+    /// <summary>
+    /// Emits intrinsic static call for inline (unmaterialized) temps - leaves result on stack.
+    /// </summary>
+    private void EmitIntrinsicStaticCallInline(
+        LIRCallIntrinsicStatic instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        // Resolve the static method (same logic as EmitIntrinsicStaticCall)
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var argCount = instruction.Arguments.Count;
+        var chosen = ResolveIntrinsicStaticMethod(methods, instruction.Arguments);
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static method found: {intrinsicType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            // Build an object[] array with all arguments
+            ilEncoder.LoadConstantI4(argCount);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int i = 0; i < argCount; i++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(i);
+                EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+        }
+        else
+        {
+            // Load each argument directly (boxing handled if needed based on target parameter type)
+            for (int i = 0; i < instruction.Arguments.Count; i++)
+            {
+                EmitLoadTempForParameter(instruction.Arguments[i], parameters[i].ParameterType, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        // Emit the static call - result stays on stack
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private System.Reflection.MethodInfo? ResolveIntrinsicStaticMethod(
+        List<System.Reflection.MethodInfo> methods,
+        IReadOnlyList<TempVariable> arguments)
+    {
+        var argCount = arguments.Count;
+
+        var compatible = methods
+            .Where(mi => mi.GetParameters().Length == argCount)
+            .Where(mi => AreIntrinsicArgumentsCompatible(arguments, mi.GetParameters()))
+            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
+            .ThenByDescending(mi => GetIntrinsicSpecificityScore(arguments, mi.GetParameters()))
+            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (compatible != null)
+        {
+            return compatible;
+        }
+
+        var exactArity = methods
+            .Where(mi => mi.GetParameters().Length == argCount)
+            .OrderBy(mi => IsParamsObjectArrayOverload(mi) ? 1 : 0)
+            .ThenBy(mi => mi.ToString(), StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (exactArity != null)
+        {
+            return exactArity;
+        }
+
+        return methods.FirstOrDefault(IsParamsObjectArrayOverload);
+    }
+
+    private int GetIntrinsicSpecificityScore(
+        IReadOnlyList<TempVariable> arguments,
+        System.Reflection.ParameterInfo[] parameters)
+    {
+        int score = 0;
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            var parameterType = parameters[i].ParameterType;
+            if (parameterType == typeof(object))
+            {
+                continue;
+            }
+
+            var storage = GetTempStorage(arguments[i]);
+            var clrType = storage.ClrType;
+
+            if (parameterType == typeof(string)
+                && storage.Kind == ValueStorageKind.Reference
+                && clrType == typeof(string))
+            {
+                score += 4;
+                continue;
+            }
+
+            if (parameterType == typeof(double) && clrType == typeof(double))
+            {
+                score += 4;
+                continue;
+            }
+
+            if (parameterType == typeof(bool) && clrType == typeof(bool))
+            {
+                score += 4;
+                continue;
+            }
+
+            if (!parameterType.IsValueType
+                && storage.Kind == ValueStorageKind.Reference
+                && clrType != null
+                && clrType != typeof(object)
+                && parameterType.IsAssignableFrom(clrType))
+            {
+                score += clrType == parameterType ? 4 : 2;
+                continue;
+            }
+
+            if (storage.Kind == ValueStorageKind.UnboxedValue && clrType == parameterType)
+            {
+                score += 4;
+            }
+        }
+
+        return score;
+    }
+
+    private bool AreIntrinsicArgumentsCompatible(
+        IReadOnlyList<TempVariable> arguments,
+        System.Reflection.ParameterInfo[] parameters)
+    {
+        if (parameters.Length != arguments.Count)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if (!IsIntrinsicArgumentCompatible(arguments[i], parameters[i].ParameterType))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsIntrinsicArgumentCompatible(TempVariable argument, Type parameterType)
+    {
+        if (parameterType == typeof(object))
+        {
+            return true;
+        }
+
+        var storage = GetTempStorage(argument);
+        var clrType = storage.ClrType;
+
+        if (parameterType == typeof(string))
+        {
+            return storage.Kind == ValueStorageKind.Reference && clrType == typeof(string);
+        }
+
+        if (parameterType == typeof(double))
+        {
+            return clrType == typeof(double);
+        }
+
+        if (parameterType == typeof(bool))
+        {
+            return clrType == typeof(bool);
+        }
+
+        if (!parameterType.IsValueType)
+        {
+            return storage.Kind == ValueStorageKind.Reference
+                && clrType != null
+                && clrType != typeof(object)
+                && parameterType.IsAssignableFrom(clrType);
+        }
+
+        return storage.Kind == ValueStorageKind.UnboxedValue && clrType == parameterType;
+    }
+
+    private void EmitLoadTempForParameter(
+        TempVariable argument,
+        Type parameterType,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(argument);
+
+        if (parameterType == typeof(object))
+        {
+            EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (parameterType == typeof(string))
+        {
+            EmitLoadTempAsString(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (parameterType == typeof(double))
+        {
+            EmitLoadTempAsDouble(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (parameterType == typeof(bool))
+        {
+            EmitLoadTempAsBoolean(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (!parameterType.IsValueType)
+        {
+            if (storage.Kind == ValueStorageKind.Reference
+                && storage.ClrType != null
+                && parameterType.IsAssignableFrom(storage.ClrType))
+            {
+                EmitLoadTemp(argument, ilEncoder, allocation, methodDescriptor);
+                return;
+            }
+
+            EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterType));
+            return;
+        }
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == parameterType)
+        {
+            EmitLoadTemp(argument, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(argument, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Unbox_any);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterType));
+    }
+
+    private static bool IsParamsObjectArrayOverload(System.Reflection.MethodInfo method)
+    {
+        var ps = method.GetParameters();
+        return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+    }
+
+    #endregion
+}

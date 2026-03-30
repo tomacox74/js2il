@@ -1,3 +1,5 @@
+"use strict";
+
 function innerThen(resolve2, reject2) {
   resolve2(7);
 }

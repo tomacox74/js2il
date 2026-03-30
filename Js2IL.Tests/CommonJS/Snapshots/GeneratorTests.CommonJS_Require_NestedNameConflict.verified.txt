@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23a7
+			// Method begins at RVA 0x2372
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,59 +40,27 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 98 (0x62)
-		.maxstack 32
-		.locals init (
-			[0] class Modules.a/Scope,
-			[1] object[]
+		// Code size: 47 (0x2f)
+		.maxstack 8
+		.locals (
+			[0] class Modules.a/Scope
 		)
 
 		IL_0000: newobj instance void Modules.a/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldstr "./b"
-		IL_0013: stelem.ref
-		IL_0014: stloc.1
-		IL_0015: ldarg.1
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldnull
-		IL_001f: stelem.ref
-		IL_0020: ldloc.1
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0026: pop
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldstr "./helpers/b"
-		IL_0034: stelem.ref
-		IL_0035: stloc.1
-		IL_0036: ldarg.1
-		IL_0037: ldc.i4.1
-		IL_0038: newarr [System.Runtime]System.Object
-		IL_003d: dup
-		IL_003e: ldc.i4.0
-		IL_003f: ldnull
-		IL_0040: stelem.ref
-		IL_0041: ldloc.1
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0047: pop
-		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldstr "CommonJS_Require_NestedNameConflict a has been loaded"
-		IL_005a: stelem.ref
-		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0060: pop
-		IL_0061: ret
+		IL_0006: ldarg.1
+		IL_0007: ldstr "./b"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: pop
+		IL_0012: ldarg.1
+		IL_0013: ldstr "./helpers/b"
+		IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_001d: pop
+		IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0023: ldstr "CommonJS_Require_NestedNameConflict a has been loaded"
+		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_002d: pop
+		IL_002e: ret
 	} // end of method a::__js_module_init__
 
 } // end of class Modules.a
@@ -101,6 +69,58 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C9
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 0b 53 63 6f 70 65 20 78 3d 7b 78 7d 00 00
+			)
+			// Fields
+			.field public object x
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2384
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object x
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x221b
+			// Header size: 1
+			// Code size: 2 (0x2)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: ret
+		} // end of method ArrowFunction_L3C9::__js_call__
+
+	} // end of class ArrowFunction_L3C9
+
 	.class nested public auto ansi abstract sealed beforefieldinit commonFunctionName
 		extends [System.Runtime]System.Object
 	{
@@ -112,7 +132,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d4
+				// Method begins at RVA 0x239f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -129,92 +149,44 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				class Modules.b/Scope scope,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2208
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 0c 00 00 02
+			)
+			// Method begins at RVA 0x2220
 			// Header size: 12
-			// Code size: 66 (0x42)
-			.maxstack 32
+			// Code size: 50 (0x32)
+			.maxstack 8
 			.locals init (
 				[0] string
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.b/Scope
-			IL_0008: ldfld string Modules.b/Scope::moduleName
-			IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0012: stloc.0
-			IL_0013: ldstr "Function from "
+			IL_0001: ldfld string Modules.b/Scope::moduleName
+			IL_0006: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_000b: stloc.0
+			IL_000c: ldstr "Function from "
+			IL_0011: ldloc.0
+			IL_0012: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0017: stloc.0
 			IL_0018: ldloc.0
-			IL_0019: call string [System.Runtime]System.String::Concat(string, string)
-			IL_001e: stloc.0
-			IL_001f: ldloc.0
-			IL_0020: ldstr " has been called"
-			IL_0025: call string [System.Runtime]System.String::Concat(string, string)
-			IL_002a: stloc.0
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: ldc.i4.1
-			IL_0031: newarr [System.Runtime]System.Object
-			IL_0036: dup
-			IL_0037: ldc.i4.0
-			IL_0038: ldloc.0
-			IL_0039: stelem.ref
-			IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_003f: pop
-			IL_0040: ldnull
-			IL_0041: ret
+			IL_0019: ldstr " has been called"
+			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0023: stloc.0
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.0
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method commonFunctionName::__js_call__
 
 	} // end of class commonFunctionName
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C9
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Fields
-			.field public object x
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x23b9
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object[] scopes,
-				object x
-			) cil managed 
-		{
-			// Method begins at RVA 0x2258
-			// Header size: 12
-			// Code size: 2 (0x2)
-			.maxstack 32
-
-			IL_0000: ldarg.1
-			IL_0001: ret
-		} // end of method ArrowFunction_L1C9::__js_call__
-
-	} // end of class ArrowFunction_L1C9
 
 	.class nested public auto ansi beforefieldinit CommonClassName
 		extends [System.Runtime]System.Object
@@ -227,7 +199,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c2
+				// Method begins at RVA 0x238d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -247,7 +219,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23cb
+				// Method begins at RVA 0x2396
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -270,10 +242,13 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2268
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 02 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2260
 			// Header size: 12
 			// Code size: 16 (0x10)
-			.maxstack 32
+			.maxstack 8
 			.locals init (
 				[0] object[]
 			)
@@ -291,10 +266,13 @@
 		.method public hidebysig 
 			instance object Log () cil managed 
 		{
-			// Method begins at RVA 0x2284
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x227c
 			// Header size: 12
-			// Code size: 71 (0x47)
-			.maxstack 32
+			// Code size: 62 (0x3e)
+			.maxstack 8
 			.locals init (
 				[0] string
 			)
@@ -316,16 +294,11 @@
 			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
 			IL_002f: stloc.0
 			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldc.i4.1
-			IL_0036: newarr [System.Runtime]System.Object
-			IL_003b: dup
-			IL_003c: ldc.i4.0
-			IL_003d: ldloc.0
-			IL_003e: stelem.ref
-			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0044: pop
-			IL_0045: ldnull
-			IL_0046: ret
+			IL_0035: ldloc.0
+			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003b: pop
+			IL_003c: ldnull
+			IL_003d: ret
 		} // end of method CommonClassName::Log
 
 	} // end of class CommonClassName
@@ -333,6 +306,13 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 46 53 63 6f 70 65 20 6d 6f 64 75 6c 65 4e
+			61 6d 65 3d 7b 6d 6f 64 75 6c 65 4e 61 6d 65 7d
+			2c 20 63 6f 6d 6d 6f 6e 46 75 6e 63 74 69 6f 6e
+			4e 61 6d 65 3d 7b 63 6f 6d 6d 6f 6e 46 75 6e 63
+			74 69 6f 6e 4e 61 6d 65 7d 00 00
+		)
 		// Fields
 		.field public string moduleName
 		.field public object commonFunctionName
@@ -341,7 +321,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23b0
+			// Method begins at RVA 0x237b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -365,71 +345,89 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c0
+		// Method begins at RVA 0x208c
 		// Header size: 12
-		// Code size: 150 (0x96)
-		.maxstack 32
+		// Code size: 187 (0xbb)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.b/Scope,
-			[1] object
+			[1] object,
+			[2] object,
+			[3] class Modules.b/CommonClassName
 		)
 
 		IL_0000: newobj instance void Modules.b/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.b/ArrowFunction_L1C9::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldc.i4.1
-		IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0028: dup
-		IL_0029: ldc.r8 1
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_003c: ldc.i4.1
-		IL_003d: newarr [System.Runtime]System.Object
-		IL_0042: dup
-		IL_0043: ldc.i4.0
-		IL_0044: ldloc.1
-		IL_0045: stelem.ref
-		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_004b: pop
-		IL_004c: ldloc.0
-		IL_004d: ldstr "CommonJS_Require_NestedNameConflict/b"
-		IL_0052: stfld string Modules.b/Scope::moduleName
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.0
-		IL_0060: stelem.ref
-		IL_0061: newobj instance void Modules.b/CommonClassName::.ctor(object[])
-		IL_0066: stloc.1
-		IL_0067: ldloc.1
-		IL_0068: ldstr "Log"
-		IL_006d: ldc.i4.0
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0078: pop
-		IL_0079: ldnull
-		IL_007a: ldftn object Modules.b/commonFunctionName::__js_call__(object[])
-		IL_0080: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.0
-		IL_008e: stelem.ref
-		IL_008f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0094: pop
-		IL_0095: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: ldc.i4.0
+		IL_0011: ldelem.ref
+		IL_0012: castclass Modules.b/Scope
+		IL_0017: ldftn object Modules.b/commonFunctionName::__js_call__(class Modules.b/Scope, object)
+		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0022: stloc.2
+		IL_0023: ldloc.2
+		IL_0024: stloc.1
+		IL_0025: ldnull
+		IL_0026: ldftn object Modules.b/ArrowFunction_L3C9::__js_call__(object, object)
+		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.0
+		IL_003a: stelem.ref
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0045: stloc.2
+		IL_0046: ldc.i4.1
+		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004c: dup
+		IL_004d: ldc.r8 1
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0060: ldc.i4.1
+		IL_0061: newarr [System.Runtime]System.Object
+		IL_0066: dup
+		IL_0067: ldc.i4.0
+		IL_0068: ldloc.2
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_006f: pop
+		IL_0070: ldloc.0
+		IL_0071: ldstr "CommonJS_Require_NestedNameConflict/b"
+		IL_0076: stfld string Modules.b/Scope::moduleName
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldloc.0
+		IL_0084: stelem.ref
+		IL_0085: newobj instance void Modules.b/CommonClassName::.ctor(object[])
+		IL_008a: stloc.3
+		IL_008b: ldloc.3
+		IL_008c: ldstr "Log"
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0096: pop
+		IL_0097: ldc.i4.1
+		IL_0098: newarr [System.Runtime]System.Object
+		IL_009d: dup
+		IL_009e: ldc.i4.0
+		IL_009f: ldloc.0
+		IL_00a0: stelem.ref
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldelem.ref
+		IL_00a3: castclass Modules.b/Scope
+		IL_00a8: ldftn object Modules.b/commonFunctionName::__js_call__(class Modules.b/Scope, object)
+		IL_00ae: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00b3: ldnull
+		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_00b9: pop
+		IL_00ba: ret
 	} // end of method b::__js_module_init__
 
 } // end of class Modules.b
@@ -438,6 +436,58 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C9
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 0b 53 63 6f 70 65 20 78 3d 7b 78 7d 00 00
+			)
+			// Fields
+			.field public object x
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x23b1
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object x
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x22c6
+			// Header size: 1
+			// Code size: 2 (0x2)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: ret
+		} // end of method ArrowFunction_L3C9::__js_call__
+
+	} // end of class ArrowFunction_L3C9
+
 	.class nested public auto ansi abstract sealed beforefieldinit commonFunctionName
 		extends [System.Runtime]System.Object
 	{
@@ -449,7 +499,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2401
+				// Method begins at RVA 0x23cc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -466,92 +516,44 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				class Modules.helpers_b/Scope scope,
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x22d8
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x22cc
 			// Header size: 12
-			// Code size: 66 (0x42)
-			.maxstack 32
+			// Code size: 50 (0x32)
+			.maxstack 8
 			.locals init (
 				[0] string
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldc.i4.0
-			IL_0002: ldelem.ref
-			IL_0003: castclass Modules.helpers_b/Scope
-			IL_0008: ldfld string Modules.helpers_b/Scope::moduleName
-			IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0012: stloc.0
-			IL_0013: ldstr "Function from "
+			IL_0001: ldfld string Modules.helpers_b/Scope::moduleName
+			IL_0006: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_000b: stloc.0
+			IL_000c: ldstr "Function from "
+			IL_0011: ldloc.0
+			IL_0012: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0017: stloc.0
 			IL_0018: ldloc.0
-			IL_0019: call string [System.Runtime]System.String::Concat(string, string)
-			IL_001e: stloc.0
-			IL_001f: ldloc.0
-			IL_0020: ldstr " has been called"
-			IL_0025: call string [System.Runtime]System.String::Concat(string, string)
-			IL_002a: stloc.0
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: ldc.i4.1
-			IL_0031: newarr [System.Runtime]System.Object
-			IL_0036: dup
-			IL_0037: ldc.i4.0
-			IL_0038: ldloc.0
-			IL_0039: stelem.ref
-			IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_003f: pop
-			IL_0040: ldnull
-			IL_0041: ret
+			IL_0019: ldstr " has been called"
+			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0023: stloc.0
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.0
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method commonFunctionName::__js_call__
 
 	} // end of class commonFunctionName
-
-	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L1C9
-		extends [System.Runtime]System.Object
-	{
-		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
-			extends [System.Runtime]System.Object
-		{
-			// Fields
-			.field public object x
-
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x23e6
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Scope::.ctor
-
-		} // end of class Scope
-
-
-		// Methods
-		.method public hidebysig static 
-			object __js_call__ (
-				object[] scopes,
-				object x
-			) cil managed 
-		{
-			// Method begins at RVA 0x2328
-			// Header size: 12
-			// Code size: 2 (0x2)
-			.maxstack 32
-
-			IL_0000: ldarg.1
-			IL_0001: ret
-		} // end of method ArrowFunction_L1C9::__js_call__
-
-	} // end of class ArrowFunction_L1C9
 
 	.class nested public auto ansi beforefieldinit CommonClassName
 		extends [System.Runtime]System.Object
@@ -564,7 +566,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ef
+				// Method begins at RVA 0x23ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -584,7 +586,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23f8
+				// Method begins at RVA 0x23c3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -607,10 +609,13 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x2338
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 02 00 00 00 00 00
+			)
+			// Method begins at RVA 0x230c
 			// Header size: 12
 			// Code size: 16 (0x10)
-			.maxstack 32
+			.maxstack 8
 			.locals init (
 				[0] object[]
 			)
@@ -628,10 +633,13 @@
 		.method public hidebysig 
 			instance object Log () cil managed 
 		{
-			// Method begins at RVA 0x2354
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2328
 			// Header size: 12
-			// Code size: 71 (0x47)
-			.maxstack 32
+			// Code size: 62 (0x3e)
+			.maxstack 8
 			.locals init (
 				[0] string
 			)
@@ -653,16 +661,11 @@
 			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
 			IL_002f: stloc.0
 			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldc.i4.1
-			IL_0036: newarr [System.Runtime]System.Object
-			IL_003b: dup
-			IL_003c: ldc.i4.0
-			IL_003d: ldloc.0
-			IL_003e: stelem.ref
-			IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0044: pop
-			IL_0045: ldnull
-			IL_0046: ret
+			IL_0035: ldloc.0
+			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003b: pop
+			IL_003c: ldnull
+			IL_003d: ret
 		} // end of method CommonClassName::Log
 
 	} // end of class CommonClassName
@@ -670,6 +673,13 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 46 53 63 6f 70 65 20 6d 6f 64 75 6c 65 4e
+			61 6d 65 3d 7b 6d 6f 64 75 6c 65 4e 61 6d 65 7d
+			2c 20 63 6f 6d 6d 6f 6e 46 75 6e 63 74 69 6f 6e
+			4e 61 6d 65 3d 7b 63 6f 6d 6d 6f 6e 46 75 6e 63
+			74 69 6f 6e 4e 61 6d 65 7d 00 00
+		)
 		// Fields
 		.field public string moduleName
 		.field public object commonFunctionName
@@ -678,7 +688,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23dd
+			// Method begins at RVA 0x23a8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -702,71 +712,89 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x2154
 		// Header size: 12
-		// Code size: 150 (0x96)
-		.maxstack 32
+		// Code size: 187 (0xbb)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.helpers_b/Scope,
-			[1] object
+			[1] object,
+			[2] object,
+			[3] class Modules.helpers_b/CommonClassName
 		)
 
 		IL_0000: newobj instance void Modules.helpers_b/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: ldftn object Modules.helpers_b/ArrowFunction_L1C9::__js_call__(object[], object)
-		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0021: stloc.1
-		IL_0022: ldc.i4.1
-		IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0028: dup
-		IL_0029: ldc.r8 1
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_003c: ldc.i4.1
-		IL_003d: newarr [System.Runtime]System.Object
-		IL_0042: dup
-		IL_0043: ldc.i4.0
-		IL_0044: ldloc.1
-		IL_0045: stelem.ref
-		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_004b: pop
-		IL_004c: ldloc.0
-		IL_004d: ldstr "CommonJS_Require_NestedNameConflict/helpers/b"
-		IL_0052: stfld string Modules.helpers_b/Scope::moduleName
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.0
-		IL_0060: stelem.ref
-		IL_0061: newobj instance void Modules.helpers_b/CommonClassName::.ctor(object[])
-		IL_0066: stloc.1
-		IL_0067: ldloc.1
-		IL_0068: ldstr "Log"
-		IL_006d: ldc.i4.0
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0078: pop
-		IL_0079: ldnull
-		IL_007a: ldftn object Modules.helpers_b/commonFunctionName::__js_call__(object[])
-		IL_0080: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.0
-		IL_008e: stelem.ref
-		IL_008f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0094: pop
-		IL_0095: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: ldc.i4.0
+		IL_0011: ldelem.ref
+		IL_0012: castclass Modules.helpers_b/Scope
+		IL_0017: ldftn object Modules.helpers_b/commonFunctionName::__js_call__(class Modules.helpers_b/Scope, object)
+		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0022: stloc.2
+		IL_0023: ldloc.2
+		IL_0024: stloc.1
+		IL_0025: ldnull
+		IL_0026: ldftn object Modules.helpers_b/ArrowFunction_L3C9::__js_call__(object, object)
+		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.0
+		IL_003a: stelem.ref
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0045: stloc.2
+		IL_0046: ldc.i4.1
+		IL_0047: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004c: dup
+		IL_004d: ldc.r8 1
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0060: ldc.i4.1
+		IL_0061: newarr [System.Runtime]System.Object
+		IL_0066: dup
+		IL_0067: ldc.i4.0
+		IL_0068: ldloc.2
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_006f: pop
+		IL_0070: ldloc.0
+		IL_0071: ldstr "CommonJS_Require_NestedNameConflict/helpers/b"
+		IL_0076: stfld string Modules.helpers_b/Scope::moduleName
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldloc.0
+		IL_0084: stelem.ref
+		IL_0085: newobj instance void Modules.helpers_b/CommonClassName::.ctor(object[])
+		IL_008a: stloc.3
+		IL_008b: ldloc.3
+		IL_008c: ldstr "Log"
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0096: pop
+		IL_0097: ldc.i4.1
+		IL_0098: newarr [System.Runtime]System.Object
+		IL_009d: dup
+		IL_009e: ldc.i4.0
+		IL_009f: ldloc.0
+		IL_00a0: stelem.ref
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldelem.ref
+		IL_00a3: castclass Modules.helpers_b/Scope
+		IL_00a8: ldftn object Modules.helpers_b/commonFunctionName::__js_call__(class Modules.helpers_b/Scope, object)
+		IL_00ae: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00b3: ldnull
+		IL_00b4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_00b9: pop
+		IL_00ba: ret
 	} // end of method helpers_b::__js_module_init__
 
 } // end of class Modules.helpers_b
@@ -778,7 +806,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x240a
+		// Method begins at RVA 0x23d5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

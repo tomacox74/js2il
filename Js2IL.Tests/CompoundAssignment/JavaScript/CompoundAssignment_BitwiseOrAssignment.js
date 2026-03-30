@@ -1,3 +1,5 @@
+"use strict";
+
 // Test bitwise OR assignment operator |=
 // This reproduces the issue found in PrimeJavaScript.js
 var x = 5;

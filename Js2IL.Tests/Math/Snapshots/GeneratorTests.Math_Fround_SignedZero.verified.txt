@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217c
+				// Method begins at RVA 0x2175
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -35,74 +35,74 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes,
+				object newTarget,
 				object n
 			) cil managed 
 		{
-			// Method begins at RVA 0x20e4
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20e0
 			// Header size: 12
-			// Code size: 131 (0x83)
-			.maxstack 32
+			// Code size: 128 (0x80)
+			.maxstack 8
 			.locals init (
-				[0] bool,
-				[1] object,
-				[2] float64,
-				[3] object,
+				[0] object,
+				[1] bool,
+				[2] object,
+				[3] float64,
 				[4] object,
-				[5] object,
-				[6] object
+				[5] object
 			)
 
 			IL_0000: ldarg.1
 			IL_0001: ldc.r8 0.0
 			IL_000a: box [System.Runtime]System.Double
 			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0014: stloc.0
-			IL_0015: ldloc.0
+			IL_0014: stloc.1
+			IL_0015: ldloc.1
 			IL_0016: box [System.Runtime]System.Boolean
-			IL_001b: stloc.1
-			IL_001c: ldloc.1
+			IL_001b: stloc.2
+			IL_001c: ldloc.2
 			IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0022: stloc.0
-			IL_0023: ldloc.0
-			IL_0024: brfalse IL_0056
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: brfalse IL_0052
 
 			IL_0029: ldc.r8 1
 			IL_0032: ldarg.1
 			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0038: div
-			IL_0039: stloc.2
-			IL_003a: ldloc.2
+			IL_0039: stloc.3
+			IL_003a: ldloc.3
 			IL_003b: ldc.r8 0.0
 			IL_0044: clt
-			IL_0046: stloc.0
-			IL_0047: ldloc.0
-			IL_0048: box [System.Runtime]System.Boolean
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: stloc.s 5
-			IL_0051: br IL_0059
+			IL_0046: box [System.Runtime]System.Boolean
+			IL_004b: stloc.s 5
+			IL_004d: br IL_0055
 
-			IL_0056: ldloc.1
-			IL_0057: stloc.s 5
+			IL_0052: ldloc.2
+			IL_0053: stloc.s 5
 
-			IL_0059: ldloc.s 5
-			IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0060: stloc.0
-			IL_0061: ldloc.0
-			IL_0062: brfalse IL_0073
+			IL_0055: ldloc.s 5
+			IL_0057: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_005c: stloc.1
+			IL_005d: ldloc.1
+			IL_005e: brfalse IL_006e
 
-			IL_0067: ldstr "-0"
-			IL_006c: stloc.s 6
-			IL_006e: br IL_0080
+			IL_0063: ldstr "-0"
+			IL_0068: stloc.0
+			IL_0069: br IL_007e
 
-			IL_0073: ldstr ""
-			IL_0078: ldarg.1
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_007e: stloc.s 6
+			IL_006e: ldstr ""
+			IL_0073: ldarg.1
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0079: stloc.s 5
+			IL_007b: ldloc.s 5
+			IL_007d: stloc.0
 
-			IL_0080: ldloc.s 6
-			IL_0082: ret
+			IL_007e: ldloc.0
+			IL_007f: ret
 		} // end of method toStr::__js_call__
 
 	} // end of class toStr
@@ -110,6 +110,10 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 13 53 63 6f 70 65 20 74 6f 53 74 72 3d 7b
+			74 6f 53 74 72 7d 00 00
+		)
 		// Fields
 		.field public object toStr
 
@@ -117,7 +121,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2173
+			// Method begins at RVA 0x216c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -143,62 +147,60 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 133 (0x85)
-		.maxstack 32
+		// Code size: 130 (0x82)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Fround_SignedZero/Scope,
 			[1] object,
-			[2] object,
-			[3] object,
-			[4] object
+			[2] float64,
+			[3] float64,
+			[4] object,
+			[5] float64,
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Fround_SignedZero/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.r8 1.337
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
-		IL_0019: stloc.1
-		IL_001a: ldc.r8 0.0
-		IL_0023: neg
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0012: stloc.s 4
+		IL_0014: ldloc.s 4
+		IL_0016: stloc.1
+		IL_0017: ldc.r8 1.337
+		IL_0020: box [System.Runtime]System.Double
+		IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_002a: stloc.s 5
+		IL_002c: ldloc.s 5
 		IL_002e: stloc.2
-		IL_002f: ldstr ""
-		IL_0034: ldloc.1
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_003a: stloc.3
-		IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0040: ldc.i4.1
-		IL_0041: newarr [System.Runtime]System.Object
-		IL_0046: dup
-		IL_0047: ldc.i4.0
-		IL_0048: ldloc.3
-		IL_0049: stelem.ref
-		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004f: pop
-		IL_0050: ldnull
-		IL_0051: ldftn object Modules.Math_Fround_SignedZero/toStr::__js_call__(object[], object)
-		IL_0057: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldloc.0
-		IL_0065: stelem.ref
-		IL_0066: ldloc.2
-		IL_0067: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_006c: stloc.s 4
-		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0073: ldc.i4.1
-		IL_0074: newarr [System.Runtime]System.Object
-		IL_0079: dup
-		IL_007a: ldc.i4.0
-		IL_007b: ldloc.s 4
-		IL_007d: stelem.ref
-		IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0083: pop
-		IL_0084: ret
+		IL_002f: ldc.r8 0.0
+		IL_0038: neg
+		IL_0039: box [System.Runtime]System.Double
+		IL_003e: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_0043: stloc.s 5
+		IL_0045: ldloc.s 5
+		IL_0047: stloc.3
+		IL_0048: ldstr ""
+		IL_004d: ldloc.2
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_0053: stloc.s 6
+		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005a: ldloc.s 6
+		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0061: pop
+		IL_0062: ldloc.3
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: stloc.s 7
+		IL_006a: ldnull
+		IL_006b: ldloc.s 7
+		IL_006d: call object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, object)
+		IL_0072: stloc.s 4
+		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0079: ldloc.s 4
+		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0080: pop
+		IL_0081: ret
 	} // end of method Math_Fround_SignedZero::__js_module_init__
 
 } // end of class Modules.Math_Fround_SignedZero
@@ -210,7 +212,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2185
+		// Method begins at RVA 0x217e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

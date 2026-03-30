@@ -1,3 +1,5 @@
+"use strict";
+
 let x = 2;
 
 switch (x) {

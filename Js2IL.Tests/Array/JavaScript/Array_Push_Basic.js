@@ -1,3 +1,5 @@
+"use strict";
+
 var arr = [1, 2];
 console.log(arr.push(3)); // length after push -> 3
 console.log(arr.length); // 3

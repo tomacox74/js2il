@@ -1,3 +1,5 @@
+"use strict";
+
 // Minimal repro for invalid IL in class constructor
 // Two constructor lines only, per request:
 //   this.sieveSizeInBits = sieveSize >>> 1;

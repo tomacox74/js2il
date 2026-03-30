@@ -1,3 +1,5 @@
+"use strict";
+
 const global = 7;
 console.log("before try");
 try {

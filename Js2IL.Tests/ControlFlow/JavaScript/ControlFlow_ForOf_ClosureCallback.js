@@ -1,3 +1,5 @@
+"use strict";
+
 function outer(callback) {
   (function inner() {
     for (const x of [1, 2, 3]) {

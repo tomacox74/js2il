@@ -1,3 +1,5 @@
+"use strict";
+
 let x = 0;
 function inc() {
   x = x + 1;

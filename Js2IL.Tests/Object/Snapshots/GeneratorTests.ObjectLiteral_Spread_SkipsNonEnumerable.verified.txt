@@ -1,0 +1,142 @@
+﻿// IL code: ObjectLiteral_Spread_SkipsNonEnumerable
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.ObjectLiteral_Spread_SkipsNonEnumerable
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x212f
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 211 (0xd3)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.ObjectLiteral_Spread_SkipsNonEnumerable/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Modules.ObjectLiteral_Spread_SkipsNonEnumerable/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: ldstr "hidden"
+		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0017: dup
+		IL_0018: ldstr "value"
+		IL_001d: ldc.r8 42
+		IL_0026: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_002b: dup
+		IL_002c: ldstr "enumerable"
+		IL_0031: ldc.i4.0
+		IL_0032: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_003c: pop
+		IL_003d: ldloc.1
+		IL_003e: ldstr "visible"
+		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0048: dup
+		IL_0049: ldstr "value"
+		IL_004e: ldc.r8 7
+		IL_0057: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_005c: dup
+		IL_005d: ldstr "enumerable"
+		IL_0062: ldc.i4.1
+		IL_0063: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_006d: pop
+		IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0073: stloc.3
+		IL_0074: ldloc.3
+		IL_0075: ldloc.1
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SpreadIntoObjectLiteral(object, object)
+		IL_007b: pop
+		IL_007c: ldloc.3
+		IL_007d: stloc.2
+		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0083: ldloc.2
+		IL_0084: ldstr "hidden"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0093: pop
+		IL_0094: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0099: ldloc.2
+		IL_009a: ldstr "visible"
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a9: pop
+		IL_00aa: ldloc.2
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_00b0: stloc.s 4
+		IL_00b2: ldloc.s 4
+		IL_00b4: ldstr "join"
+		IL_00b9: ldstr ","
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c3: stloc.s 4
+		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ca: ldloc.s 4
+		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d1: pop
+		IL_00d2: ret
+	} // end of method ObjectLiteral_Spread_SkipsNonEnumerable::__js_module_init__
+
+} // end of class Modules.ObjectLiteral_Spread_SkipsNonEnumerable
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2138
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.ObjectLiteral_Spread_SkipsNonEnumerable::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

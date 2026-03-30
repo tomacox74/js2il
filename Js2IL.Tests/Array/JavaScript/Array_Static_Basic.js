@@ -1,3 +1,5 @@
+"use strict";
+
 // Static Array operations
 
 console.log(Array.of(1, 2, 3).join());

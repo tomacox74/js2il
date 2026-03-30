@@ -1,7 +1,10 @@
 #!/usr/bin/env node
+"use strict";
+
 /*
  * bumpVersion.js
- * Automates version bumping across CHANGELOG.md, Js2IL/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj.
+ * Automates version bumping across CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj,
+ * src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj.
  * Usage examples:
  *   node scripts/bumpVersion.js patch
  *   node scripts/bumpVersion.js minor
@@ -15,7 +18,10 @@
  * - Moves content under '## Unreleased' (excluding placeholder lines like '_Nothing yet._')
  *   into a new section '## vX.Y.Z - YYYY-MM-DD' above the previous releases.
  * - If Unreleased is empty and you request a bump, it still creates an empty release section unless --skip-empty.
- * - Updates <Version> in both Js2IL.csproj and JavaScriptRuntime.csproj (adds if not present).
+ * - Updates <Js2ILPackageVersion> in samples/Directory.Build.props.
+ * - Updates <Version> in src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj,
+ *   src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
+ *   (adds if not present).
  * - Writes files only if actual changes differ.
  * - Prints next steps (commit, tag).
  */
@@ -24,8 +30,11 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const CSPROJ_PATH = path.join(ROOT, 'Js2IL', 'Js2IL.csproj');
-const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Js2IL.csproj');
+const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.Core', 'Js2IL.Core.csproj');
+const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.SDK', 'Js2IL.SDK.csproj');
+const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
+const SAMPLES_PROPS_PATH = path.join(ROOT, 'samples', 'Directory.Build.props');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 
 function readFile(p) { return fs.readFileSync(p, 'utf8'); }
@@ -71,6 +80,15 @@ function updateCsprojVersion(text, newVersion) {
   );
 }
 
+function updateSamplesPropsVersion(text, newVersion) {
+  const pattern = /<Js2ILPackageVersion\b([^>]*)>[^<]+<\/Js2ILPackageVersion>/;
+  if(!pattern.test(text)) {
+    throw new Error('Could not find <Js2ILPackageVersion> in samples/Directory.Build.props');
+  }
+
+  return text.replace(pattern, `<Js2ILPackageVersion$1>${newVersion}<\/Js2ILPackageVersion>`);
+}
+
 function extractUnreleased(changelog) {
   const unreleasedHeaderIdx = changelog.indexOf('## Unreleased');
   if(unreleasedHeaderIdx === -1) throw new Error('CHANGELOG.md missing "## Unreleased" section');
@@ -101,7 +119,10 @@ function perform() {
   const arg = process.argv[2];
   const skipEmpty = process.argv.includes('--skip-empty');
   const csprojText = readFile(CSPROJ_PATH);
+  const coreCsprojText = readFile(CORE_CSPROJ_PATH);
+  const sdkCsprojText = readFile(SDK_CSPROJ_PATH);
   const runtimeCsprojText = readFile(RUNTIME_CSPROJ_PATH);
+  const samplesPropsText = readFile(SAMPLES_PROPS_PATH);
   const changelogText = readFile(CHANGELOG_PATH);
 
   const currentVersion = parseCurrentVersion(csprojText);
@@ -114,11 +135,17 @@ function perform() {
   const { body, start, end } = extractUnreleased(changelogText);
   const hasRealContent = body.split(/\r?\n/).some(l => l.trim().length && !isPlaceholder(l));
   if(!hasRealContent && skipEmpty) {
-    console.log('Unreleased is empty and --skip-empty specified; only bumping csproj version.');
+    console.log('Unreleased is empty and --skip-empty specified; only bumping csproj versions and samples/Directory.Build.props.');
     const newCsproj = updateCsprojVersion(csprojText, newVersion);
+    const newCoreCsproj = updateCsprojVersion(coreCsprojText, newVersion);
+    const newSdkCsproj = updateCsprojVersion(sdkCsprojText, newVersion);
     const newRuntimeCsproj = updateCsprojVersion(runtimeCsprojText, newVersion);
+    const newSamplesProps = updateSamplesPropsVersion(samplesPropsText, newVersion);
     writeFile(CSPROJ_PATH, newCsproj);
+    writeFile(CORE_CSPROJ_PATH, newCoreCsproj);
+    writeFile(SDK_CSPROJ_PATH, newSdkCsproj);
     writeFile(RUNTIME_CSPROJ_PATH, newRuntimeCsproj);
+    writeFile(SAMPLES_PROPS_PATH, newSamplesProps);
     return;
   }
 
@@ -129,16 +156,22 @@ function perform() {
   const newUnreleased = '\n_Nothing yet._\n\n';
   const updatedChangelog = before + newUnreleased + releaseSection + after;
   const updatedCsproj = updateCsprojVersion(csprojText, newVersion);
+  const updatedCoreCsproj = updateCsprojVersion(coreCsprojText, newVersion);
+  const updatedSdkCsproj = updateCsprojVersion(sdkCsprojText, newVersion);
   const updatedRuntimeCsproj = updateCsprojVersion(runtimeCsprojText, newVersion);
+  const updatedSamplesProps = updateSamplesPropsVersion(samplesPropsText, newVersion);
 
   writeFile(CHANGELOG_PATH, updatedChangelog);
   writeFile(CSPROJ_PATH, updatedCsproj);
+  writeFile(CORE_CSPROJ_PATH, updatedCoreCsproj);
+  writeFile(SDK_CSPROJ_PATH, updatedSdkCsproj);
   writeFile(RUNTIME_CSPROJ_PATH, updatedRuntimeCsproj);
+  writeFile(SAMPLES_PROPS_PATH, updatedSamplesProps);
 
   console.log(`Bumped version: ${currentVersion} -> ${newVersion}`);
-  console.log('Updated CHANGELOG.md, Js2IL.csproj, and JavaScriptRuntime.csproj');
+  console.log('Updated CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj');
   console.log('\nNext steps:');
-  console.log(`  git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj`);
+  console.log(`  git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj`);
   console.log(`  git commit -m "chore(release): cut ${newVersion}"`);
   console.log(`  git tag -a v${newVersion} -m "Release ${newVersion}"`);
   console.log('  git push && git push --tags');

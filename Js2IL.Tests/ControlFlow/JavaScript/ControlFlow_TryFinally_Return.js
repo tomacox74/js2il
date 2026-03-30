@@ -1,3 +1,5 @@
+"use strict";
+
 function f() {
   try {
     console.log("a");

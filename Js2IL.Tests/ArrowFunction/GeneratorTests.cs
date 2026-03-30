@@ -32,6 +32,15 @@ namespace Js2IL.Tests.ArrowFunction
         [Fact]
         public Task ArrowFunction_NestedFunctionAccessesMultipleScopes() { var testName = nameof(ArrowFunction_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName); }
 
+        [Fact]
+        public Task ArrowFunction_LexicalThis_ConstructorAssigned() { var testName = nameof(ArrowFunction_LexicalThis_ConstructorAssigned); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_LexicalThis_CreatedInMethod() { var testName = nameof(ArrowFunction_LexicalThis_CreatedInMethod); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_LexicalThis_ObjectLiteralProperty() { var testName = nameof(ArrowFunction_LexicalThis_ObjectLiteralProperty); return GenerateTest(testName); }
+
         // New: parameter destructuring (object)
         [Fact]
         public Task ArrowFunction_ParameterDestructuring_Object() { var testName = nameof(ArrowFunction_ParameterDestructuring_Object); return GenerateTest(testName); }
@@ -57,13 +66,31 @@ namespace Js2IL.Tests.ArrowFunction
                 var createCounterScope = createCounterClass.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic)!;
                 Assert.True(createCounterScope.IsClass);
 
-                var nestedArrowFunction = createCounterClass.GetNestedType("ArrowFunction_L7C23", BindingFlags.Public | BindingFlags.NonPublic)!;
-                Assert.True(nestedArrowFunction.IsClass, "Expected ArrowFunction_L7C23 to be a class");
+                var nestedArrowFunctions = createCounterClass
+                    .GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(t => t.Name.StartsWith("ArrowFunction_L", StringComparison.Ordinal))
+                    .ToArray();
 
-                // make sure there is no old Function.* types
-                var previousType = generatedAssembly.GetType("Functions.ArrowFunction_L7C23", throwOnError: false);
-                Assert.Null(previousType);
+                Assert.True(nestedArrowFunctions.Length > 0, "Expected at least one nested ArrowFunction_L* type.");
+
+                foreach (var nestedArrowFunction in nestedArrowFunctions)
+                {
+                    Assert.True(nestedArrowFunction.IsClass, $"Expected {nestedArrowFunction.Name} to be a class");
+
+                    // Make sure there is no old Function.* type for this arrow function
+                    var previousType = generatedAssembly.GetType($"Functions.{nestedArrowFunction.Name}", throwOnError: false);
+                    Assert.Null(previousType);
+                }
             });
         }
+
+        [Fact]
+        public Task ArrowFunction_MaxParameters_32() { var testName = nameof(ArrowFunction_MaxParameters_32); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestParameters_Basic() { var testName = nameof(ArrowFunction_RestParameters_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestParameters_WithNamedParams() { var testName = nameof(ArrowFunction_RestParameters_WithNamedParams); return GenerateTest(testName); }
     }
 }

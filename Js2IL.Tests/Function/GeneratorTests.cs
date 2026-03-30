@@ -78,6 +78,15 @@ namespace Js2IL.Tests.Function
         public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Arguments_Basics() { var testName = nameof(Function_Arguments_Basics); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Arguments_NoFalsePositive_ObjectLiteralKey() { var testName = nameof(Function_Arguments_NoFalsePositive_ObjectLiteralKey); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Arguments_ComputedKey_TriggersBinding() { var testName = nameof(Function_Arguments_ComputedKey_TriggersBinding); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return GenerateTest(testName); }
 
         [Fact]
@@ -85,5 +94,154 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ObjectLiteralValueFunction_ForEachCapturesOuter() { var testName = nameof(Function_ObjectLiteralValueFunction_ForEachCapturesOuter); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_Basic() { var testName = nameof(Function_Apply_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_ThisArg() { var testName = nameof(Function_Apply_ThisArg); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Apply_NullArgArray_TreatedAsEmpty() { var testName = nameof(Function_Apply_NullArgArray_TreatedAsEmpty); return GenerateTest(testName); }
+
+        // Regression: storing a captured boolean into a typed scope field must emit the correct value type.
+        [Fact]
+        public Task Function_Closure_CapturedBoolean_AssignAndRead() { var testName = nameof(Function_Closure_CapturedBoolean_AssignAndRead); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Basic() { var testName = nameof(Function_Call_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_Basic() { var testName = nameof(Function_Call_Spread_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_Middle() { var testName = nameof(Function_Call_Spread_Middle); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_Multiple() { var testName = nameof(Function_Call_Spread_Multiple); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_EvaluationOrder() { var testName = nameof(Function_Call_Spread_EvaluationOrder); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_StringIterable() { var testName = nameof(Function_Call_Spread_StringIterable); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Call_Spread_MemberCall_ConsoleLog() { var testName = nameof(Function_Call_Spread_MemberCall_ConsoleLog); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_Basic_PartialApplication() { var testName = nameof(Function_Bind_Basic_PartialApplication); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_ThisBinding_IgnoresCallReceiver() { var testName = nameof(Function_Bind_ThisBinding_IgnoresCallReceiver); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_Metadata_LengthNameAndPrototype() { var testName = nameof(Function_Bind_Metadata_LengthNameAndPrototype); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Bind_Construct_NewTargetAndPrototype() { var testName = nameof(Function_Bind_Construct_NewTargetAndPrototype); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ApplyBind_DominoPushAll() { var testName = nameof(Function_ApplyBind_DominoPushAll); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_ObjectCreate_ObjectPrototype() { var testName = nameof(Function_Prototype_ObjectCreate_ObjectPrototype); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_Bind_PropertyExists() { var testName = nameof(Function_Prototype_Bind_PropertyExists); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_Constructor_ReferencesFunction() { var testName = nameof(Function_Prototype_Constructor_ReferencesFunction); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Prototype_ToString_Basic() { var testName = nameof(Function_Prototype_ToString_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Length_Name_Basic() { var testName = nameof(Function_Instance_Length_Name_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Length_Name_DescriptorOwnProperties() { var testName = nameof(Function_Instance_Length_Name_DescriptorOwnProperties); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_New_ConstantString_Basic() { var testName = nameof(Function_Constructor_New_ConstantString_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_Call_Length_Name() { var testName = nameof(Function_Constructor_Call_Length_Name); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_GlobalScope_NoClosure() { var testName = nameof(Function_Constructor_GlobalScope_NoClosure); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_NonLiteral_RuntimeError() { var testName = nameof(Function_Constructor_NonLiteral_RuntimeError); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_SyntaxError() { var testName = nameof(Function_Constructor_SyntaxError); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Constructor_New_ShadowedLocal_NoSyntaxError() { var testName = nameof(Function_Constructor_New_ShadowedLocal_NoSyntaxError); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous() { var testName = nameof(Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_MaxParameters_16() { var testName = nameof(Function_MaxParameters_16); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_MaxParameters_32_CallViaVariable() { var testName = nameof(Function_MaxParameters_32_CallViaVariable); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Arity0() { var testName = nameof(Function_CallViaVariable_Arity0); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Arity1() { var testName = nameof(Function_CallViaVariable_Arity1); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Arity2() { var testName = nameof(Function_CallViaVariable_Arity2); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Arity3() { var testName = nameof(Function_CallViaVariable_Arity3); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Arity4() { var testName = nameof(Function_CallViaVariable_Arity4); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_CapturesOuterCtor() { var testName = nameof(Function_NewExpression_CapturesOuterCtor); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_MemberCallee_Compiles() { var testName = nameof(Function_NewExpression_MemberCallee_Compiles); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_NewTarget_NewVsCall() { var testName = nameof(Function_NewTarget_NewVsCall); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_NewTarget_Arrow_Inherits() { var testName = nameof(Function_NewTarget_Arrow_Inherits); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_Basic() { var testName = nameof(Function_RestParameters_Basic); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_WithNamedParams() { var testName = nameof(Function_RestParameters_WithNamedParams); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_Empty() { var testName = nameof(Function_RestParameters_Empty); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_RestParameters_MultipleNamed() { var testName = nameof(Function_RestParameters_MultipleNamed); return GenerateTest(testName); }
+
+        // ABI optimization tests: non-capturing functions should NOT have scopes parameter
+        [Fact]
+        public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_Capture_HasScopesParameter() { var testName = nameof(Function_Capture_HasScopesParameter); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Arrow_NoCapture_NoScopesParameter() { var testName = nameof(Arrow_NoCapture_NoScopesParameter); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Arrow_Capture_HasScopesParameter() { var testName = nameof(Arrow_Capture_HasScopesParameter); return GenerateTest(testName); }
     }
 }

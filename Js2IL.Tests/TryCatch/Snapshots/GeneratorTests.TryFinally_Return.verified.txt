@@ -15,14 +15,14 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L2C6
+			.class nested private auto ansi beforefieldinit Block_L4C6
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x20f2
+					// Method begins at RVA 0x20de
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -31,18 +31,18 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L2C6::.ctor
+				} // end of method Block_L4C6::.ctor
 
-			} // end of class Block_L2C6
+			} // end of class Block_L4C6
 
-			.class nested private auto ansi beforefieldinit Block_L5C12
+			.class nested private auto ansi beforefieldinit Block_L7C12
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x20fb
+					// Method begins at RVA 0x20e7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -51,16 +51,16 @@
 					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 					IL_0006: nop
 					IL_0007: ret
-				} // end of method Block_L5C12::.ctor
+				} // end of method Block_L7C12::.ctor
 
-			} // end of class Block_L5C12
+			} // end of class Block_L7C12
 
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e9
+				// Method begins at RVA 0x20d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -77,13 +77,16 @@
 		// Methods
 		.method public hidebysig static 
 			object __js_call__ (
-				object[] scopes
+				object newTarget
 			) cil managed 
 		{
-			// Method begins at RVA 0x2080
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x207c
 			// Header size: 12
-			// Code size: 67 (0x43)
-			.maxstack 32
+			// Code size: 49 (0x31)
+			.maxstack 8
 			.locals init (
 				[0] object
 			)
@@ -91,38 +94,28 @@
 			.try
 			{
 				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0005: ldc.i4.1
-				IL_0006: newarr [System.Runtime]System.Object
-				IL_000b: dup
-				IL_000c: ldc.i4.0
-				IL_000d: ldstr "a"
-				IL_0012: stelem.ref
-				IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0018: pop
-				IL_0019: ldnull
-				IL_001a: stloc.0
-				IL_001b: ldnull
-				IL_001c: stloc.0
-				IL_001d: leave IL_0041
+				IL_0005: ldstr "a"
+				IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_000f: pop
+				IL_0010: ldnull
+				IL_0011: stloc.0
+				IL_0012: ldnull
+				IL_0013: stloc.0
+				IL_0014: leave IL_002f
 
-				IL_0022: leave IL_0041
+				IL_0019: leave IL_002f
 			} // end .try
 			finally
 			{
-				IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_002c: ldc.i4.1
-				IL_002d: newarr [System.Runtime]System.Object
-				IL_0032: dup
-				IL_0033: ldc.i4.0
-				IL_0034: ldstr "b"
-				IL_0039: stelem.ref
-				IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_003f: pop
-				IL_0040: endfinally
+				IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0023: ldstr "b"
+				IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_002d: pop
+				IL_002e: endfinally
 			} // end handler
 
-			IL_0041: ldloc.0
-			IL_0042: ret
+			IL_002f: ldloc.0
+			IL_0030: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -130,6 +123,9 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 0b 53 63 6f 70 65 20 66 3d 7b 66 7d 00 00
+		)
 		// Fields
 		.field public object f
 
@@ -137,7 +133,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e0
+			// Method begins at RVA 0x20cc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -163,26 +159,26 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 35 (0x23)
-		.maxstack 32
-		.locals (
-			[0] class Modules.TryFinally_Return/Scope
+		// Code size: 29 (0x1d)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.TryFinally_Return/Scope,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.TryFinally_Return/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.TryFinally_Return/f::__js_call__(object[])
-		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0021: pop
-		IL_0022: ret
+		IL_0007: ldftn object Modules.TryFinally_Return/f::__js_call__(object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0012: stloc.2
+		IL_0013: ldloc.2
+		IL_0014: stloc.1
+		IL_0015: ldnull
+		IL_0016: call object Modules.TryFinally_Return/f::__js_call__(object)
+		IL_001b: pop
+		IL_001c: ret
 	} // end of method TryFinally_Return::__js_module_init__
 
 } // end of class Modules.TryFinally_Return
@@ -194,7 +190,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x20f0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

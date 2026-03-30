@@ -1,3 +1,5 @@
+"use strict";
+
 // Object literal computed keys
 
 const k = 'x';

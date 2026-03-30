@@ -1,3 +1,5 @@
+"use strict";
+
 // Test module identity properties: id, filename, path
 
 // module.id should be the resolved filename (or '.' for main module)

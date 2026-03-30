@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L3C47
+		.class nested private auto ansi beforefieldinit Block_L5C47
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e1
+				// Method begins at RVA 0x20da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -27,16 +27,16 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L3C47::.ctor
+			} // end of method Block_L5C47::.ctor
 
-		} // end of class Block_L3C47
+		} // end of class Block_L5C47
 
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20d1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,8 +62,8 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 124 (0x7c)
-		.maxstack 32
+		// Code size: 117 (0x75)
+		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrayLiteral/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -76,47 +76,40 @@
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_000c: dup
 		IL_000d: ldstr "cat"
-		IL_0012: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0012: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0017: dup
 		IL_0018: ldstr "dog"
-		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_001d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_0022: dup
 		IL_0023: ldstr "dotnet bot"
-		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0028: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_002d: stloc.1
 		IL_002e: ldc.r8 0.0
 		IL_0037: stloc.2
 		// loop start (head: IL_0038)
 			IL_0038: ldloc.2
 			IL_0039: ldloc.1
-			IL_003a: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
+			IL_003a: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
 			IL_003f: conv.r8
 			IL_0040: clt
-			IL_0042: brfalse IL_007b
+			IL_0042: brfalse IL_0074
 
 			IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004c: ldc.i4.2
-			IL_004d: newarr [System.Runtime]System.Object
-			IL_0052: dup
-			IL_0053: ldc.i4.0
-			IL_0054: ldstr ""
-			IL_0059: stelem.ref
-			IL_005a: dup
-			IL_005b: ldc.i4.1
-			IL_005c: ldloc.1
-			IL_005d: ldloc.2
-			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0063: stelem.ref
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0069: pop
-			IL_006a: ldloc.2
-			IL_006b: ldc.r8 1
-			IL_0074: add
-			IL_0075: stloc.2
-			IL_0076: br IL_0038
+			IL_004c: ldstr ""
+			IL_0051: ldloc.1
+			IL_0052: ldloc.2
+			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_0058: castclass [System.Runtime]System.String
+			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0062: pop
+			IL_0063: ldloc.2
+			IL_0064: ldc.r8 1
+			IL_006d: add
+			IL_006e: stloc.2
+			IL_006f: br IL_0038
 		// end loop
 
-		IL_007b: ret
+		IL_0074: ret
 	} // end of method ArrayLiteral::__js_module_init__
 
 } // end of class Modules.ArrayLiteral
@@ -128,7 +121,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ea
+		// Method begins at RVA 0x20e3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

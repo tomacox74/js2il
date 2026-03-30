@@ -1,3 +1,5 @@
+"use strict";
+
 // Test module.require() - should work like require()
 // This is a bound require function on the module object
 

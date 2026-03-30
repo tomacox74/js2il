@@ -55,10 +55,16 @@ namespace Js2IL.Tests.Math
             return ExecutionTest(nameof(Math_Round_Trunc_NegativeHalves));
         }
 
-        [Fact(Skip = "Temporarily disabled in CI: cross-platform signed-zero differences to be resolved later")]
+        [Fact]
         public Task Math_Sign_ZeroVariants()
         {
             return ExecutionTest(nameof(Math_Sign_ZeroVariants));
+        }
+
+        [Fact]
+        public Task Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes()
+        {
+            return ExecutionTest(nameof(Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes));
         }
     }
 }

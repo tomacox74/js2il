@@ -1,3 +1,5 @@
+"use strict";
+
 // Assignment targets beyond identifiers
 var cfg = { a: 1 };
 cfg.b = 2;

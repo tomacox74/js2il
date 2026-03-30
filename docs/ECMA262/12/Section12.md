@@ -4,6 +4,8 @@ Defines the lexical grammar: tokens, literals, comments, whitespace, and related
 
 [Back to Index](../Index.md)
 
+> Last generated (UTC): 2026-03-09T07:34:42Z
+
 _This section is split into subsection documents for readability._
 
 ## Section Entry
@@ -26,4 +28,3 @@ _This section is split into subsection documents for readability._
 | 12.8 | Punctuators | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-punctuators) | [Section12_8.md](Section12_8.md) |
 | 12.9 | Literals | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar-literals) | [Section12_9.md](Section12_9.md) |
 | 12.10 | Automatic Semicolon Insertion | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-automatic-semicolon-insertion) | [Section12_10.md](Section12_10.md) |
-

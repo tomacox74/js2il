@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 /**
  * Syncs execution test snapshots with Node.js output.
  * 

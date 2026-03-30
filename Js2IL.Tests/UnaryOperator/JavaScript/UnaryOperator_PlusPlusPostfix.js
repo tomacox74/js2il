@@ -1,3 +1,5 @@
+"use strict";
+
 function logCase(label, before, result, after) {
 	console.log(label, before, result, after);
 }

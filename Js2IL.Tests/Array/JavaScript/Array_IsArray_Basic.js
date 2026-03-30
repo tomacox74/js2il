@@ -1,3 +1,5 @@
+"use strict";
+
 var a = [1, 2, 3];
 console.log(Array.isArray(a));
 console.log(Array.isArray('x'));

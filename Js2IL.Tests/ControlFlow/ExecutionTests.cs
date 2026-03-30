@@ -47,10 +47,25 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForLoop_CountToFive() { var testName = nameof(ControlFlow_ForLoop_CountToFive); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForLoop_Update_SequenceExpression() { var testName = nameof(ControlFlow_ForLoop_Update_SequenceExpression); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_LabeledStatement_CapturesParentVar() { var testName = nameof(ControlFlow_LabeledStatement_CapturesParentVar); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForLoop_GreaterThanOrEqual() { var testName = nameof(ControlFlow_ForLoop_GreaterThanOrEqual); return ExecutionTest(testName); }
 
         [Fact]
         public Task ControlFlow_ForLoop_LessThanOrEqual() { var testName = nameof(ControlFlow_ForLoop_LessThanOrEqual); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_LetClosureCapture() { var testName = nameof(ControlFlow_ForLoop_LetClosureCapture); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_LetClosureCapture_Continue() { var testName = nameof(ControlFlow_ForLoop_LetClosureCapture_Continue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_VarClosureCapture() { var testName = nameof(ControlFlow_ForLoop_VarClosureCapture); return ExecutionTest(testName); }
 
         [Fact]
         public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return ExecutionTest(testName); }
@@ -59,7 +74,28 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForOf_ClosureCallback() { var testName = nameof(ControlFlow_ForOf_ClosureCallback); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForOf_Let_PerIterationBinding() { var testName = nameof(ControlFlow_ForOf_Let_PerIterationBinding); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Let_PerIterationBinding() { var testName = nameof(ControlFlow_ForIn_Let_PerIterationBinding); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_Let_Destructuring_PerIterationBinding() { var testName = nameof(ControlFlow_ForOf_Let_Destructuring_PerIterationBinding); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_CustomIterable_IteratorProtocol() { var testName = nameof(ControlFlow_ForOf_CustomIterable_IteratorProtocol); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForIn_Object_Basic() { var testName = nameof(ControlFlow_ForIn_Object_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Mutation_DeleteAndAdd() { var testName = nameof(ControlFlow_ForIn_Mutation_DeleteAndAdd); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_ClassFields_BaseAndDerived() { var testName = nameof(ControlFlow_ForIn_ClassFields_BaseAndDerived); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Shadowing_NoDuplicateKeys() { var testName = nameof(ControlFlow_ForIn_Shadowing_NoDuplicateKeys); return ExecutionTest(testName); }
 
         [Fact]
         public Task ControlFlow_ForOf_Break() { var testName = nameof(ControlFlow_ForOf_Break); return ExecutionTest(testName); }
@@ -114,6 +150,9 @@ namespace Js2IL.Tests.ControlFlow
 
         [Fact]
         public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_EmptyStatement() { var testName = nameof(ControlFlow_EmptyStatement); return ExecutionTest(testName); }
         
         [Fact]
         public Task ControlFlow_If_Truthiness() { var testName = nameof(ControlFlow_If_Truthiness); return ExecutionTest(testName); }

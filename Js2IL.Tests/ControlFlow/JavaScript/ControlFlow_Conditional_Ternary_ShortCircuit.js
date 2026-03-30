@@ -1,3 +1,5 @@
+"use strict";
+
 let x = 0;
 function bump() {
   x = x + 1;

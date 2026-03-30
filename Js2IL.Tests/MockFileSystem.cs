@@ -4,8 +4,11 @@ namespace Js2IL.Tests;
 /// Mock file system implementation for testing that stores files in memory.
 /// </summary>
 public class MockFileSystem : IFileSystem
+	, ISourceFilePathResolver
 {
     private readonly Dictionary<string, string> _files = new(StringComparer.OrdinalIgnoreCase);
+
+    private readonly Dictionary<string, string> _sourceFilePaths = new(StringComparer.OrdinalIgnoreCase);
 
     private static string NormalizePath(string path)
     {
@@ -39,6 +42,26 @@ public class MockFileSystem : IFileSystem
     }
 
     /// <summary>
+    /// Adds a file to the mock file system, with an optional on-disk source path to be used for debugging symbols.
+    /// </summary>
+    public void AddFile(string path, string content, string? sourceFilePath)
+    {
+        var normalized = NormalizePath(path);
+        _files[normalized] = content;
+
+        if (!string.IsNullOrWhiteSpace(sourceFilePath))
+        {
+            _sourceFilePaths[normalized] = sourceFilePath;
+        }
+    }
+
+    public bool TryGetSourceFilePath(string logicalPath, out string sourceFilePath)
+    {
+        var normalized = NormalizePath(logicalPath);
+        return _sourceFilePaths.TryGetValue(normalized, out sourceFilePath!);
+    }
+
+    /// <summary>
     /// Reads all text from a file. Falls back to real file system if file not found in mock.
     /// </summary>
     public string ReadAllText(string path)
@@ -50,6 +73,20 @@ public class MockFileSystem : IFileSystem
         }
         // Fall back to real file system for other files
         return File.ReadAllText(normalized);
+    }
+
+    /// <summary>
+    /// Reads all bytes from a file. Falls back to real file system if file not found in mock.
+    /// </summary>
+    public byte[] ReadAllBytes(string path)
+    {
+        var normalized = NormalizePath(path);
+        if (_files.TryGetValue(normalized, out var content))
+        {
+            return System.Text.Encoding.UTF8.GetBytes(content);
+        }
+
+        return File.ReadAllBytes(normalized);
     }
 
     /// <summary>
