@@ -17,5 +17,8 @@ namespace Js2IL.Tests.WeakSet
 
         [Fact]
         public Task WeakSet_Object_Values() { var testName = nameof(WeakSet_Object_Values); return GenerateTest(testName); }
+
+        [Fact]
+        public Task WeakSet_Constructor_Prototype_Surface() { var testName = nameof(WeakSet_Constructor_Prototype_Surface); return GenerateTest(testName); }
     }
 }

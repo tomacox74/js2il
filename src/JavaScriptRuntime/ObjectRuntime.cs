@@ -139,6 +139,16 @@ namespace JavaScriptRuntime
 
             var key = DotNet2JSConversions.ToString(propName);
 
+            if (receiver is JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("deleteProperty", "deleteProperty", new object?[] { proxy.GetTarget("deleteProperty"), key }, out var trapResult))
+                {
+                    return TypeUtilities.ToBoolean(trapResult);
+                }
+
+                receiver = proxy.GetTarget("deleteProperty");
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
                 && !ownDescriptor.Configurable)
             {

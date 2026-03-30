@@ -1,0 +1,328 @@
+﻿// IL code: Proxy_DeletePropertyTrap_And_Fallback
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Proxy_DeletePropertyTrap_And_Fallback
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_trappedProxy
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Block_L9C28
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x226d
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L9C28::.ctor
+
+			} // end of class Block_L9C28
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2264
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope scope,
+				object newTarget,
+				object target,
+				object prop
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 04 00 00 02
+			)
+			// Method begins at RVA 0x2218
+			// Header size: 12
+			// Code size: 55 (0x37)
+			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::seen
+			IL_0006: ldarg.3
+			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_000c: pop
+			IL_000d: ldarg.3
+			IL_000e: ldstr "blocked"
+			IL_0013: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0018: stloc.0
+			IL_0019: ldloc.0
+			IL_001a: brfalse IL_0026
+
+			IL_001f: ldc.i4.0
+			IL_0020: box [System.Runtime]System.Boolean
+			IL_0025: ret
+
+			IL_0026: ldarg.2
+			IL_0027: ldarg.3
+			IL_0028: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteItem(object, object)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: box [System.Runtime]System.Boolean
+			IL_0034: stloc.1
+			IL_0035: ldloc.1
+			IL_0036: ret
+		} // end of method FunctionExpression_trappedProxy::__js_call__
+
+	} // end of class FunctionExpression_trappedProxy
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 73 65 65 6e 3d 7b 73
+			65 65 6e 7d 00 00
+		)
+		// Fields
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array seen
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x225b
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 442 (0x1ba)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Proxy,
+			[8] bool,
+			[9] object,
+			[10] string
+		)
+
+		IL_0000: newobj instance void Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000b: dup
+		IL_000c: ldstr "keep"
+		IL_0011: ldc.r8 1
+		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_001f: dup
+		IL_0020: ldstr "removeMe"
+		IL_0025: ldc.r8 2
+		IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0033: dup
+		IL_0034: ldstr "blocked"
+		IL_0039: ldc.r8 3
+		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0047: stloc.1
+		IL_0048: ldloc.0
+		IL_0049: ldc.i4.0
+		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004f: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::seen
+		IL_0054: ldc.i4.1
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldloc.0
+		IL_005d: stelem.ref
+		IL_005e: ldc.i4.0
+		IL_005f: ldelem.ref
+		IL_0060: castclass Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope
+		IL_0065: ldftn object Modules.Proxy_DeletePropertyTrap_And_Fallback/FunctionExpression_trappedProxy::__js_call__(class Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope, object, object, object)
+		IL_006b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0070: stloc.s 5
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0077: dup
+		IL_0078: ldstr "deleteProperty"
+		IL_007d: ldloc.s 5
+		IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0084: stloc.s 6
+		IL_0086: ldloc.1
+		IL_0087: ldloc.s 6
+		IL_0089: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_008e: stloc.s 7
+		IL_0090: ldloc.s 7
+		IL_0092: stloc.2
+		IL_0093: ldloc.2
+		IL_0094: ldstr "removeMe"
+		IL_0099: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_009e: stloc.s 8
+		IL_00a0: ldloc.s 8
+		IL_00a2: box [System.Runtime]System.Boolean
+		IL_00a7: stloc.s 9
+		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ae: ldloc.s 9
+		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b5: pop
+		IL_00b6: ldstr "removeMe"
+		IL_00bb: ldloc.1
+		IL_00bc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_00c1: stloc.s 8
+		IL_00c3: ldloc.s 8
+		IL_00c5: box [System.Runtime]System.Boolean
+		IL_00ca: stloc.s 9
+		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d1: ldloc.s 9
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: ldloc.2
+		IL_00da: ldstr "blocked"
+		IL_00df: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_00e4: stloc.s 8
+		IL_00e6: ldloc.s 8
+		IL_00e8: box [System.Runtime]System.Boolean
+		IL_00ed: stloc.s 9
+		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f4: ldloc.s 9
+		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fb: pop
+		IL_00fc: ldstr "blocked"
+		IL_0101: ldloc.1
+		IL_0102: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_0107: stloc.s 8
+		IL_0109: ldloc.s 8
+		IL_010b: box [System.Runtime]System.Boolean
+		IL_0110: stloc.s 9
+		IL_0112: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0117: ldloc.s 9
+		IL_0119: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_011e: pop
+		IL_011f: ldloc.0
+		IL_0120: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_DeletePropertyTrap_And_Fallback/Scope::seen
+		IL_0125: ldc.i4.1
+		IL_0126: newarr [System.Runtime]System.Object
+		IL_012b: dup
+		IL_012c: ldc.i4.0
+		IL_012d: ldstr ","
+		IL_0132: stelem.ref
+		IL_0133: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0138: stloc.s 10
+		IL_013a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013f: ldloc.s 10
+		IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0146: pop
+		IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_014c: dup
+		IL_014d: ldstr "fallback"
+		IL_0152: ldc.r8 1
+		IL_015b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0160: stloc.3
+		IL_0161: ldloc.3
+		IL_0162: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0167: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Proxy::.ctor(object, object)
+		IL_016c: stloc.s 7
+		IL_016e: ldloc.s 7
+		IL_0170: stloc.s 4
+		IL_0172: ldloc.s 4
+		IL_0174: ldstr "fallback"
+		IL_0179: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+		IL_017e: stloc.s 8
+		IL_0180: ldloc.s 8
+		IL_0182: box [System.Runtime]System.Boolean
+		IL_0187: stloc.s 9
+		IL_0189: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_018e: ldloc.s 9
+		IL_0190: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0195: pop
+		IL_0196: ldstr "fallback"
+		IL_019b: ldloc.3
+		IL_019c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_01a1: stloc.s 8
+		IL_01a3: ldloc.s 8
+		IL_01a5: box [System.Runtime]System.Boolean
+		IL_01aa: stloc.s 9
+		IL_01ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01b1: ldloc.s 9
+		IL_01b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01b8: pop
+		IL_01b9: ret
+	} // end of method Proxy_DeletePropertyTrap_And_Fallback::__js_module_init__
+
+} // end of class Modules.Proxy_DeletePropertyTrap_And_Fallback
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2276
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Proxy_DeletePropertyTrap_And_Fallback::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-03-29T04:29:49Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -16,10 +16,10 @@
 |---:|---|---|---|
 | 24.3.1 | The WeakMap Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap-constructor) |
 | 24.3.1.1 | WeakMap ( [ iterable ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap-iterable) |
-| 24.3.2 | Properties of the WeakMap Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakmap-constructor) |
-| 24.3.2.1 | WeakMap.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype) |
+| 24.3.2 | Properties of the WeakMap Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakmap-constructor) |
+| 24.3.2.1 | WeakMap.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype) |
 | 24.3.3 | Properties of the WeakMap Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object) |
-| 24.3.3.1 | WeakMap.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.constructor) |
+| 24.3.3.1 | WeakMap.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.constructor) |
 | 24.3.3.2 | WeakMap.prototype.delete ( key ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.delete) |
 | 24.3.3.3 | WeakMap.prototype.get ( key ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.get) |
 | 24.3.3.4 | WeakMap.prototype.getOrInsert ( key , value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert) |
@@ -44,7 +44,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| WeakMap constructor value and WeakMap.prototype surface | Not Yet Supported |  | WeakMap is compiler-recognized in new expressions but is not exposed as a first-class global constructor value with readable prototype properties. |
+| WeakMap constructor value and WeakMap.prototype surface | Supported with Limitations | [`WeakMap_Constructor_Prototype_Surface.js`](../../../Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js) | JS2IL now exposes globalThis.WeakMap as a constructor value, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction and the remaining WeakMap prototype gaps are still incomplete. |
 
 ### 24.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object))
 

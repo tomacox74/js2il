@@ -277,6 +277,7 @@ public class RuntimeServices
         container.Register<CommonJS.Require>();
         container.Register<LocalModulesAssembly>();
         container.Register<IEnvironment, DefaultEnvironment>();
+        container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();
         
         return container;
     }
