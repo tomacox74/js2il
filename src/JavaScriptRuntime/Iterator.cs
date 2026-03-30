@@ -437,12 +437,21 @@ public static class Iterator
                 return IteratorResult.Create(null, true);
             }
 
-            return NextCore();
+            try
+            {
+                return NextCore();
+            }
+            catch
+            {
+                Abort();
+                throw;
+            }
         }
 
         public void Return()
         {
-            Finish();
+            Done = true;
+            CloseEarly();
         }
 
         protected abstract IteratorResultObject NextCore();
@@ -450,8 +459,25 @@ public static class Iterator
         protected IteratorResultObject Finish(object? value = null)
         {
             Done = true;
-            CloseSource();
             return IteratorResult.Create(value, true);
+        }
+
+        protected IteratorResultObject FinishAndClose(object? value = null)
+        {
+            Done = true;
+            CloseEarly();
+            return IteratorResult.Create(value, true);
+        }
+
+        protected virtual void Abort()
+        {
+            Done = true;
+            CloseSource();
+        }
+
+        protected virtual void CloseEarly()
+        {
+            CloseSource();
         }
 
         protected void CloseSource()
@@ -570,7 +596,7 @@ public static class Iterator
         {
             if (_taken >= _limit)
             {
-                return Finish();
+                return FinishAndClose();
             }
 
             var step = Source.Next();
@@ -608,7 +634,7 @@ public static class Iterator
                         return innerStep;
                     }
 
-                    CloseInner();
+                    ReleaseInner();
                 }
 
                 var step = Source.Next();
@@ -627,6 +653,18 @@ public static class Iterator
             CloseInner();
         }
 
+        protected override void Abort()
+        {
+            ReleaseInner();
+            base.Abort();
+        }
+
+        protected override void CloseEarly()
+        {
+            CloseInner();
+            base.CloseEarly();
+        }
+
         private void CloseInner()
         {
             if (_inner == null)
@@ -639,6 +677,11 @@ public static class Iterator
                 _inner.Return();
             }
 
+            _inner = null;
+        }
+
+        private void ReleaseInner()
+        {
             _inner = null;
         }
     }
