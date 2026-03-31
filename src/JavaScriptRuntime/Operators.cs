@@ -943,24 +943,13 @@ namespace JavaScriptRuntime
             {
                 // Convert property to string key (minimal; symbols not yet surfaced here)
                 var proxyPropName = DotNet2JSConversions.ToString(property);
-
-                var hasTrap = JavaScriptRuntime.ObjectRuntime.GetProperty(proxy.Handler, "has");
-                if (hasTrap is not null && hasTrap is not JsNull)
+                if (proxy.TryInvokeTrap("has", "has", new object?[] { proxy.GetTarget("has"), proxyPropName }, out var trapResult))
                 {
-                    var prev = RuntimeServices.SetCurrentThis(proxy.Handler);
-                    try
-                    {
-                        var trapResult = Closure.InvokeWithArgs(hasTrap, System.Array.Empty<object>(), new object?[] { proxy.Target, proxyPropName });
-                        return TypeUtilities.ToBoolean(trapResult);
-                    }
-                    finally
-                    {
-                        RuntimeServices.SetCurrentThis(prev);
-                    }
+                    return TypeUtilities.ToBoolean(trapResult);
                 }
 
                 // Fallback: apply normal 'in' semantics to the proxy target.
-                return In(proxyPropName, proxy.Target);
+                return In(proxyPropName, proxy.GetTarget("has"));
             }
 
             // Convert property to string

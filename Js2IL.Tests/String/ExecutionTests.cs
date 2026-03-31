@@ -208,5 +208,23 @@ namespace Js2IL.Tests.String
         {
             return ExecutionTest(nameof(String_Repeat_Basic));
         }
+
+        [Fact]
+        public Task String_Prototype_Iterator_Surface()
+        {
+            return ExecutionTest(nameof(String_Prototype_Iterator_Surface));
+        }
+
+        [Fact]
+        public Task String_NewApis_Basic()
+        {
+            return ExecutionTest(nameof(String_NewApis_Basic));
+        }
+
+        [Fact]
+        public Task String_MatchAll_Basic()
+        {
+            return ExecutionTest(nameof(String_MatchAll_Basic));
+        }
     }
 }

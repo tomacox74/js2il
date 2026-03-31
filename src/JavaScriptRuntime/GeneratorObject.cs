@@ -16,6 +16,8 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class GeneratorObject
 {
+    private static readonly object Prototype = CreatePrototype();
+
     // Stable singleton used as %GeneratorPrototype%.constructor.
     // Per ECMA-262, gen.constructor is the same function object for all generator instances.
     private static readonly Func<object[], object?[], object?> _generatorFunctionConstructor =
@@ -30,12 +32,71 @@ public sealed class GeneratorObject
         _step = step ?? throw new ArgumentNullException(nameof(step));
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
         _args = args ?? throw new ArgumentNullException(nameof(args));
+        InitializeGeneratorSurface(this);
     }
 
     /// <summary>
     /// %GeneratorPrototype%.constructor — stable function object, same for all generator instances.
     /// </summary>
     public object constructor => _generatorFunctionConstructor;
+
+    private static object CreatePrototype()
+    {
+        var prototype = new JsObject();
+        PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
+        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
+        DefineDataProperty(prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
+        DefineDataProperty(prototype, "return", (Func<object[], object?[]?, object?>)PrototypeReturn);
+        DefineDataProperty(prototype, "throw", (Func<object[], object?[]?, object?>)PrototypeThrow);
+        DefineDataProperty(prototype, Symbol.toStringTag.DebugId, "Generator");
+        return prototype;
+    }
+
+    private static void InitializeGeneratorSurface(object generator)
+    {
+        if (PrototypeChain.GetPrototypeOrNull(generator) == null)
+        {
+            PrototypeChain.SetPrototype(generator, Prototype);
+        }
+    }
+
+    private static void DefineDataProperty(object target, string key, object? value)
+    {
+        PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = value
+        });
+    }
+
+    private static GeneratorObject GetReceiver(string methodName)
+    {
+        var receiver = RuntimeServices.GetCurrentThis();
+        if (receiver is GeneratorObject generator)
+        {
+            return generator;
+        }
+
+        throw new TypeError($"Generator.prototype.{methodName} called on incompatible receiver");
+    }
+
+    private static object? PrototypeNext(object[] scopes, object?[]? args)
+    {
+        return GetReceiver("next").next(args != null && args.Length > 0 ? args[0] : null);
+    }
+
+    private static object? PrototypeReturn(object[] scopes, object?[]? args)
+    {
+        return GetReceiver("return").@return(args != null && args.Length > 0 ? args[0] : null);
+    }
+
+    private static object? PrototypeThrow(object[] scopes, object?[]? args)
+    {
+        return GetReceiver("throw").@throw(args != null && args.Length > 0 ? args[0] : null);
+    }
 
     private GeneratorScope GetLeafScope()
     {

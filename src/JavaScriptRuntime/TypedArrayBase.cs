@@ -1013,6 +1013,7 @@ namespace JavaScriptRuntime
         {
             _typedArray = typedArray;
             _kind = kind;
+            JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
         }
 
         public IteratorResultObject Next()

@@ -1,0 +1,1383 @@
+﻿// IL code: Proxy_Revocable_ThrowsAfterRevoke
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Proxy_Revocable_ThrowsAfterRevoke
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit logThrow
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested private auto ansi beforefieldinit Block_L4C6
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2713
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L4C6::.ctor
+
+			} // end of class Block_L4C6
+
+			.class nested private auto ansi beforefieldinit Block_L7C18
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x271c
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L7C18::.ctor
+
+			} // end of class Block_L7C18
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x270a
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget,
+				object label,
+				object action
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x2450
+			// Header size: 12
+			// Code size: 166 (0xa6)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] class [System.Runtime]System.Exception,
+				[2] object,
+				[3] object,
+				[4] object,
+				[5] object
+			)
+
+			.try
+			{
+				IL_0000: ldarg.3
+				IL_0001: ldc.i4.1
+				IL_0002: newarr [System.Runtime]System.Object
+				IL_0007: dup
+				IL_0008: ldc.i4.0
+				IL_0009: ldarg.0
+				IL_000a: stelem.ref
+				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_0010: stloc.s 4
+				IL_0012: ldloc.s 4
+				IL_0014: stloc.0
+				IL_0015: ldarg.2
+				IL_0016: ldstr ":ok:"
+				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0020: stloc.s 5
+				IL_0022: ldloc.s 5
+				IL_0024: ldloc.0
+				IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_002a: stloc.s 5
+				IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0031: ldloc.s 5
+				IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0038: pop
+				IL_0039: leave IL_00a4
+			} // end .try
+			catch [System.Runtime]System.Exception
+			{
+				IL_003e: stloc.1
+				IL_003f: ldloc.1
+				IL_0040: dup
+				IL_0041: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0046: dup
+				IL_0047: brtrue IL_005d
+
+				IL_004c: pop
+				IL_004d: dup
+				IL_004e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0053: dup
+				IL_0054: brtrue IL_0069
+
+				IL_0059: pop
+				IL_005a: pop
+				IL_005b: rethrow
+
+				IL_005d: pop
+				IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0063: stloc.2
+				IL_0064: br IL_006b
+
+				IL_0069: pop
+				IL_006a: stloc.2
+
+				IL_006b: ldloc.2
+				IL_006c: stloc.s 4
+				IL_006e: ldloc.s 4
+				IL_0070: stloc.3
+				IL_0071: ldarg.2
+				IL_0072: ldstr ":"
+				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_007c: stloc.s 5
+				IL_007e: ldloc.s 5
+				IL_0080: ldloc.3
+				IL_0081: ldstr "name"
+				IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0090: stloc.s 5
+				IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0097: ldloc.s 5
+				IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_009e: pop
+				IL_009f: leave IL_00a4
+			} // end handler
+
+			IL_00a4: ldnull
+			IL_00a5: ret
+		} // end of method logThrow::__js_call__
+
+	} // end of class logThrow
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_revocable
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2725
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object t,
+				object prop
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2514
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_0007: ret
+		} // end of method FunctionExpression_revocable::__js_call__
+
+	} // end of class FunctionExpression_revocable
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_revocable_L17C7
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x272e
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object t,
+				object prop,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x251d
+			// Header size: 1
+			// Code size: 16 (0x10)
+			.maxstack 8
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: ldarg.3
+			IL_0003: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, object, object)
+			IL_0008: pop
+			IL_0009: ldc.i4.1
+			IL_000a: box [System.Runtime]System.Boolean
+			IL_000f: ret
+		} // end of method FunctionExpression_revocable_L17C7::__js_call__
+
+	} // end of class FunctionExpression_revocable_L17C7
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L28C16
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2737
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x252e
+			// Header size: 1
+			// Code size: 27 (0x1b)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: ldstr "a"
+			IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001a: ret
+		} // end of method FunctionExpression_L28C16::__js_call__
+
+	} // end of class FunctionExpression_L28C16
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L29C16
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2740
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x254a
+			// Header size: 1
+			// Code size: 42 (0x2a)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: ldstr "c"
+			IL_0015: ldc.r8 3
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64)
+			IL_0023: pop
+			IL_0024: ldstr "set"
+			IL_0029: ret
+		} // end of method FunctionExpression_L29C16::__js_call__
+
+	} // end of class FunctionExpression_L29C16
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L30C16
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2749
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x2578
+			// Header size: 12
+			// Code size: 36 (0x24)
+			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] object
+			)
+
+			IL_0000: ldstr "a"
+			IL_0005: ldarg.0
+			IL_0006: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_000b: ldstr "proxy"
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: box [System.Runtime]System.Boolean
+			IL_0021: stloc.1
+			IL_0022: ldloc.1
+			IL_0023: ret
+		} // end of method FunctionExpression_L30C16::__js_call__
+
+	} // end of class FunctionExpression_L30C16
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L31C19
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2752
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x25a8
+			// Header size: 12
+			// Code size: 36 (0x24)
+			.maxstack 8
+			.locals init (
+				[0] bool,
+				[1] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: ldstr "a"
+			IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+			IL_001a: stloc.0
+			IL_001b: ldloc.0
+			IL_001c: box [System.Runtime]System.Boolean
+			IL_0021: stloc.1
+			IL_0022: ldloc.1
+			IL_0023: ret
+		} // end of method FunctionExpression_L31C19::__js_call__
+
+	} // end of class FunctionExpression_L31C19
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L32C17
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x275b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x25d8
+			// Header size: 12
+			// Code size: 41 (0x29)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::keys(object)
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: ldstr "join"
+			IL_001c: ldstr ","
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0026: stloc.0
+			IL_0027: ldloc.0
+			IL_0028: ret
+		} // end of method FunctionExpression_L32C17::__js_call__
+
+	} // end of class FunctionExpression_L32C17
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L33C27
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2764
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x2610
+			// Header size: 12
+			// Code size: 24 (0x18)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getPrototypeOf(object)
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: ret
+		} // end of method FunctionExpression_L33C27::__js_call__
+
+	} // end of class FunctionExpression_L33C27
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L34C27
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x276d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x2634
+			// Header size: 12
+			// Code size: 32 (0x20)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.i4.0
+			IL_0013: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::setPrototypeOf(object, object)
+			IL_001d: stloc.0
+			IL_001e: ldloc.0
+			IL_001f: ret
+		} // end of method FunctionExpression_L34C27::__js_call__
+
+	} // end of class FunctionExpression_L34C27
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_callable
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2776
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object x
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2660
+			// Header size: 12
+			// Code size: 18 (0x12)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldc.r8 1
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_000f: stloc.0
+			IL_0010: ldloc.0
+			IL_0011: ret
+		} // end of method FunctionExpression_callable::__js_call__
+
+	} // end of class FunctionExpression_callable
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L40C17
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x277f
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x2680
+			// Header size: 12
+			// Code size: 35 (0x23)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::callable
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "proxy"
+			IL_000d: ldc.r8 1
+			IL_0016: box [System.Runtime]System.Double
+			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0020: stloc.0
+			IL_0021: ldloc.0
+			IL_0022: ret
+		} // end of method FunctionExpression_L40C17::__js_call__
+
+	} // end of class FunctionExpression_L40C17
+
+	.class nested public auto ansi abstract sealed beforefieldinit C
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 0b 53 63 6f 70 65 20 43 3d 7b 43 7d 00 00
+			)
+			// Fields
+			.field public object C
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2788
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object x
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x26af
+			// Header size: 1
+			// Code size: 19 (0x13)
+			.maxstack 8
+
+			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0005: ldstr "x"
+			IL_000a: ldarg.1
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+			IL_0010: pop
+			IL_0011: ldnull
+			IL_0012: ret
+		} // end of method C::__js_call__
+
+	} // end of class C
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L46C22
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2791
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope scope,
+				object newTarget
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 11 00 00 02
+			)
+			// Method begins at RVA 0x26c4
+			// Header size: 12
+			// Code size: 49 (0x31)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::constructible
+			IL_0006: ldstr "proxy"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldc.i4.1
+			IL_0013: newarr [System.Runtime]System.Object
+			IL_0018: dup
+			IL_0019: ldc.i4.0
+			IL_001a: ldc.r8 1
+			IL_0023: box [System.Runtime]System.Double
+			IL_0028: stelem.ref
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+			IL_002e: stloc.0
+			IL_002f: ldloc.0
+			IL_0030: ret
+		} // end of method FunctionExpression_L46C22::__js_call__
+
+	} // end of class FunctionExpression_L46C22
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 64 53 63 6f 70 65 20 6c 6f 67 54 68 72 6f
+			77 3d 7b 6c 6f 67 54 68 72 6f 77 7d 2c 20 72 65
+			76 6f 63 61 62 6c 65 3d 7b 72 65 76 6f 63 61 62
+			6c 65 7d 2c 20 63 61 6c 6c 61 62 6c 65 3d 7b 63
+			61 6c 6c 61 62 6c 65 7d 2c 20 63 6f 6e 73 74 72
+			75 63 74 69 62 6c 65 3d 7b 63 6f 6e 73 74 72 75
+			63 74 69 62 6c 65 7d 00 00
+		)
+		// Fields
+		.field public object logThrow
+		.field public object revocable
+		.field public object callable
+		.field public object constructible
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2701
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 1012 (0x3f4)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope,
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[3] object,
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		)
+
+		IL_0000: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::Enable()
+		IL_0005: newobj instance void Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::.ctor()
+		IL_000a: stloc.0
+		IL_000b: ldc.i4.1
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: dup
+		IL_0012: ldc.i4.0
+		IL_0013: ldloc.0
+		IL_0014: stelem.ref
+		IL_0015: ldc.i4.0
+		IL_0016: ldelem.ref
+		IL_0017: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_001c: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0027: stloc.3
+		IL_0028: ldloc.3
+		IL_0029: stloc.1
+		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_002f: dup
+		IL_0030: ldstr "a"
+		IL_0035: ldc.r8 1
+		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0043: stloc.2
+		IL_0044: ldnull
+		IL_0045: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_revocable::__js_call__(object, object, object)
+		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0050: stloc.3
+		IL_0051: ldnull
+		IL_0052: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_revocable_L17C7::__js_call__(object, object, object, object)
+		IL_0058: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_005d: stloc.s 4
+		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0064: dup
+		IL_0065: ldstr "get"
+		IL_006a: ldloc.3
+		IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0070: dup
+		IL_0071: ldstr "set"
+		IL_0076: ldloc.s 4
+		IL_0078: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_007d: stloc.s 5
+		IL_007f: ldloc.2
+		IL_0080: ldloc.s 5
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Proxy::revocable(object, object)
+		IL_0087: stloc.s 4
+		IL_0089: ldloc.0
+		IL_008a: ldloc.s 4
+		IL_008c: stfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0096: ldloc.0
+		IL_0097: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+		IL_009c: ldstr "proxy"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a6: ldstr "a"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b5: pop
+		IL_00b6: ldloc.0
+		IL_00b7: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+		IL_00bc: ldstr "proxy"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c6: ldstr "b"
+		IL_00cb: ldc.r8 2
+		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64)
+		IL_00d9: pop
+		IL_00da: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00df: ldloc.2
+		IL_00e0: ldstr "b"
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ef: pop
+		IL_00f0: ldloc.0
+		IL_00f1: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::revocable
+		IL_00f6: ldstr "revoke"
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0100: pop
+		IL_0101: ldc.i4.1
+		IL_0102: newarr [System.Runtime]System.Object
+		IL_0107: dup
+		IL_0108: ldc.i4.0
+		IL_0109: ldloc.0
+		IL_010a: stelem.ref
+		IL_010b: ldc.i4.0
+		IL_010c: ldelem.ref
+		IL_010d: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0112: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L28C16::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_0118: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_011d: stloc.s 4
+		IL_011f: ldc.i4.1
+		IL_0120: newarr [System.Runtime]System.Object
+		IL_0125: dup
+		IL_0126: ldc.i4.0
+		IL_0127: ldloc.0
+		IL_0128: stelem.ref
+		IL_0129: ldc.i4.0
+		IL_012a: ldelem.ref
+		IL_012b: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0130: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_0136: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_013b: ldnull
+		IL_013c: ldstr "get"
+		IL_0141: ldloc.s 4
+		IL_0143: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0148: pop
+		IL_0149: ldc.i4.1
+		IL_014a: newarr [System.Runtime]System.Object
+		IL_014f: dup
+		IL_0150: ldc.i4.0
+		IL_0151: ldloc.0
+		IL_0152: stelem.ref
+		IL_0153: ldc.i4.0
+		IL_0154: ldelem.ref
+		IL_0155: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_015a: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L29C16::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_0160: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0165: stloc.s 4
+		IL_0167: ldc.i4.1
+		IL_0168: newarr [System.Runtime]System.Object
+		IL_016d: dup
+		IL_016e: ldc.i4.0
+		IL_016f: ldloc.0
+		IL_0170: stelem.ref
+		IL_0171: ldc.i4.0
+		IL_0172: ldelem.ref
+		IL_0173: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0178: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_017e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0183: ldnull
+		IL_0184: ldstr "set"
+		IL_0189: ldloc.s 4
+		IL_018b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0190: pop
+		IL_0191: ldc.i4.1
+		IL_0192: newarr [System.Runtime]System.Object
+		IL_0197: dup
+		IL_0198: ldc.i4.0
+		IL_0199: ldloc.0
+		IL_019a: stelem.ref
+		IL_019b: ldc.i4.0
+		IL_019c: ldelem.ref
+		IL_019d: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_01a2: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L30C16::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_01a8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01ad: stloc.s 4
+		IL_01af: ldc.i4.1
+		IL_01b0: newarr [System.Runtime]System.Object
+		IL_01b5: dup
+		IL_01b6: ldc.i4.0
+		IL_01b7: ldloc.0
+		IL_01b8: stelem.ref
+		IL_01b9: ldc.i4.0
+		IL_01ba: ldelem.ref
+		IL_01bb: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_01c0: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_01c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_01cb: ldnull
+		IL_01cc: ldstr "has"
+		IL_01d1: ldloc.s 4
+		IL_01d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_01d8: pop
+		IL_01d9: ldc.i4.1
+		IL_01da: newarr [System.Runtime]System.Object
+		IL_01df: dup
+		IL_01e0: ldc.i4.0
+		IL_01e1: ldloc.0
+		IL_01e2: stelem.ref
+		IL_01e3: ldc.i4.0
+		IL_01e4: ldelem.ref
+		IL_01e5: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_01ea: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L31C19::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_01f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01f5: stloc.s 4
+		IL_01f7: ldc.i4.1
+		IL_01f8: newarr [System.Runtime]System.Object
+		IL_01fd: dup
+		IL_01fe: ldc.i4.0
+		IL_01ff: ldloc.0
+		IL_0200: stelem.ref
+		IL_0201: ldc.i4.0
+		IL_0202: ldelem.ref
+		IL_0203: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0208: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_020e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0213: ldnull
+		IL_0214: ldstr "delete"
+		IL_0219: ldloc.s 4
+		IL_021b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0220: pop
+		IL_0221: ldc.i4.1
+		IL_0222: newarr [System.Runtime]System.Object
+		IL_0227: dup
+		IL_0228: ldc.i4.0
+		IL_0229: ldloc.0
+		IL_022a: stelem.ref
+		IL_022b: ldc.i4.0
+		IL_022c: ldelem.ref
+		IL_022d: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0232: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L32C17::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_0238: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_023d: stloc.s 4
+		IL_023f: ldc.i4.1
+		IL_0240: newarr [System.Runtime]System.Object
+		IL_0245: dup
+		IL_0246: ldc.i4.0
+		IL_0247: ldloc.0
+		IL_0248: stelem.ref
+		IL_0249: ldc.i4.0
+		IL_024a: ldelem.ref
+		IL_024b: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0250: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_0256: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_025b: ldnull
+		IL_025c: ldstr "keys"
+		IL_0261: ldloc.s 4
+		IL_0263: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0268: pop
+		IL_0269: ldc.i4.1
+		IL_026a: newarr [System.Runtime]System.Object
+		IL_026f: dup
+		IL_0270: ldc.i4.0
+		IL_0271: ldloc.0
+		IL_0272: stelem.ref
+		IL_0273: ldc.i4.0
+		IL_0274: ldelem.ref
+		IL_0275: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_027a: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L33C27::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_0280: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0285: stloc.s 4
+		IL_0287: ldc.i4.1
+		IL_0288: newarr [System.Runtime]System.Object
+		IL_028d: dup
+		IL_028e: ldc.i4.0
+		IL_028f: ldloc.0
+		IL_0290: stelem.ref
+		IL_0291: ldc.i4.0
+		IL_0292: ldelem.ref
+		IL_0293: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_0298: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_029e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_02a3: ldnull
+		IL_02a4: ldstr "getPrototypeOf"
+		IL_02a9: ldloc.s 4
+		IL_02ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_02b0: pop
+		IL_02b1: ldc.i4.1
+		IL_02b2: newarr [System.Runtime]System.Object
+		IL_02b7: dup
+		IL_02b8: ldc.i4.0
+		IL_02b9: ldloc.0
+		IL_02ba: stelem.ref
+		IL_02bb: ldc.i4.0
+		IL_02bc: ldelem.ref
+		IL_02bd: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_02c2: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L34C27::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_02c8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_02cd: stloc.s 4
+		IL_02cf: ldc.i4.1
+		IL_02d0: newarr [System.Runtime]System.Object
+		IL_02d5: dup
+		IL_02d6: ldc.i4.0
+		IL_02d7: ldloc.0
+		IL_02d8: stelem.ref
+		IL_02d9: ldc.i4.0
+		IL_02da: ldelem.ref
+		IL_02db: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_02e0: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_02e6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_02eb: ldnull
+		IL_02ec: ldstr "setPrototypeOf"
+		IL_02f1: ldloc.s 4
+		IL_02f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_02f8: pop
+		IL_02f9: ldnull
+		IL_02fa: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_callable::__js_call__(object, object)
+		IL_0300: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0305: stloc.s 4
+		IL_0307: ldloc.s 4
+		IL_0309: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.Proxy::revocable(object, object)
+		IL_0313: stloc.s 4
+		IL_0315: ldloc.0
+		IL_0316: ldloc.s 4
+		IL_0318: stfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::callable
+		IL_031d: ldloc.0
+		IL_031e: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::callable
+		IL_0323: ldstr "revoke"
+		IL_0328: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_032d: pop
+		IL_032e: ldc.i4.1
+		IL_032f: newarr [System.Runtime]System.Object
+		IL_0334: dup
+		IL_0335: ldc.i4.0
+		IL_0336: ldloc.0
+		IL_0337: stelem.ref
+		IL_0338: ldc.i4.0
+		IL_0339: ldelem.ref
+		IL_033a: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_033f: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L40C17::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_0345: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_034a: stloc.s 4
+		IL_034c: ldc.i4.1
+		IL_034d: newarr [System.Runtime]System.Object
+		IL_0352: dup
+		IL_0353: ldc.i4.0
+		IL_0354: ldloc.0
+		IL_0355: stelem.ref
+		IL_0356: ldc.i4.0
+		IL_0357: ldelem.ref
+		IL_0358: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_035d: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_0363: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0368: ldnull
+		IL_0369: ldstr "call"
+		IL_036e: ldloc.s 4
+		IL_0370: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_0375: pop
+		IL_0376: ldnull
+		IL_0377: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/C::__js_call__(object, object)
+		IL_037d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0382: stloc.s 4
+		IL_0384: ldloc.s 4
+		IL_0386: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_038b: call object [JavaScriptRuntime]JavaScriptRuntime.Proxy::revocable(object, object)
+		IL_0390: stloc.s 4
+		IL_0392: ldloc.0
+		IL_0393: ldloc.s 4
+		IL_0395: stfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::constructible
+		IL_039a: ldloc.0
+		IL_039b: ldfld object Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope::constructible
+		IL_03a0: ldstr "revoke"
+		IL_03a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_03aa: pop
+		IL_03ab: ldc.i4.1
+		IL_03ac: newarr [System.Runtime]System.Object
+		IL_03b1: dup
+		IL_03b2: ldc.i4.0
+		IL_03b3: ldloc.0
+		IL_03b4: stelem.ref
+		IL_03b5: ldc.i4.0
+		IL_03b6: ldelem.ref
+		IL_03b7: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_03bc: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/FunctionExpression_L46C22::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object)
+		IL_03c2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_03c7: stloc.s 4
+		IL_03c9: ldc.i4.1
+		IL_03ca: newarr [System.Runtime]System.Object
+		IL_03cf: dup
+		IL_03d0: ldc.i4.0
+		IL_03d1: ldloc.0
+		IL_03d2: stelem.ref
+		IL_03d3: ldc.i4.0
+		IL_03d4: ldelem.ref
+		IL_03d5: castclass Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope
+		IL_03da: ldftn object Modules.Proxy_Revocable_ThrowsAfterRevoke/logThrow::__js_call__(class Modules.Proxy_Revocable_ThrowsAfterRevoke/Scope, object, object, object)
+		IL_03e0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_03e5: ldnull
+		IL_03e6: ldstr "construct"
+		IL_03eb: ldloc.s 4
+		IL_03ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::Invoke(object, object, object)
+		IL_03f2: pop
+		IL_03f3: ret
+	} // end of method Proxy_Revocable_ThrowsAfterRevoke::__js_module_init__
+
+} // end of class Modules.Proxy_Revocable_ThrowsAfterRevoke
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x279a
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Proxy_Revocable_ThrowsAfterRevoke::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

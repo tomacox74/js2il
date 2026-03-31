@@ -616,23 +616,40 @@ namespace JavaScriptRuntime
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
             try
             {
+                if (target is global::JavaScriptRuntime.Proxy proxy)
+                {
+                    var proxyTarget = proxy.GetTarget("apply");
+                    if (!global::JavaScriptRuntime.Proxy.IsCallableValue(proxyTarget))
+                    {
+                        throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(proxyTarget)}.");
+                    }
 
-            // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
-            // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
-            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
-            {
-                return require(args.Length > 0 ? args[0] : null)!;
-            }
+                    var trapArgs = new global::JavaScriptRuntime.Array(args);
+                    if (proxy.TryInvokeTrap("apply", "apply", new object?[] { proxyTarget, RuntimeServices.GetCurrentThis(), trapArgs }, out var trapResult))
+                    {
+                        return trapResult!;
+                    }
 
-            if (target is Delegate del)
-            {
-                // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
-                return InvokeDelegateWithArgs(del, scopes, args, newTarget);
-            }
+                    return InvokeWithArgsCore(proxyTarget, scopes, newTarget, args);
+                }
 
-            // JavaScript/Node semantics: calling a non-callable throws a TypeError.
-            // Use a stable, type-based message since we don't always have the identifier name available here.
-            throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
+
+                // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
+                // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
+                if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+                {
+                    return require(args.Length > 0 ? args[0] : null)!;
+                }
+
+                if (target is Delegate del)
+                {
+                    // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
+                    return InvokeDelegateWithArgs(del, scopes, args, newTarget);
+                }
+
+                // JavaScript/Node semantics: calling a non-callable throws a TypeError.
+                // Use a stable, type-based message since we don't always have the identifier name available here.
+                throw new TypeError($"Callee is not a function: it has type {TypeUtilities.Typeof(target)}.");
             }
             finally
             {
@@ -654,6 +671,18 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
+        private static bool TryInvokeProxyCallFastPath(object target, object[] scopes, object?[] args, out object result)
+        {
+            if (target is global::JavaScriptRuntime.Proxy)
+            {
+                result = InvokeWithArgsCore(target, scopes, newTarget: null, args);
+                return true;
+            }
+
+            result = null!;
+            return false;
+        }
+
         // Arity-specific overloads for common cases (0-5 args).
         // These directly invoke the delegate while also setting RuntimeServices.CurrentArguments.
 
@@ -661,6 +690,11 @@ namespace JavaScriptRuntime
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+
+            if (TryInvokeProxyCallFastPath(target, scopes, System.Array.Empty<object>(), out var proxyResult))
+            {
+                return proxyResult;
+            }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
@@ -697,6 +731,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0 };
+
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            {
+                return proxyResult;
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -732,6 +772,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1 };
+
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            {
+                return proxyResult;
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -767,6 +813,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1, a2 };
+
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            {
+                return proxyResult;
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -802,6 +854,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1, a2, a3 };
+
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            {
+                return proxyResult;
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -837,6 +895,12 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var args = new object?[] { a0, a1, a2, a3, a4 };
+
+            if (TryInvokeProxyCallFastPath(target, scopes, args, out var proxyResult))
+            {
+                return proxyResult;
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
@@ -1821,4 +1885,3 @@ namespace JavaScriptRuntime
         }
     }
 }
-

@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T23:10:54Z
+> Last generated (UTC): 2026-03-29T04:34:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -18,34 +18,34 @@
 | 22.1.1.1 | String ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string-constructor-string-value) |
 | 22.1.2 | Properties of the String Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-constructor) |
 | 22.1.2.1 | String.fromCharCode ( ... codeUnits ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode) |
-| 22.1.2.2 | String.fromCodePoint ( ... codePoints ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcodepoint) |
-| 22.1.2.3 | String.prototype | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype) |
-| 22.1.2.4 | String.raw ( template , ... substitutions ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.raw) |
+| 22.1.2.2 | String.fromCodePoint ( ... codePoints ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.fromcodepoint) |
+| 22.1.2.3 | String.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype) |
+| 22.1.2.4 | String.raw ( template , ... substitutions ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.raw) |
 | 22.1.3 | Properties of the String Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-string-prototype-object) |
-| 22.1.3.1 | String.prototype.at ( index ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at) |
+| 22.1.3.1 | String.prototype.at ( index ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at) |
 | 22.1.3.2 | String.prototype.charAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charat) |
 | 22.1.3.3 | String.prototype.charCodeAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat) |
-| 22.1.3.4 | String.prototype.codePointAt ( pos ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat) |
+| 22.1.3.4 | String.prototype.codePointAt ( pos ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat) |
 | 22.1.3.5 | String.prototype.concat ( ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat) |
-| 22.1.3.6 | String.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor) |
+| 22.1.3.6 | String.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.constructor) |
 | 22.1.3.7 | String.prototype.endsWith ( searchString [ , endPosition ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith) |
 | 22.1.3.8 | String.prototype.includes ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.includes) |
 | 22.1.3.9 | String.prototype.indexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.indexof) |
-| 22.1.3.10 | String.prototype.isWellFormed ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.iswellformed) |
+| 22.1.3.10 | String.prototype.isWellFormed ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.iswellformed) |
 | 22.1.3.11 | String.prototype.lastIndexOf ( searchString [ , position ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof) |
 | 22.1.3.12 | String.prototype.localeCompare ( that [ , reserved1 [ , reserved2 ] ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.localecompare) |
 | 22.1.3.13 | String.prototype.match ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.match) |
-| 22.1.3.14 | String.prototype.matchAll ( regexp ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
+| 22.1.3.14 | String.prototype.matchAll ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall) |
 | 22.1.3.15 | String.prototype.normalize ( [ form ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize) |
-| 22.1.3.16 | String.prototype.padEnd ( maxLength [ , fillString ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padend) |
-| 22.1.3.17 | String.prototype.padStart ( maxLength [ , fillString ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padstart) |
+| 22.1.3.16 | String.prototype.padEnd ( maxLength [ , fillString ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padend) |
+| 22.1.3.17 | String.prototype.padStart ( maxLength [ , fillString ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padstart) |
 | 22.1.3.17.1 | StringPaddingBuiltinsImpl ( O , maxLength , fillString , placement ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl) |
 | 22.1.3.17.2 | StringPad ( S , maxLength , fillString , placement ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringpad) |
 | 22.1.3.17.3 | ToZeroPaddedDecimalString ( n , minLength ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-tozeropaddeddecimalstring) |
 | 22.1.3.18 | String.prototype.repeat ( count ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.repeat) |
 | 22.1.3.19 | String.prototype.replace ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replace) |
 | 22.1.3.19.1 | GetSubstitution ( matched , str , position , captures , namedCaptures , replacementTemplate ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-getsubstitution) |
-| 22.1.3.20 | String.prototype.replaceAll ( searchValue , replaceValue ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall) |
+| 22.1.3.20 | String.prototype.replaceAll ( searchValue , replaceValue ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.replaceall) |
 | 22.1.3.21 | String.prototype.search ( regexp ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search) |
 | 22.1.3.22 | String.prototype.slice ( start , end ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice) |
 | 22.1.3.23 | String.prototype.split ( separator , limit ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.split) |
@@ -54,22 +54,22 @@
 | 22.1.3.26 | String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocalelowercase) |
 | 22.1.3.27 | String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolocaleuppercase) |
 | 22.1.3.28 | String.prototype.toLowerCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tolowercase) |
-| 22.1.3.29 | String.prototype.toString ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tostring) |
+| 22.1.3.29 | String.prototype.toString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.tostring) |
 | 22.1.3.30 | String.prototype.toUpperCase ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase) |
-| 22.1.3.31 | String.prototype.toWellFormed ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.towellformed) |
+| 22.1.3.31 | String.prototype.toWellFormed ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.towellformed) |
 | 22.1.3.32 | String.prototype.trim ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim) |
 | 22.1.3.32.1 | TrimString ( string , where ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-trimstring) |
 | 22.1.3.33 | String.prototype.trimEnd ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimend) |
 | 22.1.3.34 | String.prototype.trimStart ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trimstart) |
-| 22.1.3.35 | String.prototype.valueOf ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.valueof) |
-| 22.1.3.35.1 | ThisStringValue ( value ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-thisstringvalue) |
-| 22.1.3.36 | String.prototype [ %Symbol.iterator% ] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%) |
+| 22.1.3.35 | String.prototype.valueOf ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype.valueof) |
+| 22.1.3.35.1 | ThisStringValue ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-thisstringvalue) |
+| 22.1.3.36 | String.prototype [ %Symbol.iterator% ] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%) |
 | 22.1.4 | Properties of String Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-string-instances) |
 | 22.1.4.1 | length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-string-instances-length) |
-| 22.1.5 | String Iterator Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string-iterator-objects) |
-| 22.1.5.1 | The %StringIteratorPrototype% Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%-object) |
-| 22.1.5.1.1 | %StringIteratorPrototype%.next ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next) |
-| 22.1.5.1.2 | %StringIteratorPrototype% [ %Symbol.toStringTag% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%-%symbol.tostringtag%) |
+| 22.1.5 | String Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string-iterator-objects) |
+| 22.1.5.1 | The %StringIteratorPrototype% Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%-object) |
+| 22.1.5.1.1 | %StringIteratorPrototype%.next ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next) |
+| 22.1.5.1.2 | %StringIteratorPrototype% [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%-%symbol.tostringtag%) |
 
 ## Support
 
@@ -97,43 +97,43 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.fromCodePoint | Not Yet Supported |  | No runtime helper is exposed; GlobalThis.String.fromCodePoint is absent so calls currently fail. |
+| String.fromCodePoint | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.FromCodePoint and exposed on GlobalThis.String.fromCodePoint. Supports integer Unicode scalar values and throws RangeError for invalid code points; boxed String wrapper edge cases are still not modeled. |
 
 ### 22.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype object | Not Yet Supported |  | JS2IL relies on primitive string fast paths instead of exposing a full String.prototype object with spec-observable properties. Methods are dispatched via intrinsic fast paths only. |
+| String.prototype object | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | GlobalThis.String.prototype is now exposed as a shared runtime object. Primitive string property reads consult that prototype surface for methods like constructor, toString, valueOf, at, and @@iterator, but js2il still does not create observable boxed String wrapper objects. |
 
 ### 22.1.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-string.raw))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.raw | Not Yet Supported |  | GlobalThis.String.raw is not implemented. Tagged template compilation constructs cooked/raw arrays directly without invoking String.raw. |
+| String.raw | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.Raw and exposed as GlobalThis.String.raw. Supports array-like template.raw values used by tagged-template helpers, but does not attempt full spec fidelity for exotic template objects or property attributes. |
 
 ### 22.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.at))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.at | Not Yet Supported |  | No intrinsic or fast-path implementation; accessing at results in an undefined property rather than the spec algorithm. |
+| String.prototype.at | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js)<br>[`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | Implemented in JavaScriptRuntime.String.At with negative-index support and exposed both through string fast paths and String.prototype. Out-of-range results surface as js2il's undefined/null representation rather than a boxed wrapper value. |
 
 ### 22.1.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charat))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.charAt | Supported with Limitations | [`String_CharAt_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_CharAt_Basic.js) | Implemented via JavaScriptRuntime.String.CharAt and routed through the string member-call fast path in JavaScriptRuntime.Object. Covers primitive strings plus current new String sugar cases, but JS2IL still does not expose a spec-observable String.prototype object or boxed String wrapper semantics. |
+| String.prototype.charAt | Supported with Limitations | [`String_CharAt_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_CharAt_Basic.js) | Implemented via JavaScriptRuntime.String.CharAt and exposed on the shared String.prototype surface while retaining direct string fast paths. js2il still skips boxed String wrapper semantics and full exotic-property observability. |
 
 ### 22.1.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.charCodeAt | Supported with Limitations | [`String_CharCodeAt_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_CharCodeAt_Basic.js) | Implemented in JavaScriptRuntime.String.CharCodeAt for definite string receivers. Returns a boxed number. Edge cases such as out-of-range indices and surrogate handling are not fully validated. |
+| String.prototype.charCodeAt | Supported with Limitations | [`String_CharCodeAt_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_CharCodeAt_Basic.js) | Implemented in JavaScriptRuntime.String.CharCodeAt and exposed on the shared String.prototype surface. Returns a boxed number and preserves js2il's current undefined/null modeling rather than full boxed-wrapper semantics. |
 
 ### 22.1.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.codePointAt | Not Yet Supported |  | No implementation for code point extraction; calls will observe an undefined property. |
+| String.prototype.codePointAt | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.CodePointAt with surrogate-pair decoding for valid leading surrogates. Out-of-range results use js2il's undefined/null representation and boxed String wrapper edge cases remain unsupported. |
 
 ### 22.1.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.concat))
 
@@ -145,7 +145,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.constructor | Not Yet Supported |  | String values are primitives without wrapper objects, so constructor property is not exposed. |
+| String.prototype.constructor | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | String.prototype.constructor is exposed and points at the shared GlobalThis.String constructor value. Since js2il still treats new String(x) as primitive-string sugar, boxed constructor behaviors remain limited. |
 
 ### 22.1.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.endswith))
 
@@ -169,7 +169,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.isWellFormed | Not Yet Supported |  | No method exists to check Unicode well-formedness; string values are treated as UTF-16 without validation. |
+| String.prototype.isWellFormed | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.IsWellFormed for UTF-16 surrogate validation. The helper reflects string primitive contents only; there is no separate boxed String data slot model. |
 
 ### 22.1.3.11 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.lastindexof))
 
@@ -193,7 +193,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.matchAll | Not Yet Supported |  | No iterator-producing implementation; @@matchAll and RegExp string iterator protocols are not present. |
+| String.prototype.matchAll | Supported with Limitations | [`String_MatchAll_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_MatchAll_Basic.js) | Implemented in JavaScriptRuntime.String.MatchAll for string patterns and global RegExp inputs. The current runtime eagerly materializes the matches as a JavaScriptRuntime.Array of exec-like match arrays instead of the spec's lazy RegExp String Iterator. |
 
 ### 22.1.3.15 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize))
 
@@ -205,13 +205,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.padEnd | Not Yet Supported |  | Pad algorithms are not implemented; property lookups find no padEnd method. |
+| String.prototype.padEnd | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.PadEnd using a shared padding helper. Behavior covers common string/fill-string cases but does not yet model every abstract-operation edge case from the spec text. |
 
 ### 22.1.3.17 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.padstart))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.padStart | Not Yet Supported |  | Pad algorithms are not implemented; property lookups find no padStart method. |
+| String.prototype.padStart | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.PadStart using a shared padding helper. Behavior covers common string/fill-string cases but does not yet model every abstract-operation edge case from the spec text. |
 
 ### 22.1.3.17.1 ([tc39.es](https://tc39.es/ecma262/#sec-stringpaddingbuiltinsimpl))
 
@@ -253,7 +253,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.replaceAll | Not Yet Supported |  | replaceAll is not exposed; only the limited replace helper exists. |
+| String.prototype.replaceAll | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.ReplaceAll for literal-string search values, callback replacements, and global RegExp inputs. It enforces the non-global RegExp TypeError but still uses js2il's simplified replacement-template semantics. |
 
 ### 22.1.3.21 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.search))
 
@@ -307,7 +307,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.toString | Not Yet Supported |  | No explicit prototype toString method is exposed; ToString conversions are handled via DotNet2JSConversions and primitive fast paths rather than the spec wrapper object. |
+| String.prototype.toString | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | String.prototype.toString is now exposed on the public String.prototype object and validates that the receiver is string-compatible. Because js2il does not create boxed String objects, wrapper-object edge cases stay limited. |
 
 ### 22.1.3.30 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.touppercase))
 
@@ -319,7 +319,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.toWellFormed | Not Yet Supported |  | Well-formed UTF-16 enforcement is not available; method is missing. |
+| String.prototype.toWellFormed | Supported with Limitations | [`String_NewApis_Basic.js`](../../../Js2IL.Tests/String/JavaScript/String_NewApis_Basic.js) | Implemented in JavaScriptRuntime.String.ToWellFormed by replacing lone surrogates with U+FFFD. The helper targets primitive string contents rather than a spec-observable boxed String instance. |
 
 ### 22.1.3.32 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.trim))
 
@@ -349,19 +349,19 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype.valueOf | Not Yet Supported |  | No valueOf method is exposed; primitives are used directly without boxing. |
+| String.prototype.valueOf | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | String.prototype.valueOf is now exposed on the public String.prototype object and returns the primitive string value for compatible receivers. Wrapper-object and [[StringData]] fidelity remain limited because js2il does not allocate boxed String objects. |
 
 ### 22.1.3.35.1 ([tc39.es](https://tc39.es/ecma262/#sec-thisstringvalue))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ThisStringValue | Not Yet Supported |  | The abstract operation that unwraps String objects is not represented because wrapper objects are not created. |
+| ThisStringValue | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | JavaScriptRuntime.String.ThisStringValue now validates and unwraps string-compatible receivers for the public String.prototype surface. It supports primitive strings plus js2il's direct string helpers, but there is still no distinct boxed String object model. |
 
 ### 22.1.3.36 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String.prototype[@@iterator] | Not Yet Supported |  | No String iterator is implemented; for-of iteration over strings is not supported. |
+| String.prototype[@@iterator] | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | String.prototype[@@iterator] is now exposed and returns public string iterator objects that iterate Unicode code points (surrogate pairs stay intact). The runtime still models strings as primitives without full wrapper-object/property-attribute fidelity. |
 
 ### 22.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-string-instances))
 
@@ -379,23 +379,23 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| String iterator objects | Not Yet Supported |  | Iterator construction for strings is absent; Symbol.iterator on strings is undefined. |
+| String iterator objects | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | Public string iterator objects are now created by String.prototype[@@iterator] and by the internal fast path used for for..of/Array.from. They preserve code-point iteration but do not yet implement every spec-visible internal slot or helper abstraction. |
 
 ### 22.1.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%-object))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| %StringIteratorPrototype% | Not Yet Supported |  | Iterator prototype object and its behaviors are not defined. |
+| %StringIteratorPrototype% | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | The runtime now exposes a shared %StringIteratorPrototype% object and uses it as the prototype for returned string iterators. It is observable through Object.getPrototypeOf on iterator instances. |
 
 ### 22.1.5.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| %StringIteratorPrototype%.next | Not Yet Supported |  | Iterator next() is not implemented; no iteration protocol for strings. |
+| %StringIteratorPrototype%.next | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | The public %StringIteratorPrototype%.next implementation advances through Unicode code points and returns iterator result objects. Iterator closing/return semantics stay aligned with js2il's broader iterator model rather than the full spec algorithm text. |
 
 ### 22.1.5.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-%stringiteratorprototype%-%symbol.tostringtag%))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| %StringIteratorPrototype% [ %Symbol.toStringTag% ] | Not Yet Supported |  | The toStringTag property for string iterators is not defined because iterators are absent. |
+| %StringIteratorPrototype% [ %Symbol.toStringTag% ] | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../Js2IL.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) | The shared %StringIteratorPrototype% now exposes Symbol.toStringTag as "String Iterator". |
 
