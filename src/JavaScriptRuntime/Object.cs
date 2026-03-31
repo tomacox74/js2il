@@ -3304,9 +3304,14 @@ namespace JavaScriptRuntime
                 return dictGeneric.TryGetValue(propName, out value);
             }
 
-            // JavaScriptRuntime.Array: no custom properties yet
-            if (target is Array)
+            if (target is Array array)
             {
+                if (string.Equals(propName, "length", StringComparison.Ordinal))
+                {
+                    value = array.length;
+                    return true;
+                }
+
                 value = null;
                 return false;
             }
