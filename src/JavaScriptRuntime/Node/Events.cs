@@ -133,6 +133,7 @@ namespace JavaScriptRuntime.Node
                 _emitter = emitter;
                 _eventName = eventName;
                 _observeError = !IsErrorEvent(eventName);
+                JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
 
                 _eventHandler = (_, args) =>
                 {

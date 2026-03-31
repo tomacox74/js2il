@@ -16,6 +16,7 @@ public sealed class AsyncGeneratorObject : IJavaScriptAsyncIterator
     public AsyncGeneratorObject(object[] scopes)
     {
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
+        JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
     }
 
     private AsyncGeneratorScope GetLeafScope()

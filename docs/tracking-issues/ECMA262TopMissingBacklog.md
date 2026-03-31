@@ -15,8 +15,7 @@
 | Rank | Issue | Missing feature | Key tracked clauses | Why it is still top-10 |
 |---:|---|---|---|---|
 | 1 | [#859](https://github.com/tomacox74/js2il/issues/859) | Remaining modern class element limitations | [`15.7 Class Definitions`](../ECMA262/15/Section15_7.md) - `15.7.1`, `15.7.10`, `15.7.11` | Most modern class elements now work, but arbitrary runtime-computed method keys and the remaining class-element edge cases tracked in the docs are still incomplete. |
-| 2 | [#865](https://github.com/tomacox74/js2il/issues/865) | Iterator helpers plus the `Iterator` / `AsyncIterator` constructor surfaces | [`27.1 Iteration`](../ECMA262/27/Section27_1.md) - `27.1.2`, `27.1.3`, `27.1.4` | `for..of` and `for await..of` work, but the new iterator-helper family and the public `Iterator` / `AsyncIterator` objects are still entirely marked `Not Yet Supported`. |
-| 3 | [#866](https://github.com/tomacox74/js2il/issues/866) | Arguments exotic objects / mapped `arguments` semantics | [`10.4 Built-in Exotic Objects`](../ECMA262/10/Section10_4.md) - `10.4.4` | Functions currently materialize `arguments` as plain arrays, so mapped/unmapped arguments objects and their aliasing semantics are still missing. |
+| 2 | [#866](https://github.com/tomacox74/js2il/issues/866) | Arguments exotic objects / mapped `arguments` semantics | [`10.4 Built-in Exotic Objects`](../ECMA262/10/Section10_4.md) - `10.4.4` | Functions currently materialize `arguments` as plain arrays, so mapped/unmapped arguments objects and their aliasing semantics are still missing. |
 
 ## Notable next-tier gaps
 
