@@ -4563,6 +4563,21 @@ namespace JavaScriptRuntime
                 return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
             }
 
+            if (string.Equals(name, "length", StringComparison.Ordinal))
+            {
+                switch (obj)
+                {
+                    case Array array:
+                        return array.length;
+                    case TypedArrayBase typedArray:
+                        return typedArray.length;
+                    case JavaScriptRuntime.Node.Buffer buffer:
+                        return buffer.length;
+                    case string s:
+                        return s.Length;
+                }
+            }
+
             if (TryGetFastDictionaryOwnValue(obj, name, out var fastOwnValue))
             {
                 return fastOwnValue;
