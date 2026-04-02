@@ -184,6 +184,15 @@ internal static class TempLocalAllocator
 
     private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
     {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
+        {
+            var variableSlot = methodBody.TempVariableSlots[temp.Index];
+            if (variableSlot >= 0 && variableSlot < methodBody.VariableStorages.Count)
+            {
+                return methodBody.VariableStorages[variableSlot];
+            }
+        }
+
         if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
         {
             return methodBody.TempStorages[temp.Index];

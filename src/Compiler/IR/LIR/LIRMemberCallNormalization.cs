@@ -127,19 +127,18 @@ internal static class LIRMemberCallNormalization
                     arguments,
                     result);
 
+                if (result.Index >= 0)
+                {
+                    var resultStorage = GetPreferredTypedCallResultStorage(returnClrType, returnTypeHandle);
+                    if (CanRetypeResultTemp(methodBody, result, resultStorage))
+                    {
+                        SetTempStorage(methodBody, result, resultStorage);
+                    }
+                }
+
                 if (resultIsReceiverType && result.Index >= 0)
                 {
                     knownUserClassReceiverTypeHandles[result.Index] = resolvedReceiverEntityHandle;
-
-                    // Also propagate the proven type handle into the temp's storage so IL emission can avoid
-                    // redundant castclass when the result is used as a typed receiver (including stackified temps).
-                    if (result.Index < methodBody.TempStorages.Count)
-                    {
-                        methodBody.TempStorages[result.Index] = new ValueStorage(
-                            ValueStorageKind.Reference,
-                            typeof(object),
-                            resolvedReceiverEntityHandle);
-                    }
                 }
 
                 if (buildArrayDefIndex >= 0)
@@ -285,6 +284,75 @@ internal static class LIRMemberCallNormalization
         }
 
         return classRegistry.TryGetFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+    }
+
+    private static ValueStorage GetPreferredTypedCallResultStorage(Type returnClrType, EntityHandle returnTypeHandle)
+    {
+        if (!returnTypeHandle.IsNil)
+        {
+            return new ValueStorage(ValueStorageKind.Reference, typeof(object), returnTypeHandle);
+        }
+
+        if (returnClrType == typeof(double) || returnClrType == typeof(bool) || returnClrType == typeof(JavaScriptRuntime.JsNull))
+        {
+            return new ValueStorage(ValueStorageKind.UnboxedValue, returnClrType);
+        }
+
+        if (returnClrType != typeof(object))
+        {
+            return new ValueStorage(ValueStorageKind.Reference, returnClrType);
+        }
+
+        return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+    }
+
+    private static void SetTempStorage(MethodBodyIR methodBody, TempVariable temp, ValueStorage storage)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
+        {
+            methodBody.TempStorages[temp.Index] = storage;
+        }
+    }
+
+    private static bool CanRetypeResultTemp(MethodBodyIR methodBody, TempVariable temp, ValueStorage desiredStorage)
+    {
+        var slot = GetTempVariableSlot(methodBody, temp);
+        if (slot < 0 || slot >= methodBody.VariableStorages.Count)
+        {
+            return true;
+        }
+
+        return AreCompatiblePinnedSlotStorages(methodBody.VariableStorages[slot], desiredStorage);
+    }
+
+    private static bool AreCompatiblePinnedSlotStorages(ValueStorage slotStorage, ValueStorage desiredStorage)
+    {
+        if (slotStorage.Kind != desiredStorage.Kind)
+        {
+            return false;
+        }
+
+        if (slotStorage.ClrType != desiredStorage.ClrType)
+        {
+            return false;
+        }
+
+        if (!slotStorage.TypeHandle.IsNil || !desiredStorage.TypeHandle.IsNil)
+        {
+            return slotStorage.TypeHandle.Equals(desiredStorage.TypeHandle);
+        }
+
+        return string.Equals(slotStorage.ScopeName, desiredStorage.ScopeName, StringComparison.Ordinal);
+    }
+
+    private static int GetTempVariableSlot(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
+        {
+            return methodBody.TempVariableSlots[temp.Index];
+        }
+
+        return -1;
     }
 
     private static bool IsTempUsedOutside(MethodBodyIR methodBody, TempVariable temp, HashSet<int> ignoreInstructionIndices)

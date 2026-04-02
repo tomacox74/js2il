@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
@@ -102,6 +103,7 @@ namespace JavaScriptRuntime
             return ReadInt32(BufferObject.RawBytes, offset);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void WriteElementValue(int index, double value)
         {
             var offset = ByteOffsetBytes + (index * ElementSize);
@@ -111,8 +113,15 @@ namespace JavaScriptRuntime
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Int32Array(buffer, byteOffset, length);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int ToInt32(double value)
         {
+            var candidate = (int)value;
+            if (candidate == value)
+            {
+                return candidate;
+            }
+
             if (double.IsNaN(value) || double.IsInfinity(value) || value == 0.0)
             {
                 return 0;

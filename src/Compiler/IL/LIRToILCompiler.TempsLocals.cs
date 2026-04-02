@@ -1243,7 +1243,7 @@ internal sealed partial class LIRToILCompiler
                 {
                     // Inline the typed call (no fallback) and leave the result on the stack.
                     EmitCallTypedMemberNoFallbackCore(callTyped, ilEncoder, allocation, methodDescriptor);
-                    EmitBoxIfNeededForTypedCallResult(temp, callTyped.ReturnClrType, ilEncoder);
+                    EmitBoxIfNeededForTypedCallResult(temp, callTyped.ReturnClrType, ilEncoder, allocation);
                     break;
                 }
 
@@ -2076,6 +2076,15 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private ValueStorage GetTempStorage(TempVariable temp)
     {
+        if (temp.Index >= 0 && temp.Index < MethodBody.TempVariableSlots.Count)
+        {
+            var variableSlot = MethodBody.TempVariableSlots[temp.Index];
+            if (variableSlot >= 0 && variableSlot < MethodBody.VariableStorages.Count)
+            {
+                return MethodBody.VariableStorages[variableSlot];
+            }
+        }
+
         if (temp.Index >= 0 && temp.Index < MethodBody.TempStorages.Count)
         {
             return MethodBody.TempStorages[temp.Index];

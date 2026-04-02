@@ -26,7 +26,15 @@ internal sealed partial class LIRToILCompiler
                 {
                     return true;
                 }
-                EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                var destinationStorage = GetMaterializedTempStorage(copyTemp.Destination, allocation);
+                if (destinationStorage.Kind == ValueStorageKind.Reference && copyTemp.Source.Index >= 0)
+                {
+                    EmitLoadTempAsObject(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                }
+                else
+                {
+                    EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                }
                 EmitStoreTemp(copyTemp.Destination, ilEncoder, allocation);
                 return true;
 

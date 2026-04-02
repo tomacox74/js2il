@@ -1097,7 +1097,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 return true;
                 }
-            }
+                }
         }
 
         // Case 2c: Generic member call via runtime dispatcher.
