@@ -26,7 +26,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21fc
+					// Method begins at RVA 0x2201
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2205
+					// Method begins at RVA 0x220a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f3
+				// Method begins at RVA 0x21f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -94,7 +94,7 @@
 			)
 			// Method begins at RVA 0x2148
 			// Header size: 12
-			// Code size: 150 (0x96)
+			// Code size: 155 (0x9b)
 			.maxstack 8
 			.locals init (
 				[0] float64,
@@ -129,34 +129,35 @@
 				IL_0041: ldarg.1
 				IL_0042: ldstr "children"
 				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-				IL_0051: clt
-				IL_0053: brfalse IL_0094
+				IL_004c: ldstr "length"
+				IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_0056: clt
+				IL_0058: brfalse IL_0099
 
-				IL_0058: ldarg.1
-				IL_0059: ldstr "children"
-				IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0063: ldloc.0
-				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0069: stloc.1
-				IL_006a: ldarg.2
-				IL_006b: ldc.r8 1
-				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_0079: stloc.3
-				IL_007a: ldnull
-				IL_007b: ldloc.1
-				IL_007c: ldloc.3
-				IL_007d: call object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
-				IL_0082: pop
-				IL_0083: ldloc.0
-				IL_0084: ldc.r8 1
-				IL_008d: add
-				IL_008e: stloc.0
-				IL_008f: br IL_0040
+				IL_005d: ldarg.1
+				IL_005e: ldstr "children"
+				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0068: ldloc.0
+				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_006e: stloc.1
+				IL_006f: ldarg.2
+				IL_0070: ldc.r8 1
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_007e: stloc.3
+				IL_007f: ldnull
+				IL_0080: ldloc.1
+				IL_0081: ldloc.3
+				IL_0082: call object Modules.Function_IIFE_Recursive/walk::__js_call__(object, object, object)
+				IL_0087: pop
+				IL_0088: ldloc.0
+				IL_0089: ldc.r8 1
+				IL_0092: add
+				IL_0093: stloc.0
+				IL_0094: br IL_0040
 			// end loop
 
-			IL_0094: ldnull
-			IL_0095: ret
+			IL_0099: ldnull
+			IL_009a: ret
 		} // end of method walk::__js_call__
 
 	} // end of class walk
@@ -168,7 +169,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ea
+			// Method begins at RVA 0x21ef
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -287,7 +288,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x220e
+		// Method begins at RVA 0x2213
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

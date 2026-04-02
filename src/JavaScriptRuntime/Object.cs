@@ -1744,6 +1744,7 @@ namespace JavaScriptRuntime
 
             // Built-in type tags.
             if (thisVal is JavaScriptRuntime.Array) return "[object Array]";
+            if (thisVal is JavaScriptRuntime.ArgumentsObject) return "[object Arguments]";
             if (thisVal is string) return "[object String]";
             if (thisVal is bool) return "[object Boolean]";
             if (thisVal is double or float or int or long) return "[object Number]";
@@ -3303,9 +3304,14 @@ namespace JavaScriptRuntime
                 return dictGeneric.TryGetValue(propName, out value);
             }
 
-            // JavaScriptRuntime.Array: no custom properties yet
-            if (target is Array)
+            if (target is Array array)
             {
+                if (string.Equals(propName, "length", StringComparison.Ordinal))
+                {
+                    value = array.length;
+                    return true;
+                }
+
                 value = null;
                 return false;
             }
@@ -4518,6 +4524,10 @@ namespace JavaScriptRuntime
                     return JavaScriptRuntime.Function.GetLength(del);
                 case Array arr:
                     return arr.length;
+                case ArgumentsObject argumentsObject:
+                    return argumentsObject.TryGetValue("length", out var argumentsLength)
+                        ? TypeUtilities.ToNumber(argumentsLength)
+                        : 0.0;
                 case TypedArrayBase typedArray:
                     return typedArray.length;
                 case JavaScriptRuntime.Node.Buffer buffer:
@@ -4551,6 +4561,21 @@ namespace JavaScriptRuntime
             if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
             {
                 return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
+            }
+
+            if (string.Equals(name, "length", StringComparison.Ordinal))
+            {
+                switch (obj)
+                {
+                    case Array array:
+                        return array.length;
+                    case TypedArrayBase typedArray:
+                        return typedArray.length;
+                    case JavaScriptRuntime.Node.Buffer buffer:
+                        return buffer.length;
+                    case string s:
+                        return s.Length;
+                }
             }
 
             if (TryGetFastDictionaryOwnValue(obj, name, out var fastOwnValue))

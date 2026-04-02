@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T02:30:25Z
+> Last generated (UTC): 2026-03-29T05:07:03Z
 
 JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.
 
@@ -31,16 +31,16 @@ JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for t
 | 10.4.3.3 | [[OwnPropertyKeys]] ( ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-string-exotic-objects-ownpropertykeys) |
 | 10.4.3.4 | StringCreate ( value , prototype ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringcreate) |
 | 10.4.3.5 | StringGetOwnProperty ( S , P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringgetownproperty) |
-| 10.4.4 | Arguments Exotic Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects) |
-| 10.4.4.1 | [[GetOwnProperty]] ( P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-getownproperty-p) |
-| 10.4.4.2 | [[DefineOwnProperty]] ( P , Desc ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc) |
-| 10.4.4.3 | [[Get]] ( P , Receiver ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-get-p-receiver) |
-| 10.4.4.4 | [[Set]] ( P , V , Receiver ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver) |
-| 10.4.4.5 | [[Delete]] ( P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-delete-p) |
-| 10.4.4.6 | CreateUnmappedArgumentsObject ( argumentsList ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-createunmappedargumentsobject) |
-| 10.4.4.7 | CreateMappedArgumentsObject ( func , formals , argumentsList , env ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-createmappedargumentsobject) |
-| 10.4.4.7.1 | MakeArgGetter ( name , env ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-makearggetter) |
-| 10.4.4.7.2 | MakeArgSetter ( name , env ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-makeargsetter) |
+| 10.4.4 | Arguments Exotic Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects) |
+| 10.4.4.1 | [[GetOwnProperty]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-getownproperty-p) |
+| 10.4.4.2 | [[DefineOwnProperty]] ( P , Desc ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc) |
+| 10.4.4.3 | [[Get]] ( P , Receiver ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-get-p-receiver) |
+| 10.4.4.4 | [[Set]] ( P , V , Receiver ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver) |
+| 10.4.4.5 | [[Delete]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-delete-p) |
+| 10.4.4.6 | CreateUnmappedArgumentsObject ( argumentsList ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createunmappedargumentsobject) |
+| 10.4.4.7 | CreateMappedArgumentsObject ( func , formals , argumentsList , env ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-createmappedargumentsobject) |
+| 10.4.4.7.1 | MakeArgGetter ( name , env ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-makearggetter) |
+| 10.4.4.7.2 | MakeArgSetter ( name , env ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-makeargsetter) |
 | 10.4.5 | TypedArray Exotic Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-typedarray-exotic-objects) |
 | 10.4.5.1 | [[PreventExtensions]] ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-typedarray-preventextensions) |
 | 10.4.5.2 | [[GetOwnProperty]] ( P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-typedarray-getownproperty) |
@@ -98,7 +98,7 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Arguments objects are plain arrays, not Arguments Exotic Objects | Not Yet Supported | [`Function_Arguments_Basics.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js)<br>[`Function_Arguments_ComputedKey_TriggersBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js) | When referenced, non-arrow functions materialize a JavaScriptRuntime.Array snapshot of the runtime arguments list. Mapped-arguments aliasing, Arguments Exotic Object internal methods, and the accessor helpers from 10.4.4.7 are not implemented. |
+| Arguments objects materialize with mapped/unmapped exotic-object basics | Supported with Limitations | [`Function_Arguments_Basics.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js)<br>[`Function_Arguments_ComputedKey_TriggersBinding.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js)<br>[`Function_Arguments_MappedParameterAliasing.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js)<br>[`Function_Arguments_Unmapped_StrictAndComplex.js`](../../../Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js) | When referenced, non-arrow functions now materialize a dedicated arguments object. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped snapshot semantics. Basic length/indexed access, deletion, and own-key enumeration now work for the covered cases, but full [[DefineOwnProperty]] invariants, callee/caller legacy details, and the exact accessor-helper machinery from 10.4.4.7 remain incomplete. |
 
 ### 10.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-typedarray-exotic-objects))
 

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a5
+				// Method begins at RVA 0x219b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b7
+					// Method begins at RVA 0x21ad
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ae
+				// Method begins at RVA 0x21a4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -95,7 +95,7 @@
 			)
 			// Method begins at RVA 0x210c
 			// Header size: 12
-			// Code size: 132 (0x84)
+			// Code size: 122 (0x7a)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Call_Spread_Basic/dump/Scope,
@@ -105,46 +105,44 @@
 			IL_0000: newobj instance void Modules.Function_Call_Spread_Basic/dump/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject()
-			IL_000c: stfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-			IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0016: ldloc.0
-			IL_0017: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-			IL_001c: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_0021: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_0026: conv.r8
-			IL_0027: box [System.Runtime]System.Double
-			IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0031: pop
-			IL_0032: ldc.r8 0.0
-			IL_003b: stloc.1
-			// loop start (head: IL_003c)
-				IL_003c: ldloc.1
-				IL_003d: ldloc.0
-				IL_003e: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-				IL_0043: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-				IL_0048: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-				IL_004d: conv.r8
-				IL_004e: clt
-				IL_0050: brfalse IL_0082
+			IL_0007: ldloc.0
+			IL_0008: ldnull
+			IL_0009: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[])
+			IL_000e: stfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
+			IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0018: ldloc.0
+			IL_0019: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
+			IL_001e: ldstr "length"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002d: pop
+			IL_002e: ldc.r8 0.0
+			IL_0037: stloc.1
+			// loop start (head: IL_0038)
+				IL_0038: ldloc.1
+				IL_0039: ldloc.0
+				IL_003a: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
+				IL_003f: ldstr "length"
+				IL_0044: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_0049: clt
+				IL_004b: brfalse IL_0078
 
-				IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_005a: ldloc.0
-				IL_005b: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
-				IL_0060: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-				IL_0065: ldloc.1
-				IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0070: pop
-				IL_0071: ldloc.1
-				IL_0072: ldc.r8 1
-				IL_007b: add
-				IL_007c: stloc.1
-				IL_007d: br IL_003c
+				IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0055: ldloc.0
+				IL_0056: ldfld object Modules.Function_Call_Spread_Basic/dump/Scope::arguments
+				IL_005b: ldloc.1
+				IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0066: pop
+				IL_0067: ldloc.1
+				IL_0068: ldc.r8 1
+				IL_0071: add
+				IL_0072: stloc.1
+				IL_0073: br IL_0038
 			// end loop
 
-			IL_0082: ldnull
-			IL_0083: ret
+			IL_0078: ldnull
+			IL_0079: ret
 		} // end of method dump::__js_call__
 
 	} // end of class dump
@@ -163,7 +161,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x2192
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -272,7 +270,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c0
+		// Method begins at RVA 0x21b6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

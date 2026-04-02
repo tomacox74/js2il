@@ -43,7 +43,7 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
-    private void EmitInitArgumentsObjectIfNeeded(InstructionEncoder ilEncoder, string scopeName)
+    private void EmitInitArgumentsObjectIfNeeded(InstructionEncoder ilEncoder, string scopeName, MethodDescriptor methodDescriptor)
     {
         var callableId = MethodBody.CallableId;
         if (callableId is null || !callableId.NeedsArgumentsObject)
@@ -51,15 +51,62 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
-        // scope.arguments = RuntimeServices.CreateArgumentsObject();
+        EmitInitializeMappedArgumentParameterFieldsIfNeeded(ilEncoder, scopeName, callableId, methodDescriptor);
+
         ilEncoder.LoadLocal(0);
+        // scope.arguments = RuntimeServices.CreateArgumentsObject(scope, mappedParameterNames);
+        ilEncoder.LoadLocal(0);
+        EmitLoadArgumentsParameterNamesArray(ilEncoder, callableId.ArgumentsParameterNames);
         var createArgsRef = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.RuntimeServices),
             nameof(JavaScriptRuntime.RuntimeServices.CreateArgumentsObject),
-            Type.EmptyTypes);
+            new[] { typeof(object), typeof(string[]) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(createArgsRef);
         EmitStoreFieldByName(ilEncoder, scopeName, "arguments");
+    }
+
+    private void EmitInitializeMappedArgumentParameterFieldsIfNeeded(InstructionEncoder ilEncoder, string scopeName, CallableId callableId, MethodDescriptor methodDescriptor)
+    {
+        if (!callableId.UsesMappedArgumentsObject || callableId.ArgumentsParameterNames.Count == 0)
+        {
+            return;
+        }
+
+        for (var i = 0; i < callableId.ArgumentsParameterNames.Count; i++)
+        {
+            var parameterName = callableId.ArgumentsParameterNames[i];
+            if (!_scopeMetadataRegistry.TryGetFieldHandle(scopeName, parameterName, out var fieldHandle))
+            {
+                continue;
+            }
+
+            ilEncoder.LoadLocal(0);
+            ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, i));
+            ilEncoder.OpCode(ILOpCode.Stfld);
+            ilEncoder.Token(fieldHandle);
+        }
+    }
+
+    private void EmitLoadArgumentsParameterNamesArray(InstructionEncoder ilEncoder, IReadOnlyList<string> parameterNames)
+    {
+        if (parameterNames.Count == 0)
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            return;
+        }
+
+        ilEncoder.LoadConstantI4(parameterNames.Count);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.StringType);
+
+        for (var i = 0; i < parameterNames.Count; i++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(i);
+            ilEncoder.Ldstr(_metadataBuilder, parameterNames[i]);
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        }
     }
 
     private bool? TryCompileInstructionToIL_LeafScopeInstance(
@@ -112,7 +159,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
 
-                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName, methodDescriptor);
 
                         // Build modified scopes array with leaf at [0]
                         ilEncoder.LoadLocal(0); // leafScope
@@ -299,7 +346,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
 
-                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName, methodDescriptor);
 
                         // Build modified scopes array using runtime helper:
                         // scopes = Promise.PrependScopeToArray(leafScope, scopes)
@@ -539,7 +586,7 @@ internal sealed partial class LIRToILCompiler
 
                         EmitInitModuleParameterFieldsIfNeeded(ilEncoder, methodDescriptor, scopeName);
 
-                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName);
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName, methodDescriptor);
                     }
                     break;
                 }

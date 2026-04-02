@@ -104,7 +104,10 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        // Currently we only support the 'length' property
+        // Length is only safe to intrinsic-lower when the receiver's length semantics are fixed
+        // and always numeric. Arguments objects and plain objects expose length as normal
+        // configurable properties, so they must use generic property access to preserve cases
+        // like delete arguments.length -> undefined.
         if (propAccessExpr.PropertyName == "length")
         {
             var lengthReceiver = objectTemp;
@@ -128,9 +131,43 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            var boxedObject = EnsureObject(lengthReceiver);
-            _methodBodyIR.Instructions.Add(new LIRGetLength(boxedObject, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            static bool HasIntrinsicNumericLength(Type? clrType)
+            {
+                if (clrType == null)
+                {
+                    return false;
+                }
+
+                return clrType == typeof(JavaScriptRuntime.Array)
+                    || typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(clrType)
+                    || typeof(JavaScriptRuntime.Node.Buffer).IsAssignableFrom(clrType)
+                    || typeof(Delegate).IsAssignableFrom(clrType);
+            }
+
+            Type? stableReceiverType = null;
+            if (propAccessExpr.Object is HIRVariableExpression lengthReceiverVarExpr
+                && lengthReceiverVarExpr.Name.BindingInfo.IsStableType)
+            {
+                stableReceiverType = lengthReceiverVarExpr.Name.BindingInfo.ClrType;
+            }
+
+            if ((receiverStorage.Kind == ValueStorageKind.Reference && HasIntrinsicNumericLength(receiverStorage.ClrType))
+                || HasIntrinsicNumericLength(stableReceiverType))
+            {
+                var boxedObject = EnsureObject(lengthReceiver);
+                _methodBodyIR.Instructions.Add(new LIRGetLength(boxedObject, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+
+            var lengthKeyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, lengthKeyTemp));
+            DefineTempStorage(lengthKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var boxedLengthReceiver = EnsureObject(lengthReceiver);
+            var boxedLengthKey = EnsureObject(lengthKeyTemp);
+            _methodBodyIR.Instructions.Add(new LIRGetItem(boxedLengthReceiver, boxedLengthKey, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 

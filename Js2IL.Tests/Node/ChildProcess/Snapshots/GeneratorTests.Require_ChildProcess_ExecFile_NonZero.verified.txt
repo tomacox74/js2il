@@ -177,15 +177,15 @@
 			IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0101: ldstr "stdout length:"
 			IL_0106: ldarg.3
-			IL_0107: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_010c: box [System.Runtime]System.Double
+			IL_0107: ldstr "length"
+			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_0111: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0116: pop
 			IL_0117: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_011c: ldstr "stderr length:"
 			IL_0121: ldarg.s stderr
-			IL_0123: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0128: box [System.Runtime]System.Double
+			IL_0123: ldstr "length"
+			IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0132: pop
 			IL_0133: ldarg.0
