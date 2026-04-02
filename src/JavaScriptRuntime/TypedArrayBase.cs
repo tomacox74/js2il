@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
@@ -646,6 +647,7 @@ namespace JavaScriptRuntime
             });
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private double GetElement(double index)
         {
             if (!TryGetElementIndex(index, out var elementIndex))
@@ -656,6 +658,7 @@ namespace JavaScriptRuntime
             return ReadElementValue(elementIndex);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SetElement(double index, double value)
         {
             if (!TryGetElementIndex(index, out var elementIndex))
@@ -666,16 +669,16 @@ namespace JavaScriptRuntime
             WriteElementValue(elementIndex, value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TryGetElementIndex(double index, out int elementIndex)
         {
             if (!double.IsNaN(index)
                 && !double.IsInfinity(index)
-                && index % 1.0 == 0.0
                 && index >= 0
                 && index <= int.MaxValue)
             {
                 var candidate = (int)index;
-                if ((uint)candidate < (uint)_length)
+                if (candidate == index && (uint)candidate < (uint)_length)
                 {
                     elementIndex = candidate;
                     return true;

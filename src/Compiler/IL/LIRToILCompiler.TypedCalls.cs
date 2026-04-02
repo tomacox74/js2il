@@ -19,7 +19,7 @@ internal sealed partial class LIRToILCompiler
 
         if (IsMaterialized(instruction.Result, allocation))
         {
-            EmitBoxIfNeededForTypedCallResult(instruction.Result, instruction.ReturnClrType, ilEncoder);
+            EmitBoxIfNeededForTypedCallResult(instruction.Result, instruction.ReturnClrType, ilEncoder, allocation);
             EmitStoreTemp(instruction.Result, ilEncoder, allocation);
         }
         else
@@ -28,9 +28,9 @@ internal sealed partial class LIRToILCompiler
         }
     }
 
-    private void EmitBoxIfNeededForTypedCallResult(TempVariable resultTemp, Type returnClrType, InstructionEncoder ilEncoder)
+    private void EmitBoxIfNeededForTypedCallResult(TempVariable resultTemp, Type returnClrType, InstructionEncoder ilEncoder, TempLocalAllocation allocation)
     {
-        var resultStorage = GetTempStorage(resultTemp);
+        var resultStorage = GetMaterializedTempStorage(resultTemp, allocation);
         if (resultStorage.Kind == ValueStorageKind.Reference
             && resultStorage.ClrType == typeof(object)
             && returnClrType != typeof(object)
@@ -39,6 +39,29 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.OpCode(ILOpCode.Box);
             ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(returnClrType));
         }
+    }
+
+    private ValueStorage GetMaterializedTempStorage(TempVariable temp, TempLocalAllocation allocation)
+    {
+        if (temp.Index >= 0 && temp.Index < MethodBody.TempVariableSlots.Count)
+        {
+            var variableSlot = MethodBody.TempVariableSlots[temp.Index];
+            if (variableSlot >= 0 && variableSlot < MethodBody.VariableStorages.Count)
+            {
+                return MethodBody.VariableStorages[variableSlot];
+            }
+        }
+
+        if (allocation.IsMaterialized(temp))
+        {
+            var tempSlot = allocation.GetSlot(temp);
+            if (tempSlot >= 0 && tempSlot < allocation.SlotStorages.Count)
+            {
+                return allocation.SlotStorages[tempSlot];
+            }
+        }
+
+        return GetTempStorage(temp);
     }
 
     private void EmitCallTypedMemberNoFallbackCore(

@@ -488,6 +488,14 @@ internal sealed partial class LIRToILCompiler
 
                     if (IsMaterialized(callUserClass.Result, allocation))
                     {
+                        if (GetMaterializedTempStorage(callUserClass.Result, allocation) is { Kind: ValueStorageKind.Reference, ClrType: Type clrType }
+                            && clrType == typeof(object)
+                            && GetTempStorage(callUserClass.Result) is { Kind: ValueStorageKind.UnboxedValue, ClrType: Type resultClrType })
+                        {
+                            ilEncoder.OpCode(ILOpCode.Box);
+                            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(resultClrType));
+                        }
+
                         EmitStoreTemp(callUserClass.Result, ilEncoder, allocation);
                     }
                     else
