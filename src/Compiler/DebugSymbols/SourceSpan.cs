@@ -1,5 +1,6 @@
 using Acornima;
 using Acornima.Ast;
+using System.Reflection.Metadata;
 
 namespace Js2IL.DebugSymbols;
 
@@ -19,6 +20,8 @@ public readonly record struct SourceSpan(string Document, SourcePosition Start, 
 {
     public override string ToString() => $"{Document}:{Start}-{End}";
 
+    public bool IsHidden => Start.Line == SequencePoint.HiddenLine && End.Line == SequencePoint.HiddenLine;
+
     public static SourceSpan FromNode(Node node, string document)
     {
         var loc = node.Location;
@@ -31,4 +34,10 @@ public readonly record struct SourceSpan(string Document, SourcePosition Start, 
             SourcePosition.FromAcornima(loc.Start),
             SourcePosition.FromAcornima(loc.End));
     }
+
+    public static SourceSpan Hidden(string document)
+        => new(
+            document,
+            new SourcePosition(SequencePoint.HiddenLine, 1),
+            new SourcePosition(SequencePoint.HiddenLine, 1));
 }

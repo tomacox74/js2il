@@ -1,5 +1,7 @@
 using Acornima.Ast;
+using Js2IL.DebugSymbols;
 using Js2IL.Services;
+using Js2IL.Utilities;
 using Js2IL.Validation;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -273,7 +275,13 @@ public class ModuleLoader
 
         var moduleRecord = BuildModuleRecord(ast, moduleDependencies);
 
-        if (!TryRewriteStaticModuleSyntax(jsSource, ast, out var rewrittenSource, out var rewriteError))
+        if (!TryRewriteStaticModuleSyntax(
+            jsSource,
+            ast,
+            sourceFileForDebugging,
+            out var rewrittenSource,
+            out var topLevelDebugSpanOverrides,
+            out var rewriteError))
         {
             module = null;
             diagnostics.AddParseError(modulePath, rewriteError ?? "Failed to rewrite ES module syntax.");
@@ -291,6 +299,21 @@ public class ModuleLoader
             {
                 module = null;
                 diagnostics.AddParseError(modulePath, $"Failed to parse rewritten ES module syntax: {ex.Message}");
+                return false;
+            }
+        }
+
+        Dictionary<Node, SourceSpan>? debugSequencePointOverrides = null;
+        if (topLevelDebugSpanOverrides.Count > 0)
+        {
+            if (!TryCreateTopLevelDebugSequencePointOverrides(
+                ast,
+                topLevelDebugSpanOverrides,
+                out debugSequencePointOverrides,
+                out var debugOverrideError))
+            {
+                module = null;
+                diagnostics.AddParseError(modulePath, debugOverrideError ?? "Failed to align rewritten debug sequence points.");
                 return false;
             }
         }
@@ -339,6 +362,14 @@ public class ModuleLoader
             Ast = ast,
             ModuleRecord = moduleRecord
         };
+
+        if (debugSequencePointOverrides != null)
+        {
+            foreach (var (node, span) in debugSequencePointOverrides)
+            {
+                module.DebugSequencePointOverrides[node] = span;
+            }
+        }
 
         module.Dependencies.AddRange(moduleDependencies);
 
@@ -467,6 +498,8 @@ function __js2il_esm_export(name, getter) {
         }
     }
 
+    private readonly record struct TopLevelDebugSpanOverride(SourceSpan Span, bool HideGeneratedCallables);
+
     private static string ApplyTextEdits(string source, List<TextEdit> edits)
     {
         if (edits.Count == 0)
@@ -588,7 +621,8 @@ function __js2il_esm_export(name, getter) {
         ImportDeclaration importDeclaration,
         string source,
         ref int tempCounter,
-        List<string> importPrelude,
+        SourceSpan debugSpan,
+        List<(string Text, SourceSpan Span)> importPrelude,
         Dictionary<string, string> importedBindings)
     {
         if (importDeclaration.Attributes.Count > 0)
@@ -599,12 +633,12 @@ function __js2il_esm_export(name, getter) {
         var importSourceLiteral = GetNodeSource(source, importDeclaration.Source);
         if (importDeclaration.Specifiers.Count == 0)
         {
-            importPrelude.Add($"require({importSourceLiteral});");
+            importPrelude.Add(($"require({importSourceLiteral});", debugSpan));
             return;
         }
 
         var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
-        importPrelude.Add($"var {moduleTemp} = require({importSourceLiteral});");
+        importPrelude.Add(($"var {moduleTemp} = require({importSourceLiteral});", debugSpan));
 
         foreach (var specifier in importDeclaration.Specifiers)
         {
@@ -623,7 +657,7 @@ function __js2il_esm_export(name, getter) {
                     {
                         throw new NotSupportedException("Namespace import local binding must be an identifier");
                     }
-                    importPrelude.Add($"var {namespaceLocal.Name} = __js2il_esm_namespace({moduleTemp});");
+                    importPrelude.Add(($"var {namespaceLocal.Name} = __js2il_esm_namespace({moduleTemp});", debugSpan));
                     break;
 
                 case ImportSpecifier importSpecifier:
@@ -1234,9 +1268,16 @@ function __js2il_esm_export(name, getter) {
         }
     }
 
-    private bool TryRewriteStaticModuleSyntax(string source, Acornima.Ast.Program ast, out string rewrittenSource, out string? error)
+    private bool TryRewriteStaticModuleSyntax(
+        string source,
+        Acornima.Ast.Program ast,
+        string debugDocumentId,
+        out string rewrittenSource,
+        out List<TopLevelDebugSpanOverride> topLevelDebugSpanOverrides,
+        out string? error)
     {
         rewrittenSource = source;
+        topLevelDebugSpanOverrides = new List<TopLevelDebugSpanOverride>();
         error = null;
 
         var topLevelModuleStatements = new HashSet<Node>(ReferenceEqualityComparer.Instance);
@@ -1305,8 +1346,8 @@ function __js2il_esm_export(name, getter) {
         }
 
         var exportPreludeDeclarations = new List<string>();
-        var exportPrelude = new List<string>();
-        var importPrelude = new List<string>();
+        var exportPrelude = new List<(string Text, SourceSpan Span)>();
+        var importPrelude = new List<(string Text, SourceSpan Span)>();
         var importedBindings = new Dictionary<string, string>(StringComparer.Ordinal);
         var edits = new List<TextEdit>();
         var tempCounter = 0;
@@ -1320,12 +1361,19 @@ function __js2il_esm_export(name, getter) {
                 {
                     case ImportDeclaration importDeclaration:
                         rewrittenAny = true;
-                        AppendImportPrelude(importDeclaration, source, ref tempCounter, importPrelude, importedBindings);
+                        AppendImportPrelude(
+                            importDeclaration,
+                            source,
+                            ref tempCounter,
+                            SourceSpan.FromNode(statement, debugDocumentId),
+                            importPrelude,
+                            importedBindings);
                         edits.Add(new TextEdit(statement.Start, statement.End, string.Empty));
                         break;
 
                     case ExportNamedDeclaration exportNamedDeclaration:
                         rewrittenAny = true;
+                        var exportSpan = SourceSpan.FromNode(statement, debugDocumentId);
                         if (exportNamedDeclaration.Attributes.Count > 0)
                         {
                             throw new NotSupportedException("Export attributes are not yet supported");
@@ -1351,13 +1399,13 @@ function __js2il_esm_export(name, getter) {
 
                                     foreach (var name in bindingNames.Distinct(StringComparer.Ordinal))
                                     {
-                                        exportPrelude.Add(CreateExportGetterLine(name, name));
+                                        exportPrelude.Add((CreateExportGetterLine(name, name), exportSpan));
                                     }
                                     break;
 
                                 case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
                                     edits.Add(new TextEdit(statement.Start, statement.End, GetNodeSource(source, declarationNode)));
-                                    exportPrelude.Add(CreateExportGetterLine(functionDeclaration.Id.Name, functionDeclaration.Id.Name));
+                                    exportPrelude.Add((CreateExportGetterLine(functionDeclaration.Id.Name, functionDeclaration.Id.Name), exportSpan));
                                     break;
 
                                 case ClassDeclaration:
@@ -1383,11 +1431,12 @@ function __js2il_esm_export(name, getter) {
 
                     case ExportDefaultDeclaration exportDefaultDeclaration:
                         rewrittenAny = true;
+                        var exportDefaultSpan = SourceSpan.FromNode(statement, debugDocumentId);
                         switch (exportDefaultDeclaration.Declaration)
                         {
                             case FunctionDeclaration functionDeclaration when functionDeclaration.Id != null:
                                 edits.Add(new TextEdit(statement.Start, statement.End, GetNodeSource(source, functionDeclaration)));
-                                exportPrelude.Add(CreateExportGetterLine("default", functionDeclaration.Id.Name));
+                                exportPrelude.Add((CreateExportGetterLine("default", functionDeclaration.Id.Name), exportDefaultSpan));
                                 break;
 
                             case ClassDeclaration:
@@ -1419,6 +1468,135 @@ function __js2il_esm_export(name, getter) {
             return true;
         }
 
+        foreach (var statement in ast.Body)
+        {
+            if (!IsDirectivePrologueStatement(statement))
+            {
+                break;
+            }
+
+            topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.FromNode(statement, debugDocumentId), false));
+        }
+
+        foreach (var exportPreludeDeclaration in exportPreludeDeclarations)
+        {
+            if (!AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, exportPreludeDeclaration, debugDocumentId, true, out error))
+            {
+                return false;
+            }
+        }
+
+        if (!AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, "__js2il_esm_mark();", debugDocumentId, false, out error))
+        {
+            return false;
+        }
+
+        foreach (var (line, span) in exportPrelude)
+        {
+            if (!AppendRepeatedSnippetDebugSpans(topLevelDebugSpanOverrides, line, _ => new TopLevelDebugSpanOverride(span, true), out error))
+            {
+                return false;
+            }
+        }
+
+        foreach (var (line, span) in importPrelude)
+        {
+            if (!AppendRepeatedSnippetDebugSpans(topLevelDebugSpanOverrides, line, _ => new TopLevelDebugSpanOverride(span, false), out error))
+            {
+                return false;
+            }
+        }
+
+        foreach (var statement in ast.Body)
+        {
+            if (IsDirectivePrologueStatement(statement))
+            {
+                continue;
+            }
+
+            var originalSpan = SourceSpan.FromNode(statement, debugDocumentId);
+            switch (statement)
+            {
+                case ImportDeclaration:
+                    break;
+
+                case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is VariableDeclaration:
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(originalSpan, false));
+                    break;
+
+                case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is FunctionDeclaration { Id: not null }:
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), false));
+                    break;
+
+                case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is ClassDeclaration:
+                    if (!AppendRepeatedSnippetDebugSpans(
+                        topLevelDebugSpanOverrides,
+                        RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter),
+                        index => new TopLevelDebugSpanOverride(
+                            index == 0 ? SourceSpan.Hidden(debugDocumentId) : originalSpan,
+                            index != 0),
+                        out error))
+                    {
+                        return false;
+                    }
+                    break;
+
+                case ExportNamedDeclaration exportNamedDeclaration:
+                    if (!AppendRepeatedSnippetDebugSpans(
+                        topLevelDebugSpanOverrides,
+                        RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter),
+                        _ => new TopLevelDebugSpanOverride(originalSpan, true),
+                        out error))
+                    {
+                        return false;
+                    }
+                    break;
+
+                case ExportDefaultDeclaration exportDefaultDeclaration when exportDefaultDeclaration.Declaration is FunctionDeclaration { Id: not null }:
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), false));
+                    break;
+
+                case ExportDefaultDeclaration exportDefaultDeclaration when exportDefaultDeclaration.Declaration is ClassDeclaration:
+                    if (!AppendRepeatedSnippetDebugSpans(
+                        topLevelDebugSpanOverrides,
+                        RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter),
+                        index => new TopLevelDebugSpanOverride(
+                            index == 0 ? SourceSpan.Hidden(debugDocumentId) : originalSpan,
+                            index != 0),
+                        out error))
+                    {
+                        return false;
+                    }
+                    break;
+
+                case ExportDefaultDeclaration exportDefaultDeclaration:
+                    if (!AppendRepeatedSnippetDebugSpans(
+                        topLevelDebugSpanOverrides,
+                        RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter),
+                        index => new TopLevelDebugSpanOverride(originalSpan, index != 0),
+                        out error))
+                    {
+                        return false;
+                    }
+                    break;
+
+                case ExportAllDeclaration exportAllDeclaration:
+                    if (!AppendRepeatedSnippetDebugSpans(
+                        topLevelDebugSpanOverrides,
+                        RewriteExportAllDeclaration(exportAllDeclaration, source, ref tempCounter),
+                        _ => new TopLevelDebugSpanOverride(originalSpan, true),
+                        out error))
+                    {
+                        return false;
+                    }
+                    break;
+
+                default:
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(originalSpan, false));
+                    break;
+            }
+        }
+
         var preludeBuilder = new StringBuilder();
         preludeBuilder.AppendLine();
         foreach (var line in exportPreludeDeclarations)
@@ -1426,11 +1604,11 @@ function __js2il_esm_export(name, getter) {
             preludeBuilder.AppendLine(line);
         }
         preludeBuilder.AppendLine("__js2il_esm_mark();");
-        foreach (var line in exportPrelude)
+        foreach (var (line, _) in exportPrelude)
         {
             preludeBuilder.AppendLine(line);
         }
-        foreach (var line in importPrelude)
+        foreach (var (line, _) in importPrelude)
         {
             preludeBuilder.AppendLine(line);
         }
@@ -1461,7 +1639,142 @@ function __js2il_esm_export(name, getter) {
         builder.AppendLine();
         builder.AppendLine(EsModuleInteropPrelude);
         rewrittenSource = builder.ToString();
+
+        if (!AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, EsModuleInteropPrelude, debugDocumentId, true, out error))
+        {
+            return false;
+        }
+
         return true;
+    }
+
+    private bool TryCreateTopLevelDebugSequencePointOverrides(
+        Acornima.Ast.Program ast,
+        IReadOnlyList<TopLevelDebugSpanOverride> topLevelDebugSpanOverrides,
+        out Dictionary<Node, SourceSpan>? overrides,
+        out string? error)
+    {
+        overrides = null;
+        error = null;
+
+        if (topLevelDebugSpanOverrides.Count == 0)
+        {
+            overrides = new Dictionary<Node, SourceSpan>(ReferenceEqualityComparer.Instance);
+            return true;
+        }
+
+        if (ast.Body.Count != topLevelDebugSpanOverrides.Count)
+        {
+            error = $"Internal debug sequence point mapping mismatch: expected {ast.Body.Count} top-level statements after rewrite, but built {topLevelDebugSpanOverrides.Count} debug spans.";
+            return false;
+        }
+
+        overrides = new Dictionary<Node, SourceSpan>(ReferenceEqualityComparer.Instance);
+        var overrideMap = overrides;
+        for (var i = 0; i < ast.Body.Count; i++)
+        {
+            var statement = ast.Body[i];
+            var topLevelOverride = topLevelDebugSpanOverrides[i];
+            overrideMap[statement] = topLevelOverride.Span;
+
+            if (!topLevelOverride.HideGeneratedCallables)
+            {
+                continue;
+            }
+
+            var documentId = topLevelOverride.Span.Document;
+            var hiddenSpan = SourceSpan.Hidden(documentId);
+            var hideEntireStatementSubtree = topLevelOverride.Span.IsHidden;
+            var walker = new AstWalker();
+            walker.Visit(statement, node =>
+            {
+                if (ReferenceEquals(node, statement))
+                {
+                    if (hideEntireStatementSubtree)
+                    {
+                        AddHiddenStatementOverrides(node, hiddenSpan, overrideMap);
+                    }
+
+                    return;
+                }
+
+                if (hideEntireStatementSubtree)
+                {
+                    return;
+                }
+
+                if (IsGeneratedCallableNode(node))
+                {
+                    AddHiddenStatementOverrides(node, hiddenSpan, overrideMap);
+                }
+            });
+        }
+
+        return true;
+    }
+
+    private bool AppendRepeatedSnippetDebugSpans(
+        List<TopLevelDebugSpanOverride> spans,
+        string snippet,
+        Func<int, TopLevelDebugSpanOverride> spanFactory,
+        out string? error)
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(snippet))
+        {
+            return true;
+        }
+
+        Acornima.Ast.Program snippetAst;
+        try
+        {
+            snippetAst = _parser.ParseJavaScript(snippet, "rewritten.js");
+        }
+        catch (Exception ex)
+        {
+            error = $"Failed to parse rewritten module debug mapping snippet: {ex.Message}";
+            return false;
+        }
+
+        for (var i = 0; i < snippetAst.Body.Count; i++)
+        {
+            spans.Add(spanFactory(i));
+        }
+
+        return true;
+    }
+
+    private bool AppendHiddenSnippetDebugSpans(
+        List<TopLevelDebugSpanOverride> spans,
+        string snippet,
+        string debugDocumentId,
+        bool hideGeneratedCallables,
+        out string? error)
+    {
+        return AppendRepeatedSnippetDebugSpans(
+            spans,
+            snippet,
+            _ => new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), hideGeneratedCallables),
+            out error);
+    }
+
+    private static bool IsGeneratedCallableNode(Node node)
+    {
+        return node is FunctionDeclaration
+            or FunctionExpression
+            or ArrowFunctionExpression;
+    }
+
+    private static void AddHiddenStatementOverrides(Node node, SourceSpan hiddenSpan, Dictionary<Node, SourceSpan> overrides)
+    {
+        var walker = new AstWalker();
+        walker.Visit(node, child =>
+        {
+            if (child is Statement statement)
+            {
+                overrides[statement] = hiddenSpan;
+            }
+        });
     }
 
     private static bool TryRewriteTopLevelModuleStatement(
