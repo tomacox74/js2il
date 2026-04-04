@@ -156,6 +156,15 @@ Suggested approach:
 - Throw an exception and verify stack trace file/line
 - Inspect with ILSpy/ilspycmd
 
+### Current validation status
+- Automated coverage now verifies source-mapped stack traces for both plain scripts and rewritten ES module `import`/`export` flows (`Js2IL.Tests.DebugSymbols.JavaScriptErrorStackTraceTests`).
+- Rewritten module sequence-point coverage also verifies original-source coordinates for both top-level statements and nested user-authored callables (`Js2IL.Tests.DebugSymbols.PortablePdbSequencePointTests`).
+
+### Current debugger limitations
+- Uncaptured locals emit Portable PDB `LocalVariable` entries, but captured closure / scope-class variables are still surfaced through generated scope objects plus `DebuggerDisplay` rather than ordinary debugger local slots.
+- Generated helper code for rewritten module interop is hidden from sequence points, but stepping can still be rough around other compiler-generated helper/runtime paths compared with a native JavaScript debugger.
+- The JavaScript `debugger` statement itself is still unsupported and rejected during AST validation.
+
 ## Risks & Mitigations
 - **Line/column drift** due to lowering: start with statement-level points and mark generated IL as hidden
 - **Performance overhead**: keep feature opt-in; avoid heavy per-instruction bookkeeping

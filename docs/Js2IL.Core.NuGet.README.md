@@ -75,7 +75,8 @@ Given an input like `C:\code\sample.js`, JS2IL emits the following into the outp
 - `StrictMode`
   - Controls how missing `"use strict"` directive prologues are reported.
 - `EmitPdb`
-  - Emits Portable PDB symbols next to the generated assembly.
+  - Emits Portable PDB symbols next to the generated assembly, mapping both plain scripts and rewritten `import` / `export` modules back to the original source path for breakpoints and stack traces.
+  - Uncaptured locals emit debugger local names; captured closure variables currently remain visible through generated scope types instead of ordinary local slots.
 - `GenerateModuleExportContracts`
   - Emits typed CommonJS export contracts for .NET hosting scenarios.
 

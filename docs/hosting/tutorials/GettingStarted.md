@@ -48,6 +48,8 @@ If you pass `--pdb`, it also produces:
 
 - `out\math.pdb`
 
+Portable PDBs map back to the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code, so managed debuggers and source-mapped stack traces resolve the original file and line numbers. Uncaptured locals appear as normal debugger locals; captured closure variables still surface through generated scope objects rather than ordinary local slots.
+
 ## 3) Create a host console app
 
 ```powershell

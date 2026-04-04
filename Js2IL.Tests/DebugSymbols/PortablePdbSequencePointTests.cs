@@ -307,6 +307,67 @@ public class PortablePdbSequencePointTests
         Assert.DoesNotContain(nonHiddenPoints, point => point.StartLine > 12);
     }
 
+    [Fact]
+    public void NestedStatementsInsideBlocks_EmitSequencePoints_ForOriginalSourceLines()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "PortablePdbNestedBlockStatements", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputPath);
+
+        var jsPath = Path.Combine(outputPath, "nested-blocks.js");
+        var dllPath = Path.Combine(outputPath, "nested-blocks.dll");
+        var pdbPath = Path.Combine(outputPath, "nested-blocks.pdb");
+
+        var js = "\"use strict\";\n"
+               + "try {\n"
+               + "  console.log('a');\n"
+               + "  throw new Error('boom');\n"
+               + "} catch (e) {\n"
+               + "  console.log(e.message);\n"
+               + "}\n";
+
+        File.WriteAllText(jsPath, js);
+
+        var mockFs = new MockFileSystem();
+        mockFs.AddFile(jsPath, js);
+
+        var options = new CompilerOptions
+        {
+            OutputDirectory = outputPath,
+            EmitPdb = true
+        };
+
+        var logger = new TestLogger();
+        var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, logger);
+        var compiler = serviceProvider.GetRequiredService<Compiler>();
+
+        Assert.True(compiler.Compile(jsPath), $"Compilation failed. Errors: {logger.Errors}\nWarnings: {logger.Warnings}");
+        Assert.True(File.Exists(dllPath), $"Expected DLL at '{dllPath}'.");
+        Assert.True(File.Exists(pdbPath), $"Expected PDB at '{pdbPath}'.");
+
+        using var pdbStream = File.OpenRead(pdbPath);
+        using var provider = MetadataReaderProvider.FromPortablePdbStream(pdbStream);
+        var pdbReader = provider.GetMetadataReader();
+
+        var documentHandle = pdbReader.Documents
+            .FirstOrDefault(handle => string.Equals(
+                pdbReader.GetString(pdbReader.GetDocument(handle).Name),
+                jsPath,
+                StringComparison.OrdinalIgnoreCase));
+
+        Assert.False(documentHandle.IsNil, $"Expected a PDB document row for '{jsPath}'.");
+
+        var nonHiddenPoints = pdbReader.MethodDebugInformation
+            .Select(handle => pdbReader.GetMethodDebugInformation(handle))
+            .Where(mdi => mdi.Document == documentHandle && !mdi.SequencePointsBlob.IsNil)
+            .SelectMany(mdi => DecodeSequencePoints(pdbReader, mdi))
+            .Where(point => point.StartLine != SequencePoint.HiddenLine)
+            .ToList();
+
+        Assert.NotEmpty(nonHiddenPoints);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 4);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 6);
+    }
+
     private static List<DecodedSequencePoint> DecodeSequencePoints(MetadataReader pdbReader, MethodDebugInformation mdi)
     {
         var blobReader = pdbReader.GetBlobReader(mdi.SequencePointsBlob);

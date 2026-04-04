@@ -1250,13 +1250,13 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                if (!TryParseStatement(ifStmt.Consequent, out var consequentStmt))
+                if (!TryParseNestedStatement(ifStmt.Consequent, out var consequentStmt))
                 {
                     return false;
                 }
 
                 HIRStatement? alternateStmt = null;
-                if (ifStmt.Alternate != null && !TryParseStatement(ifStmt.Alternate, out alternateStmt))
+                if (ifStmt.Alternate != null && !TryParseNestedStatement(ifStmt.Alternate, out alternateStmt))
                 {
                     return false;
                 }
@@ -1276,7 +1276,7 @@ class HIRMethodBuilder
                 var blockStatements = new List<HIRStatement>();
                 foreach (var innerStmt in blockStmt.Body)
                 {
-                    if (!TryParseStatement(innerStmt, out var innerHir))
+                    if (!TryParseNestedStatement(innerStmt, out var innerHir))
                     {
                         _currentScope = previousScope;
                         return false;
@@ -1385,7 +1385,7 @@ class HIRMethodBuilder
                     }
 
                     // Parse body
-                    if (!TryParseStatement(forStmt.Body, out var bodyStmt))
+                    if (!TryParseNestedStatement(forStmt.Body, out var bodyStmt))
                     {
                         _currentScope = previousForScope;
                         return false;
@@ -1514,7 +1514,7 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    if (!TryParseStatement(forOfStmt.Body, out var bodyStmt))
+                    if (!TryParseNestedStatement(forOfStmt.Body, out var bodyStmt))
                     {
                         _currentScope = previousForOfScope;
                         return false;
@@ -1640,7 +1640,7 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    if (!TryParseStatement(forInStmt.Body, out var bodyStmt))
+                    if (!TryParseNestedStatement(forInStmt.Body, out var bodyStmt))
                     {
                         _currentScope = previousForInScope;
                         return false;
@@ -1658,7 +1658,7 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    if (!TryParseStatement(whileStmt.Body, out var bodyStmt))
+                    if (!TryParseNestedStatement(whileStmt.Body, out var bodyStmt))
                     {
                         return false;
                     }
@@ -1669,7 +1669,7 @@ class HIRMethodBuilder
 
             case DoWhileStatement doWhileStmt:
                 {
-                    if (!TryParseStatement(doWhileStmt.Body, out var bodyStmt))
+                    if (!TryParseNestedStatement(doWhileStmt.Body, out var bodyStmt))
                     {
                         return false;
                     }
@@ -1693,7 +1693,9 @@ class HIRMethodBuilder
 
             case LabeledStatement labeledStmt:
                 {
-                    // Support labeled loops and labeled blocks so labeled break can target them.
+                    // Preserve loop-bodied labels as loops so labeled continue can still bind to
+                    // the loop's continue target. Outer nested-statement wrapping applies to the
+                    // labeled statement node itself when needed.
                     if (!TryParseStatement(labeledStmt.Body, out var labeledBody))
                     {
                         return false;
@@ -1737,7 +1739,7 @@ class HIRMethodBuilder
                         var consequent = new List<HIRStatement>();
                         foreach (var consStmt in sc.Consequent)
                         {
-                            if (!TryParseStatement(consStmt, out var consHir))
+                            if (!TryParseNestedStatement(consStmt, out var consHir))
                             {
                                 return false;
                             }
@@ -1753,7 +1755,7 @@ class HIRMethodBuilder
 
             case TryStatement tryStmt:
                 {
-                    if (!TryParseStatement(tryStmt.Block, out var tryBlock))
+                    if (!TryParseNestedStatement(tryStmt.Block, out var tryBlock))
                     {
                         return false;
                     }
@@ -1763,7 +1765,7 @@ class HIRMethodBuilder
                     if (tryStmt.Handler != null)
                     {
                         // Catch clause body is a BlockStatement; parsing it will enter the correct child scope.
-                        if (!TryParseStatement(tryStmt.Handler.Body, out catchBody))
+                        if (!TryParseNestedStatement(tryStmt.Handler.Body, out catchBody))
                         {
                             return false;
                         }
@@ -1785,7 +1787,7 @@ class HIRMethodBuilder
                     HIRStatement? finallyBody = null;
                     if (tryStmt.Finalizer != null)
                     {
-                        if (!TryParseStatement(tryStmt.Finalizer, out finallyBody))
+                        if (!TryParseNestedStatement(tryStmt.Finalizer, out finallyBody))
                         {
                             return false;
                         }
@@ -1827,6 +1829,36 @@ class HIRMethodBuilder
         }
 
         return false;
+    }
+
+    private bool TryParseNestedStatement(Acornima.Ast.Statement statement, out HIRStatement? hirStatement)
+    {
+        hirStatement = null;
+        if (!TryParseStatement(statement, out var parsedStatement))
+        {
+            return false;
+        }
+
+        if (statement is BlockStatement
+            || parsedStatement is HIRBlock { Statements.IsDefaultOrEmpty: true })
+        {
+            hirStatement = parsedStatement;
+            return true;
+        }
+
+        var span = TryGetDebugSequencePointOverride(statement, out var overrideSpan)
+            ? overrideSpan
+            : SourceSpan.FromNode(statement, GetCurrentDocumentId());
+
+        hirStatement = new HIRBlock(new HIRStatement[]
+        {
+            new HIRSequencePointStatement
+            {
+                Span = span
+            },
+            parsedStatement!
+        });
+        return true;
     }
 
     private static string GetRegistryClassName(Scope classScope)
