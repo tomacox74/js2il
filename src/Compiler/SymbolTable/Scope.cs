@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using Js2IL.DebugSymbols;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +26,7 @@ public class Scope
     public Scope? Parent { get; }
     public List<Scope> Children { get; } = new();
     public Dictionary<string, BindingInfo> Bindings { get; } = new();
+    public Dictionary<Node, SourceSpan> DebugSequencePointOverrides { get; } = new(ReferenceEqualityComparer.Instance);
 
     /// <summary>
     /// Stable inferred CLR types for JavaScript class instance fields.

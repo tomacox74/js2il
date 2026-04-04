@@ -92,6 +92,11 @@ internal static class PortablePdbEmitter
 
         static (int startLine, int startColumn, int endLine, int endColumn) NormalizeSpan(SourceSpan span)
         {
+            if (span.IsHidden)
+            {
+                return (SequencePoint.HiddenLine, 0, SequencePoint.HiddenLine, 0);
+            }
+
             int startLine = span.Start.Line;
             // Portable PDB uses 0-based columns; our SourceSpan uses 1-based columns for human readability.
             int startColumn = span.Start.Column - 1;
@@ -112,10 +117,6 @@ internal static class PortablePdbEmitter
             {
                 endColumn = startColumn + 1;
             }
-
-            // Avoid the special "hidden" line value unless we explicitly want a hidden sequence point.
-            if (startLine == SequencePoint.HiddenLine) startLine = SequencePoint.HiddenLine - 1;
-            if (endLine == SequencePoint.HiddenLine) endLine = SequencePoint.HiddenLine - 1;
 
             return (startLine, startColumn, endLine, endColumn);
         }

@@ -1099,9 +1099,13 @@ class HIRMethodBuilder
 
         foreach (var statement in statements)
         {
+            var span = TryGetDebugSequencePointOverride(statement, out var overrideSpan)
+                ? overrideSpan
+                : SourceSpan.FromNode(statement, documentId);
+
             hirStatements.Add(new HIRSequencePointStatement
             {
-                Span = SourceSpan.FromNode(statement, documentId)
+                Span = span
             });
 
             if (!TryParseStatement(statement, out var hirStatement))
@@ -1112,6 +1116,23 @@ class HIRMethodBuilder
         }
 
         return true;
+    }
+
+    private bool TryGetDebugSequencePointOverride(Statement statement, out SourceSpan span)
+    {
+        var scope = _rootScope;
+        while (scope != null)
+        {
+            if (scope.DebugSequencePointOverrides.TryGetValue(statement, out span))
+            {
+                return true;
+            }
+
+            scope = scope.Parent;
+        }
+
+        span = default;
+        return false;
     }
 
     private string GetCurrentDocumentId()

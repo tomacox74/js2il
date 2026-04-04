@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/debug/tests: fix rewritten ES module Portable PDB sequence points by mapping both top-level rewrites and nested user-authored callable bodies back to the original source coordinates, hiding generated interop helper code, and adding focused debug-symbol regressions for rewritten import/export files.
 
 ## v0.9.6 - 2026-04-02
 

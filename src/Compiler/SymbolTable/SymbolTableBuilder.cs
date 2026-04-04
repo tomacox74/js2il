@@ -55,6 +55,11 @@ namespace Js2IL.SymbolTables
                 ModuleId = module.ModuleId
             };
 
+            foreach (var (node, span) in module.DebugSequencePointOverrides)
+            {
+                globalScope.DebugSequencePointOverrides[node] = span;
+            }
+
             AddModuleBuiltInParameters(globalScope, module.Ast);
 
             BuildScopeRecursive(globalScope,module.Ast, globalScope);

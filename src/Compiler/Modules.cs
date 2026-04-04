@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using Js2IL.DebugSymbols;
 using Js2IL.SymbolTables;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,8 @@ public sealed class ModuleDefinition
     public ModuleRecord? ModuleRecord { get; set; }
 
     public SymbolTable? SymbolTable { get; set; }
+
+    public Dictionary<Node, SourceSpan> DebugSequencePointOverrides { get; } = new(ReferenceEqualityComparer.Instance);
 }
 
 public sealed class ModuleDependency
