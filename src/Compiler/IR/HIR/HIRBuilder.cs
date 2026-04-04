@@ -1693,8 +1693,10 @@ class HIRMethodBuilder
 
             case LabeledStatement labeledStmt:
                 {
-                    // Support labeled loops and labeled blocks so labeled break can target them.
-                    if (!TryParseNestedStatement(labeledStmt.Body, out var labeledBody))
+                    // Preserve loop-bodied labels as loops so labeled continue can still bind to
+                    // the loop's continue target. Outer nested-statement wrapping applies to the
+                    // labeled statement node itself when needed.
+                    if (!TryParseStatement(labeledStmt.Body, out var labeledBody))
                     {
                         return false;
                     }
