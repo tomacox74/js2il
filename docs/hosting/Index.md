@@ -8,7 +8,7 @@ This page is the **canonical user documentation** for hosting. The older documen
 
 - **No filesystem module loading at runtime**: modules are compiled into an assembly.
 - A dedicated **script thread** per runtime instance.
-- Optional **debug symbols**: compile with `--pdb` to emit a Portable PDB (`.pdb`) next to your compiled module for stepping and better stack traces.
+- Optional **debug symbols**: compile with `--pdb` to emit a Portable PDB (`.pdb`) next to your compiled module for stepping and better stack traces against the original `.js` / `.mjs` source path, including rewritten `import` / `export` module code.
 - Two ways to call exports:
   - **Typed**: use compiler-generated C# contract interfaces and `JsEngine.LoadModule<TExports>()`.
   - **Dynamic**: use `dynamic` with `JsEngine.LoadModule(Assembly, moduleId)`.

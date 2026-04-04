@@ -12,16 +12,8 @@ public class JavaScriptErrorStackTraceTests
     [Fact]
     public void ThrownError_HasSourceMappedStackTrace()
     {
-        var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "JavaScriptErrorStackTrace", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(outputPath);
-
         var baseName = "stacktrace_" + Guid.NewGuid().ToString("N");
         var jsFileName = baseName + ".js";
-        var dllFileName = baseName + ".dll";
-
-        var jsPath = Path.Combine(outputPath, jsFileName);
-        var dllPath = Path.Combine(outputPath, dllFileName);
-
         var js = "\"use strict\";\n" +
                  "function inner() {\n" +
                  "  throw new Error(\"boom\");\n" +
@@ -29,8 +21,100 @@ public class JavaScriptErrorStackTraceTests
                  "function outer() { inner(); }\n" +
                  "try { outer(); } catch (e) { console.log(e.stack); }\n";
 
+        var output = CompileAndRunWithEmitPdb(
+            "JavaScriptErrorStackTrace",
+            jsFileName,
+            new Dictionary<string, string>
+            {
+                [jsFileName] = js
+            });
+
+        // The throw is on line 3 in stacktrace.js.
+        Assert.Contains($"{jsFileName}:line 3", output, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void ThrownError_InRewrittenModuleTopLevelCode_HasOriginalSourceMappedStackTrace()
+    {
+        var suffix = Guid.NewGuid().ToString("N");
+        var rootFileName = $"root_{suffix}.mjs";
+        var depFileName = $"dep_{suffix}.mjs";
+        var rootJs = "\"use strict\";\n" +
+                     $"import defaultValue, {{ namedValue as renamed }} from \"./{depFileName}\";\n" +
+                     "export { renamed as exportedRenamed };\n" +
+                     "try {\n" +
+                     "  throw new Error(String(defaultValue + renamed));\n" +
+                     "} catch (e) {\n" +
+                     "  console.log(e.stack);\n" +
+                     "}\n";
+        var depJs = "\"use strict\";\n" +
+                    "export default 40;\n" +
+                    "export const namedValue = 2;\n";
+
+        var output = CompileAndRunWithEmitPdb(
+            "JavaScriptModuleTopLevelStackTrace",
+            rootFileName,
+            new Dictionary<string, string>
+            {
+                [rootFileName] = rootJs,
+                [depFileName] = depJs
+            });
+
+        Assert.Contains($"{rootFileName}:line 4", output, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("rewritten.js", output, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void ThrownError_InRewrittenModuleNestedCallable_HasOriginalSourceMappedStackTrace()
+    {
+        var suffix = Guid.NewGuid().ToString("N");
+        var rootFileName = $"root_{suffix}.mjs";
+        var depFileName = $"dep_{suffix}.mjs";
+        var rootJs = "\"use strict\";\n" +
+                     $"import defaultValue, {{ namedValue as renamed }} from \"./{depFileName}\";\n" +
+                     "export function explode() {\n" +
+                     "  throw new Error(String(defaultValue + renamed));\n" +
+                     "}\n" +
+                     "try {\n" +
+                     "  explode();\n" +
+                     "} catch (e) {\n" +
+                     "  console.log(e.stack);\n" +
+                     "}\n";
+        var depJs = "\"use strict\";\n" +
+                    "export default 40;\n" +
+                    "export const namedValue = 2;\n";
+
+        var output = CompileAndRunWithEmitPdb(
+            "JavaScriptModuleNestedStackTrace",
+            rootFileName,
+            new Dictionary<string, string>
+            {
+                [rootFileName] = rootJs,
+                [depFileName] = depJs
+            });
+
+        Assert.Contains($"{rootFileName}:line 4", output, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("rewritten.js", output, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string CompileAndRunWithEmitPdb(
+        string scenarioName,
+        string entryFileName,
+        IReadOnlyDictionary<string, string> sources)
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", scenarioName, Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputPath);
+
         var mockFs = new MockFileSystem();
-        mockFs.AddFile(jsPath, js);
+        foreach (var (relativePath, content) in sources)
+        {
+            var absolutePath = Path.Combine(outputPath, relativePath);
+            File.WriteAllText(absolutePath, content);
+            mockFs.AddFile(absolutePath, content);
+        }
+
+        var entryPath = Path.Combine(outputPath, entryFileName);
+        var dllPath = Path.Combine(outputPath, Path.GetFileNameWithoutExtension(entryFileName) + ".dll");
 
         var options = new CompilerOptions
         {
@@ -39,12 +123,17 @@ public class JavaScriptErrorStackTraceTests
         };
 
         var logger = new TestLogger();
-        var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, logger);
+        using var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, logger);
         var compiler = serviceProvider.GetRequiredService<Compiler>();
 
-        Assert.True(compiler.Compile(jsPath), $"Compilation failed. Errors: {logger.Errors}\nWarnings: {logger.Warnings}");
+        Assert.True(compiler.Compile(entryPath), $"Compilation failed. Errors: {logger.Errors}\nWarnings: {logger.Warnings}");
         Assert.True(File.Exists(dllPath), $"Expected DLL at '{dllPath}'.");
 
+        return NormalizeDebugOutput(RunAssemblyAndCaptureOutput(dllPath));
+    }
+
+    private static string RunAssemblyAndCaptureOutput(string dllPath)
+    {
         // Run in-proc while capturing console output (similar to ExecutionTestsBase).
         var modDir = Path.GetDirectoryName(dllPath) ?? string.Empty;
         var file = dllPath;
@@ -75,14 +164,14 @@ public class JavaScriptErrorStackTraceTests
             JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
         }
 
-        var output = captured.GetOutput();
-        // Normalize for Windows paths.
+        return captured.GetOutput();
+    }
+
+    private static string NormalizeDebugOutput(string output)
+    {
         output = output.Replace('\\', '/');
         var temp = Path.GetTempPath().Replace('\\', '/');
-        output = output.Replace(temp, "{TempPath}");
-
-        // The throw is on line 3 in stacktrace.js.
-        Assert.Contains($"{jsFileName}:line 3", output, StringComparison.OrdinalIgnoreCase);
+        return output.Replace(temp, "{TempPath}");
     }
 
     private sealed class CapturingConsoleOutput : IConsoleOutput
