@@ -232,6 +232,81 @@ public class PortablePdbSequencePointTests
         Assert.DoesNotContain(nonHiddenPoints, point => point.StartLine > 4);
     }
 
+    [Fact]
+    public void RewrittenModuleSyntax_MapsNestedCallableSequencePoints_BackToOriginalSourceLines()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "PortablePdbNestedModuleRewrite", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputPath);
+
+        var rootPath = Path.Combine(outputPath, "root.mjs");
+        var depPath = Path.Combine(outputPath, "dep.mjs");
+        var dllPath = Path.Combine(outputPath, "root.dll");
+        var pdbPath = Path.Combine(outputPath, "root.pdb");
+
+        var rootJs = "\"use strict\";\n"
+                   + "import defaultValue, { namedValue as renamed } from \"./dep.mjs\";\n"
+                   + "export function exportedTotal() {\n"
+                   + "  console.log(defaultValue + renamed);\n"
+                   + "}\n"
+                   + "class LocalBox {\n"
+                   + "  value() {\n"
+                   + "    console.log(defaultValue - renamed);\n"
+                   + "  }\n"
+                   + "}\n"
+                   + "exportedTotal();\n"
+                   + "new LocalBox().value();\n";
+        var depJs = "\"use strict\";\n"
+                  + "export default 40;\n"
+                  + "export const namedValue = 2;\n";
+
+        File.WriteAllText(rootPath, rootJs);
+        File.WriteAllText(depPath, depJs);
+
+        var mockFs = new MockFileSystem();
+        mockFs.AddFile(rootPath, rootJs);
+        mockFs.AddFile(depPath, depJs);
+
+        var options = new CompilerOptions
+        {
+            OutputDirectory = outputPath,
+            EmitPdb = true
+        };
+
+        var logger = new TestLogger();
+        var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, logger);
+        var compiler = serviceProvider.GetRequiredService<Compiler>();
+
+        Assert.True(compiler.Compile(rootPath), $"Compilation failed. Errors: {logger.Errors}\nWarnings: {logger.Warnings}");
+        Assert.True(File.Exists(dllPath), $"Expected DLL at '{dllPath}'.");
+        Assert.True(File.Exists(pdbPath), $"Expected PDB at '{pdbPath}'.");
+
+        using var pdbStream = File.OpenRead(pdbPath);
+        using var provider = MetadataReaderProvider.FromPortablePdbStream(pdbStream);
+        var pdbReader = provider.GetMetadataReader();
+
+        var documentHandle = pdbReader.Documents
+            .FirstOrDefault(handle => string.Equals(
+                pdbReader.GetString(pdbReader.GetDocument(handle).Name),
+                rootPath,
+                StringComparison.OrdinalIgnoreCase));
+
+        Assert.False(documentHandle.IsNil, $"Expected a PDB document row for '{rootPath}'.");
+
+        var nonHiddenPoints = pdbReader.MethodDebugInformation
+            .Select(handle => pdbReader.GetMethodDebugInformation(handle))
+            .Where(mdi => mdi.Document == documentHandle && !mdi.SequencePointsBlob.IsNil)
+            .SelectMany(mdi => DecodeSequencePoints(pdbReader, mdi))
+            .Where(point => point.StartLine != SequencePoint.HiddenLine)
+            .ToList();
+
+        Assert.NotEmpty(nonHiddenPoints);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 2);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 4);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 8);
+        Assert.Contains(nonHiddenPoints, point => point.StartLine == 12);
+        Assert.DoesNotContain(nonHiddenPoints, point => point.StartLine > 12);
+    }
+
     private static List<DecodedSequencePoint> DecodeSequencePoints(MetadataReader pdbReader, MethodDebugInformation mdi)
     {
         var blobReader = pdbReader.GetBlobReader(mdi.SequencePointsBlob);

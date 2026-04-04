@@ -498,7 +498,7 @@ function __js2il_esm_export(name, getter) {
         }
     }
 
-    private readonly record struct TopLevelDebugSpanOverride(SourceSpan Span, bool HideGeneratedCallables);
+    private readonly record struct TopLevelDebugSpanOverride(SourceSpan Span, bool HideGeneratedCallables, Node? OriginalSubtree = null);
 
     private static string ApplyTextEdits(string source, List<TextEdit> edits)
     {
@@ -1475,7 +1475,7 @@ function __js2il_esm_export(name, getter) {
                 break;
             }
 
-            topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.FromNode(statement, debugDocumentId), false));
+            topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.FromNode(statement, debugDocumentId), false, statement));
         }
 
         foreach (var exportPreludeDeclaration in exportPreludeDeclarations)
@@ -1520,12 +1520,12 @@ function __js2il_esm_export(name, getter) {
                 case ImportDeclaration:
                     break;
 
-                case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is VariableDeclaration:
-                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(originalSpan, false));
+                case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is VariableDeclaration variableDeclaration:
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(originalSpan, false, variableDeclaration));
                     break;
 
                 case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is FunctionDeclaration { Id: not null }:
-                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), false));
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), false, exportNamedDeclaration.Declaration as Node));
                     break;
 
                 case ExportNamedDeclaration exportNamedDeclaration when exportNamedDeclaration.Declaration is ClassDeclaration:
@@ -1534,7 +1534,8 @@ function __js2il_esm_export(name, getter) {
                         RewriteExportNamedDeclaration(exportNamedDeclaration, source, ref tempCounter),
                         index => new TopLevelDebugSpanOverride(
                             index == 0 ? SourceSpan.Hidden(debugDocumentId) : originalSpan,
-                            index != 0),
+                            index != 0,
+                            index == 0 ? exportNamedDeclaration.Declaration as Node : null),
                         out error))
                     {
                         return false;
@@ -1553,7 +1554,7 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 case ExportDefaultDeclaration exportDefaultDeclaration when exportDefaultDeclaration.Declaration is FunctionDeclaration { Id: not null }:
-                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), false));
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(SourceSpan.Hidden(debugDocumentId), false, exportDefaultDeclaration.Declaration as Node));
                     break;
 
                 case ExportDefaultDeclaration exportDefaultDeclaration when exportDefaultDeclaration.Declaration is ClassDeclaration:
@@ -1562,7 +1563,8 @@ function __js2il_esm_export(name, getter) {
                         RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter),
                         index => new TopLevelDebugSpanOverride(
                             index == 0 ? SourceSpan.Hidden(debugDocumentId) : originalSpan,
-                            index != 0),
+                            index != 0,
+                            index == 0 ? exportDefaultDeclaration.Declaration as Node : null),
                         out error))
                     {
                         return false;
@@ -1573,7 +1575,10 @@ function __js2il_esm_export(name, getter) {
                     if (!AppendRepeatedSnippetDebugSpans(
                         topLevelDebugSpanOverrides,
                         RewriteExportDefaultDeclaration(exportDefaultDeclaration, source, ref tempCounter),
-                        index => new TopLevelDebugSpanOverride(originalSpan, index != 0),
+                        index => new TopLevelDebugSpanOverride(
+                            originalSpan,
+                            index != 0,
+                            index == 0 ? exportDefaultDeclaration.Declaration as Node : null),
                         out error))
                     {
                         return false;
@@ -1592,7 +1597,7 @@ function __js2il_esm_export(name, getter) {
                     break;
 
                 default:
-                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(originalSpan, false));
+                    topLevelDebugSpanOverrides.Add(new TopLevelDebugSpanOverride(originalSpan, false, statement));
                     break;
             }
         }
@@ -1676,6 +1681,12 @@ function __js2il_esm_export(name, getter) {
             var statement = ast.Body[i];
             var topLevelOverride = topLevelDebugSpanOverrides[i];
             overrideMap[statement] = topLevelOverride.Span;
+
+            if (topLevelOverride.OriginalSubtree != null
+                && !TryAddNestedStatementOverrides(topLevelOverride.OriginalSubtree, statement, topLevelOverride.Span.Document, overrideMap, out error))
+            {
+                return false;
+            }
 
             if (!topLevelOverride.HideGeneratedCallables)
             {
@@ -1775,6 +1786,47 @@ function __js2il_esm_export(name, getter) {
                 overrides[statement] = hiddenSpan;
             }
         });
+    }
+
+    private static bool TryAddNestedStatementOverrides(
+        Node originalSubtree,
+        Statement rewrittenStatement,
+        string debugDocumentId,
+        Dictionary<Node, SourceSpan> overrides,
+        out string? error)
+    {
+        error = null;
+
+        var originalStatements = CollectStatementDescendants(originalSubtree);
+        var rewrittenStatements = CollectStatementDescendants(rewrittenStatement);
+
+        if (originalStatements.Count != rewrittenStatements.Count)
+        {
+            error = $"Internal debug sequence point mapping mismatch: expected {originalStatements.Count} nested statements, but found {rewrittenStatements.Count} after rewrite.";
+            return false;
+        }
+
+        for (var i = 0; i < originalStatements.Count; i++)
+        {
+            overrides[rewrittenStatements[i]] = SourceSpan.FromNode(originalStatements[i], debugDocumentId);
+        }
+
+        return true;
+    }
+
+    private static List<Statement> CollectStatementDescendants(Node node)
+    {
+        var statements = new List<Statement>();
+        var walker = new AstWalker();
+        walker.Visit(node, child =>
+        {
+            if (child is Statement statement && !ReferenceEquals(child, node))
+            {
+                statements.Add(statement);
+            }
+        });
+
+        return statements;
     }
 
     private static bool TryRewriteTopLevelModuleStatement(
