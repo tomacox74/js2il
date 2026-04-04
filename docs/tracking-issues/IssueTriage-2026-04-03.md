@@ -5,16 +5,16 @@ This file captures a point-in-time recommended ordering for all currently open G
 Synced to:
 - Repo: `master` @ `143929f1`
 - Latest release on `master`: `v0.9.6` via PR [#937](https://github.com/tomacox74/js2il/pull/937)
-- Active review branches at latest update: none
-- GitHub: open issues / PR state as of 2026-04-04 after merging PR [#941](https://github.com/tomacox74/js2il/pull/941)
+- Active review branches at latest update: `copilot/issue-919-debugger-followup-20260404` via PR [#942](https://github.com/tomacox74/js2il/pull/942)
+- GitHub: open issues / PR state as of 2026-04-04 with PR [#942](https://github.com/tomacox74/js2il/pull/942) open for review
 - Open issues: 22
-- Open PRs: 0
+- Open PRs: 1
 
 ## What changed since the previous snapshot
 
 - `master` moved past the original 2026-04-03 snapshot in two important ways: commit `a4e275f4` landed the core rewritten-module sequence-point mapping work behind [#919](https://github.com/tomacox74/js2il/issues/919), and PR [#941](https://github.com/tomacox74/js2il/pull/941) upgraded the GitHub Actions workflows to the newer supported Node runtime.
-- Because the rewrite-aware debug mapping work is already on `master`, [#919](https://github.com/tomacox74/js2il/issues/919) is no longer the primary code-implementation item in the backlog; it is now a narrower debugger-validation / documentation closeout item.
-- The active review queue is still empty on `master`, so there is no merge-first work left ahead of the issue backlog.
+- Because the rewrite-aware debug mapping work is already on `master`, [#919](https://github.com/tomacox74/js2il/issues/919) is no longer the primary code-implementation item in the backlog; PR [#942](https://github.com/tomacox74/js2il/pull/942) now carries the narrower debugger-validation / documentation closeout for that issue.
+- The active review queue is no longer empty: PR [#942](https://github.com/tomacox74/js2il/pull/942) is open, so the immediate merge-first work is to review and land that debugger follow-up before taking the next issue from `master`.
 - The open issue count is still 22, with the backlog shape unchanged at a high level: the `test262` umbrella and child set [#927](https://github.com/tomacox74/js2il/issues/927)-[#934](https://github.com/tomacox74/js2il/issues/934), the deferred performance lane, and the remaining bounded follow-ons [#841](https://github.com/tomacox74/js2il/issues/841), [#842](https://github.com/tomacox74/js2il/issues/842), [#919](https://github.com/tomacox74/js2il/issues/919), and [#935](https://github.com/tomacox74/js2il/issues/935).
 - The remaining backlog is now shaped much differently than it was in late March:
   - 8 `test262` adoption issues ([#927](https://github.com/tomacox74/js2il/issues/927)-[#934](https://github.com/tomacox74/js2il/issues/934))
@@ -72,8 +72,8 @@ Synced to:
 
 ## Execution notes
 
-- **No active review queue remains:** there are currently no open PRs on `master`, so the next work can start directly instead of finishing review branches first.
-- **Immediate top-of-stack track:** [#935](https://github.com/tomacox74/js2il/issues/935) and [#842](https://github.com/tomacox74/js2il/issues/842) are now the clearest bounded next shipping slices, while [#919](https://github.com/tomacox74/js2il/issues/919) has been narrowed to debugger validation/docs closeout work.
+- **Active review queue:** PR [#942](https://github.com/tomacox74/js2il/pull/942) is the one open review item and should be resolved before starting another implementation branch from `master`.
+- **Immediate top-of-stack track after the active review clears:** [#935](https://github.com/tomacox74/js2il/issues/935) and [#842](https://github.com/tomacox74/js2il/issues/842) are now the clearest bounded next shipping slices, while [#919](https://github.com/tomacox74/js2il/issues/919) is already in review-focused closeout work.
 - **`test262` track:** use [#927](https://github.com/tomacox74/js2il/issues/927) as the parent, then deliver [#928](https://github.com/tomacox74/js2il/issues/928) -> [#929](https://github.com/tomacox74/js2il/issues/929) -> [#930](https://github.com/tomacox74/js2il/issues/930) -> [#931](https://github.com/tomacox74/js2il/issues/931) -> [#932](https://github.com/tomacox74/js2il/issues/932) -> [#933](https://github.com/tomacox74/js2il/issues/933), leaving [#934](https://github.com/tomacox74/js2il/issues/934) as the deliberate post-MVP expansion bucket.
 - **Performance track:** [#451](https://github.com/tomacox74/js2il/issues/451) -> [#737](https://github.com/tomacox74/js2il/issues/737) remains the best general optimization path; [#738](https://github.com/tomacox74/js2il/issues/738) stays the Prime umbrella with [#742](https://github.com/tomacox74/js2il/issues/742) / [#743](https://github.com/tomacox74/js2il/issues/743) as child slices, while [#746](https://github.com/tomacox74/js2il/issues/746) -> [#747](https://github.com/tomacox74/js2il/issues/747) / [#748](https://github.com/tomacox74/js2il/issues/748) and [#768](https://github.com/tomacox74/js2il/issues/768) / [#837](https://github.com/tomacox74/js2il/issues/837) remain lower-priority benchmark work.
 
@@ -81,4 +81,4 @@ Synced to:
 
 - Open-issue labeling still lags the actual queue: `0/22` open issues currently carry a `priority:*` label, `0/22` carry a `lane:*` label, and `17/22` have no labels at all.
 - The new `test262` track is well-structured by issue bodies and parent/child links, but that structure is not yet reflected in GitHub labels.
-- With no open PRs, this triage document is currently a more reliable ordering signal than any active review-queue metadata.
+- With one open PR ([#942](https://github.com/tomacox74/js2il/pull/942)), this triage document should be read alongside the active review queue rather than as a substitute for it.
