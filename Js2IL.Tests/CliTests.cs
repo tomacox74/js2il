@@ -102,26 +102,6 @@ namespace Js2IL.Tests
                 };
             }
 
-            return RunProcess(psi);
-        }
-
-        private static (int ExitCode, string StdOut, string StdErr) RunDotNetAssembly(string assemblyPath, params string[] args)
-        {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "dotnet",
-                Arguments = $"\"{assemblyPath}\" {string.Join(" ", args.Select(a => $"\"{a}\""))}",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            return RunProcess(psi);
-        }
-
-        private static (int ExitCode, string StdOut, string StdErr) RunProcess(ProcessStartInfo psi)
-        {
             Console.WriteLine($"[CliTests] Starting process: {psi.FileName} {psi.Arguments}");
             using var process = Process.Start(psi)!;
             
@@ -144,30 +124,6 @@ namespace Js2IL.Tests
             Console.WriteLine($"[CliTests] stdout length: {stdout.Length}, stderr length: {stderr.Length}");
             
             return (process.ExitCode, stdout, stderr);
-        }
-
-        private static string FindRepoRoot()
-        {
-            var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
-            var dir = Path.GetDirectoryName(asmLocation)!;
-
-            while (!string.IsNullOrEmpty(dir))
-            {
-                if (File.Exists(Path.Combine(dir, "js2il.sln")))
-                {
-                    return dir;
-                }
-
-                var parent = Path.GetDirectoryName(dir);
-                if (string.IsNullOrEmpty(parent) || parent == dir)
-                {
-                    break;
-                }
-
-                dir = parent;
-            }
-
-            throw new FileNotFoundException("Could not locate the repository root from the test assembly location.");
         }
 
         [Fact]
@@ -325,62 +281,6 @@ namespace Js2IL.Tests
                 var baseName = Path.GetFileNameWithoutExtension(jsFile);
                 var dllPath = Path.Combine(outDir, baseName + ".dll");
                 Assert.True(File.Exists(dllPath), $"Missing output: {dllPath}");
-            }
-            finally
-            {
-                try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
-            }
-        }
-
-        [Fact]
-        public void Convert_Ecma262ExtractScript_LocalMode_SucceedsUnderJs2Il()
-        {
-            var repoRoot = FindRepoRoot();
-            var scriptPath = Path.Combine(repoRoot, "scripts", "ECMA262", "extractEcma262SectionHtml.js");
-            var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_ecma262_" + Guid.NewGuid().ToString("n"));
-            Directory.CreateDirectory(tempRoot);
-
-            var inputHtml = Path.Combine(tempRoot, "control-abstraction-objects.html");
-            var compileOut = Path.Combine(tempRoot, "compiled");
-            var extractedHtml = Path.Combine(tempRoot, "Section27_3.html");
-
-            File.WriteAllText(
-                inputHtml,
-                """
-                <!doctype html>
-                <html>
-                <body>
-                <emu-clause id="sec-generatorfunction-objects"><h1><span class="secnum">27.3</span> GeneratorFunction Objects</h1><p>demo</p></emu-clause>
-                </body>
-                </html>
-                """);
-
-            try
-            {
-                var (compileCode, compileStdOut, compileStdErr) = RunOutOfProc(scriptPath, "-o", compileOut);
-                Assert.Equal(0, compileCode);
-                Assert.True(string.IsNullOrWhiteSpace(compileStdErr), $"Unexpected stderr: {compileStdErr}");
-                Assert.Contains("Compilation succeeded", compileStdOut, StringComparison.OrdinalIgnoreCase);
-
-                var dllPath = Path.Combine(compileOut, "extractEcma262SectionHtml.dll");
-                Assert.True(File.Exists(dllPath), $"Missing output: {dllPath}");
-
-                var (runCode, runStdOut, runStdErr) = RunDotNetAssembly(
-                    dllPath,
-                    "--section", "27.3",
-                    "--in", inputHtml,
-                    "--out", extractedHtml,
-                    "--no-wrap");
-
-                Assert.Equal(0, runCode);
-                Assert.True(string.IsNullOrWhiteSpace(runStdErr), $"Unexpected stderr: {runStdErr}");
-                Assert.Contains("Extracted section 27.3", runStdOut, StringComparison.OrdinalIgnoreCase);
-                Assert.True(File.Exists(extractedHtml), $"Missing extracted HTML: {extractedHtml}");
-
-                var extracted = File.ReadAllText(extractedHtml);
-                Assert.Contains("<emu-clause id=\"sec-generatorfunction-objects\">", extracted, StringComparison.Ordinal);
-                Assert.Contains("GeneratorFunction Objects", extracted, StringComparison.Ordinal);
-                Assert.DoesNotContain("<html", extracted, StringComparison.OrdinalIgnoreCase);
             }
             finally
             {

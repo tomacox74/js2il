@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- tooling/compiler/tests/docs: close issue #842 by switching the ECMA-262 section extractor script from the unsupported global `URL` constructor to `require('node:url')`, guarding js2il execution to the supported local `--in` mode until HTTPS/TLS work lands, fixing resumable async/generator scope-array slot mapping for captured outer function bindings, and adding both focused async regression coverage and a CLI smoke test for the checked-in script.
+- compiler/tests: fix resumable async/generator scope-array slot mapping for captured outer function bindings, add focused async regression coverage for module-level helper calls that suspend across `await`, and refresh the affected generator snapshot uncovered while investigating issue #842.
 - compiler/debug/tests/docs: fix rewritten ES module Portable PDB sequence points by mapping both top-level rewrites and nested user-authored callable bodies back to the original source coordinates, hiding generated interop helper code, extending source-mapped stack-trace coverage for rewritten import/export flows, and documenting the remaining debugger limitations.
 - runtime/spec/tests: close issue #935 by wiring keyed-collection constructor values into the `Function.prototype` / `Object.prototype` chain like real built-in function objects, preserving their constructor/prototype descriptor surface, extending focused Map/Set/WeakMap/WeakSet reflective coverage, and documenting that broader constructor-object fidelity for other built-ins remains follow-up work.
 
