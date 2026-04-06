@@ -1,35 +1,36 @@
-# Issue triage snapshot (refreshed 2026-04-05)
+# Issue triage snapshot (refreshed 2026-04-06)
 
 This file captures a point-in-time recommended ordering for all currently open GitHub issues.
 
 Synced to:
-- Repo: `master` @ `588fffac`
+- Repo: `master` @ `9651667f`
 - Latest release on `master`: `v0.9.6` via PR [#937](https://github.com/tomacox74/js2il/pull/937)
 - Active review branches at latest update: none
-- GitHub: open issues / PR state as of 2026-04-05 after merging PR [#942](https://github.com/tomacox74/js2il/pull/942)
+- GitHub: open issues / PR state as of 2026-04-06 after merging PR [#944](https://github.com/tomacox74/js2il/pull/944) and PR [#945](https://github.com/tomacox74/js2il/pull/945)
 - Open issues: 21
 - Open PRs: 0
 
 ## What changed since the previous snapshot
 
-- PR [#942](https://github.com/tomacox74/js2il/pull/942) merged as commit `588fffac` and closed [#919](https://github.com/tomacox74/js2il/issues/919), so the debugger closeout work is no longer part of the open backlog.
-- The active review queue is empty again on `master`: there are currently no open PRs to land before taking the next issue.
-- The open issue count dropped to 21. The remaining bounded non-performance follow-ons are now [#841](https://github.com/tomacox74/js2il/issues/841), [#842](https://github.com/tomacox74/js2il/issues/842), and [#935](https://github.com/tomacox74/js2il/issues/935).
+- PR [#944](https://github.com/tomacox74/js2il/pull/944) merged as commit `ce2e5b9e` and closed [#935](https://github.com/tomacox74/js2il/issues/935), so the keyed-collection constructor follow-on is no longer part of the open backlog.
+- PR [#945](https://github.com/tomacox74/js2il/pull/945) merged as commit `9651667f` and landed the resumable scope-array compiler fix plus regression coverage that were uncovered while investigating [#842](https://github.com/tomacox74/js2il/issues/842).
+- The old extractor umbrella issue [#842](https://github.com/tomacox74/js2il/issues/842) is now closed on GitHub; its remaining actionable work is split into [#946](https://github.com/tomacox74/js2il/issues/946) (global `URL` / `URLSearchParams`) and [#947](https://github.com/tomacox74/js2il/issues/947) (network-backed extractor mode via HTTP client fixes).
+- The open issue count remains 21 and the open PR count remains 0: two issues closed ([#935](https://github.com/tomacox74/js2il/issues/935), [#842](https://github.com/tomacox74/js2il/issues/842)), two follow-up issues opened ([#946](https://github.com/tomacox74/js2il/issues/946), [#947](https://github.com/tomacox74/js2il/issues/947)), and there are still no active review branches on `master`.
 - The remaining backlog is now split into:
   - 8 `test262` adoption issues ([#927](https://github.com/tomacox74/js2il/issues/927)-[#934](https://github.com/tomacox74/js2il/issues/934))
   - 10 deferred performance issues ([#451](https://github.com/tomacox74/js2il/issues/451), [#737](https://github.com/tomacox74/js2il/issues/737), [#738](https://github.com/tomacox74/js2il/issues/738), [#742](https://github.com/tomacox74/js2il/issues/742), [#743](https://github.com/tomacox74/js2il/issues/743), [#746](https://github.com/tomacox74/js2il/issues/746), [#747](https://github.com/tomacox74/js2il/issues/747), [#748](https://github.com/tomacox74/js2il/issues/748), [#768](https://github.com/tomacox74/js2il/issues/768), [#837](https://github.com/tomacox74/js2il/issues/837))
-  - 3 non-performance follow-ons ([#841](https://github.com/tomacox74/js2il/issues/841), [#842](https://github.com/tomacox74/js2il/issues/842), [#935](https://github.com/tomacox74/js2il/issues/935))
+  - 3 non-performance follow-ons ([#841](https://github.com/tomacox74/js2il/issues/841), [#946](https://github.com/tomacox74/js2il/issues/946), [#947](https://github.com/tomacox74/js2il/issues/947))
 
 ## Ranking method
 
-- Use [TriageScoreboard.md](./TriageScoreboard.md) as the strategic source of truth, but adapt it to the current backlog reality: the Node/hosting quick-win queue that dominated the prior snapshot is now mostly off the board.
-- Prefer bounded issues that improve developer trust or runtime fidelity first, then build the new `test262` conformance program in dependency order, and keep performance behind correctness/tooling unless it directly unblocks those tracks.
+- Use [TriageScoreboard.md](./TriageScoreboard.md) as the strategic source of truth, but adapt it to the current backlog reality: the next bounded correctness/tooling wins now live in the extractor follow-up split rather than the old Node/hosting quick-win queue.
+- Prefer bounded issues that improve developer trust, runtime fidelity, or self-hosting first, then build the new `test262` conformance program in dependency order, and keep performance behind correctness/tooling unless it directly unblocks those tracks.
 - Treat [#927](https://github.com/tomacox74/js2il/issues/927) as the umbrella tracker for the `test262` program, and rank the child issues by execution order rather than by issue number alone.
 
 ## Recommended next picks
 
-- **Primary next item:** [#935](https://github.com/tomacox74/js2il/issues/935) `runtime: model built-in constructor values as real function objects`
-- **Best tooling / self-hosting follow-on:** [#842](https://github.com/tomacox74/js2il/issues/842) `scripts/ECMA262: extractEcma262SectionHtml.js still does not work under js2il`
+- **Primary next item:** [#946](https://github.com/tomacox74/js2il/issues/946) `runtime: add full global URL support`
+- **Best tooling / self-hosting follow-on:** [#947](https://github.com/tomacox74/js2il/issues/947) `scripts/ECMA262: enable network mode under js2il via HTTP client fixes`
 - **Best research / architecture follow-on:** [#841](https://github.com/tomacox74/js2il/issues/841) `Investigate using existing .NET HTTP primitives for future Node HTTP work`
 - **Strategic next program:** [#927](https://github.com/tomacox74/js2il/issues/927) `test262: create a phased conformance program for js2il`, starting with [#928](https://github.com/tomacox74/js2il/issues/928) -> [#929](https://github.com/tomacox74/js2il/issues/929) -> [#930](https://github.com/tomacox74/js2il/issues/930) -> [#931](https://github.com/tomacox74/js2il/issues/931) -> [#932](https://github.com/tomacox74/js2il/issues/932) -> [#933](https://github.com/tomacox74/js2il/issues/933), while keeping [#934](https://github.com/tomacox74/js2il/issues/934) explicitly deferred until the MVP exists.
 
@@ -37,8 +38,8 @@ Synced to:
 
 ### Tier 1 - Immediate bounded correctness and tooling wins
 
-1. **[#935](https://github.com/tomacox74/js2il/issues/935)** `runtime: model built-in constructor values as real function objects` - This is now the clearest small runtime-fidelity follow-up after [#921](https://github.com/tomacox74/js2il/pull/921): it closes the remaining reflective `Map`/`Set`/`WeakMap`/`WeakSet` constructor-object gap without reopening the larger keyed-collection surface work.
-2. **[#842](https://github.com/tomacox74/js2il/issues/842)** `scripts/ECMA262: extractEcma262SectionHtml.js still does not work under js2il` - This remains the best self-hosting/tooling issue because it has a checked-in repro, a concrete compile blocker, and a separate runtime failure that currently prevents js2il from running one of its own ECMA tooling scripts.
+1. **[#946](https://github.com/tomacox74/js2il/issues/946)** `runtime: add full global URL support` - This is now the clearest small runtime/tooling follow-on after [#944](https://github.com/tomacox74/js2il/pull/944) and [#945](https://github.com/tomacox74/js2il/pull/945): it removes the bare global `URL` / `URLSearchParams` validator/runtime gap without waiting on broader HTTP networking work.
+2. **[#947](https://github.com/tomacox74/js2il/issues/947)** `scripts/ECMA262: enable network mode under js2il via HTTP client fixes` - This is the best remaining self-hosting/tooling issue after the old [#842](https://github.com/tomacox74/js2il/issues/842) umbrella was split: it keeps the checked-in extractor as the driving repro, but success now depends mainly on the Node HTTP/HTTPS client path and end-to-end script verification.
 
 ### Tier 2 - `test262` program bootstrapping
 
@@ -53,7 +54,7 @@ Synced to:
 
 ### Tier 3 - Research / architecture follow-on
 
-11. **[#841](https://github.com/tomacox74/js2il/issues/841)** `Investigate using existing .NET HTTP primitives for future Node HTTP work` - Still useful architectural input, but it is a research issue rather than the next shipping slice now that the more immediate hosting backlog has landed.
+11. **[#841](https://github.com/tomacox74/js2il/issues/841)** `Investigate using existing .NET HTTP primitives for future Node HTTP work` - Still useful architectural input and likely relevant to [#947](https://github.com/tomacox74/js2il/issues/947), but it remains a research issue rather than the next shipping slice now that the concrete extractor follow-ons exist.
 
 ### Tier 4 - Deferred performance queue
 
@@ -71,12 +72,12 @@ Synced to:
 ## Execution notes
 
 - **No active review queue remains:** there are currently no open PRs on `master`, so the next work can start directly instead of finishing review branches first.
-- **Immediate top-of-stack track:** [#935](https://github.com/tomacox74/js2il/issues/935) and [#842](https://github.com/tomacox74/js2il/issues/842) are the clearest bounded next shipping slices, with [#841](https://github.com/tomacox74/js2il/issues/841) as the next research-oriented follow-on after those.
+- **Immediate top-of-stack track:** [#946](https://github.com/tomacox74/js2il/issues/946) and [#947](https://github.com/tomacox74/js2il/issues/947) are now the clearest bounded next shipping slices, with [#841](https://github.com/tomacox74/js2il/issues/841) as the next research-oriented follow-on after those.
 - **`test262` track:** use [#927](https://github.com/tomacox74/js2il/issues/927) as the parent, then deliver [#928](https://github.com/tomacox74/js2il/issues/928) -> [#929](https://github.com/tomacox74/js2il/issues/929) -> [#930](https://github.com/tomacox74/js2il/issues/930) -> [#931](https://github.com/tomacox74/js2il/issues/931) -> [#932](https://github.com/tomacox74/js2il/issues/932) -> [#933](https://github.com/tomacox74/js2il/issues/933), leaving [#934](https://github.com/tomacox74/js2il/issues/934) as the deliberate post-MVP expansion bucket.
 - **Performance track:** [#451](https://github.com/tomacox74/js2il/issues/451) -> [#737](https://github.com/tomacox74/js2il/issues/737) remains the best general optimization path; [#738](https://github.com/tomacox74/js2il/issues/738) stays the Prime umbrella with [#742](https://github.com/tomacox74/js2il/issues/742) / [#743](https://github.com/tomacox74/js2il/issues/743) as child slices, while [#746](https://github.com/tomacox74/js2il/issues/746) -> [#747](https://github.com/tomacox74/js2il/issues/747) / [#748](https://github.com/tomacox74/js2il/issues/748) and [#768](https://github.com/tomacox74/js2il/issues/768) / [#837](https://github.com/tomacox74/js2il/issues/837) remain lower-priority benchmark work.
 
 ## Metadata gaps
 
-- Open-issue labeling still lags the actual queue: `0/21` open issues currently carry a `priority:*` label, `0/21` carry a `lane:*` label, and `16/21` have no labels at all.
-- The new `test262` track is well-structured by issue bodies and parent/child links, but that structure is not yet reflected in GitHub labels.
+- Open-issue labeling still lags the actual queue: `2/21` open issues currently carry a `priority:*` label, `0/21` carry a `lane:*` label, and `14/21` have no labels at all.
+- The new extractor follow-on split is visible in GitHub, but the broader queue still is not labeled in a way that reflects the actual work lanes.
 - With no open PRs, this triage document is currently a more reliable ordering signal than any active review-queue metadata.
