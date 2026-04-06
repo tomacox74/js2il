@@ -28,6 +28,7 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { URL } = require('node:url');
 
 function parseArgs(argv) {
   const args = {
@@ -239,6 +240,15 @@ async function fetchText(urlString) {
   return await fetchTextWithHttps(urlString);
 }
 
+function isJs2IlRuntime() {
+  return typeof process === 'object'
+    && process !== null
+    && typeof process.versions === 'object'
+    && process.versions !== null
+    && typeof process.versions.js2il === 'string'
+    && process.versions.js2il.length > 0;
+}
+
 function detectEol(text) {
   return text.includes('\r\n') ? '\r\n' : '\n';
 }
@@ -440,6 +450,7 @@ ${extractedHtml}
 function printHelp() {
   console.log('Extract a section\'s HTML from a locally saved ECMA-262 multipage HTML file.');
   console.log('You can also fetch the input HTML from the web using Node\'s built-in fetch/https.');
+  console.log('Under js2il, only local --in mode is currently supported; --url/--auto remain deferred until HTTPS/TLS support lands.');
   console.log('');
   console.log('Usage:');
   console.log('  node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.3 --in <input.html> --out <output.html>');
@@ -484,6 +495,10 @@ async function main() {
 
   if (!args.outFile) {
     throw new Error('Missing required --out <output.html>.');
+  }
+
+  if (isJs2IlRuntime() && (args.auto || args.url)) {
+    throw new Error('Under js2il, extractEcma262SectionHtml.js currently supports only local --in mode. Network-backed --url/--auto modes remain deferred until HTTPS/TLS support lands (see issue #870).');
   }
 
   const outPath = path.resolve(process.cwd(), args.outFile);

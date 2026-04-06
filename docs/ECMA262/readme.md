@@ -80,8 +80,11 @@ Tooling used
 - scripts/ECMA262/convertEcmaExtractHtmlToMarkdown.js (optional, for embedding converted text)
 
 Steps
-1. Extract the HTML for the section you want to sync (auto-discovery mode):
-   - node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.6 --auto --no-wrap --out test_output/ecma262-27.6.html
+1. Extract the HTML for the section you want to sync:
+   - Node / network-backed auto-discovery:
+     - node scripts/ECMA262/extractEcma262SectionHtml.js --section 27.6 --auto --no-wrap --out test_output/ecma262-27.6.html
+   - js2il / supported local-file mode:
+     - dotnet out\extractEcma262SectionHtml.dll --section 27.6 --in control-abstraction-objects.html --no-wrap --out test_output\ecma262-27.6.html
 2. From the extracted HTML, identify each subclause’s:
    - Section number (from <span class="secnum">…)
    - Title (from the <h1> text)
@@ -95,6 +98,7 @@ Steps
 Notes
 - Prefer copying the title text as rendered in the heading (including %…% and %Symbol.toStringTag% forms).
 - The extracted HTML is a scratch artifact; it does not need to be committed.
+- When running this script under js2il today, only local `--in` mode is supported. `--url` / `--auto` remain explicitly deferred until the HTTPS/TLS work in [#870](https://github.com/tomacox74/js2il/issues/870) lands.
 
 ## JSON helpers (subsection metadata)
 

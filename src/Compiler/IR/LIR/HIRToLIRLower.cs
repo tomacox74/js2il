@@ -676,6 +676,20 @@ public sealed partial class HIRToLIRLowerer
     /// <summary>
     /// Maps a callee scope slot to a source in the caller context.
     /// </summary>
+    private bool CallerPrependsLeafScopeToScopesArgument()
+    {
+        if (_environmentLayout?.Abi.ScopesSource != ScopesSource.Argument)
+        {
+            return false;
+        }
+
+        return (_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
+            || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0);
+    }
+
+    private int AdjustCallerScopesArgumentIndex(int callerSlotIndex)
+        => CallerPrependsLeafScopeToScopesArgument() ? callerSlotIndex + 1 : callerSlotIndex;
+
     private bool TryMapScopeSlotToSource(ScopeSlot slot, out ScopeSlotSource slotSource)
     {
         slotSource = default;
@@ -715,7 +729,7 @@ public sealed partial class HIRToLIRLowerer
                 var scopesSource = _environmentLayout.Abi.ScopesSource;
                 if (scopesSource == ScopesSource.Argument)
                 {
-                    slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.ScopesArgument, callerSlotIndex);
+                    slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.ScopesArgument, AdjustCallerScopesArgumentIndex(callerSlotIndex));
                     return true;
                 }
                 else if (scopesSource == ScopesSource.ThisField)

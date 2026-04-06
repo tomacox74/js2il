@@ -17,6 +17,9 @@ namespace Js2IL.Tests.Async
         public Task Async_PendingPromiseAwait() { var testName = nameof(Async_PendingPromiseAwait); return GenerateTest(testName); }
 
         [Fact]
+        public Task Async_Calls_Module_Function_Before_Await() { var testName = nameof(Async_Calls_Module_Function_Before_Await); return GenerateTest(testName); }
+
+        [Fact]
         public Task Async_RealSuspension_SetTimeout() { var testName = nameof(Async_RealSuspension_SetTimeout); return GenerateTest(testName); }
 
         [Fact]
