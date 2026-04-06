@@ -2,6 +2,9 @@
 
 console.log(globalThis.WeakSet === WeakSet);
 console.log(WeakSet.prototype.constructor === WeakSet);
+console.log(WeakSet instanceof Function);
+console.log(Object.getPrototypeOf(WeakSet) === Function.prototype);
+console.log(Object.getPrototypeOf(WeakSet.prototype) === Object.prototype);
 
 var descriptor = Object.getOwnPropertyDescriptor(WeakSet, "prototype");
 console.log(descriptor.writable);

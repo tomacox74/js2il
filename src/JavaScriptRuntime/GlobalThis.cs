@@ -109,9 +109,12 @@ namespace JavaScriptRuntime
 
         static GlobalThis()
         {
+            PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
+
             // Attach minimal prototypes to callable globals so patterns like
             // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
             // references GlobalThis static properties and never touches the globalThis object.
+            ConfigureBuiltinFunctionObject(_functionConstructorValue);
             PropertyDescriptorStore.DefineOrUpdate(_functionConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -789,6 +792,9 @@ namespace JavaScriptRuntime
 
         private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
         {
+            ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
+
             PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -805,6 +811,11 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = constructorValue
             });
+        }
+
+        private static void ConfigureBuiltinFunctionObject(object functionValue)
+        {
+            PrototypeChain.SetPrototype(functionValue, JavaScriptRuntime.Function.Prototype);
         }
     }
 }

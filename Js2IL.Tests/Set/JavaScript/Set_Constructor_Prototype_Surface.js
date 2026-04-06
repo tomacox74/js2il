@@ -2,6 +2,9 @@
 
 console.log(globalThis.Set === Set);
 console.log(Set.prototype.constructor === Set);
+console.log(Set instanceof Function);
+console.log(Object.getPrototypeOf(Set) === Function.prototype);
+console.log(Object.getPrototypeOf(Set.prototype) === Object.prototype);
 
 var descriptor = Object.getOwnPropertyDescriptor(Set, "prototype");
 console.log(descriptor.writable);

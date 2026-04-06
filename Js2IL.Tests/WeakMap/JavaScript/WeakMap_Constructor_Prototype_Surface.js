@@ -2,6 +2,9 @@
 
 console.log(globalThis.WeakMap === WeakMap);
 console.log(WeakMap.prototype.constructor === WeakMap);
+console.log(WeakMap instanceof Function);
+console.log(Object.getPrototypeOf(WeakMap) === Function.prototype);
+console.log(Object.getPrototypeOf(WeakMap.prototype) === Object.prototype);
 
 var descriptor = Object.getOwnPropertyDescriptor(WeakMap, "prototype");
 console.log(descriptor.writable);

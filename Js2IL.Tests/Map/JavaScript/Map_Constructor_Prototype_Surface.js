@@ -2,6 +2,9 @@
 
 console.log(globalThis.Map === Map);
 console.log(Map.prototype.constructor === Map);
+console.log(Map instanceof Function);
+console.log(Object.getPrototypeOf(Map) === Function.prototype);
+console.log(Object.getPrototypeOf(Map.prototype) === Object.prototype);
 
 var descriptor = Object.getOwnPropertyDescriptor(Map, "prototype");
 console.log(descriptor.writable);
