@@ -17,7 +17,7 @@
 
 ## Notes
 
-The current fs/promises baseline covers whole-file helpers plus FileHandle open/read/write/close, createReadStream/createWriteStream support exposed from node:fs, and practical mutation helpers. Supported FileHandle flags are r, r+, w, w+, a, and a+.
+The current fs/promises baseline covers whole-file helpers plus FileHandle open/read/write/close, richer stat/lstat metadata, createReadStream/createWriteStream support exposed from node:fs, and practical mutation helpers. Supported FileHandle flags are r, r+, w, w+, a, and a+. Async-iterator file watching and raw numeric-fd callback parity remain unsupported follow-ons.
 
 ## APIs
 
@@ -35,6 +35,7 @@ The current fs/promises baseline covers whole-file helpers plus FileHandle open/
 | unlink(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisesunlinkpath) |
 | stat(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisesstatpath-options) |
 | lstat(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromiseslstatpath-options) |
+| watch(filename[, options]) | function | not-supported | [docs](https://nodejs.org/api/fs.html#fspromiseswatchfilename-options) |
 | realpath(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisesrealpathpath-options) |
 
 ## API Details
@@ -97,11 +98,21 @@ Removes files with Node-like ENOENT/EISDIR/EACCES error reporting in the support
 
 ### stat(path)
 
-Returns a Promise resolving to a Stats object with a 'size' property. Rejects if path doesn't exist.
+Returns a Promise resolving to a richer Stats-like object with size, mode, atime/mtime/ctime/birthtime plus their `*Ms` number variants, and the common type predicates. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata. Rejects if path doesn't exist.
+
+**Tests:**
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Stat_FileSize` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Stat_RichMetadata` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Stat_FileSize` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Stat_RichMetadata` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### lstat(path)
 
-Currently behaves the same as stat() due to .NET limitations. Returns Stats object with 'size' property.
+Currently behaves the same as stat() due to .NET limitations, including the richer Stats-like metadata surface. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata.
+
+### watch(filename[, options])
+
+Async-iterator-based file watching is not implemented yet in the current runtime, so watch-driven promise workflows still require a host fallback.
 
 ### realpath(path)
 

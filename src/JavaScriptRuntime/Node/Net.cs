@@ -1286,30 +1286,35 @@ namespace JavaScriptRuntime.Node
                 _hadSocketError = true;
             }
 
-            try
+            // Deliver EOF behind any already-queued data callbacks so consumers never observe
+            // socket end before the final scheduled data chunk.
+            NodeNetworkingCommon.ScheduleOnEventLoop(_nodeScheduler, () =>
             {
-                push(null);
-            }
-            catch
-            {
-            }
-
-            if (!_allowHalfOpen && !_outputClosed && !_destroyRequested)
-            {
-                NodeNetworkingCommon.ScheduleImmediateOnEventLoop(_nodeScheduler, () =>
+                try
                 {
-                    if (_closeEmitted || _outputClosed || _destroyRequested)
+                    push(null);
+                }
+                catch
+                {
+                }
+
+                if (!_allowHalfOpen && !_outputClosed && !_destroyRequested)
+                {
+                    NodeNetworkingCommon.ScheduleImmediateOnEventLoop(_nodeScheduler, () =>
                     {
-                        TryFinalizeClose();
-                        return;
-                    }
+                        if (_closeEmitted || _outputClosed || _destroyRequested)
+                        {
+                            TryFinalizeClose();
+                            return;
+                        }
 
-                    CloseOutputSide();
-                });
-                return;
-            }
+                        CloseOutputSide();
+                    });
+                    return;
+                }
 
-            TryFinalizeClose();
+                TryFinalizeClose();
+            });
         }
 
         private void TryFinalizeClose()

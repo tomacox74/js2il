@@ -39,6 +39,7 @@
 | readdir(path[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirpath-options-callback) |
 | mkdir(path[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsmkdirpath-options-callback) |
 | stat(path, callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatpath-options-callback) |
+| watch(filename[, options][, listener]) | function | not-supported | [docs](https://nodejs.org/api/fs.html#fswatchfilename-options-listener) |
 | rm(path[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrmpath-options-callback) |
 | access(path[, mode], callback) | function | partial | [docs](https://nodejs.org/api/fs.html#fsaccesspath-mode-callback) |
 | realpath(path[, options], callback) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrealpathpath-options-callback) |
@@ -88,11 +89,13 @@ Removes a file or directory (recursive). Supports options.force to ignore errors
 
 ### statSync(path)
 
-Returns a minimal Stats-like object supporting size (number). Directories report size 0.
+Returns a practical Stats-like object with size, mode, atime/mtime/ctime/birthtime plus their `*Ms` number variants, and the common `isFile()` / `isDirectory()` / `isSymbolicLink()` / `isBlockDevice()` / `isCharacterDevice()` / `isFIFO()` / `isSocket()` predicates. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata. Non-existent paths still return the legacy zeroed fallback instead of throwing.
 
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_StatSync_FileSize` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_StatSync_RichMetadata` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_StatSync_NonExistentPath_ReturnsZero` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FS_StatSync_RichMetadata` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### writeFileSync(path, data[, options])
 
@@ -113,7 +116,7 @@ Exposes the fs.promises API surface (see module: fs/promises). Note: method call
 
 ### open(path[, flags[, mode]], callback)
 
-Opens a file and passes back a FileHandle-like object exposing fd/read/write/close for the supported baseline. Supported flags: r, r+, w, w+, a, a+. The callback currently receives the FileHandle object instead of Node's raw numeric fd.
+Opens a file and passes back a FileHandle-like object exposing fd/read/write/close for the supported baseline. Supported flags: r, r+, w, w+, a, a+. The callback still receives the FileHandle object instead of Node's raw numeric fd, so raw fd-centric callback workflows remain unsupported.
 
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_Open_Callback_FileHandle` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
@@ -201,10 +204,15 @@ Callback-style async mkdir; supports options.recursive.
 
 ### stat(path, callback)
 
-Callback-style async stat; returns a minimal Stats-like object supporting size.
+Callback-style async stat; returns the same richer Stats-like surface as statSync(), including mode, timestamps, and common type predicates. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata.
 
 **Tests:**
 - `Js2IL.Tests.Node.FS.ExecutionTests.FS_Stat_Callback_FileSize` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FS_Stat_Callback_RichMetadata` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+
+### watch(filename[, options][, listener])
+
+File watching is not implemented yet in the current runtime, so watch-driven dev-server and incremental-build loops still require a host fallback.
 
 ### rm(path[, options], callback)
 

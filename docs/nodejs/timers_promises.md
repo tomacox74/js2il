@@ -5,7 +5,7 @@
 | Property | Value |
 | --- | --- |
 | Type | module |
-| Status | partial |
+| Status | completed |
 | Node.js Version | 22.x LTS |
 | Documentation | [Node.js Docs](https://nodejs.org/api/timers.html#timers-promises-api) |
 
@@ -16,7 +16,7 @@
 
 ## Notes
 
-This baseline exposes the Promise-based one-shot timer helpers on top of the existing Node scheduler/event-loop implementation, so ordering continues to match process.nextTick, Promise microtasks, setImmediate, and timer-global behavior. Minimal AbortController/AbortSignal support is included for the timers/promises cancellation path.
+This module now exposes the Promise-based one-shot timer helpers plus the async-iterator `setInterval(...)` contract on top of the existing Node scheduler/event-loop implementation, so ordering continues to match process.nextTick, Promise microtasks, setImmediate, and timer-global behavior. AbortController/AbortSignal cancellation is supported for the documented timers/promises paths.
 
 ## APIs
 
@@ -24,7 +24,7 @@ This baseline exposes the Promise-based one-shot timer helpers on top of the exi
 | --- | ---- | ------ | ---- |
 | setTimeout(delay[, value[, options]]) | function | supported | [docs](https://nodejs.org/api/timers.html#timerspromisessettimeoutdelay-value-options) |
 | setImmediate([value[, options]]) | function | supported | [docs](https://nodejs.org/api/timers.html#timerspromisessetimmediatevalue-options) |
-| setInterval(delay[, value[, options]]) | function | not-supported | [docs](https://nodejs.org/api/timers.html#timerspromisessetintervaldelay-value-options) |
+| setInterval(delay[, value[, options]]) | function | supported | [docs](https://nodejs.org/api/timers.html#timerspromisessetintervaldelay-value-options) |
 
 ## API Details
 
@@ -50,8 +50,12 @@ Returns a Promise that resolves during the existing immediate phase with the sup
 
 ### setInterval(delay[, value[, options]])
 
-The async-iterator contract is deferred for now. Calls currently reject with a clear runtime error instead of exposing a partial iterator surface.
+Returns an async iterator that yields the supplied value for each elapsed interval. Pending ticks are queued until consumed, `return()`/`for await ... break` tear down the repeating timer, and `options.signal` aborts active iteration with AbortError/ABORT_ERR.
 
 **Tests:**
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_RejectsClearly` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_RejectsClearly` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_Backpressure_And_Return` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_Backpressure_And_Return` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_Abort_RejectsActiveIterator` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_Abort_RejectsActiveIterator` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
