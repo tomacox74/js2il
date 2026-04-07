@@ -135,7 +135,7 @@ namespace JavaScriptRuntime.Node
         }
 
         public object spawn(object command, object? args = null, object? options = null)
-            => StartChildProcess(command, args, options, shellOverride: null, callback: null, suppressUnhandledError: false);
+            => StartChildProcess(command, args, options, shellOverride: null, callback: null, suppressUnhandledError: false, apiName: "child_process.spawn");
 
         public object execSync(object[] args)
         {
@@ -215,7 +215,7 @@ namespace JavaScriptRuntime.Node
         public object exec(object command, object? options = null, object? callback = null)
         {
             var cb = ValidateCallback(callback);
-            return StartChildProcess(command, args: null, options, shellOverride: true, callback: cb, suppressUnhandledError: cb != null);
+            return StartChildProcess(command, args: null, options, shellOverride: true, callback: cb, suppressUnhandledError: cb != null, apiName: "child_process.exec");
         }
 
         public object execFile(object[] args)
@@ -270,7 +270,7 @@ namespace JavaScriptRuntime.Node
         public object execFile(object file, object? args = null, object? options = null, object? callback = null)
         {
             var cb = ValidateCallback(callback);
-            return StartChildProcess(file, args, options, shellOverride: false, callback: cb, suppressUnhandledError: cb != null);
+            return StartChildProcess(file, args, options, shellOverride: false, callback: cb, suppressUnhandledError: cb != null, apiName: "child_process.execFile");
         }
 
         public object fork(object[] args)
@@ -349,7 +349,7 @@ namespace JavaScriptRuntime.Node
             childArgs.AddRange(moduleArgs);
 
             var cwd = TryGetStringOption(options, "cwd");
-            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.ForkDefault, allowIpc: true, apiName: "child_process.fork");
+            var stdio = ResolveForkStdioConfiguration(options);
             if (!stdio.IpcEnabled)
             {
                 throw new Error("child_process.fork requires an IPC channel. Include 'ipc' in stdio[3] or omit stdio to use the default fork configuration.");
@@ -453,7 +453,7 @@ namespace JavaScriptRuntime.Node
             public object stderr { get; }
         }
 
-        private object StartChildProcess(object command, object? args, object? options, bool? shellOverride, Delegate? callback, bool suppressUnhandledError)
+        private object StartChildProcess(object command, object? args, object? options, bool? shellOverride, Delegate? callback, bool suppressUnhandledError, string apiName)
         {
             var commandText = command?.ToString() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(commandText))
@@ -461,10 +461,15 @@ namespace JavaScriptRuntime.Node
                 throw new TypeError("The \"file\" argument must be a non-empty string");
             }
 
+            if (TryGetBoolOption(options, "detached"))
+            {
+                throw new Error($"{apiName} does not support detached child processes in the current runtime.");
+            }
+
             var argList = CoerceArgs(args);
             var cwd = TryGetStringOption(options, "cwd");
             var shell = shellOverride ?? TryGetBoolOption(options, "shell");
-            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.AsyncDefault, allowIpc: false, apiName: "child_process.spawn/exec");
+            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.AsyncDefault, allowIpc: false, apiName);
             var envOverrides = ParseEnvironmentOverrides(TryGetOption(options, "env"));
             var child = new ChildProcessHandle(stdio);
             var completion = CreateCompletionPromise(child, commandText, callback, suppressUnhandledError);
@@ -516,8 +521,8 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                Task<string>? stdoutTask = StartTextReadTask(process.StandardOutput, stdio.StdoutMode);
-                Task<string>? stderrTask = StartTextReadTask(process.StandardError, stdio.StderrMode);
+                Task<string>? stdoutTask = StartTextReadTaskIfRedirected(process, stdio.StdoutMode, isErrorStream: false);
+                Task<string>? stderrTask = StartTextReadTaskIfRedirected(process, stdio.StderrMode, isErrorStream: true);
                 var completionTasks = new List<Task>(capacity: 3)
                 {
                     process.WaitForExitAsync(),
@@ -609,8 +614,8 @@ namespace JavaScriptRuntime.Node
 
         private static ProcessCompletionResult WaitForProcessCompletionSync(DiagnosticsProcess process, StdioConfiguration stdio)
         {
-            Task<string>? stdoutTask = StartTextReadTask(process.StandardOutput, stdio.StdoutMode);
-            Task<string>? stderrTask = StartTextReadTask(process.StandardError, stdio.StderrMode);
+            Task<string>? stdoutTask = StartTextReadTaskIfRedirected(process, stdio.StdoutMode, isErrorStream: false);
+            Task<string>? stderrTask = StartTextReadTaskIfRedirected(process, stdio.StderrMode, isErrorStream: true);
 
             if (stdoutTask != null && stderrTask != null)
             {
@@ -645,6 +650,16 @@ namespace JavaScriptRuntime.Node
                 StdioMode.Ignore => DrainTextReaderAsync(reader),
                 _ => null,
             };
+        }
+
+        private static Task<string>? StartTextReadTaskIfRedirected(DiagnosticsProcess process, StdioMode mode, bool isErrorStream)
+        {
+            if (mode == StdioMode.Inherit)
+            {
+                return null;
+            }
+
+            return StartTextReadTask(isErrorStream ? process.StandardError : process.StandardOutput, mode);
         }
 
         private static async Task<string> DrainTextReaderAsync(TextReader reader)
@@ -836,6 +851,31 @@ namespace JavaScriptRuntime.Node
             return v?.ToString();
         }
 
+        private static bool TryGetBoolOptionValue(object? options, string name, out bool value)
+        {
+            value = false;
+            if (!TryHasOwnOption(options, name, out var rawValue))
+            {
+                return false;
+            }
+
+            if (rawValue == null || rawValue is JsNull)
+            {
+                return true;
+            }
+
+            try
+            {
+                value = TypeUtilities.ToBoolean(rawValue);
+            }
+            catch
+            {
+                value = false;
+            }
+
+            return true;
+        }
+
         private static bool TryGetBoolOption(object? options, string name)
         {
             var v = TryGetOption(options, name);
@@ -848,6 +888,42 @@ namespace JavaScriptRuntime.Node
             {
                 return false;
             }
+        }
+
+        private static bool TryHasOwnOption(object? options, string name, out object? value)
+        {
+            value = null;
+            if (options == null || options is JsNull)
+            {
+                return false;
+            }
+
+            if (options is IDictionary<string, object?> dictionary && dictionary.TryGetValue(name, out value))
+            {
+                return true;
+            }
+
+            try
+            {
+                if (JavaScriptRuntime.Object.GetEnumerableKeys(options) is JavaScriptRuntime.Array keys)
+                {
+                    for (int i = 0; i < (int)keys.length; i++)
+                    {
+                        if (!string.Equals(keys[i]?.ToString(), name, StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+
+                        value = ObjectRuntime.GetProperty(options, name);
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return false;
         }
 
         private static Delegate? ValidateCallback(object? callback)
@@ -911,6 +987,19 @@ namespace JavaScriptRuntime.Node
             }
 
             return value.ToString();
+        }
+
+        private static StdioConfiguration ResolveForkStdioConfiguration(object? options)
+        {
+            var defaultConfiguration = StdioConfiguration.ForkDefault;
+            if (TryGetBoolOptionValue(options, "silent", out var silent))
+            {
+                defaultConfiguration = silent
+                    ? StdioConfiguration.ForkDefault
+                    : StdioConfiguration.InheritAll.WithIpc(true);
+            }
+
+            return ParseStdioConfiguration(TryGetOption(options, "stdio"), defaultConfiguration, allowIpc: true, apiName: "child_process.fork");
         }
 
         private static StdioConfiguration ParseStdioConfiguration(object? stdio, StdioConfiguration defaults, bool allowIpc, string apiName)

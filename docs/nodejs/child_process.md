@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, and basic signal/kill reporting with explicit diagnostics for unsupported detached, advanced serialization, and non-IPC stdio modes. Hosted `JsEngine` runtimes can also use `fork()`, but they must supply `JsModuleLoadOptions.CompiledAssemblyPath` explicitly; hosted fork launch paths are not inferred automatically. Hosts may override process creation through `IChildProcessLauncher`.
+Provides synchronous process execution, async spawn/exec/execFile, and a documented fork baseline for compiled child modules in the current assembly. The supported slice includes authenticated JSON-only parent/child IPC over loopback (`child.on('message')`, `child.send(...)`, `process.on('message')`, `process.send(...)`), environment overlays, explicit unsupported detached diagnostics across the current async APIs, and a focused `fork({ silent: true|false })` follow-on for common toolchain stdio control. Hosted `JsEngine` runtimes can also use `fork()`, but they must supply `JsModuleLoadOptions.CompiledAssemblyPath` explicitly; hosted fork launch paths are not inferred automatically. Hosts may override process creation through `IChildProcessLauncher`.
 
 ## APIs
 
@@ -32,7 +32,7 @@ Provides synchronous process execution, async spawn/exec/execFile, and a documen
 
 ### spawn(command[, args][, options])
 
-Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling).
+Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling). Detached launches remain explicit unsupported diagnostics instead of being silently approximated.
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
@@ -42,7 +42,7 @@ Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pip
 
 ### exec(command[, options][, callback])
 
-Executes via a shell and optionally invokes an error-first callback with (err, stdout, stderr). Returns the child handle immediately. Non-zero exit codes surface an Error-like object carrying status/code/stdout/stderr.
+Executes via a shell and optionally invokes an error-first callback with (err, stdout, stderr). Returns the child handle immediately. Non-zero exit codes surface an Error-like object carrying status/code/stdout/stderr. Detached launches remain explicit unsupported diagnostics.
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Exec_Callback` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
@@ -50,7 +50,7 @@ Executes via a shell and optionally invokes an error-first callback with (err, s
 
 ### execFile(file[, args][, options][, callback])
 
-Runs a file directly without an implicit shell and optionally invokes an error-first callback with (err, stdout, stderr). Non-zero exits surface the same Error-like callback shape used by exec().
+Runs a file directly without an implicit shell and optionally invokes an error-first callback with (err, stdout, stderr). Non-zero exits surface the same Error-like callback shape used by exec(). Detached launches remain explicit unsupported diagnostics.
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
@@ -58,14 +58,16 @@ Runs a file directly without an implicit shell and optionally invokes an error-f
 
 ### fork(modulePath[, args][, options])
 
-Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. In hosted `JsEngine` scenarios, the child is launched only when the host explicitly supplies `JsModuleLoadOptions.CompiledAssemblyPath`; if that configuration is missing, `fork()` throws a targeted runtime error instead of inferring a launch target. Hosts can customize process creation through `IChildProcessLauncher`. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain unsupported.
+Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, explicit `options.silent` control (`true` keeps piped stdio, `false` maps stdio[0-2] to `inherit` while preserving IPC), `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics. In hosted `JsEngine` scenarios, the child is launched only when the host explicitly supplies `JsModuleLoadOptions.CompiledAssemblyPath`; if that configuration is missing, `fork()` throws a targeted runtime error instead of inferring a launch target. Hosts can customize process creation through `IChildProcessLauncher`.
 
 **Tests:**
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Silent` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Silent` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### spawnSync(command, args, options)
