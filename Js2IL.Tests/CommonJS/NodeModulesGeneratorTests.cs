@@ -20,4 +20,21 @@ public class NodeModulesGeneratorTests
         Assert.Contains("pkg/cjs/feature", moduleIds);
         Assert.Contains("pkg/cjs/shared", moduleIds);
     }
+
+    [Fact]
+    public void CommonJS_NodeModules_PackageImports_BarePackageAlias_EmitsManifest()
+    {
+        using var project = NodeModulesTestProjectSupport.CreateBarePackageImportsAliasProject();
+        var compiled = NodeModulesTestProjectSupport.Compile(project);
+
+        Assert.True(compiled.Success, compiled.Logger.Errors);
+        Assert.False(string.IsNullOrWhiteSpace(compiled.AssemblyPath));
+
+        var moduleIds = NodeModulesTestProjectSupport.ReadCompiledModuleIdsFromManifest(compiled.AssemblyPath!);
+
+        Assert.Contains("dep/esm/index", moduleIds);
+        Assert.Contains("dep/esm/feature", moduleIds);
+        Assert.Contains("dep/cjs/index", moduleIds);
+        Assert.Contains("dep/cjs/feature", moduleIds);
+    }
 }

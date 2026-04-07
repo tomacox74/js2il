@@ -357,15 +357,9 @@ namespace JavaScriptRuntime.Node
                     return Promise.reject(new Error("Path must be a non-empty string"));
                 }
 
-                if (File.Exists(path))
+                if (FsCommon.TryCreateStats(path, out var stats))
                 {
-                    var fi = new FileInfo(path);
-                    return Promise.resolve(new FS.Stats(fi.Length));
-                }
-
-                if (Directory.Exists(path))
-                {
-                    return Promise.resolve(new FS.Stats(0));
+                    return Promise.resolve(stats);
                 }
 
                 return Promise.reject(new Error($"ENOENT: no such file or directory, stat '{path}'"));

@@ -2,6 +2,6 @@ namespace JavaScriptRuntime.Node
 {
     public sealed class PassThrough : Transform
     {
-        public PassThrough() { }
+        public PassThrough(object? options = null) : base(options) { }
     }
 }

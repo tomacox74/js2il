@@ -67,6 +67,17 @@ namespace Js2IL.Tests.Node.FS
                 });
 
         [Fact]
+        public Task FS_StatSync_RichMetadata()
+            => ExecutionTest(
+                nameof(FS_StatSync_RichMetadata),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task FS_RmSync_Removes_File_And_Directory()
             => ExecutionTest(
                 nameof(FS_RmSync_Removes_File_And_Directory),
@@ -139,6 +150,17 @@ namespace Js2IL.Tests.Node.FS
         public Task FSPromises_Stat_FileSize()
             => ExecutionTest(
                 nameof(FSPromises_Stat_FileSize),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FSPromises_Stat_RichMetadata()
+            => ExecutionTest(
+                nameof(FSPromises_Stat_RichMetadata),
                 configureSettings: s =>
                 {
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
@@ -403,6 +425,17 @@ namespace Js2IL.Tests.Node.FS
         public Task FS_Stat_Callback_FileSize()
             => ExecutionTest(
                 nameof(FS_Stat_Callback_FileSize),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
+        public Task FS_Stat_Callback_RichMetadata()
+            => ExecutionTest(
+                nameof(FS_Stat_Callback_RichMetadata),
                 configureSettings: s =>
                 {
                     s.AddScrubber(sb => sb.Replace('\\', '/'));

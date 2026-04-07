@@ -24,7 +24,18 @@ namespace JavaScriptRuntime.Node
 
         public object? _write = null;
 
-        public Writable() { }
+        public bool writableObjectMode { get; }
+
+        public Writable(object? options = null)
+        {
+            writableObjectMode = ResolveObjectMode(options, "writableObjectMode");
+
+            var configuredHighWaterMark = NodeNetworkingCommon.TryGetOption(options, "highWaterMark");
+            if (configuredHighWaterMark != null && configuredHighWaterMark is not JsNull)
+            {
+                highWaterMark = CoerceHighWaterMark(configuredHighWaterMark);
+            }
+        }
 
         public bool write(object? chunk)
         {
@@ -262,10 +273,31 @@ namespace JavaScriptRuntime.Node
                 var threshold = (int)JavaScriptRuntime.TypeUtilities.ToNumber(highWaterMark);
                 return threshold < 1 ? 1 : threshold;
             }
-            catch
+            catch (Exception)
             {
                 return DefaultHighWaterMark;
             }
+        }
+
+        private static double CoerceHighWaterMark(object? value)
+        {
+            try
+            {
+                var threshold = JavaScriptRuntime.TypeUtilities.ToNumber(value);
+                return threshold < 1 || double.IsNaN(threshold) || double.IsInfinity(threshold)
+                    ? DefaultHighWaterMark
+                    : threshold;
+            }
+            catch (Exception)
+            {
+                return DefaultHighWaterMark;
+            }
+        }
+
+        private static bool ResolveObjectMode(object? options, string specificOptionName)
+        {
+            return TypeUtilities.ToBoolean(NodeNetworkingCommon.TryGetOption(options, "objectMode"))
+                || TypeUtilities.ToBoolean(NodeNetworkingCommon.TryGetOption(options, specificOptionName));
         }
     }
 }
