@@ -4,6 +4,7 @@ using System.Xml.Linq;
 
 namespace Js2IL.Tests;
 
+[Collection("RepoDotnetCli")]
 public class Js2ILSdkPackageTests
 {
     [Fact]
