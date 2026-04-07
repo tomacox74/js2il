@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using JavaScriptRuntime.EngineCore;
 
@@ -175,10 +176,22 @@ namespace JavaScriptRuntime.Node
 
         public object? setInterval(object? delay = null, object? value = null, object? options = null)
         {
-            _ = delay;
-            _ = value;
-            _ = options;
-            return (Promise)Promise.reject(new Error("node:timers/promises.setInterval is not supported yet."))!;
+            object? signal = null;
+            object? startupFailure = null;
+            double delayMs = 0;
+
+            try
+            {
+                delayMs = CoerceIntervalDelay(delay);
+                signal = TryGetOption(options, "signal");
+                startupFailure = GetAbortReason(signal);
+            }
+            catch (Exception ex)
+            {
+                startupFailure = ex;
+            }
+
+            return new TimersPromisesIntervalIterator(_scheduler, delayMs, value, signal, startupFailure);
         }
 
         private static double CoerceDelay(object? delay)
@@ -187,6 +200,17 @@ namespace JavaScriptRuntime.Node
             if (delayMs < 0 || double.IsNaN(delayMs))
             {
                 return 0;
+            }
+
+            return delayMs;
+        }
+
+        private static double CoerceIntervalDelay(object? delay)
+        {
+            var delayMs = TypeUtilities.ToNumber(delay);
+            if (delayMs < 1 || double.IsNaN(delayMs))
+            {
+                return 1;
             }
 
             return delayMs;
@@ -287,6 +311,165 @@ namespace JavaScriptRuntime.Node
             if (deferred.reject is Delegate reject)
             {
                 Closure.InvokeWithArgs(reject, System.Array.Empty<object>(), reason);
+            }
+        }
+
+        private sealed class TimersPromisesIntervalIterator : IJavaScriptAsyncIterator
+        {
+            private readonly IScheduler _scheduler;
+            private readonly double _delayMs;
+            private readonly object? _value;
+            private readonly object? _signal;
+            private readonly Queue<PromiseWithResolvers> _pending = new();
+
+            private object? _handle;
+            private object? _startupFailure;
+            private object? _terminalError;
+            private Action _unregisterAbort = static () => { };
+            private bool _started;
+            private bool _closed;
+            private int _notYielded;
+
+            public TimersPromisesIntervalIterator(IScheduler scheduler, double delayMs, object? value, object? signal, object? startupFailure)
+            {
+                _scheduler = scheduler;
+                _delayMs = delayMs;
+                _value = value;
+                _signal = signal;
+                _startupFailure = startupFailure;
+                JavaScriptRuntime.AsyncIterator.InitializeAsyncIteratorSurface(this);
+            }
+
+            public bool HasReturn => true;
+
+            public object? Next()
+            {
+                if (_startupFailure != null)
+                {
+                    var reason = _startupFailure;
+                    _startupFailure = null;
+                    _closed = true;
+                    return Promise.reject(reason);
+                }
+
+                EnsureStarted();
+
+                if (_terminalError != null)
+                {
+                    var reason = _terminalError;
+                    _terminalError = null;
+                    return Promise.reject(reason);
+                }
+
+                if (_notYielded > 0)
+                {
+                    _notYielded--;
+                    return Promise.resolve(IteratorResult.Create(_value, done: false));
+                }
+
+                if (_closed)
+                {
+                    return Promise.resolve(IteratorResult.Create(null, done: true));
+                }
+
+                var deferred = Promise.withResolvers();
+                _pending.Enqueue(deferred);
+                return deferred.promise;
+            }
+
+            public object? Return()
+            {
+                _startupFailure = null;
+                _terminalError = null;
+                Close();
+
+                while (_pending.Count > 0)
+                {
+                    ResolveDeferred(_pending.Dequeue(), IteratorResult.Create(null, done: true));
+                }
+
+                return Promise.resolve(IteratorResult.Create(null, done: true));
+            }
+
+            private void EnsureStarted()
+            {
+                if (_started || _closed)
+                {
+                    return;
+                }
+
+                _started = true;
+
+                var abortReason = GetAbortReason(_signal);
+                if (abortReason != null)
+                {
+                    AbortWithError(abortReason);
+                    return;
+                }
+
+                TryRegisterAbortListener(_signal, abortSignalReason =>
+                {
+                    AbortWithError(abortSignalReason is null or JsNull
+                        ? GetAbortReason(_signal) ?? new AbortError()
+                        : CreateAbortError(abortSignalReason));
+                }, out _unregisterAbort);
+
+                _handle = _scheduler.ScheduleInterval(OnTick, TimeSpan.FromMilliseconds(_delayMs));
+
+                if (_closed && _handle != null)
+                {
+                    _scheduler.CancelInterval(_handle);
+                }
+            }
+
+            private void OnTick()
+            {
+                if (_closed)
+                {
+                    return;
+                }
+
+                if (_pending.Count > 0)
+                {
+                    ResolveDeferred(_pending.Dequeue(), IteratorResult.Create(_value, done: false));
+                    return;
+                }
+
+                _notYielded++;
+            }
+
+            private void AbortWithError(object? error)
+            {
+                if (_closed)
+                {
+                    return;
+                }
+
+                _terminalError = error;
+                Close();
+
+                while (_pending.Count > 0)
+                {
+                    RejectDeferred(_pending.Dequeue(), error);
+                }
+            }
+
+            private void Close()
+            {
+                if (_closed)
+                {
+                    return;
+                }
+
+                _closed = true;
+                _notYielded = 0;
+                _unregisterAbort();
+
+                if (_handle != null)
+                {
+                    _scheduler.CancelInterval(_handle);
+                    _handle = null;
+                }
             }
         }
     }

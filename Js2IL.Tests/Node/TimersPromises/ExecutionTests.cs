@@ -27,7 +27,15 @@ namespace Js2IL.Tests.Node.TimersPromises
             => ExecutionTest(nameof(TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks));
 
         [Fact]
-        public Task TimersPromises_SetInterval_RejectsClearly()
-            => ExecutionTest(nameof(TimersPromises_SetInterval_RejectsClearly));
+        public Task TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown()
+            => ExecutionTest(nameof(TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown));
+
+        [Fact]
+        public Task TimersPromises_SetInterval_Backpressure_And_Return()
+            => ExecutionTest(nameof(TimersPromises_SetInterval_Backpressure_And_Return));
+
+        [Fact]
+        public Task TimersPromises_SetInterval_Abort_RejectsActiveIterator()
+            => ExecutionTest(nameof(TimersPromises_SetInterval_Abort_RejectsActiveIterator));
     }
 }

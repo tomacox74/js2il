@@ -48,10 +48,60 @@ namespace Js2IL.Tests.Node.TimersPromises
                 Assert.Equal("AbortError", immediateCause.name);
                 Assert.Equal("This operation was aborted", immediateCause.message);
 
-                var intervalPromise = Assert.IsType<JavaScriptRuntime.Promise>(timersPromises.setInterval(0, "interval-value"));
-                var intervalError = Assert.IsType<Error>(CaptureRejection(intervalPromise, eventLoop));
-                Assert.Equal("Error", intervalError.name);
-                Assert.Equal("node:timers/promises.setInterval is not supported yet.", intervalError.message);
+            }
+            finally
+            {
+                GlobalThis.ServiceProvider = null;
+            }
+        }
+
+        [Fact]
+        public void TimersPromises_SetInterval_SupportsAsyncIteration_Abort_And_Return()
+        {
+            var tickSource = new Node.MockTickSource();
+            var waitHandle = new Node.MockWaitHandle(
+                onSet: () => { },
+                onWaitOne: milliseconds => tickSource.Increment(TimeSpan.FromMilliseconds(milliseconds)));
+            var serviceProvider = RuntimeServices.BuildServiceProvider();
+            serviceProvider.Replace<ITickSource>(tickSource);
+            serviceProvider.Replace<IWaitHandle>(waitHandle);
+
+            try
+            {
+                GlobalThis.ServiceProvider = serviceProvider;
+
+                var schedulerState = serviceProvider.Resolve<NodeSchedulerState>();
+                var eventLoop = new NodeEventLoopPump(schedulerState, tickSource, waitHandle);
+                var timersPromises = new JavaScriptRuntime.Node.TimersPromises();
+
+                var iterator = Assert.IsAssignableFrom<IJavaScriptAsyncIterator>(timersPromises.setInterval(0, "interval-value"));
+                var first = Assert.IsType<IteratorResultObject>(CaptureResolution(Assert.IsType<JavaScriptRuntime.Promise>(iterator.Next()), eventLoop, expectIdle: false));
+                Assert.False(first.done);
+                Assert.Equal("interval-value", first.value);
+
+                var returned = Assert.IsType<IteratorResultObject>(CaptureResolution(Assert.IsType<JavaScriptRuntime.Promise>(iterator.Return()), eventLoop));
+                Assert.True(returned.done);
+                Assert.False(eventLoop.HasPendingWork());
+
+                var afterReturn = Assert.IsType<IteratorResultObject>(CaptureResolution(Assert.IsType<JavaScriptRuntime.Promise>(iterator.Next()), eventLoop));
+                Assert.True(afterReturn.done);
+
+                var controller = new AbortController();
+                var abortingIterator = Assert.IsAssignableFrom<IJavaScriptAsyncIterator>(timersPromises.setInterval(0, "abort-value", CreateOptions(controller.signal)));
+                var yielded = Assert.IsType<IteratorResultObject>(CaptureResolution(Assert.IsType<JavaScriptRuntime.Promise>(abortingIterator.Next()), eventLoop, expectIdle: false));
+                Assert.False(yielded.done);
+                Assert.Equal("abort-value", yielded.value);
+
+                controller.abort(new Error("boom-reason"));
+
+                var abortError = Assert.IsType<AbortError>(CaptureRejection(Assert.IsType<JavaScriptRuntime.Promise>(abortingIterator.Next()), eventLoop));
+                Assert.Equal("AbortError", abortError.name);
+                Assert.Equal("ABORT_ERR", abortError.code);
+                Assert.Equal("The operation was aborted", abortError.message);
+                var abortCause = Assert.IsType<Error>(abortError.cause);
+                Assert.Equal("Error", abortCause.name);
+                Assert.Equal("boom-reason", abortCause.message);
+                Assert.False(eventLoop.HasPendingWork());
             }
             finally
             {
@@ -89,7 +139,30 @@ namespace Js2IL.Tests.Node.TimersPromises
             return rejected ?? throw new Xunit.Sdk.XunitException("Expected promise rejection.");
         }
 
-        private static void DrainEventLoop(NodeEventLoopPump eventLoop, int maxIterations = 10)
+        private static object CaptureResolution(JavaScriptRuntime.Promise promise, NodeEventLoopPump eventLoop, bool expectIdle = true)
+        {
+            object? resolved = null;
+            object? rejected = null;
+
+            promise.@then(
+                new Func<object?[], object?, object?>((_, value) =>
+                {
+                    resolved = value;
+                    return null;
+                }),
+                new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    rejected = reason;
+                    return null;
+                }));
+
+            DrainEventLoop(eventLoop, expectIdle: expectIdle);
+
+            Assert.Null(rejected);
+            return resolved ?? throw new Xunit.Sdk.XunitException("Expected promise resolution.");
+        }
+
+        private static void DrainEventLoop(NodeEventLoopPump eventLoop, int maxIterations = 10, bool expectIdle = true)
         {
             var iterations = 0;
             while (eventLoop.HasPendingWork() && iterations++ < maxIterations)
@@ -101,7 +174,10 @@ namespace Js2IL.Tests.Node.TimersPromises
                 }
             }
 
-            Assert.False(eventLoop.HasPendingWork());
+            if (expectIdle)
+            {
+                Assert.False(eventLoop.HasPendingWork());
+            }
         }
     }
 }
