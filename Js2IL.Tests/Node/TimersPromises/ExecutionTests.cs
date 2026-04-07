@@ -37,5 +37,9 @@ namespace Js2IL.Tests.Node.TimersPromises
         [Fact]
         public Task TimersPromises_SetInterval_Abort_RejectsActiveIterator()
             => ExecutionTest(nameof(TimersPromises_SetInterval_Abort_RejectsActiveIterator));
+
+        [Fact]
+        public Task TimersPromises_SetInterval_InfinityDelay_ClampsToTick()
+            => ExecutionTest(nameof(TimersPromises_SetInterval_InfinityDelay_ClampsToTick));
     }
 }

@@ -204,12 +204,15 @@ namespace JavaScriptRuntime.Node
             return delayMs;
         }
 
-        // The underlying scheduler only reschedules repeating timers with a positive interval,
-        // and Node clamps sub-1ms interval delays instead of treating them as zero-delay loops.
+        // The underlying scheduler only reschedules repeating timers with a positive interval.
+        // Node clamps sub-1ms, overflow, and non-finite interval delays back to 1ms.
         private static double CoerceIntervalDelay(object? delay)
         {
             var delayMs = TypeUtilities.ToNumber(delay);
-            if (delayMs < 1 || double.IsNaN(delayMs))
+            if (delayMs < 1
+                || double.IsNaN(delayMs)
+                || double.IsInfinity(delayMs)
+                || delayMs > int.MaxValue)
             {
                 return 1;
             }
