@@ -8,9 +8,19 @@ namespace JavaScriptRuntime.Node
     [NodeModule("url")]
     public sealed class Url
     {
-        public Type URL => typeof(URL);
+        internal static readonly JsFuncNoScopes2 URLConstructorValue = CreateUrlConstructorValue();
 
-        public Type URLSearchParams => typeof(URLSearchParams);
+        internal static readonly JsFuncNoScopes1 URLSearchParamsConstructorValue = CreateUrlSearchParamsConstructorValue();
+
+        static Url()
+        {
+            ConfigureConstructorSurface(URLConstructorValue, global::JavaScriptRuntime.Node.URL.Prototype);
+            ConfigureConstructorSurface(URLSearchParamsConstructorValue, global::JavaScriptRuntime.Node.URLSearchParams.Prototype);
+        }
+
+        public Delegate URL => URLConstructorValue;
+
+        public Delegate URLSearchParams => URLSearchParamsConstructorValue;
 
         public string fileURLToPath(object input)
         {
@@ -47,10 +57,64 @@ namespace JavaScriptRuntime.Node
             };
             return new URL(builder.Uri.AbsoluteUri);
         }
+
+        private static JsFuncNoScopes2 CreateUrlConstructorValue()
+        {
+            return (newTarget, input, baseValue) =>
+            {
+                if (newTarget is null)
+                {
+                    throw new TypeError("Constructor URL requires 'new'");
+                }
+
+                return baseValue == null || baseValue is JsNull
+                    ? new global::JavaScriptRuntime.Node.URL(input!)
+                    : new global::JavaScriptRuntime.Node.URL(input!, baseValue);
+            };
+        }
+
+        private static JsFuncNoScopes1 CreateUrlSearchParamsConstructorValue()
+        {
+            return (newTarget, init) =>
+            {
+                if (newTarget is null)
+                {
+                    throw new TypeError("Constructor URLSearchParams requires 'new'");
+                }
+
+                return new global::JavaScriptRuntime.Node.URLSearchParams(init);
+            };
+        }
+
+        private static void ConfigureConstructorSurface(object constructorValue, object prototypeValue)
+        {
+            GlobalThis.ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, GlobalThis.ObjectPrototypeValue);
+
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+        }
     }
 
     public sealed class URL
     {
+        internal static readonly object Prototype = CreatePrototype();
+
         private readonly URLSearchParams _searchParams;
 
         private string _protocol;
@@ -68,6 +132,7 @@ namespace JavaScriptRuntime.Node
 
         public URL(object input, object? baseValue)
         {
+            PrototypeChain.SetPrototype(this, Prototype);
             var uri = ResolveUri(input, baseValue);
 
             _protocol = uri.Scheme + ":";
@@ -225,19 +290,69 @@ namespace JavaScriptRuntime.Node
 
             return text.StartsWith("#", StringComparison.Ordinal) ? text : "#" + text;
         }
+
+        private static object CreatePrototype()
+        {
+            var prototype = new JsObject();
+            DefinePrototypeMethod(prototype, "toJSON", PrototypeToJson);
+            DefinePrototypeMethod(prototype, "toString", PrototypeToString);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "URL"
+            });
+            return prototype;
+        }
+
+        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = method
+            });
+        }
+
+        private static URL GetUrlReceiver(string memberName)
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            if (thisValue is not URL url)
+            {
+                throw new TypeError($"URL.prototype.{memberName} called on incompatible receiver");
+            }
+
+            return url;
+        }
+
+        private static object? PrototypeToJson(object[] scopes, object?[]? args)
+            => GetUrlReceiver("toJSON").toJSON();
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+            => GetUrlReceiver("toString").toString();
     }
 
     public sealed class URLSearchParams
     {
+        private static readonly Func<object[], object?[]?, object?> PrototypeEntriesValue = PrototypeEntries;
+        internal static readonly object Prototype = CreatePrototype();
+
         private readonly List<KeyValuePair<string, string>> _entries;
 
         public URLSearchParams()
         {
+            PrototypeChain.SetPrototype(this, Prototype);
             _entries = new List<KeyValuePair<string, string>>();
         }
 
         public URLSearchParams(object? init)
         {
+            PrototypeChain.SetPrototype(this, Prototype);
             _entries = InitializeEntries(init);
         }
 
@@ -527,5 +642,145 @@ namespace JavaScriptRuntime.Node
                 _closed = true;
             }
         }
+
+        private static object CreatePrototype()
+        {
+            var prototype = new JsObject();
+            DefinePrototypeMethod(prototype, "append", PrototypeAppend);
+            DefinePrototypeMethod(prototype, "delete", PrototypeDelete);
+            DefinePrototypeMethod(prototype, "entries", PrototypeEntriesValue);
+            DefinePrototypeMethod(prototype, "forEach", PrototypeForEach);
+            DefinePrototypeMethod(prototype, "get", PrototypeGet);
+            DefinePrototypeMethod(prototype, "getAll", PrototypeGetAll);
+            DefinePrototypeMethod(prototype, "has", PrototypeHas);
+            DefinePrototypeMethod(prototype, "keys", PrototypeKeys);
+            DefinePrototypeMethod(prototype, "set", PrototypeSet);
+            DefinePrototypeMethod(prototype, "sort", PrototypeSort);
+            DefinePrototypeMethod(prototype, "toString", PrototypeToString);
+            DefinePrototypeMethod(prototype, "values", PrototypeValues);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, "size", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)PrototypeSizeGetter
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.iterator.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = PrototypeEntriesValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "URLSearchParams"
+            });
+            return prototype;
+        }
+
+        private static void DefinePrototypeMethod(object prototype, string name, Func<object[], object?[]?, object?> method)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = method
+            });
+        }
+
+        private static URLSearchParams GetUrlSearchParamsReceiver(string memberName)
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            if (thisValue is not URLSearchParams searchParams)
+            {
+                throw new TypeError($"URLSearchParams.prototype.{memberName} called on incompatible receiver");
+            }
+
+            return searchParams;
+        }
+
+        private static object? PrototypeAppend(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("append");
+            var name = args != null && args.Length > 0 ? args[0] : null;
+            var value = args != null && args.Length > 1 ? args[1] : null;
+            searchParams.append(name!, value!);
+            return null;
+        }
+
+        private static object? PrototypeDelete(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("delete");
+            var name = args != null && args.Length > 0 ? args[0] : null;
+            searchParams.@delete(name!);
+            return null;
+        }
+
+        private static object? PrototypeEntries(object[] scopes, object?[]? args)
+            => GetUrlSearchParamsReceiver("entries").entries();
+
+        private static object? PrototypeForEach(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("forEach");
+            var callback = args != null && args.Length > 0 ? args[0] : null;
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            return searchParams.forEach(callback!, thisArg);
+        }
+
+        private static object? PrototypeGet(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("get");
+            var name = args != null && args.Length > 0 ? args[0] : null;
+            return searchParams.get(name!);
+        }
+
+        private static object? PrototypeGetAll(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("getAll");
+            var name = args != null && args.Length > 0 ? args[0] : null;
+            return searchParams.getAll(name!);
+        }
+
+        private static object? PrototypeHas(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("has");
+            var name = args != null && args.Length > 0 ? args[0] : null;
+            return searchParams.has(name!);
+        }
+
+        private static object? PrototypeKeys(object[] scopes, object?[]? args)
+            => GetUrlSearchParamsReceiver("keys").keys();
+
+        private static object? PrototypeSet(object[] scopes, object?[]? args)
+        {
+            var searchParams = GetUrlSearchParamsReceiver("set");
+            var name = args != null && args.Length > 0 ? args[0] : null;
+            var value = args != null && args.Length > 1 ? args[1] : null;
+            searchParams.set(name!, value!);
+            return null;
+        }
+
+        private static object? PrototypeSizeGetter(object[] scopes, object?[]? args)
+            => GetUrlSearchParamsReceiver("size").size;
+
+        private static object? PrototypeSort(object[] scopes, object?[]? args)
+        {
+            GetUrlSearchParamsReceiver("sort").sort();
+            return null;
+        }
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+            => GetUrlSearchParamsReceiver("toString").toString();
+
+        private static object? PrototypeValues(object[] scopes, object?[]? args)
+            => GetUrlSearchParamsReceiver("values").values();
     }
 }

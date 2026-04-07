@@ -424,6 +424,12 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.AbortSignal), AbortSignal);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.AbortSignal), dict[nameof(GlobalThis.AbortSignal)]);
 
+            dict.TryAdd(nameof(GlobalThis.URL), URL);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.URL), dict[nameof(GlobalThis.URL)]);
+
+            dict.TryAdd(nameof(GlobalThis.URLSearchParams), URLSearchParams);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.URLSearchParams), dict[nameof(GlobalThis.URLSearchParams)]);
+
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
@@ -533,6 +539,10 @@ namespace JavaScriptRuntime
         public static Type AbortController => typeof(JavaScriptRuntime.AbortController);
 
         public static Type AbortSignal => typeof(JavaScriptRuntime.AbortSignal);
+
+        public static Delegate URL => JavaScriptRuntime.Node.Url.URLConstructorValue;
+
+        public static Delegate URLSearchParams => JavaScriptRuntime.Node.Url.URLSearchParamsConstructorValue;
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).
@@ -813,7 +823,9 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void ConfigureBuiltinFunctionObject(object functionValue)
+        internal static object ObjectPrototypeValue => _objectPrototypeValue;
+
+        internal static void ConfigureBuiltinFunctionObject(object functionValue)
         {
             PrototypeChain.SetPrototype(functionValue, JavaScriptRuntime.Function.Prototype);
         }

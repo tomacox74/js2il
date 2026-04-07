@@ -2363,7 +2363,22 @@ class HIRMethodBuilder
                 bool isFunctionCtor = string.Equals(calleeName, "Function", StringComparison.Ordinal);
                 var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeName);
 
-                if (!isBuiltInError && !isArrayCtor && !isStringCtor && !isBooleanCtor && !isNumberCtor && !isFunctionCtor && intrinsicType == null)
+                var globalThisProperty = typeof(JavaScriptRuntime.GlobalThis).GetProperty(
+                    calleeName,
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                bool isConstructibleGlobalThisProperty =
+                    globalThisProperty != null
+                    && (typeof(Delegate).IsAssignableFrom(globalThisProperty.PropertyType)
+                        || typeof(Type).IsAssignableFrom(globalThisProperty.PropertyType));
+
+                if (!isBuiltInError
+                    && !isArrayCtor
+                    && !isStringCtor
+                    && !isBooleanCtor
+                    && !isNumberCtor
+                    && !isFunctionCtor
+                    && intrinsicType == null
+                    && !isConstructibleGlobalThisProperty)
                 {
                     return false;
                 }
