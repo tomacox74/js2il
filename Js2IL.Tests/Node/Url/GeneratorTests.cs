@@ -21,5 +21,9 @@ namespace Js2IL.Tests.Node.Url
         [Fact]
         public Task Require_Url_File_Helpers()
             => GenerateTest(nameof(Require_Url_File_Helpers));
+
+        [Fact]
+        public Task Global_Url_And_SearchParams()
+            => GenerateTest(nameof(Global_Url_And_SearchParams));
     }
 }

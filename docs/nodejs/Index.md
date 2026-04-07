@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-03-16T06:25:20Z`
+**Generated:** `2026-04-07T12:56:18Z`
 
 ## Summary
 
 - **Modules:** 19
-- **Globals:** 14
-  - Supported: 14
-  - Partial: 17
+- **Globals:** 16
+  - Supported: 15
+  - Partial: 18
 
 ## Modules
 
@@ -55,6 +55,8 @@
 | [setImmediate](setImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#setimmediatecallback-args) |
 | [setInterval](setInterval.md) | supported | [Node.js](https://nodejs.org/api/timers.html#setintervalcallback-delay-args) |
 | [setTimeout](setTimeout.md) | supported | [Node.js](https://nodejs.org/api/timers.html#settimeoutcallback-delay-args) |
+| [URL](URL_global.md) | supported | [Node.js](https://nodejs.org/api/url.html#new-urlinput-base) |
+| [URLSearchParams](URLSearchParams.md) | partial | [Node.js](https://nodejs.org/api/url.html#class-urlsearchparams) |
 
 ## Limitations
 

@@ -15,6 +15,10 @@ function sanitizeFileName(name) {
   return name.replace(/[\/\.]/g, '_');
 }
 
+function getOutputFileName(doc) {
+  return sanitizeFileName(doc.fileName || doc.name);
+}
+
 function link(href, text) {
   return href ? `[${text || href}](${href})` : (text || '');
 }
@@ -115,8 +119,8 @@ function main() {
     lines.push('| --- | --- | --- |');
     
     for (const mod of modules) {
-      const fileName = sanitizeFileName(mod.name) + '.md';
-      const name = link(fileName, mod.name);
+      const outputFileName = getOutputFileName(mod) + '.md';
+      const name = link(outputFileName, mod.name);
       const docsLink = mod.docsUrl ? link(mod.docsUrl, 'Node.js') : '';
       lines.push(`| ${name} | ${mod.status} | ${docsLink} |`);
     }
@@ -131,8 +135,8 @@ function main() {
     lines.push('| --- | --- | --- |');
     
     for (const glob of globals) {
-      const fileName = sanitizeFileName(glob.name) + '.md';
-      const name = link(fileName, glob.name);
+      const outputFileName = getOutputFileName(glob) + '.md';
+      const name = link(outputFileName, glob.name);
       const docsLink = glob.docsUrl ? link(glob.docsUrl, 'Node.js') : '';
       lines.push(`| ${name} | ${glob.status} | ${docsLink} |`);
     }

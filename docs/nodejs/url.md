@@ -16,7 +16,7 @@
 
 ## Notes
 
-Provides a focused WHATWG URL baseline for typical http(s) and file URLs, including base-relative resolution, URLSearchParams basics, and fileURLToPath/pathToFileURL helpers. Legacy url.parse/url.format APIs and global URL exposure are not implemented yet.
+Provides a focused WHATWG URL baseline for typical http(s) and file URLs, including base-relative resolution, URLSearchParams basics, fileURLToPath/pathToFileURL helpers, and shared `globalThis.URL` / `globalThis.URLSearchParams` constructor exposure. Legacy url.parse/url.format APIs remain unimplemented.
 
 ## APIs
 
@@ -31,23 +31,27 @@ Provides a focused WHATWG URL baseline for typical http(s) and file URLs, includ
 
 ### URL
 
-Supports absolute URL parsing, base-relative resolution, href/origin/protocol/username/password/host/hostname/port/pathname/search/hash accessors, and a live searchParams object.
+Supports absolute URL parsing, base-relative resolution, href/origin/protocol/username/password/host/hostname/port/pathname/search/hash accessors, `toString()` / `toJSON()`, a live searchParams object, and shared constructor identity with the global `URL` binding.
 
 **Tests:**
 - `Js2IL.Tests.Node.Url.ExecutionTests.Require_Url_Parse_And_Base` (`Js2IL.Tests/Node/Url/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Url.ExecutionTests.Require_Url_SearchParams_Mutate` (`Js2IL.Tests/Node/Url/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Url.ExecutionTests.Require_Url_Invalid_With_Base_Throws` (`Js2IL.Tests/Node/Url/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Url.ExecutionTests.Global_Url_And_SearchParams` (`Js2IL.Tests/Node/Url/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Url.GeneratorTests.Require_Url_Parse_And_Base` (`Js2IL.Tests/Node/Url/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Url.GeneratorTests.Require_Url_SearchParams_Mutate` (`Js2IL.Tests/Node/Url/GeneratorTests.cs`)
 - `Js2IL.Tests.Node.Url.GeneratorTests.Require_Url_Invalid_With_Base_Throws` (`Js2IL.Tests/Node/Url/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Url.GeneratorTests.Global_Url_And_SearchParams` (`Js2IL.Tests/Node/Url/GeneratorTests.cs`)
 
 ### URLSearchParams
 
-Supports string initialization plus get/getAll/has/append/set/delete/sort/forEach/entries/keys/values/toString for common query workflows.
+Supports string initialization plus get/getAll/has/append/set/delete/sort/forEach/entries/keys/values/toString for common query workflows, and shares its constructor object with the global `URLSearchParams` binding.
 
 **Tests:**
 - `Js2IL.Tests.Node.Url.ExecutionTests.Require_Url_SearchParams_Mutate` (`Js2IL.Tests/Node/Url/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Url.ExecutionTests.Global_Url_And_SearchParams` (`Js2IL.Tests/Node/Url/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Url.GeneratorTests.Require_Url_SearchParams_Mutate` (`Js2IL.Tests/Node/Url/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Url.GeneratorTests.Global_Url_And_SearchParams` (`Js2IL.Tests/Node/Url/GeneratorTests.cs`)
 
 ### fileURLToPath(url)
 

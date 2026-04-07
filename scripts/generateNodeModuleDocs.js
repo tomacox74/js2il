@@ -51,6 +51,10 @@ function sanitizeFileName(name) {
   return name.replace(/[\/\.]/g, '_');
 }
 
+function getOutputFileName(doc) {
+  return sanitizeFileName(doc.fileName || doc.name);
+}
+
 function asArray(v) {
   return Array.isArray(v) ? v : (v == null ? [] : [v]);
 }
@@ -197,8 +201,7 @@ function generateMarkdown(doc) {
 
 function processFile(jsonPath, nodejsDir) {
   const doc = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-  const baseName = path.basename(jsonPath, '.json');
-  const mdPath = path.join(nodejsDir, baseName + '.md');
+  const mdPath = path.join(nodejsDir, getOutputFileName(doc) + '.md');
   
   const markdown = generateMarkdown(doc);
   fs.writeFileSync(mdPath, markdown, 'utf8');
@@ -225,16 +228,38 @@ function main() {
   let jsonFiles = [];
   
   if (args.module) {
-    // Generate specific module
-    const fileName = sanitizeFileName(args.module) + '.json';
-    const filePath = path.join(nodejsDir, fileName);
-    
-    if (!fs.existsSync(filePath)) {
-      console.error(`Error: Module file not found: ${fileName}`);
+    const requestedName = sanitizeFileName(args.module).toLowerCase();
+    const exactJsonPath = path.join(nodejsDir, `${args.module}.json`);
+    const exactSanitizedJsonPath = path.join(nodejsDir, `${sanitizeFileName(args.module)}.json`);
+    const allFiles = fs.readdirSync(nodejsDir)
+      .filter(f => f.endsWith('.json'))
+      .filter(f => f !== 'NodeSupport.json' &&
+                   f !== 'NodeSupport.schema.json' &&
+                   f !== 'ModuleDoc.schema.json' &&
+                   f !== 'NodeLimitations.json')
+      .map(f => path.join(nodejsDir, f));
+
+    let matchingPath = null;
+    if (fs.existsSync(exactJsonPath)) {
+      matchingPath = exactJsonPath;
+    } else if (fs.existsSync(exactSanitizedJsonPath)) {
+      matchingPath = exactSanitizedJsonPath;
+    } else {
+      matchingPath = allFiles.find(filePath => {
+        const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        const jsonBaseName = path.basename(filePath, '.json').toLowerCase();
+        const docName = sanitizeFileName(doc.name || '').toLowerCase();
+        const outputName = getOutputFileName(doc).toLowerCase();
+        return jsonBaseName === requestedName || outputName === requestedName || docName === requestedName;
+      });
+    }
+
+    if (!matchingPath) {
+      console.error(`Error: Module file not found: ${args.module}`);
       process.exit(1);
     }
-    
-    jsonFiles = [filePath];
+
+    jsonFiles = [matchingPath];
   } else {
     // Generate all modules
     const allFiles = fs.readdirSync(nodejsDir);
