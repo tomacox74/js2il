@@ -1,6 +1,6 @@
 # js2il – JavaScript to .NET IL (consumer guide)
 
-js2il is a .NET global tool that parses JavaScript (ES) and emits ECMA‑335 IL you can run on .NET.
+js2il is a JavaScript to .NET compiler, available as a .NET global tool. It compiles JavaScript source code to native .NET assemblies you can run on .NET.
 
 ## Install
 
