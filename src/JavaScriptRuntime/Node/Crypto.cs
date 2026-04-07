@@ -41,6 +41,23 @@ namespace JavaScriptRuntime.Node
         public object getRandomValues(object? target)
             => _webcrypto.getRandomValues(target);
 
+        public Buffer pbkdf2Sync(object? password, object? salt, object? iterations, object? keylen, object? digest)
+        {
+            if (digest is not string digestText)
+            {
+                throw new TypeError("The \"digest\" argument must be of type string");
+            }
+
+            var passwordBytes = CoercePbkdf2InputBytes(password, "password");
+            var saltBytes = CoercePbkdf2InputBytes(salt, "salt");
+            var iterationCount = CoercePbkdf2Iterations(iterations);
+            var outputLength = CoercePbkdf2KeyLength(keylen);
+            var algorithm = ResolvePbkdf2DigestAlgorithm(digestText);
+            var derived = new byte[outputLength];
+            Rfc2898DeriveBytes.Pbkdf2(passwordBytes, saltBytes, derived, iterationCount, algorithm);
+            return Buffer.FromBytes(derived);
+        }
+
         internal static byte[] CoerceBytes(object? value, object? encoding)
         {
             switch (value)
@@ -128,6 +145,30 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        internal static byte[] CoercePbkdf2InputBytes(object? value, string argumentName)
+        {
+            switch (value)
+            {
+                case Buffer buffer:
+                    return buffer.ToByteArray();
+                case byte[] bytes:
+                    return (byte[])bytes.Clone();
+                case ArrayBuffer arrayBuffer:
+                    return (byte[])arrayBuffer.RawBytes.Clone();
+                case TypedArrayBase typedArray:
+                    return CopyTypedArrayBytes(typedArray);
+                case DataView dataView:
+                    return CopyDataViewBytes(dataView);
+                case string text:
+                    return Buffer.from(text).ToByteArray();
+                default:
+                    throw CreateInvalidArgumentTypeError(
+                        argumentName,
+                        "of type string or an instance of ArrayBuffer, Buffer, TypedArray, or DataView",
+                        value);
+            }
+        }
+
         internal static void FillRandomValues(object? target)
         {
             switch (target)
@@ -211,6 +252,12 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        private static HashAlgorithmName ResolvePbkdf2DigestAlgorithm(string digest)
+            => ResolveHashAlgorithm(
+                digest,
+                allowMd5: false,
+                () => new TypeError($"Invalid digest: {digest}"));
+
         private static HashAlgorithmName ResolveHashAlgorithm(string algorithm)
             => ResolveHashAlgorithm(algorithm, allowMd5: true, static () => new Error("Digest method not supported"));
 
@@ -244,6 +291,46 @@ namespace JavaScriptRuntime.Node
                 || number > int.MaxValue)
             {
                 throw new RangeError($"The value of \"{argumentName}\" is out of range. It must be an integer between 0 and {int.MaxValue}.");
+            }
+
+            return (int)number;
+        }
+
+        private static int CoercePbkdf2Iterations(object? iterations)
+        {
+            if (iterations == null || iterations is JsNull || !IsNumberValue(iterations))
+            {
+                throw new TypeError("The \"iterations\" argument must be of type number");
+            }
+
+            var number = TypeUtilities.ToNumber(iterations);
+            if (double.IsNaN(number)
+                || double.IsInfinity(number)
+                || number < 1
+                || global::System.Math.Truncate(number) != number
+                || number > int.MaxValue)
+            {
+                throw new RangeError($"The value of \"iterations\" is out of range. It must be >= 1 && <= {int.MaxValue}.");
+            }
+
+            return (int)number;
+        }
+
+        private static int CoercePbkdf2KeyLength(object? keylen)
+        {
+            if (keylen == null || keylen is JsNull || !IsNumberValue(keylen))
+            {
+                throw new TypeError("The \"keylen\" argument must be of type number");
+            }
+
+            var number = TypeUtilities.ToNumber(keylen);
+            if (double.IsNaN(number)
+                || double.IsInfinity(number)
+                || number < 0
+                || global::System.Math.Truncate(number) != number
+                || number > int.MaxValue)
+            {
+                throw new RangeError($"The value of \"keylen\" is out of range. It must be >= 0 && <= {int.MaxValue}.");
             }
 
             return (int)number;

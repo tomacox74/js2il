@@ -19,6 +19,13 @@ logError("hmac algorithm type", () => crypto.createHmac(123, "key"));
 logError("hmac algorithm unsupported", () => crypto.createHmac("sha3", "key"));
 logError("hmac key null", () => crypto.createHmac("sha256", null));
 logError("hmac key number", () => crypto.createHmac("sha256", 123));
+logError("pbkdf2 digest missing", () => crypto.pbkdf2Sync("password", "salt", 1, 16));
+logError("pbkdf2 digest unsupported", () => crypto.pbkdf2Sync("password", "salt", 1, 16, "sha3"));
+logError("pbkdf2 password number", () => crypto.pbkdf2Sync(123, "salt", 1, 16, "sha256"));
+logError("pbkdf2 salt null", () => crypto.pbkdf2Sync("password", null, 1, 16, "sha256"));
+logError("pbkdf2 iterations type", () => crypto.pbkdf2Sync("password", "salt", "1", 16, "sha256"));
+logError("pbkdf2 iterations zero", () => crypto.pbkdf2Sync("password", "salt", 0, 16, "sha256"));
+logError("pbkdf2 keylen negative", () => crypto.pbkdf2Sync("password", "salt", 1, -1, "sha256"));
 logError("random size type", () => crypto.randomBytes("4"));
 logError("random size negative", () => crypto.randomBytes(-1));
 
