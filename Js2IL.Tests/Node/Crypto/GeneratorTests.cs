@@ -15,6 +15,10 @@ namespace Js2IL.Tests.Node.Crypto
             => GenerateTest(nameof(Require_Crypto_CreateHmac));
 
         [Fact]
+        public Task Require_Crypto_Pbkdf2Sync()
+            => GenerateTest(nameof(Require_Crypto_Pbkdf2Sync));
+
+        [Fact]
         public Task Require_Crypto_WebCrypto_GetRandomValues()
             => GenerateTest(nameof(Require_Crypto_WebCrypto_GetRandomValues));
 

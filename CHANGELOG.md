@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- node/crypto/tests/docs: close issue #954 by adding a focused `crypto.pbkdf2Sync(...)` baseline over .NET PBKDF2 for string and binary inputs with explicit sha1/sha256/sha384/sha512 support, extending Node crypto error-path coverage for invalid digest/input/range handling, and refreshing the Node crypto docs while keeping broader cipher/asymmetric/Web Crypto gaps explicit.
 - node/loader/tests/docs: expand the documented post-#869 package-loader slice by allowing package.json `imports` aliases to target bare package specifiers (including patterned subpaths) in addition to package-local `./...` paths, add focused resolver plus Node module execution/manifest coverage, and clarify the remaining unsupported loader/runtime-probing boundaries.
 - node/child_process/tests/docs: expand the post-baseline `fork(...)` slice with explicit `options.silent` stdio control (`true` piped, `false` inherited while keeping IPC), make detached async child-process requests fail with targeted diagnostics instead of being silently approximated, add focused execution/generator coverage, and refresh the Node child_process docs.
 - node/timers/tests/docs: complete issue #875's follow-on by implementing the `node:timers/promises.setInterval(...)` async-iterator contract with queued tick/backpressure handling, `AbortSignal` rejection for active iterators, deterministic teardown on `return()` / `for await ... break`, focused execution/generator/runtime coverage, and refreshed Node module docs.

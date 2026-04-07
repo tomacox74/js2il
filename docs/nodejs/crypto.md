@@ -15,7 +15,7 @@
 
 ## Notes
 
-Provides a focused practical crypto slice for hashing, secure random bytes, HMAC, and a minimal Web Crypto bridge. Supported Node algorithms are createHash/createHmac with md5, sha1, sha256, sha384, and sha512. Supported webcrypto.subtle operations are digest with SHA-1/SHA-256/SHA-384/SHA-512 plus importKey("raw", ...) / sign(...) / verify(...) for HMAC keys. Unsupported algorithms, formats, invalid key lengths, and unsupported key usages fail explicitly. Ciphers, pbkdf2Sync, asymmetric sign/verify, key generation/export, X.509/TLS crypto, and the broader Web Crypto matrix remain unimplemented.
+Provides a focused practical crypto slice for hashing, PBKDF2 key derivation, secure random bytes, HMAC, and a minimal Web Crypto bridge. Supported Node algorithms are createHash/createHmac with md5, sha1, sha256, sha384, and sha512 plus pbkdf2Sync with sha1, sha256, sha384, and sha512. Supported webcrypto.subtle operations are digest with SHA-1/SHA-256/SHA-384/SHA-512 plus importKey("raw", ...) / sign(...) / verify(...) for HMAC keys. Unsupported algorithms, formats, invalid key lengths, and unsupported key usages fail explicitly. Ciphers, asymmetric sign/verify, key generation/export, X.509/TLS crypto, and the broader Web Crypto matrix remain unimplemented.
 
 ## APIs
 
@@ -24,6 +24,7 @@ Provides a focused practical crypto slice for hashing, secure random bytes, HMAC
 | createHash(algorithm) | function | supported | [docs](https://nodejs.org/api/crypto.html#cryptocreatehashalgorithm-options) |
 | createHmac(algorithm, key) | function | supported | [docs](https://nodejs.org/api/crypto.html#cryptocreatehmacalgorithm-key-options) |
 | randomBytes(size) | function | supported | [docs](https://nodejs.org/api/crypto.html#cryptorandombytessize-callback) |
+| pbkdf2Sync(password, salt, iterations, keylen, digest) | function | supported | [docs](https://nodejs.org/api/crypto.html#cryptopbkdf2syncpassword-salt-iterations-keylen-digest) |
 | getRandomValues(typedArray) | function | supported | [docs](https://nodejs.org/api/crypto.html#cryptogetrandomvaluestypedarray) |
 | webcrypto.getRandomValues(typedArray) | method | supported | [docs](https://nodejs.org/api/webcrypto.html#cryptogetrandomvaluestypedarray) |
 | webcrypto.subtle.digest(algorithm, data) | method | supported | [docs](https://nodejs.org/api/webcrypto.html#subtledigestalgorithm-data) |
@@ -56,6 +57,16 @@ Returns a Buffer of the requested size using the platform cryptographic random s
 **Tests:**
 - `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHash_And_RandomBytes` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHash_And_RandomBytes` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+
+### pbkdf2Sync(password, salt, iterations, keylen, digest)
+
+Supports string/ArrayBuffer/Buffer/TypedArray/DataView password and salt inputs with sha1, sha256, sha384, and sha512 digests. Returns a Buffer. Callback-style pbkdf2(...) and other digest algorithms remain unsupported.
+
+**Tests:**
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_Pbkdf2Sync` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_Pbkdf2Sync` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### getRandomValues(typedArray)
 
