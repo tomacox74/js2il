@@ -105,7 +105,7 @@
       "name": "statSync(path)",
       "kind": "function",
       "status": "supported",
-      "notes": "Returns a minimal Stats-like object supporting size (number). Directories report size 0.",
+      "notes": "Returns a practical Stats-like object with size, mode, atime/mtime/ctime/birthtime plus their `*Ms` number variants, and the common `isFile()` / `isDirectory()` / `isSymbolicLink()` / `isBlockDevice()` / `isCharacterDevice()` / `isFIFO()` / `isSocket()` predicates. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata. Non-existent paths still return the legacy zeroed fallback instead of throwing.",
       "docs": "https://nodejs.org/api/fs.html#fsstatsyncpath-options",
       "tests": [
         {
@@ -113,8 +113,16 @@
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_StatSync_RichMetadata",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_StatSync_NonExistentPath_ReturnsZero",
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.GeneratorTests.FS_StatSync_RichMetadata",
+          "file": "Js2IL.Tests/Node/FS/GeneratorTests.cs"
         }
       ]
     },
@@ -160,7 +168,7 @@
       "name": "open(path[, flags[, mode]], callback)",
       "kind": "function",
       "status": "partial",
-      "notes": "Opens a file and passes back a FileHandle-like object exposing fd/read/write/close for the supported baseline. Supported flags: r, r+, w, w+, a, a+. The callback currently receives the FileHandle object instead of Node's raw numeric fd.",
+      "notes": "Opens a file and passes back a FileHandle-like object exposing fd/read/write/close for the supported baseline. Supported flags: r, r+, w, w+, a, a+. The callback still receives the FileHandle object instead of Node's raw numeric fd, so raw fd-centric callback workflows remain unsupported.",
       "docs": "https://nodejs.org/api/fs.html#fsopenpath-flags-mode-callback",
       "tests": [
         {
@@ -347,14 +355,25 @@
       "name": "stat(path, callback)",
       "kind": "function",
       "status": "supported",
-      "notes": "Callback-style async stat; returns a minimal Stats-like object supporting size.",
+      "notes": "Callback-style async stat; returns the same richer Stats-like surface as statSync(), including mode, timestamps, and common type predicates. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata.",
       "docs": "https://nodejs.org/api/fs.html#fsstatpath-options-callback",
       "tests": [
         {
           "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Stat_Callback_FileSize",
           "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.FS.ExecutionTests.FS_Stat_Callback_RichMetadata",
+          "file": "Js2IL.Tests/Node/FS/ExecutionTests.cs"
         }
       ]
+    },
+    {
+      "name": "watch(filename[, options][, listener])",
+      "kind": "function",
+      "status": "not-supported",
+      "notes": "File watching is not implemented yet in the current runtime, so watch-driven dev-server and incremental-build loops still require a host fallback.",
+      "docs": "https://nodejs.org/api/fs.html#fswatchfilename-options-listener"
     },
     {
       "name": "rm(path[, options], callback)",

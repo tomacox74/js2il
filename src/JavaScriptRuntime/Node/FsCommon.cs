@@ -11,6 +11,12 @@ namespace JavaScriptRuntime.Node
     internal static class FsCommon
     {
         private static int _nextFileDescriptor = 17;
+        private const int RegularFileTypeBits = 32768; // 0100000
+        private const int DirectoryTypeBits = 16384; // 0040000
+        private const int ReadOnlyFilePermissionBits = 292; // 0444
+        private const int ReadWriteFilePermissionBits = 438; // 0666
+        private const int ReadOnlyDirectoryPermissionBits = 365; // 0555
+        private const int ReadWriteDirectoryPermissionBits = 511; // 0777
         internal const FileShare NodeFileShare = FileShare.ReadWrite | FileShare.Delete;
 
         internal static bool GetBooleanOption(object? options, string propertyName)
@@ -207,6 +213,113 @@ namespace JavaScriptRuntime.Node
             {
                 scheduler.EndIo(promiseWithResolvers, TranslateOpenError(path, ex), isError: true);
             }
+        }
+
+        /// <summary>
+        /// Attempts to build a Stats-like object for an existing file system entry.
+        /// </summary>
+        /// <param name="path">The file or directory path to inspect.</param>
+        /// <param name="stats">The resulting Stats-like object, or the zeroed fallback when inspection fails.</param>
+        /// <returns><c>true</c> when <paramref name="path"/> resolved to an existing file or directory; otherwise <c>false</c>.</returns>
+        internal static bool TryCreateStats(string path, out FS.Stats stats)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                try
+                {
+                    if (File.Exists(path))
+                    {
+                        stats = CreateStats(new FileInfo(path), isDirectory: false);
+                        return true;
+                    }
+
+                    if (Directory.Exists(path))
+                    {
+                        stats = CreateStats(new DirectoryInfo(path), isDirectory: true);
+                        return true;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            stats = CreateZeroStats();
+            return false;
+        }
+
+        /// <summary>
+        /// Creates a Stats-like object for an existing file system entry, or throws when the path does not exist.
+        /// </summary>
+        /// <param name="path">The file or directory path to inspect.</param>
+        /// <returns>A populated Stats-like object for the requested path.</returns>
+        internal static FS.Stats CreateStats(string path)
+        {
+            if (TryCreateStats(path, out var stats))
+            {
+                return stats;
+            }
+
+            throw new FileNotFoundException(path);
+        }
+
+        /// <summary>
+        /// Creates the legacy zeroed Stats fallback used by the existing statSync missing-path behavior.
+        /// </summary>
+        internal static FS.Stats CreateZeroStats()
+            => new FS.Stats(
+                length: 0,
+                isFile: false,
+                isDirectory: false,
+                mode: 0,
+                atimeMs: 0,
+                mtimeMs: 0,
+                ctimeMs: 0,
+                birthtimeMs: 0);
+
+        private static FS.Stats CreateStats(FileSystemInfo info, bool isDirectory)
+        {
+            var length = info is FileInfo fileInfo ? fileInfo.Length : 0L;
+            var mode = (double)((isDirectory ? DirectoryTypeBits : RegularFileTypeBits) | GetPermissionBits(info.Attributes, isDirectory));
+            var atimeMs = ToUnixTimeMilliseconds(info.LastAccessTimeUtc);
+            var mtimeMs = ToUnixTimeMilliseconds(info.LastWriteTimeUtc);
+            var creationMs = ToUnixTimeMilliseconds(info.CreationTimeUtc);
+
+            return new FS.Stats(
+                length,
+                isFile: !isDirectory,
+                isDirectory,
+                mode,
+                atimeMs,
+                mtimeMs,
+                ctimeMs: creationMs,
+                birthtimeMs: creationMs);
+        }
+
+        private static long ToUnixTimeMilliseconds(DateTime value)
+        {
+            try
+            {
+                var utcValue = value.Kind == DateTimeKind.Utc
+                    ? value
+                    : value.ToUniversalTime();
+                return new DateTimeOffset(utcValue).ToUnixTimeMilliseconds();
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        private static int GetPermissionBits(FileAttributes attributes, bool isDirectory)
+        {
+            var isReadOnly = (attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
+            if (isDirectory)
+            {
+                return isReadOnly ? ReadOnlyDirectoryPermissionBits : ReadWriteDirectoryPermissionBits;
+            }
+
+            return isReadOnly ? ReadOnlyFilePermissionBits : ReadWriteFilePermissionBits;
         }
 
         internal static async Task CompleteReadFileTextAsync(IIOScheduler scheduler, string path, System.Text.Encoding textEncoding, PromiseWithResolvers promiseWithResolvers)

@@ -189,6 +189,62 @@ public class NodeModuleResolverTests
     }
 
     [Fact]
+    public void Resolve_PackageImports_AllowsBarePackageTargets_AndPatterns()
+    {
+        var fs = new MockFileSystem();
+        var resolver = new NodeModuleResolver(fs);
+
+        var projectDir = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "proj"));
+        var packageRoot = Path.Combine(projectDir, "packages", "app");
+        var packageJson = Path.Combine(packageRoot, "package.json");
+        var baseDirectory = Path.Combine(packageRoot, "src");
+        var depRoot = Path.Combine(packageRoot, "node_modules", "dep");
+        var depPackageJson = Path.Combine(depRoot, "package.json");
+        var importEntry = Path.Combine(depRoot, "esm", "index.js");
+        var requireEntry = Path.Combine(depRoot, "cjs", "index.cjs");
+        var importFeature = Path.Combine(depRoot, "esm", "feature.js");
+        var requireFeature = Path.Combine(depRoot, "cjs", "feature.cjs");
+
+        fs.AddFile(
+            packageJson,
+            "{"
+            + "\"name\":\"app\","
+            + "\"imports\":{"
+            + "\"#dep\":\"dep\","
+            + "\"#dep/*\":\"dep/*\""
+            + "}"
+            + "}"
+        );
+        fs.AddFile(
+            depPackageJson,
+            "{"
+            + "\"name\":\"dep\","
+            + "\"type\":\"module\","
+            + "\"exports\":{"
+            + "\".\":{\"import\":\"./esm/index.js\",\"require\":\"./cjs/index.cjs\"},"
+            + "\"./feature\":{\"import\":\"./esm/feature.js\",\"require\":\"./cjs/feature.cjs\"}"
+            + "}"
+            + "}"
+        );
+        fs.AddFile(importEntry, "export default 'esm-dep';");
+        fs.AddFile(requireEntry, "\"use strict\"; module.exports = 'cjs-dep';");
+        fs.AddFile(importFeature, "export default 'esm-feature';");
+        fs.AddFile(requireFeature, "\"use strict\"; module.exports = 'cjs-feature';");
+
+        Assert.True(resolver.TryResolve("#dep", baseDirectory, ModuleResolutionMode.Import, out var importResolved, out var importError), importError);
+        Assert.Equal(Path.GetFullPath(importEntry), importResolved);
+
+        Assert.True(resolver.TryResolve("#dep", baseDirectory, ModuleResolutionMode.Require, out var requireResolved, out var requireError), requireError);
+        Assert.Equal(Path.GetFullPath(requireEntry), requireResolved);
+
+        Assert.True(resolver.TryResolve("#dep/feature", baseDirectory, ModuleResolutionMode.Import, out var importFeatureResolved, out var importFeatureError), importFeatureError);
+        Assert.Equal(Path.GetFullPath(importFeature), importFeatureResolved);
+
+        Assert.True(resolver.TryResolve("#dep/feature", baseDirectory, ModuleResolutionMode.Require, out var requireFeatureResolved, out var requireFeatureError), requireFeatureError);
+        Assert.Equal(Path.GetFullPath(requireFeature), requireFeatureResolved);
+    }
+
+    [Fact]
     public void Resolve_PackageImports_ReportsUnsupportedConditions()
     {
         var fs = new MockFileSystem();
@@ -246,5 +302,33 @@ public class NodeModuleResolverTests
         Assert.Contains("Available supported conditions: require", error);
         Assert.Contains("Ignored unsupported conditions: browser", error);
         Assert.DoesNotContain("Unsupported package.json imports conditions", error);
+    }
+
+    [Fact]
+    public void Resolve_PackageImports_RejectsPathLikeTargetsOutsideSupportedSlice()
+    {
+        var fs = new MockFileSystem();
+        var resolver = new NodeModuleResolver(fs);
+
+        var projectDir = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "proj"));
+        var packageRoot = Path.Combine(projectDir, "packages", "app");
+        var packageJson = Path.Combine(packageRoot, "package.json");
+        var baseDirectory = Path.Combine(packageRoot, "src");
+
+        fs.AddFile(
+            packageJson,
+            "{"
+            + "\"name\":\"app\","
+            + "\"imports\":{"
+            + "\"#shared\":\"../shared.js\""
+            + "}"
+            + "}"
+        );
+
+        var ok = resolver.TryResolve("#shared", baseDirectory, ModuleResolutionMode.Import, out _, out var error);
+
+        Assert.False(ok);
+        Assert.Contains("Unsupported package.json imports target '../shared.js'", error);
+        Assert.Contains("expected package-local path starting with './' or bare package specifier", error);
     }
 }

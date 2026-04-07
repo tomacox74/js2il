@@ -3,7 +3,10 @@ using System.Dynamic;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using JavaScriptRuntime;
+using JavaScriptRuntime.EngineCore;
 using JavaScriptRuntime.Node;
 using Xunit;
 
@@ -53,6 +56,75 @@ namespace Js2IL.Tests.Node.Net
 
             var keepAliveValue = accepted.Client.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive);
             Assert.Equal(1, Convert.ToInt32(keepAliveValue));
+        }
+
+        [Fact]
+        public void NetSocket_FinalizeReadableSide_DeliversQueuedDataBeforeEnd()
+        {
+            var tickSource = new Node.MockTickSource();
+            var waitHandle = new Node.MockWaitHandle(
+                onSet: () => { },
+                onWaitOne: milliseconds => tickSource.Increment(TimeSpan.FromMilliseconds(milliseconds)));
+            var serviceProvider = RuntimeServices.BuildServiceProvider();
+            serviceProvider.Replace<ITickSource>(tickSource);
+            serviceProvider.Replace<IWaitHandle>(waitHandle);
+
+            try
+            {
+                GlobalThis.ServiceProvider = serviceProvider;
+
+                var schedulerState = serviceProvider.Resolve<NodeSchedulerState>();
+                var eventLoop = new NodeEventLoopPump(schedulerState, tickSource, waitHandle);
+
+                dynamic options = new ExpandoObject();
+                options.allowHalfOpen = true;
+
+                var socket = new NetSocket((object)options);
+                var events = new System.Collections.Generic.List<string>();
+                socket.on("data", (Func<object[], object?[], object?>)((scopes, args) =>
+                {
+                    var chunk = Assert.IsType<JavaScriptRuntime.Node.Buffer>(args[0]);
+                    events.Add("data:" + chunk.toString());
+                    return null;
+                }));
+                socket.on("end", (Func<object[], object?[], object?>)((scopes, args) =>
+                {
+                    events.Add("end");
+                    return null;
+                }));
+
+                var emitReadChunk = typeof(NetSocket).GetMethod("EmitReadChunk", BindingFlags.Instance | BindingFlags.NonPublic);
+                var finalizeReadableSide = typeof(NetSocket).GetMethod("FinalizeReadableSide", BindingFlags.Instance | BindingFlags.NonPublic);
+                Assert.NotNull(emitReadChunk);
+                Assert.NotNull(finalizeReadableSide);
+
+                emitReadChunk!.Invoke(socket, new object?[] { new JavaScriptRuntime.Node.Buffer(Encoding.UTF8.GetBytes("alpha")), false });
+                emitReadChunk.Invoke(socket, new object?[] { new JavaScriptRuntime.Node.Buffer(Encoding.UTF8.GetBytes("beta")), false });
+                finalizeReadableSide!.Invoke(socket, new object?[] { false });
+
+                DrainEventLoop(eventLoop);
+
+                Assert.Equal(new[] { "data:alpha", "data:beta", "end" }, events);
+            }
+            finally
+            {
+                GlobalThis.ServiceProvider = null;
+            }
+        }
+
+        private static void DrainEventLoop(NodeEventLoopPump eventLoop, int maxIterations = 10)
+        {
+            var iterations = 0;
+            while (eventLoop.HasPendingWork() && iterations++ < maxIterations)
+            {
+                eventLoop.RunOneIteration();
+                if (eventLoop.HasPendingWork())
+                {
+                    eventLoop.WaitForWorkOrNextTimer();
+                }
+            }
+
+            Assert.False(eventLoop.HasPendingWork());
         }
     }
 }

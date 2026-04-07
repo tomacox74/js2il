@@ -35,6 +35,20 @@ public class NodeModulesExecutionTests
     }
 
     [Fact]
+    public Task CommonJS_Require_NodeModules_PackageImports_BarePackageAlias()
+    {
+        using var project = NodeModulesTestProjectSupport.CreateBarePackageImportsAliasProject();
+        var compiled = NodeModulesTestProjectSupport.Compile(project);
+        if (!compiled.Success || string.IsNullOrWhiteSpace(compiled.AssemblyPath))
+        {
+            throw new InvalidOperationException("Compilation failed.\nErrors:\n" + compiled.Logger.Errors);
+        }
+
+        var output = NodeModulesTestProjectSupport.ExecuteGeneratedAssembly(compiled.AssemblyPath);
+        return VerifyWithSnapshot(output);
+    }
+
+    [Fact]
     public void CommonJS_Require_NodeModules_UnsupportedConditions_ReportDiagnostic()
     {
         using var project = NodeModulesTestProjectSupport.CreateUnsupportedExportsConditionsProject();

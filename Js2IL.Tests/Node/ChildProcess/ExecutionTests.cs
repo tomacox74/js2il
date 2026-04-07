@@ -35,6 +35,12 @@ namespace Js2IL.Tests.Node.ChildProcess
                 additionalScripts: new[] { "Require_ChildProcess_Fork_Kill_And_Env_Child" });
 
         [Fact]
+        public Task Require_ChildProcess_Fork_Silent()
+            => ExecutionTest(
+                nameof(Require_ChildProcess_Fork_Silent),
+                additionalScripts: new[] { "Require_ChildProcess_Fork_Silent_Child" });
+
+        [Fact]
         public Task Require_ChildProcess_Fork_Unsupported_Options()
             => ExecutionTest(nameof(Require_ChildProcess_Fork_Unsupported_Options));
     }
