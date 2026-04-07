@@ -209,6 +209,99 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        internal static bool TryCreateStats(string path, out FS.Stats stats)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                try
+                {
+                    if (File.Exists(path))
+                    {
+                        stats = CreateStats(new FileInfo(path), isDirectory: false);
+                        return true;
+                    }
+
+                    if (Directory.Exists(path))
+                    {
+                        stats = CreateStats(new DirectoryInfo(path), isDirectory: true);
+                        return true;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            stats = CreateZeroStats();
+            return false;
+        }
+
+        internal static FS.Stats CreateStats(string path)
+        {
+            if (TryCreateStats(path, out var stats))
+            {
+                return stats;
+            }
+
+            throw new FileNotFoundException(path);
+        }
+
+        internal static FS.Stats CreateZeroStats()
+            => new FS.Stats(
+                length: 0,
+                isFile: false,
+                isDirectory: false,
+                mode: 0,
+                atimeMs: 0,
+                mtimeMs: 0,
+                ctimeMs: 0,
+                birthtimeMs: 0);
+
+        private static FS.Stats CreateStats(FileSystemInfo info, bool isDirectory)
+        {
+            var length = info is FileInfo fileInfo ? fileInfo.Length : 0L;
+            var mode = (double)((isDirectory ? 16384 : 32768) | GetPermissionBits(info.Attributes, isDirectory));
+            var atimeMs = ToUnixTimeMilliseconds(info.LastAccessTimeUtc);
+            var mtimeMs = ToUnixTimeMilliseconds(info.LastWriteTimeUtc);
+            var creationMs = ToUnixTimeMilliseconds(info.CreationTimeUtc);
+
+            return new FS.Stats(
+                length,
+                isFile: !isDirectory,
+                isDirectory,
+                mode,
+                atimeMs,
+                mtimeMs,
+                ctimeMs: creationMs,
+                birthtimeMs: creationMs);
+        }
+
+        private static long ToUnixTimeMilliseconds(DateTime value)
+        {
+            try
+            {
+                var utcValue = value.Kind == DateTimeKind.Utc
+                    ? value
+                    : value.ToUniversalTime();
+                return new DateTimeOffset(utcValue).ToUnixTimeMilliseconds();
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        private static int GetPermissionBits(FileAttributes attributes, bool isDirectory)
+        {
+            var isReadOnly = (attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
+            if (isDirectory)
+            {
+                return isReadOnly ? 365 : 511;
+            }
+
+            return isReadOnly ? 292 : 438;
+        }
+
         internal static async Task CompleteReadFileTextAsync(IIOScheduler scheduler, string path, System.Text.Encoding textEncoding, PromiseWithResolvers promiseWithResolvers)
         {
             try

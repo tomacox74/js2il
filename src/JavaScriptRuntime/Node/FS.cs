@@ -834,21 +834,7 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                var stats = await Task.Run(() =>
-                {
-                    if (File.Exists(path))
-                    {
-                        var fi = new FileInfo(path);
-                        return new Stats(fi.Length);
-                    }
-
-                    if (Directory.Exists(path))
-                    {
-                        return new Stats(0);
-                    }
-
-                    throw new FileNotFoundException(path);
-                }).ConfigureAwait(false);
+                var stats = await Task.Run(() => FsCommon.CreateStats(path)).ConfigureAwait(false);
 
                 IoScheduler.EndIo(promiseWithResolvers, stats, isError: false);
             }
@@ -1009,22 +995,9 @@ namespace JavaScriptRuntime.Node
         public object statSync(object file)
         {
             var path = file?.ToString() ?? string.Empty;
-            if (string.IsNullOrEmpty(path)) return new Stats(0);
-            try
-            {
-                if (System.IO.File.Exists(path))
-                {
-                    var fi = new System.IO.FileInfo(path);
-                    return new Stats(fi.Length);
-                }
-                if (System.IO.Directory.Exists(path))
-                {
-                    // Directory: size 0 (not used in our script)
-                    return new Stats(0);
-                }
-            }
-            catch { }
-            return new Stats(0);
+            return FsCommon.TryCreateStats(path, out var stats)
+                ? stats
+                : FsCommon.CreateZeroStats();
         }
 
         public object rmSync(object file, object? options)
@@ -1084,14 +1057,60 @@ namespace JavaScriptRuntime.Node
             public object isFile() => !_isDirectory;
         }
 
-        // Minimal Stats object with a size property used by the script
+        // Practical Stats object for common Node fs consumers.
         public sealed class Stats
         {
             public double size { get; }
-            public Stats(long length)
+            public double mode { get; }
+            public double atimeMs { get; }
+            public double mtimeMs { get; }
+            public double ctimeMs { get; }
+            public double birthtimeMs { get; }
+            public JavaScriptRuntime.Date atime { get; }
+            public JavaScriptRuntime.Date mtime { get; }
+            public JavaScriptRuntime.Date ctime { get; }
+            public JavaScriptRuntime.Date birthtime { get; }
+
+            private readonly bool _isFile;
+            private readonly bool _isDirectory;
+
+            public Stats(
+                long length,
+                bool isFile,
+                bool isDirectory,
+                double mode,
+                long atimeMs,
+                long mtimeMs,
+                long ctimeMs,
+                long birthtimeMs)
             {
                 size = (double)length;
+                _isFile = isFile;
+                _isDirectory = isDirectory;
+                this.mode = mode;
+                this.atimeMs = atimeMs;
+                this.mtimeMs = mtimeMs;
+                this.ctimeMs = ctimeMs;
+                this.birthtimeMs = birthtimeMs;
+                atime = new JavaScriptRuntime.Date((double)atimeMs);
+                mtime = new JavaScriptRuntime.Date((double)mtimeMs);
+                ctime = new JavaScriptRuntime.Date((double)ctimeMs);
+                birthtime = new JavaScriptRuntime.Date((double)birthtimeMs);
             }
+
+            public object isFile() => _isFile;
+
+            public object isDirectory() => _isDirectory;
+
+            public object isSymbolicLink() => false;
+
+            public object isBlockDevice() => false;
+
+            public object isCharacterDevice() => false;
+
+            public object isFIFO() => false;
+
+            public object isSocket() => false;
         }
     }
 }

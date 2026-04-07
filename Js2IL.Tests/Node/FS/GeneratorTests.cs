@@ -27,6 +27,10 @@ namespace Js2IL.Tests.Node.FS
             nameof(FSPromises_Stat_FileSize));
 
         [Fact]
+        public Task FSPromises_Stat_RichMetadata() => GenerateTest(
+            nameof(FSPromises_Stat_RichMetadata));
+
+        [Fact]
         public Task FSPromises_Realpath() => GenerateTest(
             nameof(FSPromises_Realpath));
 
@@ -57,6 +61,10 @@ namespace Js2IL.Tests.Node.FS
         [Fact]
         public Task FS_Open_Callback_FileHandle() => GenerateTest(
             nameof(FS_Open_Callback_FileHandle));
+
+        [Fact]
+        public Task FS_StatSync_RichMetadata() => GenerateTest(
+            nameof(FS_StatSync_RichMetadata));
 
         [Fact]
         public Task FS_CreateReadStream_Basic() => GenerateTest(
