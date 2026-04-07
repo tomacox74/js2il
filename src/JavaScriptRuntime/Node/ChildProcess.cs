@@ -521,12 +521,8 @@ namespace JavaScriptRuntime.Node
         {
             try
             {
-                Task<string>? stdoutTask = stdio.StdoutMode == StdioMode.Inherit
-                    ? null
-                    : StartTextReadTask(process.StandardOutput, stdio.StdoutMode);
-                Task<string>? stderrTask = stdio.StderrMode == StdioMode.Inherit
-                    ? null
-                    : StartTextReadTask(process.StandardError, stdio.StderrMode);
+                Task<string>? stdoutTask = StartTextReadTaskIfRedirected(process, stdio.StdoutMode, isErrorStream: false);
+                Task<string>? stderrTask = StartTextReadTaskIfRedirected(process, stdio.StderrMode, isErrorStream: true);
                 var completionTasks = new List<Task>(capacity: 3)
                 {
                     process.WaitForExitAsync(),
@@ -618,12 +614,8 @@ namespace JavaScriptRuntime.Node
 
         private static ProcessCompletionResult WaitForProcessCompletionSync(DiagnosticsProcess process, StdioConfiguration stdio)
         {
-            Task<string>? stdoutTask = stdio.StdoutMode == StdioMode.Inherit
-                ? null
-                : StartTextReadTask(process.StandardOutput, stdio.StdoutMode);
-            Task<string>? stderrTask = stdio.StderrMode == StdioMode.Inherit
-                ? null
-                : StartTextReadTask(process.StandardError, stdio.StderrMode);
+            Task<string>? stdoutTask = StartTextReadTaskIfRedirected(process, stdio.StdoutMode, isErrorStream: false);
+            Task<string>? stderrTask = StartTextReadTaskIfRedirected(process, stdio.StderrMode, isErrorStream: true);
 
             if (stdoutTask != null && stderrTask != null)
             {
@@ -658,6 +650,16 @@ namespace JavaScriptRuntime.Node
                 StdioMode.Ignore => DrainTextReaderAsync(reader),
                 _ => null,
             };
+        }
+
+        private static Task<string>? StartTextReadTaskIfRedirected(DiagnosticsProcess process, StdioMode mode, bool isErrorStream)
+        {
+            if (mode == StdioMode.Inherit)
+            {
+                return null;
+            }
+
+            return StartTextReadTask(isErrorStream ? process.StandardError : process.StandardOutput, mode);
         }
 
         private static async Task<string> DrainTextReaderAsync(TextReader reader)
@@ -849,7 +851,7 @@ namespace JavaScriptRuntime.Node
             return v?.ToString();
         }
 
-        private static bool TryGetBooleanOptionValue(object? options, string name, out bool value)
+        private static bool TryGetBoolOptionValue(object? options, string name, out bool value)
         {
             value = false;
             if (!TryHasOwnOption(options, name, out var rawValue))
@@ -990,7 +992,7 @@ namespace JavaScriptRuntime.Node
         private static StdioConfiguration ResolveForkStdioConfiguration(object? options)
         {
             var defaultConfiguration = StdioConfiguration.ForkDefault;
-            if (TryGetBooleanOptionValue(options, "silent", out var silent))
+            if (TryGetBoolOptionValue(options, "silent", out var silent))
             {
                 defaultConfiguration = silent
                     ? StdioConfiguration.ForkDefault
