@@ -11,6 +11,12 @@ namespace JavaScriptRuntime.Node
     internal static class FsCommon
     {
         private static int _nextFileDescriptor = 17;
+        private const int RegularFileTypeBits = 32768; // 0100000
+        private const int DirectoryTypeBits = 16384; // 0040000
+        private const int ReadOnlyFilePermissionBits = 292; // 0444
+        private const int ReadWriteFilePermissionBits = 438; // 0666
+        private const int ReadOnlyDirectoryPermissionBits = 365; // 0555
+        private const int ReadWriteDirectoryPermissionBits = 511; // 0777
         internal const FileShare NodeFileShare = FileShare.ReadWrite | FileShare.Delete;
 
         internal static bool GetBooleanOption(object? options, string propertyName)
@@ -209,6 +215,12 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        /// <summary>
+        /// Attempts to build a Stats-like object for an existing file system entry.
+        /// </summary>
+        /// <param name="path">The file or directory path to inspect.</param>
+        /// <param name="stats">The resulting Stats-like object, or the zeroed fallback when inspection fails.</param>
+        /// <returns><c>true</c> when <paramref name="path"/> resolved to an existing file or directory; otherwise <c>false</c>.</returns>
         internal static bool TryCreateStats(string path, out FS.Stats stats)
         {
             if (!string.IsNullOrEmpty(path))
@@ -236,6 +248,11 @@ namespace JavaScriptRuntime.Node
             return false;
         }
 
+        /// <summary>
+        /// Creates a Stats-like object for an existing file system entry, or throws when the path does not exist.
+        /// </summary>
+        /// <param name="path">The file or directory path to inspect.</param>
+        /// <returns>A populated Stats-like object for the requested path.</returns>
         internal static FS.Stats CreateStats(string path)
         {
             if (TryCreateStats(path, out var stats))
@@ -246,6 +263,9 @@ namespace JavaScriptRuntime.Node
             throw new FileNotFoundException(path);
         }
 
+        /// <summary>
+        /// Creates the legacy zeroed Stats fallback used by the existing statSync missing-path behavior.
+        /// </summary>
         internal static FS.Stats CreateZeroStats()
             => new FS.Stats(
                 length: 0,
@@ -260,7 +280,7 @@ namespace JavaScriptRuntime.Node
         private static FS.Stats CreateStats(FileSystemInfo info, bool isDirectory)
         {
             var length = info is FileInfo fileInfo ? fileInfo.Length : 0L;
-            var mode = (double)((isDirectory ? 16384 : 32768) | GetPermissionBits(info.Attributes, isDirectory));
+            var mode = (double)((isDirectory ? DirectoryTypeBits : RegularFileTypeBits) | GetPermissionBits(info.Attributes, isDirectory));
             var atimeMs = ToUnixTimeMilliseconds(info.LastAccessTimeUtc);
             var mtimeMs = ToUnixTimeMilliseconds(info.LastWriteTimeUtc);
             var creationMs = ToUnixTimeMilliseconds(info.CreationTimeUtc);
@@ -296,10 +316,10 @@ namespace JavaScriptRuntime.Node
             var isReadOnly = (attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
             if (isDirectory)
             {
-                return isReadOnly ? 365 : 511;
+                return isReadOnly ? ReadOnlyDirectoryPermissionBits : ReadWriteDirectoryPermissionBits;
             }
 
-            return isReadOnly ? 292 : 438;
+            return isReadOnly ? ReadOnlyFilePermissionBits : ReadWriteFilePermissionBits;
         }
 
         internal static async Task CompleteReadFileTextAsync(IIOScheduler scheduler, string path, System.Text.Encoding textEncoding, PromiseWithResolvers promiseWithResolvers)
