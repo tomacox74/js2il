@@ -273,7 +273,7 @@ namespace JavaScriptRuntime.Node
                 var threshold = (int)JavaScriptRuntime.TypeUtilities.ToNumber(highWaterMark);
                 return threshold < 1 ? 1 : threshold;
             }
-            catch
+            catch (Exception)
             {
                 return DefaultHighWaterMark;
             }
@@ -288,7 +288,7 @@ namespace JavaScriptRuntime.Node
                     ? DefaultHighWaterMark
                     : threshold;
             }
-            catch
+            catch (Exception)
             {
                 return DefaultHighWaterMark;
             }

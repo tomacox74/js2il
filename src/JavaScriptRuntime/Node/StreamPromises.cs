@@ -1,3 +1,5 @@
+using System;
+
 namespace JavaScriptRuntime.Node
 {
     [NodeModule("stream/promises")]
@@ -12,7 +14,12 @@ namespace JavaScriptRuntime.Node
 
         public object pipeline(object[] args)
         {
-            return _stream.pipeline(args);
+            if (_stream.pipeline(args) is not Promise promise)
+            {
+                return Promise.resolve(null)!;
+            }
+
+            return promise.then(new Func<object?[], object?, object?>((_, _) => null))!;
         }
     }
 }

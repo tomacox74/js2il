@@ -40,7 +40,7 @@ The stream baseline now includes lifecycle controls and helpers that are useful 
 
 ### pipeline(...streams[, callback])
 
-Supports callback-oriented pipeline chaining across the current EventEmitter-backed Readable/Duplex -> Writable/Duplex stream classes. The final non-stream argument may be an options object with `signal`, allowing AbortSignal-driven cancellation that destroys the participating streams and surfaces `AbortError`. Omitting the callback returns the same Promise-backed completion path used by `node:stream/promises`.
+Supports callback-oriented pipeline chaining across the current EventEmitter-backed Readable/Duplex -> Writable/Duplex stream classes. The final non-stream argument may be an options object with `signal`, allowing AbortSignal-driven cancellation that destroys the participating streams and surfaces `AbortError`. The same underlying orchestration is reused by `node:stream/promises.pipeline(...)`.
 
 **Tests:**
 - `Js2IL.Tests.Node.Stream.ExecutionTests.Stream_Pipeline_Basic` (`Js2IL.Tests/Node/Stream/ExecutionTests.cs`)

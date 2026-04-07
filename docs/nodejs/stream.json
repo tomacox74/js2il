@@ -20,7 +20,7 @@
       "name": "pipeline(...streams[, callback])",
       "kind": "function",
       "status": "partial",
-      "notes": "Supports callback-oriented pipeline chaining across the current EventEmitter-backed Readable/Duplex -> Writable/Duplex stream classes. The final non-stream argument may be an options object with `signal`, allowing AbortSignal-driven cancellation that destroys the participating streams and surfaces `AbortError`. Omitting the callback returns the same Promise-backed completion path used by `node:stream/promises`.",
+      "notes": "Supports callback-oriented pipeline chaining across the current EventEmitter-backed Readable/Duplex -> Writable/Duplex stream classes. The final non-stream argument may be an options object with `signal`, allowing AbortSignal-driven cancellation that destroys the participating streams and surfaces `AbortError`. The same underlying orchestration is reused by `node:stream/promises.pipeline(...)`.",
       "docs": "https://nodejs.org/api/stream.html#streampipelinesource-transforms-destination-callback",
       "tests": [
         {
