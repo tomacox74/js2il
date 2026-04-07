@@ -33,7 +33,7 @@ namespace JavaScriptRuntime.Node
             var deferred = Promise.withResolvers();
             StreamCompletionObserver? observer = null;
             var settled = false;
-            var signal = GetSignal(options);
+            var signal = GetValidatedAbortSignal(options);
             Action unregisterAbort = static () => { };
 
             void ResolveSuccess()
@@ -127,7 +127,7 @@ namespace JavaScriptRuntime.Node
             var observers = new List<StreamCompletionObserver>(streamCount);
             var settled = false;
             var remaining = streamCount;
-            var signal = GetSignal(options);
+            var signal = GetValidatedAbortSignal(options);
             Action unregisterAbort = static () => { };
 
             void CleanupObservers()
@@ -282,30 +282,41 @@ namespace JavaScriptRuntime.Node
             return new AbortError("The operation was aborted", signalReason);
         }
 
-        private static AbortError? GetAbortReason(object? signal)
+        private static AbortError? GetAbortReason(AbortSignal? signal)
         {
-            if (signal == null || signal is JsNull)
+            if (signal == null || !signal.aborted)
             {
                 return null;
             }
 
-            var aborted = TypeUtilities.ToBoolean(ObjectRuntime.GetProperty(signal, "aborted"));
-            if (!aborted)
-            {
-                return null;
-            }
-
-            return CreateAbortError(ObjectRuntime.GetProperty(signal, "reason"));
+            return CreateAbortError(signal.reason);
         }
 
-        private static object? GetSignal(object? options)
+        private static AbortSignal? GetValidatedAbortSignal(object? options)
         {
             if (options == null || options is JsNull)
             {
                 return null;
             }
 
-            return ObjectRuntime.GetProperty(options, "signal");
+            if (!NodeNetworkingCommon.LooksLikeOptionsObject(options)
+                || !ObjectRuntime.HasPropertyIn("signal", options))
+            {
+                return null;
+            }
+
+            var signal = ObjectRuntime.GetProperty(options, "signal");
+            if (signal == null)
+            {
+                return null;
+            }
+
+            if (signal is AbortSignal abortSignal)
+            {
+                return abortSignal;
+            }
+
+            throw CreateInvalidSignalTypeError(signal);
         }
 
         private static void PipeStreams(object? source, object? destination)
@@ -349,41 +360,48 @@ namespace JavaScriptRuntime.Node
             return args[^1] as Delegate;
         }
 
-        private static bool TryRegisterAbortListener(object? signal, Action<object?> abortListener, out Action unregister)
+        private static TypeError CreateInvalidSignalTypeError(object? value)
+            => new($"The \"options.signal\" property must be an instance of AbortSignal. {FormatReceivedSignalValue(value)}");
+
+        private static string FormatReceivedSignalValue(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return "Received null";
+            }
+
+            var jsType = TypeUtilities.Typeof(value);
+            return jsType switch
+            {
+                "number" or "boolean" or "bigint" or "string"
+                    => $"Received type {jsType} ({DotNet2JSConversions.ToString(value)})",
+                "object"
+                    => $"Received an instance of {GetSignalInstanceName(value)}",
+                _ => $"Received type {jsType}",
+            };
+        }
+
+        private static string GetSignalInstanceName(object value)
+        {
+            return value switch
+            {
+                JsObject => "Object",
+                System.Dynamic.ExpandoObject => "Object",
+                System.Collections.Generic.IDictionary<string, object?> => "Object",
+                _ => value.GetType().Name,
+            };
+        }
+
+        private static bool TryRegisterAbortListener(AbortSignal? signal, Action<object?> abortListener, out Action unregister)
         {
             unregister = static () => { };
 
-            if (signal == null || signal is JsNull)
+            if (signal == null)
             {
                 return false;
             }
 
-            if (signal is AbortSignal abortSignal)
-            {
-                return abortSignal.TryRegisterInternalListener(abortListener, out unregister);
-            }
-
-            var addListener = ObjectRuntime.GetProperty(signal, "addEventListener");
-            if (addListener is not Delegate addDelegate)
-            {
-                return false;
-            }
-
-            Func<object[], object?[], object?> listenerDelegate = (_, _) =>
-            {
-                abortListener(null);
-                return null;
-            };
-
-            Function.Call(addDelegate, signal, new object?[] { "abort", listenerDelegate });
-
-            var removeListener = ObjectRuntime.GetProperty(signal, "removeEventListener");
-            if (removeListener is Delegate removeDelegate)
-            {
-                unregister = () => Function.Call(removeDelegate, signal, new object?[] { "abort", listenerDelegate });
-            }
-
-            return true;
+            return signal.TryRegisterInternalListener(abortListener, out unregister);
         }
 
         private static void ValidatePipelineStreams(object?[] streams)

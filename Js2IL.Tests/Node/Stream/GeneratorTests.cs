@@ -81,5 +81,9 @@ namespace Js2IL.Tests.Node.Stream
         [Fact]
         public Task Stream_Promises_Pipeline_AbortSignal()
             => GenerateTest(nameof(Stream_Promises_Pipeline_AbortSignal));
+
+        [Fact]
+        public Task Stream_Helper_Signal_Requires_AbortSignal()
+            => GenerateTest(nameof(Stream_Helper_Signal_Requires_AbortSignal));
     }
 }

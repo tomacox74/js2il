@@ -3,35 +3,7 @@
 const stream = require("node:stream");
 const streamPromises = require("node:stream/promises");
 
-function createController() {
-  const signal = {
-    aborted: false,
-    reason: null,
-    addEventListener: function (type, listener) {
-      if (type === "abort") {
-        this.listener = listener;
-      }
-    },
-    removeEventListener: function (type, listener) {
-      if (type === "abort" && this.listener === listener) {
-        this.listener = null;
-      }
-    }
-  };
-
-  return {
-    signal: signal,
-    abort: function (reason) {
-      signal.aborted = true;
-      signal.reason = reason;
-      if (signal.listener) {
-        signal.listener();
-      }
-    }
-  };
-}
-
-const controller = createController();
+const controller = new globalThis.AbortController();
 const readable = new stream.Readable({ objectMode: true });
 const pass = new stream.PassThrough({ objectMode: true });
 const writable = new stream.Writable({ objectMode: true });

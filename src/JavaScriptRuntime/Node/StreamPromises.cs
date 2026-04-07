@@ -9,17 +9,31 @@ namespace JavaScriptRuntime.Node
 
         public object finished(object[] args)
         {
-            return _stream.finished(args);
+            try
+            {
+                return _stream.finished(args);
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(ex as Error ?? new Error(ex.Message, ex))!;
+            }
         }
 
         public object pipeline(object[] args)
         {
-            if (_stream.pipeline(args) is not Promise promise)
+            try
             {
-                return Promise.resolve(null)!;
-            }
+                if (_stream.pipeline(args) is not Promise promise)
+                {
+                    return Promise.resolve(null)!;
+                }
 
-            return promise.then(new Func<object?[], object?, object?>((_, _) => null))!;
+                return promise.then(new Func<object?[], object?, object?>((_, _) => null))!;
+            }
+            catch (Exception ex)
+            {
+                return Promise.reject(ex as Error ?? new Error(ex.Message, ex))!;
+            }
         }
     }
 }
