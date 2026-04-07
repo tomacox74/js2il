@@ -69,5 +69,17 @@ namespace Js2IL.Tests.Node.Stream
         [Fact]
         public Task Stream_Pipeline_Error_PropagatesToPeers()
             => GenerateTest(nameof(Stream_Pipeline_Error_PropagatesToPeers));
+
+        [Fact]
+        public Task Stream_Promises_Finished_Basic()
+            => GenerateTest(nameof(Stream_Promises_Finished_Basic));
+
+        [Fact]
+        public Task Stream_Promises_Pipeline_ObjectMode()
+            => GenerateTest(nameof(Stream_Promises_Pipeline_ObjectMode));
+
+        [Fact]
+        public Task Stream_Promises_Pipeline_AbortSignal()
+            => GenerateTest(nameof(Stream_Promises_Pipeline_AbortSignal));
     }
 }

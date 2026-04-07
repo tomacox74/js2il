@@ -17,7 +17,12 @@ namespace JavaScriptRuntime.Node
 
         public string? readableEncoding => _encoding;
 
-        public Duplex() { }
+        public bool readableObjectMode { get; }
+
+        public Duplex(object? options = null) : base(options)
+        {
+            readableObjectMode = ResolveObjectMode(options, "readableObjectMode");
+        }
 
         public bool push(object? chunk)
         {
@@ -379,6 +384,12 @@ namespace JavaScriptRuntime.Node
             }
 
             return NodeNetworkingCommon.CoerceToText(chunk);
+        }
+
+        private static bool ResolveObjectMode(object? options, string specificOptionName)
+        {
+            return TypeUtilities.ToBoolean(NodeNetworkingCommon.TryGetOption(options, "objectMode"))
+                || TypeUtilities.ToBoolean(NodeNetworkingCommon.TryGetOption(options, specificOptionName));
         }
     }
 }

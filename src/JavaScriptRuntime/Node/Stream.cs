@@ -25,9 +25,16 @@ namespace JavaScriptRuntime.Node
 
             var stream = args[0];
             var callback = TryGetTrailingCallback(args, minimumArgumentCount: 1);
+            var options = callback != null && args.Length > 2
+                ? args[1]
+                : callback == null && args.Length > 1
+                    ? args[1]
+                    : null;
             var deferred = Promise.withResolvers();
             StreamCompletionObserver? observer = null;
             var settled = false;
+            var signal = GetSignal(options);
+            Action unregisterAbort = static () => { };
 
             void ResolveSuccess()
             {
@@ -38,6 +45,7 @@ namespace JavaScriptRuntime.Node
 
                 settled = true;
                 observer?.Dispose();
+                unregisterAbort();
                 if (callback != null)
                 {
                     InvokeCallback(callback, JsNull.Null);
@@ -55,12 +63,27 @@ namespace JavaScriptRuntime.Node
 
                 settled = true;
                 observer?.Dispose();
+                unregisterAbort();
                 if (callback != null)
                 {
                     InvokeCallback(callback, reason);
                 }
 
                 RejectPromise(deferred, reason);
+            }
+
+            TryRegisterAbortListener(signal, abortSignalReason =>
+            {
+                ResolveError(abortSignalReason is null or JsNull
+                    ? GetAbortReason(signal) ?? new AbortError()
+                    : CreateAbortError(abortSignalReason));
+            }, out unregisterAbort);
+
+            var abortReason = GetAbortReason(signal);
+            if (abortReason != null)
+            {
+                ResolveError(abortReason);
+                return callback != null ? stream! : deferred.promise;
             }
 
             observer = new StreamCompletionObserver(stream, ResolveSuccess, ResolveError);
@@ -75,7 +98,21 @@ namespace JavaScriptRuntime.Node
             }
 
             var callback = TryGetTrailingCallback(args, minimumArgumentCount: 2);
-            var streamCount = callback != null ? args.Length - 1 : args.Length;
+            var effectiveArgumentCount = callback != null ? args.Length - 1 : args.Length;
+            object? options = null;
+            if (effectiveArgumentCount > 2)
+            {
+                var optionsCandidate = args[effectiveArgumentCount - 1];
+                if (optionsCandidate is not EventEmitter
+                    && optionsCandidate is not Delegate
+                    && NodeNetworkingCommon.LooksLikeOptionsObject(optionsCandidate))
+                {
+                    options = optionsCandidate;
+                    effectiveArgumentCount--;
+                }
+            }
+
+            var streamCount = effectiveArgumentCount;
             if (streamCount < 2)
             {
                 throw new TypeError("stream.pipeline requires at least two streams.");
@@ -90,6 +127,8 @@ namespace JavaScriptRuntime.Node
             var observers = new List<StreamCompletionObserver>(streamCount);
             var settled = false;
             var remaining = streamCount;
+            var signal = GetSignal(options);
+            Action unregisterAbort = static () => { };
 
             void CleanupObservers()
             {
@@ -99,6 +138,7 @@ namespace JavaScriptRuntime.Node
                 }
 
                 observers.Clear();
+                unregisterAbort();
             }
 
             void ResolveSuccess()
@@ -121,7 +161,7 @@ namespace JavaScriptRuntime.Node
                     InvokeCallback(callback, JsNull.Null);
                 }
 
-                ResolvePromise(deferred, streams[^1]);
+                ResolvePromise(deferred, null);
             }
 
             void ResolveError(object? reason)
@@ -146,6 +186,20 @@ namespace JavaScriptRuntime.Node
                 }
 
                 RejectPromise(deferred, reason);
+            }
+
+            TryRegisterAbortListener(signal, abortSignalReason =>
+            {
+                ResolveError(abortSignalReason is null or JsNull
+                    ? GetAbortReason(signal) ?? new AbortError()
+                    : CreateAbortError(abortSignalReason));
+            }, out unregisterAbort);
+
+            var abortReason = GetAbortReason(signal);
+            if (abortReason != null)
+            {
+                ResolveError(abortReason);
+                return callback != null ? streams[^1]! : deferred.promise;
             }
 
             foreach (var stream in streams)
@@ -218,6 +272,42 @@ namespace JavaScriptRuntime.Node
             Closure.InvokeWithArgs(callback, System.Array.Empty<object>(), args);
         }
 
+        private static AbortError CreateAbortError(object? signalReason)
+        {
+            if (signalReason == null || signalReason is JsNull)
+            {
+                return new AbortError();
+            }
+
+            return new AbortError("The operation was aborted", signalReason);
+        }
+
+        private static AbortError? GetAbortReason(object? signal)
+        {
+            if (signal == null || signal is JsNull)
+            {
+                return null;
+            }
+
+            var aborted = TypeUtilities.ToBoolean(ObjectRuntime.GetProperty(signal, "aborted"));
+            if (!aborted)
+            {
+                return null;
+            }
+
+            return CreateAbortError(ObjectRuntime.GetProperty(signal, "reason"));
+        }
+
+        private static object? GetSignal(object? options)
+        {
+            if (options == null || options is JsNull)
+            {
+                return null;
+            }
+
+            return ObjectRuntime.GetProperty(options, "signal");
+        }
+
         private static void PipeStreams(object? source, object? destination)
         {
             switch (source)
@@ -257,6 +347,43 @@ namespace JavaScriptRuntime.Node
             }
 
             return args[^1] as Delegate;
+        }
+
+        private static bool TryRegisterAbortListener(object? signal, Action<object?> abortListener, out Action unregister)
+        {
+            unregister = static () => { };
+
+            if (signal == null || signal is JsNull)
+            {
+                return false;
+            }
+
+            if (signal is AbortSignal abortSignal)
+            {
+                return abortSignal.TryRegisterInternalListener(abortListener, out unregister);
+            }
+
+            var addListener = ObjectRuntime.GetProperty(signal, "addEventListener");
+            if (addListener is not Delegate addDelegate)
+            {
+                return false;
+            }
+
+            Func<object[], object?[], object?> listenerDelegate = (_, _) =>
+            {
+                abortListener(null);
+                return null;
+            };
+
+            Function.Call(addDelegate, signal, new object?[] { "abort", listenerDelegate });
+
+            var removeListener = ObjectRuntime.GetProperty(signal, "removeEventListener");
+            if (removeListener is Delegate removeDelegate)
+            {
+                unregister = () => Function.Call(removeDelegate, signal, new object?[] { "abort", listenerDelegate });
+            }
+
+            return true;
         }
 
         private static void ValidatePipelineStreams(object?[] streams)

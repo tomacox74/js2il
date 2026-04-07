@@ -21,7 +21,12 @@ namespace JavaScriptRuntime.Node
 
         public string? readableEncoding => _encoding;
 
-        public Readable() { }
+        public bool readableObjectMode { get; }
+
+        public Readable(object? options = null)
+        {
+            readableObjectMode = ResolveObjectMode(options, "readableObjectMode");
+        }
 
         public bool push(object? chunk)
         {
@@ -409,6 +414,12 @@ namespace JavaScriptRuntime.Node
             }
 
             return NodeNetworkingCommon.CoerceToText(chunk);
+        }
+
+        private static bool ResolveObjectMode(object? options, string specificOptionName)
+        {
+            return TypeUtilities.ToBoolean(NodeNetworkingCommon.TryGetOption(options, "objectMode"))
+                || TypeUtilities.ToBoolean(NodeNetworkingCommon.TryGetOption(options, specificOptionName));
         }
     }
 }
