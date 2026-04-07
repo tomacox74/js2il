@@ -551,7 +551,7 @@
       "status": "supported",
       "implementation": "src/JavaScriptRuntime/CommonJS/Require.cs, src/JavaScriptRuntime/CommonJS/ModuleContext.cs, src/JavaScriptRuntime/CommonJS/ModuleName.cs, src/JavaScriptRuntime/CommonJS/Module.cs",
       "docs": "https://nodejs.org/api/modules.html#requireid",
-      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Also supports compile-time resolution of npm packages via node_modules discovery, .js/.mjs/.cjs files, package.json main, package.json type=module entry graphs, conditional exports/imports with import/require/node/default conditions, and single-* subpath patterns for the supported slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different entries from the same package graph. Runtime require does not probe the file system; packages must be discovered at compile time. package.json imports targets are currently limited to package-local relative paths (./...). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require).",
+      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Also supports compile-time resolution of npm packages via node_modules discovery, .js/.mjs/.cjs files, package.json main, package.json type=module entry graphs, conditional exports/imports with import/require/node/default conditions, single-* subpath patterns, and package.json imports aliases that target either package-local relative paths (./...) or bare package specifiers in the supported deterministic slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different entries from the same package graph. Runtime require does not probe the file system; packages must be discovered at compile time. Custom loaders/hooks, nested package-imports aliases, and broader runtime probing remain unsupported. Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require).",
       "tests": [
         {
           "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_Basic",
@@ -610,11 +610,19 @@
           "file": "Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs"
         },
         {
+          "name": "Js2IL.Tests.CommonJS.NodeModulesExecutionTests.CommonJS_Require_NodeModules_PackageImports_BarePackageAlias",
+          "file": "Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs"
+        },
+        {
           "name": "Js2IL.Tests.CommonJS.NodeModulesExecutionTests.CommonJS_Require_NodeModules_UnsupportedConditions_ReportDiagnostic",
           "file": "Js2IL.Tests/CommonJS/NodeModulesExecutionTests.cs"
         },
         {
           "name": "Js2IL.Tests.CommonJS.NodeModulesGeneratorTests.CommonJS_NodeModules_DualMode_Exports_Imports_TypeModule_And_MjsEntry_EmitsManifest",
+          "file": "Js2IL.Tests/CommonJS/NodeModulesGeneratorTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.NodeModulesGeneratorTests.CommonJS_NodeModules_PackageImports_BarePackageAlias_EmitsManifest",
           "file": "Js2IL.Tests/CommonJS/NodeModulesGeneratorTests.cs"
         }
       ]
@@ -835,7 +843,7 @@
   ],
   "limitations": [
     "No Buffer support yet; fs APIs operate on UTF-8 text only.",
-    "CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules discovery across .js/.mjs/.cjs files, package.json type=module entry graphs, and package exports/imports condition selection for import/require/node/default in the supported slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different package entries in one graph, and import.meta.url is available for compiled modules as a deterministic file:// URL. Runtime probing, package imports targets outside package-local relative paths (./...), custom loaders/hooks, and broader Node loader semantics beyond the documented slice remain unsupported.",
+    "CommonJS globals (__dirname/__filename) are supported; require() supports compiled local modules, implemented core modules, and compile-time node_modules discovery across .js/.mjs/.cjs files, package.json type=module entry graphs, package exports/imports condition selection for import/require/node/default, and package.json imports aliases that target either package-local ./... paths or bare package specifiers in the supported deterministic slice. Static import/export declarations and literal import()/require() package requests are resolved at compile time so import and require can target different package entries in one graph, and import.meta.url is available for compiled modules as a deterministic file:// URL. Runtime probing, custom loaders/hooks, nested package-imports aliases, and broader Node loader semantics beyond the documented slice remain unsupported.",
     "Only a small subset of Node is implemented to support tests; many APIs are unimplemented."
   ]
 }

@@ -137,6 +137,69 @@ internal static class NodeModulesTestProjectSupport
         return project;
     }
 
+    public static TempNodeModulesProject CreateBarePackageImportsAliasProject()
+    {
+        var project = CreateProject("Issue952BarePackageImportsAlias", Path.Combine("src", "main.mjs"));
+
+        WriteFile(project.ProjectRoot, "package.json",
+            "{\n" +
+            "  \"name\": \"app\",\n" +
+            "  \"type\": \"module\",\n" +
+            "  \"imports\": {\n" +
+            "    \"#dep\": \"dep\",\n" +
+            "    \"#dep/*\": \"dep/*\"\n" +
+            "  }\n" +
+            "}\n");
+
+        WriteFile(project.ProjectRoot, Path.Combine("src", "main.mjs"),
+            "\"use strict\";\n" +
+            "import pkg from '#dep';\n" +
+            "import feature from '#dep/feature';\n" +
+            "import cjsView from './require-view.cjs';\n" +
+            "console.log('esm.entry', pkg.entry);\n" +
+            "console.log('esm.feature', feature.feature);\n" +
+            "console.log('cjs.entry', cjsView.entry);\n" +
+            "console.log('cjs.feature', cjsView.feature);\n");
+
+        WriteFile(project.ProjectRoot, Path.Combine("src", "require-view.cjs"),
+            "\"use strict\";\n" +
+            "const pkg = require('#dep');\n" +
+            "const feature = require('#dep/feature');\n" +
+            "module.exports = {\n" +
+            "  entry: pkg.entry,\n" +
+            "  feature: feature.feature\n" +
+            "};\n");
+
+        var packageRoot = Path.Combine(project.ProjectRoot, "node_modules", "dep");
+        WriteFile(packageRoot, "package.json",
+            "{\n" +
+            "  \"name\": \"dep\",\n" +
+            "  \"type\": \"module\",\n" +
+            "  \"exports\": {\n" +
+            "    \".\": { \"import\": \"./esm/index.js\", \"require\": \"./cjs/index.cjs\" },\n" +
+            "    \"./feature\": { \"import\": \"./esm/feature.js\", \"require\": \"./cjs/feature.cjs\" }\n" +
+            "  }\n" +
+            "}\n");
+
+        WriteFile(packageRoot, Path.Combine("esm", "index.js"),
+            "\"use strict\";\n" +
+            "export default { entry: 'esm-dep-entry' };\n");
+
+        WriteFile(packageRoot, Path.Combine("esm", "feature.js"),
+            "\"use strict\";\n" +
+            "export default { feature: 'esm-dep-feature' };\n");
+
+        WriteFile(packageRoot, Path.Combine("cjs", "index.cjs"),
+            "\"use strict\";\n" +
+            "module.exports = { entry: 'cjs-dep-entry' };\n");
+
+        WriteFile(packageRoot, Path.Combine("cjs", "feature.cjs"),
+            "\"use strict\";\n" +
+            "module.exports = { feature: 'cjs-dep-feature' };\n");
+
+        return project;
+    }
+
     public static TempNodeModulesProject CreateUnsupportedExportsConditionsProject()
     {
         var project = CreateProject("Issue869UnsupportedConditions", Path.Combine("src", "main.mjs"));
