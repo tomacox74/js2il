@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Js2IL.Tests
 {
+    [Collection("RepoDotnetCli")]
     public class ReadmeSampleTests
     {
         [Fact]
