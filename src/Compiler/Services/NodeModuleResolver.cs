@@ -603,18 +603,22 @@ public sealed class NodeModuleResolver
             return false;
         }
 
-        // Keep the first closure slice deterministic: resolve only package-local targets.
         var trimmed = targetRel.Trim();
-        if (!trimmed.StartsWith("./", StringComparison.Ordinal))
+        if (trimmed.StartsWith("./", StringComparison.Ordinal))
         {
-            error = $"Unsupported package.json imports target '{targetRel}' (expected relative path starting with './').";
-            return false;
+            var rel = trimmed.Substring(2);
+            var combined = Path.Combine(packageRoot, rel.Replace('/', Path.DirectorySeparatorChar));
+
+            return TryResolveAsFileOrDirectory(combined, resolutionMode, out resolvedPath, out error);
         }
 
-        var rel = trimmed.Substring(2);
-        var combined = Path.Combine(packageRoot, rel.Replace('/', Path.DirectorySeparatorChar));
+        if (!IsPathLikeSpecifier(trimmed) && !trimmed.StartsWith("#", StringComparison.Ordinal))
+        {
+            return TryResolveBarePackageSpecifier(trimmed, packageRoot, resolutionMode, out resolvedPath, out error);
+        }
 
-        return TryResolveAsFileOrDirectory(combined, resolutionMode, out resolvedPath, out error);
+        error = $"Unsupported package.json imports target '{targetRel}' (expected package-local path starting with './' or bare package specifier).";
+        return false;
     }
 
     private static string NormalizeSpecifier(string specifier)
