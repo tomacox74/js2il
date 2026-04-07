@@ -10,7 +10,7 @@ namespace JavaScriptRuntime.Node
         public object? _transform = null;
 
         // Constructor for subclassing
-        public Transform() { }
+        public Transform(object? options = null) : base(options) { }
 
         protected override void InvokeWrite(object? chunk)
         {
