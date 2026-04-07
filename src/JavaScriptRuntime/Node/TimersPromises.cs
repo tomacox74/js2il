@@ -8,6 +8,7 @@ namespace JavaScriptRuntime.Node
     [NodeModule("timers/promises")]
     public sealed class TimersPromises
     {
+        private static readonly Action NoOp = () => { };
         private readonly IScheduler _scheduler;
 
         public TimersPromises()
@@ -39,7 +40,7 @@ namespace JavaScriptRuntime.Node
 
             int settled = 0;
             int abortRequested = 0;
-            Action unregisterAbort = static () => { };
+            Action unregisterAbort = NoOp;
             object? handle = null;
 
             var abortListener = new Action<object?>(abortSignalReason =>
@@ -57,9 +58,7 @@ namespace JavaScriptRuntime.Node
                 }
 
                 unregisterAbort();
-                RejectDeferred(deferred, abortSignalReason is null or JsNull
-                    ? GetAbortReason(signal) ?? new AbortError()
-                    : CreateAbortError(abortSignalReason));
+                RejectDeferred(deferred, ResolveAbortError(signal, abortSignalReason));
             });
 
             TryRegisterAbortListener(signal, abortListener, out unregisterAbort);
@@ -118,7 +117,7 @@ namespace JavaScriptRuntime.Node
 
             int settled = 0;
             int abortRequested = 0;
-            Action unregisterAbort = static () => { };
+            Action unregisterAbort = NoOp;
             object? handle = null;
 
             var abortListener = new Action<object?>(abortSignalReason =>
@@ -136,9 +135,7 @@ namespace JavaScriptRuntime.Node
                 }
 
                 unregisterAbort();
-                RejectDeferred(deferred, abortSignalReason is null or JsNull
-                    ? GetAbortReason(signal) ?? new AbortError()
-                    : CreateAbortError(abortSignalReason));
+                RejectDeferred(deferred, ResolveAbortError(signal, abortSignalReason));
             });
 
             TryRegisterAbortListener(signal, abortListener, out unregisterAbort);
@@ -176,9 +173,9 @@ namespace JavaScriptRuntime.Node
 
         public object? setInterval(object? delay = null, object? value = null, object? options = null)
         {
-            object? signal = null;
-            object? startupFailure = null;
-            double delayMs = 0;
+            object? signal;
+            object? startupFailure;
+            double delayMs;
 
             try
             {
@@ -188,6 +185,8 @@ namespace JavaScriptRuntime.Node
             }
             catch (Exception ex)
             {
+                delayMs = 1;
+                signal = null;
                 startupFailure = ex;
             }
 
@@ -205,6 +204,8 @@ namespace JavaScriptRuntime.Node
             return delayMs;
         }
 
+        // The underlying scheduler only reschedules repeating timers with a positive interval,
+        // and Node clamps sub-1ms interval delays instead of treating them as zero-delay loops.
         private static double CoerceIntervalDelay(object? delay)
         {
             var delayMs = TypeUtilities.ToNumber(delay);
@@ -261,9 +262,16 @@ namespace JavaScriptRuntime.Node
             return new AbortError("The operation was aborted", signalReason);
         }
 
+        private static AbortError ResolveAbortError(object? signal, object? abortSignalReason)
+        {
+            return abortSignalReason is null or JsNull
+                ? GetAbortReason(signal) ?? new AbortError()
+                : CreateAbortError(abortSignalReason);
+        }
+
         private static bool TryRegisterAbortListener(object? signal, Action<object?> abortListener, out Action unregister)
         {
-            unregister = static () => { };
+            unregister = NoOp;
 
             if (signal == null || signal is JsNull)
             {
@@ -325,7 +333,7 @@ namespace JavaScriptRuntime.Node
             private object? _handle;
             private object? _startupFailure;
             private object? _terminalError;
-            private Action _unregisterAbort = static () => { };
+            private Action _unregisterAbort = NoOp;
             private bool _started;
             private bool _closed;
             private int _notYielded;
@@ -409,9 +417,7 @@ namespace JavaScriptRuntime.Node
 
                 TryRegisterAbortListener(_signal, abortSignalReason =>
                 {
-                    AbortWithError(abortSignalReason is null or JsNull
-                        ? GetAbortReason(_signal) ?? new AbortError()
-                        : CreateAbortError(abortSignalReason));
+                    AbortWithError(ResolveAbortError(_signal, abortSignalReason));
                 }, out _unregisterAbort);
 
                 _handle = _scheduler.ScheduleInterval(OnTick, TimeSpan.FromMilliseconds(_delayMs));
@@ -424,6 +430,9 @@ namespace JavaScriptRuntime.Node
 
             private void OnTick()
             {
+                // Match Node's async-generator contract: if a consumer is already awaiting next(),
+                // fulfill it immediately; otherwise count the elapsed interval so a later next()
+                // can synchronously drain queued ticks one by one.
                 if (_closed)
                 {
                     return;
