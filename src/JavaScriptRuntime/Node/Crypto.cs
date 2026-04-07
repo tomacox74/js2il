@@ -304,13 +304,17 @@ namespace JavaScriptRuntime.Node
             }
 
             var number = TypeUtilities.ToNumber(iterations);
+            if (global::System.Math.Truncate(number) != number)
+            {
+                throw CreatePbkdf2IntegerRangeError("iterations", number);
+            }
+
             if (double.IsNaN(number)
                 || double.IsInfinity(number)
                 || number < 1
-                || global::System.Math.Truncate(number) != number
                 || number > int.MaxValue)
             {
-                throw new RangeError($"The value of \"iterations\" is out of range. It must be >= 1 && <= {int.MaxValue}.");
+                throw CreatePbkdf2BoundedRangeError("iterations", 1, number);
             }
 
             return (int)number;
@@ -324,17 +328,27 @@ namespace JavaScriptRuntime.Node
             }
 
             var number = TypeUtilities.ToNumber(keylen);
+            if (global::System.Math.Truncate(number) != number)
+            {
+                throw CreatePbkdf2IntegerRangeError("keylen", number);
+            }
+
             if (double.IsNaN(number)
                 || double.IsInfinity(number)
                 || number < 0
-                || global::System.Math.Truncate(number) != number
                 || number > int.MaxValue)
             {
-                throw new RangeError($"The value of \"keylen\" is out of range. It must be >= 0 && <= {int.MaxValue}.");
+                throw CreatePbkdf2BoundedRangeError("keylen", 0, number);
             }
 
             return (int)number;
         }
+
+        private static RangeError CreatePbkdf2IntegerRangeError(string argumentName, double number)
+            => new($"The value of \"{argumentName}\" is out of range. It must be an integer. Received {DotNet2JSConversions.ToString(number)}");
+
+        private static RangeError CreatePbkdf2BoundedRangeError(string argumentName, int minValue, double number)
+            => new($"The value of \"{argumentName}\" is out of range. It must be >= {minValue} && <= {int.MaxValue}. Received {DotNet2JSConversions.ToString(number)}");
 
         private static bool IsNumberValue(object value)
         {
