@@ -23,3 +23,13 @@ try {
 } catch (err) {
     console.log("spawn ipc error:", true);
 }
+
+try {
+    const isWindows = process.platform === "win32";
+    childProcess.spawn(
+        isWindows ? "cmd.exe" : "/bin/sh",
+        isWindows ? ["/d", "/s", "/c", "exit /b 0"] : ["-c", "exit 0"],
+        { detached: true });
+} catch (err) {
+    console.log("spawn detached error:", err.message.indexOf("detached child processes") >= 0);
+}
