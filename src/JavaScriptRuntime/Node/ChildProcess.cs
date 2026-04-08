@@ -1923,6 +1923,11 @@ namespace JavaScriptRuntime.Node
             catch (OperationCanceledException) when (_disposed || _disposeCancellation.IsCancellationRequested)
             {
             }
+            catch (Exception ex) when (IsExpectedDisconnectException(ex))
+            {
+                // A peer-initiated IPC shutdown can surface as a transport exception instead of EOF.
+                // Node treats that path as a plain disconnect rather than an 'error' event.
+            }
             catch (Exception ex)
             {
                 if (!_disposed)
@@ -1994,6 +1999,9 @@ namespace JavaScriptRuntime.Node
         {
             _queueImmediate(() => Error?.Invoke(ex));
         }
+
+        private static bool IsExpectedDisconnectException(Exception ex)
+            => ex is IOException or SocketException or ObjectDisposedException;
 
         public void Dispose()
         {

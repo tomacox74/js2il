@@ -8,6 +8,7 @@ _Nothing yet._
 
 ## v0.9.7 - 2026-04-07
 
+- node/child_process/tests: treat expected fork IPC transport shutdowns from `process.disconnect()` / normal child exit as plain `disconnect` teardown instead of surfacing unhandled socket errors, keeping `fork(..., { silent })` behavior aligned with Node during shutdown.
 - node/url/compiler/tests/docs: close issue #946 by exposing `URL` / `URLSearchParams` as shared global constructor values, wiring their constructor/prototype surfaces and `new`-required behavior to match the existing built-in function-object model, teaching bare `new <GlobalThisCtor>(...)` lowering to accept constructible `GlobalThis` properties, adding focused global URL execution/generator coverage, and refreshing the Node url/global docs.
 - node/stream/tests/docs: close issue #955 by adding constructor-level stream object-mode flags (`readableObjectMode` / `writableObjectMode`), a focused `node:stream/promises` baseline for Promise-oriented `finished(...)` / `pipeline(...)`, AbortSignal-aware helper cancellation, focused execution/generator coverage, and refreshed Node stream docs.
 - node/crypto/tests/docs: close issue #954 by adding a focused `crypto.pbkdf2Sync(...)` baseline over .NET PBKDF2 for string and binary inputs with explicit sha1/sha256/sha384/sha512 support, extending Node crypto error-path coverage for invalid digest/input/range handling, and refreshing the Node crypto docs while keeping broader cipher/asymmetric/Web Crypto gaps explicit.
