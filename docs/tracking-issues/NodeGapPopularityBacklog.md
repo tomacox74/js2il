@@ -84,3 +84,45 @@
 - This ranking is deliberately heuristic. It reflects the current docs plus repo-local demand signals, not external npm telemetry.
 - Some items are feature families rather than single APIs. Each should still be delivered in explicit, documented slices.
 - The global/web-platform items (`URL`, `fetch`, `Request`, `Response`, `Headers`) are included because they now directly affect common Node workloads, even when they are not packaged as core-module gaps.
+
+## Issue #841 investigation addendum (2026-04-09)
+
+This addendum is the concrete output for [#841](https://github.com/tomacox74/js2il/issues/841). It does not rewrite the historical 2026-04-06 ranking above; it records the transport architecture recommendation against the current post-`v0.9.7` HTTP/TLS baseline.
+
+### Current-state inventory
+
+- `src/JavaScriptRuntime/Node/Net.cs` already owns the transport/event-loop model through `TcpClient` / `TcpListener`, `IIOScheduler`, `NodeSchedulerState`, incremental reads/writes, and Node-shaped socket lifecycle behavior.
+- `src/JavaScriptRuntime/Node/Http.cs` already owns the custom HTTP/1.1 request/response model: `HttpClientRequest`, `HttpServer`, `IncomingMessage`, `ServerResponse`, a custom parser/decoder, chunked framing, sequential keep-alive reuse, and explicit unsupported handling for CONNECT, Upgrade, Expect/100-continue, and pipelining.
+- `src/JavaScriptRuntime/Node/Https.cs` already layers TLS on top of that same transport through `SslStream`, with a documented local/self-signed baseline and explicit omissions around custom CA trust, client certificates, ALPN, and advanced `https.Agent` behavior.
+- Because JS2IL already exposes Node-shaped request/response/socket/event surfaces, any .NET-backed reuse has to sit behind those existing objects instead of replacing them wholesale.
+
+### Options comparison
+
+| Option | Best fit | Advantages | Main risks / mismatches | Recommendation |
+|---|---|---|---|---|
+| Current custom TCP + parser path | Existing server and client baseline | Full control over socket visibility, unsupported-feature gating, event-loop scheduling, and Node-shaped objects | More incremental work is needed to grow outbound parity and TLS follow-ons | **Keep as the server-side and transport foundation** |
+| `HttpClient` / `SocketsHttpHandler` | Outbound client follow-ons only | Mature cross-platform HTTP/TLS behavior, strong handler knobs, and headers-first response streaming | Raw socket visibility is limited, default auto-behaviors must be disabled, agent semantics are not 1:1, and abort/error timing still needs a Node adapter | **Investigate selectively for outbound-only flows** |
+| `HttpListener` | Narrow server experiments at most | Built-in server API with low immediate coding cost | Older API, host/OS friction, and a poor fit for Node's stream/event/socket model | **Do not adopt for core `node:http` server work** |
+| Kestrel / ASP.NET Core | Heavyweight hosting only | Rich HTTP/TLS infrastructure and a well-tested server stack | Large dependency/runtime weight, request-pipeline model differs from Node, and it does not naturally expose Node-like socket/request lifecycles | **Possible for a hosting-specific integration layer, but not recommended for the baseline Node runtime** |
+
+### Recommendation
+
+- Keep the current custom `node:net` + HTTP server/parser stack as the long-term foundation for server-side flows and any API that depends on direct socket ownership.
+- Only consider selective reuse of .NET HTTP primitives through an outbound-only adapter over `HttpClient` / `SocketsHttpHandler`, and only if it stays behind the existing `HttpClientRequest`, `IncomingMessage`, and `http.Agent` semantics.
+- If that outbound adapter is spiked, require all of the following up front:
+  - `AllowAutoRedirect = false` so Node redirect semantics stay explicit.
+  - Headers-first streaming (`ResponseHeadersRead`) so response bodies can still surface incrementally.
+  - No hidden cookies or automatic decompression unless JS2IL explicitly models those behaviors.
+  - Explicit mapping for abort/destroy/error timing and clear preservation of supported keep-alive / agent behavior.
+  - A deliberate answer for any supported `request.socket` / `response.socket` expectations before widening the public surface.
+- Do not pursue `HttpListener` or Kestrel as the baseline `node:http` server implementation; both fight the Node evented stream model harder than the current parser path helps.
+- Kestrel is still technically worth considering for a separate hosting-oriented integration layer if the goal changes and strict Node socket/runtime semantics become less important than leveraging a richer ASP.NET Core host stack.
+
+### Follow-on map
+
+- [#947](https://github.com/tomacox74/js2il/issues/947) should use this recommendation to choose between:
+  1. extending the current custom client path for the extractor's exact needs, or
+  2. prototyping a narrow outbound `HttpClient` adapter against the real `scripts/ECMA262/extractEcma262SectionHtml.js` workload.
+- The extractor's transport needs today are intentionally modest: simple GET, manual redirect handling in the `https` fallback, and UTF-8 text body consumption. That makes it a good spike target without forcing a full client rewrite.
+- [#956](https://github.com/tomacox74/js2il/issues/956) should only build on a `HttpClient` path if the spike proves we can map CA trust, client certificates, ALPN, and agent behavior cleanly; otherwise it should continue extending the current `SslStream` + `NetSocket` / `https` stack.
+- Non-goals for the first follow-on after [#841](https://github.com/tomacox74/js2il/issues/841): server rewrite, HTTP/2, WebSocket/Upgrade, CONNECT tunneling, or replacing `node:net`.
