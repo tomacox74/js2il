@@ -20,6 +20,14 @@ namespace Js2IL.Tests.Integration
             => GenerateTest(nameof(Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown), ["node_modules/turndown/index"]);
 
         [Fact]
+        public Task Compile_Scripts_ExtractEcma262SectionHtml_UrlMode()
+            => GenerateTest(nameof(Compile_Scripts_ExtractEcma262SectionHtml_UrlMode), ["Compile_Scripts_ExtractEcma262SectionHtml"]);
+
+        [Fact]
+        public Task Compile_Scripts_ExtractEcma262SectionHtml_AutoMode()
+            => GenerateTest(nameof(Compile_Scripts_ExtractEcma262SectionHtml_AutoMode), ["Compile_Scripts_ExtractEcma262SectionHtml"]);
+
+        [Fact]
         public Task Compile_Performance_Dromaeo_Object_Array_Modern() => GenerateTest(nameof(Compile_Performance_Dromaeo_Object_Array_Modern));
 
         [Fact]

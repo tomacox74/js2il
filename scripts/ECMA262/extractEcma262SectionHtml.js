@@ -26,6 +26,7 @@
 'use strict';
 
 const fs = require('fs');
+const http = require('http');
 const path = require('path');
 const https = require('https');
 
@@ -157,7 +158,15 @@ function parseArgs(argv) {
   return args;
 }
 
+function fetchTextWithHttp(urlString, maxRedirects = 5) {
+  return fetchTextWithTransport('http', urlString, maxRedirects);
+}
+
 function fetchTextWithHttps(urlString, maxRedirects = 5) {
+  return fetchTextWithTransport('https', urlString, maxRedirects);
+}
+
+function fetchTextWithTransport(protocol, urlString, maxRedirects = 5) {
   return new Promise((resolve, reject) => {
     let urlObj;
     try {
@@ -167,12 +176,12 @@ function fetchTextWithHttps(urlString, maxRedirects = 5) {
       return;
     }
 
-    if (urlObj.protocol !== 'https:') {
-      reject(new Error(`Only https:// URLs are supported by the https fallback. Got: ${urlString}`));
+    if (urlObj.protocol !== protocol + ':') {
+      reject(new Error(`Only ${protocol}:// URLs are supported by the ${protocol} fallback. Got: ${urlString}`));
       return;
     }
 
-    const req = https.request(
+    const req = (protocol === 'http' ? http : https).request(
       urlObj,
       {
         method: 'GET',
@@ -195,7 +204,7 @@ function fetchTextWithHttps(urlString, maxRedirects = 5) {
 
           const nextUrl = new URL(location, urlObj).toString();
           res.resume();
-          fetchTextWithHttps(nextUrl, maxRedirects - 1).then(resolve, reject);
+          fetchTextWithNodeRequest(nextUrl, maxRedirects - 1).then(resolve, reject);
           return;
         }
 
@@ -219,24 +228,27 @@ function fetchTextWithHttps(urlString, maxRedirects = 5) {
   });
 }
 
-async function fetchText(urlString) {
-  // Prefer the built-in fetch (Node 18+). Fall back to https for older Node.
-  if (typeof fetch === 'function') {
-    const res = await fetch(urlString, {
-      redirect: 'follow',
-      headers: {
-        'User-Agent': 'js2il-docs-script',
-      },
-    });
+function fetchText(urlString) {
+  return fetchTextWithNodeRequest(urlString);
+}
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} fetching ${urlString}`);
-    }
-
-    return await res.text();
+function fetchTextWithNodeRequest(urlString, maxRedirects = 5) {
+  let urlObj;
+  try {
+    urlObj = new URL(urlString);
+  } catch {
+    return Promise.reject(new Error(`Invalid URL: ${urlString}`));
   }
 
-  return await fetchTextWithHttps(urlString);
+  if (urlObj.protocol === 'http:') {
+    return fetchTextWithHttp(urlString, maxRedirects);
+  }
+
+  if (urlObj.protocol === 'https:') {
+    return fetchTextWithHttps(urlString, maxRedirects);
+  }
+
+  return Promise.reject(new Error(`Only http:// and https:// URLs are supported by the request fallback. Got: ${urlString}`));
 }
 
 function detectEol(text) {
@@ -460,8 +472,8 @@ function printHelp() {
   console.log('  --help, -h      Show help');
 }
 
-async function main() {
-  const args = parseArgs(process.argv);
+async function main(argv = process.argv, logger = console.log) {
+  const args = parseArgs(argv);
 
   if (args.help) {
     printHelp();
@@ -550,8 +562,12 @@ async function main() {
   writeTextPreserveEol(outPath, outText);
 
   // eslint-disable-next-line no-console
-  console.log(`Extracted section ${args.section} (id=${elementId}, tag=${extracted.tagName}) -> ${outPath}`);
+  logger(`Extracted section ${args.section} (id=${elementId}, tag=${extracted.tagName}) -> ${outPath}`);
 }
+
+module.exports = {
+  main,
+};
 
 if (require.main === module) {
   main().catch((err) => {
