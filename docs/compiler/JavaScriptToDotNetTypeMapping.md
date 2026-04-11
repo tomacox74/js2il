@@ -203,7 +203,7 @@ Where this fits in the codebase:
 - The orchestration is in [src/Compiler/JsMethodCompiler.cs](../../src/Compiler/JsMethodCompiler.cs) (`TryLowerASTToLIR`)
 - Intrinsic normalization: [src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs](../../src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs)
 - Type normalization: [src/Compiler/IR/LIR/LIRTypeNormalization.cs](../../src/Compiler/IR/LIR/LIRTypeNormalization.cs)
-- Tests/examples of normalization behavior: [Js2IL.Tests/LIRIntrinsicNormalizationTests.cs](../../Js2IL.Tests/LIRIntrinsicNormalizationTests.cs)
+- Tests/examples of normalization behavior: [tests/Js2IL.Tests/LIRIntrinsicNormalizationTests.cs](../../tests/Js2IL.Tests/LIRIntrinsicNormalizationTests.cs)
 
 ---
 
@@ -233,7 +233,7 @@ Nested scopes become nested types. Typical shapes you will see in IL:
 - Class scopes: `...+<ClassName>+Scope` (class lexical scope)
 - Class member scopes: nested under the runtime class type as siblings of the class scope (e.g., `...+<ClassName>+Scope_ctor`)
 
-The exact scope names come from the symbol table (see `Js2IL.Tests/ScopeNamingTests.cs`). For example:
+The exact scope names come from the symbol table (see `tests/Js2IL.Tests/ScopeNamingTests.cs`). For example:
 
 - Assigned arrow scope: `ArrowFunction_<varName>`
 - Assigned function-expression scope: `FunctionExpression_<varName>`
@@ -450,5 +450,5 @@ A typical shape of emitted artifacts:
 - Scope type generation: [src/Compiler/Services/TypeGenerator.cs](../../src/Compiler/Services/TypeGenerator.cs)
 - Class emission + `_scopes`: [src/Compiler/Services/ILGenerators/ClassesGenerator.cs](../../src/Compiler/Services/ILGenerators/ClassesGenerator.cs)
 - Value sentinels (`undefined` vs `null`): [src/JavaScriptRuntime/TypeUtilities.cs](../../src/JavaScriptRuntime/TypeUtilities.cs), [src/JavaScriptRuntime/JsNull.cs](../../src/JavaScriptRuntime/JsNull.cs)
-- Scope naming behavior: [Js2IL.Tests/ScopeNamingTests.cs](../../Js2IL.Tests/ScopeNamingTests.cs)
+- Scope naming behavior: [tests/Js2IL.Tests/ScopeNamingTests.cs](../../tests/Js2IL.Tests/ScopeNamingTests.cs)
 

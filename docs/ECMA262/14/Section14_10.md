@@ -24,6 +24,6 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| return statement (finally executes) | Supported | [`ControlFlow_TryFinally_Return.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js)<br>[`TryFinally_Return.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js) | Return exits the current function while ensuring finally blocks execute on the way out. |
-| return statement (with value) | Supported | [`Function_ReturnsStaticValueAndLogs.js`](../../../Js2IL.Tests/Function/JavaScript/Function_ReturnsStaticValueAndLogs.js) |  |
+| return statement (finally executes) | Supported | [`ControlFlow_TryFinally_Return.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js)<br>[`TryFinally_Return.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js) | Return exits the current function while ensuring finally blocks execute on the way out. |
+| return statement (with value) | Supported | [`Function_ReturnsStaticValueAndLogs.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ReturnsStaticValueAndLogs.js) |  |
 

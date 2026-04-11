@@ -84,7 +84,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-weakset-iterable",
         "testScripts": [
-          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js"
+          "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js"
         ],
         "notes": "Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection."
       },
@@ -101,7 +101,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakset.prototype",
         "testScripts": [
-          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js"
+          "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js"
         ],
         "notes": "JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction and the remaining WeakSet prototype gaps are still incomplete."
       },
@@ -111,9 +111,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakset-prototype-object",
         "testScripts": [
-          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js",
-          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js",
-          "Js2IL.Tests/WeakSet/JavaScript/WeakSet_Object_Values.js"
+          "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js",
+          "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js",
+          "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Object_Values.js"
         ],
         "notes": "Core WeakSet flows work for the object values used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-value restrictions for every non-null primitive or boxed value."
       },

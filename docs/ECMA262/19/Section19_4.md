@@ -27,11 +27,11 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| JSON intrinsic object is available (JSON.parse) | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js) | JavaScriptRuntime.JSON implements JSON.parse only. JSON.stringify and the optional reviver/replacer behaviors are not implemented. Parsing errors are translated to JavaScript SyntaxError. |
+| JSON intrinsic object is available (JSON.parse) | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js) | JavaScriptRuntime.JSON implements JSON.parse only. JSON.stringify and the optional reviver/replacer behaviors are not implemented. Parsing errors are translated to JavaScript SyntaxError. |
 
 ### 19.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-math))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Math intrinsic object is available (common Math.* functions and constants) | Supported with Limitations | [`Math_Ceil_Sqrt_Basic.js`](../../../Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js)<br>[`Math_Imul_Clz32_Basics.js`](../../../Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js)<br>[`Math_Min_Max_NaN_EmptyArgs.js`](../../../Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js) | Implemented by JavaScriptRuntime.Math, backed by System.Math with JS-style argument coercions. Coverage is partial (Supported with Limitations). |
+| Math intrinsic object is available (common Math.* functions and constants) | Supported with Limitations | [`Math_Ceil_Sqrt_Basic.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js)<br>[`Math_Imul_Clz32_Basics.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js)<br>[`Math_Min_Max_NaN_EmptyArgs.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js) | Implemented by JavaScriptRuntime.Math, backed by System.Math with JS-style argument coercions. Coverage is partial (Supported with Limitations). |
 

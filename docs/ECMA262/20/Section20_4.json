@@ -205,7 +205,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-symbol-description",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Callable_Basic.js"
         ],
         "notes": "Supports callable invocation with 0/1 arguments, unique symbol instances, and typeof === 'symbol'. Registry APIs and well-known symbols are documented in separate support entries."
       },
@@ -215,7 +215,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-symbol-constructor",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js"
         ],
         "notes": "Supports Symbol.iterator, Symbol.asyncIterator, Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.match, Symbol.matchAll, Symbol.replace, Symbol.search, Symbol.species, Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, and Symbol.unscopables as stable singletons. js2il also wires Symbol.asyncIterator, RegExp symbol dispatch, Array.prototype.concat spreadability, and Object.prototype.toString Symbol.toStringTag lookup; hasInstance/species/toPrimitive protocol hooks remain partial."
       },
@@ -225,7 +225,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-symbol.for",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Registry_WellKnown.js"
         ],
         "notes": "Supports global symbol registry round-tripping and TypeError on non-symbol Symbol.keyFor input."
       },
@@ -235,7 +235,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-symbol.isconcatspreadable",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js"
         ],
         "notes": "Array.prototype.concat honors explicit Symbol.isConcatSpreadable flags on arrays and ordinary array-like objects. Species, sparse-hole fidelity, and broader exotic concat edge cases remain limited."
       },
@@ -245,8 +245,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-symbol.tostringtag",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js",
-          "Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Prototype_ToString_SymbolToStringTag_Custom.js",
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js"
         ],
         "notes": "Object.prototype.toString consults Symbol.toStringTag for ordinary objects, arrays, and the built-in generator/runtime types that expose custom brands. Full exotic-brand coverage is not exhaustive."
       },
@@ -256,7 +256,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-symbol-prototype-object",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Symbol_Prototype_Basic.js"
         ],
         "notes": "Supports description, toString(), and valueOf() behavior for symbol instances."
       }

@@ -79,7 +79,7 @@ function findProjectRoot(startDir) {
   let dir = startDir;
   while (true) {
     const sln = path.join(dir, 'js2il.sln');
-    const testsDir = path.join(dir, 'Js2IL.Tests');
+    const testsDir = path.join(dir, 'tests', 'Js2IL.Tests');
     if (fs.existsSync(sln) && fs.existsSync(testsDir)) {
       return dir;
     }
@@ -119,7 +119,7 @@ function main() {
   const category = args[0];
   const testName = args[1];
   const fullTestName = `Js2IL.Tests.${category}.GeneratorTests.${testName}`;
-  const testProject = path.join(projectRoot, 'Js2IL.Tests', 'Js2IL.Tests.csproj');
+  const testProject = path.join(projectRoot, 'tests', 'Js2IL.Tests', 'Js2IL.Tests.csproj');
 
   console.log(`Running test: ${fullTestName}`);
 

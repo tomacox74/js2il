@@ -8,8 +8,8 @@ Usage:
 Options:
   --configuration Debug|Release   (default: Debug)
   --filter <trx filter>           (default: auto-generated from ExecutionTestsBase-derived classes)
-  --project <path>               (default: Js2IL.Tests/Js2IL.Tests.csproj)
-  --results <dir>                (default: Js2IL.Tests/TestResults)
+  --project <path>               (default: tests/Js2IL.Tests/Js2IL.Tests.csproj)
+  --results <dir>                (default: tests/Js2IL.Tests/TestResults)
   --trx <filename>               (default: execution.trx)
   --list                         (print discovered test classes and exit)
 
@@ -146,7 +146,7 @@ function writeFailedTestsFile(outputPath, failedTests) {
 }
 
 function discoverExecutionTestClassNames(repoRoot) {
-  const testsRoot = path.join(repoRoot, 'Js2IL.Tests');
+  const testsRoot = path.join(repoRoot, 'tests', 'Js2IL.Tests');
   const csFiles = listFilesRecursive(testsRoot).filter((p) => p.toLowerCase().endsWith('.cs'));
 
   /** @type {string[]} */
@@ -189,8 +189,8 @@ function main() {
         'Options:',
         '  --configuration Debug|Release   (default: Debug)',
         '  --filter <trx filter>           (default: auto-generated from ExecutionTestsBase-derived classes)',
-        '  --project <path>               (default: Js2IL.Tests/Js2IL.Tests.csproj)',
-        '  --results <dir>                (default: Js2IL.Tests/TestResults)',
+        '  --project <path>               (default: tests/Js2IL.Tests/Js2IL.Tests.csproj)',
+        '  --results <dir>                (default: tests/Js2IL.Tests/TestResults)',
         '  --trx <filename>               (default: execution.trx)',
         '  --list                         (print discovered test classes and exit)',
         '',
@@ -199,8 +199,8 @@ function main() {
     process.exit(0);
   }
 
-  const projectPath = path.resolve(repoRoot, args.project ?? path.join('Js2IL.Tests', 'Js2IL.Tests.csproj'));
-  const resultsDir = path.resolve(repoRoot, args.results ?? path.join('Js2IL.Tests', 'TestResults'));
+  const projectPath = path.resolve(repoRoot, args.project ?? path.join('tests', 'Js2IL.Tests', 'Js2IL.Tests.csproj'));
+  const resultsDir = path.resolve(repoRoot, args.results ?? path.join('tests', 'Js2IL.Tests', 'TestResults'));
   const trxFileName = args.trx;
 
   ensureDir(resultsDir);

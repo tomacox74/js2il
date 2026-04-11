@@ -1,5 +1,5 @@
 /*
-Runs generator tests and updates Js2IL.Tests/TestResults/failed-tests.txt based on TRX output.
+Runs generator tests and updates tests/Js2IL.Tests/TestResults/failed-tests.txt based on TRX output.
 
 Usage:
   node scripts/runGeneratorTestsAndUpdateFailures.js
@@ -7,8 +7,8 @@ Usage:
 Options:
   --configuration Debug|Release   (default: Debug)
   --filter <trx filter>           (default: FullyQualifiedName~.GeneratorTests.)
-  --project <path>               (default: Js2IL.Tests/Js2IL.Tests.csproj)
-  --results <dir>                (default: Js2IL.Tests/TestResults)
+  --project <path>               (default: tests/Js2IL.Tests/Js2IL.Tests.csproj)
+  --results <dir>                (default: tests/Js2IL.Tests/TestResults)
   --trx <filename>               (default: generator.trx)
 
 Exit code:
@@ -124,8 +124,8 @@ function main() {
         'Options:',
         '  --configuration Debug|Release   (default: Debug)',
         '  --filter <trx filter>           (default: FullyQualifiedName~.GeneratorTests.)',
-        '  --project <path>               (default: Js2IL.Tests/Js2IL.Tests.csproj)',
-        '  --results <dir>                (default: Js2IL.Tests/TestResults)',
+        '  --project <path>               (default: tests/Js2IL.Tests/Js2IL.Tests.csproj)',
+        '  --results <dir>                (default: tests/Js2IL.Tests/TestResults)',
         '  --trx <filename>               (default: generator.trx)',
         '',
       ].join('\n')
@@ -133,8 +133,8 @@ function main() {
     process.exit(0);
   }
 
-  const projectPath = path.resolve(repoRoot, args.project ?? path.join('Js2IL.Tests', 'Js2IL.Tests.csproj'));
-  const resultsDir = path.resolve(repoRoot, args.results ?? path.join('Js2IL.Tests', 'TestResults'));
+  const projectPath = path.resolve(repoRoot, args.project ?? path.join('tests', 'Js2IL.Tests', 'Js2IL.Tests.csproj'));
+  const resultsDir = path.resolve(repoRoot, args.results ?? path.join('tests', 'Js2IL.Tests', 'TestResults'));
   const trxFileName = args.trx;
 
   ensureDir(resultsDir);

@@ -33,29 +33,29 @@ This module now exposes the Promise-based one-shot timer helpers plus the async-
 Returns a Promise that resolves with the supplied value after the existing timer scheduler fires. Supports options.signal cancellation and rejects with AbortError/ABORT_ERR when aborted before resolution.
 
 **Tests:**
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetTimeout_AwaitsValue` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetTimeout_AwaitsValue` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Abort_RejectsSupportedOneShotApis` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetTimeout_AwaitsValue` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetTimeout_AwaitsValue` (`tests/Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Abort_RejectsSupportedOneShotApis` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
 
 ### setImmediate([value[, options]])
 
 Returns a Promise that resolves during the existing immediate phase with the supplied value. Supports options.signal cancellation and rejects with AbortError/ABORT_ERR when aborted before resolution.
 
 **Tests:**
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetImmediate_AwaitsValue` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetImmediate_AwaitsValue` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Abort_RejectsSupportedOneShotApis` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetImmediate_AwaitsValue` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetImmediate_AwaitsValue` (`tests/Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Abort_RejectsSupportedOneShotApis` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_Ordering_WithNextTick_AndPromiseMicrotasks` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
 
 ### setInterval(delay[, value[, options]])
 
 Returns an async iterator that yields the supplied value for each elapsed interval. Pending ticks are queued until consumed, `return()`/`for await ... break` tear down the repeating timer, and `options.signal` aborts active iteration with AbortError/ABORT_ERR.
 
 **Tests:**
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_Backpressure_And_Return` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_Backpressure_And_Return` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_Abort_RejectsActiveIterator` (`Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_Abort_RejectsActiveIterator` (`Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_ForAwait_BreaksAndTearsDown` (`tests/Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_Backpressure_And_Return` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_Backpressure_And_Return` (`tests/Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.ExecutionTests.TimersPromises_SetInterval_Abort_RejectsActiveIterator` (`tests/Js2IL.Tests/Node/TimersPromises/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.TimersPromises.GeneratorTests.TimersPromises_SetInterval_Abort_RejectsActiveIterator` (`tests/Js2IL.Tests/Node/TimersPromises/GeneratorTests.cs`)

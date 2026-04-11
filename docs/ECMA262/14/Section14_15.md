@@ -28,13 +28,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| try/catch (with binding; block-scoped catch parameter) | Supported | [`TryCatch_ScopedParam.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js)<br>[`ControlFlow_TryCatch_ScopedParam.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatch_ScopedParam.js) | Catch parameter binding is block-scoped to the catch clause. |
+| try/catch (with binding; block-scoped catch parameter) | Supported | [`TryCatch_ScopedParam.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js)<br>[`ControlFlow_TryCatch_ScopedParam.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatch_ScopedParam.js) | Catch parameter binding is block-scoped to the catch clause. |
 
 ### 14.15.3 ([tc39.es](https://tc39.es/ecma262/#sec-try-statement-runtime-semantics-evaluation))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| try/catch (no binding) | Supported | [`TryCatch_NoBinding.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js)<br>[`TryCatch_NoBinding_NoThrow.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js) | Catch blocks handle values thrown within the try region. |
-| try/catch/finally | Supported | [`TryCatchFinally_ThrowValue.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js)<br>[`ControlFlow_TryCatchFinally_ThrowValue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js) |  |
-| try/finally (no catch) | Supported with Limitations | [`TryFinally_NoCatch.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js)<br>[`TryFinally_NoCatch_Throw.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js)<br>[`TryFinally_Return.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js)<br>[`ControlFlow_TryFinally_Return.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js) | Finally emission executes on normal and return exits. Execution coverage for unhandled throws is incomplete (some tests are skipped pending stable top-level unhandled error semantics). |
+| try/catch (no binding) | Supported | [`TryCatch_NoBinding.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js)<br>[`TryCatch_NoBinding_NoThrow.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js) | Catch blocks handle values thrown within the try region. |
+| try/catch/finally | Supported | [`TryCatchFinally_ThrowValue.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js)<br>[`ControlFlow_TryCatchFinally_ThrowValue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js) |  |
+| try/finally (no catch) | Supported with Limitations | [`TryFinally_NoCatch.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js)<br>[`TryFinally_NoCatch_Throw.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js)<br>[`TryFinally_Return.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js)<br>[`ControlFlow_TryFinally_Return.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js) | Finally emission executes on normal and return exits. Execution coverage for unhandled throws is incomplete (some tests are skipped pending stable top-level unhandled error semantics). |
 

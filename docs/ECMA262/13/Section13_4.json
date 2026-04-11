@@ -72,7 +72,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-typeof-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js"
         ],
         "notes": "Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'."
       },
@@ -82,7 +82,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-prefix-increment-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js"
         ],
         "notes": "Increments the value first, then returns the new value."
       },
@@ -92,7 +92,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-prefix-decrement-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js"
         ],
         "notes": "Decrements the value first, then returns the new value."
       },
@@ -102,7 +102,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-bitwise-not-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js"
         ],
         "notes": "Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns."
       },
@@ -112,8 +112,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-logical-not-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js"
         ],
         "notes": "Supported end-to-end in IR pipeline (HIR unary + LIRLogicalNot) using JavaScriptRuntime.TypeUtilities.ToBoolean for JS truthiness, then invert. Covered both in a dedicated unary-operator fixture and in control-flow conditionals (if (!x) ...)."
       },
@@ -123,7 +123,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-postfix-increment-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js"
         ]
       },
       {
@@ -132,7 +132,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-postfix-decrement-operator",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js"
         ]
       }
     ]

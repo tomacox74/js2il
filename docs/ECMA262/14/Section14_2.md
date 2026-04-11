@@ -34,13 +34,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| block statement (basic execution) | Supported | [`ArrowFunction_BlockBody_Return.js`](../../../Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js) | Statement lists within blocks execute normally; common block bodies are exercised widely (e.g., function bodies). |
+| block statement (basic execution) | Supported | [`ArrowFunction_BlockBody_Return.js`](../../../tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js) | Statement lists within blocks execute normally; common block bodies are exercised widely (e.g., function bodies). |
 
 ### 14.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-blockdeclarationinstantiation))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| lexical block scope (let shadowing) | Supported | [`Variable_LetBlockScope.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  |
-| lexical declarations inside loop blocks | Supported | [`ControlFlow_DoWhile_NestedLet.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_NestedLet.js) |  |
-| temporal dead zone (TDZ) in blocks | Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js)<br>[`Variable_TemporalDeadZoneShadowing.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneShadowing.js) | Reads of block-scoped lexical bindings throw a ReferenceError until the declaration initializes the binding, and shadowing applies the TDZ only to the inner lexical binding. |
+| lexical block scope (let shadowing) | Supported | [`Variable_LetBlockScope.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js) |  |
+| lexical declarations inside loop blocks | Supported | [`ControlFlow_DoWhile_NestedLet.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_NestedLet.js) |  |
+| temporal dead zone (TDZ) in blocks | Supported | [`Variable_TemporalDeadZoneAccess.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js)<br>[`Variable_TemporalDeadZoneShadowing.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneShadowing.js) | Reads of block-scoped lexical bindings throw a ReferenceError until the declaration initializes the binding, and shadowing applies the TDZ only to the inner lexical binding. |
 

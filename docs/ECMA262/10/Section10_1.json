@@ -192,7 +192,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js"
+          "tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js"
         ],
         "notes": "JS2IL stores an optional [[Prototype]] in the PrototypeChain side-table and only enables prototype-chain semantics when code exercises them. Null-prototype objects and explicit prototype mutation work, but ordinary/exotic invariants are not enforced."
       },
@@ -202,7 +202,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-isextensible",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
         ],
         "notes": "Integrity APIs are backed by a simplified ObjectIntegrityState plus descriptor rewrites for existing own properties. They cover the common preventExtensions/seal/freeze checks, but do not model every descriptor invariant or exotic-object edge case from the specification."
       },
@@ -212,9 +212,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getownproperty-p",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyDescriptors_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
-          "Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyDescriptors_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js"
         ],
         "notes": "Own descriptor reflection synthesizes ordinary data descriptors for dictionary-backed direct-assignment properties and returns explicit data/accessor descriptors stored in PropertyDescriptorStore. Host objects and other exotic receivers still use simplified reflection-backed behavior rather than full spec-accurate descriptor materialization."
       },
@@ -224,11 +224,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-defineownproperty-p-desc",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
-          "Js2IL.Tests/Object/JavaScript/Object_DefineProperties_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js",
-          "Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperties_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js",
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
         ],
         "notes": "Ordinary-object defineProperty handling now preserves unspecified attributes on redefinition, rejects mixed data/accessor descriptors, blocks invalid non-configurable/non-writable redefinitions, and rejects new own properties on non-extensible ordinary objects. Array, typed-array, string, and other exotic-object descriptor edge cases are still not modeled end-to-end."
       },
@@ -238,10 +238,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-hasproperty-p",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js",
-          "Js2IL.Tests/Object/JavaScript/Object_HasOwn_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js",
-          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_HasOwn_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js",
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
         "notes": "Ordinary-style [[HasProperty]], [[Get]], and [[Set]] work over JsObject/ExpandoObject/IDictionary receivers, reflection-backed host objects, descriptor-backed accessors, and opt-in prototype chains. Descriptor validation, receiver substitution, and exotic-object corner cases remain incomplete."
       },
@@ -251,8 +251,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-delete-p",
         "testScripts": [
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js",
-          "Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
         ],
         "notes": "delete removes configurable properties from dictionary-backed objects and respects non-configurable descriptors. Arrays, typed arrays, strings, and CLR-backed objects still use simplified no-op behavior rather than full ordinary-object deletion semantics."
       },
@@ -262,12 +262,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinaryownpropertykeys",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js"
         ],
         "notes": "Ordinary-object own-key reflection now follows the usual ECMA-262 ordering for array-index string keys (ascending), then string keys in insertion order, then symbols in insertion order across Object.keys/values/entries, getOwnPropertyNames, getOwnPropertySymbols, and for...in on dictionary-backed ordinary objects. Host objects and some exotic receivers still rely on simplified reflection ordering."
       },
@@ -277,9 +277,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinaryobjectcreate",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
         ],
         "notes": "Object.create handles null and explicit prototypes, and function construction consults constructor.prototype when instantiating delegate-backed functions. newTarget-based default prototype selection and other constructor-side abstract operations are still simplified."
       }

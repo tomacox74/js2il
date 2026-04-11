@@ -28,13 +28,13 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function-expression naming for internal scope/binding identity | Supported with Limitations | `Js2IL.Tests/SymbolTableBuilderTests.cs`<br>[`Function_IIFE_Recursive.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js) | Named function expressions create internal bindings and anonymous function expressions receive deterministic internal scope names. |
+| Function-expression naming for internal scope/binding identity | Supported with Limitations | `tests/Js2IL.Tests/SymbolTableBuilderTests.cs`<br>[`Function_IIFE_Recursive.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js) | Named function expressions create internal bindings and anonymous function expressions receive deterministic internal scope names. |
 
 ### 8.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-isanonymousfunctiondefinition))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Anonymous function-expression detection in scope construction | Supported with Limitations | `Js2IL.Tests/SymbolTableBuilderTests.cs` | Anonymous function expressions are distinguished for compiler-internal naming, but observable Function.name semantics are not fully implemented. |
+| Anonymous function-expression detection in scope construction | Supported with Limitations | `tests/Js2IL.Tests/SymbolTableBuilderTests.cs` | Anonymous function expressions are distinguished for compiler-internal naming, but observable Function.name semantics are not fully implemented. |
 
 ### 8.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-namedevaluation))
 

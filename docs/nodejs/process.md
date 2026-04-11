@@ -42,96 +42,96 @@
 argv[0] normalized to current script filename; extra host args trimmed in tests.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Process.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/Process/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Environment_EnumerateProcessArgV` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.GeneratorTests.Environment_EnumerateProcessArgV` (`tests/Js2IL.Tests/Node/Process/GeneratorTests.cs`)
 
 ### exit()
 
 Sets the current exitCode on the host environment abstraction without terminating the test host.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Uses_Current_ExitCode` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Uses_Current_ExitCode` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### exit(code)
 
 Coerces the code to int, sets it on the environment abstraction, and does not terminate the test host.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Code_Sets_ExitCode` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Exit_Code_Sets_ExitCode` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### exitCode
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`Js2IL.Tests/Node/Process/ProcessExitCodeTests.cs`)
+- `Js2IL.Tests.Node.Process.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`tests/Js2IL.Tests/Node/Process/ProcessExitCodeTests.cs`)
 
 ### platform
 
 Returns a Node-compatible platform identifier: win32, linux, darwin, or unknown.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### versions.node
 
 Exposes a minimal process.versions object with node version identity.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### versions.v8
 
 V8 version string compatible with Node.js 22.x for compatibility checks.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### versions.modules
 
 Node modules ABI version (127) for Node.js 22.x compatibility.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### versions.js2il
 
 JavaScriptRuntime assembly version exposed by JS2IL runtime. JS2IL-specific extension to process.versions.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### versions.dotnet
 
 .NET runtime version description. JS2IL-specific extension to process.versions.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Versions_Expanded` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### env
 
 Returns a cached snapshot object of host environment variables as string values for the current runtime instance. Values are exposed as-is from the host process environment.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Platform_Versions_And_Env_Basics` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### chdir(directory)
 
 Changes the current working directory for the running process.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### cwd()
 
 Returns the current working directory of the Node.js process.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
 
 ### nextTick(callback, ...args)
 
 Queues a callback into a dedicated nextTick queue with priority over Promise microtasks and immediates at callback checkpoints.
 
 **Tests:**
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_NextTick_Precedes_SetImmediate_When_Queued_Later` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Process.ExecutionTests.Process_NextTick_And_Promise_Ordering` (`Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_Chdir_And_NextTick_Basics` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_NextTick_Precedes_SetImmediate_When_Queued_Later` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Process.ExecutionTests.Process_NextTick_And_Promise_Ordering` (`tests/Js2IL.Tests/Node/Process/ExecutionTests.cs`)

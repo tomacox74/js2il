@@ -37,5 +37,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) | Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. The spec-level AsyncGeneratorFunction constructor/prototype intrinsics are not currently exposed. |
+| async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) | Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. The spec-level AsyncGeneratorFunction constructor/prototype intrinsics are not currently exposed. |
 

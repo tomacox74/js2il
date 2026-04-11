@@ -36,8 +36,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-numeric-literals",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js"
         ],
         "notes": "Numbers are represented as double and used pervasively across arithmetic, comparison, and control-flow tests."
       },
@@ -47,8 +47,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-string-literals",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js",
-          "Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js"
         ],
         "notes": "Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation."
       },
@@ -58,10 +58,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-boolean-literals",
         "testScripts": [
-          "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js",
-          "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
+          "tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js",
+          "tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
         ],
-        "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
+        "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: tests/Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
       },
       {
         "clause": "13.1.4",
@@ -69,7 +69,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-template-literals",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_TemplateLiteral_Basic.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_TemplateLiteral_Basic.js"
         ],
         "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
       },
@@ -79,10 +79,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-null-literals",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js",
-          "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
+          "tests/Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js",
+          "tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
         ],
-        "notes": "null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
+        "notes": "null emission validated in literals and variable tests; see execution snapshot tests/Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
       },
       {
         "clause": "13.1.6",
@@ -90,9 +90,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-undefined",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js"
+          "tests/Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js"
         ],
-        "notes": "Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
+        "notes": "Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot tests/Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
       },
       {
         "clause": "13.1.7",
@@ -100,7 +100,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-this-keyword",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
         ],
         "notes": "Member calls bind the receiver as runtime this."
       }

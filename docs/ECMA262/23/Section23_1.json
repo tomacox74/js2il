@@ -402,10 +402,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js",
-          "Js2IL.Tests/Array/JavaScript/Array_New_Empty.js",
-          "Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
-          "Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_New_Empty.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js"
         ],
         "notes": "Implements Array() and new Array(...) including numeric length mode; range and integer checks are implemented with runtime-backed limits."
       },
@@ -415,8 +415,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.from",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js"
         ],
         "notes": "Supports array, enumerable, and iterator-producing sources (including Array iterator methods); mapper and thisArg semantics are not fully modeled."
       },
@@ -433,7 +433,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array.isarray",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js"
         ],
         "notes": "Returns true for JavaScriptRuntime.Array instances and false otherwise."
       },
@@ -443,7 +443,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array.of",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js"
         ],
         "notes": "Creates arrays from argument lists with expected element ordering."
       },
@@ -453,8 +453,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.concat",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Concat_SymbolIsConcatSpreadable.js"
         ],
         "notes": "Supports concatenating arrays, primitive values, and array-like objects that opt in or out via Symbol.isConcatSpreadable. Species, sparse-hole fidelity, and broader exotic receiver behavior remain limited."
       },
@@ -464,7 +464,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.entries",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js"
         ],
         "notes": "Exposes Array iterator methods plus Array.prototype[Symbol.iterator] as the values alias, supports borrowed array-like calls, and routes for..of / spread through the same iterator surface. %ArrayIteratorPrototype% metadata (for example %Symbol.toStringTag%) and broader exotic edge behavior remain limited."
       },
@@ -474,8 +474,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.flatmap",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_CallbackOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_CallbackOps_Basic.js"
         ],
         "notes": "Supports core flattening and map+flatten workflows for dense arrays; full species/holes/exotic edge behavior is not exhaustive."
       },
@@ -485,7 +485,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.includes",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
         ],
         "notes": "Implements SameValueZero-style comparisons for common runtime values; sparse-array edge behavior remains limited."
       },
@@ -495,9 +495,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.indexof",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
-          "Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js"
         ],
         "notes": "Supports standard array usage and array-like call patterns, including fromIndex edge cases; full sparse/exotic behavior is limited."
       },
@@ -507,8 +507,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.join",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Join_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_Stringification_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Join_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Stringification_Basic.js"
         ],
         "notes": "join and stringification are implemented; toLocaleString currently aliases basic stringification behavior."
       },
@@ -518,9 +518,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.reduce",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_CallbackOps_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
-          "Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_CallbackOps_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js"
         ],
         "notes": "Supports core reduce flows and array-like .call(...) usage; not all sparse/exotic and thisArg edge semantics are modeled."
       },
@@ -530,9 +530,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.sort",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js",
-          "Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
         ],
         "notes": "Supports default and callback comparator paths; full spec stability/exotic-object details are not fully modeled."
       },
@@ -542,9 +542,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.splice",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Splice_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js",
-          "Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Splice_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
         ],
         "notes": "Core insertion/deletion semantics are implemented; complete exotic length/property descriptor interactions are not exhaustive."
       },
@@ -554,7 +554,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.toreversed",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
         ],
         "notes": "Returns a reversed copy while preserving original array."
       },
@@ -564,7 +564,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.with",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
         ],
         "notes": "Returns a copied array with one replaced index; error and coercion behavior is a pragmatic subset."
       },
@@ -574,9 +574,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-array-instances-length",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
-          "Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js",
-          "Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
         ],
         "notes": "Length reads and integer-validated writes are implemented; full array exotic descriptor semantics are not complete."
       },
@@ -586,7 +586,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createarrayiterator",
         "testScripts": [
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js"
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js"
         ],
         "notes": "for-of over arrays uses runtime iterator objects; direct Array.prototype[Symbol.iterator] exposure remains incomplete."
       }

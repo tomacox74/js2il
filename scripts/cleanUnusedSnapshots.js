@@ -5,17 +5,17 @@
  * Finds and optionally deletes unused *.verified.txt snapshot files.
  * A snapshot is considered unused if its derived test name
  * (the portion after 'ExecutionTests.' or 'GeneratorTests.' in the filename)
- * is not referenced in any test source (*.cs) under the supplied root (default: Js2IL.Tests).
+ * is not referenced in any test source (*.cs) under the supplied root (default: tests/Js2IL.Tests).
  */
 const fs = require('fs');
 const path = require('path');
 
 function usage() {
-  console.log(`Usage: node scripts/cleanUnusedSnapshots.js [--root Js2IL.Tests] [--delete] [--quiet]`);
+  console.log(`Usage: node scripts/cleanUnusedSnapshots.js [--root tests/Js2IL.Tests] [--delete] [--quiet]`);
 }
 
 function parseArgs(argv) {
-  const args = { root: 'Js2IL.Tests', delete: false, quiet: false };
+  const args = { root: 'tests/Js2IL.Tests', delete: false, quiet: false };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--help' || a === '-h') { args.help = true; }

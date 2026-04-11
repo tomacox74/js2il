@@ -15,5 +15,5 @@
 
 ## Tests
 
-- `Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/ExecutionTests.cs#L21`)
-- `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV` (`tests/Js2IL.Tests/Node/ExecutionTests.cs#L21`)
+- `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`tests/Js2IL.Tests/Node/GeneratorTests.cs`)

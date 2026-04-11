@@ -20,5 +20,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Runtime evaluation lowering for supported statements and expressions | Supported with Limitations | [`Function_HelloWorld.js`](../../../Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`BinaryOperator_AddNumberNumber.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js)<br>[`ControlFlow_If_BooleanLiteral.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_BooleanLiteral.js) | Evaluation is implemented for the supported syntax subset via HIR parsing and LIR/IL lowering, not as a full coverage implementation of every grammar production in ECMA-262. |
+| Runtime evaluation lowering for supported statements and expressions | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`BinaryOperator_AddNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js)<br>[`ControlFlow_If_BooleanLiteral.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_BooleanLiteral.js) | Evaluation is implemented for the supported syntax subset via HIR parsing and LIR/IL lowering, not as a full coverage implementation of every grammar production in ECMA-262. |
 

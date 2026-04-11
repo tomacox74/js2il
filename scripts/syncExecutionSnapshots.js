@@ -4,7 +4,7 @@
 /**
  * Syncs execution test snapshots with Node.js output.
  * 
- * For each execution test in Js2IL.Tests:
+ * For each execution test in tests/Js2IL.Tests:
  * 1. Runs the JavaScript file with Node.js
  * 2. Compares the output to the current verified snapshot
  * 3. Updates the snapshot if they differ
@@ -21,7 +21,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const testsRoot = path.join(__dirname, '..', 'Js2IL.Tests');
+const testsRoot = path.join(__dirname, '..', 'tests', 'Js2IL.Tests');
 
 // Tests to ignore (e.g., timeout tests, error-path tests, environment-specific)
 const ignoredTests = [

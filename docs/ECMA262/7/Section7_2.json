@@ -102,8 +102,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-isarray",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js",
-          "Js2IL.Tests/Array/JavaScript/Array_AsArray_Ternary.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_AsArray_Ternary.js"
         ],
         "notes": "Implemented by JavaScriptRuntime.Array.isArray for JS array instances."
       },
@@ -113,8 +113,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-iscallable",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
         ],
         "notes": "Callable detection is primarily delegate-based in runtime dispatch and intrinsic paths."
       },
@@ -124,8 +124,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-isconstructor",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
         ],
         "notes": "Dynamic construction supports delegate/type/Construct-member shapes used by JS2IL; full constructability semantics are not complete."
       },
@@ -135,8 +135,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-isregexp",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
         ],
         "notes": "RegExp-aware behavior is implemented for JavaScriptRuntime.RegExp call sites; Symbol.match override semantics are not fully modeled."
       },
@@ -146,7 +146,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-samevalue",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js"
         ],
         "notes": "Implemented by Operators.SameValue and exposed via Object.is."
       },
@@ -156,7 +156,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-samevaluezero",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
         ],
         "notes": "Implemented in array includes/search paths and runtime helper comparisons."
       },
@@ -166,10 +166,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-islessthan",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
         ],
         "notes": "Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete."
       },
@@ -179,9 +179,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-islooselyequal",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js"
         ],
         "notes": "Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented."
       },
@@ -191,7 +191,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-isstrictlyequal",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js"
         ],
         "notes": "Implements strict-equality behavior across supported runtime representations, with CLR/JS representation normalization in key paths."
       }

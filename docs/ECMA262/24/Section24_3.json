@@ -102,7 +102,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable",
         "testScripts": [
-          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js"
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js"
         ],
         "notes": "Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection."
       },
@@ -119,7 +119,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype",
         "testScripts": [
-          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js"
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js"
         ],
         "notes": "JS2IL now exposes globalThis.WeakMap as a constructor value, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction and the remaining WeakMap prototype gaps are still incomplete."
       },
@@ -129,10 +129,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object",
         "testScripts": [
-          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
-          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
-          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js",
-          "Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js"
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js",
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js"
         ],
         "notes": "Core WeakMap flows work for the object keys used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value."
       },

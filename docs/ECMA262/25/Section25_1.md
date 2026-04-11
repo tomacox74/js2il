@@ -64,17 +64,17 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ArrayBuffer(length) | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) | Implemented as a fixed-length JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers. Resizable buffers, detached buffers, and transfer APIs are not implemented. |
+| ArrayBuffer(length) | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) | Implemented as a fixed-length JavaScriptRuntime.ArrayBuffer backed by byte[]. Length uses ToIndex-like truncation for finite non-negative numbers. Resizable buffers, detached buffers, and transfer APIs are not implemented. |
 
 ### 25.1.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-arraybuffer.isview))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ArrayBuffer.isView | Supported with Limitations | [`ArrayBuffer_IsView_DataView.js`](../../../Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js) | Recognizes DataView and the current Int32Array typed-array surface as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774. |
+| ArrayBuffer.isView | Supported with Limitations | [`ArrayBuffer_IsView_DataView.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_DataView.js) | Recognizes DataView and the current Int32Array typed-array surface as ArrayBuffer views. Broader TypedArray families and shared ArrayBuffer-backed view infrastructure remain follow-up work for issue #774. |
 
 ### 25.1.6 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-arraybuffer-prototype-object))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) | byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. Species, detach, resize, and transfer semantics are not implemented. |
+| ArrayBuffer.prototype.byteLength and ArrayBuffer.prototype.slice | Supported with Limitations | [`ArrayBuffer_Construct_ByteLength.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js) | byteLength reflects the backing byte[] length, and slice returns a copied fixed-length ArrayBuffer. Species, detach, resize, and transfer semantics are not implemented. |
 

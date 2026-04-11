@@ -378,11 +378,11 @@
         "feature": "Top-level static import declarations",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js",
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named.js",
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
-          "Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
-          "Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
+          "tests/Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
         ],
         "notes": "Supported forms include side-effect imports, default imports, named imports, and namespace imports. Imports are lowered to CommonJS `require(...)` calls, and imported identifier reads are rewritten to live reads to better match ESM semantics. Namespace imports from ESM return the module export object; namespace imports from CommonJS return a cached synthetic namespace object whose properties forward through to the underlying exports (live values for keys present at namespace creation time). Imported bindings are treated as immutable; assignment/update/destructuring writes and `delete` of an imported binding are rejected at compile time. The compiler now validates ESM named/default imports against the linked module graph and reports missing or ambiguous re-export chains during linking. Static import/export declarations must still appear at top level and before non-directive top-level statements, and `with` clauses / import attributes are rejected."
       },
@@ -391,8 +391,8 @@
         "feature": "Dynamic import() namespace/default interop",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Esm_Namespace.js",
-          "Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Cjs_Namespace.js"
+          "tests/Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Esm_Namespace.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_DynamicImport_Cjs_Namespace.js"
         ],
         "notes": "Literal dynamic `import()` requests resolve through the existing CommonJS loader but now return the same pragmatic namespace/default projection used by the static ESM lowering. ESM-lowered modules resolve to their export object directly; CommonJS-style modules resolve to a cached synthetic namespace object that exposes `default`, `module.exports`, and getter-backed enumerable export keys. Full ECMA-262 module-record linking/evaluation semantics remain out of scope and are tracked separately."
       },
@@ -401,14 +401,14 @@
         "feature": "Top-level export declarations",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs",
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named_Lib.mjs",
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_A.mjs",
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_B.mjs",
-          "Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js",
-          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js",
-          "Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic_Lib.mjs",
-          "Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable_Lib.cjs"
+          "tests/Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule_Lib.mjs",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Named_Lib.mjs",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_A.mjs",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle_B.mjs",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_ExportNamedFrom.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic_Lib.mjs",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable_Lib.cjs"
         ],
         "notes": "Supported forms include named/default exports, `export ... from`, and `export *` re-exports. Exports are projected through CommonJS `exports` with getter-based wiring, and the compiler now tracks explicit module export records so that named re-exports, multi-hop `export *` chains, and ambiguity failures are driven by the module graph instead of only by rewrite order. Export getters are still emitted into the existing CommonJS-oriented runtime, so host hooks, async module execution, and full SourceTextModuleRecord environment semantics remain out of scope."
       },
@@ -417,9 +417,9 @@
         "feature": "Full module record/linking/evaluation model",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
-          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js",
-          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFromMultiHop.js"
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_ExportStarFromMultiHop.js"
         ],
         "notes": "JS2IL now materializes explicit module-record metadata, performs a separate graph-based linking pass, and plans evaluation order/components before IL generation. This covers module-request records, graph-driven `GetExportedNames` / `ResolveExport`, common cyclic graphs, and link-time ambiguity/missing-export diagnostics for the supported static ESM subset. The runtime still executes through the CommonJS-oriented host model, so host loading hooks, true `ParseModule`, top-level `await`, and async-module algorithms remain unsupported."
       },
@@ -434,8 +434,8 @@
         "feature": "Module namespace objects for static imports",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
-          "Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
+          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
         ],
         "notes": "Namespace objects are produced through the `__js2il_esm_namespace` helper. ESM namespace imports expose the export object directly, while CommonJS namespace imports use a cached synthetic namespace object with getter-based forwarding."
       },
@@ -444,9 +444,9 @@
         "feature": "Module body evaluation via CommonJS require and export getters",
         "status": "Supported with Limitations",
         "testScripts": [
-          "Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js",
-          "Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
-          "Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js"
+          "tests/Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_LiveBindings_Cycle.js",
+          "tests/Js2IL.Tests/Import/JavaScript/Import_ExportStarFrom.js"
         ],
         "notes": "Module bodies still evaluate through generated CommonJS `require(...)` calls and getter-based export wiring, but the compiler now plans evaluation order/components from the linked module graph before code generation. Common cyclic/live-binding cases and multi-hop re-export chains are covered for the supported static ESM subset. Async module execution and top-level `await` remain unsupported."
       }

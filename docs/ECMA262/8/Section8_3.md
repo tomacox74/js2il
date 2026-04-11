@@ -26,17 +26,17 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Duplicate label detection | Supported with Limitations | `Js2IL.Tests/ValidatorTests.cs` | JavaScriptAstValidator tracks active labels and rejects duplicate declarations in the same label set; explicit negative duplicate-label coverage is still light. |
+| Duplicate label detection | Supported with Limitations | `tests/Js2IL.Tests/ValidatorTests.cs` | JavaScriptAstValidator tracks active labels and rejects duplicate declarations in the same label set; explicit negative duplicate-label coverage is still light. |
 
 ### 8.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-containsundefinedbreaktarget))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Undefined break-target detection | Supported with Limitations | `Js2IL.Tests/ParserTests.cs`<br>[`ControlFlow_ForLoop_LabeledBreak.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js) | Parser/validator reject breaks to missing labels and runtime lowering supports valid labeled break targets. |
+| Undefined break-target detection | Supported with Limitations | `tests/Js2IL.Tests/ParserTests.cs`<br>[`ControlFlow_ForLoop_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js) | Parser/validator reject breaks to missing labels and runtime lowering supports valid labeled break targets. |
 
 ### 8.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-containsundefinedcontinuetarget))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Undefined/invalid continue-target detection | Supported with Limitations | `Js2IL.Tests/ParserTests.cs`<br>[`ControlFlow_While_LabeledContinue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js) | Continue targets are validated to reference iteration labels; non-loop targets are rejected. |
+| Undefined/invalid continue-target detection | Supported with Limitations | `tests/Js2IL.Tests/ParserTests.cs`<br>[`ControlFlow_While_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js) | Continue targets are validated to reference iteration labels; non-loop targets are rejected. |
 

@@ -114,10 +114,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js",
-          "Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js"
         ],
         "notes": "Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, and a lazily materialized arguments array when the binding is referenced. The runtime still does not implement the full Arguments Exotic Object or every environment-record edge case from the spec."
       },
@@ -127,10 +127,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-construct-argumentslist-newtarget",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
-          "Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
         ],
         "notes": "JS2IL constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete."
       },
@@ -140,9 +140,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-makeconstructor",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
         "notes": "Delegate-backed functions lazily synthesize prototype, constructor, name, length, and toString metadata so common library patterns continue to work. These properties are inferred from CLR delegates rather than being installed through the exact SetFunctionName / SetFunctionLength / MakeConstructor abstract-operation flow."
       },
@@ -152,9 +152,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-functiondeclarationinstantiation",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_ClosureMutatesOuterVariable.js",
-          "Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js",
-          "Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_ClosureMutatesOuterVariable.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
         ],
         "notes": "Scope-as-class lowering gives functions stable lexical captures and nested-scope access. Parameter environments, rest/arguments interactions, and strict-mode corner cases are supported only to the extent needed by the current compiler/runtime feature set."
       }

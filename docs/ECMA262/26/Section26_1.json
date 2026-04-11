@@ -84,7 +84,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weak-ref-objects",
         "testScripts": [
-          "Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
+          "tests/Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js"
         ],
         "notes": "Supports `new WeakRef(target)` in construct positions, `deref()`, and `%Symbol.toStringTag%` via instance-level descriptor wiring. `deref()` adds live targets to a host-kept set until the next cleanup checkpoint, and tests use a host-opt-in non-standard global `gc()` helper to force deterministic collection. js2il does not yet expose a full first-class `WeakRef` constructor/prototype object on `globalThis`."
       }

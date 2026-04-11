@@ -1558,6 +1558,7 @@ namespace JavaScriptRuntime.Node
         private TcpClient? _tcpClient;
         private StreamReader? _reader;
         private StreamWriter? _writer;
+        private PromiseWithResolvers? _ioLifetimePromise;
         private int _disconnectSignaled;
         private int _disposeSignaled;
         private int _started;
@@ -1859,9 +1860,23 @@ namespace JavaScriptRuntime.Node
                 _stream = stream;
                 _reader = reader;
                 _writer = writer;
+                BeginConnectedIoLifetime_NoLock();
                 _connected.TrySetResult();
                 return true;
             }
+        }
+
+        private void BeginConnectedIoLifetime_NoLock()
+        {
+            if (_ioScheduler == null || _ioLifetimePromise != null || _disposed)
+            {
+                return;
+            }
+
+            JsFunc1 resolve = (scopes, newTarget, value) => null;
+            JsFunc1 reject = (scopes, newTarget, reason) => null;
+            _ioLifetimePromise = new PromiseWithResolvers(new Promise(), resolve, reject);
+            _ioScheduler.BeginIo();
         }
 
         private static void PrepareTextEndpoints(global::System.IO.Stream stream, out StreamReader reader, out StreamWriter writer)
@@ -2010,6 +2025,8 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
+            PromiseWithResolvers? ioLifetimePromise;
+
             if (!_connected.Task.IsCompleted)
             {
                 _connected.TrySetException(new ObjectDisposedException(nameof(ChildProcessIpcChannel)));
@@ -2026,6 +2043,8 @@ namespace JavaScriptRuntime.Node
             lock (_sync)
             {
                 _disposed = true;
+                ioLifetimePromise = _ioLifetimePromise;
+                _ioLifetimePromise = null;
                 try
                 {
                     _writer?.Dispose();
@@ -2065,6 +2084,11 @@ namespace JavaScriptRuntime.Node
                 catch
                 {
                 }
+            }
+
+            if (ioLifetimePromise != null && _ioScheduler != null)
+            {
+                _ioScheduler.EndIo(ioLifetimePromise, JsNull.Null, isError: false);
             }
 
             try

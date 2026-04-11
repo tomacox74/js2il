@@ -18,5 +18,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| AddToKeptObjects ( value ) | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | WeakRef.deref() adds live targets to the host-kept set so they survive same-job `gc()` forcing until the next cleanup checkpoint. The approximation is scoped to the current js2il runtime/event loop. |
+| AddToKeptObjects ( value ) | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../tests/Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | WeakRef.deref() adds live targets to the host-kept set so they survive same-job `gc()` forcing until the next cleanup checkpoint. The approximation is scoped to the current js2il runtime/event loop. |
 

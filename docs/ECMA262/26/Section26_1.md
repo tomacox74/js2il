@@ -34,5 +34,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| WeakRef constructor, deref(), and kept-object baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions, `deref()`, and `%Symbol.toStringTag%` via instance-level descriptor wiring. `deref()` adds live targets to a host-kept set until the next cleanup checkpoint, and tests use a host-opt-in non-standard global `gc()` helper to force deterministic collection. js2il does not yet expose a full first-class `WeakRef` constructor/prototype object on `globalThis`. |
+| WeakRef constructor, deref(), and kept-object baseline | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../tests/Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js) | Supports `new WeakRef(target)` in construct positions, `deref()`, and `%Symbol.toStringTag%` via instance-level descriptor wiring. `deref()` adds live targets to a host-kept set until the next cleanup checkpoint, and tests use a host-opt-in non-standard global `gc()` helper to force deterministic collection. js2il does not yet expose a full first-class `WeakRef` constructor/prototype object on `globalThis`. |
 

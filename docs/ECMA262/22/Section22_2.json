@@ -576,11 +576,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp-pattern-flags",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
         ],
         "notes": "Lowered by the compiler as an intrinsic constructor-like call to JavaScriptRuntime.RegExp (and regex literals /.../flags are lowered as new RegExp(pattern, flags)). The g, i, m, s, u, d, and y flags are parsed and reflected today; v is explicitly rejected with a SyntaxError diagnostic. Unicode behavior is still a limited subset backed by .NET Regex plus common-case rewrites for code-point escapes and dot handling, not full ECMAScript parity."
       },
@@ -590,9 +590,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.exec",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures, attaching .index and .input, honoring lastIndex for both /g and /y regexes, and attaching a minimal .indices array when the d flag is present. Full RegExp exotic object semantics, named groups on indices, and complete Unicode mode parity are still not implemented."
       },
@@ -602,8 +602,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.dotAll from the stored s flag. Backed by .NET Regex Singleline for the non-unicode path and by the runtime's limited unicode-pattern rewriting when /su is used."
       },
@@ -613,9 +613,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.flags",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Flags_Getter.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.flags. Returns flags in canonical order (dgimsuvy). The g, i, m, s, u, d, and y flags are currently reflected; v is rejected during construction."
       },
@@ -625,7 +625,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.global",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp based on stored flags. Full RegExp exotic object semantics and cross-realm behaviors are not implemented."
       },
@@ -635,9 +635,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.hasIndices",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.hasIndices from the stored d flag. exec() attaches a minimal .indices property containing [start, end] pairs for the overall match and each capture, with unmatched captures represented as null. Named groups on indices are not yet implemented."
       },
@@ -647,7 +647,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp based on stored flags."
       },
@@ -657,9 +657,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.match%",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_Match_Global.js",
-          "Js2IL.Tests/String/JavaScript/String_Match_NonGlobal.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_Match_Global.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_Match_NonGlobal.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
         ],
         "notes": "Implemented by exposing a symbol-keyed matcher on RegExp instances and by routing String.prototype.match through well-known symbol dispatch. Custom objects with Symbol.match overrides are honored. The runtime still models only a subset of RegExp exotic behavior."
       },
@@ -669,7 +669,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.multiline",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp based on stored flags."
       },
@@ -679,8 +679,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.replace%",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
         ],
         "notes": "Implemented by exposing a symbol-keyed replacer on RegExp instances and by routing String.prototype.replace through well-known symbol dispatch. Custom Symbol.replace overrides are honored. Replacement pattern semantics remain a pragmatic subset and do not yet cover every ECMAScript replacement token edge case."
       },
@@ -690,8 +690,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.search%",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_Search_Basic.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_Search_Basic.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
         ],
         "notes": "Implemented by exposing a symbol-keyed searcher on RegExp instances and by routing String.prototype.search through well-known symbol dispatch. The built-in path preserves the caller's lastIndex after searching. Custom Symbol.search overrides are honored."
       },
@@ -701,7 +701,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.source",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Prototype_Getters_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp using the original pattern text. Does not attempt to normalize/escape patterns exactly per spec."
       },
@@ -711,8 +711,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.split%",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_Split_Regex_Basic.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_Split_Regex_Basic.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_SymbolDispatch_Custom.js"
         ],
         "notes": "Implemented by exposing a symbol-keyed splitter on RegExp instances and by routing String.prototype.split through well-known symbol dispatch. Custom Symbol.split overrides are honored. Built-in regex splitting currently uses a pragmatic subset and does not yet model every capture-insertion corner case."
       },
@@ -722,7 +722,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.sticky",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Sticky_Getters.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.sticky from the stored y flag. Sticky regexes use lastIndex-constrained matching in exec() and test(); matchAll and some broader RegExp exotic semantics remain incomplete."
       },
@@ -732,9 +732,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.test",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Global.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.test. Updates lastIndex for both global (/g) and sticky (/y) regexes using the same matching rules as exec(), and participates in the runtime's limited unicode-aware empty-match advancement for /u regexes. Complete Unicode mode parity is still not implemented."
       },
@@ -744,7 +744,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-regexp.prototype.tostring",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ToString_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.toString returning /source/flags format. Does not handle all exotic object semantics."
       },
@@ -754,8 +754,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.unicode",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.unicode from the stored u flag. The runtime supports a limited subset of unicode behavior by rewriting common code-point escapes and dot handling before compiling with .NET Regex. Property escapes, unicode sets, and full ECMAScript Unicode-mode parity are still not implemented."
       },
@@ -765,8 +765,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-regexp.prototype.unicodesets",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp.unicodeSets. The getter remains false for supported regexes, and the v flag is explicitly rejected during RegExp construction with a SyntaxError because UnicodeSets mode is not implemented."
       },
@@ -776,9 +776,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-lastindex",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js",
-          "Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js",
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js",
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Test_LastIndex_Sticky.js"
         ],
         "notes": "Implemented in JavaScriptRuntime.RegExp as a numeric property. Participates in exec() and test() for both /g and /y regexes, and resets to 0 after failed sticky/global matches or when the stored start position is past the end of the input."
       }

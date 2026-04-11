@@ -32,13 +32,13 @@ Provides a focused legacy querystring baseline with parse/stringify support for 
 Decodes '+' as space, percent-decodes keys/values, and materializes duplicate keys as JavaScript arrays.
 
 **Tests:**
-- `Js2IL.Tests.Node.QueryString.ExecutionTests.Require_QueryString_Parse_And_Stringify` (`Js2IL.Tests/Node/QueryString/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.QueryString.GeneratorTests.Require_QueryString_Parse_And_Stringify` (`Js2IL.Tests/Node/QueryString/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.QueryString.ExecutionTests.Require_QueryString_Parse_And_Stringify` (`tests/Js2IL.Tests/Node/QueryString/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.QueryString.GeneratorTests.Require_QueryString_Parse_And_Stringify` (`tests/Js2IL.Tests/Node/QueryString/GeneratorTests.cs`)
 
 ### stringify(obj[, sep[, eq[, options]]])
 
 Serializes scalar values and JavaScript arrays, repeating duplicate keys in the output order encountered on the source object.
 
 **Tests:**
-- `Js2IL.Tests.Node.QueryString.ExecutionTests.Require_QueryString_Parse_And_Stringify` (`Js2IL.Tests/Node/QueryString/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.QueryString.GeneratorTests.Require_QueryString_Parse_And_Stringify` (`Js2IL.Tests/Node/QueryString/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.QueryString.ExecutionTests.Require_QueryString_Parse_And_Stringify` (`tests/Js2IL.Tests/Node/QueryString/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.QueryString.GeneratorTests.Require_QueryString_Parse_And_Stringify` (`tests/Js2IL.Tests/Node/QueryString/GeneratorTests.cs`)

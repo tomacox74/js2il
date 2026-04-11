@@ -26,17 +26,17 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Host-defined realm initialization (single runtime realm) | Supported with Limitations | [`Hosting_EventLoopKeepAlive.js`](../../../Js2IL.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js) | Engine bootstrap initializes one host realm/global runtime context per execution instance; multi-realm semantics are limited. |
+| Host-defined realm initialization (single runtime realm) | Supported with Limitations | [`Hosting_EventLoopKeepAlive.js`](../../../tests/Js2IL.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js) | Engine bootstrap initializes one host realm/global runtime context per execution instance; multi-realm semantics are limited. |
 
 ### 9.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-createintrinsics))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| CreateIntrinsics for runtime global object | Supported with Limitations | `Js2IL.Tests/ValidatorTests.cs`<br>[`Process_Platform_Versions_And_Env_Basics.js`](../../../Js2IL.Tests/Node/Process/JavaScript/Process_Platform_Versions_And_Env_Basics.js) | GlobalThis is populated with runtime intrinsics/host APIs, but does not fully model per-realm intrinsic identity across multiple realms. |
+| CreateIntrinsics for runtime global object | Supported with Limitations | `tests/Js2IL.Tests/ValidatorTests.cs`<br>[`Process_Platform_Versions_And_Env_Basics.js`](../../../tests/Js2IL.Tests/Node/Process/JavaScript/Process_Platform_Versions_And_Env_Basics.js) | GlobalThis is populated with runtime intrinsics/host APIs, but does not fully model per-realm intrinsic identity across multiple realms. |
 
 ### 9.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-setdefaultglobalbindings))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| SetDefaultGlobalBindings | Supported with Limitations | [`GlobalTimers_AsValues_WindowLikeAssignment.js`](../../../Js2IL.Tests/Node/Timers/JavaScript/GlobalTimers_AsValues_WindowLikeAssignment.js) | Default global bindings are established through GlobalThis initialization for the supported host/runtime surface. |
+| SetDefaultGlobalBindings | Supported with Limitations | [`GlobalTimers_AsValues_WindowLikeAssignment.js`](../../../tests/Js2IL.Tests/Node/Timers/JavaScript/GlobalTimers_AsValues_WindowLikeAssignment.js) | Default global bindings are established through GlobalThis initialization for the supported host/runtime surface. |
 

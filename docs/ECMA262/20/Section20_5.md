@@ -63,54 +63,54 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js) | Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported. |
-| new Error(message) and new NativeError(message) | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties. |
+| Error(message) (callable creates instance) | Supported with Limitations | [`IntrinsicCallables_Error_Callable_CreatesInstances.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js) | Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported. |
+| new Error(message) and new NativeError(message) | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js) | Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties. |
 
 ### 20.5.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-error.iserror))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error.isError(arg) basic predicate | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented. |
+| Error.isError(arg) basic predicate | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented. |
 
 ### 20.5.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error.prototype data property exists (minimal) | Supported with Limitations | [`CommonJS_Global_ErrorPrototype_Read.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js)<br>[`CommonJS_Global_ErrorPrototype_Read_Lib.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js) | Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Constructor/prototype behavior remains partial relative to full spec object-model semantics. |
+| Error.prototype data property exists (minimal) | Supported with Limitations | [`CommonJS_Global_ErrorPrototype_Read.js`](../../../tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js)<br>[`CommonJS_Global_ErrorPrototype_Read_Lib.js`](../../../tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js) | Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Constructor/prototype behavior remains partial relative to full spec object-model semantics. |
 
 ### 20.5.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.constructor))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error.prototype.constructor | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Error.prototype.constructor points to the global Error callable value. |
+| Error.prototype.constructor | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Error.prototype.constructor points to the global Error callable value. |
 
 ### 20.5.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.message))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error.prototype.message default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Provides an empty-string default value on Error.prototype. |
+| Error.prototype.message default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Provides an empty-string default value on Error.prototype. |
 
 ### 20.5.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.name))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error.prototype.name default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Provides the default "Error" value on Error.prototype.name. |
+| Error.prototype.name default value | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Provides the default "Error" value on Error.prototype.name. |
 
 ### 20.5.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-error.prototype.tostring))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error.prototype.toString() basic formatting | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers. |
+| Error.prototype.toString() basic formatting | Supported with Limitations | [`IntrinsicCallables_Error_ConstructorSurface.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js) | Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers. |
 
 ### 20.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-error-instances))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js) | name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
+| Error instance properties: name, message, stack | Supported with Limitations | [`TryCatch_CallMember_MissingMethod_IsTypeError.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js)<br>[`Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js) | name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet). |
 
 ### 20.5.7.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-aggregate-error))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| AggregateError constructors and .errors | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js)<br>[`Promise_Any_AllRejected.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js) | JavaScriptRuntime.AggregateError stores errors in a JavaScriptRuntime.Array. Signature differs from spec in some cases (e.g., the test uses new AggregateError("agg") which maps to a message-only overload). 'options' / 'cause' are not supported. |
+| AggregateError constructors and .errors | Supported with Limitations | [`TryCatch_NewExpression_BuiltInErrors.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js)<br>[`Promise_Any_AllRejected.js`](../../../tests/Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js) | JavaScriptRuntime.AggregateError stores errors in a JavaScriptRuntime.Array. Signature differs from spec in some cases (e.g., the test uses new AggregateError("agg") which maps to a message-only overload). 'options' / 'cause' are not supported. |
 

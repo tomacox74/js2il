@@ -1,4 +1,4 @@
-﻿# 0. Synchronous Generator Lowering Spec (JS2IL)
+# 0. Synchronous Generator Lowering Spec (JS2IL)
 
 ## 1. Goals
 
@@ -286,7 +286,7 @@ This requires a runtime helper for â€œget iteratorâ€ and optional `thro
 
 ## 8. Testing plan
 
-Add tests under `Js2IL.Tests/Generator/`:
+Add tests under `tests/Js2IL.Tests/Generator/`:
 
 1. Basic yield sequence:
    - `g().next()` returns expected `{value,done}` triples

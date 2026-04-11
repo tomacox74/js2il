@@ -24,5 +24,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Empty statement (;) | Supported | [`ControlFlow_EmptyStatement.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_EmptyStatement.js) | Parsed as an EmptyStatement node and lowered as a no-op; has no observable runtime effect. |
+| Empty statement (;) | Supported | [`ControlFlow_EmptyStatement.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_EmptyStatement.js) | Parsed as an EmptyStatement node and lowered as a no-op; has no observable runtime effect. |
 

@@ -24,5 +24,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Nullish coalescing operator (??) | Supported | [`BinaryOperator_NullishCoalescing_Basic.js`](../../../Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NullishCoalescing_Basic.js) | Implements short-circuit semantics: the right-hand side is evaluated only when the left-hand side is nullish (undefined or null). |
+| Nullish coalescing operator (??) | Supported | [`BinaryOperator_NullishCoalescing_Basic.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NullishCoalescing_Basic.js) | Implements short-circuit semantics: the right-hand side is evaluated only when the left-hand side is nullish (undefined or null). |
 

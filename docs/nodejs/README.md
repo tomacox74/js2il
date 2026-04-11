@@ -82,7 +82,7 @@ See `ModuleDoc.schema.json` for the complete schema definition.
       "tests": [
         {
           "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_Basic",
-          "file": "Js2IL.Tests/Node/ExecutionTests.cs#L9"
+          "file": "tests/Js2IL.Tests/Node/ExecutionTests.cs#L9"
         }
       ]
     }
@@ -104,7 +104,7 @@ See `ModuleDoc.schema.json` for the complete schema definition.
   "tests": [
     {
       "name": "Js2IL.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory",
-      "file": "Js2IL.Tests/Node/ExecutionTests.cs#L15"
+      "file": "tests/Js2IL.Tests/Node/ExecutionTests.cs#L15"
     }
   ]
 }

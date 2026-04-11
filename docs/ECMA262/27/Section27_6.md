@@ -43,5 +43,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| async generator objects returned from `async function*` support next/return/throw and are consumable by `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) | Async generator objects are implemented as a runtime type implementing the async iterator protocol. Prototype intrinsics (e.g. %AsyncGeneratorPrototype% identity, toStringTag) are not fully modeled yet. |
+| async generator objects returned from `async function*` support next/return/throw and are consumable by `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) | Async generator objects are implemented as a runtime type implementing the async iterator protocol. Prototype intrinsics (e.g. %AsyncGeneratorPrototype% identity, toStringTag) are not fully modeled yet. |
 

@@ -119,10 +119,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_MultipleAwaits.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_WithThis.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ClassMethod_CallsOtherAsync.js"
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ClassMethod_MultipleAwaits.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ClassMethod_WithThis.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ClassMethod_CallsOtherAsync.js"
         ],
         "notes": "Async class instance methods are compiled as resumable state machines and return a Promise; supports await points, multiple awaits, and correct this binding across suspension/resumption."
       },
@@ -132,7 +132,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js"
+          "tests/Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js"
         ],
         "notes": "Async class static methods are compiled as resumable state machines and return a Promise."
       },
@@ -142,7 +142,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
         ]
       },
       {
@@ -151,17 +151,17 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessGlobalVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessGlobalVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.js"
         ],
         "notes": "Class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. Implementation walks the scope tree from the class's parent scope to root, building a complete ancestor chain. The scope array is passed as an argument to methods/constructors, enabling proper multi-level scope access. Supports regular functions, arrow functions, and constructor parameters. Fixed parameter indexing for constructors: when scopes are present, arg0=this, arg1=scopes[], parameters start at arg2."
       },
@@ -171,8 +171,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js"
         ],
         "notes": "Class constructors support default parameter values and destructuring with defaults. Call sites validate argument count against min/max parameter bounds and pad missing optional arguments with ldnull. Default values are applied using starg IL pattern when arguments are null. Object destructuring parameters support default values (e.g., constructor({host=\"localhost\", port=8080})) with conditional IL generation."
       },
@@ -182,8 +182,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js"
         ],
         "notes": "Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Returning a primitive does not override."
       },
@@ -193,9 +193,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
         ],
         "notes": "Covers multi-parameter constructors and arithmetic in instance methods."
       },
@@ -205,7 +205,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_Param_Field_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_Param_Field_Log.js"
         ]
       },
       {
@@ -214,9 +214,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js",
-          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_YieldAssign.js",
-          "Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js"
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js",
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_YieldAssign.js",
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js"
         ],
         "notes": "Generator class instance methods compile to a synchronous generator state machine and return a GeneratorObject; supports yield points and correct this binding across next() calls. yield* delegation support is tracked under Generator Function Definitions."
       },
@@ -226,7 +226,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
         ],
         "notes": "Generator class static methods compile to a synchronous generator state machine and return a GeneratorObject. yield* delegation support is tracked under Generator Function Definitions."
       },
@@ -236,7 +236,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js"
         ],
         "notes": "Emitted by assigning defaults in the generated .ctor."
       },
@@ -246,7 +246,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js"
         ]
       },
       {
@@ -255,8 +255,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
         ],
         "notes": "Class instance methods support default parameter values and destructuring with defaults. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt. Object destructuring parameters support default values with conditional IL generation."
       },
@@ -266,7 +266,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Method_DefaultReturnUndefined.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Method_DefaultReturnUndefined.js"
         ],
         "notes": "Class/instance methods that reach the end without an explicit return evaluate to JS undefined (represented as CLR null), matching ECMAScript semantics."
       },
@@ -276,7 +276,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
         ],
         "notes": "Generated as a private .NET field with a mangled name; accessible only within the class."
       },
@@ -286,7 +286,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
         ],
         "notes": "Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld."
       },
@@ -296,7 +296,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
         ]
       },
       {
@@ -305,7 +305,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
         ],
         "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Private accessors are compiled as hidden callable members. Computed class accessors still have limitations."
       },
@@ -315,8 +315,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
         ],
         "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods."
       },
@@ -326,7 +326,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_IntrinsicInheritance_ExtendsArray_SuperLength.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_IntrinsicInheritance_ExtendsArray_SuperLength.js"
         ],
         "notes": "JS2IL resolves `extends Array` to the runtime CLR base type JavaScriptRuntime.Array. `super(...)` in derived constructors calls Array::.ctor() and then applies JS Array constructor semantics via Array.ConstructInto(args). Limitation: only `extends Array` is handled today; other intrinsic bases are not yet supported."
       },
@@ -336,11 +336,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-classelementkind",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
         ],
         "notes": "JS2IL supports constructors, identifier/private-named methods and accessors, static blocks, and identifier/private-identifier fields. Literal/simple computed names are compiled onto the generated class/field surface; arbitrary runtime-computed method keys still have limitations."
       },
@@ -350,8 +350,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-constructormethod",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
         ],
         "notes": "Supports explicit constructors and synthesizes implicit constructors (including derived implicit super() insertion)."
       },
@@ -361,10 +361,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-isstatic",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js",
-          "Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js",
-          "Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_StaticMethod_SimpleAwait.js",
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_StaticMethod_SimpleYield.js"
         ]
       },
       {
@@ -373,7 +373,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-allprivateidentifiersvalid",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
         ],
         "notes": "Valid programs using declared private fields compile and run. Invalid private identifier usage is not fully validated per spec; some cases fail during compilation when registry resolution cannot find the field."
       },
@@ -383,7 +383,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
         ]
       },
       {
@@ -392,7 +392,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
         ]
       },
       {
@@ -401,7 +401,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
         ]
       },
       {
@@ -410,8 +410,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateMethodAndAccessor_Log.js"
+          "tests/Js2IL.Tests/ValidatorTests.cs",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateMethodAndAccessor_Log.js"
         ],
         "notes": "Private methods and private accessors are compiled as hidden callable members distinct from private field storage, so they are not surfaced through normal property enumeration or lookup."
       },
@@ -421,8 +421,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
+          "tests/Js2IL.Tests/ValidatorTests.cs",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
         ],
         "notes": "Identifier, string-literal, numeric-literal, and other simple literal computed method names compile onto the generated class surface. Arbitrary runtime-computed method keys still have limitations."
       },
@@ -432,8 +432,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
+          "tests/Js2IL.Tests/ValidatorTests.cs",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
         ],
         "notes": "Identifier/private-identifier field definitions are emitted as CLR fields. Simple literal computed names are resolved onto the generated class surface; dynamically computed field keys still use the generic runtime property path."
       },
@@ -443,8 +443,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classstaticblockdefinitionevaluation",
         "testScripts": [
-          "Js2IL.Tests/ValidatorTests.cs",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
+          "tests/Js2IL.Tests/ValidatorTests.cs",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
         ],
         "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization."
       }
