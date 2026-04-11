@@ -22,12 +22,22 @@ namespace Js2IL.Tests.Integration
 
             await ExecutionTest(
                 nameof(Compile_Scripts_ExtractEcma262SectionHtml_UrlMode),
-                additionalScripts: ["Compile_Scripts_ExtractEcma262SectionHtml"],
+                additionalScripts:
+                [
+                    "Compile_Scripts_ExtractEcma262SectionHtml_TestHarness",
+                ],
                 addMocks: services => services.RegisterInstance<IEnvironment>(
                     new FixedCommandLineEnvironment(
                         "dotnet",
                         "extract-url-smoke.dll",
-                        server.RedirectUrl)));
+                        "--section",
+                        "27.3",
+                        "--url",
+                        server.RedirectUrl,
+                        "--id",
+                        "sec-generatorfunction-objects",
+                        "--out",
+                        "section-url.html")));
 
             Assert.Equal(
                 new[]
@@ -46,12 +56,21 @@ namespace Js2IL.Tests.Integration
 
             await ExecutionTest(
                 nameof(Compile_Scripts_ExtractEcma262SectionHtml_AutoMode),
-                additionalScripts: ["Compile_Scripts_ExtractEcma262SectionHtml"],
+                additionalScripts:
+                [
+                    "Compile_Scripts_ExtractEcma262SectionHtml_TestHarness",
+                ],
                 addMocks: services => services.RegisterInstance<IEnvironment>(
                     new FixedCommandLineEnvironment(
                         "dotnet",
                         "extract-auto-smoke.dll",
-                        server.IndexUrl)));
+                        "--section",
+                        "27.3",
+                        "--auto",
+                        "--index-url",
+                        server.IndexUrl,
+                        "--out",
+                        "section-auto.html")));
 
             Assert.Equal(
                 new[]
