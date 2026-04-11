@@ -1322,6 +1322,15 @@ namespace JavaScriptRuntime.Node
 
                 result.Callback = tertiary as Delegate ?? secondary as Delegate;
             }
+            else if (TryApplyUrlObject(result, primary, scheme, defaultPort, moduleName))
+            {
+                if (secondary != null && secondary is not JsNull && secondary is not Delegate)
+                {
+                    ApplyObjectOptions(result, secondary);
+                }
+
+                result.Callback = tertiary as Delegate ?? secondary as Delegate;
+            }
             else if (primary is Delegate callbackOnly)
             {
                 result.Callback = callbackOnly;
@@ -1342,6 +1351,17 @@ namespace JavaScriptRuntime.Node
             }
 
             return result;
+        }
+
+        private static bool TryApplyUrlObject(HttpRequestOptions options, object? value, string scheme, int defaultPort, string moduleName)
+        {
+            if (value is not URL url)
+            {
+                return false;
+            }
+
+            ApplyUrl(options, url.href, scheme, defaultPort, moduleName);
+            return true;
         }
 
         internal static bool TryGetUnsupportedFeatureMessage(string method, IDictionary<string, string> headers, string moduleName, out string message)

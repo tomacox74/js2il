@@ -25,5 +25,9 @@ namespace Js2IL.Tests.Node.Https
         [Fact]
         public Task Https_Request_Post_Basic()
             => ExecutionTest(nameof(Https_Request_Post_Basic));
+
+        [Fact]
+        public Task Https_Request_UrlObject_WithOptions()
+            => ExecutionTest(nameof(Https_Request_UrlObject_WithOptions));
     }
 }

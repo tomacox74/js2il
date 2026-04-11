@@ -682,9 +682,11 @@ namespace JavaScriptRuntime.Node
             }
 
             var first = sourceArgs[0];
-            if (first is string)
+            if (first is string || first is URL)
             {
-                if (sourceArgs.Length > 1 && NodeNetworkingCommon.LooksLikeOptionsObject(sourceArgs[1]))
+                if (sourceArgs.Length > 1
+                    && sourceArgs[1] is not URL
+                    && NodeNetworkingCommon.LooksLikeOptionsObject(sourceArgs[1]))
                 {
                     return sourceArgs[1];
                 }

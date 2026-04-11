@@ -40,11 +40,13 @@ Creates an HTTPS server that reuses the node:http request/response lifecycle ove
 
 ### request(...)
 
-Issues HTTPS client requests on port 443 by default, preserving the existing node:http ClientRequest/IncomingMessage object model. The current baseline supports object or https:// URL inputs plus rejectUnauthorized: false for local self-signed test scenarios; custom CA trust, secureContext on the client side, and https.Agent pooling are not yet implemented.
+Issues HTTPS client requests on port 443 by default, preserving the existing node:http ClientRequest/IncomingMessage object model. The current baseline supports object or https:// / WHATWG URL inputs, including URL-plus-options call shapes where second-argument overrides still control headers, path, and rejectUnauthorized: false for local self-signed test scenarios; custom CA trust, secureContext on the client side, and https.Agent pooling are not yet implemented.
 
 **Tests:**
 - `Js2IL.Tests.Node.Https.ExecutionTests.Https_Request_Post_Basic` (`Js2IL.Tests/Node/Https/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.Https.GeneratorTests.Https_Request_Post_Basic` (`Js2IL.Tests/Node/Https/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Https.ExecutionTests.Https_Request_UrlObject_WithOptions` (`Js2IL.Tests/Node/Https/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Https.GeneratorTests.Https_Request_UrlObject_WithOptions` (`Js2IL.Tests/Node/Https/GeneratorTests.cs`)
 
 ### get(...)
 
