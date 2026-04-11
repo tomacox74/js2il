@@ -25,5 +25,5 @@
 ### performance.now()
 
 **Tests:**
-- `Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic` (`tests/Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`tests/Js2IL.Tests/Node/GeneratorTests.cs`)

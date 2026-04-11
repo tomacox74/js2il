@@ -84,7 +84,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators",
         "testScripts": [
-          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
         "notes": "Supports computed MemberExpression assignment via JavaScriptRuntime.Object.SetItem(obj, index, value). Works for object literals (ExpandoObject), JavaScriptRuntime.Array index writes (including extending length), and Int32Array index writes."
       },
@@ -94,7 +94,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators",
         "testScripts": [
-          "Js2IL.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js"
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js"
         ],
         "notes": "Supports destructuring assignment expressions with object/array patterns. Applies defaults when extracted values are undefined and supports rest elements/properties. The overall assignment expression evaluates to the RHS value."
       },
@@ -104,10 +104,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
-          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
-          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Module_Exports_ChainedAssignment.js",
-          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Module_Exports_ChainedAssignment_Lib.js"
+          "tests/Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js",
+          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Module_Exports_ChainedAssignment.js",
+          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Module_Exports_ChainedAssignment_Lib.js"
         ],
         "notes": "Supports assignment to non-computed member targets and returns the assigned value (JavaScript assignment-expression semantics), including chained assignment patterns where the result is consumed (e.g., exports = module.exports = {...}; fixes #558). Emitted via JavaScriptRuntime.Object.SetItem(obj, key, value) with a string key. Supports ExpandoObject (object literals) and reflection-backed host objects; strings are treated as immutable and ignore writes."
       },
@@ -117,11 +117,11 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators",
         "testScripts": [
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_SubtractionAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_MultiplicationAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_DivisionAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RemainderAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_ExponentiationAssignment.js"
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_SubtractionAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_MultiplicationAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_DivisionAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RemainderAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_ExponentiationAssignment.js"
         ],
         "notes": "Arithmetic operations work on double values. Exponentiation (**=) uses System.Math.Pow. All operators properly preserve JavaScript numeric semantics."
       },
@@ -131,12 +131,12 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators",
         "testScripts": [
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseOrAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseAndAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseXorAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_LeftShiftAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RightShiftAssignment.js",
-          "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_UnsignedRightShiftAssignment.js"
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseOrAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseAndAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseXorAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_LeftShiftAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RightShiftAssignment.js",
+          "tests/Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_UnsignedRightShiftAssignment.js"
         ],
         "notes": "Emits load-convert-operate-convert-store pattern with int32 operations. Operands are converted to int32, operation applied, result converted back to double for storage."
       },
@@ -146,7 +146,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-assignment-operators",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_PlusEquals_Append.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_PlusEquals_Append.js"
         ],
         "notes": "+= on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot."
       }

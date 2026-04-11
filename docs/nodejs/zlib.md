@@ -33,35 +33,35 @@ Provides a focused gzip baseline for common synchronous and Transform-stream-bas
 Accepts Buffer, ArrayBuffer, typed-array, byte-array, and string inputs. Supports the `level` option in the `-1..9` range with Node-style numeric coercion/truncation and returns a Buffer containing gzip-compressed bytes.
 
 **Tests:**
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_ErrorPaths` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_ErrorPaths` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_ErrorPaths` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_ErrorPaths` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
 
 ### gunzipSync(buffer[, options])
 
 Returns a Buffer containing the decompressed gzip payload. Deferred gunzip tuning flags such as `flush`, `finishFlush`, and `chunkSize` are not implemented and fail explicitly.
 
 **Tests:**
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_ErrorPaths` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_ErrorPaths` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_GzipSync_GunzipSync_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_ErrorPaths` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_ErrorPaths` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
 
 ### createGzip([options])
 
 Returns a Transform-compatible gzip stream that buffers the current payload until end() and then emits a single compressed Buffer chunk. Supports the `level` option in the `-1..9` range with Node-style numeric coercion/truncation.
 
 **Tests:**
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_Stream_RoundTrip` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_Stream_RoundTrip` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_Stream_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_Stream_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
 
 ### createGunzip([options])
 
 Returns a Transform-compatible gunzip stream for the current stream baseline. Deferred zlib tuning flags remain unsupported and fail explicitly.
 
 **Tests:**
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_Stream_RoundTrip` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_Stream_RoundTrip` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_ErrorPaths` (`Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_ErrorPaths` (`Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_Stream_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_Stream_RoundTrip` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Zlib.ExecutionTests.Require_Zlib_ErrorPaths` (`tests/Js2IL.Tests/Node/Zlib/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Zlib.GeneratorTests.Require_Zlib_ErrorPaths` (`tests/Js2IL.Tests/Node/Zlib/GeneratorTests.cs`)

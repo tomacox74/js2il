@@ -275,8 +275,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
-          "Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js"
         ],
         "notes": "Supported in the new IR pipeline for global (non-shadowed) Array. Lowered via JavaScriptRuntime.Array::Construct(object[] args) to preserve JS Array constructor semantics."
       },
@@ -286,8 +286,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js",
-          "Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js"
+          "tests/Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js",
+          "tests/Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js"
         ],
         "notes": "Supported in the new IR pipeline for global (non-shadowed) Boolean/Number. Lowered to primitive coercions (TypeUtilities.ToBoolean/ToNumber)."
       },
@@ -297,7 +297,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
+          "tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
         ],
         "notes": "Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. Spread arguments in `new` are not supported."
       },
@@ -307,7 +307,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "Js2IL.Tests/String/JavaScript/String_New_Sugar.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_New_Sugar.js"
         ],
         "notes": "Supported in the new IR pipeline for global (non-shadowed) String. Lowered to primitive string conversion (DotNet2JSConversions.ToString)."
       },
@@ -317,8 +317,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js"
+          "tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
+          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js"
         ],
         "notes": "Supported in the new IR pipeline for global (non-shadowed) intrinsic identifiers registered in JavaScriptRuntime.IntrinsicObjectRegistry that are constructible classes. Currently limited to 0–2 constructor arguments."
       },
@@ -328,8 +328,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-new-operator",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js"
         ],
         "notes": "User-defined classes are lowered to direct CLR construction of the generated type, including scope-array wiring for closures in constructors/methods. Spread arguments in `new` are not supported."
       },
@@ -346,7 +346,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-property-accessors",
         "testScripts": [
-          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
         "notes": "MemberExpression lowering supports both identifier and computed forms, and supports both read and write targets. `super.prop` as a *value* (non-call) is not supported; only `super.m(...)` is supported for base-method calls."
       },
@@ -356,13 +356,13 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-function-calls",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionCallsGlobalFunction.js",
-          "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionCallsGlobalFunction.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js"
         ],
         "notes": "Covers direct function bindings and runtime dispatch for non-binding callee values (closures stored in variables). Spread in call arguments is supported by evaluating arguments left-to-right, expanding spread values using iterator semantics, and invoking via an args-array dispatch path. Spread in `new` argument lists is not supported."
       },
@@ -372,9 +372,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-function-calls",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_CallsAnotherMethod.js",
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_CallsAnotherMethod.js",
+          "tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
         ],
         "notes": "Supports intrinsic static calls (e.g., Math.abs) and dynamic member calls via runtime dispatcher when receiver type is not statically known. Spread in call arguments is supported; typed/early-bound member-call optimizations may fall back to the generic member-dispatch path when spread is present."
       },
@@ -384,12 +384,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-argument-lists",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Basic.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Middle.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_Multiple.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_EvaluationOrder.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Spread_MemberCall_ConsoleLog.js"
         ],
         "notes": "Argument list evaluation supports spread elements in CallExpression argument lists by expanding iterables via the iterator protocol. Spread in `new` argument lists is not supported."
       },
@@ -399,9 +399,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-function-calls",
         "testScripts": [
-          "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js",
-          "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
-          "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
+          "tests/Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js",
+          "tests/Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
+          "tests/Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
         ],
         "notes": "Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default (\"\" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null)."
       },
@@ -411,7 +411,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
         ],
         "notes": "Supported for derived class constructors."
       },
@@ -421,8 +421,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-meta-properties",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
-          "Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js"
         ],
         "notes": "`new.target` is propagated through function call/new invocation ABI. Normal calls observe undefined; constructor calls observe a defined newTarget value. Arrow functions capture lexical newTarget."
       },
@@ -432,7 +432,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-meta-properties",
         "testScripts": [
-          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_ImportMeta_Basic.js"
+          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_ImportMeta_Basic.js"
         ],
         "notes": "CommonJS-hosted and compiled-module scripts expose a host-defined import.meta object with stable identity per module URL key and a deterministic `file://` `url` for compiled modules. This is not full ESM module-record semantics."
       },
@@ -442,9 +442,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
-          "Js2IL.Tests/Async/JavaScript/Async_Inheritance_SuperAsyncMethod.js",
-          "Js2IL.Tests/Generator/JavaScript/Generator_Inheritance_SuperIteratorMethod.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_Inheritance_SuperAsyncMethod.js",
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_Inheritance_SuperIteratorMethod.js"
         ],
         "notes": "Supported only for the base-method call form. Property reads/writes like `super.x` / `super[x]` are not yet supported."
       },
@@ -454,7 +454,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-super-keyword",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
         ]
       },
       {
@@ -463,8 +463,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-optional-chains",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_PropertyAccess.js",
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_PropertyAccess.js",
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit.js"
         ],
         "notes": "Implements nullish short-circuiting for optional member access (identifier + computed) and optional calls, including skipping evaluation of computed keys / call arguments when the base/callee is nullish. Optional chaining on private fields and other less common forms may be incomplete."
       }

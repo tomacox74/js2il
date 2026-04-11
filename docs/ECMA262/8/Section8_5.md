@@ -25,11 +25,11 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Targeted AST containment checks for early-error validation | Supported with Limitations | `Js2IL.Tests/ValidatorTests.cs` | JS2IL performs explicit AST-walk checks for required early-error contexts (for example await/yield/new.target/label rules) rather than implementing every spec Contains production generically. |
+| Targeted AST containment checks for early-error validation | Supported with Limitations | `tests/Js2IL.Tests/ValidatorTests.cs` | JS2IL performs explicit AST-walk checks for required early-error contexts (for example await/yield/new.target/label rules) rather than implementing every spec Contains production generically. |
 
 ### 8.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-computedpropertycontains))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Computed-property containment checks | Supported with Limitations | `Js2IL.Tests/ValidatorTests.cs`<br>[`ObjectLiteral_ComputedKey_Basic.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js)<br>[`ObjectLiteral_ComputedKey_EvaluationOrder.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js) | Computed keys are supported for object literals and tracked during evaluation-order/lowering, but computed keys in object binding patterns are currently rejected. |
+| Computed-property containment checks | Supported with Limitations | `tests/Js2IL.Tests/ValidatorTests.cs`<br>[`ObjectLiteral_ComputedKey_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js)<br>[`ObjectLiteral_ComputedKey_EvaluationOrder.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js) | Computed keys are supported for object literals and tracked during evaluation-order/lowering, but computed keys in object binding patterns are currently rejected. |
 

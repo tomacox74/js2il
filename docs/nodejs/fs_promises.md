@@ -61,8 +61,8 @@ Copies a file from src to dest (overwrites if destination exists).
 Returns a Promise resolving to a FileHandle supporting fd/read/write/close in the current baseline. Supported flags: r, r+, w, w+, a, and a+.
 
 **Tests:**
-- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Open_Read_Write_Close` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Open_Read_Write_Close` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Open_Read_Write_Close` (`tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Open_Read_Write_Close` (`tests/Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### readFile(path, options)
 
@@ -77,34 +77,34 @@ Writes data to a file, creating or overwriting it. Supports Buffer, byte array, 
 Appends Buffer, byte array, or string content to a file using the same utf8 encoding baseline as writeFile.
 
 **Tests:**
-- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink` (`tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink` (`tests/Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### rename(oldPath, newPath)
 
 Renames files or directories with Node-like ENOENT/EACCES/EIO style errors in the supported baseline.
 
 **Tests:**
-- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink` (`tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink` (`tests/Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### unlink(path)
 
 Removes files with Node-like ENOENT/EISDIR/EACCES error reporting in the supported baseline.
 
 **Tests:**
-- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Append_Rename_Unlink` (`tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Append_Rename_Unlink` (`tests/Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### stat(path)
 
 Returns a Promise resolving to a richer Stats-like object with size, mode, atime/mtime/ctime/birthtime plus their `*Ms` number variants, and the common type predicates. `mode` and permission bits are best-effort platform-derived values, and `ctime` / `birthtime` currently both map to platform creation metadata. Rejects if path doesn't exist.
 
 **Tests:**
-- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Stat_FileSize` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Stat_RichMetadata` (`Js2IL.Tests/Node/FS/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Stat_FileSize` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Stat_RichMetadata` (`Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Stat_FileSize` (`tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.ExecutionTests.FSPromises_Stat_RichMetadata` (`tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Stat_FileSize` (`tests/Js2IL.Tests/Node/FS/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.FS.GeneratorTests.FSPromises_Stat_RichMetadata` (`tests/Js2IL.Tests/Node/FS/GeneratorTests.cs`)
 
 ### lstat(path)
 

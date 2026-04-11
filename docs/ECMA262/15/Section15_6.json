@@ -48,9 +48,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
         "testScripts": [
-          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
-          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
-          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
         ],
         "notes": "Async generators are compiled via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. AsyncGeneratorScope inherits from AsyncScope and includes generator state. AsyncGeneratorObject implements IJavaScriptAsyncIterator with next() returning Promises. Known limitations: throw() and return() protocol methods have known issues; try/catch/finally with async generators may generate invalid IL in some cases."
       },
@@ -60,7 +60,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
         "testScripts": [
-          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js"
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js"
         ],
         "notes": "Yield expressions work within async generator functions, suspending execution and returning Promise-wrapped iterator results."
       },
@@ -70,7 +70,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
         "testScripts": [
-          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js"
         ],
         "notes": "Await expressions work within async generator functions, allowing promises to be awaited before yielding values."
       },
@@ -80,7 +80,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-async-generator-function-definitions",
         "testScripts": [
-          "Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js"
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js"
         ],
         "notes": "for await...of loops correctly consume async generators, awaiting each yielded value."
       }

@@ -39,82 +39,82 @@ Provides a focused practical crypto slice for hashing, PBKDF2 key derivation, se
 Supports md5, sha1, sha256, sha384, and sha512. Returned Hash objects support update(data[, inputEncoding]) and digest([outputEncoding]).
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHash_And_RandomBytes` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHash_And_RandomBytes` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHash_And_RandomBytes` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHash_And_RandomBytes` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### createHmac(algorithm, key)
 
 Supports md5, sha1, sha256, sha384, and sha512 with string/Buffer/ArrayBuffer/typed-array/DataView key material. Returned Hmac objects support update(data[, inputEncoding]) and digest([outputEncoding]).
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHmac` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHmac` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHmac` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHmac` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### randomBytes(size)
 
 Returns a Buffer of the requested size using the platform cryptographic random source. Callback-style randomBytes is not implemented.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHash_And_RandomBytes` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHash_And_RandomBytes` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_CreateHash_And_RandomBytes` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_CreateHash_And_RandomBytes` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### pbkdf2Sync(password, salt, iterations, keylen, digest)
 
 Supports string/ArrayBuffer/Buffer/TypedArray/DataView password and salt inputs with sha1, sha256, sha384, and sha512 digests. Returns a Buffer. Callback-style pbkdf2(...) and other digest algorithms remain unsupported.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_Pbkdf2Sync` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_Pbkdf2Sync` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_Pbkdf2Sync` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_Pbkdf2Sync` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_ErrorPaths` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### getRandomValues(typedArray)
 
 Aliased to webcrypto.getRandomValues for Buffer, Uint8Array, and Int32Array.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_GetRandomValues` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_GetRandomValues` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_GetRandomValues` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_GetRandomValues` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### webcrypto.getRandomValues(typedArray)
 
 Supports Buffer, Uint8Array, and Int32Array. Additional Web Crypto support is limited to the documented subtle digest/import/sign/verify HMAC slice.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_GetRandomValues` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_GetRandomValues` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_GetRandomValues` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_GetRandomValues` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
 
 ### webcrypto.subtle.digest(algorithm, data)
 
 Supports SHA-1, SHA-256, SHA-384, and SHA-512 for Buffer, ArrayBuffer, TypedArray, and DataView input. Returns a Promise that resolves to an ArrayBuffer.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
 
 ### webcrypto.subtle.importKey(format, keyData, algorithm, extractable, keyUsages)
 
 Supports only importKey("raw", keyData, { name: "HMAC", hash: "SHA-1"|"SHA-256"|"SHA-384"|"SHA-512"[, length: <exact key bit length>] }, extractable, non-empty ["sign"|"verify", ...]) for secret keys. Unsupported formats, algorithms, invalid key lengths, and unsupported key usages reject explicitly.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
 
 ### webcrypto.subtle.sign(algorithm, key, data)
 
 Supports HMAC CryptoKeys imported via importKey("raw", ...) for Buffer, ArrayBuffer, TypedArray, and DataView input. Returns a Promise that resolves to an ArrayBuffer signature.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_ErrorPaths` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
 
 ### webcrypto.subtle.verify(algorithm, key, signature, data)
 
 Supports HMAC CryptoKeys imported via importKey("raw", ...) and resolves to a boolean indicating whether the signature matches.
 
 **Tests:**
-- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.Crypto.ExecutionTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Crypto.GeneratorTests.Require_Crypto_WebCrypto_Subtle` (`tests/Js2IL.Tests/Node/Crypto/GeneratorTests.cs`)

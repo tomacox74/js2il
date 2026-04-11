@@ -41,47 +41,47 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| GetIterator for for..of sources | Supported with Limitations | [`ControlFlow_ForOf_Array_Basic.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Supports built-in iterables, user-defined Symbol.iterator sources, and IEnumerable fallback paths. |
+| GetIterator for for..of sources | Supported with Limitations | [`ControlFlow_ForOf_Array_Basic.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Supports built-in iterables, user-defined Symbol.iterator sources, and IEnumerable fallback paths. |
 
 ### 7.4.6 ([tc39.es](https://tc39.es/ecma262/#sec-iteratornext))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| IteratorNext | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js)<br>[`Generator_BasicNext.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js) | Iterator advancement is implemented for native and dynamic iterator objects used by lowering/runtime helpers. |
+| IteratorNext | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js)<br>[`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js) | Iterator advancement is implemented for native and dynamic iterator objects used by lowering/runtime helpers. |
 
 ### 7.4.7 ([tc39.es](https://tc39.es/ecma262/#sec-iteratorcomplete))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| IteratorComplete | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Done-state checks are implemented through IteratorResultDone in iteration paths. |
+| IteratorComplete | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Done-state checks are implemented through IteratorResultDone in iteration paths. |
 
 ### 7.4.8 ([tc39.es](https://tc39.es/ecma262/#sec-iteratorvalue))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| IteratorValue | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Value extraction is implemented through IteratorResultValue for native and dynamic iterator result shapes. |
+| IteratorValue | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Value extraction is implemented through IteratorResultValue for native and dynamic iterator result shapes. |
 
 ### 7.4.11 ([tc39.es](https://tc39.es/ecma262/#sec-iteratorclose))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| IteratorClose | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Break/throw paths invoke iterator return() for supported iterator forms. |
+| IteratorClose | Supported with Limitations | [`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Break/throw paths invoke iterator return() for supported iterator forms. |
 
 ### 7.4.14 ([tc39.es](https://tc39.es/ecma262/#sec-asynciteratorclose))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| AsyncIteratorClose | Supported with Limitations | [`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Async iterator close is implemented for both native async iterators and sync-iterator fallback wrappers. |
+| AsyncIteratorClose | Supported with Limitations | [`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Async iterator close is implemented for both native async iterators and sync-iterator fallback wrappers. |
 
 ### 7.4.15 ([tc39.es](https://tc39.es/ecma262/#sec-ifabruptcloseasynciterator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| IfAbruptCloseAsyncIterator behavior in for-await control flow | Supported with Limitations | [`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Abrupt loop exits trigger async iterator close in supported lowered paths. |
+| IfAbruptCloseAsyncIterator behavior in for-await control flow | Supported with Limitations | [`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Abrupt loop exits trigger async iterator close in supported lowered paths. |
 
 ### 7.4.16 ([tc39.es](https://tc39.es/ecma262/#sec-createiterresultobject))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| CreateIteratorResultObject | Supported with Limitations | [`Generator_BasicNext.js`](../../../Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`AsyncGenerator_BasicNext.js`](../../../Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js) | Iterator result objects are produced via IteratorResult helpers for sync and async iterator implementations. |
+| CreateIteratorResultObject | Supported with Limitations | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js) | Iterator result objects are produced via IteratorResult helpers for sync and async iterator implementations. |
 

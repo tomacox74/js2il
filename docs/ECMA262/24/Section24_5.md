@@ -24,5 +24,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| CanonicalizeKeyedCollectionKey behavior | Incomplete | [`Map_Null_Key.js`](../../../Js2IL.Tests/Map/JavaScript/Map_Null_Key.js) | Map uses a null sentinel plus a SameValueZero-style comparer to support common key cases such as null and NaN, but JS2IL does not implement a shared CanonicalizeKeyedCollectionKey abstraction across Map, Set, WeakMap, and WeakSet, and full canonical storage behavior such as normalizing -0 to +0 in observable results remains incomplete. |
+| CanonicalizeKeyedCollectionKey behavior | Incomplete | [`Map_Null_Key.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Null_Key.js) | Map uses a null sentinel plus a SameValueZero-style comparer to support common key cases such as null and NaN, but JS2IL does not implement a shared CanonicalizeKeyedCollectionKey abstraction across Map, Set, WeakMap, and WeakSet, and full canonical storage behavior such as normalizing -0 to +0 in observable results remains incomplete. |
 

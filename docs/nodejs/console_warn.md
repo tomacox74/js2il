@@ -19,4 +19,4 @@ Writes to stderr.
 
 ## Tests
 
-- `JavaScriptRuntime.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces` (`Js2IL.Tests/ConsoleTests.cs`)
+- `JavaScriptRuntime.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces` (`tests/Js2IL.Tests/ConsoleTests.cs`)

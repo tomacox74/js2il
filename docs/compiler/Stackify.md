@@ -509,7 +509,7 @@ Stackify refuses to keep temps on the stack across control flow (`LIRLabel`/bran
 
 ### 4) Add/adjust tests
 
-`Js2IL.Tests/StackifyTests.cs` is the best place to lock in expected behavior.
+`tests/Js2IL.Tests/StackifyTests.cs` is the best place to lock in expected behavior.
 
 - Add a test for “should stackify” when it’s obviously safe.
 - Add a test for “must not stackify” for:

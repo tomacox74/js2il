@@ -18,13 +18,13 @@ The package split is considered release-ready only when the following package fl
 It currently runs:
 
 - `npm run diff:test:canary:packed`
-- `dotnet test .\Js2IL.Tests\Js2IL.Tests.csproj -c Release --filter "FullyQualifiedName~Js2ILSdkPackageTests" --nologo`
+- `dotnet test .\tests\Js2IL.Tests\Js2IL.Tests.csproj -c Release --filter "FullyQualifiedName~Js2ILSdkPackageTests" --nologo`
 
 `scripts\release.js` invokes this command before it creates the release commit, so coordinated package regressions fail before the tag is cut.
 
 ### `Js2IL.Core` restore/consumption coverage
 
-`Js2IL.Tests\Js2ILSdkPackageTests.cs` covers the referenceable compiler package with:
+`tests\Js2IL.Tests\Js2ILSdkPackageTests.cs` covers the referenceable compiler package with:
 
 - `Pack_Js2ILCore_ContainsReadmeIconAndDiscoverabilityMetadata`
   - packs a local feed
@@ -32,7 +32,7 @@ It currently runs:
 
 ### `Js2IL.SDK` restore/build integration coverage
 
-`Js2IL.Tests\Js2ILSdkPackageTests.cs` covers the SDK package with:
+`tests\Js2IL.Tests\Js2ILSdkPackageTests.cs` covers the SDK package with:
 
 - `Pack_Js2ILSdk_ContainsBuildAssetsSamplesAndCoreDependency`
   - verifies `.props` / `.targets`, task assets, bundled samples, and the `Js2IL.Core` dependency

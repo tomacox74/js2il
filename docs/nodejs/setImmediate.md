@@ -19,8 +19,8 @@ Schedules a callback to run on the next event loop iteration. Callbacks execute 
 
 ## Tests
 
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_ExecutesCallback` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_WithArgs_PassesCorrectly` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_Multiple_ExecuteInOrder` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_ExecutesBeforeSetTimeout` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_Nested_ExecutesInNextIteration` (`Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_ExecutesCallback` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_WithArgs_PassesCorrectly` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_Multiple_ExecuteInOrder` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_ExecutesBeforeSetTimeout` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.Timers.ExecutionTests.SetImmediate_Nested_ExecutesInNextIteration` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)

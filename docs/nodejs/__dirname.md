@@ -15,5 +15,5 @@
 
 ## Tests
 
-- `Js2IL.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory` (`Js2IL.Tests/Node/ExecutionTests.cs#L15`)
-- `Js2IL.Tests.Node.GeneratorTests.Global___dirname_PrintsDirectory` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory` (`tests/Js2IL.Tests/Node/ExecutionTests.cs#L15`)
+- `Js2IL.Tests.Node.GeneratorTests.Global___dirname_PrintsDirectory` (`tests/Js2IL.Tests/Node/GeneratorTests.cs`)

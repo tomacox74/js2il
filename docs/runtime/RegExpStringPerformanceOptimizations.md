@@ -138,7 +138,7 @@ Focused behavior coverage was added for:
 Validation commands used during the work:
 
 ```powershell
-dotnet test .\Js2IL.Tests\Js2IL.Tests.csproj -c Release --filter "FullyQualifiedName~Js2IL.Tests.String.ExecutionTests|FullyQualifiedName~Js2IL.Tests.String.GeneratorTests|FullyQualifiedName~Js2IL.Tests.IntrinsicCallables.ExecutionTests.IntrinsicCallables_RegExp|FullyQualifiedName~Js2IL.Tests.IntrinsicCallables.GeneratorTests.IntrinsicCallables_RegExp" --nologo
+dotnet test .\tests\Js2IL.Tests\Js2IL.Tests.csproj -c Release --filter "FullyQualifiedName~Js2IL.Tests.String.ExecutionTests|FullyQualifiedName~Js2IL.Tests.String.GeneratorTests|FullyQualifiedName~Js2IL.Tests.IntrinsicCallables.ExecutionTests.IntrinsicCallables_RegExp|FullyQualifiedName~Js2IL.Tests.IntrinsicCallables.GeneratorTests.IntrinsicCallables_RegExp" --nologo
 ```
 
 ```powershell
@@ -151,9 +151,9 @@ node .\scripts\runPhasedBenchmarkScenario.js dromaeo-object-regexp
 - `src\JavaScriptRuntime\RegExp.cs`
 - `src\JavaScriptRuntime\Object.cs`
 - `src\JavaScriptRuntime\Symbol.cs`
-- `Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpOverride.js`
-- `Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpPrototypeOverride.js`
-- `Js2IL.Tests\String\JavaScript\String_Split_Regex_Empty.js`
+- `tests\Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpOverride.js`
+- `tests\Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpPrototypeOverride.js`
+- `tests\Js2IL.Tests\String\JavaScript\String_Split_Regex_Empty.js`
 
 ## Takeaways
 

@@ -258,7 +258,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error-message",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_Callable_CreatesInstances.js"
         ],
         "notes": "Compiler lowers built-in error callables (Error/TypeError/...) to construction of JavaScriptRuntime error types. Currently supports 0 or 1 argument; the optional 'options' parameter is not supported."
       },
@@ -268,7 +268,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error-message",
         "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
+          "tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
         ],
         "notes": "Constructs JavaScriptRuntime.Error (and derived types) with message stringification via DotNet2JSConversions.ToString. The runtime does not currently model spec prototype objects; behavior is closer to .NET exceptions with JS-like surface properties."
       },
@@ -278,8 +278,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.prototype",
         "testScripts": [
-          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js",
-          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js"
+          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read.js",
+          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Global_ErrorPrototype_Read_Lib.js"
         ],
         "notes": "Exposes the global Error value as a first-class intrinsic and provides a writable Error.prototype object for libraries that read/attach prototype members (e.g., CommonJS polyfills). Constructor/prototype behavior remains partial relative to full spec object-model semantics."
       },
@@ -289,7 +289,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.iserror",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
         ],
         "notes": "Returns true for JavaScriptRuntime.Error instances (including built-in NativeError subclasses) and false for non-error objects. The full spec [[ErrorData]] internal-slot semantics are not implemented."
       },
@@ -299,7 +299,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.constructor",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
         ],
         "notes": "Error.prototype.constructor points to the global Error callable value."
       },
@@ -309,7 +309,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.message",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
         ],
         "notes": "Provides an empty-string default value on Error.prototype."
       },
@@ -319,7 +319,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.name",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
         ],
         "notes": "Provides the default \"Error\" value on Error.prototype.name."
       },
@@ -329,7 +329,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-error.prototype.tostring",
         "testScripts": [
-          "Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Error_ConstructorSurface.js"
         ],
         "notes": "Formats values as name/message combinations and supports .call(receiver) usage for object receivers. Throws TypeError for null/undefined receivers."
       },
@@ -339,8 +339,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-error-instances",
         "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js",
-          "Js2IL.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js"
+          "tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_CallMember_MissingMethod_IsTypeError.js",
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage.js"
         ],
         "notes": "name/message are exposed as instance properties on JavaScriptRuntime.Error. stack is backed by the .NET stack trace (or a captured construction-time stack if not thrown yet)."
       },
@@ -350,8 +350,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-aggregate-error",
         "testScripts": [
-          "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js",
-          "Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js"
+          "tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js",
+          "tests/Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js"
         ],
         "notes": "JavaScriptRuntime.AggregateError stores errors in a JavaScriptRuntime.Array. Signature differs from spec in some cases (e.g., the test uses new AggregateError(\"agg\") which maps to a message-only overload). 'options' / 'cause' are not supported."
       }

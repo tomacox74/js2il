@@ -108,7 +108,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-hasproperty-p",
         "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js"
         ],
         "notes": "The in operator routes through handler.has(target, propertyKey) when present. Proxy invariants and descriptor-based validation are not enforced."
       },
@@ -118,7 +118,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-get-p-receiver",
         "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
         ],
         "notes": "Property reads call handler.get(target, propertyKey, receiver) before falling back to the target. Non-configurable target invariants and other edge cases are not checked."
       },
@@ -128,7 +128,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-set-p-v-receiver",
         "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js"
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js"
         ],
         "notes": "Property writes call handler.set(target, propertyKey, value, receiver) before falling back to the target. The return value is not validated against target descriptors or other proxy invariants."
       },
@@ -138,14 +138,14 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxycreate",
         "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_SetTrap_InterceptsWrites.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_HasTrap_AffectsInOperator.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
         ],
         "notes": "ProxyCreate validates object targets/handlers and routes get, set, has, deleteProperty, ownKeys, apply, construct, getPrototypeOf, and setPrototypeOf through handler traps when present. Absent traps fall back to the target/default runtime behavior, and the supported trap surface now enforces basic result-shape checks (for example ownKeys/getPrototypeOf/construct) plus callable/constructible target gating for apply/construct. Full Proxy invariant enforcement and descriptor-heavy traps remain unimplemented."
       },
@@ -155,11 +155,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-delete-p",
         "testScripts": [
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_DeletePropertyTrap_And_Fallback.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_OwnKeys_And_PrototypeTraps_WithFallback.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_ApplyAndConstructTraps_WithFallback.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_Revocable_ThrowsAfterRevoke.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_Validation_EdgeCases.js"
         ],
         "notes": "deleteProperty, ownKeys, getPrototypeOf, setPrototypeOf, apply, construct, and revocation now route through proxy handlers and throw once revoked. isExtensible, preventExtensions, getOwnProperty, defineProperty, and full spec invariant validation are still not modeled."
       }

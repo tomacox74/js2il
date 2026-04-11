@@ -24,5 +24,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| expression statement (call expression) | Supported | [`Variable_ConstSimple.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_ConstSimple.js)<br>[`Array_ConsoleLog_PrintsArrayContent.js`](../../../Js2IL.Tests/Array/JavaScript/Array_ConsoleLog_PrintsArrayContent.js) | Emits evaluation of the expression and discards the value; common case is a call like console.log(...). |
+| expression statement (call expression) | Supported | [`Variable_ConstSimple.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_ConstSimple.js)<br>[`Array_ConsoleLog_PrintsArrayContent.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_ConsoleLog_PrintsArrayContent.js) | Emits evaluation of the expression and discards the value; common case is a call like console.log(...). |
 

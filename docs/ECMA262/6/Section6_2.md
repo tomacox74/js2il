@@ -64,19 +64,19 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Completion records (normal/throw/return control flow) | Supported with Limitations | [`ControlFlow_TryCatchFinally_ThrowValue.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js)<br>[`ControlFlow_TryFinally_Return.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js) | Core completion behavior is represented by emitted control flow and exception handling, not as first-class Completion Record values. |
+| Completion records (normal/throw/return control flow) | Supported with Limitations | [`ControlFlow_TryCatchFinally_ThrowValue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js)<br>[`ControlFlow_TryFinally_Return.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js) | Core completion behavior is represented by emitted control flow and exception handling, not as first-class Completion Record values. |
 
 ### 6.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-reference-record-specification-type))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../Js2IL.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | Identifier/member references work for supported language forms; spec-exact modeling of all Reference Record variants remains incomplete. |
+| Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | Identifier/member references work for supported language forms; spec-exact modeling of all Reference Record variants remains incomplete. |
 
 ### 6.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-property-descriptor-specification-type))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Property descriptor specification type | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js) | Descriptor creation and usage are implemented for supported object/runtime paths via PropertyDescriptorStore; full spec parity is incomplete. |
+| Property descriptor specification type | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js) | Descriptor creation and usage are implemented for supported object/runtime paths via PropertyDescriptorStore; full spec parity is incomplete. |
 
 ### 6.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-data-blocks))
 
@@ -88,19 +88,19 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| PrivateElement specification type | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js) | Private instance fields are supported; private methods/accessors are rejected. |
+| PrivateElement specification type | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js) | Private instance fields are supported; private methods/accessors are rejected. |
 
 ### 6.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-classfielddefinition-record-specification-type))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| ClassFieldDefinition record | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassWithStaticProperty_DefaultAndLog.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js) | Supports public/private instance and static fields with initializer constraints; computed names and some class element forms remain unsupported. |
+| ClassFieldDefinition record | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassWithStaticProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js) | Supports public/private instance and static fields with initializer constraints; computed names and some class element forms remain unsupported. |
 
 ### 6.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-private-names))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Private Names | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js) | Private names for fields are supported with validator/runtime constraints; invalid/private-name edge cases are not fully spec-complete. |
+| Private Names | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js) | Private names for fields are supported with validator/runtime constraints; invalid/private-name edge cases are not fully spec-complete. |
 
 ### 6.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-classstaticblockdefinition-record-specification-type))
 

@@ -11,7 +11,7 @@
 - Stated runtime limitations: `docs/nodejs/NodeLimitations.json`
 - Module-level coverage: `docs/nodejs/*.json`
 - Runtime module footprint: `src/JavaScriptRuntime/Node/*` and `src/JavaScriptRuntime/CommonJS/*`
-- Repo-local demand signals: `Js2IL.Tests/Node/**/*`, `Js2IL.Tests/CommonJS/**/*`, and `Js2IL.Tests/Import/**/*`
+- Repo-local demand signals: `tests/Js2IL.Tests/Node/**/*`, `tests/Js2IL.Tests/CommonJS/**/*`, and `tests/Js2IL.Tests/Import/**/*`
 - Current open Node/runtime follow-up issues: [#841](https://github.com/tomacox74/js2il/issues/841), [#946](https://github.com/tomacox74/js2il/issues/946), [#947](https://github.com/tomacox74/js2il/issues/947), [#949](https://github.com/tomacox74/js2il/issues/949), [#950](https://github.com/tomacox74/js2il/issues/950), [#951](https://github.com/tomacox74/js2il/issues/951), [#952](https://github.com/tomacox74/js2il/issues/952), [#953](https://github.com/tomacox74/js2il/issues/953), [#954](https://github.com/tomacox74/js2il/issues/954), [#955](https://github.com/tomacox74/js2il/issues/955), [#956](https://github.com/tomacox74/js2il/issues/956)
 
 ## Current Baseline (Snapshot)

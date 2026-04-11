@@ -33,12 +33,12 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Boolean(value) (callable primitive conversion) | Supported | [`PrimitiveConversion_Boolean_Callable.js`](../../../Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) | Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean). |
-| new Boolean(value) | Supported | [`NewExpression_Boolean_Sugar.js`](../../../Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) | Constructs a Boolean wrapper object with `Boolean.prototype` semantics. |
+| Boolean(value) (callable primitive conversion) | Supported | [`PrimitiveConversion_Boolean_Callable.js`](../../../tests/Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js) | Lowered by the compiler to truthiness conversion (JavaScriptRuntime.TypeUtilities.ToBoolean). |
+| new Boolean(value) | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) | Constructs a Boolean wrapper object with `Boolean.prototype` semantics. |
 
 ### 20.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Boolean.prototype constructor/toString/valueOf | Supported | [`NewExpression_Boolean_Sugar.js`](../../../Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) | Implements `Boolean.prototype.constructor`, `Boolean.prototype.toString()`, `Boolean.prototype.valueOf()`, and `ThisBooleanValue` behavior for primitives and Boolean wrapper instances. |
+| Boolean.prototype constructor/toString/valueOf | Supported | [`NewExpression_Boolean_Sugar.js`](../../../tests/Js2IL.Tests/Literals/JavaScript/NewExpression_Boolean_Sugar.js) | Implements `Boolean.prototype.constructor`, `Boolean.prototype.toString()`, `Boolean.prototype.valueOf()`, and `ThisBooleanValue` behavior for primitives and Boolean wrapper instances. |
 

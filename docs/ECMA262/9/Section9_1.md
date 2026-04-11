@@ -85,41 +85,41 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Declarative Environment Records for lexical bindings | Supported with Limitations | [`Variable_LetBlockScope.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js)<br>[`Variable_TemporalDeadZoneAccess.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js) | Lexical bindings are modeled by scope bindings and lowered storage operations; exact spec object shapes/invariants are approximated. |
+| Declarative Environment Records for lexical bindings | Supported with Limitations | [`Variable_LetBlockScope.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js)<br>[`Variable_TemporalDeadZoneAccess.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js) | Lexical bindings are modeled by scope bindings and lowered storage operations; exact spec object shapes/invariants are approximated. |
 
 ### 9.1.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-object-environment-records))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Object Environment Records (with-based environments) | Not Yet Supported | `Js2IL.Tests/ValidatorTests.cs` | with statement/object environment semantics are intentionally rejected in validation. |
+| Object Environment Records (with-based environments) | Not Yet Supported | `tests/Js2IL.Tests/ValidatorTests.cs` | with statement/object environment semantics are intentionally rejected in validation. |
 
 ### 9.1.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-function-environment-records))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Function Environment Records (this/super/new.target plumbing) | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | RuntimeServices and lowering carry this/new.target/super behavior for supported forms, with subset coverage of exotic function cases. |
+| Function Environment Records (this/super/new.target plumbing) | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) | RuntimeServices and lowering carry this/new.target/super behavior for supported forms, with subset coverage of exotic function cases. |
 
 ### 9.1.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-global-environment-records))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Global Environment Records (script/CommonJS global bindings) | Supported with Limitations | [`CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js`](../../../Js2IL.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js)<br>`Js2IL.Tests/ValidatorTests.cs` | Global bindings are modeled in JS2IL global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete. |
+| Global Environment Records (script/CommonJS global bindings) | Supported with Limitations | [`CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js`](../../../tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js)<br>`tests/Js2IL.Tests/ValidatorTests.cs` | Global bindings are modeled in JS2IL global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete. |
 
 ### 9.1.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-module-environment-records))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Module Environment Records | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_RequireEsmModule.js`](../../../Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js) | Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete. |
+| Module Environment Records | Supported with Limitations | [`Import_StaticImport_FromCjs.js`](../../../tests/Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js)<br>[`Import_RequireEsmModule.js`](../../../tests/Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js) | Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete. |
 
 ### 9.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-getidentifierreference))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| GetIdentifierReference over nested scope chains | Supported with Limitations | `Js2IL.Tests/SymbolTableBuilderTests.cs`<br>[`Variable_LetBlockScope.js`](../../../Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js) | Identifier resolution is implemented through symbol table + scope chain planning/lowering for supported syntax. |
+| GetIdentifierReference over nested scope chains | Supported with Limitations | `tests/Js2IL.Tests/SymbolTableBuilderTests.cs`<br>[`Variable_LetBlockScope.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js) | Identifier resolution is implemented through symbol table + scope chain planning/lowering for supported syntax. |
 
 ### 9.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-newdeclarativeenvironment))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| NewDeclarativeEnvironment behavior in block/function scopes | Supported with Limitations | `Js2IL.Tests/SymbolTableBuilderTests.cs`<br>[`ControlFlow_ForOf_Let_PerIterationBinding.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js) | Compiler materializes declarative environments as scope instances, including loop-head lexical environments where required. |
+| NewDeclarativeEnvironment behavior in block/function scopes | Supported with Limitations | `tests/Js2IL.Tests/SymbolTableBuilderTests.cs`<br>[`ControlFlow_ForOf_Let_PerIterationBinding.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js) | Compiler materializes declarative environments as scope instances, including loop-head lexical environments where required. |
 

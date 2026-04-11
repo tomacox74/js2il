@@ -18,5 +18,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Forward progress in event-loop/microtask scheduling | Supported with Limitations | [`Promise_Scheduling_StarvationTest.js`](../../../Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js)<br>[`Hosting_EventLoopKeepAlive.js`](../../../Js2IL.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js) | NodeEventLoopPump bounds work per checkpoint and drains queued work deterministically for supported host queues; full multi-agent progress guarantees are out of scope. |
+| Forward progress in event-loop/microtask scheduling | Supported with Limitations | [`Promise_Scheduling_StarvationTest.js`](../../../tests/Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js)<br>[`Hosting_EventLoopKeepAlive.js`](../../../tests/Js2IL.Tests/Hosting/JavaScript/Hosting_EventLoopKeepAlive.js) | NodeEventLoopPump bounds work per checkpoint and drains queued work deterministically for supported host queues; full multi-agent progress guarantees are out of scope. |
 

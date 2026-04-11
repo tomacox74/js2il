@@ -43,9 +43,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects-call-thisargument-argumentslist",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
-          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
         ],
         "notes": "Implemented built-ins are surfaced as delegates and CLR instance/static methods, then invoked through the same Closure dispatch machinery as user functions. Realm-specific callable creation, full Function.prototype inheritance, and exhaustive built-in coverage are still incomplete."
       },
@@ -55,10 +55,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-built-in-function-objects-construct-argumentslist-newtarget",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js",
-          "Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-          "Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Callable_Construct.js",
+          "tests/Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
+          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "tests/Js2IL.Tests/Proxy/JavaScript/Proxy_GetTrap_OverridesProperty.js"
         ],
         "notes": "The implemented subset of built-ins can usually be called/constructed directly through dedicated intrinsic lowering or runtime helpers. First-class constructor values are still uneven; for example, the global `Function` constructor only supports direct compile-time string literal call/new forms and throws for non-literal runtime usage."
       },
@@ -68,7 +68,7 @@
         "status": "Incomplete",
         "specUrl": "https://tc39.es/ecma262/#sec-createbuiltinfunction",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
         ],
         "notes": "Built-ins are discovered through IntrinsicObject attributes and selectively wired onto GlobalThis/prototype objects, which is sufficient for many library patterns. The engine does not yet implement CreateBuiltinFunction in the full spec sense with realms, exact length/name attributes, and uniform constructor/call behavior across every intrinsic."
       }

@@ -381,7 +381,7 @@ namespace Js2IL.Tests
                     if (string.IsNullOrWhiteSpace(sourcePath))
                     {
                         // Fallback: derive the repo path from known test layout:
-                        // Js2IL.Tests/<Category>/JavaScript/<testName>.js
+                        // tests/Js2IL.Tests/<Category>/JavaScript/<testName>.js
                         if (!string.IsNullOrWhiteSpace(category))
                         {
                             var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");

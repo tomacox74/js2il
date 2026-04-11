@@ -32,41 +32,41 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| typeof | Supported | [`UnaryOperator_Typeof.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js) | Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'. |
+| typeof | Supported | [`UnaryOperator_Typeof.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js) | Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'. |
 
 ### 13.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-prefix-increment-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Unary ++ (Prefix increment) | Supported | [`UnaryOperator_PlusPlusPrefix.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js) | Increments the value first, then returns the new value. |
+| Unary ++ (Prefix increment) | Supported | [`UnaryOperator_PlusPlusPrefix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js) | Increments the value first, then returns the new value. |
 
 ### 13.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Unary -- (Prefix decrement) | Supported | [`UnaryOperator_MinusMinusPrefix.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js) | Decrements the value first, then returns the new value. |
+| Unary -- (Prefix decrement) | Supported | [`UnaryOperator_MinusMinusPrefix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js) | Decrements the value first, then returns the new value. |
 
 ### 13.4.6 ([tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Unary ~ (Bitwise NOT) | Supported | [`UnaryOperator_BitwiseNot.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js) | Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns. |
+| Unary ~ (Bitwise NOT) | Supported | [`UnaryOperator_BitwiseNot.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js) | Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns. |
 
 ### 13.4.7 ([tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Unary ! (Logical not) | Supported | [`UnaryOperator_LogicalNot.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js)<br>[`ControlFlow_If_NotFlag.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js) | Supported end-to-end in IR pipeline (HIR unary + LIRLogicalNot) using JavaScriptRuntime.TypeUtilities.ToBoolean for JS truthiness, then invert. Covered both in a dedicated unary-operator fixture and in control-flow conditionals (if (!x) ...). |
+| Unary ! (Logical not) | Supported | [`UnaryOperator_LogicalNot.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js)<br>[`ControlFlow_If_NotFlag.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js) | Supported end-to-end in IR pipeline (HIR unary + LIRLogicalNot) using JavaScriptRuntime.TypeUtilities.ToBoolean for JS truthiness, then invert. Covered both in a dedicated unary-operator fixture and in control-flow conditionals (if (!x) ...). |
 
 ### 13.4.9 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Unary ++ (Postfix increment) | Supported | [`UnaryOperator_PlusPlusPostfix.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js) |  |
+| Unary ++ (Postfix increment) | Supported | [`UnaryOperator_PlusPlusPostfix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js) |  |
 
 ### 13.4.10 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator))
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Unary -- (Postfix decrement) | Supported | [`UnaryOperator_MinusMinusPostfix.js`](../../../Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js) |  |
+| Unary -- (Postfix decrement) | Supported | [`UnaryOperator_MinusMinusPostfix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js) |  |
 

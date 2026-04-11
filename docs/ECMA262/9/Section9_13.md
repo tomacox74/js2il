@@ -18,5 +18,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| CanBeHeldWeakly ( v ) | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | js2il approximates CanBeHeldWeakly as any non-null reference type (including functions and symbols) and rejects null/undefined/string/value-type primitives. This is sufficient for the current WeakRef/FinalizationRegistry baseline but does not yet model the full ECMAScript symbol-registry distinction. |
+| CanBeHeldWeakly ( v ) | Supported with Limitations | [`WeakRef_Deref_KeptObjects.js`](../../../tests/Js2IL.Tests/WeakRef/JavaScript/WeakRef_Deref_KeptObjects.js)<br>[`FinalizationRegistry_Unregister_Basic.js`](../../../tests/Js2IL.Tests/FinalizationRegistry/JavaScript/FinalizationRegistry_Unregister_Basic.js) | js2il approximates CanBeHeldWeakly as any non-null reference type (including functions and symbols) and rejects null/undefined/string/value-type primitives. This is sufficient for the current WeakRef/FinalizationRegistry baseline but does not yet model the full ECMAScript symbol-registry distinction. |
 

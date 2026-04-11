@@ -216,7 +216,7 @@ Notes on `Variables`/`Variable` deletion:
 6. Continue expanding IR coverage; legacy fallback has been removed.
 
 ## Validation Checklist (per feature)
-- Add/extend execution tests under `Js2IL.Tests/*/ExecutionTests`.
+- Add/extend execution tests under `tests/Js2IL.Tests/*/ExecutionTests`.
 - Update generator snapshots only after execution behavior matches legacy (if snapshots are used for the area).
 - Confirm `IRPipelineMetrics` has no new failure hotspots for common test suites.
 

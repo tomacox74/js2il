@@ -40,5 +40,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| BigInt(value) callable (basic) | Supported with Limitations | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js) | Supports BigInt(value) with basic conversion from integral Numbers and from decimal strings; typeof === 'bigint'. Does not implement the full spec ToBigInt / StringToBigInt grammar or the full BigInt constructor/prototype surface. |
+| BigInt(value) callable (basic) | Supported with Limitations | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js) | Supports BigInt(value) with basic conversion from integral Numbers and from decimal strings; typeof === 'bigint'. Does not implement the full spec ToBigInt / StringToBigInt grammar or the full BigInt constructor/prototype surface. |
 

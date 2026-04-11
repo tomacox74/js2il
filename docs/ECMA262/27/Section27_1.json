@@ -318,12 +318,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-iterable-interface",
         "testScripts": [
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js"
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_Destructuring_PerIterationBinding.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js"
         ],
         "notes": "Runtime implements iterator protocol consumption for `for..of` over arrays and user-defined iterables via `obj[Symbol.iterator]()`. IteratorClose is implemented: if an iterator has a callable `return`, it is invoked on break/throw paths."
       },
@@ -333,9 +333,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-asynciterable-interface",
         "testScripts": [
-          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
         ],
         "notes": "Runtime implements async iterator protocol consumption for `for await..of`. When `Symbol.asyncIterator` is missing, it wraps the sync iterator (CreateAsyncFromSyncIterator semantics) and ensures `return()` is invoked on early-exit paths."
       },
@@ -345,8 +345,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-iterator-helper-objects",
         "testScripts": [
-          "Js2IL.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
-          "Js2IL.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
+          "tests/Js2IL.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
+          "tests/Js2IL.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
         ],
         "notes": "Helper objects are lazy, iterable, and expose `next()` / `return()` through the public iterator-helper surface. Limit/count coercion and constructor metadata follow the new helper API shape, but only the synchronous helper family is implemented here."
       },
@@ -356,8 +356,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-iterator-objects",
         "testScripts": [
-          "Js2IL.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
-          "Js2IL.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
+          "tests/Js2IL.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
+          "tests/Js2IL.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
         ],
         "notes": "JS2IL now exposes global `Iterator` and `Iterator.prototype` surfaces, including `Iterator.from(...)`, helper chaining, terminal helpers, and iterable array-iterator objects. `Iterator.concat` and full abstract-constructor semantics are still not implemented."
       },
@@ -367,9 +367,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-asynciteratorprototype",
         "testScripts": [
-          "Js2IL.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
-          "Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+          "tests/Js2IL.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js",
+          "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
         ],
         "notes": "Global `AsyncIterator` and `%AsyncIteratorPrototype%[@@asyncIterator]` are exposed, and runtime async iterators inherit that public surface. Async iterator helper methods beyond the prototype exposure are still not implemented."
       }

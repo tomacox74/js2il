@@ -240,8 +240,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-get-o-p",
         "testScripts": [
-          "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js",
-          "Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
+          "tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
         ],
         "notes": "Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Descriptor APIs enable accessor/prototype lookup via side-tables; symbol-keyed properties and many exotic behaviors are incomplete."
       },
@@ -251,8 +251,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-set-o-p-v-throw",
         "testScripts": [
-          "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
-          "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+          "tests/Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
+          "tests/Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
         "notes": "Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. Throw/invariant behavior is not fully spec-complete."
       },
@@ -262,7 +262,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createnonenumerabledatapropertyorthrow",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js"
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js"
         ],
         "notes": "Non-enumerable data properties can be created through descriptor APIs; strict throw/invariant semantics are approximate."
       },
@@ -272,9 +272,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-definepropertyorthrow",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js",
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
         ],
         "notes": "Approximated by runtime defineProperty/defineProperties/create using PropertyDescriptorStore; many spec validation and throw paths are incomplete."
       },
@@ -284,7 +284,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-deletepropertyorthrow",
         "testScripts": [
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js"
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js"
         ],
         "notes": "Delete operations are supported for dynamic object shapes; full non-configurable property behavior and strict throw fidelity are incomplete."
       },
@@ -294,8 +294,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-hasproperty",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js",
-          "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js"
         ],
         "notes": "Implemented for object literals, arrays, typed arrays, strings, and host objects. Prototype traversal is supported with prototype-chain mode; symbol support is limited."
       },
@@ -305,7 +305,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-hasownproperty",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js"
         ],
         "notes": "Object.prototype.hasOwnProperty is provided with descriptor-store, dictionary, and host-object fallbacks."
       },
@@ -315,11 +315,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-call",
         "testScripts": [
-          "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
-          "Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
-          "Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js",
-          "Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js"
         ],
         "notes": "Supports common declared/function-expression/delegate call paths. Some exotic call semantics are not implemented."
       },
@@ -329,10 +329,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-construct",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js",
-          "Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js",
-          "Js2IL.Tests/Hosting/JavaScript/ctorPadding.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js",
+          "tests/Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js",
+          "tests/Js2IL.Tests/Hosting/JavaScript/ctorPadding.js"
         ],
         "notes": "Supports statically-known constructors and runtime fallback for dynamic constructor values; full newTarget and exotic constructor behavior is incomplete."
       },
@@ -342,9 +342,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-lengthofarraylike",
         "testScripts": [
-          "Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
-          "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-          "Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
+          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "tests/Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
         ],
         "notes": "Implemented for supported array-like runtime types with partial coercion behavior."
       },
@@ -354,7 +354,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinaryhasinstance",
         "testScripts": [
-          "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
         ],
         "notes": "Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete."
       },
@@ -364,9 +364,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-enumerableownproperties",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js"
         ],
         "notes": "Implemented for supported object shapes with descriptor-store enumerable filtering."
       },
@@ -376,8 +376,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-copydataproperties",
         "testScripts": [
-          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js",
-          "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js"
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js",
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js"
         ],
         "notes": "Implemented via SpreadInto/Object spread for enumerable own string-keyed properties; full symbol/exotic semantics are incomplete."
       },
@@ -387,8 +387,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-privateelementfind",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js"
         ],
         "notes": "Private field access works for supported class forms; private methods/accessors and complete validation coverage are not yet implemented."
       },
@@ -398,8 +398,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-initializeinstanceelements",
         "testScripts": [
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
-          "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
         ],
         "notes": "Supports instance field initializers and private instance fields. Static blocks, private methods/accessors, and some inheritance details are incomplete."
       }

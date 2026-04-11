@@ -35,40 +35,40 @@ Provides synchronous process execution, async spawn/exec/execFile, and a documen
 Returns an EventEmitter-backed child handle with pid, stdout/stderr Readable pipes, a Writable stdin pipe when piped, exit/close events, and kill(). Supports cwd, shell, and stdio ('pipe'/'inherit'/'ignore' plus basic first-three-entry array handling). Detached launches remain explicit unsupported diagnostics instead of being silently approximated.
 
 **Tests:**
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Ignore` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Ignore` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Ignore` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Ignore` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### exec(command[, options][, callback])
 
 Executes via a shell and optionally invokes an error-first callback with (err, stdout, stderr). Returns the child handle immediately. Non-zero exit codes surface an Error-like object carrying status/code/stdout/stderr. Detached launches remain explicit unsupported diagnostics.
 
 **Tests:**
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Exec_Callback` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Exec_Callback` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Exec_Callback` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Exec_Callback` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### execFile(file[, args][, options][, callback])
 
 Runs a file directly without an implicit shell and optionally invokes an error-first callback with (err, stdout, stderr). Non-zero exits surface the same Error-like callback shape used by exec(). Detached launches remain explicit unsupported diagnostics.
 
 **Tests:**
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFile_NonZero` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFile_NonZero` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### fork(modulePath[, args][, options])
 
 Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, explicit `options.silent` control (`true` keeps piped stdio, `false` maps stdio[0-2] to `inherit` while preserving IPC), `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics. In hosted `JsEngine` scenarios, the child is launched only when the host explicitly supplies `JsModuleLoadOptions.CompiledAssemblyPath`; if that configuration is missing, `fork()` throws a targeted runtime error instead of inferring a launch target. Hosts can customize process creation through `IChildProcessLauncher`.
 
 **Tests:**
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Silent` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options` (`Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Silent` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options` (`Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Silent` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options` (`tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Silent` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
+- `Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options` (`tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### spawnSync(command, args, options)
 

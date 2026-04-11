@@ -25,8 +25,8 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| if condition truthiness (non-boolean) | Supported | [`ControlFlow_If_Truthiness.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_Truthiness.js) | Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true). |
-| if statement (!flag) | Supported | [`ControlFlow_If_NotFlag.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js) | Logical not in conditional test supported. |
-| if statement (LessThan) | Supported | [`ControlFlow_If_LessThan.js`](../../../Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_LessThan.js) |  |
-| if statement (result == true) | Supported | [`Function_IsEven_CompareResultToTrue.js`](../../../Js2IL.Tests/Function/JavaScript/Function_IsEven_CompareResultToTrue.js) | Compares function-returned boolean to true and branches accordingly. |
+| if condition truthiness (non-boolean) | Supported | [`ControlFlow_If_Truthiness.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_Truthiness.js) | Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true). |
+| if statement (!flag) | Supported | [`ControlFlow_If_NotFlag.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js) | Logical not in conditional test supported. |
+| if statement (LessThan) | Supported | [`ControlFlow_If_LessThan.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_LessThan.js) |  |
+| if statement (result == true) | Supported | [`Function_IsEven_CompareResultToTrue.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_IsEven_CompareResultToTrue.js) | Compares function-returned boolean to true and branches accordingly. |
 
