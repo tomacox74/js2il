@@ -15,6 +15,82 @@ namespace Js2IL.Tests.Integration
         public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp));
 
         [Fact]
+        public async Task Compile_Scripts_Test262Bootstrap()
+        {
+            using var currentDirectory = new TemporaryCurrentDirectory();
+            var pinPath = System.IO.Path.Combine(currentDirectory.Path, "test262.pin.json");
+
+            System.IO.File.WriteAllText(
+                pinPath,
+                """
+                {
+                  "upstream": {
+                    "owner": "tc39",
+                    "repo": "test262",
+                    "cloneUrl": "https://github.com/tc39/test262.git",
+                    "commit": "0123456789abcdef0123456789abcdef01234567",
+                    "packageVersion": "5.0.0"
+                  },
+                  "localOverrideEnvVar": "JS2IL_TEST262_ROOT",
+                  "managedRoot": "./managed-cache",
+                  "lineEndings": "lf",
+                  "updateStrategy": "manual-pinned-sha",
+                  "includeFiles": [
+                    "LICENSE",
+                    "INTERPRETING.md",
+                    "features.txt",
+                    "package.json"
+                  ],
+                  "includeDirectories": [
+                    "harness",
+                    "test/language",
+                    "test/built-ins"
+                  ],
+                  "requiredFiles": [
+                    "LICENSE",
+                    "INTERPRETING.md",
+                    "features.txt",
+                    "package.json",
+                    "harness/assert.js",
+                    "harness/sta.js"
+                  ],
+                  "requiredDirectories": [
+                    "harness",
+                    "test/language",
+                    "test/built-ins"
+                  ],
+                  "defaultHarnessFiles": [
+                    "assert.js",
+                    "sta.js"
+                  ],
+                  "excludedFromMvp": [
+                    "test/annexB/**",
+                    "test/intl402/**",
+                    "test/staging/**",
+                    "frontmatter:flags=module",
+                    "frontmatter:flags=async",
+                    "frontmatter:requires-agent-or-broadcast",
+                    "frontmatter:requires-async-harness"
+                  ],
+                  "attributionFiles": [
+                    "LICENSE",
+                    "INTERPRETING.md"
+                  ]
+                }
+                """.ReplaceLineEndings("\n"));
+
+            await ExecutionTest(
+                nameof(Compile_Scripts_Test262Bootstrap),
+                addMocks: services => services.RegisterInstance<IEnvironment>(
+                    new FixedCommandLineEnvironment(
+                        "dotnet",
+                        "test262-bootstrap.dll",
+                        "--describe",
+                        "--pin",
+                        pinPath)));
+        }
+
+        [Fact]
         public async Task Compile_Scripts_ExtractEcma262SectionHtml_UrlMode()
         {
             await using var server = await LoopbackEcma262Server.StartAsync();
