@@ -204,6 +204,8 @@ public class RunnerCliTests
             .Replace('\\', '/')
             .Replace(normalizedRepoRoot, "<repo>")
             .Replace(normalizedTempRoot, "<temp>")
+            .Replace("/bin/Release/net10.0/Js2IL.dll", "/bin/<configuration>/net10.0/Js2IL.dll")
+            .Replace("/bin/Debug/net10.0/Js2IL.dll", "/bin/<configuration>/net10.0/Js2IL.dll")
             .TrimEnd();
     }
 
