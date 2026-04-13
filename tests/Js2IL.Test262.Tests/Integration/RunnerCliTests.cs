@@ -23,7 +23,7 @@ public class RunnerCliTests
         RunnerResult result = RunRunner(test262Root, outputRoot);
         Assert.Equal(0, result.ExitCode);
 
-        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path));
+        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
     }
 
     [Fact]
@@ -40,7 +40,25 @@ public class RunnerCliTests
 
         Assert.Equal(1, result.ExitCode);
 
-        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path));
+        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
+    }
+
+    [Fact]
+    public Task RunMvp_ClassifiesPolicyWrongPhaseAndWrongErrorKind()
+    {
+        using var tempDirectory = new TemporaryDirectory();
+        string test262Root = CreateTest262Fixture(tempDirectory.Path, includeFailingPositive: false, includeClassificationEdges: true);
+        string outputRoot = Path.Combine(tempDirectory.Path, "runner-output");
+        string pinPath = CreatePinFile(tempDirectory.Path, ["test/language/mvp/classification-policy-skip.js"]);
+
+        RunnerResult result = RunRunner(
+            test262Root,
+            outputRoot,
+            $" --pin \"{pinPath}\" --filter \"classification-\"");
+
+        Assert.Equal(1, result.ExitCode);
+
+        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
     }
 
     private static RunnerResult RunRunner(string test262Root, string outputRoot, string extraArguments = "", int timeoutMilliseconds = 180000)
@@ -73,7 +91,70 @@ public class RunnerCliTests
         return new RunnerResult(process.ExitCode, stdoutTask.Result, stderrTask.Result);
     }
 
-    private static string CreateTest262Fixture(string root, bool includeFailingPositive)
+    private static string CreatePinFile(string root, IReadOnlyList<string> excludedFromMvp)
+    {
+        string pinPath = Path.Combine(root, "fixture.pin.json");
+        string exclusionsJson = string.Join(
+            ",\n",
+            excludedFromMvp.Select(entry => $"                \"{entry.Replace("\\", "\\\\")}\""));
+
+        File.WriteAllText(
+            pinPath,
+            $$"""
+            {
+              "upstream": {
+                "owner": "tc39",
+                "repo": "test262",
+                "cloneUrl": "https://github.com/tc39/test262.git",
+                "commit": "0123456789abcdef0123456789abcdef01234567",
+                "packageVersion": "5.0.0"
+              },
+              "localOverrideEnvVar": "JS2IL_TEST262_ROOT",
+              "managedRoot": "./managed-cache",
+              "lineEndings": "lf",
+              "updateStrategy": "manual-pinned-sha",
+              "includeFiles": [
+                "LICENSE",
+                "INTERPRETING.md",
+                "features.txt",
+                "package.json"
+              ],
+              "includeDirectories": [
+                "harness",
+                "test/language",
+                "test/built-ins"
+              ],
+              "requiredFiles": [
+                "LICENSE",
+                "INTERPRETING.md",
+                "features.txt",
+                "package.json",
+                "harness/assert.js",
+                "harness/sta.js"
+              ],
+              "requiredDirectories": [
+                "harness",
+                "test/language",
+                "test/built-ins"
+              ],
+              "defaultHarnessFiles": [
+                "assert.js",
+                "sta.js"
+              ],
+              "excludedFromMvp": [
+            {{exclusionsJson}}
+              ],
+              "attributionFiles": [
+                "LICENSE",
+                "INTERPRETING.md"
+              ]
+            }
+            """.ReplaceLineEndings("\n"));
+
+        return pinPath;
+    }
+
+    private static string CreateTest262Fixture(string root, bool includeFailingPositive, bool includeClassificationEdges = false)
     {
         string test262Root = Path.Combine(root, "test262-root");
         Directory.CreateDirectory(test262Root);
@@ -165,6 +246,37 @@ public class RunnerCliTests
                 """);
         }
 
+        if (includeClassificationEdges)
+        {
+            WriteFile(test262Root, @"test\language\mvp\classification-policy-skip.js", """
+                /*---
+                description: skipped by policy
+                flags: [noStrict]
+                ---*/
+                assert.sameValue(1, 1);
+                """);
+            WriteFile(test262Root, @"test\language\mvp\classification-parse-wrong-phase.js", """
+                /*---
+                description: parse negative wrong phase
+                flags: [noStrict]
+                negative:
+                  phase: parse
+                  type: SyntaxError
+                ---*/
+                throw new SyntaxError('late parse-like boom');
+                """);
+            WriteFile(test262Root, @"test\language\mvp\classification-runtime-wrong-error.js", """
+                /*---
+                description: runtime negative wrong error kind
+                flags: [noStrict]
+                negative:
+                  phase: runtime
+                  type: TypeError
+                ---*/
+                throw new RangeError('wrong kind');
+                """);
+        }
+
         return test262Root;
     }
 
@@ -178,7 +290,7 @@ public class RunnerCliTests
         File.WriteAllText(filePath, content.ReplaceLineEndings("\n"));
     }
 
-    private static string FormatResult(RunnerResult result, string tempRoot)
+    private static string FormatResult(RunnerResult result, string tempRoot, string outputRoot)
     {
         string normalizedTempRoot = NormalizePath(tempRoot);
         string normalizedRepoRoot = NormalizePath(FindRepoRoot());
@@ -192,6 +304,13 @@ public class RunnerCliTests
         {
             builder.AppendLine("stderr:");
             builder.AppendLine(NormalizeText(result.StdErr, normalizedTempRoot, normalizedRepoRoot));
+        }
+
+        string summaryPath = Path.Combine(outputRoot, "summary.json");
+        if (File.Exists(summaryPath))
+        {
+            builder.AppendLine("summary.json:");
+            builder.AppendLine(NormalizeText(File.ReadAllText(summaryPath), normalizedTempRoot, normalizedRepoRoot));
         }
 
         return builder.ToString().TrimEnd();

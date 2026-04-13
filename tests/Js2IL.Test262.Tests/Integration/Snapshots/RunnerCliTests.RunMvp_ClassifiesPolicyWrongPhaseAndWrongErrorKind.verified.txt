@@ -1,0 +1,183 @@
+﻿exit: 1
+stdout:
+root <temp>/test262-root
+js2il <repo>/src/Cli/bin/<configuration>/net10.0/Js2IL.dll
+output <temp>/runner-output
+discovered 9
+selected-files 3
+selected-cases 2
+SKIP-POLICY test/language/mvp/classification-policy-skip.js [all] [path-excluded:test/language/mvp/classification-policy-skip.js] excluded by policy (test/language/mvp/classification-policy-skip.js)
+WRONG-PHASE test/language/mvp/classification-parse-wrong-phase.js [non-strict] expected negative(parse:SyntaxError) but rejection moved to runtime (SyntaxError)
+REPRO node scripts/test262/runMvp.js --root "<temp>/test262-root" --file "test/language/mvp/classification-parse-wrong-phase.js" --variant non-strict
+WRONG-ERROR-KIND test/language/mvp/classification-runtime-wrong-error.js [non-strict] expected negative(runtime:TypeError) but observed RangeError
+REPRO node scripts/test262/runMvp.js --root "<temp>/test262-root" --file "test/language/mvp/classification-runtime-wrong-error.js" --variant non-strict
+SUMMARY matched=0 unexpected=2 not-run=1 selected=2 classified=3 wrong-phase=1 wrong-error-kind=1 skipped-by-policy=1
+REPORT <temp>/runner-output/summary.json
+summary.json:
+{
+  "schemaVersion": 1,
+  "suite": "js2il-test262-mvp",
+  "pin": {
+    "commit": "0123456789abcdef0123456789abcdef01234567",
+    "packageVersion": "5.0.0"
+  },
+  "policy": {
+    "pathExclusions": [
+      "test/language/mvp/classification-policy-skip.js"
+    ],
+    "unsupportedResultSources": [
+      "metadata.unsupported",
+      "metadata.mvpBlockers"
+    ],
+    "negativeExpectations": {
+      "parse": {
+        "expectedObservedPhase": "compile",
+        "validateErrorType": false
+      },
+      "runtime": {
+        "expectedObservedPhase": "runtime",
+        "validateErrorType": true
+      }
+    },
+    "baselineArtifact": {
+      "fileName": "summary.json",
+      "format": "js2il-test262-summary-v1"
+    }
+  },
+  "selection": {
+    "file": null,
+    "filter": "classification-",
+    "limit": null,
+    "variant": null,
+    "discoveredFiles": 9,
+    "selectedFiles": 3,
+    "selectedCases": 2,
+    "classifiedEntries": 3
+  },
+  "summary": {
+    "exitCode": 1,
+    "verdictCounts": {
+      "unexpected": 2,
+      "not-run": 1
+    },
+    "kindCounts": {
+      "wrong-phase": 1,
+      "wrong-error-kind": 1,
+      "skipped-by-policy": 1
+    }
+  },
+  "results": [
+    {
+      "id": "test/language/mvp/classification-policy-skip.js#all",
+      "relativePath": "test/language/mvp/classification-policy-skip.js",
+      "variant": null,
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "skipped-by-policy",
+        "verdict": "not-run",
+        "phase": "selection",
+        "detail": "excluded by policy (test/language/mvp/classification-policy-skip.js)"
+      },
+      "reasons": [
+        {
+          "code": "path-excluded",
+          "source": "excludedFromMvp",
+          "reason": "Path matched excludedFromMvp entry 'test/language/mvp/classification-policy-skip.js'.",
+          "pattern": "test/language/mvp/classification-policy-skip.js"
+        }
+      ],
+      "observed": {
+        "compile": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": null
+    },
+    {
+      "id": "test/language/mvp/classification-parse-wrong-phase.js#non-strict",
+      "relativePath": "test/language/mvp/classification-parse-wrong-phase.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "negative",
+        "phase": "parse",
+        "errorType": "SyntaxError",
+        "validatesErrorType": false
+      },
+      "classification": {
+        "kind": "wrong-phase",
+        "verdict": "unexpected",
+        "phase": "runtime",
+        "detail": "expected negative(parse:SyntaxError) but rejection moved to runtime (SyntaxError)"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "rejected",
+          "exitCode": 1,
+          "errorType": "SyntaxError",
+          "summary": "SyntaxError: late parse-like boom"
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/classification-parse-wrong-phase.js",
+        "variant": "non-strict"
+      }
+    },
+    {
+      "id": "test/language/mvp/classification-runtime-wrong-error.js#non-strict",
+      "relativePath": "test/language/mvp/classification-runtime-wrong-error.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "negative",
+        "phase": "runtime",
+        "errorType": "TypeError",
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "wrong-error-kind",
+        "verdict": "unexpected",
+        "phase": "runtime",
+        "detail": "expected negative(runtime:TypeError) but observed RangeError"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "rejected",
+          "exitCode": 1,
+          "errorType": "RangeError",
+          "summary": "RangeError: wrong kind"
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/classification-runtime-wrong-error.js",
+        "variant": "non-strict"
+      }
+    }
+  ]
+}

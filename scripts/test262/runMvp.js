@@ -11,6 +11,33 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const DEFAULT_TIMEOUT_SECONDS = 20;
 const DEFAULT_COMPILE_TIMEOUT_SECONDS = 60;
 const VALID_VARIANTS = new Set(['non-strict', 'strict']);
+const SUMMARY_FILE_NAME = 'summary.json';
+const SUMMARY_SCHEMA_VERSION = 1;
+const RESULT_KIND_ORDER = [
+  'pass',
+  'compile-rejection',
+  'runtime-rejection',
+  'wrong-phase',
+  'wrong-error-kind',
+  'runtime-mismatch',
+  'timeout',
+  'runner-error',
+  'unsupported-requirement',
+  'skipped-by-policy',
+];
+const VERDICT_ORDER = ['matched', 'unexpected', 'not-run'];
+const RESULT_LABELS = {
+  pass: 'PASS',
+  'compile-rejection': 'COMPILE-REJECTION',
+  'runtime-rejection': 'RUNTIME-REJECTION',
+  'wrong-phase': 'WRONG-PHASE',
+  'wrong-error-kind': 'WRONG-ERROR-KIND',
+  'runtime-mismatch': 'RUNTIME-MISMATCH',
+  timeout: 'TIMEOUT',
+  'runner-error': 'RUNNER-ERROR',
+  'unsupported-requirement': 'UNSUPPORTED',
+  'skipped-by-policy': 'SKIP-POLICY',
+};
 
 function printHelp() {
   console.log([
@@ -150,6 +177,10 @@ function defaultOutputRoot() {
   return path.join(REPO_ROOT, 'artifacts', 'test262', 'runs', `${stamp}-${process.pid}`);
 }
 
+function defaultSummaryPath(outputRoot) {
+  return path.join(outputRoot, SUMMARY_FILE_NAME);
+}
+
 function collectCandidateFiles(rootPath, pin) {
   const files = [];
   const includeDirectories = Array.isArray(pin.includeDirectories) ? pin.includeDirectories : [];
@@ -247,15 +278,142 @@ function determineVariants(execution, requestedVariant, relativePath) {
   throw new Error(`Variant '${requestedVariant}' is not valid for ${relativePath}; supported variants: ${variants.join(', ')}.`);
 }
 
-function issueCodes(issues) {
-  if (!Array.isArray(issues) || issues.length === 0) {
-    return [];
+function createResultId(relativePath, variant) {
+  return variant ? `${relativePath}#${variant}` : `${relativePath}#all`;
+}
+
+function createReproData(relativePath, variant) {
+  return variant ? { file: relativePath, variant } : { file: relativePath };
+}
+
+function createClassification(kind, verdict, phase, detail) {
+  return {
+    kind,
+    verdict,
+    phase,
+    detail,
+  };
+}
+
+function createObservation(status, overrides) {
+  return Object.assign(
+    {
+      status,
+      exitCode: null,
+      errorType: null,
+      summary: null,
+    },
+    overrides || {}
+  );
+}
+
+function normalizeReportedExitCode(exitCode) {
+  if (!Number.isInteger(exitCode)) {
+    return null;
   }
 
-  return issues
-    .map(issue => issue && issue.code ? issue.code : 'unknown-issue')
-    .filter((value, index, array) => array.indexOf(value) === index)
-    .sort();
+  return exitCode === 0 ? 0 : 1;
+}
+
+function createResult(relativePath, variant, metadata, classification, reasons, observed, repro) {
+  return {
+    id: createResultId(relativePath, variant),
+    relativePath,
+    variant,
+    expected: buildExpectedOutcome(metadata),
+    classification,
+    reasons: Array.isArray(reasons) ? reasons : [],
+    observed,
+    repro: repro || null,
+  };
+}
+
+function buildExpectedOutcome(metadata) {
+  if (!metadata || !metadata.negative) {
+    return {
+      category: 'positive',
+      phase: null,
+      errorType: null,
+      validatesErrorType: true,
+    };
+  }
+
+  return {
+    category: 'negative',
+    phase: metadata.negative.phase,
+    errorType: metadata.negative.type,
+    validatesErrorType: metadata.negative.phase !== 'parse',
+  };
+}
+
+function expectedOutcomeLabel(testCase) {
+  const negative = testCase.metadata.negative;
+  if (!negative) {
+    return 'positive';
+  }
+
+  return `negative(${negative.phase}:${negative.type})`;
+}
+
+function createPathExclusionReason(exclusion) {
+  return {
+    code: 'path-excluded',
+    source: 'excludedFromMvp',
+    reason: `Path matched excludedFromMvp entry '${exclusion}'.`,
+    pattern: exclusion,
+  };
+}
+
+function createNotRunResult(relativePath, metadata, kind, reasons, detail) {
+  return createResult(
+    relativePath,
+    null,
+    metadata,
+    createClassification(kind, 'not-run', 'selection', detail),
+    reasons,
+    {
+      compile: createObservation('not-run'),
+      runtime: createObservation('not-run'),
+    },
+    null
+  );
+}
+
+function normalizeReasonEntries(reasons) {
+  const entries = Array.isArray(reasons) ? reasons : [];
+  const seen = new Set();
+  const normalized = [];
+
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+    if (!entry || typeof entry !== 'object') {
+      continue;
+    }
+
+    const normalizedEntry = {
+      code: entry.code || 'unknown-issue',
+      source: entry.source || '<unknown>',
+      reason: entry.reason || '',
+    };
+
+    if (entry.pattern) {
+      normalizedEntry.pattern = entry.pattern;
+    }
+
+    const key = JSON.stringify(normalizedEntry);
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    normalized.push(normalizedEntry);
+  }
+
+  return normalized;
+}
+
+function createSelectionResult(relativePath, metadata, kind, reasons, detail) {
+  return createNotRunResult(relativePath, metadata, kind, normalizeReasonEntries(reasons), detail);
 }
 
 function createExecutionPlan(rootPath, pin, args) {
@@ -284,18 +442,31 @@ function createExecutionPlan(rootPath, pin, args) {
     const relativePath = selectedFiles[i];
     const exclusion = matchPathExclusion(relativePath, pin);
     if (exclusion !== null) {
-      skipped.push({
-        relativePath,
-        reasons: [`pin-excluded:${exclusion}`],
-      });
+      skipped.push(
+        createSelectionResult(
+          relativePath,
+          null,
+          'skipped-by-policy',
+          [createPathExclusionReason(exclusion)],
+          `excluded by policy (${exclusion})`
+        )
+      );
       continue;
     }
 
     const absolutePath = path.join(rootPath, ...relativePath.split('/'));
     const parsed = parseTest262File(absolutePath);
-    const reasons = issueCodes(parsed.unsupported).concat(issueCodes(parsed.mvpBlockers));
+    const reasons = normalizeReasonEntries(parsed.unsupported.concat(parsed.mvpBlockers));
     if (reasons.length > 0) {
-      skipped.push({ relativePath, reasons });
+      skipped.push(
+        createSelectionResult(
+          relativePath,
+          parsed,
+          'unsupported-requirement',
+          reasons,
+          'unsupported requirement'
+        )
+      );
       continue;
     }
 
@@ -472,6 +643,11 @@ function extractJsError(stderr) {
     return dotnetMatch[1].trim();
   }
 
+  const dotnetUnhandledMatch = stderr.match(/Unhandled exception\.\s*([A-Za-z]+Error|Error|EvalError|RangeError|ReferenceError|SyntaxError|TypeError|URIError):\s*(.+)/m);
+  if (dotnetUnhandledMatch) {
+    return `${dotnetUnhandledMatch[1]}: ${dotnetUnhandledMatch[2].trim()}`;
+  }
+
   const nodeMatch = stderr.match(/^([A-Za-z]+Error|Error|EvalError|RangeError|ReferenceError|SyntaxError|TypeError|URIError):\s*(.+)/m);
   if (nodeMatch) {
     return `${nodeMatch[1]}: ${nodeMatch[2].trim()}`;
@@ -485,8 +661,46 @@ function extractJsError(stderr) {
   return '';
 }
 
-function summarizeFailureText(text) {
-  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+function normalizeDiagnosticText(text, diagnosticContext) {
+  let normalized = String(text || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/\\/g, '/')
+    .trim();
+
+  const replacements = Array.isArray(diagnosticContext) ? diagnosticContext : [];
+  for (let i = 0; i < replacements.length; i++) {
+    const replacement = replacements[i];
+    if (!replacement || !replacement.from) {
+      continue;
+    }
+
+    normalized = normalized.split(replacement.from).join(replacement.to);
+  }
+
+  return normalized.trim();
+}
+
+function createDiagnosticContext(rootPath, outputRoot) {
+  return [
+    { from: normalizePortablePath(outputRoot), to: '<output>' },
+    { from: normalizePortablePath(rootPath), to: '<test262-root>' },
+    { from: normalizePortablePath(REPO_ROOT), to: '<repo>' },
+  ].sort((left, right) => right.from.length - left.from.length);
+}
+
+function extractErrorType(text) {
+  const jsError = extractJsError(text);
+  if (!jsError) {
+    return null;
+  }
+
+  const match = /^([A-Za-z]+Error|Error)\b/.exec(jsError);
+  return match ? match[1] : null;
+}
+
+function summarizeFailureText(text, diagnosticContext) {
+  const normalized = normalizeDiagnosticText(text, diagnosticContext);
   const jsError = extractJsError(normalized);
   if (jsError) {
     return jsError;
@@ -504,21 +718,16 @@ function summarizeFailureText(text) {
   return lines[0];
 }
 
-function containsExpectedError(text, expectedType) {
+function matchesExpectedErrorType(observedType, expectedType) {
   if (!expectedType) {
     return true;
   }
 
-  return text.toLowerCase().indexOf(String(expectedType).toLowerCase()) >= 0;
-}
-
-function expectedOutcomeLabel(testCase) {
-  const negative = testCase.metadata.negative;
-  if (!negative) {
-    return 'positive';
+  if (!observedType) {
+    return false;
   }
 
-  return `negative(${negative.phase}:${negative.type})`;
+  return String(observedType).toLowerCase() === String(expectedType).toLowerCase();
 }
 
 function createCaseDirectory(outputRoot, testCase) {
@@ -530,23 +739,49 @@ function quoteForDisplay(value) {
   return `"${String(value).replace(/"/g, '\\"')}"`;
 }
 
-function createReproCommand(rootPath, testCase, args) {
+function createReproCommand(rootPath, repro, args) {
   const command = [
     'node',
     'scripts/test262/runMvp.js',
     '--root',
     quoteForDisplay(rootPath),
     '--file',
-    quoteForDisplay(testCase.relativePath),
-    '--variant',
-    testCase.variant,
+    quoteForDisplay(repro.file),
   ];
+
+  if (repro.variant) {
+    command.push('--variant', repro.variant);
+  }
 
   if (args.js2il) {
     command.push('--js2il', quoteForDisplay(args.js2il));
   }
 
   return command.join(' ');
+}
+
+function createMatchedCaseResult(testCase, kind, phase, detail, observed) {
+  return createResult(
+    testCase.relativePath,
+    testCase.variant,
+    testCase.metadata,
+    createClassification(kind, 'matched', phase, detail),
+    [],
+    observed,
+    createReproData(testCase.relativePath, testCase.variant)
+  );
+}
+
+function createUnexpectedCaseResult(testCase, kind, phase, detail, observed) {
+  return createResult(
+    testCase.relativePath,
+    testCase.variant,
+    testCase.metadata,
+    createClassification(kind, 'unexpected', phase, detail),
+    [],
+    observed,
+    createReproData(testCase.relativePath, testCase.variant)
+  );
 }
 
 function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
@@ -556,6 +791,7 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
   const compositeSourcePath = path.join(caseDirectory, 'input.js');
   fs.writeFileSync(compositeSourcePath, buildCompositeSource(rootPath, testCase), 'utf8');
   const compilerArgs = ['--strictMode', 'Ignore'];
+  const diagnosticContext = createDiagnosticContext(rootPath, outputRoot);
 
   const compileResult = compileWithJs2IL(
     compositeSourcePath,
@@ -566,100 +802,303 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
   );
 
   const negative = testCase.metadata.negative;
-  if (negative && negative.phase === 'parse') {
-    // JS2IL's front-end currently reports parse/early failures with compiler diagnostics rather
-    // than a normalized JS error object, so the MVP parse-negative contract is compile-time failure.
-    if (!compileResult.success && compileResult.stderr !== 'COMPILE_TIMEOUT' && compileResult.stderr !== 'DLL not found after compilation') {
-      return {
-        status: 'pass',
-        testCase,
-        detail: expectedOutcomeLabel(testCase),
-      };
-    }
-
-    if (!compileResult.success) {
-      return {
-        status: 'fail',
-        testCase,
-        detail: `expected ${expectedOutcomeLabel(testCase)} but compilation failed with ${summarizeFailureText(compileResult.stderr)}`,
-        repro: createReproCommand(rootPath, testCase, args),
-      };
-    }
-
-    return {
-      status: 'fail',
-      testCase,
-      detail: `expected ${expectedOutcomeLabel(testCase)} but compilation succeeded`,
-      repro: createReproCommand(rootPath, testCase, args),
-    };
-  }
+  const expectedLabel = expectedOutcomeLabel(testCase);
 
   if (!compileResult.success) {
-    return {
-      status: 'fail',
-      testCase,
-      detail: `compilation failed: ${summarizeFailureText(compileResult.stderr)}`,
-      repro: createReproCommand(rootPath, testCase, args),
+    if (compileResult.stderr === 'COMPILE_TIMEOUT') {
+      return createUnexpectedCaseResult(
+        testCase,
+        'timeout',
+        'compile',
+        'compilation timed out',
+        {
+          compile: createObservation('timeout', { summary: 'COMPILE_TIMEOUT' }),
+          runtime: createObservation('not-run'),
+        }
+      );
+    }
+
+    if (compileResult.stderr === 'DLL not found after compilation') {
+      return createUnexpectedCaseResult(
+        testCase,
+        'runner-error',
+        'compile',
+        'compiler completed without emitting a DLL',
+        {
+          compile: createObservation('runner-error', { summary: 'DLL not found after compilation' }),
+          runtime: createObservation('not-run'),
+        }
+      );
+    }
+
+    const compileSummary = summarizeFailureText(compileResult.stderr, diagnosticContext);
+    const compileErrorType = extractErrorType(normalizeDiagnosticText(compileResult.stderr, diagnosticContext));
+    const observed = {
+      compile: createObservation('rejected', {
+        errorType: compileErrorType,
+        summary: compileSummary,
+      }),
+      runtime: createObservation('not-run'),
     };
+
+    if (negative && negative.phase === 'parse') {
+      // Parse negatives are currently phase-classified at compile time. JS2IL does not yet surface
+      // normalized parser error objects, so the MVP baseline records phase match but not parse error kind.
+      return createMatchedCaseResult(
+        testCase,
+        'compile-rejection',
+        'compile',
+        `matched ${expectedLabel}`,
+        observed
+      );
+    }
+
+    if (negative && negative.phase === 'runtime') {
+      return createUnexpectedCaseResult(
+        testCase,
+        'wrong-phase',
+        'compile',
+        `expected ${expectedLabel} but rejection happened during compile`,
+        observed
+      );
+    }
+
+    return createUnexpectedCaseResult(
+      testCase,
+      'compile-rejection',
+      'compile',
+      `expected ${expectedLabel} but compilation rejected (${compileSummary})`,
+      observed
+    );
   }
 
   const executionResult = runDotnet(compileResult.dllPath, args.timeoutSeconds * 1000);
   const combinedExecutionOutput = `${executionResult.stderr}\n${executionResult.stdout}`;
+  const runtimeSummary = summarizeFailureText(combinedExecutionOutput, diagnosticContext);
+  const runtimeErrorType = extractErrorType(normalizeDiagnosticText(combinedExecutionOutput, diagnosticContext));
+  const observed = {
+    compile: createObservation('succeeded'),
+    runtime: executionResult.timedOut
+      ? createObservation('timeout', { summary: 'TIMEOUT' })
+      : executionResult.exitCode === 0
+        ? createObservation('passed', { exitCode: normalizeReportedExitCode(executionResult.exitCode) })
+        : createObservation('rejected', {
+            exitCode: normalizeReportedExitCode(executionResult.exitCode),
+            errorType: runtimeErrorType,
+            summary: runtimeSummary,
+          }),
+  };
 
-  if (negative && negative.phase === 'runtime') {
-    if (!executionResult.timedOut && executionResult.exitCode !== 0 && containsExpectedError(combinedExecutionOutput, negative.type)) {
-      return {
-        status: 'pass',
+  if (negative && negative.phase === 'parse') {
+    if (executionResult.timedOut) {
+      return createUnexpectedCaseResult(
         testCase,
-        detail: expectedOutcomeLabel(testCase),
-      };
+        'timeout',
+        'runtime',
+        `expected ${expectedLabel} but runtime timed out after a successful compile`,
+        observed
+      );
     }
 
-    const runtimeDetail = executionResult.timedOut
-      ? 'runtime timed out'
-      : executionResult.exitCode === 0
-        ? 'runtime completed successfully'
-        : summarizeFailureText(combinedExecutionOutput);
+    if (executionResult.exitCode !== 0) {
+      const runtimeDetail = runtimeErrorType ? ` (${runtimeErrorType})` : '';
+      return createUnexpectedCaseResult(
+        testCase,
+        'wrong-phase',
+        'runtime',
+        `expected ${expectedLabel} but rejection moved to runtime${runtimeDetail}`,
+        observed
+      );
+    }
 
-    return {
-      status: 'fail',
+    return createUnexpectedCaseResult(
       testCase,
-      detail: `expected ${expectedOutcomeLabel(testCase)} but observed ${runtimeDetail}`,
-      repro: createReproCommand(rootPath, testCase, args),
-    };
+      'runtime-mismatch',
+      'runtime',
+      `expected ${expectedLabel} but the test completed successfully`,
+      observed
+    );
+  }
+
+  if (negative && negative.phase === 'runtime') {
+    if (executionResult.timedOut) {
+      return createUnexpectedCaseResult(
+        testCase,
+        'timeout',
+        'runtime',
+        'runtime timed out',
+        observed
+      );
+    }
+
+    if (executionResult.exitCode === 0) {
+      return createUnexpectedCaseResult(
+        testCase,
+        'runtime-mismatch',
+        'runtime',
+        `expected ${expectedLabel} but the test completed successfully`,
+        observed
+      );
+    }
+
+    if (matchesExpectedErrorType(runtimeErrorType, negative.type)) {
+      return createMatchedCaseResult(
+        testCase,
+        'runtime-rejection',
+        'runtime',
+        `matched ${expectedLabel}`,
+        observed
+      );
+    }
+
+    const observedType = runtimeErrorType || runtimeSummary;
+    return createUnexpectedCaseResult(
+      testCase,
+      'wrong-error-kind',
+      'runtime',
+      `expected ${expectedLabel} but observed ${observedType}`,
+      observed
+    );
   }
 
   if (executionResult.timedOut) {
-    return {
-      status: 'fail',
+    return createUnexpectedCaseResult(
       testCase,
-      detail: 'runtime timed out',
-      repro: createReproCommand(rootPath, testCase, args),
-    };
+      'timeout',
+      'runtime',
+      'runtime timed out',
+      observed
+    );
   }
 
   if (executionResult.exitCode !== 0) {
-    return {
-      status: 'fail',
+    return createUnexpectedCaseResult(
       testCase,
-      detail: `runtime failed: ${summarizeFailureText(combinedExecutionOutput)}`,
-      repro: createReproCommand(rootPath, testCase, args),
-    };
+      'runtime-mismatch',
+      'runtime',
+      `expected ${expectedLabel} but runtime rejected (${runtimeSummary})`,
+      observed
+    );
   }
 
-  return {
-    status: 'pass',
+  return createMatchedCaseResult(
     testCase,
-    detail: expectedOutcomeLabel(testCase),
+    'pass',
+    'runtime',
+    expectedLabel,
+    observed
+  );
+}
+
+function formatReasonCodes(reasons) {
+  const codes = [];
+  const entries = Array.isArray(reasons) ? reasons : [];
+
+  for (let i = 0; i < entries.length; i++) {
+    const reason = entries[i];
+    if (!reason) {
+      continue;
+    }
+
+    if (reason.code === 'path-excluded' && reason.pattern) {
+      codes.push(`path-excluded:${reason.pattern}`);
+      continue;
+    }
+
+    codes.push(reason.code || 'unknown-issue');
+  }
+
+  return codes
+    .filter((value, index, array) => array.indexOf(value) === index)
+    .join(', ');
+}
+
+function formatVariant(variant) {
+  return variant || 'all';
+}
+
+function formatResultStatus(result) {
+  const label = RESULT_LABELS[result.classification.kind] || result.classification.kind.toUpperCase();
+  const reasonSuffix = result.reasons.length > 0 ? ` [${formatReasonCodes(result.reasons)}]` : '';
+  return `${label} ${result.relativePath} [${formatVariant(result.variant)}]${reasonSuffix} ${result.classification.detail}`;
+}
+
+function createCountMap(results, selector, orderedKeys) {
+  const counts = {};
+  const order = Array.isArray(orderedKeys) ? orderedKeys : [];
+
+  for (let i = 0; i < order.length; i++) {
+    counts[order[i]] = 0;
+  }
+
+  for (let i = 0; i < results.length; i++) {
+    const key = selector(results[i]);
+    if (!Object.prototype.hasOwnProperty.call(counts, key)) {
+      counts[key] = 0;
+    }
+
+    counts[key]++;
+  }
+
+  const compact = {};
+  const keys = order.concat(Object.keys(counts).filter(key => order.indexOf(key) < 0).sort());
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (counts[key] > 0) {
+      compact[key] = counts[key];
+    }
+  }
+
+  return compact;
+}
+
+function createSummaryReport(pin, args, plan, results, exitCode) {
+  return {
+    schemaVersion: SUMMARY_SCHEMA_VERSION,
+    suite: 'js2il-test262-mvp',
+    pin: {
+      commit: pin.upstream.commit,
+      packageVersion: pin.upstream.packageVersion,
+    },
+    policy: {
+      pathExclusions: Array.isArray(pin.excludedFromMvp) ? pin.excludedFromMvp.slice() : [],
+      unsupportedResultSources: ['metadata.unsupported', 'metadata.mvpBlockers'],
+      negativeExpectations: {
+        parse: {
+          expectedObservedPhase: 'compile',
+          validateErrorType: false,
+        },
+        runtime: {
+          expectedObservedPhase: 'runtime',
+          validateErrorType: true,
+        },
+      },
+      baselineArtifact: {
+        fileName: SUMMARY_FILE_NAME,
+        format: 'js2il-test262-summary-v1',
+      },
+    },
+    selection: {
+      file: args.file,
+      filter: args.filter,
+      limit: args.limit,
+      variant: args.variant,
+      discoveredFiles: plan.discoveredCount,
+      selectedFiles: plan.selectedFileCount,
+      selectedCases: plan.cases.length,
+      classifiedEntries: results.length,
+    },
+    summary: {
+      exitCode,
+      verdictCounts: createCountMap(results, result => result.classification.verdict, VERDICT_ORDER),
+      kindCounts: createCountMap(results, result => result.classification.kind, RESULT_KIND_ORDER),
+    },
+    results,
   };
 }
 
-function formatCaseStatus(result) {
-  return `${result.status.toUpperCase()} ${result.testCase.relativePath} [${result.testCase.variant}] ${result.detail}`;
-}
-
-function formatSkipStatus(skip) {
-  return `SKIP ${skip.relativePath} [${skip.reasons.join(', ')}]`;
+function writeSummaryReport(summaryPath, report) {
+  fs.writeFileSync(summaryPath, JSON.stringify(report, null, 2) + '\n', 'utf8');
 }
 
 function printPlanHeader(rootPath, outputRoot, js2il, plan, args) {
@@ -691,7 +1130,7 @@ function runMvp(argv) {
   printPlanHeader(rootPath, outputRoot, js2il, plan, args);
 
   for (let i = 0; i < plan.skipped.length; i++) {
-    console.log(formatSkipStatus(plan.skipped[i]));
+    console.log(formatResultStatus(plan.skipped[i]));
   }
 
   if (args.list) {
@@ -700,30 +1139,36 @@ function runMvp(argv) {
       console.log(`LIST ${testCase.relativePath} [${testCase.variant}] ${expectedOutcomeLabel(testCase)}`);
     }
 
-    console.log(`SUMMARY passed=0 failed=0 skipped=${plan.skipped.length} listed=${plan.cases.length}`);
+    console.log(`SUMMARY matched=0 unexpected=0 not-run=${plan.skipped.length} listed=${plan.cases.length}`);
     return 0;
   }
 
   fs.mkdirSync(outputRoot, { recursive: true });
+  const results = plan.skipped.slice();
 
-  let passed = 0;
-  let failed = 0;
   for (let i = 0; i < plan.cases.length; i++) {
     const result = evaluateCase(rootPath, outputRoot, plan.cases[i], js2il, args);
-    console.log(formatCaseStatus(result));
-    if (result.status === 'pass') {
-      passed++;
-      continue;
-    }
-
-    failed++;
-    if (result.repro) {
-      console.log(`REPRO ${result.repro}`);
+    results.push(result);
+    console.log(formatResultStatus(result));
+    if (result.classification.verdict === 'unexpected' && result.repro) {
+      console.log(`REPRO ${createReproCommand(rootPath, result.repro, args)}`);
     }
   }
 
-  console.log(`SUMMARY passed=${passed} failed=${failed} skipped=${plan.skipped.length} selected=${plan.cases.length}`);
-  return failed === 0 ? 0 : 1;
+  const exitCode = results.some(result => result.classification.verdict === 'unexpected') ? 1 : 0;
+  const verdictCounts = createCountMap(results, result => result.classification.verdict, VERDICT_ORDER);
+  const kindCounts = createCountMap(results, result => result.classification.kind, RESULT_KIND_ORDER);
+  const summaryPath = defaultSummaryPath(outputRoot);
+  writeSummaryReport(summaryPath, createSummaryReport(pin, args, plan, results, exitCode));
+
+  const kindSummary = Object.keys(kindCounts)
+    .map(key => `${key}=${kindCounts[key]}`)
+    .join(' ');
+  console.log(
+    `SUMMARY matched=${verdictCounts.matched || 0} unexpected=${verdictCounts.unexpected || 0} not-run=${verdictCounts['not-run'] || 0} selected=${plan.cases.length} classified=${results.length}${kindSummary ? ` ${kindSummary}` : ''}`
+  );
+  console.log(`REPORT ${summaryPath}`);
+  return exitCode;
 }
 
 module.exports = {

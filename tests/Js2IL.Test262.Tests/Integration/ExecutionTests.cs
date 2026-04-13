@@ -65,11 +65,7 @@ public class ExecutionTests : ExecutionTestsBase
               "excludedFromMvp": [
                 "test/annexB/**",
                 "test/intl402/**",
-                "test/staging/**",
-                "frontmatter:flags=module",
-                "frontmatter:flags=async",
-                "frontmatter:requires-agent-or-broadcast",
-                "frontmatter:requires-async-harness"
+                "test/staging/**"
               ],
               "attributionFiles": [
                 "LICENSE",

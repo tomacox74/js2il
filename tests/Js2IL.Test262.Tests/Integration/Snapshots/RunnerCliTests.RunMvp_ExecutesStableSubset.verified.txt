@@ -6,11 +6,329 @@ output <temp>/runner-output
 discovered 6
 selected-files 6
 selected-cases 5
-SKIP test/language/mvp/skip-module.js [module-flag]
-SKIP test/language/mvp/unsupported-flag.js [unknown-flag]
+UNSUPPORTED test/language/mvp/skip-module.js [all] [module-flag] unsupported requirement
+UNSUPPORTED test/language/mvp/unsupported-flag.js [all] [unknown-flag] unsupported requirement
 PASS test/language/mvp/basic-pass.js [non-strict] positive
 PASS test/language/mvp/basic-pass.js [strict] positive
-PASS test/language/mvp/parse-negative.js [non-strict] negative(parse:SyntaxError)
-PASS test/language/mvp/runtime-negative.js [non-strict] negative(runtime:TypeError)
+COMPILE-REJECTION test/language/mvp/parse-negative.js [non-strict] matched negative(parse:SyntaxError)
+RUNTIME-REJECTION test/language/mvp/runtime-negative.js [non-strict] matched negative(runtime:TypeError)
 PASS test/language/mvp/strict-only-pass.js [strict] positive
-SUMMARY passed=5 failed=0 skipped=2 selected=5
+SUMMARY matched=5 unexpected=0 not-run=2 selected=5 classified=7 pass=3 compile-rejection=1 runtime-rejection=1 unsupported-requirement=2
+REPORT <temp>/runner-output/summary.json
+summary.json:
+{
+  "schemaVersion": 1,
+  "suite": "js2il-test262-mvp",
+  "pin": {
+    "commit": "2b2ecead6e828dd9af13a9ec72065e645724a50f",
+    "packageVersion": "5.0.0"
+  },
+  "policy": {
+    "pathExclusions": [
+      "test/annexB/**",
+      "test/intl402/**",
+      "test/staging/**"
+    ],
+    "unsupportedResultSources": [
+      "metadata.unsupported",
+      "metadata.mvpBlockers"
+    ],
+    "negativeExpectations": {
+      "parse": {
+        "expectedObservedPhase": "compile",
+        "validateErrorType": false
+      },
+      "runtime": {
+        "expectedObservedPhase": "runtime",
+        "validateErrorType": true
+      }
+    },
+    "baselineArtifact": {
+      "fileName": "summary.json",
+      "format": "js2il-test262-summary-v1"
+    }
+  },
+  "selection": {
+    "file": null,
+    "filter": null,
+    "limit": null,
+    "variant": null,
+    "discoveredFiles": 6,
+    "selectedFiles": 6,
+    "selectedCases": 5,
+    "classifiedEntries": 7
+  },
+  "summary": {
+    "exitCode": 0,
+    "verdictCounts": {
+      "matched": 5,
+      "not-run": 2
+    },
+    "kindCounts": {
+      "pass": 3,
+      "compile-rejection": 1,
+      "runtime-rejection": 1,
+      "unsupported-requirement": 2
+    }
+  },
+  "results": [
+    {
+      "id": "test/language/mvp/skip-module.js#all",
+      "relativePath": "test/language/mvp/skip-module.js",
+      "variant": null,
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "unsupported-requirement",
+        "verdict": "not-run",
+        "phase": "selection",
+        "detail": "unsupported requirement"
+      },
+      "reasons": [
+        {
+          "code": "module-flag",
+          "source": "flags:module",
+          "reason": "Module tests are outside the plain synchronous script MVP."
+        }
+      ],
+      "observed": {
+        "compile": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": null
+    },
+    {
+      "id": "test/language/mvp/unsupported-flag.js#all",
+      "relativePath": "test/language/mvp/unsupported-flag.js",
+      "variant": null,
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "unsupported-requirement",
+        "verdict": "not-run",
+        "phase": "selection",
+        "detail": "unsupported requirement"
+      },
+      "reasons": [
+        {
+          "code": "unknown-flag",
+          "source": "flags:mysteryFlag",
+          "reason": "Unsupported flag 'mysteryFlag'."
+        }
+      ],
+      "observed": {
+        "compile": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": null
+    },
+    {
+      "id": "test/language/mvp/basic-pass.js#non-strict",
+      "relativePath": "test/language/mvp/basic-pass.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "pass",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "positive"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "passed",
+          "exitCode": 0,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/basic-pass.js",
+        "variant": "non-strict"
+      }
+    },
+    {
+      "id": "test/language/mvp/basic-pass.js#strict",
+      "relativePath": "test/language/mvp/basic-pass.js",
+      "variant": "strict",
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "pass",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "positive"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "passed",
+          "exitCode": 0,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/basic-pass.js",
+        "variant": "strict"
+      }
+    },
+    {
+      "id": "test/language/mvp/parse-negative.js#non-strict",
+      "relativePath": "test/language/mvp/parse-negative.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "negative",
+        "phase": "parse",
+        "errorType": "SyntaxError",
+        "validatesErrorType": false
+      },
+      "classification": {
+        "kind": "compile-rejection",
+        "verdict": "matched",
+        "phase": "compile",
+        "detail": "matched negative(parse:SyntaxError)"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "rejected",
+          "exitCode": null,
+          "errorType": "Error",
+          "summary": "Error: [input] <output>/cases/test/language/mvp/parse-negative/non-strict/input.js: Failed to parse JavaScript: Unexpected token '(' (<output>/cases/test/language/mvp/parse-negative/non-strict/input.js:27:10)"
+        },
+        "runtime": {
+          "status": "not-run",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/parse-negative.js",
+        "variant": "non-strict"
+      }
+    },
+    {
+      "id": "test/language/mvp/runtime-negative.js#non-strict",
+      "relativePath": "test/language/mvp/runtime-negative.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "negative",
+        "phase": "runtime",
+        "errorType": "TypeError",
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "runtime-rejection",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "matched negative(runtime:TypeError)"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "rejected",
+          "exitCode": 1,
+          "errorType": "TypeError",
+          "summary": "TypeError: runtime boom"
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/runtime-negative.js",
+        "variant": "non-strict"
+      }
+    },
+    {
+      "id": "test/language/mvp/strict-only-pass.js#strict",
+      "relativePath": "test/language/mvp/strict-only-pass.js",
+      "variant": "strict",
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "pass",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "positive"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "passed",
+          "exitCode": 0,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/strict-only-pass.js",
+        "variant": "strict"
+      }
+    }
+  ]
+}
