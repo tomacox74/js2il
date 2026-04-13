@@ -307,6 +307,14 @@ function createObservation(status, overrides) {
   );
 }
 
+function normalizeReportedExitCode(exitCode) {
+  if (!Number.isInteger(exitCode)) {
+    return null;
+  }
+
+  return exitCode === 0 ? 0 : 1;
+}
+
 function createResult(relativePath, variant, metadata, classification, reasons, observed, repro) {
   return {
     id: createResultId(relativePath, variant),
@@ -873,9 +881,9 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
     runtime: executionResult.timedOut
       ? createObservation('timeout', { summary: 'TIMEOUT' })
       : executionResult.exitCode === 0
-        ? createObservation('passed', { exitCode: 0 })
+        ? createObservation('passed', { exitCode: normalizeReportedExitCode(executionResult.exitCode) })
         : createObservation('rejected', {
-            exitCode: executionResult.exitCode,
+            exitCode: normalizeReportedExitCode(executionResult.exitCode),
             errorType: runtimeErrorType,
             summary: runtimeSummary,
           }),

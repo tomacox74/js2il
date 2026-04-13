@@ -85,6 +85,8 @@ That JSON file is the baseline/report artifact for the MVP. It includes:
 - verdict/kind counts
 - per-entry classification records
 
+To keep the artifact stable across operating systems, runtime observations normalize process exits to pass (`0`) vs rejected (`1`) instead of preserving OS-specific non-zero values for thrown failures.
+
 This is the artifact later CI work (#932) should publish or compare. For checked-in baselines, contributors should use a bounded deterministic selection (for example `--file` or a narrow `--filter`) and commit only `summary.json`, not the generated compiled outputs.
 
 ## Consequences
