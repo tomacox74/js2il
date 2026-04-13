@@ -1,234 +1,62 @@
 # Tracking Issues and Triage
 
-This directory contains planning/tracking artifacts used to prioritize ECMA-262, Node.js compatibility, and issue-driven reliability work.
+This directory contains the active and historical tracking artifacts used to prioritize Node compatibility, `test262` adoption, and remaining ECMA-262 backlog work.
 
 ## Current Source of Truth (Active)
 
-**Primary planning doc**: [TriageScoreboard.md](./TriageScoreboard.md)
+- **Primary planning doc**: [TriageScoreboard.md](./TriageScoreboard.md)
+- **Live issue-order snapshot**: [IssueTriage.md](./IssueTriage.md)
+- **Node backlog snapshot**: [NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md)
+- **ECMA issue-creation candidates**: [ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md)
 
-- Uses the current implementation split: **70% features / 30% docs+issues**
-- Prioritizes **Node compatibility** as primary implementation lane
-- Includes mandatory feature PR docs-sync gate
-- Defines weekly triage cadence and ranking criteria
+These files should stay aligned with:
 
----
+1. `origin/master`
+2. `gh issue list` / `gh pr list`
+3. Generated support docs under `docs/nodejs` and `docs/ECMA262`
 
-## Historical Phase Plans (Context)
+## Current Repo Snapshot (2026-04-13)
 
-The phase-based ECMA planning docs remain useful context but are **not** the active source of truth for current sequencing:
+- `origin/master` @ `731a54f4`
+- Open issues: **17**
+- Open PRs: **0**
+- Recent merged PRs that materially changed the queue: [#969](https://github.com/tomacox74/js2il/pull/969), [#970](https://github.com/tomacox74/js2il/pull/970), [#971](https://github.com/tomacox74/js2il/pull/971), [#972](https://github.com/tomacox74/js2il/pull/972), [#973](https://github.com/tomacox74/js2il/pull/973)
+- Remaining open lanes:
+  - Node/runtime follow-ons: [#949](https://github.com/tomacox74/js2il/issues/949), [#956](https://github.com/tomacox74/js2il/issues/956)
+  - `test262` program: [#927](https://github.com/tomacox74/js2il/issues/927), [#931](https://github.com/tomacox74/js2il/issues/931)-[#934](https://github.com/tomacox74/js2il/issues/934)
+  - Performance queue: [#451](https://github.com/tomacox74/js2il/issues/451), [#737](https://github.com/tomacox74/js2il/issues/737), [#738](https://github.com/tomacox74/js2il/issues/738), [#742](https://github.com/tomacox74/js2il/issues/742), [#743](https://github.com/tomacox74/js2il/issues/743), [#746](https://github.com/tomacox74/js2il/issues/746), [#747](https://github.com/tomacox74/js2il/issues/747), [#748](https://github.com/tomacox74/js2il/issues/748), [#768](https://github.com/tomacox74/js2il/issues/768), [#837](https://github.com/tomacox74/js2il/issues/837)
 
-- [Phase1-TrackingIssues.md](./Phase1-TrackingIssues.md)
+## Historical Context
 
-Use them as background/reference only when drafting or updating issue scopes.
+- [Phase1-TrackingIssues.md](./Phase1-TrackingIssues.md) is a completed historical rest/spread planning document. Keep it for reference only; do not use it as the template for new GitHub issues.
 
-## Quick Start
+## Updating These Docs
 
-### Creating or Updating GitHub Issues
+1. Refresh GitHub state with `gh issue list --state all` and `gh pr list --state all`.
+2. Sync rankings against shipped behavior in `docs/nodejs/Index.md` and `docs/ECMA262/**/Section*.md`.
+3. Update [TriageScoreboard.md](./TriageScoreboard.md) first, then bring [IssueTriage.md](./IssueTriage.md), [NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md), and [ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md) into alignment.
+4. Keep historical docs explicitly marked historical when the active queue moves on.
 
-The tracking issue documents are formatted to be directly copied into GitHub issues. Each issue includes:
-- Detailed description and context
-- Implementation checklist
-- Acceptance criteria
-- Estimated effort
-- Dependencies
+## Mandatory Docs-Sync Gate
 
-Before creating new issues, rank work in [TriageScoreboard.md](./TriageScoreboard.md) and verify no duplicate issue exists.
+Feature work is not ready to merge until:
 
----
-
-## How to Create Issues
-
-> Follow `.github/copilot-instructions.md` guidance: use `issue-body.md` for complex issue bodies and the dedupe flow when possible.
-
-### Option 1: Manual Creation (Recommended if no GitHub CLI)
-
-1. Open [Phase1-TrackingIssues.md](./Phase1-TrackingIssues.md)
-2. Copy the content for each issue (from "## Issue N" to the next issue or section)
-3. Create a new GitHub issue
-4. Paste the content as the issue body
-5. Add labels as specified
-6. Set the title as specified
-
-### Option 2: Bulk Creation Script
-
-Create all Phase 1 issues at once:
-
-```bash
-cd /home/runner/work/js2il/js2il
-
-# Create Issue 1: Rest Parameters
-gh issue create \
-  --repo tomacox74/js2il \
-  --title "Implement Rest Parameters (...args)" \
-  --label "enhancement,phase-1,critical,rest-spread" \
-  --body "$(awk '/^## Issue 1:/,/^## Issue 2:/' docs/tracking-issues/Phase1-TrackingIssues.md | head -n -2)"
-
-# Create Issue 2: Spread in Function Calls
-gh issue create \
-  --repo tomacox74/js2il \
-  --title "Implement Spread Operator in Function Calls" \
-  --label "enhancement,phase-1,critical,rest-spread" \
-  --body "$(awk '/^## Issue 2:/,/^## Issue 3:/' docs/tracking-issues/Phase1-TrackingIssues.md | head -n -2)"
-
-# Create Issue 3: Spread in Array Literals
-gh issue create \
-  --repo tomacox74/js2il \
-  --title "Implement Spread in Array Literals" \
-  --label "enhancement,phase-1,high-priority,rest-spread" \
-  --body "$(awk '/^## Issue 3:/,/^## Issue 4:/' docs/tracking-issues/Phase1-TrackingIssues.md | head -n -2)"
-
-# Create Issue 4: Spread in Object Literals
-gh issue create \
-  --repo tomacox74/js2il \
-  --title "Implement Spread in Object Literals" \
-  --label "enhancement,phase-1,high-priority,rest-spread" \
-  --body "$(awk '/^## Issue 4:/,/^## Phase 1 Success/' docs/tracking-issues/Phase1-TrackingIssues.md | head -n -2)"
-```
-
----
-
-## Issue Structure
-
-Each tracking issue includes:
-
-### Header
-- **Title**: Clear, concise feature description
-- **Labels**: Priority, phase, and feature category
-- **Priority**: Visual indicator (🔴 CRITICAL, 🟡 HIGH, 🟢 MEDIUM, 🔵 LOW)
-
-### Content Sections
-1. **Description**: What the feature does
-2. **Priority & Why This Matters**: Business justification
-3. **Usage Examples**: Code samples showing the feature in action
-4. **ECMA-262 Reference**: Spec sections and links
-5. **Implementation Checklist**: Broken down by area (Parser, IL Gen, Testing, Docs)
-6. **Acceptance Criteria**: Definition of done
-7. **Estimated Effort**: Time estimate
-8. **Dependencies**: Related issues
-
----
-
-## Implementation Workflow
-
-For each issue:
-
-1. **Pre-Implementation**
-   - Review the tracking issue
-   - Read related ECMA-262 spec sections
-   - Understand dependencies
-   - Set up test infrastructure
-
-2. **Implementation**
-   - Follow the implementation checklist
-   - Make small, incremental changes
-   - Test frequently
-   - Update documentation as you go
-
-3. **Testing**
-   - Add execution tests (compile + run + verify output)
-   - Add generator tests (IL snapshot tests)
-   - Update snapshots: `node scripts/updateVerifiedFiles.js`
-   - Ensure all existing tests pass
-
-4. **Documentation**
-   - Update relevant `docs/ECMA262/*/Section*.json` files
-   - Regenerate markdown: `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section X.Y`
-   - Update `CHANGELOG.md`
-   - Add usage examples
-
-5. **Completion**
-   - All checklist items complete
-   - All acceptance criteria met
-   - Code review passed
-   - Tests passing
-   - Documentation updated
-
-### Mandatory Docs-Sync Gate for Feature PRs
-
-Feature PRs are not ready to merge until docs are synchronized:
-
-1. Update relevant source JSON docs (`docs/ECMA262/**/Section*.json` and/or `docs/nodejs/*.json`)
-2. Regenerate markdown/index artifacts
-3. Ensure status summaries reflect shipped behavior
-4. Include changelog entry when behavior is user-visible
-
----
-
-## Phase Tracking (Historical Snapshot)
-
-### Phase 1: Rest/Spread Foundation
-- **Status**: Historical planning context
-- **Duration**: 4-6 weeks
-- **Issues**: 4 tracking issues created
-- **Impact**: 60% modern JavaScript coverage
-
-### Phase 2: Object Utilities
-- **Status**: Historical planning context
-- **Duration**: 2-3 weeks
-- **Impact**: 85% coverage
-
-### Phase 3: Array Methods
-- **Status**: Historical planning context
-- **Duration**: 3-4 weeks
-- **Impact**: 95% coverage
-
-### Phase 4: Advanced Features
-- **Status**: Historical planning context
-- **Duration**: 4-6 weeks
-- **Impact**: ~100% coverage
-
----
+1. Relevant source JSON docs under `docs/ECMA262` and/or `docs/nodejs` are updated
+2. Generated markdown/index artifacts are regenerated
+3. Tracking docs reflect the new issue/priority state when the queue materially changes
+4. `CHANGELOG.md` is updated for user-visible behavior
 
 ## Related Documentation
 
-- **[TriageScoreboard.md](./TriageScoreboard.md)**: Active prioritization and weekly execution board
-- **[NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md)**: Persisted holistic gap analysis + popularity-weighted Node backlog snapshot
-- **[ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md)**: Top 10 unsupported/incomplete ECMA-262 features ranked for tracking issue creation
-- **[FeatureImplementationRoadmap.md](../archive/FeatureImplementationRoadmap.md)**: Complete technical roadmap
-- **[ECMA262FeaturePriority.md](../archive/ECMA262FeaturePriority.md)**: Executive summary
-- **[ECMA262FeatureStatus.md](../archive/ECMA262FeatureStatus.md)**: Quick reference
-- **[ECMA262_README.md](../archive/ECMA262_README.md)**: Documentation index
+- **[TriageScoreboard.md](./TriageScoreboard.md)**: Active prioritization and lane ordering
+- **[IssueTriage.md](./IssueTriage.md)**: Current open-issue ordering snapshot
+- **[NodeGapPopularityBacklog.md](./NodeGapPopularityBacklog.md)**: Remaining Node backlog after the recent April delivery tranche
+- **[ECMA262TopMissingBacklog.md](./ECMA262TopMissingBacklog.md)**: Current ECMA-262 issue-creation candidates derived from the generated section docs
+- **[FeatureImplementationRoadmap.md](../archive/FeatureImplementationRoadmap.md)**: Historical technical roadmap
+- **[ECMA262FeaturePriority.md](../archive/ECMA262FeaturePriority.md)**: Historical executive summary
+- **[ECMA262FeatureStatus.md](../archive/ECMA262FeatureStatus.md)**: Historical status snapshot
 
 ---
 
-## Tips for Implementers
-
-### Getting Started
-1. Start with Issue 1 (Rest Parameters) - it's foundational
-2. Set up your development environment
-3. Run existing tests to establish baseline
-4. Review the copilot instructions: `.github/copilot-instructions.md`
-
-### During Implementation
-- Make small, focused commits
-- Test early and often
-- Use the existing code patterns in the codebase
-- Don't hesitate to ask questions
-
-### Testing Best Practices
-- Write tests before implementation (TDD)
-- Test both positive and negative cases
-- Test edge cases (empty arrays, null, undefined, etc.)
-- Ensure existing tests still pass
-
-### Common Pitfalls to Avoid
-- Don't skip the symbol table updates
-- Don't forget to handle edge cases
-- Don't skip documentation updates
-- Don't leave TODOs in production code
-
----
-
-## Questions?
-
-If you have questions about:
-- **What to implement now**: See [TriageScoreboard.md](./TriageScoreboard.md)
-- **What was originally planned**: See the phase tracking docs
-- **How to implement**: See `docs/archive/FeatureImplementationRoadmap.md`
-- **Why we're implementing**: See `docs/archive/ECMA262FeaturePriority.md`
-- **Current status**: See `docs/archive/ECMA262FeatureStatus.md`
-
----
-
-*This directory supports ongoing ECMA-262 + Node.js compatibility triage*  
-*Last updated: 2026-02-21*
+*This directory supports ongoing Node compatibility, `test262`, and ECMA-262 triage.*
+*Last updated: 2026-04-13*

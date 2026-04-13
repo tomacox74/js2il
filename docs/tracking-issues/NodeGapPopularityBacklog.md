@@ -1,9 +1,9 @@
 # Node Gap Popularity Backlog
 
-> **Last Updated**: 2026-04-06
+> **Last Updated**: 2026-04-13
 > Purpose: Persist a holistic, popularity-weighted view of the highest-value remaining Node.js gaps so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent web/runtime work called out when it directly blocks common Node workloads.
-> Active review item: none. This ranking assumes the recent child-process, networking, stream, fs, timers/promises, and `node:url` baselines are already on `master`.
+> Active review item: none.
 
 ## Inputs Used
 
@@ -12,28 +12,26 @@
 - Module-level coverage: `docs/nodejs/*.json`
 - Runtime module footprint: `src/JavaScriptRuntime/Node/*` and `src/JavaScriptRuntime/CommonJS/*`
 - Repo-local demand signals: `tests/Js2IL.Tests/Node/**/*`, `tests/Js2IL.Tests/CommonJS/**/*`, and `tests/Js2IL.Tests/Import/**/*`
-- Current open Node/runtime follow-up issues: [#841](https://github.com/tomacox74/js2il/issues/841), [#946](https://github.com/tomacox74/js2il/issues/946), [#947](https://github.com/tomacox74/js2il/issues/947), [#949](https://github.com/tomacox74/js2il/issues/949), [#950](https://github.com/tomacox74/js2il/issues/950), [#951](https://github.com/tomacox74/js2il/issues/951), [#952](https://github.com/tomacox74/js2il/issues/952), [#953](https://github.com/tomacox74/js2il/issues/953), [#954](https://github.com/tomacox74/js2il/issues/954), [#955](https://github.com/tomacox74/js2il/issues/955), [#956](https://github.com/tomacox74/js2il/issues/956)
+- Current open Node/runtime follow-up issues: [#949](https://github.com/tomacox74/js2il/issues/949), [#956](https://github.com/tomacox74/js2il/issues/956)
+- Recently closed Node/runtime issues that changed the backlog shape: [#946](https://github.com/tomacox74/js2il/issues/946), [#947](https://github.com/tomacox74/js2il/issues/947), [#950](https://github.com/tomacox74/js2il/issues/950)-[#955](https://github.com/tomacox74/js2il/issues/955), and the architecture investigation [#841](https://github.com/tomacox74/js2il/issues/841)
 
 ## Current Baseline (Snapshot)
 
-- Node docs currently track **19 modules** (**17 `partial`**, **2 `completed`**) and **14 globals** (**14 `supported`**).
-- Several high-value families have moved from "missing" to "follow-on" status on `master`:
-  - `child_process` now has a documented `fork()` + JSON IPC baseline for compiled child modules.
-  - `http`, `https`, `tls`, and `net` all have practical loopback/local baselines.
-  - `stream` has lifecycle helpers (`pipeline`, `finished`, pause/resume, UTF-8 decoding, basic backpressure) instead of only raw class stubs.
-  - `fs` / `fs/promises` now cover whole-file helpers, FileHandle open/read/write/close, and file stream basics.
-  - `timers/promises` now supports the one-shot Promise helpers.
-  - `node:url` now exposes a focused WHATWG URL module baseline.
+- Node docs currently track **19 modules** (**16 `partial`**, **3 `completed`**) and **16 globals** (**15 `supported`**, **1 `partial`**).
+- Several previously top-ranked gaps are now shipped on `master`:
+  - `globalThis.URL` is supported and shares constructor identity with `node:url`.
+  - The extractor network-mode follow-on landed, so JS2IL can now run the real `scripts/ECMA262` networking path instead of being limited to offline/manual fetch flows.
+  - `child_process`, `timers/promises`, loader/runtime probing, `fs`, `crypto`, and `stream` all moved forward enough that their previous issue-backed follow-ons are now closed.
 - The biggest remaining popularity-weighted gaps are now concentrated in:
-  - missing globals and web-adjacent surfaces (`URL`, `URLSearchParams`, `fetch`, `Headers`, `Request`, `Response`)
-  - outbound client parity beyond local loopback baselines (`http`, `https`, `tls`)
-  - deeper process-control and scheduler follow-ons (`child_process`, `timers/promises`)
-  - mature toolchain surfaces that still have only pragmatic baselines (`fs`, `stream`, `crypto`, package loader/runtime probing)
+  - missing high-level web-style globals (`fetch`, `Headers`, `Request`, `Response`)
+  - production-grade TLS/HTTPS parity beyond the current local/self-signed baseline
+  - still-thin but commonly assumed module surfaces (`os`, `path.posix` / `path.win32`, `util`, `URLSearchParams`)
+  - deeper networking/runtime polish (`net`, broader outbound client behavior)
 
 ## Repo-local Demand Signals
 
-- Node coverage is now strongest around the landed foundations: `fs`, `fs/promises`, `http`, `https`, `tls`, `net`, `stream`, `timers/promises`, `child_process`, `url`, and `util`.
-- Because those foundations exist, the next backlog should optimize for **ecosystem unblock value**: finishing the most commonly assumed follow-ons on top of those modules rather than starting lower-value new modules.
+- Node coverage is strongest around the recently delivered foundations: `child_process`, `crypto`, `fs`, `http`, `https`, `net`, `stream`, `timers/promises`, `url`, `util`, and `zlib`.
+- Because those foundations now exist, the next backlog should optimize for **ecosystem unblock value**: finish the most commonly assumed follow-ons on top of those modules instead of starting low-value new modules.
 
 ## Ranking Criteria
 
@@ -45,31 +43,31 @@
 
 ## Current ranked backlog (recommended order)
 
+Only [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://github.com/tomacox74/js2il/issues/956) remain open from the previous issue-backed top 10. Ranks 3-10 below are the best current **issue-creation candidates** if they remain high-priority after those two land.
+
 | Rank | Feature family | Primary Node area | GitHub issue | Current status signal | Why it is top-10 now |
 |---:|---|---|---|---|---|
-| 1 | [Global WHATWG URL / URLSearchParams exposure](https://github.com/tomacox74/js2il/issues/946) | globals + `url` | [#946](https://github.com/tomacox74/js2il/issues/946) | `node:url` works, but bare globals are still missing and direct global usage is still a known gap | Common Node/browser-style code assumes `globalThis.URL`, and this already surfaced as a real repo-local tooling blocker. |
-| 2 | [Outbound HTTP client parity for real tooling](https://github.com/tomacox74/js2il/issues/947) | `http` / `https` | [#947](https://github.com/tomacox74/js2il/issues/947) (related [#841](https://github.com/tomacox74/js2il/issues/841)) | Loopback HTTP/HTTPS baselines exist, but real network-mode workflows still need broader request/redirect/text-path parity | This is the clearest self-hosting/runtime follow-on after the recent extractor investigation and would unlock more than synthetic loopback demos. |
-| 3 | [Global `fetch` / `Headers` / `Request` / `Response` baseline](https://github.com/tomacox74/js2il/issues/949) | globals + web platform | [#949](https://github.com/tomacox74/js2il/issues/949) | These globals are not listed in the current supported Node global inventory, even though the lower transport stack now exists in partial form | Modern Node 18+/22 packages increasingly assume fetch-style APIs first and only fall back to raw `node:http` in edge cases. |
-| 4 | [Advanced child-process parity after the current fork baseline](https://github.com/tomacox74/js2il/issues/950) | `child_process` | [#950](https://github.com/tomacox74/js2il/issues/950) (hosted-fork sub-gap: [#914](https://github.com/tomacox74/js2il/issues/914)) | `spawn`/`exec`/`execFile`/`fork` basics now work, but detached children, handle passing, advanced serialization, and hosted-engine parity remain unsupported | Dev servers, worker orchestration, and IPC-heavy toolchains often need more than the current compiled-child JSON IPC slice. |
-| 5 | [`timers/promises.setInterval(...)` async-iterator contract](https://github.com/tomacox74/js2il/issues/951) | `timers/promises` | [#951](https://github.com/tomacox74/js2il/issues/951) | The one-shot Promise helpers are supported, but `setInterval(...)` is still explicitly rejected | Polling, retry, and scheduler libraries use this exact modern timer surface and it is now the only clearly missing API in that module. |
-| 6 | [Broader package loader and runtime-probing parity](https://github.com/tomacox74/js2il/issues/952) | `require()` / package resolution | [#952](https://github.com/tomacox74/js2il/issues/952) | Literal compile-time resolution works, but runtime probing, non-`./` package imports targets, and custom loaders/hooks remain unsupported | Plugin ecosystems and CLIs frequently depend on dynamic resolution patterns that the current compile-time-only slice cannot model. |
-| 7 | [File watching, rich stats, and raw-fd parity](https://github.com/tomacox74/js2il/issues/953) | `fs` / `fs/promises` | [#953](https://github.com/tomacox74/js2il/issues/953) | Whole-file helpers, FileHandle basics, and file streams exist; watchers, richer stats/permissions, and raw numeric-fd workflows are still missing | Build tools and dev servers hit watch/stat/raw-fd gaps quickly even when the basic file I/O baseline is present. |
-| 8 | [Practical crypto expansion beyond hashes/HMAC](https://github.com/tomacox74/js2il/issues/954) | `crypto` | [#954](https://github.com/tomacox74/js2il/issues/954) | Hash/HMAC/random/subtle-HMAC baselines exist, but pbkdf2Sync, ciphers, asymmetric keys, key import/export, and broader Web Crypto are still absent | Real auth, signing, and secure-config workloads still need more than the current digest-focused slice. |
-| 9 | [Stream `objectMode` / `stream/promises` / AbortSignal completeness](https://github.com/tomacox74/js2il/issues/955) | `stream` | [#955](https://github.com/tomacox74/js2il/issues/955) | Callback `pipeline`/`finished` and basic Readable/Writable/Transform support exist, but object mode, promise helpers, AbortSignal, and richer buffering semantics remain out of scope | Many adapters and higher-level libraries assume these helpers instead of wiring raw `pipe()` + events manually. |
-| 10 | [TLS trust, client-auth, and agent parity](https://github.com/tomacox74/js2il/issues/956) | `https` / `tls` | [#956](https://github.com/tomacox74/js2il/issues/956) | Local self-signed loopback flows work, but custom CA trust, client certificates, ALPN, and HTTPS agent pooling are still unsupported | Real outbound service integrations often fail here even after basic local HTTPS tests pass. |
+| 1 | [Global `fetch` / `Headers` / `Request` / `Response` baseline](https://github.com/tomacox74/js2il/issues/949) | globals + web platform | [#949](https://github.com/tomacox74/js2il/issues/949) | These globals are still absent from the supported global inventory even though the lower transport stack now exists in partial form | Modern Node 18+/22 packages increasingly assume fetch-style APIs first and only fall back to raw `node:http` in edge cases. |
+| 2 | [TLS trust, client-auth, and agent parity](https://github.com/tomacox74/js2il/issues/956) | `https` / `tls` | [#956](https://github.com/tomacox74/js2il/issues/956) | Local self-signed loopback flows work, but custom CA trust, client certificates, ALPN, and richer agent behavior remain unsupported | Real outbound service integrations still fail here even after the recent HTTP/TLS baseline wins. |
+| 3 | `os` surface expansion | `os` | No dedicated issue yet | The documented baseline is still only `tmpdir()` and `homedir()` | CLI and tooling code frequently expects many more environment and platform helpers than the current tiny slice exposes. |
+| 4 | `URLSearchParams` completion and legacy `url` follow-ons | globals + `url` | No dedicated issue yet | `URL` is now supported, but `URLSearchParams` is still `partial`, and legacy `url.parse` / `url.format` remain unimplemented | URL support is much more useful now, which makes the remaining gaps more visible to real workloads. |
+| 5 | `path.posix` / `path.win32` completeness | `path` | No dedicated issue yet | Core `path` helpers are in good shape, but the namespaced `posix` / `win32` surfaces are intentionally minimal | Bundlers, build tools, and cross-platform fixtures often rely on the namespaced helpers rather than the host-default surface. |
+| 6 | Broader `net` parity beyond loopback IPv4 | `net` | No dedicated issue yet | `ref()` / `unref()`, non-UTF-8 encoding paths, `keepAlive` initialDelay, and broader IPv6/non-loopback expectations remain unsupported | Lower-level networking stacks, dev servers, and adapters hit these controls quickly once basic TCP already works. |
+| 7 | Broader outbound `http` / `https` client polish after the extractor baseline | `http` / `https` | No dedicated issue yet | The extractor-specific network mode landed, but the public client surfaces still expose only a pragmatic subset of broader outbound behavior | There is still a meaningful gap between "works for the checked-in extractor path" and "safe for arbitrary Node HTTP clients". |
+| 8 | `util` follow-ons | `util` | No dedicated issue yet | `promisify`, `inherits`, `format`, and practical `types` / `inspect` slices exist, but the module remains `partial` | Utility shims get pulled in by a wide range of packages, so missing edges here create diffuse ecosystem friction. |
+| 9 | Practical compression expansion beyond the current gzip slice | `zlib` | No dedicated issue yet | `gzipSync`, `gunzipSync`, `createGzip`, and `createGunzip` exist, but deflate/inflate/brotli and richer streaming/tuning remain unsupported | Compression support is increasingly relevant once HTTP/stream baselines exist and packages start expecting richer content-encoding coverage. |
+| 10 | `perf_hooks` baseline expansion | `perf_hooks` | No dedicated issue yet | Only `performance` and `performance.now()` are documented today | Lower impact than the items above, but still a common helper surface for modern tooling and metrics libraries. |
 
 ## Notable next-tier gaps
 
-- **Broader `net` parity beyond loopback IPv4**: `ref()` / `unref()`, non-UTF-8 encoding paths, `keepAlive` initialDelay, IPv6/non-loopback expectations, and other broader socket controls remain lower-level but still meaningful follow-ons.
-- **`os` surface expansion**: the documented baseline is still only `tmpdir()` and `homedir()`, so a lot of common CLI/environment helpers remain absent.
-- **`path.posix` / `path.win32` completeness**: the core `path` helpers are in good shape, but the namespaced `posix`/`win32` surfaces are still intentionally minimal.
-- **`util` follow-ons**: `promisify`, `inherits`, `format`, and practical `types`/`inspect` slices exist, but broader utility parity is still incomplete.
-- **Legacy low-priority gaps**: `querystring` helper extras and broader `perf_hooks` APIs are still partial, but they currently unblock fewer workloads than the ten items above.
+- **Further `child_process` polish**: the module is much stronger now, but detached launches, handle passing, and advanced serialization remain unsupported by design in the delivered slice.
+- **`querystring` helper extras**: lower priority now that WHATWG URL support is present, but still incomplete.
+- **More `zlib` streaming fidelity**: today the delivered transform helpers buffer the full payload and emit a single output chunk on `end()`.
 
 ## Recommended sequencing
 
-- **Start with the current high-signal issue-backed items first:** [#946](https://github.com/tomacox74/js2il/issues/946) -> [#947](https://github.com/tomacox74/js2il/issues/947).
-- **The previously untracked top-10 gaps now have dedicated issues:** [#949](https://github.com/tomacox74/js2il/issues/949), [#950](https://github.com/tomacox74/js2il/issues/950), [#951](https://github.com/tomacox74/js2il/issues/951), [#952](https://github.com/tomacox74/js2il/issues/952), [#953](https://github.com/tomacox74/js2il/issues/953), [#954](https://github.com/tomacox74/js2il/issues/954), [#955](https://github.com/tomacox74/js2il/issues/955), and [#956](https://github.com/tomacox74/js2il/issues/956).
+- **Finish the remaining issue-backed Node work first:** [#949](https://github.com/tomacox74/js2il/issues/949) -> [#956](https://github.com/tomacox74/js2il/issues/956).
+- **Then cut the next issue from the highest remaining untracked gap:** ranks 3-5 above are the strongest current candidates.
 - **Keep transport follow-ons layered:** do not start a higher-level convenience surface (`fetch`, advanced HTTPS, agent pooling) without the minimum lower-layer HTTP/TLS behavior it depends on.
 
 ## Gate for Each Delivered Item
@@ -83,24 +81,24 @@
 
 - This ranking is deliberately heuristic. It reflects the current docs plus repo-local demand signals, not external npm telemetry.
 - Some items are feature families rather than single APIs. Each should still be delivered in explicit, documented slices.
-- The global/web-platform items (`URL`, `fetch`, `Request`, `Response`, `Headers`) are included because they now directly affect common Node workloads, even when they are not packaged as core-module gaps.
+- The global/web-platform items are included because they now directly affect common Node workloads, even when they are not packaged as classic core-module gaps.
 
-## Issue #841 investigation addendum (2026-04-09)
+## Issue #841 investigation addendum (closed 2026-04-09)
 
-This addendum is the concrete output for [#841](https://github.com/tomacox74/js2il/issues/841). It does not rewrite the historical 2026-04-06 ranking above; it records the transport architecture recommendation against the current post-`v0.9.7` HTTP/TLS baseline.
+This addendum is the concrete output for [#841](https://github.com/tomacox74/js2il/issues/841). It remains useful reference material for the remaining network work; it is no longer an open queue item.
 
 ### Current-state inventory
 
-- `src/JavaScriptRuntime/Node/Net.cs` already owns the transport/event-loop model through `TcpClient` / `TcpListener`, `IIOScheduler`, `NodeSchedulerState`, incremental reads/writes, and Node-shaped socket lifecycle behavior.
-- `src/JavaScriptRuntime/Node/Http.cs` already owns the custom HTTP/1.1 request/response model: `HttpClientRequest`, `HttpServer`, `IncomingMessage`, `ServerResponse`, a custom parser/decoder, chunked framing, sequential keep-alive reuse, and explicit unsupported handling for CONNECT, Upgrade, Expect/100-continue, and pipelining.
-- `src/JavaScriptRuntime/Node/Https.cs` already layers TLS on top of that same transport through `SslStream`, with a documented local/self-signed baseline and explicit omissions around custom CA trust, client certificates, ALPN, and advanced `https.Agent` behavior.
+- `src/JavaScriptRuntime/Node/Net.cs` owns the transport/event-loop model through `TcpClient` / `TcpListener`, `IIOScheduler`, `NodeSchedulerState`, incremental reads/writes, and Node-shaped socket lifecycle behavior.
+- `src/JavaScriptRuntime/Node/Http.cs` owns the custom HTTP/1.1 request/response model: `HttpClientRequest`, `HttpServer`, `IncomingMessage`, `ServerResponse`, custom parsing/decoding, chunked framing, sequential keep-alive reuse, and explicit unsupported handling for CONNECT, Upgrade, Expect/100-continue, and pipelining.
+- `src/JavaScriptRuntime/Node/Https.cs` layers TLS on top of that same transport through `SslStream`, with a documented local/self-signed baseline and explicit omissions around custom CA trust, client certificates, ALPN, and advanced `https.Agent` behavior.
 - Because JS2IL already exposes Node-shaped request/response/socket/event surfaces, any .NET-backed reuse has to sit behind those existing objects instead of replacing them wholesale.
 
 ### Options comparison
 
 | Option | Best fit | Advantages | Main risks / mismatches | Recommendation |
 |---|---|---|---|---|
-| Current custom TCP + parser path | Existing server and client baseline | Full control over socket visibility, unsupported-feature gating, event-loop scheduling, and Node-shaped objects | More incremental work is needed to grow outbound parity and TLS follow-ons | **Keep as the server-side and transport foundation** |
+| Current custom TCP + parser path | Existing server and client baseline | Full control over socket visibility, unsupported-feature gating, event-loop scheduling, and Node-shaped objects | More incremental work is still needed to grow outbound parity and TLS follow-ons | **Keep as the server-side and transport foundation** |
 | `HttpClient` / `SocketsHttpHandler` | Outbound client follow-ons only | Mature cross-platform HTTP/TLS behavior, strong handler knobs, and headers-first response streaming | Raw socket visibility is limited, default auto-behaviors must be disabled, agent semantics are not 1:1, and abort/error timing still needs a Node adapter | **Investigate selectively for outbound-only flows** |
 | `HttpListener` | Narrow server experiments at most | Built-in server API with low immediate coding cost | Older API, host/OS friction, and a poor fit for Node's stream/event/socket model | **Do not adopt for core `node:http` server work** |
 | Kestrel / ASP.NET Core | Heavyweight hosting only | Rich HTTP/TLS infrastructure and a well-tested server stack | Large dependency/runtime weight, request-pipeline model differs from Node, and it does not naturally expose Node-like socket/request lifecycles | **Possible for a hosting-specific integration layer, but not recommended for the baseline Node runtime** |
@@ -116,13 +114,10 @@ This addendum is the concrete output for [#841](https://github.com/tomacox74/js2
   - Explicit mapping for abort/destroy/error timing and clear preservation of supported keep-alive / agent behavior.
   - A deliberate answer for any supported `request.socket` / `response.socket` expectations before widening the public surface.
 - Do not pursue `HttpListener` or Kestrel as the baseline `node:http` server implementation; both fight the Node evented stream model harder than the current parser path helps.
-- Kestrel is still technically worth considering for a separate hosting-oriented integration layer if the goal changes and strict Node socket/runtime semantics become less important than leveraging a richer ASP.NET Core host stack.
 
 ### Follow-on map
 
-- [#947](https://github.com/tomacox74/js2il/issues/947) should use this recommendation to choose between:
-  1. extending the current custom client path for the extractor's exact needs, or
-  2. prototyping a narrow outbound `HttpClient` adapter against the real `scripts/ECMA262/extractEcma262SectionHtml.js` workload.
-- The extractor's transport needs today are intentionally modest: simple GET, manual redirect handling in the `https` fallback, and UTF-8 text body consumption. That makes it a good spike target without forcing a full client rewrite.
+- [#947](https://github.com/tomacox74/js2il/issues/947) is now closed and should be treated as the first worked example of this recommendation being applied to a real tooling workload.
+- [#949](https://github.com/tomacox74/js2il/issues/949) should reuse the same transport guidance when layering fetch-style globals over the current HTTP/HTTPS baseline.
 - [#956](https://github.com/tomacox74/js2il/issues/956) should only build on a `HttpClient` path if the spike proves we can map CA trust, client certificates, ALPN, and agent behavior cleanly; otherwise it should continue extending the current `SslStream` + `NetSocket` / `https` stack.
-- Non-goals for the first follow-on after [#841](https://github.com/tomacox74/js2il/issues/841): server rewrite, HTTP/2, WebSocket/Upgrade, CONNECT tunneling, or replacing `node:net`.
+- Non-goals for the next transport follow-ons: server rewrite, HTTP/2, WebSocket/Upgrade, CONNECT tunneling, or replacing `node:net`.
