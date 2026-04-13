@@ -15,6 +15,10 @@ namespace Js2IL.Tests.Integration
         public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp));
 
         [Fact]
+        public Task Compile_Scripts_Test262MetadataParser()
+            => ExecutionTest(nameof(Compile_Scripts_Test262MetadataParser), additionalScripts: ["test262/metadataParser"]);
+
+        [Fact]
         public async Task Compile_Scripts_Test262Bootstrap()
         {
             using var currentDirectory = new TemporaryCurrentDirectory();

@@ -19,6 +19,10 @@ namespace Js2IL.Tests.Integration
         public Task Compile_Scripts_Test262Bootstrap() => GenerateTest(nameof(Compile_Scripts_Test262Bootstrap));
 
         [Fact]
+        public Task Compile_Scripts_Test262MetadataParser()
+            => GenerateTest(nameof(Compile_Scripts_Test262MetadataParser), ["test262/metadataParser"]);
+
+        [Fact]
         public Task Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown()
             => GenerateTest(nameof(Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown), ["node_modules/turndown/index"]);
 
