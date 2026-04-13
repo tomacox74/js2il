@@ -6,6 +6,98 @@ output <temp>/runner-output
 discovered 7
 selected-files 1
 selected-cases 1
-FAIL test/language/mvp/fail-positive.js [non-strict] runtime failed: Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value
+RUNTIME-MISMATCH test/language/mvp/fail-positive.js [non-strict] expected positive but runtime rejected (Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value)
 REPRO node scripts/test262/runMvp.js --root "<temp>/test262-root" --file "test/language/mvp/fail-positive.js" --variant non-strict
-SUMMARY passed=0 failed=1 skipped=0 selected=1
+SUMMARY matched=0 unexpected=1 not-run=0 selected=1 classified=1 runtime-mismatch=1
+REPORT <temp>/runner-output/summary.json
+summary.json:
+{
+  "schemaVersion": 1,
+  "suite": "js2il-test262-mvp",
+  "pin": {
+    "commit": "2b2ecead6e828dd9af13a9ec72065e645724a50f",
+    "packageVersion": "5.0.0"
+  },
+  "policy": {
+    "pathExclusions": [
+      "test/annexB/**",
+      "test/intl402/**",
+      "test/staging/**"
+    ],
+    "unsupportedResultSources": [
+      "metadata.unsupported",
+      "metadata.mvpBlockers"
+    ],
+    "negativeExpectations": {
+      "parse": {
+        "expectedObservedPhase": "compile",
+        "validateErrorType": false
+      },
+      "runtime": {
+        "expectedObservedPhase": "runtime",
+        "validateErrorType": true
+      }
+    },
+    "baselineArtifact": {
+      "fileName": "summary.json",
+      "format": "js2il-test262-summary-v1"
+    }
+  },
+  "selection": {
+    "file": "test/language/mvp/fail-positive.js",
+    "filter": null,
+    "limit": null,
+    "variant": null,
+    "discoveredFiles": 7,
+    "selectedFiles": 1,
+    "selectedCases": 1,
+    "classifiedEntries": 1
+  },
+  "summary": {
+    "exitCode": 1,
+    "verdictCounts": {
+      "unexpected": 1
+    },
+    "kindCounts": {
+      "runtime-mismatch": 1
+    }
+  },
+  "results": [
+    {
+      "id": "test/language/mvp/fail-positive.js#non-strict",
+      "relativePath": "test/language/mvp/fail-positive.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "runtime-mismatch",
+        "verdict": "unexpected",
+        "phase": "runtime",
+        "detail": "expected positive but runtime rejected (Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value)"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "rejected",
+          "exitCode": 3762504530,
+          "errorType": null,
+          "summary": "Unhandled exception. JavaScriptRuntime.JsThrownValueException: JavaScript threw a non-exception value"
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/fail-positive.js",
+        "variant": "non-strict"
+      }
+    }
+  ]
+}

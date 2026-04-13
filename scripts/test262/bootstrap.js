@@ -110,6 +110,16 @@ function ensureStringArray(value, label) {
   }
 }
 
+function validateExcludedFromMvp(value) {
+  ensureStringArray(value, 'excludedFromMvp');
+
+  for (const entry of value) {
+    if (entry.startsWith('frontmatter:')) {
+      throw new Error("Invalid pin file: 'excludedFromMvp' now accepts only path-based exclusions; frontmatter rules belong in metadata-driven unsupported classification.");
+    }
+  }
+}
+
 function validatePin(pin) {
   if (!pin || typeof pin !== 'object') {
     throw new Error('Invalid pin file: expected a JSON object.');
@@ -133,7 +143,7 @@ function validatePin(pin) {
   ensureStringArray(pin.requiredFiles, 'requiredFiles');
   ensureStringArray(pin.requiredDirectories, 'requiredDirectories');
   ensureStringArray(pin.defaultHarnessFiles, 'defaultHarnessFiles');
-  ensureStringArray(pin.excludedFromMvp, 'excludedFromMvp');
+  validateExcludedFromMvp(pin.excludedFromMvp);
   ensureStringArray(pin.attributionFiles, 'attributionFiles');
 
   if (!/^[0-9a-f]{40}$/i.test(pin.upstream.commit)) {
