@@ -77,7 +77,7 @@ public class RunnerCliTests
     {
         string test262Root = Path.Combine(root, "test262-root");
         Directory.CreateDirectory(test262Root);
-        Directory.CreateDirectory(Path.Combine(test262Root, @"test\built-ins"));
+        Directory.CreateDirectory(Path.Combine(test262Root, "test", "built-ins"));
 
         WriteFile(test262Root, "LICENSE", "fixture license\n");
         WriteFile(test262Root, "INTERPRETING.md", "fixture instructions\n");
@@ -170,7 +170,10 @@ public class RunnerCliTests
 
     private static void WriteFile(string root, string relativePath, string content)
     {
-        string filePath = Path.Combine(root, relativePath);
+        string normalizedRelativePath = relativePath
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+        string filePath = Path.Combine(root, normalizedRelativePath);
         Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
         File.WriteAllText(filePath, content.ReplaceLineEndings("\n"));
     }
