@@ -13,7 +13,6 @@ namespace Js2IL.Tests
 {
     public abstract class GeneratorTestsBase
     {
-        private readonly string _outputPath;
         private readonly string _testCategory;
         private readonly VerifySettings _verifySettings = new();
 
@@ -21,14 +20,6 @@ namespace Js2IL.Tests
         {
             _verifySettings.DisableDiff();
             _testCategory = testCategory;
-
-            // Create a temp directory for the generated assemblies.
-            // Use a unique per-run directory to avoid file locks from Assembly.LoadFile() causing
-            // intermittent failures when re-running tests on Windows.
-            var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
-            var runId = Guid.NewGuid().ToString("N");
-            _outputPath = Path.Combine(root, $"{testCategory}.GeneratorTests", runId);
-            Directory.CreateDirectory(_outputPath);
         }
 
         protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
@@ -80,15 +71,17 @@ namespace Js2IL.Tests
 
         private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var category = GetCategoryFromNamespace();
+            var testType = GetType();
+            var assembly = testType.Assembly;
+            var category = TestProjectLayout.GetCategoryFromNamespace(testType);
+            var resourceRoot = TestProjectLayout.GetResourceRoot(testType);
             // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
             // Embedded resource names use '.' separators, so normalize path separators to '.'.
             var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
             var categorySpecific = string.IsNullOrEmpty(category)
                 ? null
-                : $"Js2IL.Tests.{category}.JavaScript.{resourceKey}.js";
-            var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
+                : $"{resourceRoot}.{category}.JavaScript.{resourceKey}.js";
+            var legacy = $"{resourceRoot}.JavaScript.{resourceKey}.js";
 
             Stream? stream = categorySpecific != null ? assembly.GetManifestResourceStream(categorySpecific) : null;
             var resolvedResourceName = categorySpecific;
@@ -124,10 +117,10 @@ namespace Js2IL.Tests
                 using (var reader = new StreamReader(stream))
                 {
                     var script = reader.ReadToEnd();
-                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(assembly, resolvedResourceName!, callerSourceFilePath);
+                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(testType, assembly, resolvedResourceName!, callerSourceFilePath);
                     if (string.IsNullOrWhiteSpace(sourcePath) && !string.IsNullOrWhiteSpace(category))
                     {
-                        var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+                        var projectRoot = TestProjectLayout.FindProjectRoot(testType, callerSourceFilePath);
                         if (projectRoot != null)
                         {
                             var categoryPath = category.Replace('.', Path.DirectorySeparatorChar);
@@ -149,7 +142,7 @@ namespace Js2IL.Tests
             }
         }
 
-        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Assembly assembly, string jsResourceName, string callerSourceFilePath)
+        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Type testType, Assembly assembly, string jsResourceName, string callerSourceFilePath)
         {
             var pathResourceName = jsResourceName.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
                 ? jsResourceName.Substring(0, jsResourceName.Length - 3) + ".path"
@@ -173,7 +166,7 @@ namespace Js2IL.Tests
                 return relativePath;
             }
 
-            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+            var projectRoot = TestProjectLayout.FindProjectRoot(testType, callerSourceFilePath);
             if (projectRoot == null)
             {
                 return null;
@@ -181,29 +174,6 @@ namespace Js2IL.Tests
 
             relativePath = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
             return Path.GetFullPath(Path.Combine(projectRoot, relativePath));
-        }
-
-        private static string? FindDirectoryContainingFile(string startDirectory, string fileName)
-        {
-            var current = startDirectory;
-            while (!string.IsNullOrWhiteSpace(current))
-            {
-                var candidate = Path.Combine(current, fileName);
-                if (File.Exists(candidate))
-                {
-                    return current;
-                }
-
-                var parent = Directory.GetParent(current);
-                if (parent == null)
-                {
-                    break;
-                }
-
-                current = parent.FullName;
-            }
-
-            return null;
         }
 
         private void AssertCompiledModuleManifest(string assemblyPath, string rootScriptPath, string[]? additionalScripts, string outputDirectory)
@@ -340,22 +310,6 @@ namespace Js2IL.Tests
             }
 
             return false;
-        }
-
-        private string GetCategoryFromNamespace()
-        {
-            var ns = GetType().Namespace ?? string.Empty;
-            const string rootNs = "Js2IL.Tests.";
-            if (ns.StartsWith(rootNs, StringComparison.Ordinal))
-            {
-                var category = ns.Substring(rootNs.Length);
-                if (!string.IsNullOrWhiteSpace(category))
-                {
-                    return category;
-                }
-            }
-
-            return ns.Split('.').LastOrDefault() ?? string.Empty;
         }
 
     }

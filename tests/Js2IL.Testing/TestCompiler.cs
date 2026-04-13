@@ -10,7 +10,7 @@ namespace Js2IL.Tests
     /// <summary>
     /// Shared compilation logic for test assemblies.
     /// </summary>
-    internal static class TestCompiler
+    public static class TestCompiler
     {
         /// <summary>
         /// Compiles JavaScript test code to a .NET assembly.

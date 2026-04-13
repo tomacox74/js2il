@@ -5,7 +5,7 @@ using ICSharpCode.Decompiler;
 
 namespace Js2IL.Tests.Utilities
 {
-    internal class AssemblyToText
+    public static class AssemblyToText
     {
         public static string ConvertToTextUsingIlSpyCmd(string assemblyPath)
         {

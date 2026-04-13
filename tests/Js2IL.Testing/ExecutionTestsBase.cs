@@ -1,38 +1,24 @@
-using Js2IL.Services;
-using Js2IL.Validation;
-using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Runtime.Loader;
-using JavaScriptRuntime;
-using System.Runtime.ExceptionServices;
 using Js2IL.IR;
+using JavaScriptRuntime;
+using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.ExceptionServices;
+using System.Runtime.Loader;
+using System.Text;
 
 namespace Js2IL.Tests
 {
     public abstract class ExecutionTestsBase
     {
-        private readonly JavaScriptParser _parser;
-        private readonly JavaScriptAstValidator _validator;
-        private readonly string _outputPath;
         private readonly string _testCategory;
         private readonly VerifySettings _verifySettings = new();
 
         protected ExecutionTestsBase(string testCategory)
         {
-            _parser = new JavaScriptParser();
-            _validator = new JavaScriptAstValidator();
             _verifySettings.DisableDiff();
             _testCategory = testCategory;
-
-            // Use a unique per-run directory to avoid file locks from in-proc AssemblyLoadContext
-            // execution causing intermittent failures when re-running tests on Windows.
-            var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
-            var runId = Guid.NewGuid().ToString("N");
-            _outputPath = Path.Combine(root, $"{testCategory}.ExecutionTests", runId);
-            Directory.CreateDirectory(_outputPath);
         }
 
         protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
@@ -336,14 +322,16 @@ namespace Js2IL.Tests
 
         private (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var testType = GetType();
+            var assembly = testType.Assembly;
             // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
             // Embedded resource names use '.' separators, so normalize path separators to '.'.
             var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
 
-            var category = GetCategoryFromNamespace();
-            var categorySpecific = $"Js2IL.Tests.{category}.JavaScript.{resourceKey}.js";
-            var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
+            var category = TestProjectLayout.GetCategoryFromNamespace(testType);
+            var resourceRoot = TestProjectLayout.GetResourceRoot(testType);
+            var categorySpecific = $"{resourceRoot}.{category}.JavaScript.{resourceKey}.js";
+            var legacy = $"{resourceRoot}.JavaScript.{resourceKey}.js";
 
             Stream? stream = assembly.GetManifestResourceStream(categorySpecific);
             var resolvedResourceName = categorySpecific;
@@ -377,14 +365,14 @@ namespace Js2IL.Tests
                 using (var reader = new StreamReader(stream))
                 {
                     var script = reader.ReadToEnd();
-                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(assembly, resolvedResourceName, callerSourceFilePath);
+                    var sourcePath = TryGetOriginalSourcePathFromEmbeddedResource(testType, assembly, resolvedResourceName, callerSourceFilePath);
                     if (string.IsNullOrWhiteSpace(sourcePath))
                     {
                         // Fallback: derive the repo path from known test layout:
-                        // tests/Js2IL.Tests/<Category>/JavaScript/<testName>.js
+                        // tests/<TestProject>/<Category>/JavaScript/<testName>.js
                         if (!string.IsNullOrWhiteSpace(category))
                         {
-                            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+                            var projectRoot = TestProjectLayout.FindProjectRoot(testType, callerSourceFilePath);
                             if (projectRoot != null)
                             {
                                 var categoryPath = category.Replace('.', Path.DirectorySeparatorChar);
@@ -406,7 +394,7 @@ namespace Js2IL.Tests
             }
         }
 
-        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Assembly assembly, string jsResourceName, string callerSourceFilePath)
+        private static string? TryGetOriginalSourcePathFromEmbeddedResource(Type testType, Assembly assembly, string jsResourceName, string callerSourceFilePath)
         {
             // For each embedded "*.js" test script, we also embed a "*.path" text resource
             // containing the project-relative path to the original on-disk JS file.
@@ -432,7 +420,7 @@ namespace Js2IL.Tests
                 return relativePath;
             }
 
-            var projectRoot = FindDirectoryContainingFile(Path.GetDirectoryName(callerSourceFilePath) ?? string.Empty, "Js2IL.Tests.csproj");
+            var projectRoot = TestProjectLayout.FindProjectRoot(testType, callerSourceFilePath);
             if (projectRoot == null)
             {
                 return null;
@@ -441,44 +429,6 @@ namespace Js2IL.Tests
             // Normalize separators to current OS.
             relativePath = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
             return Path.GetFullPath(Path.Combine(projectRoot, relativePath));
-        }
-
-        private static string? FindDirectoryContainingFile(string startDirectory, string fileName)
-        {
-            var current = startDirectory;
-            while (!string.IsNullOrWhiteSpace(current))
-            {
-                var candidate = Path.Combine(current, fileName);
-                if (File.Exists(candidate))
-                {
-                    return current;
-                }
-
-                var parent = Directory.GetParent(current);
-                if (parent == null)
-                {
-                    break;
-                }
-                current = parent.FullName;
-            }
-
-            return null;
-        }
-
-        private string GetCategoryFromNamespace()
-        {
-            var ns = GetType().Namespace ?? string.Empty;
-            const string rootNs = "Js2IL.Tests.";
-            if (ns.StartsWith(rootNs, StringComparison.Ordinal))
-            {
-                var category = ns.Substring(rootNs.Length);
-                if (!string.IsNullOrWhiteSpace(category))
-                {
-                    return category;
-                }
-            }
-
-            return ns.Split('.').LastOrDefault() ?? string.Empty;
         }
     }
 }
