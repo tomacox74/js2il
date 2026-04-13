@@ -150,7 +150,7 @@ namespace Js2IL.Tests
     /// <summary>
     /// Represents a compiled test assembly with metadata.
     /// </summary>
-    internal class CompiledAssembly
+    public class CompiledAssembly
     {
         public string AssemblyPath { get; }
         public string PdbPath { get; }

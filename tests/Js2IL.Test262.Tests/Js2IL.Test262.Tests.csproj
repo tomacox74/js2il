@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\scripts\test262\bootstrap.js">
+      <LogicalName>Js2IL.Test262.Tests.Integration.JavaScript.Compile_Scripts_Test262Bootstrap.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\scripts\test262\metadataParser.js">
+      <LogicalName>Js2IL.Test262.Tests.Integration.JavaScript.test262.metadataParser.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Integration\JavaScript\test262MetadataParser_testHarness.js">
+      <LogicalName>Js2IL.Test262.Tests.Integration.JavaScript.Compile_Scripts_Test262MetadataParser.js</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Verify.Xunit" Version="30.4.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Js2IL.Testing\Js2IL.Testing.csproj" />
+  </ItemGroup>
+</Project>

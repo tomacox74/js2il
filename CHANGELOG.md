@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- tooling/tests: close issue #929 by adding a test262 frontmatter parser with a normalized runner-facing metadata model, explicit MVP blocker/unsupported metadata reporting, and focused integration coverage for representative strict/module/async/negative/fixture cases.
 - tooling/tests/docs: close issue #928 by adopting a pinned sparse-checkout intake model for upstream `tc39/test262`, adding the bootstrap CLI + pin metadata used by local/CI acquisition, recording the licensing/update policy in a new ADR, and adding focused integration coverage for the bootstrap describe flow.
 - node/http/https/tests/docs: fix WHATWG `URL` + second-argument request-option interop for `http.request(...)` / `https.request(...)` so URL-derived path/query and TLS/client overrides stay aligned with Node call shapes, add focused HTTPS regression coverage plus end-to-end `--url` / `--auto` smoke tests for the ECMA-262 extractor network workflow, and refresh the HTTPS docs.
 
