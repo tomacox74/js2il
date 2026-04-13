@@ -1,16 +1,17 @@
 # Phase 1: Rest/Spread Foundation - Tracking Issues
 
-> **Created**: 2026-02-12  
-> **Phase Duration**: 4-6 weeks  
+> **Created**: 2026-02-12
+> **Status**: Historical completed reference
+> **Original Phase Duration**: 4-6 weeks
 > **Goal**: Enable modern function signatures and array/object manipulation
 
-This document contains the tracking issues for Phase 1 features. These issues are ready to be created in GitHub.
+This document contains the historical tracking drafts for the original Phase 1 rest/spread work. The phase has already shipped on `master`; keep this file for reference only rather than as the template for new GitHub issues.
 
-## Current State (2026-02-18)
+## Current State (2026-04-13)
 
-- ✅ Core implementation for all 4 Phase 1 issues is in place (rest parameters; spread in calls, arrays, and objects).
-- ✅ Focused rest/spread test suites currently pass (329 passed, 0 failed across Validator/Function/Array/Object execution + generator tests).
-- ✅ ECMA documentation alignment is complete for Phase 1 scope (`docs/ECMA262/13/Section13_2.json` and `docs/ECMA262/15/Section15_1.json`, with regenerated markdown).
+- ✅ Phase 1 scope is long since shipped on `master` (rest parameters; spread in calls, arrays, and objects).
+- ✅ The active queue has moved on to Node compatibility, `test262` follow-ons, and the deferred performance lane.
+- ℹ️ Any unchecked acceptance items below are preserved as historical drafting artifacts rather than current blockers.
 
 ---
 
@@ -359,7 +360,9 @@ const modified = { ...original, name: 'new name' };
 
 ---
 
-## Phase 1 Success Criteria
+## Phase 1 Success Criteria (historical completion gate)
+
+The checklist below is preserved from the original planning draft. It is no longer the active release gate for current work.
 
 When all 4 issues are complete:
 
@@ -409,6 +412,7 @@ function useCustomHook(...deps) {
 ## Notes
 
 - These issues track **Phase 1** of the ECMA-262 Feature Implementation Roadmap
+- This file is retained as historical planning context, not as the active GitHub issue queue
 - See `docs/archive/FeatureImplementationRoadmap.md` for complete context
 - See `docs/archive/ECMA262FeaturePriority.md` for executive summary
 - Total estimated effort: **4-6 weeks**
@@ -416,5 +420,5 @@ function useCustomHook(...deps) {
 
 ---
 
-*Generated from ECMA-262 Feature Implementation Analysis*  
-*Last updated: 2026-02-18*
+*Generated from ECMA-262 Feature Implementation Analysis*
+*Last updated: 2026-04-13*
