@@ -99,6 +99,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Arguments_Unmapped_StrictAndComplex() { var testName = nameof(Function_Arguments_Unmapped_StrictAndComplex); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Arguments_Unmapped_ForOfAliasing() { var testName = nameof(Function_Arguments_Unmapped_ForOfAliasing); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return ExecutionTest(testName); }
 
         [Fact]
