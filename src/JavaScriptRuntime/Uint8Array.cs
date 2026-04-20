@@ -97,6 +97,39 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static Uint8Array fromHex(object? source)
+        {
+            if (source is not string text)
+            {
+                throw new TypeError("Uint8Array.fromHex requires a string input");
+            }
+
+            if ((text.Length & 1) != 0)
+            {
+                throw new SyntaxError("Invalid hexadecimal input");
+            }
+
+            if (text.Length == 0)
+            {
+                return new Uint8Array();
+            }
+
+            var bytes = new byte[text.Length / 2];
+            for (int i = 0; i < text.Length; i += 2)
+            {
+                var high = GetHexDigitValue(text[i]);
+                var low = GetHexDigitValue(text[i + 1]);
+                if (high < 0 || low < 0)
+                {
+                    throw new SyntaxError("Invalid hexadecimal input");
+                }
+
+                bytes[i / 2] = (byte)((high << 4) | low);
+            }
+
+            return new Uint8Array(new ArrayBuffer(bytes, cloneBuffer: false), 0, bytes.Length);
+        }
+
         public static Uint8Array of(object[]? args)
             => new Uint8Array(args ?? global::System.Array.Empty<object?>());
 
@@ -136,6 +169,15 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
             => PrototypeChain.SetPrototype(this, Prototype);
+
+        private static int GetHexDigitValue(char value)
+            => value switch
+            {
+                >= '0' and <= '9' => value - '0',
+                >= 'a' and <= 'f' => value - 'a' + 10,
+                >= 'A' and <= 'F' => value - 'A' + 10,
+                _ => -1
+            };
 
         private static byte ToUint8(double value)
             => unchecked((byte)TypeUtilities.ToInt32(value));
