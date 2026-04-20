@@ -225,6 +225,8 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    internal IJavaScriptIterator CreateValueIterator() => new ValueIterator(this);
+
     private static string?[] BuildMappedParameterNames(string[]? parameterNames, int argumentCount)
     {
         var mappedNames = new string?[argumentCount];
