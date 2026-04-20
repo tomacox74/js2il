@@ -953,7 +953,7 @@ namespace JavaScriptRuntime
             return (_, args) =>
             {
                 string? message = null;
-                if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
+                if (args != null && args.Length > 0 && args[0] is not JsNull)
                 {
                     message = DotNet2JSConversions.ToString(args[0]);
                 }
@@ -1141,6 +1141,7 @@ namespace JavaScriptRuntime
         {
             ArgumentNullException.ThrowIfNull(error);
 
+            // Keep this aligned with the explicitly exposed built-in error constructor values above.
             var prototype = error switch
             {
                 JavaScriptRuntime.TypeError => _typeErrorPrototypeValue,
