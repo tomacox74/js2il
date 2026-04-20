@@ -948,12 +948,16 @@ namespace JavaScriptRuntime
             return _serviceProvider.Value!.Resolve<Timers>();
         }
 
+        /// <summary>
+        /// Creates a callable built-in error constructor that applies the shared ECMAScript
+        /// message-argument coercion used by the exposed global error constructor values.
+        /// </summary>
         private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, JavaScriptRuntime.Error> factory)
         {
             return (_, args) =>
             {
                 string? message = null;
-                if (args != null && args.Length > 0 && args[0] is not JsNull)
+                if (args != null && args.Length > 0 && args[0] is not null and not JsNull)
                 {
                     message = DotNet2JSConversions.ToString(args[0]);
                 }
