@@ -42,6 +42,26 @@ public sealed partial class HIRToLIRLowerer
             out errorMessage);
     }
 
+    private bool TryGetDirectEvalSyntaxErrorMessage(IReadOnlyList<HIRExpression> arguments, out string? errorMessage)
+    {
+        errorMessage = null;
+
+        if (arguments.Count == 0
+            || arguments[0] is not HIRLiteralExpression { Kind: JavascriptType.String, Value: string sourceText })
+        {
+            return false;
+        }
+
+        var parser = new JavaScriptParser();
+        var isStrictEval = _scope != null && ArgumentsObjectSemantics.IsStrictScope(_scope);
+        return !DynamicFunctionSupport.TryParseEvalSource(
+            parser,
+            "direct-eval",
+            sourceText,
+            isStrictEval,
+            out errorMessage);
+    }
+
     private bool TryEmitThrownBuiltInError(string errorTypeName, string message, out TempVariable resultTempVar)
     {
         var messageTemp = CreateTempVariable();

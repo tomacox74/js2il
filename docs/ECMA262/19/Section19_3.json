@@ -329,6 +329,16 @@
         "notes": "Exposes JavaScriptRuntime.GlobalThis.Function as a callable function value so libraries can reference Function as a global identifier (e.g., Function.prototype...). Direct `Function(...)` / `new Function(...)` sites with string literal source are compiled ahead-of-time; non-literal runtime forms throw a documented `Error`."
       },
       {
+        "clause": "19.3.33",
+        "feature": "Global SyntaxError constructor is available as a first-class value (e.g., assert.throws(SyntaxError, fn))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-syntaxerror",
+        "testScripts": [
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Eval_StrictSyntaxError_UsesGlobalSyntaxErrorValue.js"
+        ],
+        "notes": "Exposes JavaScriptRuntime.GlobalThis.SyntaxError as a callable function value and links thrown SyntaxError instances through SyntaxError.prototype so constructor identity checks like `thrown.constructor === SyntaxError` succeed. js2il still does not implement general direct-eval execution; currently only direct string-literal eval syntax errors are surfaced as runtime SyntaxError values."
+      },
+      {
         "clause": "19.3.21",
         "feature": "Map constructor and core prototype methods",
         "status": "Supported with Limitations",

@@ -275,6 +275,19 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_GlobalSyntaxError_AsValue_ReturnsValid()
+    {
+        var js = @"
+            const ctor = SyntaxError;
+            console.log(ctor !== undefined);
+        ";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_GlobalTimerFunctions_AsValues_ReturnsValid()
     {
         // Domino's WindowTimers polyfill pattern assigns host timer functions onto a window-like object.

@@ -82,6 +82,31 @@ internal static class DynamicFunctionSupport
             out errorMessage);
     }
 
+    internal static bool TryParseEvalSource(
+        JavaScriptParser parser,
+        string sourceFile,
+        string sourceText,
+        bool strict,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+
+        var syntheticSource = strict
+            ? "\"use strict\";\n" + sourceText
+            : sourceText;
+
+        try
+        {
+            parser.ParseJavaScript(syntheticSource, sourceFile);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.InnerException?.Message ?? ex.Message;
+            return false;
+        }
+    }
+
     private static string BuildSyntheticFunctionExpressionSource(
         IReadOnlyList<string> literalArgs,
         int startLine,

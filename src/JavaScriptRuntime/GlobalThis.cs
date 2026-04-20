@@ -89,6 +89,17 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.Error(message);
         };
 
+        private static readonly Func<object[], object?[], object?> _syntaxErrorConstructorValue = static (_, args) =>
+        {
+            string? message = null;
+            if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
+            {
+                message = DotNet2JSConversions.ToString(args[0]);
+            }
+
+            return new JavaScriptRuntime.SyntaxError(message);
+        };
+
         private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
             throw new TypeError("Iterator is not directly constructible in js2il.");
 
@@ -100,6 +111,7 @@ namespace JavaScriptRuntime
 
         // Minimal Error.prototype object. Libraries may attach properties here.
         private static readonly object _errorPrototypeValue = new JsObject();
+        private static readonly object _syntaxErrorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
@@ -159,6 +171,7 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
+            ConfigureBuiltinFunctionObject(_errorConstructorValue);
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -210,6 +223,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _errorConstructorValue
             });
+            PrototypeChain.SetPrototype(_errorPrototypeValue, _objectPrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "message", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -233,6 +247,33 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
+            });
+
+            ConfigureBuiltinFunctionObject(_syntaxErrorConstructorValue);
+            PrototypeChain.SetPrototype(_syntaxErrorPrototypeValue, _errorPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(_syntaxErrorConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _syntaxErrorPrototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_syntaxErrorPrototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _syntaxErrorConstructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_syntaxErrorPrototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = "SyntaxError"
             });
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
@@ -532,6 +573,8 @@ namespace JavaScriptRuntime
         /// </summary>
         public static Func<object[], object?[], object?> Error => _errorConstructorValue;
 
+        public static Func<object[], object?[], object?> SyntaxError => _syntaxErrorConstructorValue;
+
         public static Func<object[], object?[], object?> Iterator => _iteratorConstructorValue;
 
         public static Func<object[], object?[], object?> AsyncIterator => _asyncIteratorConstructorValue;
@@ -555,6 +598,16 @@ namespace JavaScriptRuntime
         /// Exposed as a static property so identifiers bind at compile-time.
         /// </summary>
         public static double NaN => double.NaN;
+
+        public static object? eval(object? source)
+        {
+            if (source is not string)
+            {
+                return source;
+            }
+
+            throw new JavaScriptRuntime.Error("eval(string) is not supported yet in js2il.");
+        }
 
         public static object setTimeout(object callback, object delay, params object[] args)
         {
@@ -824,6 +877,17 @@ namespace JavaScriptRuntime
         }
 
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
+
+        internal static void ConfigureErrorInstance(JavaScriptRuntime.Error error)
+        {
+            ArgumentNullException.ThrowIfNull(error);
+
+            var prototype = error is JavaScriptRuntime.SyntaxError
+                ? _syntaxErrorPrototypeValue
+                : _errorPrototypeValue;
+
+            PrototypeChain.SetPrototype(error, prototype);
+        }
 
         internal static void ConfigureBuiltinFunctionObject(object functionValue)
         {

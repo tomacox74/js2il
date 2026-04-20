@@ -86,6 +86,12 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_Eval_StrictSyntaxError_UsesGlobalSyntaxErrorValue()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_Eval_StrictSyntaxError_UsesGlobalSyntaxErrorValue));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Object_Callable_ReturnsObject()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Object_Callable_ReturnsObject));
