@@ -1,0 +1,277 @@
+name: test262 MVP
+run-name: ${{ github.workflow }} - ${{ github.event_name }} - ${{ github.event.inputs.suite || github.head_ref || github.ref_name }}
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  push:
+    branches: [ "master" ]
+  schedule:
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Named test262 MVP suite to run"
+        required: false
+        default: "pr"
+        type: choice
+        options:
+          - pr
+          - nightly
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  test262_pr:
+    name: test262 PR suite
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.suite != 'nightly') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      TEST262_ARTIFACT_DIR: artifacts/test262/pr
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore
+          npm ci
+
+      - name: Build JS2IL (Release)
+        run: dotnet build src/Cli/Js2IL.csproj --no-restore -c Release
+
+      - name: Bootstrap pinned test262 intake
+        run: npm run test262:bootstrap
+
+      - name: Run bounded test262 PR suite
+        run: npm run test262:run-pr -- --output "$TEST262_ARTIFACT_DIR"
+
+      - name: Append test262 PR summary
+        if: always()
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const summaryPath = path.join(process.env.TEST262_ARTIFACT_DIR, 'summary.json');
+          if (!fs.existsSync(summaryPath) || !process.env.GITHUB_STEP_SUMMARY) {
+            process.exit(0);
+          }
+
+          const report = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+          const suite = report.selection && report.selection.namedSuite
+            ? report.selection.namedSuite.name
+            : 'ad-hoc';
+          const verdictCounts = report.summary && report.summary.verdictCounts ? report.summary.verdictCounts : {};
+          const kindCounts = report.summary && report.summary.kindCounts ? report.summary.kindCounts : {};
+          const lines = [
+            '## test262 MVP report',
+            '',
+            `- Suite: \`${suite}\``,
+            `- Matched: ${verdictCounts.matched || 0}`,
+            `- Unexpected: ${verdictCounts.unexpected || 0}`,
+            `- Not run: ${verdictCounts['not-run'] || 0}`,
+            `- Classified entries: ${report.selection ? report.selection.classifiedEntries : 0}`,
+            '',
+            '### Result kinds',
+            ''
+          ];
+
+          for (const [kind, count] of Object.entries(kindCounts)) {
+            lines.push(`- \`${kind}\`: ${count}`);
+          }
+
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          NODE
+
+      - name: Upload test262 PR summary
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-pr-summary
+          path: artifacts/test262/pr/summary.json
+          if-no-files-found: error
+
+      - name: Upload test262 PR artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-pr-artifacts
+          path: artifacts/test262/pr
+          if-no-files-found: ignore
+
+  test262_nightly:
+    name: test262 nightly suite
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.suite == 'nightly') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    env:
+      TEST262_ARTIFACT_DIR: artifacts/test262/nightly
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore
+          npm ci
+
+      - name: Build JS2IL (Release)
+        run: dotnet build src/Cli/Js2IL.csproj --no-restore -c Release
+
+      - name: Bootstrap pinned test262 intake
+        run: npm run test262:bootstrap
+
+      - name: Run bounded test262 nightly suite
+        run: npm run test262:run-nightly -- --output "$TEST262_ARTIFACT_DIR"
+
+      - name: Append test262 nightly summary
+        if: always()
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const summaryPath = path.join(process.env.TEST262_ARTIFACT_DIR, 'summary.json');
+          if (!fs.existsSync(summaryPath) || !process.env.GITHUB_STEP_SUMMARY) {
+            process.exit(0);
+          }
+
+          const report = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+          const suite = report.selection && report.selection.namedSuite
+            ? report.selection.namedSuite.name
+            : 'ad-hoc';
+          const verdictCounts = report.summary && report.summary.verdictCounts ? report.summary.verdictCounts : {};
+          const kindCounts = report.summary && report.summary.kindCounts ? report.summary.kindCounts : {};
+          const lines = [
+            '## test262 MVP report',
+            '',
+            `- Suite: \`${suite}\``,
+            `- Matched: ${verdictCounts.matched || 0}`,
+            `- Unexpected: ${verdictCounts.unexpected || 0}`,
+            `- Not run: ${verdictCounts['not-run'] || 0}`,
+            `- Classified entries: ${report.selection ? report.selection.classifiedEntries : 0}`,
+            '',
+            '### Result kinds',
+            ''
+          ];
+
+          for (const [kind, count] of Object.entries(kindCounts)) {
+            lines.push(`- \`${kind}\`: ${count}`);
+          }
+
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+          NODE
+
+      - name: Upload test262 nightly summary
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-nightly-summary
+          path: artifacts/test262/nightly/summary.json
+          if-no-files-found: error
+
+      - name: Upload test262 nightly artifacts
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test262-nightly-artifacts
+          path: artifacts/test262/nightly
+          if-no-files-found: ignore
+
+  create-issue-on-nightly-failure:
+    name: Open issue on test262 nightly failure
+    runs-on: ubuntu-latest
+    needs: [test262_nightly]
+    if: ${{ always() && github.event_name == 'schedule' && needs.test262_nightly.result == 'failure' }}
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+            const title = 'test262 nightly MVP workflow failed';
+            const label = 'test262-nightly-failure';
+            const body = [
+              'The scheduled test262 nightly MVP workflow failed.',
+              '',
+              `- Workflow run: ${runUrl}`,
+              `- Repository: ${owner}/${repo}`,
+              `- Branch: ${context.ref}`,
+              '',
+              'Please inspect the uploaded summary/artifacts and triage the regression or infrastructure issue.'
+            ].join('\n');
+
+            try {
+              const labels = await github.paginate(github.rest.issues.listLabelsForRepo, { owner, repo, per_page: 100 });
+              if (!labels.some(current => current.name === label)) {
+                await github.rest.issues.createLabel({
+                  owner,
+                  repo,
+                  name: label,
+                  color: 'B60205',
+                  description: 'Automated issues for scheduled test262 nightly workflow failures'
+                });
+              }
+            } catch (error) {
+              core.info(`Could not ensure label '${label}': ${error.message}`);
+            }
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open',
+              labels: label,
+              per_page: 100
+            });
+
+            const existing = openIssues.find(issue => issue.title === title);
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: existing.number,
+                body: `Another scheduled test262 nightly run has failed: ${runUrl}`
+              });
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title,
+              body,
+              labels: [label]
+            });

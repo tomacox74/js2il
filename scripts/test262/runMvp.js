@@ -8,6 +8,7 @@ const bootstrap = require('./bootstrap');
 const { parseTest262File } = require('./metadataParser');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
+const DEFAULT_SUITE_CONFIG_PATH = path.join(REPO_ROOT, 'tests', 'test262', 'mvp-suites.json');
 const DEFAULT_TIMEOUT_SECONDS = 20;
 const DEFAULT_COMPILE_TIMEOUT_SECONDS = 60;
 const VALID_VARIANTS = new Set(['non-strict', 'strict']);
@@ -51,6 +52,8 @@ function printHelp() {
     '  --force                    Reuse an out-of-date managed checkout instead of failing validation.',
     '  --js2il <path>             Override the js2il executable or Js2IL.dll path.',
     '  --output <path>            Directory for generated case inputs and compiled assemblies.',
+    '  --suite <name>             Apply a named bounded suite from tests/test262/mvp-suites.json.',
+    '  --suite-config <path>      Override the named suite definition file used by --suite.',
     '  --timeout <seconds>        Per-test execution timeout (default: 20).',
     '  --compile-timeout <secs>   Per-test compile timeout (default: 60).',
     '  --file <relative-path>     Run one specific test262 file.',
@@ -69,6 +72,8 @@ function parseArgs(argv) {
     force: false,
     js2il: null,
     output: null,
+    suite: null,
+    suiteConfig: null,
     timeoutSeconds: DEFAULT_TIMEOUT_SECONDS,
     compileTimeoutSeconds: DEFAULT_COMPILE_TIMEOUT_SECONDS,
     file: null,
@@ -101,6 +106,12 @@ function parseArgs(argv) {
       case '--output':
         args.output = requireValue(argv, ++i, '--output');
         break;
+      case '--suite':
+        args.suite = requireValue(argv, ++i, '--suite');
+        break;
+      case '--suite-config':
+        args.suiteConfig = requireValue(argv, ++i, '--suite-config');
+        break;
       case '--timeout':
         args.timeoutSeconds = parsePositiveInteger(requireValue(argv, ++i, '--timeout'), '--timeout');
         break;
@@ -129,6 +140,14 @@ function parseArgs(argv) {
 
   if (args.file && args.filter) {
     throw new Error('--file and --filter cannot be used together.');
+  }
+
+  if (args.suite && (args.file || args.filter || args.limit !== null)) {
+    throw new Error('--suite cannot be combined with --file, --filter, or --limit.');
+  }
+
+  if (args.suiteConfig && !args.suite) {
+    throw new Error('--suite-config requires --suite.');
   }
 
   if (args.variant !== null && !VALID_VARIANTS.has(args.variant)) {
@@ -179,6 +198,120 @@ function defaultOutputRoot() {
 
 function defaultSummaryPath(outputRoot) {
   return path.join(outputRoot, SUMMARY_FILE_NAME);
+}
+
+function resolveSuiteConfigPath(suiteConfigPath) {
+  return path.resolve(suiteConfigPath || DEFAULT_SUITE_CONFIG_PATH);
+}
+
+function formatConfigPathForReport(filePath) {
+  const absolutePath = path.resolve(filePath);
+  const relativePath = path.relative(REPO_ROOT, absolutePath);
+  if (relativePath && !relativePath.startsWith('..') && !path.isAbsolute(relativePath)) {
+    return normalizePortablePath(relativePath);
+  }
+
+  return normalizePortablePath(absolutePath);
+}
+
+function normalizeSuiteDefinition(name, rawDefinition, suiteConfigPath) {
+  if (!rawDefinition || typeof rawDefinition !== 'object' || Array.isArray(rawDefinition)) {
+    throw new Error(`Suite '${name}' in ${suiteConfigPath} must be an object.`);
+  }
+
+  const description = typeof rawDefinition.description === 'string' && rawDefinition.description.trim().length > 0
+    ? rawDefinition.description.trim()
+    : null;
+  const files = Array.isArray(rawDefinition.files)
+    ? rawDefinition.files.map((entry, index) => {
+      if (typeof entry !== 'string' || entry.trim().length === 0) {
+        throw new Error(`Suite '${name}' file entry #${index + 1} must be a non-empty string.`);
+      }
+
+      return normalizeRelativeTestPath(entry);
+    })
+    : null;
+  const filter = typeof rawDefinition.filter === 'string' && rawDefinition.filter.trim().length > 0
+    ? rawDefinition.filter
+    : null;
+  const limit = rawDefinition.limit === undefined || rawDefinition.limit === null
+    ? null
+    : parsePositiveInteger(String(rawDefinition.limit), `suite '${name}' limit`);
+
+  if (files !== null && files.length === 0) {
+    throw new Error(`Suite '${name}' must define at least one file when 'files' is present.`);
+  }
+
+  if (files !== null && (filter !== null || limit !== null)) {
+    throw new Error(`Suite '${name}' cannot combine 'files' with 'filter' or 'limit'.`);
+  }
+
+  if (files === null && filter === null && limit === null) {
+    throw new Error(`Suite '${name}' must define either 'files' or a bounded 'filter'/'limit' selection.`);
+  }
+
+  return {
+    name,
+    description,
+    files,
+    filter,
+    limit,
+  };
+}
+
+function loadNamedSuites(suiteConfigPath) {
+  const resolvedPath = resolveSuiteConfigPath(suiteConfigPath);
+  if (!fs.existsSync(resolvedPath)) {
+    throw new Error(`Named suite config not found: ${resolvedPath}`);
+  }
+
+  let rawValue;
+  try {
+    rawValue = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
+  } catch (error) {
+    throw new Error(`Failed to parse named suite config '${resolvedPath}': ${error.message}`);
+  }
+
+  if (!rawValue || typeof rawValue !== 'object' || Array.isArray(rawValue)) {
+    throw new Error(`Named suite config '${resolvedPath}' must be a JSON object.`);
+  }
+
+  const suites = {};
+  const names = Object.keys(rawValue).sort();
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    suites[name] = normalizeSuiteDefinition(name, rawValue[name], resolvedPath);
+  }
+
+  return {
+    path: resolvedPath,
+    suites,
+  };
+}
+
+function applyNamedSuite(args) {
+  if (!args.suite) {
+    return args;
+  }
+
+  const suiteConfig = loadNamedSuites(args.suiteConfig);
+  const suiteDefinition = suiteConfig.suites[args.suite];
+  if (!suiteDefinition) {
+    const available = Object.keys(suiteConfig.suites);
+    throw new Error(
+      available.length === 0
+        ? `No named suites are defined in ${suiteConfig.path}.`
+        : `Unknown suite '${args.suite}'. Available suites: ${available.join(', ')}.`
+    );
+  }
+
+  return Object.assign({}, args, {
+    filter: suiteDefinition.filter,
+    limit: suiteDefinition.limit,
+    suiteDefinition,
+    suiteConfigPath: suiteConfig.path,
+    suiteFiles: suiteDefinition.files ? suiteDefinition.files.slice() : null,
+  });
 }
 
 function collectCandidateFiles(rootPath, pin) {
@@ -418,7 +551,29 @@ function createSelectionResult(relativePath, metadata, kind, reasons, detail) {
 
 function createExecutionPlan(rootPath, pin, args) {
   const discoveredFiles = collectCandidateFiles(rootPath, pin);
-  let selectedFiles = discoveredFiles.slice();
+  let selectedFiles;
+
+  if (Array.isArray(args.suiteFiles) && args.suiteFiles.length > 0) {
+    const discoveredSet = new Set(discoveredFiles);
+    const seen = new Set();
+    selectedFiles = [];
+
+    for (let i = 0; i < args.suiteFiles.length; i++) {
+      const relativePath = normalizeRelativeTestPath(args.suiteFiles[i]);
+      if (!discoveredSet.has(relativePath)) {
+        throw new Error(`Suite-selected test file was not found in the pinned intake: ${relativePath}`);
+      }
+
+      if (seen.has(relativePath)) {
+        continue;
+      }
+
+      seen.add(relativePath);
+      selectedFiles.push(relativePath);
+    }
+  } else {
+    selectedFiles = discoveredFiles.slice();
+  }
 
   if (args.file) {
     selectedFiles = selectedFiles.filter(relativePath => relativePath === args.file);
@@ -1053,6 +1208,10 @@ function createCountMap(results, selector, orderedKeys) {
 }
 
 function createSummaryReport(pin, args, plan, results, exitCode) {
+  const suiteConfigPath = args.suiteConfigPath
+    ? formatConfigPathForReport(args.suiteConfigPath)
+    : null;
+
   return {
     schemaVersion: SUMMARY_SCHEMA_VERSION,
     suite: 'js2il-test262-mvp',
@@ -1079,6 +1238,12 @@ function createSummaryReport(pin, args, plan, results, exitCode) {
       },
     },
     selection: {
+      namedSuite: args.suiteDefinition ? {
+        name: args.suiteDefinition.name,
+        description: args.suiteDefinition.description,
+        sourceConfig: suiteConfigPath || normalizePortablePath(args.suiteConfigPath),
+        files: args.suiteDefinition.files ? args.suiteDefinition.files.slice() : null,
+      } : null,
       file: args.file,
       filter: args.filter,
       limit: args.limit,
@@ -1104,6 +1269,9 @@ function writeSummaryReport(summaryPath, report) {
 function printPlanHeader(rootPath, outputRoot, js2il, plan, args) {
   console.log(`root ${rootPath}`);
   console.log(`js2il ${js2il.path}`);
+  if (args.suiteDefinition) {
+    console.log(`suite ${args.suiteDefinition.name}`);
+  }
   if (!args.list) {
     console.log(`output ${outputRoot}`);
   }
@@ -1113,7 +1281,7 @@ function printPlanHeader(rootPath, outputRoot, js2il, plan, args) {
 }
 
 function runMvp(argv) {
-  const args = parseArgs(argv);
+  const args = applyNamedSuite(parseArgs(argv));
   if (args.help) {
     printHelp();
     return 0;
@@ -1175,6 +1343,7 @@ module.exports = {
   createExecutionPlan,
   determineVariants,
   findJs2IL,
+  loadNamedSuites,
   parseArgs,
   runMvp,
 };
