@@ -1,6 +1,6 @@
 # Node Gap Popularity Backlog
 
-> **Last Updated**: 2026-04-13
+> **Last Updated**: 2026-04-20
 > Purpose: Persist a holistic, popularity-weighted view of the highest-value remaining Node.js gaps so triage context is not lost between sessions.
 > Scope: Node.js compatibility first, with adjacent web/runtime work called out when it directly blocks common Node workloads.
 > Active review item: none.
@@ -17,7 +17,8 @@
 
 ## Current Baseline (Snapshot)
 
-- Node docs currently track **19 modules** (**16 `partial`**, **3 `completed`**) and **16 globals** (**15 `supported`**, **1 `partial`**).
+- The JSON-backed Node docs currently track **19 modules** (**16 `partial`**, **3 `completed`**) and **16 globals** (**15 `supported`**, **1 `partial`**).
+- No Node-specific merges landed after the previous pass; the ranking below is therefore materially unchanged even though [#975](https://github.com/tomacox74/js2il/pull/975) moved the broader repo queue by closing a `test262` follow-on.
 - Several previously top-ranked gaps are now shipped on `master`:
   - `globalThis.URL` is supported and shares constructor identity with `node:url`.
   - The extractor network-mode follow-on landed, so JS2IL can now run the real `scripts/ECMA262` networking path instead of being limited to offline/manual fetch flows.
