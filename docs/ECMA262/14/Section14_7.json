@@ -385,7 +385,16 @@
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable."
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/statements/for-of/array-contract.js",
+          "test/language/statements/for-of/array-contract-expand.js",
+          "test/language/statements/for-of/array-expand-contract.js"
+        ],
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. The current bounded test262 MVP suites cover the common array for-of contract and expansion paths here."
       },
       {
         "clause": "14.7.5.7",

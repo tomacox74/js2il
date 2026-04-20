@@ -9,6 +9,7 @@ const { parseTest262File } = require('./metadataParser');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const DEFAULT_SUITE_CONFIG_PATH = path.join(REPO_ROOT, 'tests', 'test262', 'mvp-suites.json');
+const DEFAULT_LINKAGE_CONFIG_PATH = path.join(REPO_ROOT, 'tests', 'test262', 'mvp-linkage.json');
 const DEFAULT_TIMEOUT_SECONDS = 20;
 const DEFAULT_COMPILE_TIMEOUT_SECONDS = 60;
 const VALID_VARIANTS = new Set(['non-strict', 'strict']);
@@ -54,6 +55,7 @@ function printHelp() {
     '  --output <path>            Directory for generated case inputs and compiled assemblies.',
     '  --suite <name>             Apply a named bounded suite from tests/test262/mvp-suites.json.',
     '  --suite-config <path>      Override the named suite definition file used by --suite.',
+    '  --linkage-config <path>    Override the ECMA/backlog linkage definition used for summary.json annotation.',
     '  --timeout <seconds>        Per-test execution timeout (default: 20).',
     '  --compile-timeout <secs>   Per-test compile timeout (default: 60).',
     '  --file <relative-path>     Run one specific test262 file.',
@@ -74,6 +76,7 @@ function parseArgs(argv) {
     output: null,
     suite: null,
     suiteConfig: null,
+    linkageConfig: null,
     timeoutSeconds: DEFAULT_TIMEOUT_SECONDS,
     compileTimeoutSeconds: DEFAULT_COMPILE_TIMEOUT_SECONDS,
     file: null,
@@ -111,6 +114,9 @@ function parseArgs(argv) {
         break;
       case '--suite-config':
         args.suiteConfig = requireValue(argv, ++i, '--suite-config');
+        break;
+      case '--linkage-config':
+        args.linkageConfig = requireValue(argv, ++i, '--linkage-config');
         break;
       case '--timeout':
         args.timeoutSeconds = parsePositiveInteger(requireValue(argv, ++i, '--timeout'), '--timeout');
@@ -204,6 +210,10 @@ function resolveSuiteConfigPath(suiteConfigPath) {
   return path.resolve(suiteConfigPath || DEFAULT_SUITE_CONFIG_PATH);
 }
 
+function resolveLinkageConfigPath(linkageConfigPath) {
+  return path.resolve(linkageConfigPath || DEFAULT_LINKAGE_CONFIG_PATH);
+}
+
 function formatConfigPathForReport(filePath) {
   const absolutePath = path.resolve(filePath);
   const relativePath = path.relative(REPO_ROOT, absolutePath);
@@ -212,6 +222,22 @@ function formatConfigPathForReport(filePath) {
   }
 
   return normalizePortablePath(absolutePath);
+}
+
+function ensureNonEmptyString(value, message) {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    throw new Error(message);
+  }
+
+  return value.trim();
+}
+
+function normalizeStringArray(rawEntries, itemNormalizer, errorMessage) {
+  if (!Array.isArray(rawEntries) || rawEntries.length === 0) {
+    throw new Error(errorMessage);
+  }
+
+  return rawEntries.map(itemNormalizer);
 }
 
 function normalizeSuiteDefinition(name, rawDefinition, suiteConfigPath) {
@@ -256,6 +282,144 @@ function normalizeSuiteDefinition(name, rawDefinition, suiteConfigPath) {
     files,
     filter,
     limit,
+  };
+}
+
+function normalizeLinkageSupportEntry(rawEntry, index, groupId, linkageConfigPath) {
+  if (!rawEntry || typeof rawEntry !== 'object' || Array.isArray(rawEntry)) {
+    throw new Error(`Linkage group '${groupId}' support entry #${index + 1} in ${linkageConfigPath} must be an object.`);
+  }
+
+  return {
+    clause: ensureNonEmptyString(
+      rawEntry.clause,
+      `Linkage group '${groupId}' support entry #${index + 1} in ${linkageConfigPath} must define a non-empty 'clause'.`
+    ),
+    feature: ensureNonEmptyString(
+      rawEntry.feature,
+      `Linkage group '${groupId}' support entry #${index + 1} in ${linkageConfigPath} must define a non-empty 'feature'.`
+    ),
+  };
+}
+
+function normalizeLinkageGroup(rawGroup, index, linkageConfigPath) {
+  if (!rawGroup || typeof rawGroup !== 'object' || Array.isArray(rawGroup)) {
+    throw new Error(`Linkage group #${index + 1} in ${linkageConfigPath} must be an object.`);
+  }
+
+  const id = ensureNonEmptyString(rawGroup.id, `Linkage group #${index + 1} in ${linkageConfigPath} must define a non-empty 'id'.`);
+  const title = ensureNonEmptyString(
+    rawGroup.title,
+    `Linkage group '${id}' in ${linkageConfigPath} must define a non-empty 'title'.`
+  );
+  const filePaths = normalizeStringArray(
+    rawGroup.filePaths,
+    entry => normalizeRelativeTestPath(ensureNonEmptyString(
+      entry,
+      `Linkage group '${id}' in ${linkageConfigPath} contains an empty 'filePaths' entry.`
+    )),
+    `Linkage group '${id}' in ${linkageConfigPath} must define a non-empty 'filePaths' array.`
+  );
+  const clauses = normalizeStringArray(
+    rawGroup.clauses,
+    entry => ensureNonEmptyString(
+      entry,
+      `Linkage group '${id}' in ${linkageConfigPath} contains an empty 'clauses' entry.`
+    ),
+    `Linkage group '${id}' in ${linkageConfigPath} must define a non-empty 'clauses' array.`
+  );
+  const docSections = normalizeStringArray(
+    rawGroup.docSections,
+    entry => normalizePortablePath(ensureNonEmptyString(
+      entry,
+      `Linkage group '${id}' in ${linkageConfigPath} contains an empty 'docSections' entry.`
+    )),
+    `Linkage group '${id}' in ${linkageConfigPath} must define a non-empty 'docSections' array.`
+  );
+  const supportEntries = normalizeStringArray(
+    rawGroup.supportEntries,
+    (entry, entryIndex) => normalizeLinkageSupportEntry(entry, entryIndex, id, linkageConfigPath),
+    `Linkage group '${id}' in ${linkageConfigPath} must define a non-empty 'supportEntries' array.`
+  );
+  const backlogDocs = Array.isArray(rawGroup.backlogDocs)
+    ? rawGroup.backlogDocs.map((entry, entryIndex) => normalizePortablePath(ensureNonEmptyString(
+      entry,
+      `Linkage group '${id}' in ${linkageConfigPath} contains an empty 'backlogDocs' entry #${entryIndex + 1}.`
+    )))
+    : [];
+  const existingIssues = Array.isArray(rawGroup.existingIssues)
+    ? rawGroup.existingIssues.map((entry, entryIndex) => {
+      const parsed = Number.parseInt(String(entry), 10);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        throw new Error(`Linkage group '${id}' in ${linkageConfigPath} contains an invalid issue number at existingIssues[${entryIndex}].`);
+      }
+
+      return parsed;
+    })
+    : [];
+
+  return {
+    id,
+    title,
+    filePaths,
+    clauses,
+    docSections,
+    supportEntries,
+    backlogDocs,
+    existingIssues,
+  };
+}
+
+function loadLinkageConfig(linkageConfigPath, explicit) {
+  const resolvedPath = resolveLinkageConfigPath(linkageConfigPath);
+  if (!fs.existsSync(resolvedPath)) {
+    if (explicit) {
+      throw new Error(`Linkage config file was not found: ${resolvedPath}`);
+    }
+
+    return null;
+  }
+
+  const rawConfig = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
+  if (!rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) {
+    throw new Error(`Linkage config ${resolvedPath} must contain a JSON object.`);
+  }
+
+  if (rawConfig.schemaVersion !== undefined && rawConfig.schemaVersion !== 1) {
+    throw new Error(`Unsupported linkage config schemaVersion '${rawConfig.schemaVersion}' in ${resolvedPath}.`);
+  }
+
+  const guidance = rawConfig.guidance && typeof rawConfig.guidance === 'object' && !Array.isArray(rawConfig.guidance)
+    ? {
+      updateDocsWhen: ensureNonEmptyString(
+        rawConfig.guidance.updateDocsWhen,
+        `Linkage config ${resolvedPath} must define guidance.updateDocsWhen.`
+      ),
+      attachToIssueWhen: ensureNonEmptyString(
+        rawConfig.guidance.attachToIssueWhen,
+        `Linkage config ${resolvedPath} must define guidance.attachToIssueWhen.`
+      ),
+      createIssueWhen: ensureNonEmptyString(
+        rawConfig.guidance.createIssueWhen,
+        `Linkage config ${resolvedPath} must define guidance.createIssueWhen.`
+      ),
+    }
+    : null;
+
+  if (guidance === null) {
+    throw new Error(`Linkage config ${resolvedPath} must define a guidance object.`);
+  }
+
+  const rawGroups = rawConfig.groups;
+  if (!Array.isArray(rawGroups) || rawGroups.length === 0) {
+    throw new Error(`Linkage config ${resolvedPath} must define a non-empty groups array.`);
+  }
+
+  const groups = rawGroups.map((group, index) => normalizeLinkageGroup(group, index, resolvedPath));
+  return {
+    path: resolvedPath,
+    guidance,
+    groups,
   };
 }
 
@@ -1207,12 +1371,82 @@ function createCountMap(results, selector, orderedKeys) {
   return compact;
 }
 
-function createSummaryReport(pin, args, plan, results, exitCode) {
+function annotateResultsWithLinkage(results, linkageConfig) {
+  if (!linkageConfig) {
+    return new Set();
+  }
+
+  const groupsByFilePath = new Map();
+  for (let groupIndex = 0; groupIndex < linkageConfig.groups.length; groupIndex++) {
+    const group = linkageConfig.groups[groupIndex];
+    for (let fileIndex = 0; fileIndex < group.filePaths.length; fileIndex++) {
+      const relativePath = group.filePaths[fileIndex];
+      const list = groupsByFilePath.get(relativePath) || [];
+      list.push(group);
+      groupsByFilePath.set(relativePath, list);
+    }
+  }
+
+  const matchedGroupIds = new Set();
+  for (let resultIndex = 0; resultIndex < results.length; resultIndex++) {
+    const result = results[resultIndex];
+    const groups = groupsByFilePath.get(result.relativePath);
+    if (!groups || groups.length === 0) {
+      continue;
+    }
+
+    result.linkageGroupIds = groups.map(group => group.id);
+    for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+      matchedGroupIds.add(groups[groupIndex].id);
+    }
+  }
+
+  return matchedGroupIds;
+}
+
+function createLinkageSummary(linkageConfig, results, matchedGroupIds, explicit) {
+  if (!linkageConfig) {
+    return null;
+  }
+
+  if (matchedGroupIds.size === 0 && !explicit) {
+    return null;
+  }
+
+  const includedGroups = linkageConfig.groups.filter(group => explicit || matchedGroupIds.has(group.id));
+  return {
+    sourceConfig: formatConfigPathForReport(linkageConfig.path),
+    guidance: linkageConfig.guidance,
+    groups: includedGroups.map(group => ({
+      id: group.id,
+      title: group.title,
+      clauses: group.clauses.slice(),
+      docSections: group.docSections.slice(),
+      supportEntries: group.supportEntries.map(entry => ({
+        clause: entry.clause,
+        feature: entry.feature,
+      })),
+      backlogDocs: group.backlogDocs.slice(),
+      existingIssues: group.existingIssues.slice(),
+      filePaths: group.filePaths.slice(),
+    })),
+    groupCounts: includedGroups.map(group => {
+      const groupResults = results.filter(result => Array.isArray(result.linkageGroupIds) && result.linkageGroupIds.includes(group.id));
+      return {
+        groupId: group.id,
+        verdictCounts: createCountMap(groupResults, result => result.classification.verdict, VERDICT_ORDER),
+        kindCounts: createCountMap(groupResults, result => result.classification.kind, RESULT_KIND_ORDER),
+      };
+    }),
+  };
+}
+
+function createSummaryReport(pin, args, plan, results, exitCode, linkageSummary) {
   const suiteConfigPath = args.suiteConfigPath
     ? formatConfigPathForReport(args.suiteConfigPath)
     : null;
 
-  return {
+  const report = {
     schemaVersion: SUMMARY_SCHEMA_VERSION,
     suite: 'js2il-test262-mvp',
     pin: {
@@ -1260,6 +1494,12 @@ function createSummaryReport(pin, args, plan, results, exitCode) {
     },
     results,
   };
+
+  if (linkageSummary !== null) {
+    report.linkage = linkageSummary;
+  }
+
+  return report;
 }
 
 function writeSummaryReport(summaryPath, report) {
@@ -1289,6 +1529,7 @@ function runMvp(argv) {
 
   const pinPath = path.resolve(args.pin);
   const pin = bootstrap.loadPin(pinPath);
+  const linkageConfig = loadLinkageConfig(args.linkageConfig, Boolean(args.linkageConfig));
   const resolvedRoot = bootstrap.resolveBootstrapRoot(pinPath, pin, args);
   const rootPath = resolvedRoot.rootPath;
   const outputRoot = path.resolve(args.output || defaultOutputRoot());
@@ -1324,10 +1565,12 @@ function runMvp(argv) {
   }
 
   const exitCode = results.some(result => result.classification.verdict === 'unexpected') ? 1 : 0;
+  const matchedLinkageGroupIds = annotateResultsWithLinkage(results, linkageConfig);
   const verdictCounts = createCountMap(results, result => result.classification.verdict, VERDICT_ORDER);
   const kindCounts = createCountMap(results, result => result.classification.kind, RESULT_KIND_ORDER);
   const summaryPath = defaultSummaryPath(outputRoot);
-  writeSummaryReport(summaryPath, createSummaryReport(pin, args, plan, results, exitCode));
+  const linkageSummary = createLinkageSummary(linkageConfig, results, matchedLinkageGroupIds, Boolean(args.linkageConfig));
+  writeSummaryReport(summaryPath, createSummaryReport(pin, args, plan, results, exitCode, linkageSummary));
 
   const kindSummary = Object.keys(kindCounts)
     .map(key => `${key}=${kindCounts[key]}`)

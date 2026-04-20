@@ -140,6 +140,19 @@ Feature-level support tracking lives alongside the subsection docs.
 
 - Add/update support metadata under `support.entries` in the relevant subsection JSON file(s) (e.g. `docs/ECMA262/27/Section27_1.json`).
 - Regenerate the subsection markdown using `node scripts/ECMA262/generateEcma262SectionMarkdown.js --section <section.subsection>`.
+- `support.entries[].testScripts` remains the place for repo-local regression coverage.
+- `support.entries[].test262Suites` and `support.entries[].test262Paths` are optional evidence fields for the bounded `test262` MVP workflow when a support claim is backed by current `summary.json` results.
+
+## Using test262 results as evidence
+
+`summary.json` is evidence for the docs, not a second source of truth for support status.
+
+- The machine-readable linkage between current MVP test262 files, ECMA-262 section docs, and backlog ownership lives in `tests/test262/mvp-linkage.json`.
+- The runner copies that linkage into `summary.json` when the selected cases match one of the configured linkage groups.
+- Update the relevant `docs/ECMA262/**/Section*.json` support entry when the latest bounded test262 evidence shows the support note or status is now inaccurate.
+- If a linked test262 result turns `unexpected` and an open GitHub issue already tracks the same clause or feature, attach the `summary.json` evidence to that issue instead of opening a duplicate.
+- If a linked test262 result turns `unexpected` and no open issue already tracks that clause or feature, open a new issue and link the affected clause, support entry, and `summary.json` evidence. Use `docs/tracking-issues/ECMA262TopMissingBacklog.md` when the failure reveals a backlog-worthy missing feature family rather than a narrow regression.
+- Do not update ECMA-262 docs merely because one bounded suite matched once; update them when the linked evidence changes the human-readable support claim contributors should rely on.
 
 ## Repo-local linking
 

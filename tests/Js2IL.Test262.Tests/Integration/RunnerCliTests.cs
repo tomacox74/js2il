@@ -107,6 +107,30 @@ public class RunnerCliTests
         return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
     }
 
+    [Fact]
+    public Task RunMvp_AnnotatesSummaryWithEcmaLinkage()
+    {
+        using var tempDirectory = new TemporaryDirectory();
+        string test262Root = CreateTest262Fixture(tempDirectory.Path, includeFailingPositive: false);
+        string outputRoot = Path.Combine(tempDirectory.Path, "runner-output");
+        string suiteConfigPath = CreateSuiteConfigFile(
+            tempDirectory.Path,
+            [
+                "test/language/mvp/basic-pass.js",
+                "test/language/mvp/runtime-negative.js",
+            ]);
+        string linkageConfigPath = CreateLinkageConfigFile(tempDirectory.Path);
+
+        RunnerResult result = RunRunner(
+            test262Root,
+            outputRoot,
+            $" --suite pr --suite-config \"{suiteConfigPath}\" --linkage-config \"{linkageConfigPath}\"");
+
+        Assert.Equal(0, result.ExitCode);
+
+        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
+    }
+
     private static RunnerResult RunRunner(string test262Root, string outputRoot, string extraArguments = "", int timeoutMilliseconds = 180000)
     {
         string repoRoot = FindRepoRoot();
@@ -226,6 +250,75 @@ public class RunnerCliTests
             """.ReplaceLineEndings("\n"));
 
         return suitePath;
+    }
+
+    private static string CreateLinkageConfigFile(string root)
+    {
+        string linkagePath = Path.Combine(root, "fixture.linkage.json");
+        File.WriteAllText(
+            linkagePath,
+            """
+            {
+              "schemaVersion": 1,
+              "guidance": {
+                "updateDocsWhen": "Update the ECMA docs when the linked evidence changes the support claim.",
+                "attachToIssueWhen": "Attach to an existing issue when one already tracks the same feature.",
+                "createIssueWhen": "Create a new issue when no existing issue tracks the same feature."
+              },
+              "groups": [
+                {
+                  "id": "fixture-basic-pass",
+                  "title": "fixture basic pass",
+                  "filePaths": [
+                    "test/language/mvp/basic-pass.js"
+                  ],
+                  "clauses": [
+                    "15.3"
+                  ],
+                  "docSections": [
+                    "docs/ECMA262/15/Section15_3.json"
+                  ],
+                  "supportEntries": [
+                    {
+                      "clause": "15.3",
+                      "feature": "fixture basic pass"
+                    }
+                  ],
+                  "backlogDocs": [
+                    "docs/tracking-issues/ECMA262TopMissingBacklog.md"
+                  ],
+                  "existingIssues": []
+                },
+                {
+                  "id": "fixture-runtime-negative",
+                  "title": "fixture runtime negative",
+                  "filePaths": [
+                    "test/language/mvp/runtime-negative.js"
+                  ],
+                  "clauses": [
+                    "10.4.4"
+                  ],
+                  "docSections": [
+                    "docs/ECMA262/10/Section10_4.json"
+                  ],
+                  "supportEntries": [
+                    {
+                      "clause": "10.4.4",
+                      "feature": "fixture runtime negative"
+                    }
+                  ],
+                  "backlogDocs": [
+                    "docs/tracking-issues/ECMA262TopMissingBacklog.md"
+                  ],
+                  "existingIssues": [
+                    933
+                  ]
+                }
+              ]
+            }
+            """.ReplaceLineEndings("\n"));
+
+        return linkagePath;
     }
 
     private static string CreateTest262Fixture(string root, bool includeFailingPositive, bool includeClassificationEdges = false)

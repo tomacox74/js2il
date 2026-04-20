@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T05:07:03Z
+> Last generated (UTC): 2026-04-20T14:39:44Z
 
 JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.
 
@@ -80,41 +80,41 @@ JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for t
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 10.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-bound-function-exotic-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Bound functions created by Function.prototype.bind | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js) | bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. Bound call semantics are useful in practice, but bound-function construction and true [[BoundTargetFunction]] / [[BoundArguments]] slot semantics remain incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Bound functions created by Function.prototype.bind | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js) |  | bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. Bound call semantics are useful in practice, but bound-function construction and true [[BoundTargetFunction]] / [[BoundArguments]] slot semantics remain incomplete. |
 
 ### 10.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-array-exotic-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Array exotic indexing and length behavior | Supported with Limitations | [`Array_New_Length.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Array_New_MultipleArgs.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js)<br>[`Array_Length_Set_Fractional_ThrowsRangeError.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js) | Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array exotic indexing and length behavior | Supported with Limitations | [`Array_New_Length.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Array_New_MultipleArgs.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js)<br>[`Array_Length_Set_Fractional_ThrowsRangeError.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js) |  | Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled. |
 
 ### 10.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Arguments objects materialize with mapped/unmapped exotic-object basics | Supported with Limitations | [`Function_Arguments_Basics.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js)<br>[`Function_Arguments_ComputedKey_TriggersBinding.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js)<br>[`Function_Arguments_MappedParameterAliasing.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js)<br>[`Function_Arguments_Unmapped_StrictAndComplex.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js) | When referenced, non-arrow functions now materialize a dedicated arguments object. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped snapshot semantics. Basic length/indexed access, deletion, and own-key enumeration now work for the covered cases, but full [[DefineOwnProperty]] invariants, callee/caller legacy details, and the exact accessor-helper machinery from 10.4.4.7 remain incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Arguments objects materialize with mapped/unmapped exotic-object basics | Supported with Limitations | [`Function_Arguments_Basics.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js)<br>[`Function_Arguments_ComputedKey_TriggersBinding.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js)<br>[`Function_Arguments_MappedParameterAliasing.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js)<br>[`Function_Arguments_Unmapped_StrictAndComplex.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js) | suite `pr`<br>suite `nightly`<br>`test/language/arguments-object/10.5-1gs.js`<br>`test/language/arguments-object/10.5-7-b-2-s.js`<br>`test/language/arguments-object/10.5-7-b-3-s.js`<br>`test/language/arguments-object/10.5-7-b-4-s.js`<br>`test/language/arguments-object/10.6-10-c-ii-1-s.js`<br>`test/language/arguments-object/10.6-10-c-ii-1.js`<br>`test/language/arguments-object/10.6-10-c-ii-2.js`<br>`test/language/arguments-object/10.6-12-1.js` | When referenced, non-arrow functions now materialize a dedicated arguments object. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped snapshot semantics. Basic length/indexed access, deletion, and own-key enumeration now work for the covered cases, but full [[DefineOwnProperty]] invariants, callee/caller legacy details, and the exact accessor-helper machinery from 10.4.4.7 remain incomplete. The current bounded test262 MVP suites exercise both parse-negative strict-mode handling and mapped/unmapped arguments cases in this area. |
 
 ### 10.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-typedarray-exotic-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Int32Array construction, element access, and integer-index semantics | Supported with Limitations | [`Int32Array_Construct_Length.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Int32Array_Index_Assign.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js)<br>[`Int32Array_FromArray_CopyAndCoerce.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js)<br>[`Int32Array_NaN_Index_NoOp.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js) | JS2IL currently implements only Int32Array, with construction from length/iterables, integer index reads and writes, and pragmatic out-of-bounds handling. It does not model ArrayBuffer-backed typed-array witness records, detach/out-of-bounds abstract operations, or the full family of typed array exotics. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Int32Array construction, element access, and integer-index semantics | Supported with Limitations | [`Int32Array_Construct_Length.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`Int32Array_Index_Assign.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js)<br>[`Int32Array_FromArray_CopyAndCoerce.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js)<br>[`Int32Array_NaN_Index_NoOp.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js) |  | JS2IL currently implements only Int32Array, with construction from length/iterables, integer index reads and writes, and pragmatic out-of-bounds handling. It does not model ArrayBuffer-backed typed-array witness records, detach/out-of-bounds abstract operations, or the full family of typed array exotics. |
 
 ### 10.4.6 ([tc39.es](https://tc39.es/ecma262/#sec-module-namespace-exotic-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Namespace import interop objects with live getter properties | Supported with Limitations | [`Import_Namespace_Esm_Basic.js`](../../../tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js) | JSImport namespace lowering rewrites imports to a helper that builds a plain object with accessor descriptors for live reads of exported members. That captures common namespace-import behavior, but the result is not a true Module Namespace Exotic Object with the full non-extensible, non-configurable invariant set from the spec. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Namespace import interop objects with live getter properties | Supported with Limitations | [`Import_Namespace_Esm_Basic.js`](../../../tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js)<br>[`Import_Namespace_FromCjs_Stable.js`](../../../tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js) |  | JSImport namespace lowering rewrites imports to a helper that builds a plain object with accessor descriptors for live reads of exported members. That captures common namespace-import behavior, but the result is not a true Module Namespace Exotic Object with the full non-extensible, non-configurable invariant set from the spec. |
 
 ### 10.4.7 ([tc39.es](https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Immutable prototype exotic invariants | Not Yet Supported |  | JS2IL does not currently model any object with a dedicated immutable-prototype exotic internal method. Prototype mutation is handled through the ordinary PrototypeChain side-table instead. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Immutable prototype exotic invariants | Not Yet Supported |  |  | JS2IL does not currently model any object with a dedicated immutable-prototype exotic internal method. Prototype mutation is handled through the ordinary PrototypeChain side-table instead. |
 

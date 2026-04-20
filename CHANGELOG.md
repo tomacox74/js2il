@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- tooling/tests/docs: close issue #933 by mapping bounded test262 MVP results back to ECMA-262 support docs and backlog ownership through a checked-in linkage manifest, annotating `summary.json` with clause/doc linkage, surfacing test262 evidence in the relevant ECMA-262 section docs, and documenting when linked failures should update docs vs attach to or create issues.
 - tooling/tests/docs: close issue #932 by adding named bounded test262 MVP suites for PR vs nightly runs, exposing local npm entrypoints for those suites, publishing `summary.json` artifacts from a dedicated GitHub Actions workflow, and reusing the repository's scheduled-failure issue pattern for nightly regressions while extending focused runner integration coverage.
 - tooling/tests/docs: close issue #931 by formalizing test262 MVP result kinds/verdicts, classifying parse/runtime negatives plus policy skips vs unsupported requirements, emitting a stable `summary.json` baseline artifact for each runner invocation, documenting the contract in a new ADR, and extending focused runner integration coverage.
 - tooling/tests: close issue #930 by adding a plain synchronous script MVP test262 runner that resolves the pinned checkout, filters unsupported/module/async/agent cases, executes strict/non-strict variants plus parse/runtime negatives through js2il, emits per-test outcomes with repro commands, and adds focused runner integration coverage.

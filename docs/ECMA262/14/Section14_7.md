@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-04-20T14:39:44Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -48,57 +48,57 @@ do/while/for loops are supported including break/continue (with labels). for..of
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 14.7.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-dowhileloopevaluation))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| do-while loop (CountDownFromFive) | Supported | [`ControlFlow_DoWhile_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js) |  |
-| do-while loop: break | Supported | [`ControlFlow_DoWhile_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Break_AtThree.js) | break branches to loop end (LoopContext). |
-| do-while loop: continue (skip even) | Supported | [`ControlFlow_DoWhile_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js) | continue branches to the post-body test point (LoopContext). |
-| do-while loop: labeled break | Supported | [`ControlFlow_DoWhile_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledBreak.js) | Supports break <label> where <label> targets an enclosing loop. |
-| do-while loop: labeled continue | Supported | [`ControlFlow_DoWhile_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledContinue.js) | Supports continue <label> where <label> targets an enclosing loop. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| do-while loop (CountDownFromFive) | Supported | [`ControlFlow_DoWhile_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js) |  |  |
+| do-while loop: break | Supported | [`ControlFlow_DoWhile_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Break_AtThree.js) |  | break branches to loop end (LoopContext). |
+| do-while loop: continue (skip even) | Supported | [`ControlFlow_DoWhile_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js) |  | continue branches to the post-body test point (LoopContext). |
+| do-while loop: labeled break | Supported | [`ControlFlow_DoWhile_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledBreak.js) |  | Supports break <label> where <label> targets an enclosing loop. |
+| do-while loop: labeled continue | Supported | [`ControlFlow_DoWhile_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledContinue.js) |  | Supports continue <label> where <label> targets an enclosing loop. |
 
 ### 14.7.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-whileloopevaluation))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| while loop (CountDownFromFive) | Supported | [`ControlFlow_While_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_CountDownFromFive.js) |  |
-| while loop: break | Supported | [`ControlFlow_While_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Break_AtThree.js) | break branches to loop end (LoopContext). |
-| while loop: continue (skip even) | Supported | [`ControlFlow_While_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Continue_SkipEven.js) | continue branches to loop head (LoopContext). |
-| while loop: labeled break | Supported | [`ControlFlow_While_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledBreak.js) | Supports break <label> where <label> targets an enclosing loop. |
-| while loop: labeled continue | Supported | [`ControlFlow_While_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js) | Supports continue <label> where <label> targets an enclosing loop. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| while loop (CountDownFromFive) | Supported | [`ControlFlow_While_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_CountDownFromFive.js) |  |  |
+| while loop: break | Supported | [`ControlFlow_While_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Break_AtThree.js) |  | break branches to loop end (LoopContext). |
+| while loop: continue (skip even) | Supported | [`ControlFlow_While_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Continue_SkipEven.js) |  | continue branches to loop head (LoopContext). |
+| while loop: labeled break | Supported | [`ControlFlow_While_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledBreak.js) |  | Supports break <label> where <label> targets an enclosing loop. |
+| while loop: labeled continue | Supported | [`ControlFlow_While_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js) |  | Supports continue <label> where <label> targets an enclosing loop. |
 
 ### 14.7.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| for loop (CountDownFromFive) | Supported | [`ControlFlow_ForLoop_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js) |  |
-| for loop (CountToFive) | Supported | [`ControlFlow_ForLoop_CountToFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_CountToFive.js) |  |
-| for loop (GreaterThanOrEqual) | Supported | [`ControlFlow_ForLoop_GreaterThanOrEqual.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js) |  |
-| for loop (LessThanOrEqual) | Supported | [`ControlFlow_ForLoop_LessThanOrEqual.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js) |  |
-| for loop: break | Supported | [`ControlFlow_ForLoop_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Break_AtThree.js) | Implements break by branching to loop end label (LoopContext). |
-| for loop: continue | Supported | [`ControlFlow_ForLoop_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js) | Implements continue by branching to the update expression (LoopContext). |
-| for loop: labeled break | Supported | [`ControlFlow_ForLoop_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js) | Supports break <label> where <label> targets an enclosing loop. |
-| for loop: labeled continue | Supported | [`ControlFlow_ForLoop_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js) | Supports continue <label> where <label> targets an enclosing loop. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| for loop (CountDownFromFive) | Supported | [`ControlFlow_ForLoop_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js) |  |  |
+| for loop (CountToFive) | Supported | [`ControlFlow_ForLoop_CountToFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_CountToFive.js) |  |  |
+| for loop (GreaterThanOrEqual) | Supported | [`ControlFlow_ForLoop_GreaterThanOrEqual.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js) |  |  |
+| for loop (LessThanOrEqual) | Supported | [`ControlFlow_ForLoop_LessThanOrEqual.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js) |  |  |
+| for loop: break | Supported | [`ControlFlow_ForLoop_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Break_AtThree.js) |  | Implements break by branching to loop end label (LoopContext). |
+| for loop: continue | Supported | [`ControlFlow_ForLoop_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js) |  | Implements continue by branching to the update expression (LoopContext). |
+| for loop: labeled break | Supported | [`ControlFlow_ForLoop_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js) |  | Supports break <label> where <label> targets an enclosing loop. |
+| for loop: labeled continue | Supported | [`ControlFlow_ForLoop_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js) |  | Supports continue <label> where <label> targets an enclosing loop. |
 
 ### 14.7.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-createperiterationenvironment))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| for-loop per-iteration lexical environment (let closure capture) | Supported | [`ControlFlow_ForLoop_LetClosureCapture.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture.js)<br>[`ControlFlow_ForLoop_LetClosureCapture_Continue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture_Continue.js) | Implements CreatePerIterationEnvironment by materializing a dedicated loop-head scope instance per iteration and capturing that scope in closures, so closures observe 0,1,2 rather than the final value. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| for-loop per-iteration lexical environment (let closure capture) | Supported | [`ControlFlow_ForLoop_LetClosureCapture.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture.js)<br>[`ControlFlow_ForLoop_LetClosureCapture_Continue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture_Continue.js) |  | Implements CreatePerIterationEnvironment by materializing a dedicated loop-head scope instance per iteration and capturing that scope in closures, so closures observe 0,1,2 rather than the final value. |
 
 ### 14.7.5 ([tc39.es](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| for await..of | Supported | [`Async_ForAwaitOf_Array.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) | Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| for await..of | Supported | [`Async_ForAwaitOf_Array.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_Array.js)<br>[`Async_ForAwaitOf_AsyncIterator_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_AsyncIterator_BreakCloses.js)<br>[`Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js) |  | Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return). |
 
 ### 14.7.5.7 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| for-in over objects (enumerate enumerable keys) | Supported | [`ControlFlow_ForIn_Object_Basic.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js)<br>[`ControlFlow_ForIn_Continue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Continue.js)<br>[`ControlFlow_ForIn_Break.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js)<br>[`ControlFlow_ForIn_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js)<br>[`ControlFlow_ForIn_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js)<br>[`ControlFlow_ForIn_Mutation_DeleteAndAdd.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js)<br>[`ControlFlow_ForIn_ClassFields_BaseAndDerived.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_ClassFields_BaseAndDerived.js)<br>[`ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js) | Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain. |
-| for-of over arrays (enumerate values) | Supported | [`ControlFlow_ForOf_Array_Basic.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_Continue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Continue.js)<br>[`ControlFlow_ForOf_Break.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js)<br>[`ControlFlow_ForOf_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js)<br>[`ControlFlow_ForOf_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| for-in over objects (enumerate enumerable keys) | Supported | [`ControlFlow_ForIn_Object_Basic.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js)<br>[`ControlFlow_ForIn_Continue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Continue.js)<br>[`ControlFlow_ForIn_Break.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js)<br>[`ControlFlow_ForIn_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js)<br>[`ControlFlow_ForIn_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js)<br>[`ControlFlow_ForIn_Mutation_DeleteAndAdd.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js)<br>[`ControlFlow_ForIn_ClassFields_BaseAndDerived.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_ClassFields_BaseAndDerived.js)<br>[`ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js) |  | Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain. |
+| for-of over arrays (enumerate values) | Supported | [`ControlFlow_ForOf_Array_Basic.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js)<br>[`ControlFlow_ForOf_Continue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Continue.js)<br>[`ControlFlow_ForOf_Break.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js)<br>[`ControlFlow_ForOf_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js)<br>[`ControlFlow_ForOf_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js)<br>[`ControlFlow_ForOf_CustomIterable_IteratorProtocol.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js) | suite `pr`<br>suite `nightly`<br>`test/language/statements/for-of/array-contract.js`<br>`test/language/statements/for-of/array-contract-expand.js`<br>`test/language/statements/for-of/array-expand-contract.js` | Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. The current bounded test262 MVP suites cover the common array for-of contract and expansion paths here. |
 
