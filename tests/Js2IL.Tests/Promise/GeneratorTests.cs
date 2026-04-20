@@ -214,6 +214,12 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_SymbolSpecies()
+    {
+        return GenerateTest(nameof(Promise_SymbolSpecies));
+    }
+
+    [Fact]
     public Task Promise_Scheduling_StarvationTest()
     {
         return GenerateTest(nameof(Promise_Scheduling_StarvationTest));

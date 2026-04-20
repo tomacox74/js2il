@@ -61,6 +61,16 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
 
+        private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
+        {
+            if (newTarget is null)
+            {
+                throw new global::JavaScriptRuntime.TypeError("Constructor Promise requires 'new'");
+            }
+
+            return new global::JavaScriptRuntime.Promise(executor);
+        };
+
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
 
@@ -144,6 +154,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
             });
+            ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
@@ -385,6 +396,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Array), Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
 
+            dict.TryAdd(nameof(GlobalThis.Promise), Promise);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
+
             dict.TryAdd(nameof(GlobalThis.Map), Map);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Map), dict[nameof(GlobalThis.Map)]);
 
@@ -508,6 +522,8 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        public static Delegate Promise => _promiseConstructorValue;
 
         public static Delegate Map => _mapConstructorValue;
 
@@ -796,6 +812,36 @@ namespace JavaScriptRuntime
             };
         }
 
+        private static void ConfigurePromiseIntrinsicSurface(object constructorValue, object prototypeValue)
+        {
+            ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
+
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, Symbol.species.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = (Func<object[], object?[]?, object?>)SpeciesGetter
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+        }
+
         private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
@@ -817,6 +863,42 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = constructorValue
             });
+        }
+
+        private static void ConfigureErrorSubclassIntrinsicSurface(object constructorValue, object prototypeValue, string name)
+        {
+            ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, _errorPrototypeValue);
+
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = name
+            });
+        }
+
+        private static object? SpeciesGetter(object[] scopes, object?[]? args)
+        {
+            return RuntimeServices.GetCurrentThis();
         }
 
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
