@@ -11,6 +11,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
+    private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
@@ -62,6 +63,18 @@ public class RuntimeServices
     {
         var previous = _currentNewTarget.Value;
         _currentNewTarget.Value = value;
+        return previous;
+    }
+
+    public static object? GetCurrentCallee()
+    {
+        return _currentCallee.Value;
+    }
+
+    public static object? SetCurrentCallee(object? value)
+    {
+        var previous = _currentCallee.Value;
+        _currentCallee.Value = value;
         return previous;
     }
 
@@ -125,10 +138,10 @@ public class RuntimeServices
     /// This captures the full runtime argument list (including extra args beyond formal parameters)
     /// and optionally maps simple-parameter indices back to leaf-scope parameter storage.
     /// </summary>
-    public static ArgumentsObject CreateArgumentsObject(object? scopeInstance, string[]? parameterNames)
+    public static ArgumentsObject CreateArgumentsObject(object? scopeInstance, string[]? parameterNames, bool includeCallee)
     {
         var args = _currentArguments.Value;
-        return new ArgumentsObject(args, scopeInstance, parameterNames);
+        return new ArgumentsObject(args, scopeInstance, parameterNames, includeCallee ? _currentCallee.Value : null);
     }
 
     /// <summary>

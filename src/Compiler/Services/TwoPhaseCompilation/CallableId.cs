@@ -130,6 +130,11 @@ public sealed record CallableId
     /// Duplicate names are preserved so runtime duplicate-parameter rules can be applied.
     /// </summary>
     public IReadOnlyList<string> ArgumentsParameterNames { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// True when the emitted arguments object should include a non-strict own <c>callee</c> data property.
+    /// </summary>
+    public bool IncludeCalleeInArgumentsObject { get; init; }
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

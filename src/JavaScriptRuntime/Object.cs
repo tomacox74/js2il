@@ -3200,6 +3200,21 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is ArgumentsObject
+                && string.Equals(propName, "callee", StringComparison.Ordinal)
+                && TryGetOwnPropertyValue(target, propName, target, out var calleeValue))
+            {
+                descriptor = new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = calleeValue
+                };
+                return true;
+            }
+
             if (target is Delegate del && Function.TryEnsureOwnMetadataPropertyDescriptor(del, propName, out descriptor!))
             {
                 return true;
