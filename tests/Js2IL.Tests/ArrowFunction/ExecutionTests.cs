@@ -38,6 +38,9 @@ namespace Js2IL.Tests.ArrowFunction
         public Task ArrowFunction_LexicalThis_CreatedInMethod() { var testName = nameof(ArrowFunction_LexicalThis_CreatedInMethod); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ArrowFunction_LexicalThis_TopLevelCallback() { var testName = nameof(ArrowFunction_LexicalThis_TopLevelCallback); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ArrowFunction_LexicalThis_ObjectLiteralProperty() { var testName = nameof(ArrowFunction_LexicalThis_ObjectLiteralProperty); return ExecutionTest(testName); }
 
         // New: parameter destructuring (object)

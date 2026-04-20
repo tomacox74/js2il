@@ -778,6 +778,20 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_ThisInTopLevelArrowFunction_Valid()
+    {
+        var js = @"
+""use strict"";
+var lexicalThis = this;
+[1].forEach(() => this === lexicalThis);
+";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_ThisInClassMethod_Valid()
     {
         // Issue #218: 'this' IS supported in class methods
