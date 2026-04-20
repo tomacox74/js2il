@@ -61,6 +61,52 @@ public class RunnerCliTests
         return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
     }
 
+    [Fact]
+    public Task RunMvp_UsesNamedSuiteSelection()
+    {
+        using var tempDirectory = new TemporaryDirectory();
+        string test262Root = CreateTest262Fixture(tempDirectory.Path, includeFailingPositive: false);
+        string outputRoot = Path.Combine(tempDirectory.Path, "runner-output");
+        string suiteConfigPath = CreateSuiteConfigFile(
+            tempDirectory.Path,
+            [
+                "test/language/mvp/basic-pass.js",
+                "test/language/mvp/runtime-negative.js",
+            ]);
+
+        RunnerResult result = RunRunner(
+            test262Root,
+            outputRoot,
+            $" --suite pr --suite-config \"{suiteConfigPath}\"");
+
+        Assert.Equal(0, result.ExitCode);
+
+        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
+    }
+
+    [Fact]
+    public Task RunMvp_RejectsSuiteWhenCombinedWithAdHocSelection()
+    {
+        using var tempDirectory = new TemporaryDirectory();
+        string test262Root = CreateTest262Fixture(tempDirectory.Path, includeFailingPositive: false);
+        string outputRoot = Path.Combine(tempDirectory.Path, "runner-output");
+        string suiteConfigPath = CreateSuiteConfigFile(
+            tempDirectory.Path,
+            [
+                "test/language/mvp/basic-pass.js",
+                "test/language/mvp/runtime-negative.js",
+            ]);
+
+        RunnerResult result = RunRunner(
+            test262Root,
+            outputRoot,
+            $" --suite pr --suite-config \"{suiteConfigPath}\" --limit 1");
+
+        Assert.Equal(1, result.ExitCode);
+
+        return VerifyWithSnapshot(FormatResult(result, tempDirectory.Path, outputRoot));
+    }
+
     private static RunnerResult RunRunner(string test262Root, string outputRoot, string extraArguments = "", int timeoutMilliseconds = 180000)
     {
         string repoRoot = FindRepoRoot();
@@ -152,6 +198,34 @@ public class RunnerCliTests
             """.ReplaceLineEndings("\n"));
 
         return pinPath;
+    }
+
+    private static string CreateSuiteConfigFile(string root, IReadOnlyList<string> prFiles)
+    {
+        string suitePath = Path.Combine(root, "fixture.suites.json");
+        string filesJson = string.Join(
+            ",\n",
+            prFiles.Select(entry => $"      \"{entry.Replace("\\", "\\\\")}\""));
+
+        File.WriteAllText(
+            suitePath,
+            $$"""
+            {
+              "pr": {
+                "description": "fixture PR suite",
+                "files": [
+            {{filesJson}}
+                ]
+              },
+              "nightly": {
+                "description": "fixture nightly suite",
+                "filter": "test/language/mvp",
+                "limit": 3
+              }
+            }
+            """.ReplaceLineEndings("\n"));
+
+        return suitePath;
     }
 
     private static string CreateTest262Fixture(string root, bool includeFailingPositive, bool includeClassificationEdges = false)
