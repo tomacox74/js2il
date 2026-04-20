@@ -76,6 +76,9 @@ namespace Js2IL.Tests.TypedArray
         public Task Uint8Array_Iterator_Metadata() { var testName = nameof(Uint8Array_Iterator_Metadata); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Uint8Array_FromBase64_Results() { var testName = nameof(Uint8Array_FromBase64_Results); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Float64Array_Construct_ArrayBuffer_Search() { var testName = nameof(Float64Array_Construct_ArrayBuffer_Search); return ExecutionTest(testName); }
 
         [Fact]

@@ -576,6 +576,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.URLSearchParams), URLSearchParams);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.URLSearchParams), dict[nameof(GlobalThis.URLSearchParams)]);
 
+            dict.TryAdd(nameof(GlobalThis.Uint8Array), Uint8Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint8Array), dict[nameof(GlobalThis.Uint8Array)]);
+
             // Global functions exposed as delegates.
             dict.TryAdd(nameof(GlobalThis.setTimeout), (Func<object, object, object[], object>)setTimeout);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.setTimeout), dict[nameof(GlobalThis.setTimeout)]);
@@ -715,6 +718,8 @@ namespace JavaScriptRuntime
         public static Delegate URL => JavaScriptRuntime.Node.Url.URLConstructorValue;
 
         public static Delegate URLSearchParams => JavaScriptRuntime.Node.Url.URLSearchParamsConstructorValue;
+
+        public static Type Uint8Array => typeof(JavaScriptRuntime.Uint8Array);
 
         /// <summary>
         /// ECMAScript global Infinity value (+∞).
