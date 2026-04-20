@@ -242,12 +242,12 @@
                            "status":  "Supported with Limitations",
                            "specUrl":  "https://tc39.es/ecma262/#sec-performpromisethen"
                        },
-                       {
-                           "clause":  "27.2.5.5",
-                           "title":  "Promise.prototype [ %Symbol.toStringTag% ]",
-                           "status":  "Not Yet Supported",
-                           "specUrl":  "https://tc39.es/ecma262/#sec-promise.prototype-%symbol.tostringtag%"
-                       },
+                        {
+                            "clause":  "27.2.5.5",
+                            "title":  "Promise.prototype [ %Symbol.toStringTag% ]",
+                            "status":  "Supported",
+                            "specUrl":  "https://tc39.es/ecma262/#sec-promise.prototype-%symbol.tostringtag%"
+                        },
                        {
                            "clause":  "27.2.6",
                            "title":  "Properties of Promise Instances",
@@ -317,7 +317,17 @@
                                                             "tests/Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsThenable_PassThrough_Rejected.js",
                                                             "tests/Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
                                                         ],
-                                        "notes":  "Implements then/catch/finally with scheduling and thenable assimilation for returned values. Limitations remain around full spec-shaped prototype properties (constructor/toStringTag) and host rejection tracking."
+                                        "notes":  "Implements then/catch/finally with scheduling and thenable assimilation for returned values. Limitations remain around host rejection tracking."
+                                    },
+                                    {
+                                        "clause":  "27.2.5.5",
+                                        "feature":  "Promise.prototype [ %Symbol.toStringTag% ]",
+                                        "status":  "Supported",
+                                        "specUrl":  "https://tc39.es/ecma262/#sec-promise.prototype-%symbol.tostringtag%",
+                                        "testScripts":  [
+                                                            "tests/Js2IL.Tests/Promise/JavaScript/Promise_Prototype_SymbolToStringTag.js"
+                                                        ],
+                                        "notes":  "The global Promise constructor now exposes a prototype object branded with Symbol.toStringTag as \"Promise\", and Promise instances inherit that brand."
                                     },
                                     {
                                         "clause":  "27.2.4.1",

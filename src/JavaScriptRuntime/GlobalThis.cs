@@ -85,6 +85,8 @@ namespace JavaScriptRuntime
         private static readonly Delegate _weakSetConstructorValue =
             CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
 
+        private static readonly JsFuncNoScopes1 _promiseConstructorValue = CreatePromiseConstructorValue();
+
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
@@ -200,6 +202,7 @@ namespace JavaScriptRuntime
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
+            ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -547,6 +550,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.WeakSet), WeakSet);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakSet), dict[nameof(GlobalThis.WeakSet)]);
 
+            dict.TryAdd(nameof(GlobalThis.Promise), Promise);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
+
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
@@ -690,6 +696,8 @@ namespace JavaScriptRuntime
         public static Delegate WeakMap => _weakMapConstructorValue;
 
         public static Delegate WeakSet => _weakSetConstructorValue;
+
+        public static JsFuncNoScopes1 Promise => _promiseConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
@@ -1001,6 +1009,9 @@ namespace JavaScriptRuntime
         }
 
         private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
+            => ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
+
+        private static void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);

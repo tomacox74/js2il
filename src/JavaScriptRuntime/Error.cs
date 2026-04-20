@@ -66,6 +66,11 @@ namespace JavaScriptRuntime
             return Environment.StackTrace ?? string.Empty;
         }
 
+        protected void InitializeIntrinsicSurface(object prototype)
+        {
+            PrototypeChain.SetPrototype(this, prototype);
+        }
+
         public override string ToString()
             => string.IsNullOrEmpty(Message) ? Name : $"{Name}: {Message}";
     }
