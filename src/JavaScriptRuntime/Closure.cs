@@ -445,7 +445,8 @@ namespace JavaScriptRuntime
             object? boundThis,
             bool captureLexicalNewTarget,
             object? lexicalNewTarget,
-            BoundDelegateKind kind)
+            BoundDelegateKind kind,
+            bool hasRestrictedProperties)
         {
             var delegateType = target.GetType();
             var invoke = delegateType.GetMethod("Invoke")
@@ -514,6 +515,7 @@ namespace JavaScriptRuntime
             }
 
             var boundDelegate = Expression.Lambda(delegateType, body, lambdaParameters).Compile();
+            Function.ConfigureCallableObject(boundDelegate, hasRestrictedProperties);
             _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target, kind));
             return boundDelegate;
         }
@@ -545,7 +547,7 @@ namespace JavaScriptRuntime
                 throw new ArgumentException("Expected a delegate for closure binding", nameof(target));
             }
 
-            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null, BoundDelegateKind.ScopeBinding);
+            return CreateBoundDelegate(del, boundScopes, boundThis: null, captureLexicalNewTarget: false, lexicalNewTarget: null, BoundDelegateKind.ScopeBinding, hasRestrictedProperties: false);
         }
 
         // Bind an arrow function delegate to a fixed scopes array AND a fixed lexical 'this'.
@@ -562,7 +564,7 @@ namespace JavaScriptRuntime
             }
 
             var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
-            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget, BoundDelegateKind.ScopeBinding);
+            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget, BoundDelegateKind.ScopeBinding, hasRestrictedProperties: true);
         }
 
         internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)

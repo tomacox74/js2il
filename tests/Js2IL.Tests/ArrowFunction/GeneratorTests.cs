@@ -92,5 +92,8 @@ namespace Js2IL.Tests.ArrowFunction
 
         [Fact]
         public Task ArrowFunction_RestParameters_WithNamedParams() { var testName = nameof(ArrowFunction_RestParameters_WithNamedParams); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_RestrictedCallerArgumentsProperties() { var testName = nameof(ArrowFunction_RestrictedCallerArgumentsProperties); return GenerateTest(testName); }
     }
 }

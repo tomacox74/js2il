@@ -39,6 +39,7 @@ namespace JavaScriptRuntime
         {
             Name = "Error";
             _constructedStack = CaptureStack();
+            PrototypeChain.SetPrototype(this, GlobalThis.ErrorPrototypeValue);
         }
 
         public Error(string? message, object? cause) : this(message)
@@ -50,6 +51,7 @@ namespace JavaScriptRuntime
         {
             Name = "Error";
             _constructedStack = CaptureStack();
+            PrototypeChain.SetPrototype(this, GlobalThis.ErrorPrototypeValue);
         }
 
         public Error(string? message, Exception? innerException, object? cause) : this(message, innerException)
@@ -103,9 +105,9 @@ namespace JavaScriptRuntime
     [IntrinsicObject("TypeError", IntrinsicCallKind.BuiltInError)]
     public class TypeError : Error
     {
-        public TypeError() : base() { Name = "TypeError"; }
-        public TypeError(string? message) : base(message) { Name = "TypeError"; }
-        public TypeError(string? message, Exception? inner) : base(message, inner) { Name = "TypeError"; }
+        public TypeError() : base() { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
+        public TypeError(string? message) : base(message) { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
+        public TypeError(string? message, Exception? inner) : base(message, inner) { Name = "TypeError"; PrototypeChain.SetPrototype(this, GlobalThis.TypeErrorPrototypeValue); }
     }
 
     [IntrinsicObject("URIError", IntrinsicCallKind.BuiltInError)]

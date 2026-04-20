@@ -89,6 +89,9 @@ namespace JavaScriptRuntime
             return new JavaScriptRuntime.Error(message);
         };
 
+        private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
+
         private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
             throw new TypeError("Iterator is not directly constructible in js2il.");
 
@@ -100,6 +103,7 @@ namespace JavaScriptRuntime
 
         // Minimal Error.prototype object. Libraries may attach properties here.
         private static readonly object _errorPrototypeValue = new JsObject();
+        private static readonly object _typeErrorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
@@ -110,6 +114,7 @@ namespace JavaScriptRuntime
         static GlobalThis()
         {
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(JavaScriptRuntime.Function.RestrictedPropertiesPrototype, JavaScriptRuntime.Function.Prototype);
 
             // Attach minimal prototypes to callable globals so patterns like
             // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
@@ -159,14 +164,8 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
-            PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "prototype", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _errorPrototypeValue
-            });
+            ConfigureErrorIntrinsicSurface(_errorConstructorValue, _errorPrototypeValue, "Error", parentPrototype: _objectPrototypeValue);
+            ConfigureErrorIntrinsicSurface(_typeErrorConstructorValue, _typeErrorPrototypeValue, "TypeError", parentPrototype: _errorPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "constructor", new JsPropertyDescriptor
             {
@@ -202,14 +201,6 @@ namespace JavaScriptRuntime
                 Value = _errorIsErrorValue
             });
 
-            PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "constructor", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _errorConstructorValue
-            });
             PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "message", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -412,6 +403,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
 
+            dict.TryAdd(nameof(GlobalThis.TypeError), TypeError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.TypeError), dict[nameof(GlobalThis.TypeError)]);
+
             dict.TryAdd(nameof(GlobalThis.Iterator), Iterator);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Iterator), dict[nameof(GlobalThis.Iterator)]);
 
@@ -531,6 +525,8 @@ namespace JavaScriptRuntime
         /// access <c>Error.prototype</c>.
         /// </summary>
         public static Func<object[], object?[], object?> Error => _errorConstructorValue;
+
+        public static Func<object[], object?[], object?> TypeError => _typeErrorConstructorValue;
 
         public static Func<object[], object?[], object?> Iterator => _iteratorConstructorValue;
 
@@ -824,10 +820,73 @@ namespace JavaScriptRuntime
         }
 
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
+        internal static object ErrorPrototypeValue => _errorPrototypeValue;
+        internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
+
+        private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)
+        {
+            return (_, args) =>
+            {
+                string? message = null;
+                if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
+                {
+                    message = DotNet2JSConversions.ToString(args[0]);
+                }
+
+                return factory(message);
+            };
+        }
+
+        private static void ConfigureErrorIntrinsicSurface(object constructorValue, object prototypeValue, string name, object parentPrototype)
+        {
+            ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(prototypeValue, parentPrototype);
+
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = name
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = name
+            });
+        }
 
         internal static void ConfigureBuiltinFunctionObject(object functionValue)
         {
-            PrototypeChain.SetPrototype(functionValue, JavaScriptRuntime.Function.Prototype);
+            JavaScriptRuntime.Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: false);
         }
     }
 }
