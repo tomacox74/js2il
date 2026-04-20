@@ -2769,6 +2769,12 @@ class HIRMethodBuilder
                 var arrayElements = new List<HIRExpression>();
                 foreach (var element in arrayExpr.Elements)
                 {
+                    if (element == null)
+                    {
+                        arrayElements.Add(new HIRLiteralExpression(JavascriptType.Undefined, null));
+                        continue;
+                    }
+
                     if (element is SpreadElement spreadElement)
                     {
                         // Parse the spread element's argument
