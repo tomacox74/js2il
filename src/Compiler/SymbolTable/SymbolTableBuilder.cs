@@ -762,6 +762,8 @@ namespace Js2IL.SymbolTables
                                 }
                             }
 
+                            BuildFunctionParameterScopes(globalScope, mfunc.Params, methodScope);
+
                             if (mfunc.Body is BlockStatement mblock)
                             {
                                 foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
@@ -871,6 +873,8 @@ namespace Js2IL.SymbolTables
                                 }
                             }
 
+                            BuildFunctionParameterScopes(globalScope, mfunc.Params, methodScope);
+
                             if (mfunc.Body is BlockStatement mblock)
                             {
                                 foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
@@ -911,6 +915,7 @@ namespace Js2IL.SymbolTables
                     }
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
+                        BuildFunctionParameterScopes(globalScope, funcDecl.Params, funcScope);
 
                         if (funcScope.IsGenerator)
                         {
@@ -977,6 +982,7 @@ namespace Js2IL.SymbolTables
                         funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExprScope, funcExpr);
                     }
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
+                    BuildFunctionParameterScopes(globalScope, funcExpr.Params, funcExprScope);
 
                     if (funcExprScope.IsGenerator)
                     {
@@ -1288,6 +1294,8 @@ namespace Js2IL.SymbolTables
                             }
                         }
                     }
+                    BuildFunctionParameterScopes(globalScope, arrowFunc.Params, arrowScope);
+
                     if (arrowFunc.Body is BlockStatement arrowBlock)
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
@@ -2132,6 +2140,18 @@ namespace Js2IL.SymbolTables
 {
     public partial class SymbolTableBuilder
     {
+        /// <summary>
+        /// Visits parameter AST nodes inside the function scope so nested default initializers can
+        /// declare any inner callables before body compilation.
+        /// </summary>
+        private void BuildFunctionParameterScopes(Scope globalScope, IEnumerable<Node> parameters, Scope functionScope)
+        {
+            foreach (var parameter in parameters)
+            {
+                BuildScopeRecursive(globalScope, parameter, functionScope);
+            }
+        }
+
         /// <summary>
         /// Helper to bind identifier parameters and object pattern property identifiers uniformly.
         /// </summary>

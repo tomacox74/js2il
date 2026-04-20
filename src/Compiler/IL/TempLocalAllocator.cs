@@ -579,6 +579,9 @@ internal static class TempLocalAllocator
             case LIRLoadParameter:
                 // LIRLoadParameter doesn't consume any temps (it loads from IL argument)
                 break;
+            case LIRStoreParameter storeParameter:
+                yield return storeParameter.Value;
+                break;
             case LIRStoreLeafScopeField storeLeaf:
                 yield return storeLeaf.Value;
                 break;

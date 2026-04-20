@@ -20,6 +20,9 @@ namespace Js2IL.Tests.ArrowFunction
         public Task ArrowFunction_DefaultParameterValue() { var testName = nameof(ArrowFunction_DefaultParameterValue); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ArrowFunction_DefaultParameterAbruptInitializer() { var testName = nameof(ArrowFunction_DefaultParameterAbruptInitializer); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ArrowFunction_GlobalFunctionCallsGlobalFunction() { var testName = nameof(ArrowFunction_GlobalFunctionCallsGlobalFunction); return ExecutionTest(testName); }
 
         [Fact]
