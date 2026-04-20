@@ -60,14 +60,29 @@
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js",
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
         ],
-        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator)."
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-1.js",
+          "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-2.js"
+        ],
+        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). The current bounded test262 MVP suites provide additional evidence for concise-body parsing and invocation in the common non-async arrow path."
       },
       {
         "clause": "15.3.2",
         "feature": "directive prologue / strict mode (\"use strict\") semantics",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-concisebodycontainsusestrict",
-        "notes": "JS2IL parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists."
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/arrow-function/array-destructuring-param-strict-body.js"
+        ],
+        "notes": "JS2IL parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists. The current bounded test262 MVP suites include a representative parse-negative case for non-simple arrow parameters plus a strict directive."
       },
       {
         "clause": "15.3.4",

@@ -187,6 +187,24 @@ function formatTestScriptsCell(testScripts, mdDir, repoRootDir) {
     .join('<br>');
 }
 
+function formatCodeListCell(values, formatter) {
+  if (!Array.isArray(values) || values.length === 0) return '';
+  return values
+    .map((value) => {
+      const trimmed = String(value ?? '').trim();
+      if (!trimmed) return '';
+      return formatter(trimmed);
+    })
+    .filter((value) => value && value.length > 0)
+    .join('<br>');
+}
+
+function formatTest262EvidenceCell(test262Suites, test262Paths) {
+  const suiteEvidence = formatCodeListCell(test262Suites, (value) => `suite \`${escapePipes(value)}\``);
+  const pathEvidence = formatCodeListCell(test262Paths, (value) => `\`${escapePipes(toPosixPath(value))}\``);
+  return [suiteEvidence, pathEvidence].filter((value) => value && value.length > 0).join('<br>');
+}
+
 function getSpecUrlForClause(doc, clause) {
   if (!doc || typeof doc !== 'object') return '';
   if (doc.clause === clause && typeof doc.specUrl === 'string') return doc.specUrl;
@@ -286,15 +304,15 @@ function render(doc, sectionClause, mdPath, repoRootDir, generatedAt) {
 
     lines.push('## Support');
     lines.push('');
-    lines.push('Feature-level support tracking with test script references.');
+    lines.push('Feature-level support tracking with repo test references and optional test262 evidence.');
     lines.push('');
 
     for (const c of sortedClauses) {
       const url = getSpecUrlForClause(doc, c);
       lines.push(`### ${c}${url ? ` (${asSpecLink(url)})` : ''}`);
       lines.push('');
-      lines.push('| Feature name | Status | Test scripts | Notes |');
-      lines.push('|---|---|---|---|');
+      lines.push('| Feature name | Status | Test scripts | test262 evidence | Notes |');
+      lines.push('|---|---|---|---|---|');
 
       const list = entriesByClause.get(c) || [];
       list.sort((a, b) => String(a.feature || '').localeCompare(String(b.feature || ''), undefined, { numeric: true }));
@@ -303,8 +321,9 @@ function render(doc, sectionClause, mdPath, repoRootDir, generatedAt) {
         const es = normalizeLegacyStatus(requireString(e, 'status'));
         validateStatus(es);
         const scripts = formatTestScriptsCell(e.testScripts, mdDir, repoRootDir);
+        const test262Evidence = formatTest262EvidenceCell(e.test262Suites, e.test262Paths);
         const notes = formatTableCellText(e.notes || '');
-        lines.push(`| ${formatTableCellText(feature)} | ${formatTableCellText(es)} | ${scripts} | ${notes} |`);
+        lines.push(`| ${formatTableCellText(feature)} | ${formatTableCellText(es)} | ${scripts} | ${test262Evidence} | ${notes} |`);
       }
 
       lines.push('');
