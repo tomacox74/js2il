@@ -96,6 +96,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Arguments_Length_Delete() { var testName = nameof(Function_Arguments_Length_Delete); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_Arguments_Callee_Descriptor_NonStrict() { var testName = nameof(Function_Arguments_Callee_Descriptor_NonStrict); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_Arguments_Unmapped_StrictAndComplex() { var testName = nameof(Function_Arguments_Unmapped_StrictAndComplex); return ExecutionTest(testName); }
 
         [Fact]
