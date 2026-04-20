@@ -17,13 +17,14 @@ These files should stay aligned with:
 
 ## Current Repo Snapshot (2026-04-20)
 
-- `origin/master` @ `163cb816`
-- Open issues: **16**
-- Open PRs: **0**
-- Recent merged PRs that materially changed the queue: [#969](https://github.com/tomacox74/js2il/pull/969), [#970](https://github.com/tomacox74/js2il/pull/970), [#971](https://github.com/tomacox74/js2il/pull/971), [#972](https://github.com/tomacox74/js2il/pull/972), [#973](https://github.com/tomacox74/js2il/pull/973), [#975](https://github.com/tomacox74/js2il/pull/975)
+- `origin/master` @ `145d7a72`
+- Open issues: **20**
+- Open PRs: **1**
+- Recent merged PRs that materially changed the queue: [#969](https://github.com/tomacox74/js2il/pull/969), [#970](https://github.com/tomacox74/js2il/pull/970), [#971](https://github.com/tomacox74/js2il/pull/971), [#972](https://github.com/tomacox74/js2il/pull/972), [#973](https://github.com/tomacox74/js2il/pull/973), [#975](https://github.com/tomacox74/js2il/pull/975), [#977](https://github.com/tomacox74/js2il/pull/977), [#978](https://github.com/tomacox74/js2il/pull/978)
 - Remaining open lanes:
   - Node/runtime follow-ons: [#949](https://github.com/tomacox74/js2il/issues/949), [#956](https://github.com/tomacox74/js2il/issues/956)
-  - `test262` program: [#927](https://github.com/tomacox74/js2il/issues/927), [#932](https://github.com/tomacox74/js2il/issues/932)-[#934](https://github.com/tomacox74/js2il/issues/934) ([#931](https://github.com/tomacox74/js2il/issues/931) closed via [#975](https://github.com/tomacox74/js2il/pull/975))
+  - `test262` program: the MVP foundation [#928](https://github.com/tomacox74/js2il/issues/928)-[#933](https://github.com/tomacox74/js2il/issues/933) is closed, and the concrete post-MVP lane is now [#981](https://github.com/tomacox74/js2il/issues/981)-[#985](https://github.com/tomacox74/js2il/issues/985); [#927](https://github.com/tomacox74/js2il/issues/927) and [#934](https://github.com/tomacox74/js2il/issues/934) remain open only until this roadmap-split work lands
+  - Docs/tooling hygiene: [#979](https://github.com/tomacox74/js2il/issues/979)
   - Performance queue: [#451](https://github.com/tomacox74/js2il/issues/451), [#737](https://github.com/tomacox74/js2il/issues/737), [#738](https://github.com/tomacox74/js2il/issues/738), [#742](https://github.com/tomacox74/js2il/issues/742), [#743](https://github.com/tomacox74/js2il/issues/743), [#746](https://github.com/tomacox74/js2il/issues/746), [#747](https://github.com/tomacox74/js2il/issues/747), [#748](https://github.com/tomacox74/js2il/issues/748), [#768](https://github.com/tomacox74/js2il/issues/768), [#837](https://github.com/tomacox74/js2il/issues/837)
 
 ## Historical Context

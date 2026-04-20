@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "sourceIssues": {
+    "decomposition": 934,
+    "umbrella": 927
+  },
+  "summary": "Post-MVP test262 work is tracked as bounded rollout areas keyed off existing blocker codes and path exclusions instead of one open-ended follow-up issue.",
+  "areas": [
+    {
+      "id": "modules",
+      "title": "Module-mode conformance",
+      "rolloutOrder": 1,
+      "issueNumber": 981,
+      "currentSignals": [
+        "module-flag",
+        "resolution-negative"
+      ],
+      "supportStrategy": "Start with module tests that can run against the existing loader/runtime surface, then widen to module-specific harness behavior and resolution-negative expectations once those results are attributable in summary output.",
+      "firstSlice": "Bounded positive and negative module cases that do not also require agents or async-specific host support."
+    },
+    {
+      "id": "async-promise",
+      "title": "Async and Promise-dependent conformance",
+      "rolloutOrder": 2,
+      "issueNumber": 982,
+      "currentSignals": [
+        "async-requirement"
+      ],
+      "supportStrategy": "Define an explicit async completion contract around Promise jobs and test262 completion helpers before widening the bounded suites beyond synchronous script execution.",
+      "firstSlice": "Async/Promise cases that need `doneprintHandle.js` or equivalent completion signaling but not agents."
+    },
+    {
+      "id": "raw-harness-heavy",
+      "title": "Raw and harness-heavy conformance",
+      "rolloutOrder": 3,
+      "issueNumber": 983,
+      "currentSignals": [
+        "raw-flag"
+      ],
+      "supportStrategy": "Separate default-harness execution from `flags:raw` and other richer include/define scenarios so harness growth stays reviewable and deliberate.",
+      "firstSlice": "A bounded set of raw or richer-harness cases that still run in a single-agent host without environment-sensitive assumptions."
+    },
+    {
+      "id": "intl-and-environment",
+      "title": "Intl and environment-sensitive suites",
+      "rolloutOrder": 4,
+      "issueNumber": 985,
+      "currentSignals": [
+        "path-excluded:test/intl402/**",
+        "path-excluded:test/annexB/**",
+        "path-excluded:test/staging/**"
+      ],
+      "supportStrategy": "Turn the current blanket path exclusions into explicit policy by defining deterministic environment contracts for the suites worth targeting first and documenting what remains intentionally excluded.",
+      "firstSlice": "A named deterministic environment-sensitive slice, starting with `intl402` or another host-sensitive suite that can run with documented locale/timezone/platform assumptions."
+    },
+    {
+      "id": "agents-and-canblock",
+      "title": "Agent and CanBlock conformance",
+      "rolloutOrder": 5,
+      "issueNumber": 984,
+      "currentSignals": [
+        "agent-requirement",
+        "can-block-requirement"
+      ],
+      "supportStrategy": "Treat agent-sensitive tests as a dedicated host-runtime expansion with explicit multi-agent and blocking semantics instead of letting them piggyback on the single-process MVP runner.",
+      "firstSlice": "A minimal agent-host contract plus a bounded first slice of agent-sensitive tests once the host/runtime model exists."
+    }
+  ]
+}

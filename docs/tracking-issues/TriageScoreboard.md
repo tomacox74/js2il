@@ -3,7 +3,7 @@
 > **Last Updated**: 2026-04-20
 > **Planning Horizon**: Rolling 2 weeks
 > **North Star**: Real-world unblock impact
-> **Live Queue**: 16 open issues / 0 open PRs
+> **Live Queue**: 20 open issues / 1 open PR
 
 This file is the working source of truth for implementation prioritization.
 
@@ -15,9 +15,10 @@ This file is the working source of truth for implementation prioritization.
 
 ## Current Queue Highlights
 
-- Recent landed work: [#969](https://github.com/tomacox74/js2il/pull/969)-[#973](https://github.com/tomacox74/js2il/pull/973) delivered the extractor networking fix, the test project split, pinned `test262` intake, the metadata parser, and the MVP runner; [#975](https://github.com/tomacox74/js2il/pull/975) then classified MVP results and added baseline reporting artifacts.
+- Recent landed work: [#969](https://github.com/tomacox74/js2il/pull/969)-[#973](https://github.com/tomacox74/js2il/pull/973) delivered the extractor networking fix, the test project split, pinned `test262` intake, and the MVP runner; [#975](https://github.com/tomacox74/js2il/pull/975), [#977](https://github.com/tomacox74/js2il/pull/977), and [#978](https://github.com/tomacox74/js2il/pull/978) then added classified reporting, bounded CI suites, and docs/backlog linkage.
 - Primary open Node follow-ons are now [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://github.com/tomacox74/js2il/issues/956).
-- Primary open `test262` follow-ons are [#932](https://github.com/tomacox74/js2il/issues/932)-[#934](https://github.com/tomacox74/js2il/issues/934) under umbrella [#927](https://github.com/tomacox74/js2il/issues/927).
+- Primary open `test262` follow-ons are now the explicit post-MVP issues [#981](https://github.com/tomacox74/js2il/issues/981)-[#985](https://github.com/tomacox74/js2il/issues/985); [#927](https://github.com/tomacox74/js2il/issues/927) and [#934](https://github.com/tomacox74/js2il/issues/934) are now just closure items for the roadmap split.
+- Docs/tooling hygiene is represented by [#979](https://github.com/tomacox74/js2il/issues/979).
 - The performance queue remains unchanged and explicitly secondary to compatibility and conformance.
 
 ## Capacity Split
@@ -58,19 +59,24 @@ Goal: improve correctness in small, reportable slices that can feed back into do
 - Produces actionable results instead of a broad, noisy failure set
 
 **Current ranked queue**
-1. [#932](https://github.com/tomacox74/js2il/issues/932) - add CI workflow and machine-readable reporting
-2. [#933](https://github.com/tomacox74/js2il/issues/933) - connect conformance results to ECMA-262 docs and backlog
-3. [#934](https://github.com/tomacox74/js2il/issues/934) - expand beyond the MVP to modules, async, and harness-heavy suites
-4. [#927](https://github.com/tomacox74/js2il/issues/927) remains the umbrella tracker and should stay open until the child lane is actually complete
+1. [#981](https://github.com/tomacox74/js2il/issues/981) - module-mode conformance slice
+2. [#982](https://github.com/tomacox74/js2il/issues/982) - async and Promise conformance slice
+3. [#983](https://github.com/tomacox74/js2il/issues/983) - raw and harness-heavy conformance slice
+4. [#985](https://github.com/tomacox74/js2il/issues/985) - Intl and environment-sensitive suite strategy
+5. [#984](https://github.com/tomacox74/js2il/issues/984) - agent and CanBlock conformance slice
+6. [#934](https://github.com/tomacox74/js2il/issues/934) - close after the roadmap split lands; it no longer owns unique implementation work
+7. [#927](https://github.com/tomacox74/js2il/issues/927) - close after [#934](https://github.com/tomacox74/js2il/issues/934); the original phased program is now fully decomposed into concrete follow-ons
 
 **Recently delivered**
 - [#928](https://github.com/tomacox74/js2il/issues/928) - pinned intake/bootstrap
 - [#929](https://github.com/tomacox74/js2il/issues/929) - metadata/frontmatter parser
 - [#930](https://github.com/tomacox74/js2il/issues/930) - MVP runner for the narrow initial slice
 - [#931](https://github.com/tomacox74/js2il/issues/931) - classified MVP results, exclusions, and baseline outputs
+- [#932](https://github.com/tomacox74/js2il/issues/932) - CI workflow and machine-readable reporting
+- [#933](https://github.com/tomacox74/js2il/issues/933) - docs/backlog linkage for bounded `test262` evidence
 
 **Current caveat**
-- The current runner now has stable MVP verdict classification and a baseline artifact, but it is still not a broad official coverage claim. Keep CI/reporting/docs integration and suite expansion behind the remaining follow-ons rather than treating the landed slice as full-corpus conformance reporting.
+- The current runner now has stable MVP verdict classification, bounded CI suites, and docs linkage, but it is still not a broad official coverage claim. Keep future expansion work bounded to one of [#981](https://github.com/tomacox74/js2il/issues/981)-[#985](https://github.com/tomacox74/js2il/issues/985) rather than treating the landed slice as full-corpus conformance reporting.
 
 ### Lane C - Issue Throughput + Reliability Hygiene
 
@@ -82,9 +88,10 @@ Goal: keep the issue queue actionable while preventing status-document drift.
 - Documentation drift risk
 
 **Current queue**
+- [#979](https://github.com/tomacox74/js2il/issues/979) - changelog archive layout and browse-only index
 - Keep `docs/tracking-issues` synchronized after each merge tranche
-- Backfill `priority:*` labels and future `lane:*` labels on the remaining 16 open issues
-- Keep [#949](https://github.com/tomacox74/js2il/issues/949), [#956](https://github.com/tomacox74/js2il/issues/956), and [#927](https://github.com/tomacox74/js2il/issues/927) / [#932](https://github.com/tomacox74/js2il/issues/932)-[#934](https://github.com/tomacox74/js2il/issues/934) scoped with crisp acceptance criteria
+- Backfill `priority:*` labels and future `lane:*` labels on the remaining 20 open issues
+- Keep [#949](https://github.com/tomacox74/js2il/issues/949), [#956](https://github.com/tomacox74/js2il/issues/956), [#979](https://github.com/tomacox74/js2il/issues/979), and [#981](https://github.com/tomacox74/js2il/issues/981)-[#985](https://github.com/tomacox74/js2il/issues/985) scoped with crisp acceptance criteria
 - Close or retag stale issues only when the replacement scope is clearly documented
 
 ## Mandatory PR Gate (Feature Work)
