@@ -250,6 +250,63 @@ namespace JavaScriptRuntime
                 Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
             });
 
+            ConfigureBuiltinFunctionObject(_typeErrorConstructorValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _typeErrorPrototypeValue
+            });
+            PrototypeChain.SetPrototype(_typeErrorPrototypeValue, _errorPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _typeErrorConstructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = "TypeError"
+            });
+
+            ConfigureBuiltinFunctionObject(_typedArrayConstructorValue);
+            PrototypeChain.SetPrototype(_typedArrayPrototypeValue, _objectPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typedArrayConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _typedArrayPrototypeValue
+            });
+            ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_int16ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_int8ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint32ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint16ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint8ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint8ClampedArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
+
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
 

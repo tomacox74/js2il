@@ -86,6 +86,18 @@ namespace Js2IL.Tests.IntrinsicCallables
         }
 
         [Fact]
+        public Task IntrinsicCallables_TypeError_GlobalSurface()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_TypeError_GlobalSurface));
+        }
+
+        [Fact]
+        public Task IntrinsicCallables_TypedArray_ConstructorMetadataSurface()
+        {
+            return ExecutionTest(nameof(IntrinsicCallables_TypedArray_ConstructorMetadataSurface));
+        }
+
+        [Fact]
         public Task IntrinsicCallables_Object_Callable_ReturnsObject()
         {
             return ExecutionTest(nameof(IntrinsicCallables_Object_Callable_ReturnsObject));

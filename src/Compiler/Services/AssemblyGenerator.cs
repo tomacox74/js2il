@@ -80,7 +80,11 @@ namespace Js2IL.Services
 
             // Phase 0: compute callable counts across all modules so we can assign stable
             // future ctor MethodDef tokens for ALL scope types (regardless of module processing order).
-            var totalCallableMethods = modules._modules.Values.Sum(m => new CallableDiscovery(m.SymbolTable!).DiscoverAll().Count);
+            var totalCallableMethods = modules._modules.Values.Sum(m => new CallableDiscovery(m.SymbolTable!)
+                .DiscoverAll()
+                .Reverse()
+                .Distinct()
+                .Count());
             var totalModuleInitMethods = modules._modules.Values.Count;
 
             // Scope types are generated before callables are compiled (so variable binding has FieldDef handles),

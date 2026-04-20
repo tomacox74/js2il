@@ -165,23 +165,25 @@ public sealed class TwoPhaseCompilationCoordinator
         // If discovery produced callables that are missing from the plan (or duplicates exist), fail fast.
         if (_discoveredCallables != null)
         {
-            if (seen.Count != _discoveredCallables.Count)
+            var distinctDiscovered = _discoveredCallables.Distinct().ToArray();
+
+            if (seen.Count != distinctDiscovered.Length)
             {
-                var missingCallables = _discoveredCallables.Where(c => !seen.Contains(c)).ToArray();
+                var missingCallables = distinctDiscovered.Where(c => !seen.Contains(c)).ToArray();
                 var sample = missingCallables.Take(10).Select(c => c.UniqueKey).ToArray();
                 throw new InvalidOperationException(
                     "[TwoPhase] Compilation plan did not include every discovered callable. " +
-                    $"Discovered={_discoveredCallables.Count}, PlannedDistinct={seen.Count}. " +
+                    $"Discovered={_discoveredCallables.Count}, DiscoveredDistinct={distinctDiscovered.Length}, PlannedDistinct={seen.Count}. " +
                     (sample.Length > 0
                         ? ("Missing (sample): " + string.Join(", ", sample) + (missingCallables.Length > sample.Length ? $" (+{missingCallables.Length - sample.Length} more)" : ""))
                         : ""));
             }
 
-            if (ordered.Count != _discoveredCallables.Count)
+            if (ordered.Count != distinctDiscovered.Length)
             {
                 throw new InvalidOperationException(
                     "[TwoPhase] Compilation plan contained duplicate callables (after de-dup). " +
-                    $"Discovered={_discoveredCallables.Count}, PlannedOrderedDistinct={ordered.Count}.");
+                    $"Discovered={_discoveredCallables.Count}, DiscoveredDistinct={distinctDiscovered.Length}, PlannedOrderedDistinct={ordered.Count}.");
             }
         }
 
@@ -226,6 +228,7 @@ public sealed class TwoPhaseCompilationCoordinator
             // declare owner types in MethodDef-row order.
             orderedNonClassCallables = _discoveredCallables
                 .Where(IsNonClassCallable)
+                .Distinct()
                 .Select((c, index) => (Callable: c, Index: index, Depth: GetCallableDeclaringScopeDepth(symbolTable, c)))
                 .OrderBy(x => x.Depth)
                 .ThenBy(x => x.Index)
@@ -1569,7 +1572,12 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var discovery = new CallableDiscovery(symbolTable);
-        _discoveredCallables = discovery.DiscoverAll();
+        _discoveredCallables = discovery
+            .DiscoverAll()
+            .Reverse()
+            .Distinct()
+            .Reverse()
+            .ToArray();
 
         // Build O(1) lookup index from AST node to CallableId (stored in CallableRegistry)
         _registry.ResetAstNodeIndex(_discoveredCallables.Count);
