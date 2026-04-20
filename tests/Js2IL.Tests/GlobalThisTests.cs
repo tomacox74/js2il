@@ -89,7 +89,8 @@ public class GlobalThisTests
     }
 
     [Fact]
-    public void GlobalObject_ExposesPromiseAndTypeErrorConstructorValues()
+<<<<<<< HEAD
+    public void GlobalObject_ExposesTypeErrorConstructor_WithPrototypeBackReferences()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();
 
@@ -99,16 +100,19 @@ public class GlobalThisTests
 
             var globalObject = (GlobalThis)GlobalThis.globalThis;
 
-            Assert.True(globalObject.ContainsKey(nameof(GlobalThis.Promise)));
-            Assert.Same(GlobalThis.Promise, globalObject[nameof(GlobalThis.Promise)]);
-            var promisePrototype = ObjectRuntime.GetItem(GlobalThis.Promise, "prototype");
-            Assert.NotNull(promisePrototype);
-            Assert.Equal("Promise", ObjectRuntime.GetItem(promisePrototype!, Symbol.toStringTag));
-            Assert.Equal("Promise", ObjectRuntime.GetItem((JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(1)!, Symbol.toStringTag));
-
             Assert.True(globalObject.ContainsKey(nameof(GlobalThis.TypeError)));
             Assert.Same(GlobalThis.TypeError, globalObject[nameof(GlobalThis.TypeError)]);
-            Assert.Same(GlobalThis.TypeError, ObjectRuntime.GetItem(new TypeError("boom"), "constructor"));
+
+            var prototype = ObjectRuntime.GetItem(GlobalThis.TypeError, "prototype");
+            Assert.NotNull(prototype);
+            Assert.Same(GlobalThis.TypeError, ObjectRuntime.GetItem(prototype!, "constructor"));
+            Assert.Equal("TypeError", ObjectRuntime.GetItem(prototype, "name"));
+            Assert.Same(ObjectRuntime.GetItem(GlobalThis.Error, "prototype"), PrototypeChain.GetPrototypeOrNull(prototype));
+
+            var error = new TypeError("boom");
+            Assert.True(Operators.InstanceOf(error, GlobalThis.TypeError));
+            Assert.True(Operators.InstanceOf(error, GlobalThis.Error));
+            Assert.Same(GlobalThis.TypeError, ObjectRuntime.GetItem(error, "constructor"));
         }
         finally
         {

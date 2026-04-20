@@ -90,16 +90,11 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
             JavaScriptRuntime.Object.Construct(value);
 
-        private static readonly Func<object[], object?[], object?> _errorConstructorValue = static (_, args) =>
-        {
-            string? message = null;
-            if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
-            {
-                message = DotNet2JSConversions.ToString(args[0]);
-            }
+        private static readonly Func<object[], object?[], object?> _errorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.Error(message));
 
-            return new JavaScriptRuntime.Error(message);
-        };
+        private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
 
         private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
@@ -953,6 +948,20 @@ namespace JavaScriptRuntime
             return _serviceProvider.Value!.Resolve<Timers>();
         }
 
+        private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, JavaScriptRuntime.Error> factory)
+        {
+            return (_, args) =>
+            {
+                string? message = null;
+                if (args != null && args.Length > 0 && args[0] is not null && args[0] is not JsNull)
+                {
+                    message = DotNet2JSConversions.ToString(args[0]);
+                }
+
+                return factory(message);
+            };
+        }
+
         private static JsFuncNoScopes1 CreateCollectionConstructorValue(string name, Func<object> factory)
         {
             return (newTarget, iterable) =>
@@ -1126,6 +1135,19 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = name
             });
+        }
+
+        internal static void AssignBuiltInErrorPrototype(JavaScriptRuntime.Error error)
+        {
+            ArgumentNullException.ThrowIfNull(error);
+
+            var prototype = error switch
+            {
+                JavaScriptRuntime.TypeError => _typeErrorPrototypeValue,
+                _ => _errorPrototypeValue
+            };
+
+            PrototypeChain.SetPrototype(error, prototype);
         }
 
         internal static void ConfigureBuiltinFunctionObject(object functionValue)
