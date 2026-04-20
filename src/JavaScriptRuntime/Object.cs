@@ -3596,6 +3596,11 @@ namespace JavaScriptRuntime
                 return typedArray.values();
             }
 
+            if (iterable is ArgumentsObject argumentsObject)
+            {
+                return argumentsObject.values();
+            }
+
             // Best-effort fallback: treat .NET IEnumerable as iterable.
             if (iterable is System.Collections.IEnumerable en)
             {

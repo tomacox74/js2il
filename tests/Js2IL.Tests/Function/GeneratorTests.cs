@@ -90,6 +90,9 @@ namespace Js2IL.Tests.Function
         public Task Function_Arguments_MappedParameterAliasing() { var testName = nameof(Function_Arguments_MappedParameterAliasing); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_Arguments_Mapped_ForOf() { var testName = nameof(Function_Arguments_Mapped_ForOf); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_Arguments_Length_Delete() { var testName = nameof(Function_Arguments_Length_Delete); return GenerateTest(testName); }
 
         [Fact]
