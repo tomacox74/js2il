@@ -1419,6 +1419,11 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                        createArrow.IsAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
+                        nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
+                        new[] { typeof(object) }));
                     // Result stays on stack
                     break;
                 }

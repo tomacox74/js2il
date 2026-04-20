@@ -24,31 +24,31 @@
     {
       "clause": "27.7.2",
       "title": "Properties of the AsyncFunction Constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor-properties"
     },
     {
       "clause": "27.7.2.1",
       "title": "AsyncFunction.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor-prototype"
     },
     {
       "clause": "27.7.3",
       "title": "Properties of the AsyncFunction Prototype Object",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-prototype-properties"
     },
     {
       "clause": "27.7.3.1",
       "title": "AsyncFunction.prototype.constructor",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-prototype-properties-constructor"
     },
     {
       "clause": "27.7.3.2",
       "title": "AsyncFunction.prototype [ %Symbol.toStringTag% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-async-function-prototype-%symbol.tostringtag%"
     },
     {
@@ -97,6 +97,16 @@
   "support": {
     "entries": [
       {
+        "clause": "27.7.2.1",
+        "feature": "async function instances expose a dedicated AsyncFunction constructor/prototype surface",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-async-function-constructor-prototype",
+        "testScripts": [
+          "tests/Js2IL.Tests/Async/JavaScript/Async_FunctionConstructorIntrinsic.js"
+        ],
+        "notes": "Async function values now inherit from a dedicated `AsyncFunction.prototype`, and expose `instance.constructor`, `AsyncFunction.prototype.constructor`, and `%Symbol.toStringTag%`. Calling the `AsyncFunction` constructor itself is still not supported."
+      },
+      {
         "clause": "27.7.5.3",
         "feature": "async/await lowers to Promise-based state machine and supports await of pending Promises",
         "status": "Supported",
@@ -111,7 +121,7 @@
           "tests/Js2IL.Tests/Async/JavaScript/Async_TryFinally_ReturnPreservedThroughAwait.js",
           "tests/Js2IL.Tests/Async/JavaScript/Async_TryFinally_PreservesExceptionThroughAwait.js"
         ],
-        "notes": "Async functions are supported via syntax (`async function`, `await`) and runtime Promise integration. The spec-level `AsyncFunction` constructor/prototype intrinsics are not currently exposed."
+        "notes": "Async functions are supported via syntax (`async function`, `await`) and runtime Promise integration. JS2IL now exposes the observable `AsyncFunction` constructor/prototype surface for compiled async functions, but invoking the constructor itself is still unsupported."
       }
     ]
   }

@@ -201,6 +201,18 @@ public static class Function
             return boundDelegate;
         }
 
+        public static object InitializeFunctionInstance(object functionValue)
+        {
+            ArgumentNullException.ThrowIfNull(functionValue);
+
+            if (PrototypeChain.GetPrototypeOrNull(functionValue) == null)
+            {
+                PrototypeChain.SetPrototype(functionValue, Prototype);
+            }
+
+            return functionValue;
+        }
+
         public static object? Construct(Delegate constructor, object?[]? args)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));

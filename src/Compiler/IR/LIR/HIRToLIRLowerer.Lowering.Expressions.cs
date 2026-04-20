@@ -765,6 +765,7 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCreateBoundArrowFunction(
             CallableId: arrowExpr.CallableId,
             ScopesArray: scopesTemp,
+            IsAsync: arrowScope.IsAsync,
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
