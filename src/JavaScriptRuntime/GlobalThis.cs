@@ -61,6 +61,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
 
+        private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
+            JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
+
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
             if (newTarget is null)
@@ -153,6 +156,15 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
+            });
+            ConfigureBuiltinFunctionObject(_arrayIsArrayValue);
+            PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "isArray", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _arrayIsArrayValue
             });
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);

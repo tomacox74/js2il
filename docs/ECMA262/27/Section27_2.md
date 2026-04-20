@@ -44,7 +44,7 @@
 | 27.2.4.7.1 | PromiseResolve ( C , x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promise-resolve) |
 | 27.2.4.8 | Promise.try ( callback , ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.try) |
 | 27.2.4.9 | Promise.withResolvers ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.withResolvers) |
-| 27.2.4.10 | get Promise [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-promise-%symbol.species%) |
+| 27.2.4.10 | get Promise [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-promise-%symbol.species%) |
 | 27.2.5 | Properties of the Promise Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-prototype-object) |
 | 27.2.5.1 | Promise.prototype.catch ( onRejected ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.catch) |
 | 27.2.5.2 | Promise.prototype.constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.prototype.constructor) |
@@ -75,6 +75,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Promise.withResolvers() | Supported | [`Promise_WithResolvers_Resolve.js`](../../../tests/Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Resolve.js)<br>[`Promise_WithResolvers_Reject.js`](../../../tests/Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Reject.js)<br>[`Promise_WithResolvers_Idempotent.js`](../../../tests/Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Idempotent.js) |  |
+
+### 27.2.4.10 ([tc39.es](https://tc39.es/ecma262/#sec-get-promise-%symbol.species%))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Promise[Symbol.species] | Supported | [`Promise_SymbolSpecies.js`](../../../tests/Js2IL.Tests/Promise/JavaScript/Promise_SymbolSpecies.js) | Exposes Promise as a first-class global constructor value and defines a non-enumerable, configurable species accessor that returns the current constructor. |
 
 ### 27.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-prototype-object))
 
@@ -874,4 +880,3 @@ Indicates whether the promise has ever had a fulfillment or rejection handler; u
 <!-- END SPEC EXTRACT -->
 
 </details>
-

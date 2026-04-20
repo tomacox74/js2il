@@ -1080,6 +1080,11 @@ namespace JavaScriptRuntime
                 throw new TypeError("Function has non-object prototype in instanceof check");
             }
 
+            if (TryMatchBuiltInErrorInstance(value, proto))
+            {
+                return true;
+            }
+
             if (!JavaScriptRuntime.PrototypeChain.Enabled)
             {
                 // If prototype chains are not enabled/assigned, we cannot observe any inheritance.
@@ -1135,6 +1140,28 @@ namespace JavaScriptRuntime
                     return false;
                 }
             }
+        }
+
+        private static bool TryMatchBuiltInErrorInstance(object value, object ctorPrototype)
+        {
+            if (value is not JavaScriptRuntime.Error)
+            {
+                return false;
+            }
+
+            var ctorName = JavaScriptRuntime.ObjectRuntime.GetItem(ctorPrototype, "name") as string;
+            return ctorName switch
+            {
+                "Error" => value is JavaScriptRuntime.Error,
+                "EvalError" => value is JavaScriptRuntime.EvalError,
+                "RangeError" => value is JavaScriptRuntime.RangeError,
+                "ReferenceError" => value is JavaScriptRuntime.ReferenceError,
+                "SyntaxError" => value is JavaScriptRuntime.SyntaxError,
+                "TypeError" => value is JavaScriptRuntime.TypeError,
+                "URIError" => value is JavaScriptRuntime.URIError,
+                "AggregateError" => value is JavaScriptRuntime.AggregateError,
+                _ => false
+            };
         }
 
         /// <summary>

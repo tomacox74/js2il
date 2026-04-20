@@ -137,7 +137,7 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
             }
 
-            var key = DotNet2JSConversions.ToString(propName);
+            var key = JavaScriptRuntime.Object.ToPropertyKeyString(propName);
 
             if (receiver is JavaScriptRuntime.Proxy proxy)
             {
@@ -196,8 +196,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            // Arrays/typed arrays/strings and CLR objects: deletion is a no-op in this runtime for now.
-            // (Full JS semantics for array holes and non-configurable properties are not modeled.)
+            // Arrays/typed arrays/strings and other CLR-backed objects: best-effort deletion.
+            // We currently only materialize configurable own properties in PropertyDescriptorStore
+            // for these receivers, so removing the descriptor is enough for surfaced built-ins like
+            // Promise[Symbol.species].
+            PropertyDescriptorStore.Delete(receiver, key);
             return true;
         }
 
@@ -206,7 +209,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool DeleteItem(object? receiver, object? index)
         {
-            return DeleteProperty(receiver, DotNet2JSConversions.ToString(index));
+            return DeleteProperty(receiver, index);
         }
 
         // Determines whether a computed key should be treated as an array index.
