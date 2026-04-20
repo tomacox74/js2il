@@ -1,13 +1,13 @@
 # ECMA-262 Top Missing Features Backlog
 
-> **Last Updated**: 2026-04-13
+> **Last Updated**: 2026-04-20
 > Purpose: capture the highest-impact ECMA-262 gaps still marked missing or materially incomplete in `docs\ECMA262`.
 > Source basis: current generated `docs\ECMA262\**\Section*.md` / JSON tracking, cross-checked against live GitHub issue state.
 
 ## What changed since the previous pass
 
-- The previous top tracked issue [#859](https://github.com/tomacox74/js2il/issues/859) is now **closed**, so the remaining highest-value ECMA gaps are mostly **issue-creation candidates**, not already-open GitHub issues.
-- The best remaining backlog items are now concentrated in TypedArray fidelity, the new Uint8Array base64/hex surface, Promise follow-ons, and missing constructor/prototype intrinsics for generator-family function objects.
+- No new ECMA-262 support-doc updates landed after the previous pass, so the top missing-feature ranking is materially unchanged.
+- [#975](https://github.com/tomacox74/js2il/pull/975) strengthened the `test262` foundation with classified MVP results and a baseline artifact, but it did not close any of the feature gaps below; the best remaining backlog items are still concentrated in TypedArray fidelity, the new Uint8Array base64/hex surface, Promise follow-ons, and missing constructor/prototype intrinsics for generator-family function objects.
 
 ## How this pass was filtered
 

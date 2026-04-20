@@ -7,10 +7,11 @@
 
 This document contains the historical tracking drafts for the original Phase 1 rest/spread work. The phase has already shipped on `master`; keep this file for reference only rather than as the template for new GitHub issues.
 
-## Current State (2026-04-13)
+## Current State (2026-04-20)
 
 - ✅ Phase 1 scope is long since shipped on `master` (rest parameters; spread in calls, arrays, and objects).
 - ✅ The active queue has moved on to Node compatibility, `test262` follow-ons, and the deferred performance lane.
+- ✅ The current live queue is **16 open issues / 0 open PRs**, with Node follow-ons [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://github.com/tomacox74/js2il/issues/956) plus `test262` umbrella [#927](https://github.com/tomacox74/js2il/issues/927) and follow-ons [#932](https://github.com/tomacox74/js2il/issues/932)-[#934](https://github.com/tomacox74/js2il/issues/934) now taking priority instead.
 - ℹ️ Any unchecked acceptance items below are preserved as historical drafting artifacts rather than current blockers.
 
 ---
@@ -421,4 +422,4 @@ function useCustomHook(...deps) {
 ---
 
 *Generated from ECMA-262 Feature Implementation Analysis*
-*Last updated: 2026-04-13*
+*Last updated: 2026-04-20*
