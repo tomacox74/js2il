@@ -924,6 +924,11 @@ namespace JavaScriptRuntime
             // Calling getPrototypeOf is itself an opt-in signal.
             PrototypeChain.Enable();
 
+            if (obj is Delegate del)
+            {
+                return JavaScriptRuntime.Function.GetPrototypeObject(del);
+            }
+
             if (!PrototypeChain.TryGetPrototype(obj, out var prototype))
             {
                 return null;

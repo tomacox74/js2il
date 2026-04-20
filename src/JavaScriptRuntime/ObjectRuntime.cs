@@ -155,6 +155,11 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
             }
 
+            if (receiver is Delegate del)
+            {
+                return Function.DeleteOwnProperty(del, key);
+            }
+
             if (receiver is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;

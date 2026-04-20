@@ -60,6 +60,8 @@ namespace JavaScriptRuntime
         // access `Array.prototype.*` members.
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
+        private static readonly Func<object[], object?, bool> _arrayIsArrayValue = static (_, value) =>
+            JavaScriptRuntime.Array.isArray(value);
 
         private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
             JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
@@ -271,6 +273,38 @@ namespace JavaScriptRuntime
                 Value = "Error"
             });
             PropertyDescriptorStore.DefineOrUpdate(_errorPrototypeValue, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _typeErrorConstructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = "TypeError"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "toString", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
