@@ -79,6 +79,9 @@ namespace Js2IL.Tests.TypedArray
         public Task Uint8Array_FromBase64_Results() { var testName = nameof(Uint8Array_FromBase64_Results); return GenerateTest(testName); }
 
         [Fact]
+        public Task Uint8Array_FromBase64_InvalidInput() { var testName = nameof(Uint8Array_FromBase64_InvalidInput); return GenerateTest(testName); }
+
+        [Fact]
         public Task Float64Array_Construct_ArrayBuffer_Search() { var testName = nameof(Float64Array_Construct_ArrayBuffer_Search); return GenerateTest(testName); }
 
         [Fact]

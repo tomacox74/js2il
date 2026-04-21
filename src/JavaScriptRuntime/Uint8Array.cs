@@ -86,8 +86,15 @@ namespace JavaScriptRuntime
 
         public static Uint8Array fromBase64(object? value)
         {
-            var decoded = System.Convert.FromBase64String(DotNet2JSConversions.ToString(value));
-            return new Uint8Array(new ArrayBuffer(decoded, cloneBuffer: false), 0, decoded.Length);
+            try
+            {
+                var decoded = System.Convert.FromBase64String(DotNet2JSConversions.ToString(value));
+                return new Uint8Array(new ArrayBuffer(decoded, cloneBuffer: false), 0, decoded.Length);
+            }
+            catch (FormatException ex)
+            {
+                throw new SyntaxError("Invalid base64 input", ex);
+            }
         }
 
         public static Uint8Array of(object[]? args)
