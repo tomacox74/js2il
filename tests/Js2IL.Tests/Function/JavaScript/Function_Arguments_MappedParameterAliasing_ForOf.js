@@ -1,13 +1,9 @@
-var i = 0;
+"use strict";
 
-(function (a, b, c) {
-  for (var value of arguments) {
-    console.log(value);
-    a = b;
-    b = c;
-    c = i;
-    i++;
-  }
-}(1, 2, 3));
+const mapped = Function(
+  "a",
+  "b",
+  "c",
+  "let i = 0; for (const value of arguments) { console.log(value); a = b; b = c; c = i; i++; } console.log(i);");
 
-console.log(i);
+mapped(1, 2, 3);
