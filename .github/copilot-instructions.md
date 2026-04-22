@@ -256,6 +256,8 @@ All `NotSupportedException` thrown via `ILEmitHelpers.ThrowNotSupported()` with 
 3. Add IL emission in appropriate generator (statement → `ILMethodGenerator`, expression → `ILExpressionGenerator`)
 4. Add execution + generator tests with snapshot
 
+**Current limitation**: `eval` is not supported at this time. Reject `eval` during validation with a clear compile-time error; full support will be implemented in a future release.
+
 **Debugging IL**: Use `scripts/decompileGeneratorTest.js` or inspect `.verified.txt` snapshots. Common issues: stack imbalance (track push/pop), incorrect metadata handles, missing type casts.
 
 ## External Dependencies

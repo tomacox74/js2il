@@ -622,6 +622,9 @@ public class JavaScriptAstValidator : IAstValidator
             result.IsValid = false;
         }
 
+        static bool IsUnsupportedEvalIdentifier(string name)
+            => string.Equals(name, "eval", StringComparison.Ordinal);
+
         static bool IsUndefinedStringLiteral(Expression expr)
             => expr is StringLiteral sl && string.Equals(sl.Value, "undefined", StringComparison.Ordinal);
 
@@ -934,6 +937,15 @@ public class JavaScriptAstValidator : IAstValidator
                             // CommonJS injected values.
                             if (AllowedInjectedGlobals.Value.Contains(name))
                             {
+                                break;
+                            }
+
+                            if (IsUnsupportedEvalIdentifier(name))
+                            {
+                                AddError(
+                                    result,
+                                    "eval is not supported by JS2IL at this time; support will be added in a future release",
+                                    id);
                                 break;
                             }
 
