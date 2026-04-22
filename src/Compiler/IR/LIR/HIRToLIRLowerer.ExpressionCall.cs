@@ -122,13 +122,6 @@ public sealed partial class HIRToLIRLowerer
                     return TryEmitThrownBuiltInError("SyntaxError", syntaxErrorMessage, out resultTempVar);
                 }
 
-                if (string.Equals(name, "eval", StringComparison.Ordinal)
-                    && TryGetDirectEvalSyntaxErrorMessage(callExpr.Arguments, out var evalSyntaxErrorMessage)
-                    && !string.IsNullOrWhiteSpace(evalSyntaxErrorMessage))
-                {
-                    return TryEmitThrownBuiltInError("SyntaxError", evalSyntaxErrorMessage, out resultTempVar);
-                }
-
                 if (string.Equals(name, "String", StringComparison.Ordinal)
                     || string.Equals(name, "Number", StringComparison.Ordinal)
                     || string.Equals(name, "Boolean", StringComparison.Ordinal))

@@ -39,7 +39,6 @@ namespace JavaScriptRuntime
         {
             Name = "Error";
             _constructedStack = CaptureStack();
-            GlobalThis.ConfigureErrorInstance(this);
         }
 
         public Error(string? message, object? cause) : this(message)
@@ -51,7 +50,6 @@ namespace JavaScriptRuntime
         {
             Name = "Error";
             _constructedStack = CaptureStack();
-            GlobalThis.ConfigureErrorInstance(this);
         }
 
         public Error(string? message, Exception? innerException, object? cause) : this(message, innerException)

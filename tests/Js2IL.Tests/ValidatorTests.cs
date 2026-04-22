@@ -275,19 +275,6 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_GlobalSyntaxError_AsValue_ReturnsValid()
-    {
-        var js = @"
-            const ctor = SyntaxError;
-            console.log(ctor !== undefined);
-        ";
-        var ast = ParseStrict(js);
-        var result = _validator.Validate(ast);
-        Assert.True(result.IsValid);
-        Assert.Empty(result.Errors);
-    }
-
-    [Fact]
     public void Validate_GlobalTimerFunctions_AsValues_ReturnsValid()
     {
         // Domino's WindowTimers polyfill pattern assigns host timer functions onto a window-like object.
@@ -312,9 +299,9 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_GlobalFunctions_ParseFloat_IsFinite_ReturnsValid()
-    {
-        var js = @"
+        public void Validate_GlobalFunctions_ParseFloat_IsFinite_ReturnsValid()
+        {
+            var js = @"
             const x = parseFloat('1.25abc');
             const y = isFinite(x);
             console.log(x);
@@ -322,14 +309,35 @@ public class ValidatorTests
         ";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.True(result.IsValid);
-        Assert.Empty(result.Errors);
-    }
+            Assert.True(result.IsValid);
+            Assert.Empty(result.Errors);
+        }
 
-    [Fact]
-    public void Validate_Require_DynamicArgument_ReportsError()
-    {
-        var js = "const name = './b'; const m = require(name);";
+        [Fact]
+        public void Validate_EvalCall_ReportsFutureReleaseError()
+        {
+            var js = "eval('1 + 1');";
+            var ast = ParseStrict(js);
+            var result = _validator.Validate(ast);
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, e => e.Contains("eval is not supported by JS2IL at this time", StringComparison.Ordinal));
+            Assert.Contains(result.Errors, e => e.Contains("future release", StringComparison.OrdinalIgnoreCase));
+        }
+
+        [Fact]
+        public void Validate_EvalIdentifierValue_ReportsFutureReleaseError()
+        {
+            var js = "const runtimeEval = eval;";
+            var ast = ParseStrict(js);
+            var result = _validator.Validate(ast);
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, e => e.Contains("eval is not supported by JS2IL at this time", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public void Validate_Require_DynamicArgument_ReportsError()
+        {
+            var js = "const name = './b'; const m = require(name);";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
