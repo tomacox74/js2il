@@ -13,20 +13,46 @@ namespace JavaScriptRuntime
     /// JS2IL models JavaScript functions as CLR delegates; these helpers provide a small subset
     /// of Function.prototype behavior (apply/bind) for those values.
     /// </summary>
-    public static class Function
-    {
-        internal static readonly ExpandoObject Prototype = CreatePrototype();
+public static class Function
+{
+    internal static readonly ExpandoObject Prototype = CreatePrototype();
+    internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
 
-        private static ExpandoObject CreatePrototype()
-        {
-            var exp = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)exp;
+    private static ExpandoObject CreatePrototype()
+    {
+        var exp = new ExpandoObject();
+        var dict = (IDictionary<string, object?>)exp;
             dict["apply"] = (Func<object[], object?[], object?>)PrototypeApply;
             dict["call"] = (Func<object[], object?[], object?>)PrototypeCall;
             dict["bind"] = (Func<object[], object?[], object?>)PrototypeBind;
-            dict["toString"] = (Func<object[], object?[], object?>)PrototypeToString;
-            return exp;
-        }
+        dict["toString"] = (Func<object[], object?[], object?>)PrototypeToString;
+        return exp;
+    }
+
+    private static ExpandoObject CreateRestrictedPropertiesPrototype()
+    {
+        var exp = new ExpandoObject();
+        DefineRestrictedProperty(exp, "caller");
+        DefineRestrictedProperty(exp, "arguments");
+        return exp;
+    }
+
+    private static void DefineRestrictedProperty(object target, string propertyName)
+    {
+        PropertyDescriptorStore.DefineOrUpdate(target, propertyName, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Enumerable = false,
+            Configurable = true,
+            Get = (Func<object[], object?[], object?>)((_, __) => throw new TypeError($"Cannot access restricted function property '{propertyName}'")),
+            Set = (Func<object[], object?[], object?>)((_, __) => throw new TypeError($"Cannot access restricted function property '{propertyName}'"))
+        });
+    }
+
+    internal static void ConfigureCallableObject(object functionValue, bool hasRestrictedProperties)
+    {
+        PrototypeChain.SetPrototype(functionValue, hasRestrictedProperties ? RestrictedPropertiesPrototype : Prototype);
+    }
 
         private static object? PrototypeApply(object[] scopes, object?[]? args)
         {
@@ -170,6 +196,7 @@ namespace JavaScriptRuntime
                 }
             };
 
+            ConfigureCallableObject(boundDelegate, hasRestrictedProperties: false);
             Closure.TrackFunctionPrototypeBoundDelegate(boundDelegate, target, boundArgs);
             return boundDelegate;
         }
