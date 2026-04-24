@@ -12,6 +12,13 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 
 These goals drive choices made.  And their ranking above should be clear. For example if I have a 10x perf inprovement but it breaks compatiblity with node or ECMA 262 it is a non-starter.
 
+## Current compatibility goal
+
+- A major current goal is to have JS2IL pass as much of `test262` as possible.
+- The default assumption should be that `test262` coverage is the target unless a feature is explicitly unsupported today.
+- Known unsupported JavaScript features such as `eval` are valid exceptions for now; when those gaps matter, document them clearly instead of treating them as silent failures.
+- Prefer work that improves real `test262` pass rate over adding redundant project-local regressions for behavior that `test262` already covers well.
+
 ## Architecture Overview
 
 ### Compilation Pipeline (6 Phases)
@@ -111,10 +118,19 @@ js2il input.js output                           # Installed tool
 - **Execution tests**: `ExecutionTestsBase` - compile JS → run .dll → verify output
 - **Generator tests**: `GeneratorTestsBase` - compile JS → decompile IL → snapshot test via Verify
 - The same test cases are used for both execution and generator tests. The test javascript is shared.
+- **Test262 tests**: live under `tests\Js2IL.Test262.Tests\` and are the preferred place for standards-based compatibility coverage.
 - Snapshot updates: `node scripts/updateVerifiedFiles.js` (updates all `*.received.*` → `*.verified.*`).  This tool is useful when a IL change affects many tests.
 - Test categories: Array, BinaryOperator, Classes, CompoundAssignment, ControlFlow, Function, etc.
 - Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs js2il performance.
 - Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
+
+### Porting test262 coverage into this repo
+- Keep the original `test262` scenario as the source of truth whenever practical. Add the port under `tests\Js2IL.Test262.Tests\` using the matching spec-style folder structure (for example `language\expressions\arrow-function`).
+- Add a `JavaScript\` fixture file and a matching `ExecutionTests.cs` entry in that folder. Follow the existing pattern where the xUnit `DisplayName` preserves the original test name and the C# method name uses an identifier-safe variant.
+- Add the expected execution snapshot under the matching `Snapshots\` folder.
+- Prefer **not** to add a duplicate `tests\Js2IL.Tests\...` regression when the `test262` port already covers the runtime behavior clearly. Only keep a `Js2IL.Tests` companion when we need project-specific generator/IL assertions or coverage that does not map cleanly to `test262`.
+- PR #1011 is the reference example for this workflow: the arrow-function restricted `caller` / `arguments` scenario belongs under `tests\Js2IL.Test262.Tests\language\expressions\arrow-function\`, and the parallel `tests\Js2IL.Tests\ArrowFunction\ArrowFunction_RestrictedCallerArgumentsProperties` regression is considered redundant.
+- When a new `test262` case changes the documented support story, update the relevant ECMA-262 docs and changelog entry in the same PR.
 
 ### Running Phased Benchmarks Locally (Single Scenario)
 - These phased benchmarks use the open-source BenchmarkDotNet project.
