@@ -223,6 +223,8 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         }
     }
 
+    public IJavaScriptIterator values() => new ValueIterator(this);
+
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     internal IJavaScriptIterator CreateValueIterator() => new ValueIterator(this);
