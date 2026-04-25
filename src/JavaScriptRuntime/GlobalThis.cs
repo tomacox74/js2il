@@ -361,6 +361,12 @@ namespace JavaScriptRuntime
             if (string.IsNullOrEmpty(message)) return name;
             return $"{name}: {message}";
         }
+
+        private static void ConfigureTypedArrayConstructorValue(object constructorValue)
+        {
+            ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(constructorValue, _typedArrayConstructorValue);
+        }
         internal static ServiceContainer? ServiceProvider
         {
             get => _serviceProvider.Value;
