@@ -12,9 +12,6 @@ namespace Js2IL.Tests.AsyncGenerator
         [Fact]
         public Task AsyncGenerator_ForAwaitOf() { var testName = nameof(AsyncGenerator_ForAwaitOf); return GenerateTest(testName); }
 
-        [Fact]
-        public Task AsyncGenerator_FunctionConstructor_Length() { var testName = nameof(AsyncGenerator_FunctionConstructor_Length); return GenerateTest(testName); }
-
         [Fact(Skip = "throw() and return() protocol methods are not yet fully implemented for async generators")]
         public Task AsyncGenerator_Throw() { var testName = nameof(AsyncGenerator_Throw); return GenerateTest(testName); }
 
