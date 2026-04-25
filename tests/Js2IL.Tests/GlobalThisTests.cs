@@ -89,7 +89,6 @@ public class GlobalThisTests
     }
 
     [Fact]
-<<<<<<< HEAD
     public void GlobalObject_ExposesTypeErrorConstructor_WithPrototypeBackReferences()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();
