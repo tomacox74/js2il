@@ -125,6 +125,35 @@ namespace JavaScriptRuntime
         private static readonly object _booleanPrototypeValue = new JavaScriptRuntime.Boolean(false);
         private static readonly object _promisePrototypeValue = new JsObject();
 
+        // TypedArray intrinsic constructor and prototype
+        private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
+            throw new TypeError("%TypedArray% is not directly constructible in js2il.");
+        private static readonly object _typedArrayPrototypeValue = new JsObject();
+
+        // Typed array constructor values - supported and unsupported
+        private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue = 
+            static (_, args) => new Float64Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _float32ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Float32Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue = 
+            static (_, args) => new Int32Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Int16Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Int8Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Uint32Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Uint16Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue = 
+            static (_, args) => new Uint8Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Uint8ClampedArray constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The BigUint64Array constructor is not yet supported in js2il.");
+
         static GlobalThis()
         {
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
