@@ -9,4 +9,8 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "ArgumentsObject_callee-descriptor-non-strict")]
     public Task ArgumentsObject_callee_descriptor_non_strict()
         => ExecutionTest("ArgumentsObject_callee-descriptor-non-strict");
+
+    [Fact(DisplayName = "ArgumentsObject_global-TypeError")]
+    public Task ArgumentsObject_global_TypeError()
+        => ExecutionTest("ArgumentsObject_global-TypeError");
 }

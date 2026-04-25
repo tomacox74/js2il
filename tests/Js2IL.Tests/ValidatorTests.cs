@@ -213,6 +213,16 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_TypeErrorIdentifier_AsValue_IsSupported()
+    {
+        var js = "var ctor = TypeError; console.log(ctor !== undefined);";
+        var ast = ParseStrict(js);
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_Typeof_UndeclaredGlobal_IsAllowed()
     {
         var js = "var t = typeof window;";
