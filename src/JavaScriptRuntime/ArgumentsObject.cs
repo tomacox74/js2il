@@ -377,4 +377,42 @@ descriptorKeys:
             Value = _calleeValue
         });
     }
+
+    private sealed class ValueIterator : IJavaScriptIterator
+    {
+        private readonly ArgumentsObject _argumentsObject;
+        private int _index;
+        private bool _isClosed;
+
+        public ValueIterator(ArgumentsObject argumentsObject)
+        {
+            _argumentsObject = argumentsObject;
+            Iterator.InitializeIteratorSurface(this);
+        }
+
+        public bool HasReturn => true;
+
+        public IteratorResultObject Next()
+        {
+            if (_isClosed)
+            {
+                return new IteratorResultObject(null, done: true);
+            }
+
+            var length = System.Math.Max(0, TypeUtilities.ToInt32(_argumentsObject._lengthValue));
+            if (_index >= length)
+            {
+                return new IteratorResultObject(null, done: true);
+            }
+
+            var value = ObjectRuntime.GetItem(_argumentsObject, (double)_index);
+            _index++;
+            return new IteratorResultObject(value, done: false);
+        }
+
+        public void Return()
+        {
+            _isClosed = true;
+        }
+    }
 }
