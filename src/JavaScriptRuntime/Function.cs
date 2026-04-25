@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Js2IL.Runtime;
 
 namespace JavaScriptRuntime
@@ -15,8 +17,15 @@ namespace JavaScriptRuntime
     /// </summary>
 public static class Function
 {
+    private sealed class DeletedMetadataSlot
+    {
+        public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
+    }
+
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
+
+    private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
 
     private static ExpandoObject CreatePrototype()
     {
@@ -333,9 +342,33 @@ public static class Function
             return string.IsNullOrEmpty(name) ? string.Empty : name;
         }
 
+        internal static object GetPrototypeObject(Delegate target)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+
+            var existingPrototype = PrototypeChain.GetPrototypeOrNull(target);
+            if (existingPrototype != null)
+            {
+                return existingPrototype;
+            }
+
+            var prototype = IsGeneratorFunction(target)
+                ? GeneratorObject.GeneratorFunctionPrototypeObject
+                : Prototype;
+
+            PrototypeChain.SetPrototype(target, prototype);
+            return prototype;
+        }
+
         internal static bool TryEnsureOwnMetadataPropertyDescriptor(Delegate target, string propName, out JsPropertyDescriptor descriptor)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
+
+            if (IsDeletedMetadataProperty(target, propName))
+            {
+                descriptor = null!;
+                return false;
+            }
 
             if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
             {
@@ -372,6 +405,30 @@ public static class Function
 
             descriptor = null!;
             return false;
+        }
+
+        internal static bool DeleteOwnProperty(Delegate target, string propName)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+
+            PropertyDescriptorStore.Delete(target, propName);
+
+            if (IsMetadataPropertyName(propName))
+            {
+                _deletedMetadataProperties.GetOrCreateValue(target).Keys.Add(propName);
+            }
+
+            return true;
+        }
+
+        internal static void ClearDeletedMetadataProperty(Delegate target, string propName)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+
+            if (_deletedMetadataProperties.TryGetValue(target, out var deleted))
+            {
+                deleted.Keys.Remove(propName);
+            }
         }
 
         private static bool IsSyntheticDynamicFunctionDeclaringTypeName(string? declaringTypeName)
@@ -413,6 +470,21 @@ public static class Function
 
             return index == declaringTypeName.Length;
         }
+
+        private static bool IsGeneratorFunction(Delegate target)
+        {
+            var declaringType = target.Method.DeclaringType;
+            var scopeType = declaringType?.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic);
+            return scopeType != null && typeof(GeneratorScope).IsAssignableFrom(scopeType);
+        }
+
+        private static bool IsDeletedMetadataProperty(Delegate target, string propName)
+            => _deletedMetadataProperties.TryGetValue(target, out var deleted)
+                && deleted.Keys.Contains(propName);
+
+        private static bool IsMetadataPropertyName(string propName)
+            => string.Equals(propName, "length", StringComparison.Ordinal)
+                || string.Equals(propName, "name", StringComparison.Ordinal);
 
         public static string ToSourceString(Delegate target)
         {

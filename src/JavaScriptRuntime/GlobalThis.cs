@@ -60,7 +60,6 @@ namespace JavaScriptRuntime
         // access `Array.prototype.*` members.
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
-
         private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
             JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
 
@@ -278,7 +277,6 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
             });
-
             ConfigureBuiltinFunctionObject(_typeErrorConstructorValue);
             PropertyDescriptorStore.DefineOrUpdate(_typeErrorConstructorValue, "prototype", new JsPropertyDescriptor
             {

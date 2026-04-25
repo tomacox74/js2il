@@ -1,3 +1,4 @@
+using Acornima.Ast;
 using Js2IL.IR;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.TwoPhaseCompilation;
@@ -11,6 +12,29 @@ namespace Js2IL.IL;
 
 internal sealed partial class LIRToILCompiler
 {
+    private static bool IsGeneratorCallable(CallableId callableId)
+        => callableId.AstNode switch
+        {
+            FunctionDeclaration { Generator: true } => true,
+            FunctionExpression { Generator: true } => true,
+            _ => false
+        };
+
+    private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)
+    {
+        if (!IsGeneratorCallable(callableId))
+        {
+            return;
+        }
+
+        var initRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.GeneratorObject),
+            nameof(JavaScriptRuntime.GeneratorObject.InitializeGeneratorFunctionSurface),
+            new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(initRef);
+    }
+
     private bool? TryCompileInstructionToIL_Calls(
         LIRInstruction instruction,
         InstructionEncoder ilEncoder,
@@ -905,6 +929,7 @@ internal sealed partial class LIRToILCompiler
                         createFunc.IsAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
                         nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
                         new[] { typeof(object) }));
+                    EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
 
                     if (createFunc.IsAsyncGeneratorFunction)
                     {

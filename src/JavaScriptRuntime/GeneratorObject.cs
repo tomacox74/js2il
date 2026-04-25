@@ -16,12 +16,12 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class GeneratorObject
 {
-    private static readonly object Prototype = CreatePrototype();
-
     // Stable singleton used as %GeneratorPrototype%.constructor.
     // Per ECMA-262, gen.constructor is the same function object for all generator instances.
-    private static readonly Func<object[], object?[], object?> _generatorFunctionConstructor =
-        static (_, _) => null;
+    private static readonly Func<object[], object?, object?> _generatorFunctionConstructor =
+        static (_, __) => throw new Error("The GeneratorFunction constructor is not directly constructible in js2il.");
+    private static readonly object Prototype = CreatePrototype();
+    private static readonly object GeneratorFunctionPrototype = CreateGeneratorFunctionPrototype();
 
     private readonly object _step;
     private readonly object[] _scopes;
@@ -39,6 +39,20 @@ public sealed class GeneratorObject
     /// %GeneratorPrototype%.constructor — stable function object, same for all generator instances.
     /// </summary>
     public object constructor => _generatorFunctionConstructor;
+    internal static object GeneratorFunctionPrototypeObject => GeneratorFunctionPrototype;
+
+    static GeneratorObject()
+    {
+        PrototypeChain.SetPrototype(_generatorFunctionConstructor, Function.Prototype);
+        PropertyDescriptorStore.DefineOrUpdate(_generatorFunctionConstructor, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = GeneratorFunctionPrototype
+        });
+    }
 
     private static object CreatePrototype()
     {
@@ -52,12 +66,35 @@ public sealed class GeneratorObject
         return prototype;
     }
 
+    private static object CreateGeneratorFunctionPrototype()
+    {
+        var prototype = new JsObject();
+        PrototypeChain.SetPrototype(prototype, Function.Prototype);
+        DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
+        return prototype;
+    }
+
     private static void InitializeGeneratorSurface(object generator)
     {
         if (PrototypeChain.GetPrototypeOrNull(generator) == null)
         {
             PrototypeChain.SetPrototype(generator, Prototype);
         }
+    }
+
+    public static object InitializeGeneratorFunctionSurface(object functionValue)
+    {
+        if (functionValue is not Delegate del)
+        {
+            return functionValue;
+        }
+
+        if (PrototypeChain.GetPrototypeOrNull(del) == null)
+        {
+            PrototypeChain.SetPrototype(del, GeneratorFunctionPrototype);
+        }
+
+        return del;
     }
 
     private static void DefineDataProperty(object target, string key, object? value)

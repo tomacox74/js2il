@@ -57,6 +57,11 @@ internal static class PropertyDescriptorStore
         if (key == null) throw new ArgumentNullException(nameof(key));
         if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
 
+        if (target is Delegate del)
+        {
+            Function.ClearDeletedMetadataProperty(del, key);
+        }
+
         var slot = _slots.GetOrCreateValue(target);
         if (!slot.Descriptors.ContainsKey(key))
         {
