@@ -3576,11 +3576,6 @@ namespace JavaScriptRuntime
             }
 
             // Built-ins without an exposed Symbol.iterator surface fall back here.
-            if (iterable is ArgumentsObject argumentsObject)
-            {
-                return argumentsObject.values();
-            }
-
             if (iterable is string s)
             {
                 return JavaScriptRuntime.String.CreateIterator(s);
