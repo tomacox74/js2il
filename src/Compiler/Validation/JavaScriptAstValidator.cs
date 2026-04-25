@@ -702,6 +702,21 @@ public class JavaScriptAstValidator : IAstValidator
             {
                 switch (ancestor)
                 {
+                    case IfStatement ifStatement
+                        when ReferenceEquals(ifStatement.Consequent, child) || ReferenceEquals(ifStatement.Alternate, child):
+                        {
+                            if (TryGetTypeofUndefinedCheck(ifStatement.Test, out var testName, out var trueMeansDefined)
+                                && string.Equals(testName, identifierName, StringComparison.Ordinal))
+                            {
+                                var inConsequent = ReferenceEquals(ifStatement.Consequent, child);
+                                if ((inConsequent && trueMeansDefined) || (!inConsequent && !trueMeansDefined))
+                                {
+                                    return true;
+                                }
+                            }
+                            break;
+                        }
+
                     case ConditionalExpression ce
                         when (ReferenceEquals(ce.Consequent, child) || ReferenceEquals(ce.Alternate, child)):
                         {
