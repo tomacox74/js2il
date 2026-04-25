@@ -9,6 +9,8 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("Promise")]
 public sealed class Promise
 {
+    internal static readonly object Prototype = CreatePrototype();
+
     // Nested types
     private enum State { Pending, Fulfilled, Rejected }
 
@@ -45,9 +47,72 @@ public sealed class Promise
 
     private readonly List<Reaction> _reactions = new();
 
+    private static object CreatePrototype()
+    {
+        var prototype = new JsObject();
+        DefineDataProperty(prototype, "then", (Func<object[], object?[]?, object?>)PrototypeThen);
+        DefineDataProperty(prototype, "catch", (Func<object[], object?[]?, object?>)PrototypeCatch);
+        DefineDataProperty(prototype, "finally", (Func<object[], object?[]?, object?>)PrototypeFinally);
+        PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = "Promise"
+        });
+        return prototype;
+    }
+
+    private static void DefineDataProperty(object target, string key, object? value)
+    {
+        PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = value
+        });
+    }
+
+    private static Promise GetPromiseReceiver(string methodName)
+    {
+        var receiver = RuntimeServices.GetCurrentThis();
+        if (receiver is not Promise promise)
+        {
+            throw new TypeError($"Promise.prototype.{methodName} called on incompatible receiver");
+        }
+
+        return promise;
+    }
+
+    private static object? PrototypeThen(object[] scopes, object?[]? args)
+    {
+        return GetPromiseReceiver("then").then(
+            args != null && args.Length > 0 ? args[0] : null,
+            args != null && args.Length > 1 ? args[1] : null);
+    }
+
+    private static object? PrototypeCatch(object[] scopes, object?[]? args)
+    {
+        return GetPromiseReceiver("catch").@catch(args != null && args.Length > 0 ? args[0] : null);
+    }
+
+    private static object? PrototypeFinally(object[] scopes, object?[]? args)
+    {
+        return GetPromiseReceiver("finally").@finally(args != null && args.Length > 0 ? args[0] : null);
+    }
+
+    private void InitializeIntrinsicSurface()
+    {
+        PrototypeChain.SetPrototype(this, Prototype);
+    }
+
     // Constructors
     public Promise(object? executor)
     {
+        InitializeIntrinsicSurface();
         // as per the specification the delegate is called the executor
         // null is allowed
         // any value that is not a delegate will result in a TypeError being thrown
@@ -59,6 +124,7 @@ public sealed class Promise
     /// </summary>
     internal Promise()
     {
+        InitializeIntrinsicSurface();
     }
 
     // Public methods

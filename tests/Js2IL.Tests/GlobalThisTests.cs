@@ -87,4 +87,32 @@ public class GlobalThisTests
             GlobalThis.ServiceProvider = null;
         }
     }
+
+    [Fact]
+    public void GlobalObject_ExposesPromiseAndTypeErrorConstructorValues()
+    {
+        var serviceProvider = RuntimeServices.BuildServiceProvider();
+
+        try
+        {
+            GlobalThis.ServiceProvider = serviceProvider;
+
+            var globalObject = (GlobalThis)GlobalThis.globalThis;
+
+            Assert.True(globalObject.ContainsKey(nameof(GlobalThis.Promise)));
+            Assert.Same(GlobalThis.Promise, globalObject[nameof(GlobalThis.Promise)]);
+            var promisePrototype = ObjectRuntime.GetItem(GlobalThis.Promise, "prototype");
+            Assert.NotNull(promisePrototype);
+            Assert.Equal("Promise", ObjectRuntime.GetItem(promisePrototype!, Symbol.toStringTag));
+            Assert.Equal("Promise", ObjectRuntime.GetItem((JavaScriptRuntime.Promise)JavaScriptRuntime.Promise.resolve(1)!, Symbol.toStringTag));
+
+            Assert.True(globalObject.ContainsKey(nameof(GlobalThis.TypeError)));
+            Assert.Same(GlobalThis.TypeError, globalObject[nameof(GlobalThis.TypeError)]);
+            Assert.Same(GlobalThis.TypeError, ObjectRuntime.GetItem(new TypeError("boom"), "constructor"));
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
 }

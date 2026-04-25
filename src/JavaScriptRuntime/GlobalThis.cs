@@ -63,16 +63,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
             JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
 
-        private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
-        {
-            if (newTarget is null)
-            {
-                throw new global::JavaScriptRuntime.TypeError("Constructor Promise requires 'new'");
-            }
-
-            return new global::JavaScriptRuntime.Promise(executor);
-        };
-
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
 
@@ -84,6 +74,16 @@ namespace JavaScriptRuntime
 
         private static readonly Delegate _weakSetConstructorValue =
             CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
+
+        private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
+        {
+            if (newTarget is null)
+            {
+                throw new global::JavaScriptRuntime.TypeError("Constructor Promise requires 'new'");
+            }
+
+            return new global::JavaScriptRuntime.Promise(executor);
+        };
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
@@ -200,6 +200,7 @@ namespace JavaScriptRuntime
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
+            ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1001,6 +1002,9 @@ namespace JavaScriptRuntime
         }
 
         private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
+            => ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
+
+        private static void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             PrototypeChain.SetPrototype(prototypeValue, _objectPrototypeValue);
@@ -1130,3 +1134,4 @@ namespace JavaScriptRuntime
         }
     }
 }
+
