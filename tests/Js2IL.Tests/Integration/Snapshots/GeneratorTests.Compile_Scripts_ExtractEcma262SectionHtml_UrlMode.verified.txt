@@ -28,7 +28,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x407f
+				// Method begins at RVA 0x40cf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,7 +52,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x22b0
 			// Header size: 12
 			// Code size: 255 (0xff)
 			.maxstack 8
@@ -189,7 +189,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4088
+				// Method begins at RVA 0x40d8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -213,7 +213,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2384
+			// Method begins at RVA 0x23bc
 			// Header size: 12
 			// Code size: 175 (0xaf)
 			.maxstack 8
@@ -320,7 +320,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x4076
+			// Method begins at RVA 0x40c6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -346,7 +346,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 101 (0x65)
+		// Code size: 111 (0x6f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/Scope,
@@ -368,36 +368,38 @@
 		IL_0016: stelem.ref
 		IL_0017: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/run::__js_call__(object[], object)
 		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0022: stloc.2
-		IL_0023: ldloc.2
-		IL_0024: stloc.1
-		IL_0025: ldc.i4.1
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldloc.0
-		IL_002e: stelem.ref
-		IL_002f: ldnull
-		IL_0030: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/run::__js_call__(object[], object)
-		IL_0035: stloc.2
-		IL_0036: ldnull
-		IL_0037: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/ArrowFunction_L8C13::__js_call__(object, object)
-		IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldloc.0
-		IL_004b: stelem.ref
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0056: stloc.3
-		IL_0057: ldloc.2
-		IL_0058: ldstr "catch"
-		IL_005d: ldloc.3
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0063: pop
-		IL_0064: ret
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object)
+		IL_0027: stloc.2
+		IL_0028: ldloc.2
+		IL_0029: stloc.1
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
+		IL_0033: stelem.ref
+		IL_0034: ldnull
+		IL_0035: call object Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/run::__js_call__(object[], object)
+		IL_003a: stloc.2
+		IL_003b: ldnull
+		IL_003c: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode/ArrowFunction_L8C13::__js_call__(object, object)
+		IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0047: ldc.i4.1
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: dup
+		IL_004e: ldc.i4.0
+		IL_004f: ldloc.0
+		IL_0050: stelem.ref
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0060: stloc.3
+		IL_0061: ldloc.2
+		IL_0062: ldstr "catch"
+		IL_0067: ldloc.3
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006d: pop
+		IL_006e: ret
 	} // end of method Compile_Scripts_ExtractEcma262SectionHtml_UrlMode::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode
@@ -421,7 +423,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x40a3
+					// Method begins at RVA 0x40f3
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -439,7 +441,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x409a
+				// Method begins at RVA 0x40ea
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -464,7 +466,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2440
+			// Method begins at RVA 0x2478
 			// Header size: 12
 			// Code size: 239 (0xef)
 			.maxstack 8
@@ -566,7 +568,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40ac
+				// Method begins at RVA 0x40fc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -594,7 +596,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x40c7
+						// Method begins at RVA 0x4117
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -614,7 +616,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x40d0
+						// Method begins at RVA 0x4120
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -634,7 +636,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x40d9
+						// Method begins at RVA 0x4129
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -654,7 +656,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x40e2
+						// Method begins at RVA 0x4132
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -674,7 +676,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x40eb
+						// Method begins at RVA 0x413b
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -694,7 +696,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x40f4
+						// Method begins at RVA 0x4144
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -712,7 +714,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x40be
+					// Method begins at RVA 0x410e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -730,7 +732,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40b5
+				// Method begins at RVA 0x4105
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -757,7 +759,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
-			// Method begins at RVA 0x253c
+			// Method begins at RVA 0x2574
 			// Header size: 12
 			// Code size: 680 (0x2a8)
 			.maxstack 8
@@ -1057,7 +1059,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x4145
+							// Method begins at RVA 0x4195
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -1082,7 +1084,7 @@
 						.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 							01 00 02 00 00 00 00 00
 						)
-						// Method begins at RVA 0x3ff8
+						// Method begins at RVA 0x4048
 						// Header size: 12
 						// Code size: 36 (0x24)
 						.maxstack 8
@@ -1121,7 +1123,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x414e
+							// Method begins at RVA 0x419e
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -1145,7 +1147,7 @@
 						.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 							01 00 02 00 00 00 00 00
 						)
-						// Method begins at RVA 0x4028
+						// Method begins at RVA 0x4078
 						// Header size: 12
 						// Code size: 66 (0x42)
 						.maxstack 8
@@ -1218,7 +1220,7 @@
 							.method public hidebysig specialname rtspecialname 
 								instance void .ctor () cil managed 
 							{
-								// Method begins at RVA 0x4133
+								// Method begins at RVA 0x4183
 								// Header size: 1
 								// Code size: 8 (0x8)
 								.maxstack 8
@@ -1236,7 +1238,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x412a
+							// Method begins at RVA 0x417a
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -1256,7 +1258,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x413c
+							// Method begins at RVA 0x418c
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -1278,7 +1280,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x4121
+						// Method begins at RVA 0x4171
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1303,9 +1305,9 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x3bf8
+					// Method begins at RVA 0x3c40
 					// Header size: 12
-					// Code size: 1009 (0x3f1)
+					// Code size: 1019 (0x3fb)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/Scope,
@@ -1699,51 +1701,53 @@
 					IL_0388: stelem.ref
 					IL_0389: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 					IL_038e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-					IL_0393: stloc.s 15
-					IL_0395: ldarg.2
-					IL_0396: ldstr "on"
-					IL_039b: ldstr "data"
-					IL_03a0: ldloc.s 15
-					IL_03a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-					IL_03a7: pop
-					IL_03a8: ldnull
-					IL_03a9: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23::__js_call__(object[], object)
-					IL_03af: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-					IL_03b4: ldc.i4.4
-					IL_03b5: newarr [System.Runtime]System.Object
-					IL_03ba: dup
-					IL_03bb: ldc.i4.0
-					IL_03bc: ldarg.0
-					IL_03bd: ldc.i4.0
-					IL_03be: ldelem.ref
-					IL_03bf: stelem.ref
-					IL_03c0: dup
-					IL_03c1: ldc.i4.1
-					IL_03c2: ldarg.0
-					IL_03c3: ldc.i4.1
-					IL_03c4: ldelem.ref
-					IL_03c5: stelem.ref
-					IL_03c6: dup
-					IL_03c7: ldc.i4.2
-					IL_03c8: ldarg.0
-					IL_03c9: ldc.i4.2
-					IL_03ca: ldelem.ref
-					IL_03cb: stelem.ref
-					IL_03cc: dup
-					IL_03cd: ldc.i4.3
-					IL_03ce: ldloc.0
-					IL_03cf: stelem.ref
-					IL_03d0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-					IL_03d5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-					IL_03da: stloc.s 15
-					IL_03dc: ldarg.2
-					IL_03dd: ldstr "on"
-					IL_03e2: ldstr "end"
-					IL_03e7: ldloc.s 15
-					IL_03e9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-					IL_03ee: pop
-					IL_03ef: ldnull
-					IL_03f0: ret
+					IL_0393: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+					IL_0398: stloc.s 15
+					IL_039a: ldarg.2
+					IL_039b: ldstr "on"
+					IL_03a0: ldstr "data"
+					IL_03a5: ldloc.s 15
+					IL_03a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+					IL_03ac: pop
+					IL_03ad: ldnull
+					IL_03ae: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/ArrowFunction_L91C7/ArrowFunction_L119C23::__js_call__(object[], object)
+					IL_03b4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+					IL_03b9: ldc.i4.4
+					IL_03ba: newarr [System.Runtime]System.Object
+					IL_03bf: dup
+					IL_03c0: ldc.i4.0
+					IL_03c1: ldarg.0
+					IL_03c2: ldc.i4.0
+					IL_03c3: ldelem.ref
+					IL_03c4: stelem.ref
+					IL_03c5: dup
+					IL_03c6: ldc.i4.1
+					IL_03c7: ldarg.0
+					IL_03c8: ldc.i4.1
+					IL_03c9: ldelem.ref
+					IL_03ca: stelem.ref
+					IL_03cb: dup
+					IL_03cc: ldc.i4.2
+					IL_03cd: ldarg.0
+					IL_03ce: ldc.i4.2
+					IL_03cf: ldelem.ref
+					IL_03d0: stelem.ref
+					IL_03d1: dup
+					IL_03d2: ldc.i4.3
+					IL_03d3: ldloc.0
+					IL_03d4: stelem.ref
+					IL_03d5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+					IL_03da: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+					IL_03df: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+					IL_03e4: stloc.s 15
+					IL_03e6: ldarg.2
+					IL_03e7: ldstr "on"
+					IL_03ec: ldstr "end"
+					IL_03f1: ldloc.s 15
+					IL_03f3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+					IL_03f8: pop
+					IL_03f9: ldnull
+					IL_03fa: ret
 				} // end of method ArrowFunction_L91C7::__js_call__
 
 			} // end of class ArrowFunction_L91C7
@@ -1765,7 +1769,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x410f
+						// Method begins at RVA 0x415f
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1785,7 +1789,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x4118
+						// Method begins at RVA 0x4168
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -1808,7 +1812,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4106
+					// Method begins at RVA 0x4156
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1834,9 +1838,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3a1c
+				// Method begins at RVA 0x3a5c
 				// Header size: 12
-				// Code size: 448 (0x1c0)
+				// Code size: 453 (0x1c5)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope,
@@ -1935,7 +1939,7 @@
 					IL_00b0: stloc.2
 					IL_00b1: ldnull
 					IL_00b2: stloc.2
-					IL_00b3: leave IL_01be
+					IL_00b3: leave IL_01c3
 
 					IL_00b8: leave IL_00bd
 				} // end handler
@@ -2011,30 +2015,31 @@
 				IL_0174: stelem.ref
 				IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 				IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-				IL_017f: stloc.s 6
-				IL_0181: ldloc.s 4
-				IL_0183: ldstr "request"
-				IL_0188: ldloc.s 9
-				IL_018a: ldloc.s 11
-				IL_018c: ldloc.s 6
-				IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-				IL_0193: stloc.s 6
-				IL_0195: ldloc.s 6
-				IL_0197: stloc.s 5
-				IL_0199: ldloc.s 5
-				IL_019b: ldstr "on"
-				IL_01a0: ldstr "error"
-				IL_01a5: ldloc.0
-				IL_01a6: ldfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope::reject
-				IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_01b0: pop
-				IL_01b1: ldloc.s 5
-				IL_01b3: ldstr "end"
-				IL_01b8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-				IL_01bd: pop
+				IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+				IL_0184: stloc.s 6
+				IL_0186: ldloc.s 4
+				IL_0188: ldstr "request"
+				IL_018d: ldloc.s 9
+				IL_018f: ldloc.s 11
+				IL_0191: ldloc.s 6
+				IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+				IL_0198: stloc.s 6
+				IL_019a: ldloc.s 6
+				IL_019c: stloc.s 5
+				IL_019e: ldloc.s 5
+				IL_01a0: ldstr "on"
+				IL_01a5: ldstr "error"
+				IL_01aa: ldloc.0
+				IL_01ab: ldfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/ArrowFunction_L72C22/Scope::reject
+				IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_01b5: pop
+				IL_01b6: ldloc.s 5
+				IL_01b8: ldstr "end"
+				IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_01c2: pop
 
-				IL_01be: ldloc.2
-				IL_01bf: ret
+				IL_01c3: ldloc.2
+				IL_01c4: ret
 			} // end of method ArrowFunction_L72C22::__js_call__
 
 		} // end of class ArrowFunction_L72C22
@@ -2056,7 +2061,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x40fd
+				// Method begins at RVA 0x414d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2084,9 +2089,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
-			// Method begins at RVA 0x27f0
+			// Method begins at RVA 0x2828
 			// Header size: 12
-			// Code size: 88 (0x58)
+			// Code size: 93 (0x5d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText/Scope,
@@ -2124,12 +2129,13 @@
 			IL_0043: stelem.ref
 			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_004e: stloc.1
-			IL_004f: ldloc.1
-			IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
-			IL_0055: stloc.2
-			IL_0056: ldloc.2
-			IL_0057: ret
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+			IL_0053: stloc.1
+			IL_0054: ldloc.1
+			IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+			IL_005a: stloc.2
+			IL_005b: ldloc.2
+			IL_005c: ret
 		} // end of method fetchText::__js_call__
 
 	} // end of class fetchText
@@ -2145,7 +2151,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4157
+				// Method begins at RVA 0x41a7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2169,7 +2175,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2854
+			// Method begins at RVA 0x2894
 			// Header size: 12
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -2209,7 +2215,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4169
+					// Method begins at RVA 0x41b9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2233,7 +2239,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x417b
+						// Method begins at RVA 0x41cb
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2251,7 +2257,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4172
+					// Method begins at RVA 0x41c2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2269,7 +2275,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4160
+				// Method begins at RVA 0x41b0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2297,7 +2303,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
-			// Method begins at RVA 0x2884
+			// Method begins at RVA 0x28c4
 			// Header size: 12
 			// Code size: 507 (0x1fb)
 			.maxstack 8
@@ -2531,7 +2537,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x418d
+					// Method begins at RVA 0x41dd
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2551,7 +2557,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4196
+					// Method begins at RVA 0x41e6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2571,7 +2577,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x419f
+					// Method begins at RVA 0x41ef
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2591,7 +2597,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x41a8
+					// Method begins at RVA 0x41f8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2615,7 +2621,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x41ba
+						// Method begins at RVA 0x420a
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2635,7 +2641,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x41c3
+						// Method begins at RVA 0x4213
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2659,7 +2665,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x41d5
+							// Method begins at RVA 0x4225
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -2677,7 +2683,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x41cc
+						// Method begins at RVA 0x421c
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2697,7 +2703,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x41de
+						// Method begins at RVA 0x422e
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2715,7 +2721,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x41b1
+					// Method begins at RVA 0x4201
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2733,7 +2739,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4184
+				// Method begins at RVA 0x41d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2761,7 +2767,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
-			// Method begins at RVA 0x2a8c
+			// Method begins at RVA 0x2acc
 			// Header size: 12
 			// Code size: 958 (0x3be)
 			.maxstack 8
@@ -3143,7 +3149,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x41f0
+					// Method begins at RVA 0x4240
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3161,7 +3167,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x41e7
+				// Method begins at RVA 0x4237
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3189,7 +3195,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 16 00 00 02
 			)
-			// Method begins at RVA 0x2e58
+			// Method begins at RVA 0x2e98
 			// Header size: 12
 			// Code size: 444 (0x1bc)
 			.maxstack 8
@@ -3387,7 +3393,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x41f9
+				// Method begins at RVA 0x4249
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3413,7 +3419,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x3020
+			// Method begins at RVA 0x3060
 			// Header size: 12
 			// Code size: 152 (0x98)
 			.maxstack 8
@@ -3520,7 +3526,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x420b
+					// Method begins at RVA 0x425b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3540,7 +3546,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4214
+					// Method begins at RVA 0x4264
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3560,7 +3566,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x421d
+					// Method begins at RVA 0x426d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3584,7 +3590,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x422f
+						// Method begins at RVA 0x427f
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -3604,7 +3610,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x4238
+						// Method begins at RVA 0x4288
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -3622,7 +3628,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4226
+					// Method begins at RVA 0x4276
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3642,7 +3648,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x4241
+					// Method begins at RVA 0x4291
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3662,7 +3668,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x424a
+					// Method begins at RVA 0x429a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -3702,7 +3708,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x4202
+				// Method begins at RVA 0x4252
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3726,7 +3732,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x30c4
+			// Method begins at RVA 0x3104
 			// Header size: 12
 			// Code size: 2378 (0x94a)
 			.maxstack 8
@@ -4790,7 +4796,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x4091
+			// Method begins at RVA 0x40e1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -4814,9 +4820,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 424 (0x1a8)
+		// Code size: 469 (0x1d5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope,
@@ -4829,167 +4835,176 @@
 		IL_0006: ldnull
 		IL_0007: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/normalize::__js_call__(object, object, object)
 		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0012: stloc.2
-		IL_0013: ldloc.0
-		IL_0014: ldloc.2
-		IL_0015: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::normalize
-		IL_001a: ldc.i4.1
-		IL_001b: newarr [System.Runtime]System.Object
-		IL_0020: dup
-		IL_0021: ldc.i4.0
-		IL_0022: ldloc.0
-		IL_0023: stelem.ref
-		IL_0024: ldc.i4.0
-		IL_0025: ldelem.ref
-		IL_0026: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
-		IL_002b: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/parseArgs::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object)
-		IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0036: stloc.2
-		IL_0037: ldloc.0
-		IL_0038: ldloc.2
-		IL_0039: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::parseArgs
-		IL_003e: ldc.i4.1
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: dup
-		IL_0045: ldc.i4.0
-		IL_0046: ldloc.0
-		IL_0047: stelem.ref
-		IL_0048: ldc.i4.0
-		IL_0049: ldelem.ref
-		IL_004a: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
-		IL_004f: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
-		IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_005a: stloc.2
-		IL_005b: ldloc.0
-		IL_005c: ldloc.2
-		IL_005d: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::fetchText
-		IL_0062: ldnull
-		IL_0063: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/escapeRegExp::__js_call__(object, object)
-		IL_0069: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_006e: stloc.2
-		IL_006f: ldloc.0
-		IL_0070: ldloc.2
-		IL_0071: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::escapeRegExp
-		IL_0076: ldc.i4.1
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldloc.0
-		IL_007f: stelem.ref
-		IL_0080: ldc.i4.0
-		IL_0081: ldelem.ref
-		IL_0082: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
-		IL_0087: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/findTagNameAt::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
-		IL_008d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0092: stloc.2
-		IL_0093: ldloc.0
-		IL_0094: ldloc.2
-		IL_0095: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::findTagNameAt
-		IL_009a: ldc.i4.1
-		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: dup
-		IL_00a1: ldc.i4.0
-		IL_00a2: ldloc.0
-		IL_00a3: stelem.ref
-		IL_00a4: ldc.i4.0
-		IL_00a5: ldelem.ref
-		IL_00a6: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
-		IL_00ab: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/extractElementById::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
-		IL_00b1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_00b6: stloc.2
-		IL_00b7: ldloc.0
-		IL_00b8: ldloc.2
-		IL_00b9: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::extractElementById
-		IL_00be: ldc.i4.1
-		IL_00bf: newarr [System.Runtime]System.Object
-		IL_00c4: dup
-		IL_00c5: ldc.i4.0
-		IL_00c6: ldloc.0
-		IL_00c7: stelem.ref
-		IL_00c8: ldc.i4.0
-		IL_00c9: ldelem.ref
-		IL_00ca: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
-		IL_00cf: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/resolveSectionLinkFromMultipageIndexHtml::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
-		IL_00d5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_00da: stloc.2
-		IL_00db: ldloc.0
-		IL_00dc: ldloc.2
-		IL_00dd: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::resolveSectionLinkFromMultipageIndexHtml
-		IL_00e2: ldnull
-		IL_00e3: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/wrapAsStandaloneHtml::__js_call__(object, object, object, object)
-		IL_00e9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
-		IL_00ee: stloc.2
-		IL_00ef: ldloc.0
-		IL_00f0: ldloc.2
-		IL_00f1: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::wrapAsStandaloneHtml
-		IL_00f6: ldc.i4.1
-		IL_00f7: newarr [System.Runtime]System.Object
-		IL_00fc: dup
-		IL_00fd: ldc.i4.0
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0017: stloc.2
+		IL_0018: ldloc.0
+		IL_0019: ldloc.2
+		IL_001a: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::normalize
+		IL_001f: ldc.i4.1
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: dup
+		IL_0026: ldc.i4.0
+		IL_0027: ldloc.0
+		IL_0028: stelem.ref
+		IL_0029: ldc.i4.0
+		IL_002a: ldelem.ref
+		IL_002b: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
+		IL_0030: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/parseArgs::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object)
+		IL_0036: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0040: stloc.2
+		IL_0041: ldloc.0
+		IL_0042: ldloc.2
+		IL_0043: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::parseArgs
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: ldc.i4.0
+		IL_0053: ldelem.ref
+		IL_0054: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
+		IL_0059: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/fetchText::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
+		IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0069: stloc.2
+		IL_006a: ldloc.0
+		IL_006b: ldloc.2
+		IL_006c: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::fetchText
+		IL_0071: ldnull
+		IL_0072: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/escapeRegExp::__js_call__(object, object)
+		IL_0078: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0082: stloc.2
+		IL_0083: ldloc.0
+		IL_0084: ldloc.2
+		IL_0085: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::escapeRegExp
+		IL_008a: ldc.i4.1
+		IL_008b: newarr [System.Runtime]System.Object
+		IL_0090: dup
+		IL_0091: ldc.i4.0
+		IL_0092: ldloc.0
+		IL_0093: stelem.ref
+		IL_0094: ldc.i4.0
+		IL_0095: ldelem.ref
+		IL_0096: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
+		IL_009b: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/findTagNameAt::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
+		IL_00a1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_00ab: stloc.2
+		IL_00ac: ldloc.0
+		IL_00ad: ldloc.2
+		IL_00ae: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::findTagNameAt
+		IL_00b3: ldc.i4.1
+		IL_00b4: newarr [System.Runtime]System.Object
+		IL_00b9: dup
+		IL_00ba: ldc.i4.0
+		IL_00bb: ldloc.0
+		IL_00bc: stelem.ref
+		IL_00bd: ldc.i4.0
+		IL_00be: ldelem.ref
+		IL_00bf: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
+		IL_00c4: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/extractElementById::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
+		IL_00ca: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_00d4: stloc.2
+		IL_00d5: ldloc.0
+		IL_00d6: ldloc.2
+		IL_00d7: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::extractElementById
+		IL_00dc: ldc.i4.1
+		IL_00dd: newarr [System.Runtime]System.Object
+		IL_00e2: dup
+		IL_00e3: ldc.i4.0
+		IL_00e4: ldloc.0
+		IL_00e5: stelem.ref
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldelem.ref
+		IL_00e8: castclass Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope
+		IL_00ed: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/resolveSectionLinkFromMultipageIndexHtml::__js_call__(class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope, object, object, object)
+		IL_00f3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_00fd: stloc.2
 		IL_00fe: ldloc.0
-		IL_00ff: stelem.ref
-		IL_0100: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/runHarnessCli::__js_call__(object[], object)
-		IL_0106: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_010b: stloc.2
-		IL_010c: ldloc.2
-		IL_010d: stloc.1
-		IL_010e: ldarg.1
-		IL_010f: ldstr "fs"
-		IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0119: stloc.2
-		IL_011a: ldloc.0
-		IL_011b: ldloc.2
-		IL_011c: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::fs
-		IL_0121: ldarg.1
-		IL_0122: ldstr "node:http"
-		IL_0127: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_012c: stloc.2
-		IL_012d: ldloc.0
-		IL_012e: ldloc.2
-		IL_012f: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::http
-		IL_0134: ldarg.1
-		IL_0135: ldstr "node:https"
-		IL_013a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_013f: stloc.2
-		IL_0140: ldloc.0
-		IL_0141: ldloc.2
-		IL_0142: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::https
-		IL_0147: ldarg.1
-		IL_0148: ldstr "path"
-		IL_014d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0152: stloc.2
-		IL_0153: ldloc.0
-		IL_0154: ldloc.2
-		IL_0155: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::path
-		IL_015a: ldarg.1
-		IL_015b: ldstr "node:url"
-		IL_0160: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0165: stloc.2
-		IL_0166: ldloc.2
-		IL_0167: brfalse IL_0177
-
-		IL_016c: ldloc.2
-		IL_016d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0172: brfalse IL_0187
-
-		IL_0177: ldloc.2
-		IL_0178: ldstr ""
-		IL_017d: ldstr "URL"
-		IL_0182: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-
-		IL_0187: ldloc.2
-		IL_0188: ldstr "URL"
-		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ff: ldloc.2
+		IL_0100: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::resolveSectionLinkFromMultipageIndexHtml
+		IL_0105: ldnull
+		IL_0106: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/wrapAsStandaloneHtml::__js_call__(object, object, object, object)
+		IL_010c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes3::.ctor(object, native int)
+		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0116: stloc.2
+		IL_0117: ldloc.0
+		IL_0118: ldloc.2
+		IL_0119: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::wrapAsStandaloneHtml
+		IL_011e: ldc.i4.1
+		IL_011f: newarr [System.Runtime]System.Object
+		IL_0124: dup
+		IL_0125: ldc.i4.0
+		IL_0126: ldloc.0
+		IL_0127: stelem.ref
+		IL_0128: ldftn object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/runHarnessCli::__js_call__(object[], object)
+		IL_012e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object)
+		IL_0138: stloc.2
+		IL_0139: ldloc.2
+		IL_013a: stloc.1
+		IL_013b: ldarg.1
+		IL_013c: ldstr "fs"
+		IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0146: stloc.2
+		IL_0147: ldloc.0
+		IL_0148: ldloc.2
+		IL_0149: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::fs
+		IL_014e: ldarg.1
+		IL_014f: ldstr "node:http"
+		IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0159: stloc.2
+		IL_015a: ldloc.0
+		IL_015b: ldloc.2
+		IL_015c: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::http
+		IL_0161: ldarg.1
+		IL_0162: ldstr "node:https"
+		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_016c: stloc.2
+		IL_016d: ldloc.0
+		IL_016e: ldloc.2
+		IL_016f: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::https
+		IL_0174: ldarg.1
+		IL_0175: ldstr "path"
+		IL_017a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_017f: stloc.2
+		IL_0180: ldloc.0
+		IL_0181: ldloc.2
+		IL_0182: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::path
+		IL_0187: ldarg.1
+		IL_0188: ldstr "node:url"
+		IL_018d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 		IL_0192: stloc.2
-		IL_0193: ldloc.0
-		IL_0194: ldloc.2
-		IL_0195: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::NodeUrl
-		IL_019a: ldarg.0
-		IL_019b: ldstr "runHarnessCli"
-		IL_01a0: ldloc.1
-		IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-		IL_01a6: pop
-		IL_01a7: ret
+		IL_0193: ldloc.2
+		IL_0194: brfalse IL_01a4
+
+		IL_0199: ldloc.2
+		IL_019a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_019f: brfalse IL_01b4
+
+		IL_01a4: ldloc.2
+		IL_01a5: ldstr ""
+		IL_01aa: ldstr "URL"
+		IL_01af: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_01b4: ldloc.2
+		IL_01b5: ldstr "URL"
+		IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01bf: stloc.2
+		IL_01c0: ldloc.0
+		IL_01c1: ldloc.2
+		IL_01c2: stfld object Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness/Scope::NodeUrl
+		IL_01c7: ldarg.0
+		IL_01c8: ldstr "runHarnessCli"
+		IL_01cd: ldloc.1
+		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
+		IL_01d3: pop
+		IL_01d4: ret
 	} // end of method Compile_Scripts_ExtractEcma262SectionHtml_TestHarness::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness
@@ -5001,7 +5016,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x4253
+		// Method begins at RVA 0x42a3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

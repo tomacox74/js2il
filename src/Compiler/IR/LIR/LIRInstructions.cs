@@ -281,13 +281,18 @@ public record LIRCallDeclaredCallable(CallableId CallableId, IReadOnlyList<TempV
 /// Creates a JS callable value (delegate) for an ArrowFunctionExpression and binds it to a scopes array.
 /// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
 /// </summary>
-public record LIRCreateBoundArrowFunction(CallableId CallableId, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
+public record LIRCreateBoundArrowFunction(CallableId CallableId, TempVariable ScopesArray, bool IsAsync, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Creates a JS callable value (delegate) for a FunctionExpression.
 /// Emits a JsFuncNoScopesN delegate; when scopes are required, scopes are closed as delegate target.
 /// </summary>
-public record LIRCreateBoundFunctionExpression(CallableId CallableId, TempVariable ScopesArray, TempVariable Result, bool IsAsyncGeneratorFunction = false) : LIRInstruction;
+public record LIRCreateBoundFunctionExpression(
+    CallableId CallableId,
+    TempVariable ScopesArray,
+    TempVariable Result,
+    bool IsAsyncGeneratorFunction = false,
+    bool IsAsync = false) : LIRInstruction;
 
 /// <summary>
 /// Represents a scope slot in the scopes array along with the source of its value.

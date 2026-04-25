@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x209b
+				// Method begins at RVA 0x20a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x207e
+			// Method begins at RVA 0x2083
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -73,7 +73,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2092
+			// Method begins at RVA 0x2097
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,7 +99,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 39 (0x27)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithParameter/Scope,
@@ -112,14 +112,15 @@
 		IL_0006: ldnull
 		IL_0007: ldftn object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, object)
 		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0012: stloc.2
-		IL_0013: ldloc.2
-		IL_0014: stloc.1
-		IL_0015: ldnull
-		IL_0016: ldstr "Hello, Js2IL!"
-		IL_001b: call object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, object)
-		IL_0020: pop
-		IL_0021: ret
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0017: stloc.2
+		IL_0018: ldloc.2
+		IL_0019: stloc.1
+		IL_001a: ldnull
+		IL_001b: ldstr "Hello, Js2IL!"
+		IL_0020: call object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, object)
+		IL_0025: pop
+		IL_0026: ret
 	} // end of method Function_GlobalFunctionWithParameter::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithParameter
@@ -131,7 +132,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a4
+		// Method begins at RVA 0x20a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

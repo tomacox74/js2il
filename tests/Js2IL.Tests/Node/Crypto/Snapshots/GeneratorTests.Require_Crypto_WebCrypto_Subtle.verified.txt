@@ -69,7 +69,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2902
+				// Method begins at RVA 0x290a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -93,7 +93,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x20d8
 			// Header size: 12
 			// Code size: 2058 (0x80a)
 			.maxstack 8
@@ -982,7 +982,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x290b
+				// Method begins at RVA 0x2913
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1005,7 +1005,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x28e6
+			// Method begins at RVA 0x28ee
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -1036,7 +1036,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28f9
+			// Method begins at RVA 0x2901
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1062,7 +1062,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_WebCrypto_Subtle/Scope,
@@ -1081,43 +1081,45 @@
 		IL_000f: stelem.ref
 		IL_0010: ldftn object Modules.Require_Crypto_WebCrypto_Subtle/run::__js_call__(object[], object)
 		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001b: stloc.2
-		IL_001c: ldloc.2
-		IL_001d: stloc.1
-		IL_001e: ldarg.1
-		IL_001f: ldstr "crypto"
-		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0029: stloc.2
-		IL_002a: ldloc.0
-		IL_002b: ldloc.2
-		IL_002c: stfld object Modules.Require_Crypto_WebCrypto_Subtle/Scope::crypto
-		IL_0031: ldc.i4.1
-		IL_0032: newarr [System.Runtime]System.Object
-		IL_0037: dup
-		IL_0038: ldc.i4.0
-		IL_0039: ldloc.0
-		IL_003a: stelem.ref
-		IL_003b: ldnull
-		IL_003c: call object Modules.Require_Crypto_WebCrypto_Subtle/run::__js_call__(object[], object)
-		IL_0041: stloc.2
-		IL_0042: ldnull
-		IL_0043: ldftn object Modules.Require_Crypto_WebCrypto_Subtle/ArrowFunction_L39C12::__js_call__(object)
-		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_004e: ldc.i4.1
-		IL_004f: newarr [System.Runtime]System.Object
-		IL_0054: dup
-		IL_0055: ldc.i4.0
-		IL_0056: ldloc.0
-		IL_0057: stelem.ref
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0062: stloc.3
-		IL_0063: ldloc.2
-		IL_0064: ldstr "then"
-		IL_0069: ldloc.3
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_006f: pop
-		IL_0070: ret
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object)
+		IL_0020: stloc.2
+		IL_0021: ldloc.2
+		IL_0022: stloc.1
+		IL_0023: ldarg.1
+		IL_0024: ldstr "crypto"
+		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_002e: stloc.2
+		IL_002f: ldloc.0
+		IL_0030: ldloc.2
+		IL_0031: stfld object Modules.Require_Crypto_WebCrypto_Subtle/Scope::crypto
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldloc.0
+		IL_003f: stelem.ref
+		IL_0040: ldnull
+		IL_0041: call object Modules.Require_Crypto_WebCrypto_Subtle/run::__js_call__(object[], object)
+		IL_0046: stloc.2
+		IL_0047: ldnull
+		IL_0048: ldftn object Modules.Require_Crypto_WebCrypto_Subtle/ArrowFunction_L39C12::__js_call__(object)
+		IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldloc.0
+		IL_005c: stelem.ref
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_006c: stloc.3
+		IL_006d: ldloc.2
+		IL_006e: ldstr "then"
+		IL_0073: ldloc.3
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0079: pop
+		IL_007a: ret
 	} // end of method Require_Crypto_WebCrypto_Subtle::__js_module_init__
 
 } // end of class Modules.Require_Crypto_WebCrypto_Subtle
@@ -1129,7 +1131,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2914
+		// Method begins at RVA 0x291c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
