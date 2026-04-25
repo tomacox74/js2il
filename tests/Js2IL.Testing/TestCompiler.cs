@@ -77,6 +77,12 @@ namespace Js2IL.Tests
                 EmitPdb = true
             };
 
+            if (testCategory.StartsWith("language.", StringComparison.OrdinalIgnoreCase)
+                || testCategory.StartsWith("built-ins.", StringComparison.OrdinalIgnoreCase))
+            {
+                options.StrictMode = StrictModeDirectivePrologueMode.Warn;
+            }
+
             var testLogger = new TestLogger();
             var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
             var compiler = serviceProvider.GetRequiredService<Compiler>();

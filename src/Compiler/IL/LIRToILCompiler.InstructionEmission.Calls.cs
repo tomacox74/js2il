@@ -896,6 +896,16 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
 
+                    if (createFunc.IsAsyncGeneratorFunction)
+                    {
+                        var initAsyncGeneratorFunctionRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.AsyncGeneratorFunction),
+                            nameof(JavaScriptRuntime.AsyncGeneratorFunction.InitializeFunctionObject),
+                            new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(initAsyncGeneratorFunctionRef);
+                    }
+
                     EmitStoreTemp(createFunc.Result, ilEncoder, allocation);
                     break;
                 }

@@ -672,7 +672,12 @@ public sealed partial class HIRToLIRLowerer
                         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
                         resultTempVar = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(callableId, scopesTemp, resultTempVar));
+                        var isAsyncGeneratorFunction =
+                            varExpr.Name.BindingInfo.DeclarationNode is FunctionDeclaration functionDeclarationBinding
+                            && functionDeclarationBinding.Async
+                            && functionDeclarationBinding.Generator;
+
+                        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(callableId, scopesTemp, resultTempVar, isAsyncGeneratorFunction));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         // Cache the function value so repeated reads of the identifier within the same
@@ -730,7 +735,8 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
             CallableId: funcExpr.CallableId,
             ScopesArray: scopesTemp,
-            Result: resultTempVar));
+            Result: resultTempVar,
+            IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }

@@ -3586,6 +3586,11 @@ namespace JavaScriptRuntime
                 return arr.values();
             }
 
+            if (iterable is ArgumentsObject argumentsObject)
+            {
+                return argumentsObject.CreateValueIterator();
+            }
+
             if (iterable is JavaScriptRuntime.TypedArrayBase typedArray)
             {
                 return typedArray.values();
