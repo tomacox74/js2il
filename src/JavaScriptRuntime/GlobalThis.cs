@@ -63,9 +63,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, bool> _arrayIsArrayValue = static (_, value) =>
             JavaScriptRuntime.Array.isArray(value);
 
-        private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
-            JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
-
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
             if (newTarget is null)

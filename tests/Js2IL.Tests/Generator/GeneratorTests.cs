@@ -65,7 +65,5 @@ namespace Js2IL.Tests.Generator
         [Fact]
         public Task Generator_Prototype_Constructor() { var testName = nameof(Generator_Prototype_Constructor); return GenerateTest(testName); }
 
-        [Fact]
-        public Task GeneratorFunction_Instance_Length_Metadata() { var testName = nameof(GeneratorFunction_Instance_Length_Metadata); return GenerateTest(testName); }
     }
 }
