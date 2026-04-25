@@ -123,6 +123,7 @@ namespace JavaScriptRuntime
         // opt into prototype semantics as needed.
         private static readonly object _objectPrototypeValue = new JsObject();
         private static readonly object _booleanPrototypeValue = new JavaScriptRuntime.Boolean(false);
+        private static readonly object _promisePrototypeValue = new JsObject();
 
         static GlobalThis()
         {
