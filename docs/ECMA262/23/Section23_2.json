@@ -42,7 +42,7 @@
     {
       "clause": "23.2.2.3",
       "title": "%TypedArray%.prototype",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype"
     },
     {
@@ -450,6 +450,19 @@
           "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
         ],
         "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int32Array, Uint8Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete."
+      },
+      {
+        "clause": "23.2.2.3",
+        "feature": "%TypedArray% constructor prototype metadata",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype",
+        "testScripts": [
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/prototype.js"
+        ],
+        "notes": "Supported typed-array constructor values now share a %TypedArray% intrinsic constructor object with a non-writable, non-enumerable, non-configurable prototype property. Placeholder constructor values exist for unsupported typed-array families so shared metadata helpers can execute, but per-constructor prototype objects and the rest of the constructor metadata surface remain incomplete."
       },
       {
         "clause": "23.2.5.1",

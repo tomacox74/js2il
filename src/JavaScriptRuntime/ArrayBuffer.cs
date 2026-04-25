@@ -20,6 +20,11 @@ namespace JavaScriptRuntime
                 : new byte[byteLength];
         }
 
+        public ArrayBuffer(object? length, object? options)
+            : this(length)
+        {
+        }
+
         internal ArrayBuffer(byte[] bytes, bool cloneBuffer)
         {
             _bytes = cloneBuffer ? (byte[])bytes.Clone() : bytes;

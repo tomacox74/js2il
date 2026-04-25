@@ -125,6 +125,35 @@ namespace JavaScriptRuntime
         private static readonly object _booleanPrototypeValue = new JavaScriptRuntime.Boolean(false);
         private static readonly object _promisePrototypeValue = new JsObject();
 
+        // TypedArray intrinsic constructor and prototype
+        private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
+            throw new TypeError("%TypedArray% is not directly constructible in js2il.");
+        private static readonly object _typedArrayPrototypeValue = new JsObject();
+
+        // Typed array constructor values - supported and unsupported
+        private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue = 
+            static (_, args) => new Float64Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _float32ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Float32Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue = 
+            static (_, args) => new Int32Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Int16Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Int8Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Uint32Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Uint16Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue = 
+            static (_, args) => new Uint8Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The Uint8ClampedArray constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in js2il.");
+        private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
+            static (_, __) => throw new NotSupportedException("The BigUint64Array constructor is not yet supported in js2il.");
+
         static GlobalThis()
         {
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
@@ -250,6 +279,63 @@ namespace JavaScriptRuntime
                 Value = (Func<object[], object?[], object?>)ErrorPrototypeToString
             });
 
+            ConfigureBuiltinFunctionObject(_typeErrorConstructorValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _typeErrorPrototypeValue
+            });
+            PrototypeChain.SetPrototype(_typeErrorPrototypeValue, _errorPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _typeErrorConstructorValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "message", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_typeErrorPrototypeValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = "TypeError"
+            });
+
+            ConfigureBuiltinFunctionObject(_typedArrayConstructorValue);
+            PrototypeChain.SetPrototype(_typedArrayPrototypeValue, _objectPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(_typedArrayConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _typedArrayPrototypeValue
+            });
+            ConfigureTypedArrayConstructorValue(_float64ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_float32ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_int32ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_int16ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_int8ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint32ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint16ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint8ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_uint8ClampedArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue);
+            ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
+
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
 
@@ -274,6 +360,12 @@ namespace JavaScriptRuntime
             if (string.IsNullOrEmpty(name)) return message;
             if (string.IsNullOrEmpty(message)) return name;
             return $"{name}: {message}";
+        }
+
+        private static void ConfigureTypedArrayConstructorValue(object constructorValue)
+        {
+            ConfigureBuiltinFunctionObject(constructorValue);
+            PrototypeChain.SetPrototype(constructorValue, _typedArrayConstructorValue);
         }
         internal static ServiceContainer? ServiceProvider
         {
@@ -412,6 +504,39 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Promise), Promise);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
 
+            dict.TryAdd(nameof(GlobalThis.Float64Array), Float64Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Float64Array), dict[nameof(GlobalThis.Float64Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Float32Array), Float32Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Float32Array), dict[nameof(GlobalThis.Float32Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Int32Array), Int32Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Int32Array), dict[nameof(GlobalThis.Int32Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Int16Array), Int16Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Int16Array), dict[nameof(GlobalThis.Int16Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Int8Array), Int8Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Int8Array), dict[nameof(GlobalThis.Int8Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint32Array), Uint32Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint32Array), dict[nameof(GlobalThis.Uint32Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint16Array), Uint16Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint16Array), dict[nameof(GlobalThis.Uint16Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint8Array), Uint8Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint8Array), dict[nameof(GlobalThis.Uint8Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint8ClampedArray), Uint8ClampedArray);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint8ClampedArray), dict[nameof(GlobalThis.Uint8ClampedArray)]);
+
+            dict.TryAdd(nameof(GlobalThis.BigInt64Array), BigInt64Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.BigInt64Array), dict[nameof(GlobalThis.BigInt64Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.BigUint64Array), BigUint64Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.BigUint64Array), dict[nameof(GlobalThis.BigUint64Array)]);
+
             dict.TryAdd(nameof(GlobalThis.Map), Map);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Map), dict[nameof(GlobalThis.Map)]);
 
@@ -537,6 +662,28 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
 
         public static Delegate Promise => _promiseConstructorValue;
+
+        public static Delegate Float64Array => _float64ArrayConstructorValue;
+
+        public static Delegate Float32Array => _float32ArrayConstructorValue;
+
+        public static Delegate Int32Array => _int32ArrayConstructorValue;
+
+        public static Delegate Int16Array => _int16ArrayConstructorValue;
+
+        public static Delegate Int8Array => _int8ArrayConstructorValue;
+
+        public static Delegate Uint32Array => _uint32ArrayConstructorValue;
+
+        public static Delegate Uint16Array => _uint16ArrayConstructorValue;
+
+        public static Delegate Uint8Array => _uint8ArrayConstructorValue;
+
+        public static Delegate Uint8ClampedArray => _uint8ClampedArrayConstructorValue;
+
+        public static Delegate BigInt64Array => _bigInt64ArrayConstructorValue;
+
+        public static Delegate BigUint64Array => _bigUint64ArrayConstructorValue;
 
         public static Delegate Map => _mapConstructorValue;
 
