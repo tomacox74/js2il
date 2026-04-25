@@ -63,16 +63,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
             JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
 
-        private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
-        {
-            if (newTarget is null)
-            {
-                throw new global::JavaScriptRuntime.TypeError("Constructor Promise requires 'new'");
-            }
-
-            return new global::JavaScriptRuntime.Promise(executor);
-        };
-
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
 
@@ -1141,3 +1131,4 @@ namespace JavaScriptRuntime
         }
     }
 }
+
