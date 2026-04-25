@@ -75,7 +75,15 @@ namespace JavaScriptRuntime
         private static readonly Delegate _weakSetConstructorValue =
             CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
 
-        private static readonly JsFuncNoScopes1 _promiseConstructorValue = CreatePromiseConstructorValue();
+        private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
+        {
+            if (newTarget is null)
+            {
+                throw new global::JavaScriptRuntime.TypeError("Constructor Promise requires 'new'");
+            }
+
+            return new global::JavaScriptRuntime.Promise(executor);
+        };
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
