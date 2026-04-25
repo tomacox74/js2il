@@ -379,6 +379,7 @@
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
         "testScripts": [
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js",
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Continue.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js",
@@ -390,11 +391,12 @@
           "nightly"
         ],
         "test262Paths": [
+          "test/language/statements/for-of/Array.prototype.Symbol.iterator.js",
           "test/language/statements/for-of/array-contract.js",
           "test/language/statements/for-of/array-contract-expand.js",
           "test/language/statements/for-of/array-expand-contract.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. The current bounded test262 MVP suites cover the common array for-of contract and expansion paths here."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator]() for-of cases in the bounded test262 MVP coverage compile successfully."
       },
       {
         "clause": "14.7.5.7",
