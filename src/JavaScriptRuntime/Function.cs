@@ -17,8 +17,15 @@ namespace JavaScriptRuntime
     /// </summary>
 public static class Function
 {
+    private sealed class DeletedMetadataSlot
+    {
+        public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
+    }
+
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
+
+    private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
 
     private static ExpandoObject CreatePrototype()
     {
