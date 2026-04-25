@@ -504,6 +504,39 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Promise), Promise);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
 
+            dict.TryAdd(nameof(GlobalThis.Float64Array), Float64Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Float64Array), dict[nameof(GlobalThis.Float64Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Float32Array), Float32Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Float32Array), dict[nameof(GlobalThis.Float32Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Int32Array), Int32Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Int32Array), dict[nameof(GlobalThis.Int32Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Int16Array), Int16Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Int16Array), dict[nameof(GlobalThis.Int16Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Int8Array), Int8Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Int8Array), dict[nameof(GlobalThis.Int8Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint32Array), Uint32Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint32Array), dict[nameof(GlobalThis.Uint32Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint16Array), Uint16Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint16Array), dict[nameof(GlobalThis.Uint16Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint8Array), Uint8Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint8Array), dict[nameof(GlobalThis.Uint8Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.Uint8ClampedArray), Uint8ClampedArray);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Uint8ClampedArray), dict[nameof(GlobalThis.Uint8ClampedArray)]);
+
+            dict.TryAdd(nameof(GlobalThis.BigInt64Array), BigInt64Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.BigInt64Array), dict[nameof(GlobalThis.BigInt64Array)]);
+
+            dict.TryAdd(nameof(GlobalThis.BigUint64Array), BigUint64Array);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.BigUint64Array), dict[nameof(GlobalThis.BigUint64Array)]);
+
             dict.TryAdd(nameof(GlobalThis.Map), Map);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Map), dict[nameof(GlobalThis.Map)]);
 
@@ -629,6 +662,28 @@ namespace JavaScriptRuntime
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
 
         public static Delegate Promise => _promiseConstructorValue;
+
+        public static Delegate Float64Array => _float64ArrayConstructorValue;
+
+        public static Delegate Float32Array => _float32ArrayConstructorValue;
+
+        public static Delegate Int32Array => _int32ArrayConstructorValue;
+
+        public static Delegate Int16Array => _int16ArrayConstructorValue;
+
+        public static Delegate Int8Array => _int8ArrayConstructorValue;
+
+        public static Delegate Uint32Array => _uint32ArrayConstructorValue;
+
+        public static Delegate Uint16Array => _uint16ArrayConstructorValue;
+
+        public static Delegate Uint8Array => _uint8ArrayConstructorValue;
+
+        public static Delegate Uint8ClampedArray => _uint8ClampedArrayConstructorValue;
+
+        public static Delegate BigInt64Array => _bigInt64ArrayConstructorValue;
+
+        public static Delegate BigUint64Array => _bigUint64ArrayConstructorValue;
 
         public static Delegate Map => _mapConstructorValue;
 
