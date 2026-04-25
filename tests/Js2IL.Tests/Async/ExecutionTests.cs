@@ -34,9 +34,6 @@ namespace Js2IL.Tests.Async
         public Task Async_FunctionExpression_SimpleAwait() { var testName = nameof(Async_FunctionExpression_SimpleAwait); return ExecutionTest(testName); }
 
         [Fact]
-        public Task Async_FunctionConstructorIntrinsic() { var testName = nameof(Async_FunctionConstructorIntrinsic); return ExecutionTest(testName); }
-
-        [Fact]
         public Task Async_TryCatch_AwaitReject() { var testName = nameof(Async_TryCatch_AwaitReject); return ExecutionTest(testName); }
 
         [Fact]

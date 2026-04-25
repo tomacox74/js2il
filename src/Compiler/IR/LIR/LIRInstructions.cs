@@ -287,7 +287,12 @@ public record LIRCreateBoundArrowFunction(CallableId CallableId, TempVariable Sc
 /// Creates a JS callable value (delegate) for a FunctionExpression.
 /// Emits a JsFuncNoScopesN delegate; when scopes are required, scopes are closed as delegate target.
 /// </summary>
-public record LIRCreateBoundFunctionExpression(CallableId CallableId, TempVariable ScopesArray, TempVariable Result, bool IsAsyncGeneratorFunction = false) : LIRInstruction;
+public record LIRCreateBoundFunctionExpression(
+    CallableId CallableId,
+    TempVariable ScopesArray,
+    TempVariable Result,
+    bool IsAsyncGeneratorFunction = false,
+    bool IsAsync = false) : LIRInstruction;
 
 /// <summary>
 /// Represents a scope slot in the scopes array along with the source of its value.

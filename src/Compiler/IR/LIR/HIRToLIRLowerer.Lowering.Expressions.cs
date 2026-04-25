@@ -672,12 +672,20 @@ public sealed partial class HIRToLIRLowerer
                         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
                         resultTempVar = CreateTempVariable();
+                        var isAsync =
+                            varExpr.Name.BindingInfo.DeclarationNode is FunctionDeclaration asyncFunctionDeclarationBinding
+                            && asyncFunctionDeclarationBinding.Async;
                         var isAsyncGeneratorFunction =
                             varExpr.Name.BindingInfo.DeclarationNode is FunctionDeclaration functionDeclarationBinding
                             && functionDeclarationBinding.Async
                             && functionDeclarationBinding.Generator;
 
-                        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(callableId, scopesTemp, resultTempVar, isAsyncGeneratorFunction));
+                        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
+                            callableId,
+                            scopesTemp,
+                            resultTempVar,
+                            IsAsyncGeneratorFunction: isAsyncGeneratorFunction,
+                            IsAsync: isAsync));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         // Cache the function value so repeated reads of the identifier within the same
@@ -736,7 +744,8 @@ public sealed partial class HIRToLIRLowerer
             CallableId: funcExpr.CallableId,
             ScopesArray: scopesTemp,
             Result: resultTempVar,
-            IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator));
+            IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator,
+            IsAsync: funcScope.IsAsync));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
     }
