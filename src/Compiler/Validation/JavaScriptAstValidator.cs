@@ -62,7 +62,7 @@ public class JavaScriptAstValidator : IAstValidator
         var contextStack = new Stack<ValidationContext>();
         contextStack.Push(new ValidationContext
         {
-            AllowsThis = false,
+            AllowsThis = true,
             AllowsSuper = false,
             ScopeOwner = null,
             MethodDefinitionFunctionValue = null,

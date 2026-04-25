@@ -2095,7 +2095,8 @@ class HIRMethodBuilder
                 // Support 'this' in function scopes, including arrow functions.
                 // Non-arrow functions get their dynamic 'this' from the runtime call sites.
                 // Arrow functions get lexical 'this' via binding at closure creation time.
-                var allowsThis = _rootScope.Parent?.Kind == ScopeKind.Class
+                var allowsThis = _rootScope.Kind == ScopeKind.Global
+                    || _rootScope.Parent?.Kind == ScopeKind.Class
                     || _rootScope.AstNode is FunctionExpression
                     || _rootScope.AstNode is FunctionDeclaration
                     || _rootScope.AstNode is ArrowFunctionExpression;

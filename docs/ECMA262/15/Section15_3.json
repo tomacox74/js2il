@@ -93,9 +93,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatearrowfunctionexpression",
         "testScripts": [
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_ConstructorAssigned.js",
-          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js"
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js",
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_TopLevelCallback.js"
         ],
-        "notes": "Arrow functions capture lexical this at creation time and invoke with that bound this (GitHub issue #219)."
+        "test262Paths": [
+          "test/language/expressions/arrow-function/cannot-override-this-with-thisArg.js"
+        ],
+        "notes": "Arrow functions capture lexical this at creation time and invoke with that bound this, including top-level callback cases that receive a thisArg (GitHub issue #219)."
       }
     ]
   }
