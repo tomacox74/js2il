@@ -200,12 +200,12 @@
                            "status":  "Supported",
                            "specUrl":  "https://tc39.es/ecma262/#sec-promise.withResolvers"
                        },
-                       {
-                           "clause":  "27.2.4.10",
-                           "title":  "get Promise [ %Symbol.species% ]",
-                           "status":  "Not Yet Supported",
-                           "specUrl":  "https://tc39.es/ecma262/#sec-get-promise-%symbol.species%"
-                       },
+                        {
+                            "clause":  "27.2.4.10",
+                            "title":  "get Promise [ %Symbol.species% ]",
+                            "status":  "Supported",
+                            "specUrl":  "https://tc39.es/ecma262/#sec-get-promise-%symbol.species%"
+                        },
                        {
                            "clause":  "27.2.5",
                            "title":  "Properties of the Promise Prototype Object",
@@ -283,6 +283,16 @@
                                                             "tests/Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Reject.js",
                                                             "tests/Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Idempotent.js"
                                                         ]
+                                    },
+                                    {
+                                        "clause":  "27.2.4.10",
+                                        "feature":  "Promise[Symbol.species]",
+                                        "status":  "Supported",
+                                        "specUrl":  "https://tc39.es/ecma262/#sec-get-promise-%symbol.species%",
+                                        "testScripts":  [
+                                                            "tests/Js2IL.Tests/Promise/JavaScript/Promise_SymbolSpecies.js"
+                                                        ],
+                                        "notes":  "Exposes Promise as a first-class global constructor value and defines a non-enumerable, configurable species accessor that returns the current constructor."
                                     },
                                     {
                                         "clause":  "27.2.5",

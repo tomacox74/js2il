@@ -206,6 +206,12 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_SymbolSpecies()
+    {
+        return ExecutionTest(nameof(Promise_SymbolSpecies));
+    }
+
+    [Fact]
     public Task Promise_Scheduling_StarvationTest()
     {
         return ExecutionTest(nameof(Promise_Scheduling_StarvationTest));
