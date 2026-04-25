@@ -615,6 +615,7 @@ namespace JavaScriptRuntime
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
             try
             {
@@ -655,8 +656,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -699,6 +701,7 @@ namespace JavaScriptRuntime
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -722,8 +725,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -740,6 +744,7 @@ namespace JavaScriptRuntime
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -763,8 +768,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -781,6 +787,7 @@ namespace JavaScriptRuntime
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -804,8 +811,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -822,6 +830,7 @@ namespace JavaScriptRuntime
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -845,8 +854,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -863,6 +873,7 @@ namespace JavaScriptRuntime
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -886,8 +897,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -904,6 +916,7 @@ namespace JavaScriptRuntime
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
             try
             {
@@ -927,8 +940,9 @@ namespace JavaScriptRuntime
             }
             finally
             {
-                RuntimeServices.SetCurrentArguments(previousArgs);
                 RuntimeServices.SetCurrentNewTarget(previousNewTarget);
+                RuntimeServices.SetCurrentCallee(previousCallee);
+                RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
 
@@ -942,12 +956,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc0 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null);
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -955,12 +971,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc1 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -968,12 +986,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc2 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -981,12 +1001,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc3 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -994,12 +1016,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc4 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1007,12 +1031,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc5 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1020,12 +1046,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc6 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1033,12 +1061,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc7 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1046,12 +1076,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc8 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1059,12 +1091,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc9 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1072,12 +1106,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc10 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1085,12 +1121,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc11 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1098,12 +1136,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc12 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1111,12 +1151,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc13 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1124,12 +1166,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc14 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1137,12 +1181,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc15 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1150,6 +1196,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc16 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1160,6 +1207,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1167,6 +1215,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc17 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1177,6 +1226,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1184,6 +1234,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc18 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1194,6 +1245,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1201,6 +1253,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc19 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1211,6 +1264,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1218,6 +1272,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc20 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1228,6 +1283,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1235,6 +1291,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc21 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1246,6 +1303,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1253,6 +1311,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc22 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1264,6 +1323,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1271,6 +1331,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc23 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1282,6 +1343,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1289,6 +1351,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc24 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1300,6 +1363,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1307,6 +1371,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc25 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1318,6 +1383,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1325,6 +1391,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc26 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1337,6 +1404,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1344,6 +1412,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc27 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1356,6 +1425,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1363,6 +1433,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc28 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1375,6 +1446,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1382,6 +1454,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc29 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1394,6 +1467,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1401,6 +1475,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc30 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1413,6 +1488,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1420,6 +1496,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc31 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1433,6 +1510,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1440,6 +1518,7 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFunc32 target, object[] scopes, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(scopes, null,
@@ -1453,6 +1532,7 @@ namespace JavaScriptRuntime
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1460,12 +1540,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes0 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null);
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1473,12 +1555,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes1 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1486,12 +1570,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes2 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1499,12 +1585,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes3 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1512,12 +1600,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes4 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1525,12 +1615,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes5 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1538,12 +1630,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes6 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1551,12 +1645,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes7 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1564,12 +1660,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes8 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1577,12 +1675,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes9 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1590,12 +1690,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes10 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1603,12 +1705,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes11 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1616,12 +1720,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes12 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1629,12 +1735,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes13 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1642,12 +1750,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes14 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1655,12 +1765,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes15 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1668,12 +1780,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes16 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1681,12 +1795,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes17 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1694,12 +1810,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes18 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1707,12 +1825,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes19 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1720,12 +1840,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes20 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1733,12 +1855,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes21 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1746,12 +1870,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes22 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1759,12 +1885,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes23 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1772,12 +1900,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes24 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1785,12 +1915,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes25 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1798,12 +1930,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes26 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1811,12 +1945,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes27 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1824,12 +1960,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes28 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1837,12 +1975,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes29 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1850,12 +1990,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes30 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1863,12 +2005,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes31 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29), GetArg(args, 30));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }
@@ -1876,12 +2020,14 @@ namespace JavaScriptRuntime
         public static object? InvokeDirectWithArgs(JsFuncNoScopes32 target, object?[] args)
         {
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
+            var previousCallee = RuntimeServices.SetCurrentCallee(target);
             try
             {
                 return target(null, GetArg(args, 0), GetArg(args, 1), GetArg(args, 2), GetArg(args, 3), GetArg(args, 4), GetArg(args, 5), GetArg(args, 6), GetArg(args, 7), GetArg(args, 8), GetArg(args, 9), GetArg(args, 10), GetArg(args, 11), GetArg(args, 12), GetArg(args, 13), GetArg(args, 14), GetArg(args, 15), GetArg(args, 16), GetArg(args, 17), GetArg(args, 18), GetArg(args, 19), GetArg(args, 20), GetArg(args, 21), GetArg(args, 22), GetArg(args, 23), GetArg(args, 24), GetArg(args, 25), GetArg(args, 26), GetArg(args, 27), GetArg(args, 28), GetArg(args, 29), GetArg(args, 30), GetArg(args, 31));
             }
             finally
             {
+                RuntimeServices.SetCurrentCallee(previousCallee);
                 RuntimeServices.SetCurrentArguments(previousArgs);
             }
         }

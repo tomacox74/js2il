@@ -19,8 +19,10 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
     private Dictionary<string, object?>? _extraProperties;
     private object? _lengthValue;
     private bool _hasLengthProperty = true;
+    private object? _calleeValue;
+    private bool _hasCalleeProperty;
 
-    public ArgumentsObject(object?[]? args, object? scopeInstance, string[]? parameterNames)
+    public ArgumentsObject(object?[]? args, object? scopeInstance, string[]? parameterNames, object? calleeValue)
     {
         _indexedValues = args != null && args.Length > 0 ? (object?[])args.Clone() : [];
         _indexedPresent = new bool[_indexedValues.Length];
@@ -28,7 +30,10 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         _mappedParameterNames = BuildMappedParameterNames(parameterNames, _indexedValues.Length);
         _scopeInstance = scopeInstance;
         _lengthValue = (double)_indexedValues.Length;
+        _calleeValue = calleeValue;
+        _hasCalleeProperty = calleeValue is not null;
         UpdateLengthDescriptor();
+        UpdateCalleeDescriptor();
     }
 
     public object? this[string key]
@@ -62,6 +67,11 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
             return _hasLengthProperty;
         }
 
+        if (string.Equals(key, "callee", StringComparison.Ordinal))
+        {
+            return _hasCalleeProperty;
+        }
+
         if (TryGetIndexedSlot(key, out var index))
         {
             if (index < _indexedPresent.Length)
@@ -86,6 +96,19 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
             _hasLengthProperty = false;
             PropertyDescriptorStore.Delete(this, "length");
+            return true;
+        }
+
+        if (string.Equals(key, "callee", StringComparison.Ordinal))
+        {
+            if (!_hasCalleeProperty)
+            {
+                return false;
+            }
+
+            _hasCalleeProperty = false;
+            _calleeValue = null;
+            PropertyDescriptorStore.Delete(this, "callee");
             return true;
         }
 
@@ -116,6 +139,12 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
         {
             value = _hasLengthProperty ? _lengthValue : null;
             return _hasLengthProperty;
+        }
+
+        if (string.Equals(key, "callee", StringComparison.Ordinal))
+        {
+            value = _calleeValue;
+            return _hasCalleeProperty;
         }
 
         if (TryGetIndexedSlot(key, out var index))
@@ -166,7 +195,10 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
         _extraProperties?.Clear();
         _hasLengthProperty = false;
+        _hasCalleeProperty = false;
+        _calleeValue = null;
         PropertyDescriptorStore.Delete(this, "length");
+        PropertyDescriptorStore.Delete(this, "callee");
     }
 
     public bool Contains(KeyValuePair<string, object?> item)
@@ -226,12 +258,23 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
         if (_extraProperties == null)
         {
-            yield break;
+            goto descriptorKeys;
         }
 
         foreach (var key in _extraProperties.Keys)
         {
             yield return key;
+        }
+
+descriptorKeys:
+        if (_hasLengthProperty)
+        {
+            yield return "length";
+        }
+
+        if (_hasCalleeProperty)
+        {
+            yield return "callee";
         }
     }
 
@@ -279,6 +322,14 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
             return;
         }
 
+        if (string.Equals(key, "callee", StringComparison.Ordinal))
+        {
+            _calleeValue = value;
+            _hasCalleeProperty = true;
+            UpdateCalleeDescriptor();
+            return;
+        }
+
         if (TryGetIndexedSlot(key, out var index) && index < _indexedValues.Length)
         {
             var mappedParameterName = _mappedParameterNames[index];
@@ -304,6 +355,24 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
             Configurable = true,
             Writable = true,
             Value = _lengthValue
+        });
+    }
+
+    private void UpdateCalleeDescriptor()
+    {
+        if (!_hasCalleeProperty)
+        {
+            PropertyDescriptorStore.Delete(this, "callee");
+            return;
+        }
+
+        PropertyDescriptorStore.DefineOrUpdate(this, "callee", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = _calleeValue
         });
     }
 }
