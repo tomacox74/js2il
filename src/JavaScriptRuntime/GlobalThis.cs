@@ -96,9 +96,6 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
 
-        private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
-            CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
-
         private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
             throw new TypeError("Iterator is not directly constructible in js2il.");
 
