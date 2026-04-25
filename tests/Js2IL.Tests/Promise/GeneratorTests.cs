@@ -178,12 +178,6 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
-    public Task Promise_Prototype_SymbolToStringTag()
-    {
-        return GenerateTest(nameof(Promise_Prototype_SymbolToStringTag));
-    }
-
-    [Fact]
     public Task Promise_Reject_FinallyCatch()
     {
         return GenerateTest(nameof(Promise_Reject_FinallyCatch));

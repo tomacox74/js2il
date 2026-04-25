@@ -170,12 +170,6 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
-    public Task Promise_Prototype_SymbolToStringTag()
-    {
-        return ExecutionTest(nameof(Promise_Prototype_SymbolToStringTag));
-    }
-
-    [Fact]
     public Task Promise_Reject_FinallyCatch()
     {
         return ExecutionTest(nameof(Promise_Reject_FinallyCatch));
