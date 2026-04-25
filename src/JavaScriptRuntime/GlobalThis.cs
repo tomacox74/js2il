@@ -548,9 +548,6 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.WeakSet), WeakSet);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.WeakSet), dict[nameof(GlobalThis.WeakSet)]);
 
-            dict.TryAdd(nameof(GlobalThis.Promise), Promise);
-            DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
-
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
 
@@ -694,8 +691,6 @@ namespace JavaScriptRuntime
         public static Delegate WeakMap => _weakMapConstructorValue;
 
         public static Delegate WeakSet => _weakSetConstructorValue;
-
-        public static JsFuncNoScopes1 Promise => _promiseConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
