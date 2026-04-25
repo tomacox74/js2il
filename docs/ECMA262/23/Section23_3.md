@@ -4,18 +4,18 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-04-20T16:42:41Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 23.3 | Uint8Array Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array) |
+| 23.3 | Uint8Array Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-uint8array) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 23.3.1 | Additional Properties of the Uint8Array Constructor | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-constructor) |
-| 23.3.1.1 | Uint8Array.fromBase64 ( string [ , options ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.frombase64) |
+| 23.3.1 | Additional Properties of the Uint8Array Constructor | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-constructor) |
+| 23.3.1.1 | Uint8Array.fromBase64 ( string [ , options ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.frombase64) |
 | 23.3.1.2 | Uint8Array.fromHex ( string ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.fromhex) |
 | 23.3.2 | Additional Properties of the Uint8Array Prototype Object | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-additional-properties-of-the-uint8array-prototype-object) |
 | 23.3.2.1 | Uint8Array.prototype.setFromBase64 ( string [ , options ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array.prototype.setfrombase64) |
@@ -29,16 +29,16 @@
 | 23.3.3.4 | SkipAsciiWhitespace ( string , index ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-skipasciiwhitespace) |
 | 23.3.3.5 | DecodeFinalBase64Chunk ( chunk , throwOnExtraBits ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodefinalbase64chunk) |
 | 23.3.3.6 | DecodeFullLengthBase64Chunk ( chunk ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-decodefulllengthbase64chunk) |
-| 23.3.3.7 | FromBase64 ( string , alphabet , lastChunkHandling [ , maxLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-frombase64) |
+| 23.3.3.7 | FromBase64 ( string , alphabet , lastChunkHandling [ , maxLength ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-frombase64) |
 | 23.3.3.8 | FromHex ( string [ , maxLength ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-fromhex) |
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 23.3 ([tc39.es](https://tc39.es/ecma262/#sec-uint8array))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Uint8Array base64/hex extensions | Not Yet Supported |  | Uint8Array.fromBase64/fromHex and prototype setFrom*/to* methods are not implemented; Node Buffer APIs do not currently imply this ECMA-262 Uint8Array surface. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Uint8Array base64/hex extensions | Incomplete |  |  | Uint8Array.fromBase64 now supports the default base64 decoding/result semantics needed by test262 results coverage. Options handling, fromHex, and the prototype setFrom*/to* helpers remain unsupported. |
 

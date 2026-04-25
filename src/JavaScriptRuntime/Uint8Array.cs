@@ -6,15 +6,41 @@ namespace JavaScriptRuntime
     public sealed class Uint8Array : TypedArrayBase
     {
         private const int ElementSize = 1;
+        internal static readonly JsObject Prototype = CreatePrototype();
+
+        static Uint8Array()
+        {
+            PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
+
+            PropertyDescriptorStore.DefineOrUpdate(typeof(Uint8Array), "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = Prototype
+            });
+
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = typeof(Uint8Array)
+            });
+        }
 
         public Uint8Array()
         {
             InitializeEmpty();
+            InitializeIntrinsicSurface();
         }
 
         public Uint8Array(object? arg)
         {
             InitializeFromArgument(arg);
+            InitializeIntrinsicSurface();
         }
 
         public Uint8Array(object? arg, object? byteOffset)
@@ -22,10 +48,12 @@ namespace JavaScriptRuntime
             if (arg is ArrayBuffer arrayBuffer)
             {
                 InitializeFromBuffer(arrayBuffer, byteOffset, null);
+                InitializeIntrinsicSurface();
                 return;
             }
 
             InitializeFromArgument(arg);
+            InitializeIntrinsicSurface();
         }
 
         public Uint8Array(object? arg, object? byteOffset, object? length)
@@ -33,15 +61,18 @@ namespace JavaScriptRuntime
             if (arg is ArrayBuffer arrayBuffer)
             {
                 InitializeFromBuffer(arrayBuffer, byteOffset, length);
+                InitializeIntrinsicSurface();
                 return;
             }
 
             InitializeFromArgument(arg);
+            InitializeIntrinsicSurface();
         }
 
         private Uint8Array(ArrayBuffer buffer, int byteOffset, int length)
         {
             InitializeFromExisting(buffer, byteOffset, length);
+            InitializeIntrinsicSurface();
         }
 
         public static Uint8Array from(object? source)
@@ -52,6 +83,19 @@ namespace JavaScriptRuntime
 
         public static Uint8Array from(object? source, object? mapper, object? thisArg)
             => FromSource(nameof(Uint8Array), source, mapper, thisArg, static values => new Uint8Array(values));
+
+        public static Uint8Array fromBase64(object? value)
+        {
+            try
+            {
+                var decoded = System.Convert.FromBase64String(DotNet2JSConversions.ToString(value));
+                return new Uint8Array(new ArrayBuffer(decoded, cloneBuffer: false), 0, decoded.Length);
+            }
+            catch (FormatException ex)
+            {
+                throw new SyntaxError("Invalid base64 input", ex);
+            }
+        }
 
         public static Uint8Array of(object[]? args)
             => new Uint8Array(args ?? global::System.Array.Empty<object?>());
@@ -86,6 +130,12 @@ namespace JavaScriptRuntime
 
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Uint8Array(buffer, byteOffset, length);
+
+        private static JsObject CreatePrototype()
+            => new();
+
+        private void InitializeIntrinsicSurface()
+            => PrototypeChain.SetPrototype(this, Prototype);
 
         private static byte ToUint8(double value)
             => unchecked((byte)TypeUtilities.ToInt32(value));
