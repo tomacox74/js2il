@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.9 - 2026-04-27
+
 - compiler/packaging/tests: fix the v0.9.8 Linux and Windows release smoke regression by capturing module-local bindings that shadow runtime global intrinsic names (for example `URL`) when nested CommonJS function expressions close over them, restoring the packaged Hosting.Domino sample build.
 
 ## v0.9.8 - 2026-04-27
