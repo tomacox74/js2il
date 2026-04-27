@@ -1,0 +1,30 @@
+// Copyright (C) 2016 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-functiondeclarationinstantiation
+es6id: 9.2.12
+description: >
+  Arguments object is created even when the body contains a function named
+  "arguments"
+info: |
+  [...]
+  19. Else if "arguments" is an element of parameterNames, then
+      a. Let argumentsObjectNeeded be false.
+  20. Else if hasParameterExpressions is false, then
+      a. If "arguments" is an element of functionNames or if "arguments" is an
+         element of lexicalNames, then
+         i. Let argumentsObjectNeeded be false.
+  [...]
+flags: [noStrict]
+---*/
+
+var args;
+
+var f = function (x = args = arguments) {
+  let arguments;
+};
+
+f();
+
+console.log(Object.is(typeof args, 'object'));
+console.log(Object.is(args.length, 0));
