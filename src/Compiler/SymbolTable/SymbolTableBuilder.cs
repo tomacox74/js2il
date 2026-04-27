@@ -630,12 +630,14 @@ namespace Js2IL.SymbolTables
                 // Convert FunctionDeclaration to use its body like FunctionExpression
                 if (funcDecl.Body is BlockStatement body)
                 {
-                    scope.ReferencesParentScopeVariables = CheckBodyReferencesParentVariables(body, scope);
+                    scope.ReferencesParentScopeVariables =
+                        ScopeReferencesAncestorVariables(scope) || CheckBodyReferencesParentVariables(body, scope);
                 }
             }
             else if (scope.Kind == ScopeKind.Function && scope.AstNode is ArrowFunctionExpression arrowExpr)
             {
-                scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
+                scope.ReferencesParentScopeVariables =
+                    ScopeReferencesAncestorVariables(scope) || CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
             }
 
             var hasDescendantCallableReferencingParentScopeVariables = scope.Children.Any(child =>
@@ -1651,8 +1653,12 @@ namespace Js2IL.SymbolTables
         private bool CheckFunctionReferencesParentVariables(FunctionExpression funcExpr, Scope functionScope)
         {
             if (funcExpr.Body is not BlockStatement body) return false;
-            return CheckBodyReferencesParentVariables(body, functionScope);
+            return ScopeReferencesAncestorVariables(functionScope)
+                || CheckBodyReferencesParentVariables(body, functionScope);
         }
+
+        private bool ScopeReferencesAncestorVariables(Scope scope)
+            => scope.Parent != null && CollectReferencedParentVariables(scope, scope.Parent).Count > 0;
 
         /// <summary>
         /// Recursively collects identifiers that are not in localVariables but are in targetVariables.
@@ -1664,10 +1670,8 @@ namespace Js2IL.SymbolTables
             switch (node)
             {
                 case Identifier id:
-                    // If this identifier is not local, not a global intrinsic, and is in target scope
-                    if (!localVariables.Contains(id.Name) && 
-                        !IsKnownGlobalIntrinsic(id.Name) && 
-                        targetVariables.Contains(id.Name))
+                    // If an ancestor declares this name, that binding shadows any runtime global intrinsic.
+                    if (!localVariables.Contains(id.Name) && targetVariables.Contains(id.Name))
                     {
                         result.Add(id.Name);
                     }

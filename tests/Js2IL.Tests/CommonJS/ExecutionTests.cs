@@ -241,6 +241,16 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_Captures_Shadowed_Global_URL()
+        {
+            // Repro for the v0.9.8 smoke failure compiling @mixmark-io/domino:
+            // a module-local `URL` require must shadow the runtime global URL inside nested closures.
+            return ExecutionTest(
+                nameof(CommonJS_Require_Captures_Shadowed_Global_URL),
+                additionalScripts: new[] { "CommonJS_Require_Captures_Shadowed_Global_URL_Lib" });
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_ClassExpression_ExtendsArray()
         {
             // Issue #552 repro: IR pipeline crash compiling a CommonJS module that exports a class expression.
