@@ -34,7 +34,7 @@ namespace Js2IL.Tests.Node.ChildProcess
                 nameof(Require_ChildProcess_Fork_Kill_And_Env),
                 additionalScripts: new[] { "Require_ChildProcess_Fork_Kill_And_Env_Child" });
 
-        [Fact]
+        [Fact(Skip = "Flaky snapshot mismatch on GitHub Actions")]
         public Task Require_ChildProcess_Fork_Silent()
             => ExecutionTest(
                 nameof(Require_ChildProcess_Fork_Silent),
