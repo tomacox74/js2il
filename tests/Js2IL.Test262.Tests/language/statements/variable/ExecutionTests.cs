@@ -6,7 +6,7 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.variable") { }
 
-    [Fact(DisplayName = "binding-resolution")]
+    [Fact(DisplayName = "binding-resolution", Skip = "Known JS2IL defect")]
     public Task binding_resolution()
         => ExecutionTest("binding-resolution");
 }

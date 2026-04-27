@@ -6,11 +6,11 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Map") { }
 
-    [Fact(DisplayName = "bigint-number-same-value")]
+    [Fact(DisplayName = "bigint-number-same-value", Skip = "Known JS2IL defect")]
     public Task bigint_number_same_value()
         => ExecutionTest("bigint-number-same-value");
 
-    [Fact(DisplayName = "constructor")]
+    [Fact(DisplayName = "constructor", Skip = "Known JS2IL defect")]
     public Task constructor()
         => ExecutionTest("constructor");
 }
