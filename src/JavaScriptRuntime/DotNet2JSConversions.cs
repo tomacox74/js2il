@@ -54,6 +54,11 @@ namespace JavaScriptRuntime
                 return string.Join(",", items);
             }
 
+            if (JavaScriptRuntime.Number.TryGetWrappedNumberValue(value, out var wrappedNumber))
+            {
+                return ToString(wrappedNumber);
+            }
+
             if (value is IDictionary<string, object?> dictObject)
             {
                 return FormatObject(dictObject);

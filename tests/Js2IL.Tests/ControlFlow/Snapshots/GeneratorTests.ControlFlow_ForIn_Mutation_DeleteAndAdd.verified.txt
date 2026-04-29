@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211a
+			// Method begins at RVA 0x2129
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -27,22 +27,22 @@
 
 	} // end of class Scope
 
-	.class nested private auto ansi beforefieldinit Scope_ForIn_L5C5
+	.class nested public auto ansi beforefieldinit Scope_ForIn_L5C5
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L5C21
+		.class nested public auto ansi beforefieldinit Block_L5C21
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L7C17
+			.class nested public auto ansi beforefieldinit Block_L7C17
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2135
+					// Method begins at RVA 0x2144
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x213b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2123
+			// Method begins at RVA 0x2132
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -104,15 +104,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 190 (0xbe)
+		// Code size: 205 (0xcd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[2] object,
 			[3] object,
-			[4] object,
-			[5] bool
+			[4] class Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd/Scope_ForIn_L5C5/Block_L5C21,
+			[5] class Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd/Scope_ForIn_L5C5/Block_L5C21/Block_L7C17,
+			[6] object,
+			[7] bool
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd/Scope::.ctor()
@@ -137,45 +139,50 @@
 		// loop start (head: IL_004f)
 			IL_004f: ldloc.2
 			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_0055: stloc.s 4
-			IL_0057: ldloc.s 4
+			IL_0055: stloc.s 6
+			IL_0057: ldloc.s 6
 			IL_0059: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_005e: stloc.s 5
-			IL_0060: ldloc.s 5
-			IL_0062: brtrue IL_00bd
+			IL_005e: stloc.s 7
+			IL_0060: ldloc.s 7
+			IL_0062: brtrue IL_00cc
 
-			IL_0067: ldloc.s 4
+			IL_0067: ldloc.s 6
 			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_006e: stloc.s 4
-			IL_0070: ldloc.s 4
+			IL_006e: stloc.s 6
+			IL_0070: ldloc.s 6
 			IL_0072: stloc.3
-			IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0078: ldloc.3
-			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_007e: pop
+			IL_0073: newobj instance void Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd/Scope_ForIn_L5C5/Block_L5C21::.ctor()
+			IL_0078: stloc.s 4
+			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_007f: ldloc.3
-			IL_0080: ldstr "a"
-			IL_0085: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_008a: stloc.s 5
-			IL_008c: ldloc.s 5
-			IL_008e: brfalse IL_00b8
+			IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0085: pop
+			IL_0086: ldloc.3
+			IL_0087: ldstr "a"
+			IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0091: stloc.s 7
+			IL_0093: ldloc.s 7
+			IL_0095: brfalse IL_00c7
 
-			IL_0093: ldloc.1
-			IL_0094: ldstr "b"
-			IL_0099: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
-			IL_009e: stloc.s 5
-			IL_00a0: ldloc.s 5
-			IL_00a2: pop
-			IL_00a3: ldloc.1
-			IL_00a4: ldstr "d"
-			IL_00a9: ldc.r8 4
-			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64)
-			IL_00b7: pop
+			IL_009a: newobj instance void Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd/Scope_ForIn_L5C5/Block_L5C21/Block_L7C17::.ctor()
+			IL_009f: stloc.s 5
+			IL_00a1: ldloc.1
+			IL_00a2: ldstr "b"
+			IL_00a7: call bool [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DeleteProperty(object, object)
+			IL_00ac: stloc.s 7
+			IL_00ae: ldloc.s 7
+			IL_00b0: pop
+			IL_00b1: ldloc.1
+			IL_00b2: ldstr "d"
+			IL_00b7: ldc.r8 4
+			IL_00c0: ldc.i4.1
+			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_00c6: pop
 
-			IL_00b8: br IL_004f
+			IL_00c7: br IL_004f
 		// end loop
 
-		IL_00bd: ret
+		IL_00cc: ret
 	} // end of method ControlFlow_ForIn_Mutation_DeleteAndAdd::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_Mutation_DeleteAndAdd
@@ -187,7 +194,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213e
+		// Method begins at RVA 0x214d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

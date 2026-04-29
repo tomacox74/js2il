@@ -52,6 +52,19 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
 
+        private static readonly Func<object[], object?[]?, object?> _numberPrototypeToStringValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            var numberValue = JavaScriptRuntime.Number.ThisNumberValue(thisValue);
+            return JavaScriptRuntime.DotNet2JSConversions.ToString(numberValue);
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _numberPrototypeValueOfValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            return JavaScriptRuntime.Number.ThisNumberValue(thisValue);
+        };
+
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in js2il.");
 
@@ -246,6 +259,22 @@ namespace JavaScriptRuntime
                 Value = _numberPrototypeValue
             });
             DefineIntrinsicDataProperty(_numberPrototypeValue, "constructor", _numberFunctionValue);
+            PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _numberPrototypeToStringValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, "valueOf", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _numberPrototypeValueOfValue
+            });
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
 

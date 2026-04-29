@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L5C4
+		.class nested public auto ansi beforefieldinit Block_L5C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f5
+				// Method begins at RVA 0x2105
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L5C4
 
-		.class nested private auto ansi beforefieldinit Block_L7C12
+		.class nested public auto ansi beforefieldinit Block_L7C12
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fe
+				// Method begins at RVA 0x210e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20fc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,15 +82,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 142 (0x8e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_ScopedParam/Scope,
 			[1] string,
-			[2] class [System.Runtime]System.Exception,
-			[3] object,
+			[2] class Modules.TryCatch_ScopedParam/Scope/Block_L5C4,
+			[3] class [System.Runtime]System.Exception,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] class Modules.TryCatch_ScopedParam/Scope/Block_L7C12,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.TryCatch_ScopedParam/Scope::.ctor()
@@ -99,64 +101,68 @@
 		IL_000b: stloc.1
 		.try
 		{
-			IL_000c: ldstr "inner"
-			IL_0011: dup
-			IL_0012: isinst [System.Runtime]System.Exception
+			IL_000c: newobj instance void Modules.TryCatch_ScopedParam/Scope/Block_L5C4::.ctor()
+			IL_0011: stloc.2
+			IL_0012: ldstr "inner"
 			IL_0017: dup
-			IL_0018: brtrue IL_0024
+			IL_0018: isinst [System.Runtime]System.Exception
+			IL_001d: dup
+			IL_001e: brtrue IL_002a
 
-			IL_001d: pop
-			IL_001e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0023: throw
+			IL_0023: pop
+			IL_0024: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0029: throw
 
-			IL_0024: pop
-			IL_0025: throw
+			IL_002a: pop
+			IL_002b: throw
 
-			IL_0026: leave IL_0071
+			IL_002c: leave IL_0081
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_002b: stloc.2
-			IL_002c: ldloc.2
-			IL_002d: dup
-			IL_002e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0031: stloc.3
+			IL_0032: ldloc.3
 			IL_0033: dup
-			IL_0034: brtrue IL_004a
+			IL_0034: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0039: dup
+			IL_003a: brtrue IL_0050
 
-			IL_0039: pop
-			IL_003a: dup
-			IL_003b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_003f: pop
 			IL_0040: dup
-			IL_0041: brtrue IL_0056
+			IL_0041: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0046: dup
+			IL_0047: brtrue IL_005d
 
-			IL_0046: pop
-			IL_0047: pop
-			IL_0048: rethrow
+			IL_004c: pop
+			IL_004d: pop
+			IL_004e: rethrow
 
-			IL_004a: pop
-			IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0050: stloc.3
-			IL_0051: br IL_0058
+			IL_0050: pop
+			IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0056: stloc.s 4
+			IL_0058: br IL_0060
 
-			IL_0056: pop
-			IL_0057: stloc.3
+			IL_005d: pop
+			IL_005e: stloc.s 4
 
-			IL_0058: ldloc.3
-			IL_0059: stloc.s 5
-			IL_005b: ldloc.s 5
-			IL_005d: stloc.s 4
-			IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0064: ldloc.s 4
-			IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_006b: pop
-			IL_006c: leave IL_0071
+			IL_0060: ldloc.s 4
+			IL_0062: stloc.s 7
+			IL_0064: ldloc.s 7
+			IL_0066: stloc.s 5
+			IL_0068: newobj instance void Modules.TryCatch_ScopedParam/Scope/Block_L7C12::.ctor()
+			IL_006d: stloc.s 6
+			IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0074: ldloc.s 5
+			IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_007b: pop
+			IL_007c: leave IL_0081
 		} // end handler
 
-		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0076: ldloc.1
-		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007c: pop
-		IL_007d: ret
+		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0086: ldloc.1
+		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008c: pop
+		IL_008d: ret
 	} // end of method TryCatch_ScopedParam::__js_module_init__
 
 } // end of class Modules.TryCatch_ScopedParam
@@ -168,7 +174,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2107
+		// Method begins at RVA 0x2117
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

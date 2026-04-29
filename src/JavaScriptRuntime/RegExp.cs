@@ -258,7 +258,30 @@ namespace JavaScriptRuntime
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
+            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
             return prototype;
+        }
+
+        private static void DefinePrototypeMethod(object target, string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not RegExp regExp)
+            {
+                throw new TypeError("RegExp.prototype.toString called on incompatible receiver");
+            }
+
+            return regExp.toString();
         }
 
         private bool HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags flag)

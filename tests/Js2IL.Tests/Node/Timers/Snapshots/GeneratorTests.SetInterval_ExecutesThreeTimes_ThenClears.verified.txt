@@ -15,14 +15,14 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L9C21
+			.class nested public auto ansi beforefieldinit Block_L9C21
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2192
+					// Method begins at RVA 0x2198
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2189
+				// Method begins at RVA 0x218f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -68,12 +68,13 @@
 			)
 			// Method begins at RVA 0x20e0
 			// Header size: 12
-			// Code size: 137 (0x89)
+			// Code size: 143 (0x8f)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] class Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/Scope/Block_L9C21,
 				[1] object,
-				[2] bool
+				[2] object,
+				[3] bool
 			)
 
 			IL_0000: ldarg.0
@@ -88,37 +89,39 @@
 			IL_0025: ldarg.0
 			IL_0026: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
 			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0030: stloc.0
+			IL_0030: stloc.1
 			IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0036: ldloc.0
+			IL_0036: ldloc.1
 			IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003c: pop
 			IL_003d: ldarg.0
 			IL_003e: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-			IL_0043: stloc.1
-			IL_0044: ldloc.1
+			IL_0043: stloc.2
+			IL_0044: ldloc.2
 			IL_0045: ldc.r8 3
 			IL_004e: box [System.Runtime]System.Double
 			IL_0053: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0058: stloc.2
-			IL_0059: ldloc.2
-			IL_005a: brfalse IL_0087
+			IL_0058: stloc.3
+			IL_0059: ldloc.3
+			IL_005a: brfalse IL_008d
 
-			IL_005f: ldarg.0
-			IL_0060: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
-			IL_0065: ldstr "Cannot access 'id' before initialization"
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_006f: stloc.1
-			IL_0070: ldloc.1
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_0076: pop
-			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007c: ldstr "cleared"
-			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0086: pop
+			IL_005f: newobj instance void Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/Scope/Block_L9C21::.ctor()
+			IL_0064: stloc.0
+			IL_0065: ldarg.0
+			IL_0066: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
+			IL_006b: ldstr "Cannot access 'id' before initialization"
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0075: stloc.2
+			IL_0076: ldloc.2
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
+			IL_007c: pop
+			IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0082: ldstr "cleared"
+			IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_008c: pop
 
-			IL_0087: ldnull
-			IL_0088: ret
+			IL_008d: ldnull
+			IL_008e: ret
 		} // end of method ArrowFunction_L5C24::__js_call__
 
 	} // end of class ArrowFunction_L5C24
@@ -138,7 +141,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2175
+			// Method begins at RVA 0x217b
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -227,7 +230,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219b
+		// Method begins at RVA 0x21a1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -15,14 +15,14 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L4C6
+			.class nested public auto ansi beforefieldinit Block_L4C6
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2360
+					// Method begins at RVA 0x236c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -35,14 +35,14 @@
 
 			} // end of class Block_L4C6
 
-			.class nested private auto ansi beforefieldinit Block_L6C14
+			.class nested public auto ansi beforefieldinit Block_L6C14
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2369
+					// Method begins at RVA 0x2375
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2357
+				// Method begins at RVA 0x2363
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,76 +86,82 @@
 			)
 			// Method begins at RVA 0x2198
 			// Header size: 12
-			// Code size: 129 (0x81)
+			// Code size: 144 (0x90)
 			.maxstack 8
 			.locals init (
-				[0] class [System.Runtime]System.Exception,
-				[1] object,
+				[0] class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError/Scope/Block_L4C6,
+				[1] class [System.Runtime]System.Exception,
 				[2] object,
 				[3] object,
-				[4] object
+				[4] class Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError/Scope/Block_L6C14,
+				[5] object,
+				[6] object
 			)
 
 			.try
 			{
-				IL_0000: ldarg.1
-				IL_0001: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-				IL_000b: pop
-				IL_000c: leave IL_007f
+				IL_0000: newobj instance void Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError/Scope/Block_L4C6::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldarg.1
+				IL_0007: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_0011: pop
+				IL_0012: leave IL_008e
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0011: stloc.0
-				IL_0012: ldloc.0
-				IL_0013: dup
-				IL_0014: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0017: stloc.1
+				IL_0018: ldloc.1
 				IL_0019: dup
-				IL_001a: brtrue IL_0030
+				IL_001a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_001f: dup
+				IL_0020: brtrue IL_0036
 
-				IL_001f: pop
-				IL_0020: dup
-				IL_0021: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0025: pop
 				IL_0026: dup
-				IL_0027: brtrue IL_003c
+				IL_0027: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_002c: dup
+				IL_002d: brtrue IL_0042
 
-				IL_002c: pop
-				IL_002d: pop
-				IL_002e: rethrow
+				IL_0032: pop
+				IL_0033: pop
+				IL_0034: rethrow
 
-				IL_0030: pop
-				IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0036: stloc.1
-				IL_0037: br IL_003e
+				IL_0036: pop
+				IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_003c: stloc.2
+				IL_003d: br IL_0044
 
-				IL_003c: pop
-				IL_003d: stloc.1
+				IL_0042: pop
+				IL_0043: stloc.2
 
-				IL_003e: ldloc.1
-				IL_003f: stloc.3
-				IL_0040: ldloc.3
-				IL_0041: stloc.2
-				IL_0042: ldloc.2
-				IL_0043: ldstr "name"
-				IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_004d: ldstr ": "
-				IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0057: stloc.s 4
-				IL_0059: ldloc.s 4
-				IL_005b: ldloc.2
-				IL_005c: ldstr "message"
-				IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_006b: stloc.s 4
-				IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0072: ldloc.s 4
-				IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0079: pop
-				IL_007a: leave IL_007f
+				IL_0044: ldloc.2
+				IL_0045: stloc.s 5
+				IL_0047: ldloc.s 5
+				IL_0049: stloc.3
+				IL_004a: newobj instance void Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/logError/Scope/Block_L6C14::.ctor()
+				IL_004f: stloc.s 4
+				IL_0051: ldloc.3
+				IL_0052: ldstr "name"
+				IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_005c: ldstr ": "
+				IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0066: stloc.s 6
+				IL_0068: ldloc.s 6
+				IL_006a: ldloc.3
+				IL_006b: ldstr "message"
+				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_007a: stloc.s 6
+				IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0081: ldloc.s 6
+				IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0088: pop
+				IL_0089: leave IL_008e
 			} // end handler
 
-			IL_007f: ldnull
-			IL_0080: ret
+			IL_008e: ldnull
+			IL_008f: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
@@ -171,7 +177,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2372
+				// Method begins at RVA 0x237e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -197,7 +203,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2238
+			// Method begins at RVA 0x2244
 			// Header size: 12
 			// Code size: 54 (0x36)
 			.maxstack 8
@@ -242,7 +248,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x237b
+				// Method begins at RVA 0x2387
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -268,7 +274,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x227c
+			// Method begins at RVA 0x2288
 			// Header size: 12
 			// Code size: 54 (0x36)
 			.maxstack 8
@@ -313,7 +319,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2384
+				// Method begins at RVA 0x2390
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -339,7 +345,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x22c0
+			// Method begins at RVA 0x22cc
 			// Header size: 12
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -384,7 +390,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x238d
+				// Method begins at RVA 0x2399
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -410,7 +416,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2308
+			// Method begins at RVA 0x2314
 			// Header size: 12
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -461,7 +467,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x234e
+			// Method begins at RVA 0x235a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -630,7 +636,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2396
+		// Method begins at RVA 0x23a2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

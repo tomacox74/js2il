@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L4C15
+		.class nested public auto ansi beforefieldinit Block_L4C15
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20b2
+				// Method begins at RVA 0x20ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a9
+			// Method begins at RVA 0x20b1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,13 +62,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 77 (0x4d)
+		// Code size: 85 (0x55)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_NestedLet/Scope,
 			[1] float64,
-			[2] object,
-			[3] object
+			[2] class Modules.ControlFlow_DoWhile_NestedLet/Scope/Block_L4C15,
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_NestedLet/Scope::.ctor()
@@ -79,26 +80,28 @@
 			IL_0010: ldloc.1
 			IL_0011: ldc.r8 10
 			IL_001a: clt
-			IL_001c: brfalse IL_004c
+			IL_001c: brfalse IL_0054
 
-			IL_0021: ldloc.1
-			IL_0022: ldc.r8 1
-			IL_002b: add
-			IL_002c: stloc.1
-			IL_002d: ldstr "Current value is: "
-			IL_0032: ldloc.1
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0038: stloc.3
-			IL_0039: ldloc.3
-			IL_003a: stloc.2
-			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0040: ldloc.2
-			IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0046: pop
-			IL_0047: br IL_0010
+			IL_0021: newobj instance void Modules.ControlFlow_DoWhile_NestedLet/Scope/Block_L4C15::.ctor()
+			IL_0026: stloc.2
+			IL_0027: ldloc.1
+			IL_0028: ldc.r8 1
+			IL_0031: add
+			IL_0032: stloc.1
+			IL_0033: ldstr "Current value is: "
+			IL_0038: ldloc.1
+			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_003e: stloc.s 4
+			IL_0040: ldloc.s 4
+			IL_0042: stloc.3
+			IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0048: ldloc.3
+			IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004e: pop
+			IL_004f: br IL_0010
 		// end loop
 
-		IL_004c: ret
+		IL_0054: ret
 	} // end of method ControlFlow_DoWhile_NestedLet::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_NestedLet
@@ -110,7 +113,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20bb
+		// Method begins at RVA 0x20c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

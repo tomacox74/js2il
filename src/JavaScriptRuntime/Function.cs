@@ -250,6 +250,11 @@ public static class Function
                 return Construct(boundTarget, finalArgs, effectiveNewTarget);
             }
 
+            if (JavaScriptRuntime.Number.IsNumberConstructor(constructor))
+            {
+                return JavaScriptRuntime.Number.Construct(callArgs, newTarget);
+            }
+
             var instance = new System.Dynamic.ExpandoObject();
 
             // Default proto: ctor.prototype when it is an object or null; otherwise undefined.

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ce
+				// Method begins at RVA 0x21d0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,18 +42,19 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2161
+			// Method begins at RVA 0x2162
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 20 (0x14)
 			.maxstack 8
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0005: ldstr "name"
 			IL_000a: ldarg.1
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-			IL_0010: pop
-			IL_0011: ldnull
-			IL_0012: ret
+			IL_000b: ldc.i4.1
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0011: pop
+			IL_0012: ldnull
+			IL_0013: ret
 		} // end of method Animal::__js_call__
 
 	} // end of class Animal
@@ -69,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d7
+				// Method begins at RVA 0x21d9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -123,7 +124,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e0
+				// Method begins at RVA 0x21e2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -150,21 +151,23 @@
 			)
 			// Method begins at RVA 0x21a0
 			// Header size: 1
-			// Code size: 36 (0x24)
+			// Code size: 38 (0x26)
 			.maxstack 8
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_0005: ldstr "name"
 			IL_000a: ldarg.1
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-			IL_0010: pop
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0016: ldstr "breed"
-			IL_001b: ldarg.2
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-			IL_0021: pop
-			IL_0022: ldnull
-			IL_0023: ret
+			IL_000b: ldc.i4.1
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0011: pop
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0017: ldstr "breed"
+			IL_001c: ldarg.2
+			IL_001d: ldc.i4.1
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_0023: pop
+			IL_0024: ldnull
+			IL_0025: ret
 		} // end of method Dog::__js_call__
 
 	} // end of class Dog
@@ -185,7 +188,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c5
+			// Method begins at RVA 0x21c7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -211,7 +214,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 261 (0x105)
+		// Code size: 262 (0x106)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inherits_Basic/Scope,
@@ -256,59 +259,60 @@
 		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_0060: ldstr "speak"
 		IL_0065: ldloc.s 5
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object)
-		IL_006c: pop
-		IL_006d: ldloc.3
-		IL_006e: ldstr "inherits"
-		IL_0073: ldloc.2
-		IL_0074: ldloc.1
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_007a: pop
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: ldstr "inherits completed"
-		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008a: pop
-		IL_008b: ldloc.2
-		IL_008c: ldstr "super_"
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0096: ldloc.1
-		IL_0097: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_009c: stloc.s 6
-		IL_009e: ldloc.s 6
-		IL_00a0: box [System.Runtime]System.Boolean
-		IL_00a5: stloc.s 7
-		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ac: ldloc.s 7
-		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b3: pop
-		IL_00b4: ldloc.2
-		IL_00b5: ldc.i4.2
-		IL_00b6: newarr [System.Runtime]System.Object
-		IL_00bb: dup
-		IL_00bc: ldc.i4.0
-		IL_00bd: ldstr "Buddy"
-		IL_00c2: stelem.ref
-		IL_00c3: dup
-		IL_00c4: ldc.i4.1
-		IL_00c5: ldstr "Golden Retriever"
-		IL_00ca: stelem.ref
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_00d0: stloc.s 5
-		IL_00d2: ldloc.s 5
-		IL_00d4: stloc.s 4
-		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00db: ldloc.s 4
-		IL_00dd: ldstr "name"
-		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ec: pop
-		IL_00ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f2: ldloc.s 4
-		IL_00f4: ldstr "breed"
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0103: pop
-		IL_0104: ret
+		IL_0067: ldc.i4.1
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_006d: pop
+		IL_006e: ldloc.3
+		IL_006f: ldstr "inherits"
+		IL_0074: ldloc.2
+		IL_0075: ldloc.1
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_007b: pop
+		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0081: ldstr "inherits completed"
+		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008b: pop
+		IL_008c: ldloc.2
+		IL_008d: ldstr "super_"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0097: ldloc.1
+		IL_0098: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_009d: stloc.s 6
+		IL_009f: ldloc.s 6
+		IL_00a1: box [System.Runtime]System.Boolean
+		IL_00a6: stloc.s 7
+		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ad: ldloc.s 7
+		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b4: pop
+		IL_00b5: ldloc.2
+		IL_00b6: ldc.i4.2
+		IL_00b7: newarr [System.Runtime]System.Object
+		IL_00bc: dup
+		IL_00bd: ldc.i4.0
+		IL_00be: ldstr "Buddy"
+		IL_00c3: stelem.ref
+		IL_00c4: dup
+		IL_00c5: ldc.i4.1
+		IL_00c6: ldstr "Golden Retriever"
+		IL_00cb: stelem.ref
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_00d1: stloc.s 5
+		IL_00d3: ldloc.s 5
+		IL_00d5: stloc.s 4
+		IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00dc: ldloc.s 4
+		IL_00de: ldstr "name"
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ed: pop
+		IL_00ee: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f3: ldloc.s 4
+		IL_00f5: ldstr "breed"
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0104: pop
+		IL_0105: ret
 	} // end of method Require_Util_Inherits_Basic::__js_module_init__
 
 } // end of class Modules.Require_Util_Inherits_Basic
@@ -320,7 +324,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e9
+		// Method begins at RVA 0x21eb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
