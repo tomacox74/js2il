@@ -341,7 +341,7 @@ public sealed partial class HIRToLIRLowerer
         var updatedBoxed = EnsureObject(updatedNumber);
 
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueForSet, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueForSet, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         if (prefix)
@@ -448,7 +448,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueForSet, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueForSet, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         if (prefix)

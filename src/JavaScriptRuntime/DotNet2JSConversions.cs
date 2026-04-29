@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
@@ -106,6 +107,11 @@ namespace JavaScriptRuntime
                     }
                 }
                 return ff.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (value is BigInteger bigInteger)
+            {
+                return bigInteger.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
 
             // Add more conversions as needed

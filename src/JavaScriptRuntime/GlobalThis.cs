@@ -62,6 +62,13 @@ namespace JavaScriptRuntime
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
         private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
             JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly Func<object[], object?[]?, object?> _arrayFromValue = static (_, args) =>
+        {
+            var source = args != null && args.Length > 0 ? args[0] : null;
+            var mapFn = args != null && args.Length > 1 ? args[1] : null;
+            var thisArg = args != null && args.Length > 2 ? args[2] : null;
+            return JavaScriptRuntime.Array.from(source, mapFn, thisArg);
+        };
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
@@ -89,6 +96,12 @@ namespace JavaScriptRuntime
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
             JavaScriptRuntime.Object.Construct(value);
+        private static readonly Func<object[], object?[], object?> _regExpConstructorValue = static (_, args) =>
+        {
+            var pattern = (args != null && args.Length > 0) ? args[0] : null;
+            var flags = (args != null && args.Length > 1) ? args[1] : null;
+            return JavaScriptRuntime.RegExp.Call(pattern, flags);
+        };
 
         private static readonly Func<object[], object?[], object?> _errorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.Error(message));
@@ -113,6 +126,8 @@ namespace JavaScriptRuntime
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
         // opt into prototype semantics as needed.
         private static readonly object _objectPrototypeValue = new JsObject();
+        private static readonly object _jsonValue = new JsObject();
+        private static readonly object _numberPrototypeValue = new JsObject();
         private static readonly object _booleanPrototypeValue = new JavaScriptRuntime.Boolean(false);
         private static readonly object _promisePrototypeValue = new JsObject();
 
@@ -187,6 +202,15 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _arrayIsArrayValue
             });
+            ConfigureBuiltinFunctionObject(_arrayFromValue);
+            PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "from", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _arrayFromValue
+            });
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
@@ -207,6 +231,23 @@ namespace JavaScriptRuntime
 
             // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(_numberPrototypeValue, _objectPrototypeValue);
+            DefineIntrinsicDataProperty(_jsonValue, "parse", (Func<object?, object?>)JavaScriptRuntime.JSON.Parse);
+            DefineIntrinsicDataProperty(_numberPrototypeValue, Symbol.toStringTag.DebugId, "Number");
+            ConfigureConstructorPrototypeSurface(_regExpConstructorValue, JavaScriptRuntime.RegExp.Prototype);
+            ConfigureBuiltinFunctionObject(_numberFunctionValue);
+            PropertyDescriptorStore.DefineOrUpdate(_numberFunctionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _numberPrototypeValue
+            });
+            DefineIntrinsicDataProperty(_numberPrototypeValue, "constructor", _numberFunctionValue);
+            ConfigureBuiltinFunctionObject(_stringFunctionValue);
+            ConfigureBuiltinFunctionObject(_booleanFunctionValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             ConfigureErrorIntrinsicSurface(_errorConstructorValue, _errorPrototypeValue, "Error", parentPrototype: _objectPrototypeValue);
@@ -447,6 +488,18 @@ namespace JavaScriptRuntime
             });
         }
 
+        private static void DefineIntrinsicDataProperty(object target, string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
+
         private static bool ShouldExposeGc()
         {
             var serviceProvider = ServiceProvider;
@@ -542,6 +595,12 @@ namespace JavaScriptRuntime
 
             dict.TryAdd(nameof(GlobalThis.Object), Object);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Object), dict[nameof(GlobalThis.Object)]);
+
+            dict.TryAdd(nameof(GlobalThis.JSON), JSON);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.JSON), dict[nameof(GlobalThis.JSON)]);
+
+            dict.TryAdd(nameof(GlobalThis.RegExp), RegExp);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.RegExp), dict[nameof(GlobalThis.RegExp)]);
 
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
@@ -685,6 +744,10 @@ namespace JavaScriptRuntime
         public static Delegate WeakSet => _weakSetConstructorValue;
 
         public static Func<object[], object?, object> Object => _objectConstructorValue;
+
+        public static object JSON => _jsonValue;
+
+        public static Delegate RegExp => _regExpConstructorValue;
 
         /// <summary>
         /// ECMAScript global Error constructor value (placeholder).
@@ -1074,6 +1137,7 @@ namespace JavaScriptRuntime
         }
 
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
+        internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;
         internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
 

@@ -729,6 +729,9 @@ namespace JavaScriptRuntime
             return enumerableKeys;
         }
 
+        internal static List<string> GetOwnPropertyKeysInOrder(object obj)
+            => GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: false);
+
         /// <summary>
         /// Implements <c>Object.is(value1, value2)</c> via SameValue semantics.
         /// </summary>
@@ -830,6 +833,13 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _objectPrototypeDefineSetterValue = PrototypeDefineSetter;
         private static readonly Func<object[], object?[], object?> _objectPrototypeLookupGetterValue = PrototypeLookupGetter;
         private static readonly Func<object[], object?[], object?> _objectPrototypeLookupSetterValue = PrototypeLookupSetter;
+
+        internal static JsObject CreateOrdinaryObject()
+        {
+            var result = new JsObject();
+            PrototypeChain.SetPrototype(result, GlobalThis.ObjectPrototypeValue);
+            return result;
+        }
 
         private static void DefineBuiltinDataProperty(object target, string name, object? value, bool enumerable = false, bool configurable = true, bool writable = true)
         {
@@ -995,7 +1005,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object prototype may only be an Object or null");
             }
 
-            var obj = new JsObject();
+            var obj = CreateOrdinaryObject();
 
             // Explicitly set [[Prototype]] (including null-proto via JsNull).
             PrototypeChain.SetPrototype(obj, prototype);
@@ -1149,6 +1159,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
+            var targetObject = BoxAssignTarget(target);
             foreach (var source in sources)
             {
                 // Skip null/undefined sources
@@ -1158,10 +1169,61 @@ namespace JavaScriptRuntime
                 }
 
                 // Use SpreadInto which handles enumerable own properties
-                SpreadInto(target, source);
+                SpreadInto(targetObject, source);
             }
 
-            return target;
+            return targetObject;
+        }
+
+        private static object BoxAssignTarget(object value)
+        {
+            if (value is string str)
+            {
+                return CreatePrimitiveWrapper(str, JavaScriptRuntime.String.Prototype, includeOwnStringMethods: true);
+            }
+
+            if (value is double or float or int or long or short or byte or System.Numerics.BigInteger)
+            {
+                return CreatePrimitiveWrapper(value, GlobalThis.NumberPrototypeValue, includeOwnStringMethods: false);
+            }
+
+            if (value is bool boolean)
+            {
+                return new JavaScriptRuntime.Boolean(boolean);
+            }
+
+            return value;
+        }
+
+        private static object CreatePrimitiveWrapper(object primitiveValue, object prototype, bool includeOwnStringMethods)
+        {
+            var wrapper = CreateOrdinaryObject();
+            PrototypeChain.SetPrototype(wrapper, prototype);
+
+            if (!includeOwnStringMethods)
+            {
+                return wrapper;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
+            });
+
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
+            });
+
+            return wrapper;
         }
 
         /// <summary>
@@ -1175,7 +1237,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var result = new JsObject();
+            var result = CreateOrdinaryObject();
             var dict = (IDictionary<string, object?>)result;
 
             // Get iterator for the iterable
@@ -1345,7 +1407,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var result = new JsObject();
+            var result = CreateOrdinaryObject();
             if (getOwnPropertyNames(obj) is JavaScriptRuntime.Array names)
             {
                 foreach (var key in names)
@@ -1592,7 +1654,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object.groupBy callback must be a function");
             }
 
-            var result = new JsObject();
+            var result = CreateOrdinaryObject();
             var dict = (IDictionary<string, object?>)result;
             var iterator = GetIterator(items);
             var index = 0;
@@ -3264,7 +3326,7 @@ namespace JavaScriptRuntime
 
         private static object CreateDescriptorObject(JsPropertyDescriptor desc)
         {
-            var result = new JsObject();
+            var result = CreateOrdinaryObject();
             var dict = (IDictionary<string, object?>)result;
 
             dict["enumerable"] = desc.Enumerable;
@@ -3340,7 +3402,7 @@ namespace JavaScriptRuntime
                 && !Closure.IsFunctionPrototypeBoundDelegate(delPrototype)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
-                var protoObj = new JsObject();
+                var protoObj = CreateOrdinaryObject();
                 PropertyDescriptorStore.DefineOrUpdate(delPrototype, "prototype", new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,
@@ -3448,7 +3510,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool TrySetPropertyViaPrototypeOrThrow(object receiver, string propName, object? value)
+        private static bool TrySetPropertyViaPrototypeOrThrow(object receiver, string propName, object? value, bool throwOnError)
         {
             if (!PrototypeChain.Enabled)
             {
@@ -3490,11 +3552,21 @@ namespace JavaScriptRuntime
                             return true;
                         }
 
+                        if (!throwOnError)
+                        {
+                            return true;
+                        }
+
                         throw new TypeError($"Cannot set property '{propName}' of object which has only a getter");
                     }
 
                     if (!desc.Writable)
                     {
+                        if (!throwOnError)
+                        {
+                            return true;
+                        }
+
                         throw new TypeError($"Cannot assign to read only property '{propName}' of object");
                     }
 
@@ -4290,7 +4362,7 @@ namespace JavaScriptRuntime
                 excluded.Add(DotNet2JSConversions.ToString(k));
             }
 
-            var result = new JsObject();
+            var result = CreateOrdinaryObject();
 
             if (obj is JsObject jsObjSrc)
             {
@@ -4582,12 +4654,6 @@ namespace JavaScriptRuntime
                 return GetProperty(proxy.GetTarget("get"), name);
             }
 
-            // Legacy __proto__ accessor (opt-in)
-            if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
-            {
-                return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
-            }
-
             if (string.Equals(name, "length", StringComparison.Ordinal))
             {
                 switch (obj)
@@ -4611,6 +4677,12 @@ namespace JavaScriptRuntime
             if (TryGetOwnPropertyValue(obj, name, out var ownValue))
             {
                 return ownValue;
+            }
+
+            // Legacy __proto__ accessor (opt-in) only applies when there is no own "__proto__" property.
+            if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
+            {
+                return PrototypeChain.TryGetPrototype(obj, out var proto) ? proto : null;
             }
 
             if (obj is string && JavaScriptRuntime.String.TryGetPrototypeProperty(obj, name, out var stringPrototypeValue))
@@ -4674,10 +4746,14 @@ namespace JavaScriptRuntime
         /// Returns the assigned value to match JavaScript assignment expression semantics.
         /// </summary>
         public static object? SetProperty(object obj, string name, object? value)
+            => SetProperty(obj, name, value, throwOnError: true);
+
+        public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
             if (string.IsNullOrEmpty(name)) return value;
             InvalidateRegExpWellKnownSymbolFastPath(obj, name);
+            var hasOwn = HasOwnProperty(obj, name);
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
@@ -4686,12 +4762,12 @@ namespace JavaScriptRuntime
                     return value;
                 }
 
-                return SetProperty(proxy.GetTarget("set"), name, value);
+                return SetProperty(proxy.GetTarget("set"), name, value, throwOnError);
             }
 
             // Legacy __proto__ mutator (opt-in). In JS, setting __proto__ changes [[Prototype]]
             // when the RHS is an object or null; otherwise it is ignored.
-            if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
+            if (!hasOwn && PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
             {
                 if (IsValidPrototypeValue(value))
                 {
@@ -4700,15 +4776,18 @@ namespace JavaScriptRuntime
                 }
                 return value;
             }
-
-            var hasOwn = HasOwnProperty(obj, name);
-            if (!hasOwn && TrySetPropertyViaPrototypeOrThrow(obj, name, value))
+            if (!hasOwn && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
             {
                 return value;
             }
 
             if (!hasOwn && !IsExtensibleInternal(obj))
             {
+                if (!throwOnError)
+                {
+                    return value;
+                }
+
                 throw new TypeError($"Cannot add property '{name}', object is not extensible");
             }
 
@@ -4723,11 +4802,21 @@ namespace JavaScriptRuntime
                         return value;
                     }
 
+                    if (!throwOnError)
+                    {
+                        return value;
+                    }
+
                     throw new TypeError($"Cannot set property '{name}' of object which has only a getter");
                 }
 
                 if (!desc.Writable)
                 {
+                    if (!throwOnError)
+                    {
+                        return value;
+                    }
+
                     throw new TypeError($"Cannot assign to read only property '{name}' of object");
                 }
 
@@ -4752,7 +4841,7 @@ namespace JavaScriptRuntime
 
                 // Prototype-setter semantics: if no own property exists, and a prototype accessor
                 // defines a setter, route the assignment to that setter.
-                if (!dict.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value))
+                if (!dict.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
                 }
@@ -4763,7 +4852,7 @@ namespace JavaScriptRuntime
 
             if (obj is IDictionary<string, object?> dictGeneric)
             {
-                if (!dictGeneric.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value))
+                if (!dictGeneric.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
                 }
@@ -4785,7 +4874,7 @@ namespace JavaScriptRuntime
                     return value;
                 }
 
-                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value))
+                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
                 }
@@ -4806,7 +4895,7 @@ namespace JavaScriptRuntime
             // properties (e.g., MyEvent.prototype = ...). Store these in the descriptor table.
             if (obj is Delegate)
             {
-                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value))
+                if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
                 }
@@ -4851,7 +4940,7 @@ namespace JavaScriptRuntime
             // Prototype-setter semantics for "plain" CLR objects (e.g., JS2IL-generated scope classes).
             // If no own writable field/property exists, but a prototype accessor defines a setter,
             // route the assignment to that setter.
-            if (TrySetPropertyViaPrototypeOrThrow(obj, name, value))
+            if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
             {
                 return value;
             }

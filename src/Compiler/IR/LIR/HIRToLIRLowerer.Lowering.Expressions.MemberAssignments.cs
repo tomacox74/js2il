@@ -10,6 +10,9 @@ namespace Js2IL.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private bool UsesStrictAssignmentSemantics()
+        => _scope == null || Js2IL.Utilities.ArgumentsObjectSemantics.IsStrictScope(_scope);
+
     private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -110,7 +113,7 @@ public sealed partial class HIRToLIRLowerer
             valueToStore = EnsureObject(valueToStore);
         }
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueToStore, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         resultTempVar = setResult;
         return true;
@@ -249,7 +252,7 @@ public sealed partial class HIRToLIRLowerer
             valueToStore = EnsureObject(valueToStore);
         }
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         resultTempVar = setResult;
         return true;

@@ -1,3 +1,5 @@
+"use strict";
+
 // Copyright (C) 2016 The V8 Project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 

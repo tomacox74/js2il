@@ -6,7 +6,7 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Array.from") { }
 
-    [Fact(DisplayName = "calling-from-valid-1-noStrict", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "calling-from-valid-1-noStrict")]
     public Task calling_from_valid_1_noStrict()
         => ExecutionTest("calling-from-valid-1-noStrict");
 }

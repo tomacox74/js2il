@@ -139,32 +139,24 @@ public sealed partial class HIRToLIRLowerer
 
         if (string.Equals(ctorName, "Number", StringComparison.Ordinal))
         {
-            if (newExpr.Arguments.Count > 1)
-            {
-                return false;
-            }
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+        }
 
-            TempVariable source;
-            if (newExpr.Arguments.Count == 0)
+        if (string.Equals(ctorName, "Date", StringComparison.Ordinal))
+        {
+            var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
+            foreach (var arg in newExpr.Arguments)
             {
-                // JS semantics: new Number() defaults to +0 (like Number())
-                resultTempVar = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
-            }
-            else
-            {
-                if (!TryLowerExpression(newExpr.Arguments[0], out var argTemp))
+                if (!TryLowerExpression(arg, out var argTemp))
                 {
                     return false;
                 }
-                source = EnsureObject(argTemp);
+                argTemps.Add(EnsureObject(argTemp));
             }
 
             resultTempVar = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConvertToNumber(source, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Date", "Construct", argTemps, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Date)));
             return true;
         }
 

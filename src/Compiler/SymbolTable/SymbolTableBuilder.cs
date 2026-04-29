@@ -1166,6 +1166,29 @@ namespace Js2IL.SymbolTables
                     foreach (var statement in blockStmt.Body)
                         BuildScopeRecursive(globalScope, statement, blockScope);
                     break;
+                case SwitchStatement switchStmt:
+                    var switchScopeName = $"Switch_L{switchStmt.Location.Start.Line}C{switchStmt.Location.Start.Column}";
+                    var existingSwitchScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == switchScopeName);
+                    if (existingSwitchScope != null)
+                    {
+                        break;
+                    }
+
+                    var switchScope = new Scope(switchScopeName, ScopeKind.Block, currentScope, switchStmt);
+                    BuildScopeRecursive(globalScope, switchStmt.Discriminant, currentScope);
+                    foreach (var switchCase in switchStmt.Cases)
+                    {
+                        if (switchCase.Test != null)
+                        {
+                            BuildScopeRecursive(globalScope, switchCase.Test, switchScope);
+                        }
+
+                        foreach (var statement in switchCase.Consequent)
+                        {
+                            BuildScopeRecursive(globalScope, statement, switchScope);
+                        }
+                    }
+                    break;
                 case ExpressionStatement exprStmt:
                     BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
                     break;
@@ -1570,8 +1593,11 @@ namespace Js2IL.SymbolTables
                 return;
             }
 
-            // Do not override a user-declared binding named 'arguments' (parameters/vars/etc).
-            if (functionScope.Bindings.ContainsKey("arguments"))
+            // Parameter default expressions evaluate in a separate environment from body declarations.
+            // When a function has parameter expressions, default initializers should still resolve the
+            // implicit arguments object even if the body declares its own `arguments` binding.
+            if (functionScope.Bindings.ContainsKey("arguments")
+                && !Js2IL.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(functionScope.AstNode))
             {
                 return;
             }
@@ -1879,6 +1905,29 @@ namespace Js2IL.SymbolTables
                     CollectFreeVariables(ae.Right, localVariables, targetVariables, result);
                     break;
 
+                case AssignmentPattern ap:
+                    CollectFreeVariables(ap.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(ap.Right, localVariables, targetVariables, result);
+                    break;
+
+                case RestElement rest:
+                    CollectFreeVariables(rest.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case ObjectPattern objectPattern:
+                    foreach (var propNode in objectPattern.Properties)
+                    {
+                        CollectFreeVariables(propNode, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ArrayPattern arrayPattern:
+                    foreach (var element in arrayPattern.Elements)
+                    {
+                        CollectFreeVariables(element, localVariables, targetVariables, result);
+                    }
+                    break;
+
                 case ConditionalExpression ce:
                     CollectFreeVariables(ce.Test, localVariables, targetVariables, result);
                     CollectFreeVariables(ce.Consequent, localVariables, targetVariables, result);
@@ -2051,12 +2100,24 @@ namespace Js2IL.SymbolTables
                 switch (childScope.AstNode)
                 {
                     case FunctionDeclaration fd when fd.Body is BlockStatement fdb:
+                        foreach (var parameter in fd.Params)
+                        {
+                            CollectFreeVariables(parameter, new HashSet<string>(childScope.Parameters), ancestorVariables, result);
+                        }
                         CollectFreeVariables(fdb, childLocals, ancestorVariables, result);
                         break;
                     case FunctionExpression fe when fe.Body is BlockStatement feb:
+                        foreach (var parameter in fe.Params)
+                        {
+                            CollectFreeVariables(parameter, new HashSet<string>(childScope.Parameters), ancestorVariables, result);
+                        }
                         CollectFreeVariables(feb, childLocals, ancestorVariables, result);
                         break;
                     case ArrowFunctionExpression af:
+                        foreach (var parameter in af.Params)
+                        {
+                            CollectFreeVariables(parameter, new HashSet<string>(childScope.Parameters), ancestorVariables, result);
+                        }
                         if (af.Body is BlockStatement ab)
                         {
                             CollectFreeVariables(ab, childLocals, ancestorVariables, result);

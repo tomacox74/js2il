@@ -684,7 +684,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return (_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-            || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0);
+            || _methodBodyIR.IsGenerator;
     }
 
     private int AdjustCallerScopesArgumentIndex(int callerSlotIndex)

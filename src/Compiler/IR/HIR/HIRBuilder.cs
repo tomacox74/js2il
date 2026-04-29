@@ -1286,7 +1286,9 @@ class HIRMethodBuilder
                 
                 // Restore the previous scope
                 _currentScope = previousScope;
-                hirStatement = new HIRBlock(blockStatements);
+                hirStatement = new HIRBlock(
+                    blockStatements,
+                    blockScope != null ? ScopeNaming.GetRegistryScopeName(blockScope) : null);
                 return true;
 
             case FunctionDeclaration:
@@ -1300,6 +1302,36 @@ class HIRMethodBuilder
                 // In the main method body, treat them as non-executable statements for the IR pipeline.
                 hirStatement = new HIRBlock([]); // empty block = no-op
                 return true;
+
+            case WithStatement withStmt:
+                {
+                    if (!TryParseExpression(withStmt.Object, out var withObjectExpr))
+                    {
+                        return false;
+                    }
+
+                    if (!TryParseNestedStatement(withStmt.Body, out var withBody))
+                    {
+                        return false;
+                    }
+
+                    var withStatements = new List<HIRStatement>
+                    {
+                        new HIRExpressionStatement(withObjectExpr!)
+                    };
+
+                    if (withBody is HIRBlock withBlock)
+                    {
+                        withStatements.AddRange(withBlock.Statements);
+                    }
+                    else
+                    {
+                        withStatements.Add(withBody!);
+                    }
+
+                    hirStatement = new HIRBlock(withStatements);
+                    return true;
+                }
 
             case ReturnStatement returnStmt:
                 HIRExpression? returnExpr = null;
@@ -1722,9 +1754,16 @@ class HIRMethodBuilder
 
             case SwitchStatement switchStmt:
                 {
+                    var switchScope = FindChildScopeForAstNode(switchStmt);
+                    var previousSwitchScope = _currentScope;
                     if (!TryParseExpression(switchStmt.Discriminant, out var discriminant))
                     {
                         return false;
+                    }
+
+                    if (switchScope != null)
+                    {
+                        _currentScope = switchScope;
                     }
 
                     var cases = new List<HIRSwitchCase>();
@@ -1733,6 +1772,7 @@ class HIRMethodBuilder
                         HIRExpression? test = null;
                         if (sc.Test != null && !TryParseExpression(sc.Test, out test))
                         {
+                            _currentScope = previousSwitchScope;
                             return false;
                         }
 
@@ -1741,6 +1781,7 @@ class HIRMethodBuilder
                         {
                             if (!TryParseNestedStatement(consStmt, out var consHir))
                             {
+                                _currentScope = previousSwitchScope;
                                 return false;
                             }
                             consequent.Add(consHir!);
@@ -1749,7 +1790,11 @@ class HIRMethodBuilder
                         cases.Add(new HIRSwitchCase(test, consequent.ToImmutableArray()));
                     }
 
-                    hirStatement = new HIRSwitchStatement(discriminant!, cases);
+                    _currentScope = previousSwitchScope;
+                    hirStatement = new HIRSwitchStatement(
+                        discriminant!,
+                        cases,
+                        switchScope != null ? ScopeNaming.GetRegistryScopeName(switchScope) : null);
                     return true;
                 }
 
@@ -2409,7 +2454,9 @@ class HIRMethodBuilder
                 // For generic intrinsic ctors, keep the IR surface conservative for now.
                 // We only lower common ctor shapes: .ctor(), .ctor(object), .ctor(object, object),
                 // and .ctor(object, object, object).
-                if (intrinsicType != null && !(isArrayCtor || isStringCtor || isBooleanCtor || isNumberCtor))
+                if (intrinsicType != null
+                    && !(isArrayCtor || isStringCtor || isBooleanCtor || isNumberCtor)
+                    && !string.Equals(calleeName, "Date", StringComparison.Ordinal))
                 {
                     bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
                     if (isStaticClass)
@@ -2742,6 +2789,8 @@ class HIRMethodBuilder
             case BooleanLiteral booleanLiteralExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
                 return true;
+            case Literal bigIntLiteral when TryCreateBigIntLiteralExpression(bigIntLiteral, out hirExpr):
+                return true;
             case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/"):
                 // Regex literal like /pattern/flags.
                 // NOTE: Acornima 1.1.1 does not expose parsed pattern/flags on Literal,
@@ -2986,6 +3035,29 @@ class HIRMethodBuilder
             default:
                 return false;
         }
+    }
+
+    private bool TryCreateBigIntLiteralExpression(Literal literal, out HIRExpression? hirExpr)
+    {
+        hirExpr = null;
+
+        var raw = literal.Raw?.Trim();
+        if (string.IsNullOrWhiteSpace(raw) || !raw.EndsWith("n", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var canonical = raw[..^1].Replace("_", string.Empty, StringComparison.Ordinal);
+        if (canonical.Length == 0)
+        {
+            return false;
+        }
+
+        var bigIntSymbol = _currentScope.FindSymbol("BigInt");
+        hirExpr = new HIRCallExpression(
+            new HIRVariableExpression(bigIntSymbol),
+            new[] { new HIRLiteralExpression(JavascriptType.String, canonical) });
+        return true;
     }
 
     private static bool TryGetNonComputedPropertyName(Node? keyNode, out string? propertyName)

@@ -117,11 +117,42 @@ public sealed partial class HIRToLIRLowerer
             case HIRContinueStatement continueStmt:
                 return TryLowerContinueStatement(continueStmt);
             case HIRBlock block:
-                // Lower each statement in the block - return false on first failure
-                return block.Statements.All(TryLowerStatement);
+                return TryLowerBlockStatement(block);
             default:
                 // Unsupported statement type
                 return false;
+        }
+    }
+
+    private bool TryLowerBlockStatement(HIRBlock block)
+    {
+        if (string.IsNullOrEmpty(block.ScopeName))
+        {
+            return block.Statements.All(TryLowerStatement);
+        }
+
+        var scopeName = block.ScopeName!;
+        var blockScopeTemp = CreateTempVariable();
+        DefineTempStorage(blockScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName));
+        SetTempVariableSlot(blockScopeTemp, CreateAnonymousVariableSlot($"$block_lexenv_{scopeName}", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName)));
+        _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(new ScopeId(scopeName), blockScopeTemp));
+
+        var hadPreviousScope = _activeScopeTempsByScopeName.TryGetValue(scopeName, out var previousScopeTemp);
+        _activeScopeTempsByScopeName[scopeName] = blockScopeTemp;
+        try
+        {
+            return block.Statements.All(TryLowerStatement);
+        }
+        finally
+        {
+            if (hadPreviousScope)
+            {
+                _activeScopeTempsByScopeName[scopeName] = previousScopeTemp;
+            }
+            else
+            {
+                _activeScopeTempsByScopeName.Remove(scopeName);
+            }
         }
     }
 

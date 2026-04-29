@@ -156,13 +156,75 @@ public static class BigInt
             throw new SyntaxError("Cannot convert empty string to a BigInt");
         }
 
-        // Minimal decimal parsing (supports optional leading +/-).
-        // (We can extend to hex/bin/oct literal forms later if needed.)
-        if (!BigInteger.TryParse(trimmed, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var bi))
+        var sign = 1;
+        if (trimmed[0] is '+' or '-')
+        {
+            sign = trimmed[0] == '-' ? -1 : 1;
+            trimmed = trimmed[1..];
+            if (trimmed.Length == 0)
+            {
+                throw new SyntaxError("Cannot convert string to a BigInt");
+            }
+        }
+
+        if (TryParseNonDecimal(trimmed, out var nonDecimal))
+        {
+            return sign < 0 ? BigInteger.Negate(nonDecimal) : nonDecimal;
+        }
+
+        if (!BigInteger.TryParse(trimmed, NumberStyles.None, CultureInfo.InvariantCulture, out var bi))
         {
             throw new SyntaxError("Cannot convert string to a BigInt");
         }
 
-        return bi;
+        return sign < 0 ? BigInteger.Negate(bi) : bi;
+    }
+
+    private static bool TryParseNonDecimal(string trimmed, out BigInteger value)
+    {
+        value = BigInteger.Zero;
+        if (trimmed.Length < 3 || trimmed[0] != '0')
+        {
+            return false;
+        }
+
+        var digits = trimmed[2..];
+        var radix = trimmed[1] switch
+        {
+            'b' or 'B' => 2,
+            'o' or 'O' => 8,
+            'x' or 'X' => 16,
+            _ => 0
+        };
+
+        if (radix == 0)
+        {
+            return false;
+        }
+
+        if (digits.Length == 0)
+        {
+            throw new SyntaxError("Cannot convert string to a BigInt");
+        }
+
+        foreach (var ch in digits)
+        {
+            var digit = ch switch
+            {
+                >= '0' and <= '9' => ch - '0',
+                >= 'a' and <= 'f' => ch - 'a' + 10,
+                >= 'A' and <= 'F' => ch - 'A' + 10,
+                _ => -1
+            };
+
+            if (digit < 0 || digit >= radix)
+            {
+                throw new SyntaxError("Cannot convert string to a BigInt");
+            }
+
+            value = (value * radix) + digit;
+        }
+
+        return true;
     }
 }

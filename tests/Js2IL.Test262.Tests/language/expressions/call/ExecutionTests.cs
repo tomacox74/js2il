@@ -6,13 +6,13 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.call") { }
 
-    [Fact(DisplayName = "scope-lex-close", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "scope-lex-close")]
     public Task scope_lex_close()
-        => ExecutionTest("scope-lex-close");
+        => ExecutionTest("scope-lex-close", preferOutOfProc: true);
 
-    [Fact(DisplayName = "scope-lex-open", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "scope-lex-open")]
     public Task scope_lex_open()
-        => ExecutionTest("scope-lex-open");
+        => ExecutionTest("scope-lex-open", preferOutOfProc: true);
 
     [Fact(DisplayName = "scope-var-close")]
     public Task scope_var_close()

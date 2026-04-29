@@ -6,11 +6,11 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Boolean") { }
 
-    [Fact(DisplayName = "S15.6.1.1_A2", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "S15.6.1.1_A2")]
     public Task S15_6_1_1_A2()
         => ExecutionTest("S15.6.1.1_A2");
 
-    [Fact(DisplayName = "S15.6.2.1_A1", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "S15.6.2.1_A1")]
     public Task S15_6_2_1_A1()
         => ExecutionTest("S15.6.2.1_A1");
 }

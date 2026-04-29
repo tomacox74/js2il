@@ -290,6 +290,17 @@ public sealed partial class HIRToLIRLowerer
                                     return false;
                                 }
 
+                                if (string.Equals(intrinsicInfo.Name, "RegExp", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                                        "RegExp",
+                                        "Call",
+                                        argTemps,
+                                        resultTempVar));
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                    return true;
+                                }
+
                                 _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject(intrinsicInfo.Name, argTemps, resultTempVar));
                                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                                 return true;

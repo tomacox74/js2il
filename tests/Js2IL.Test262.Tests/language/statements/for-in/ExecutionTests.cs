@@ -6,11 +6,11 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.for_in") { }
 
-    [Fact(DisplayName = "12.6.4-1", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "12.6.4-1")]
     public Task _12_6_4_1()
         => ExecutionTest("12.6.4-1");
 
-    [Fact(DisplayName = "12.6.4-2", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "12.6.4-2")]
     public Task _12_6_4_2()
         => ExecutionTest("12.6.4-2");
 
