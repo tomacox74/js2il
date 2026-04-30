@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ae
+				// Method begins at RVA 0x21bf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,22 +38,22 @@
 
 		} // end of class Scope
 
-		.class nested private auto ansi beforefieldinit Scope_For_L5C9
+		.class nested public auto ansi beforefieldinit Scope_For_L5C9
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L5C43
+			.class nested public auto ansi beforefieldinit Block_L5C43
 				extends [System.Runtime]System.Object
 			{
 				// Nested Types
-				.class nested private auto ansi beforefieldinit Block_L6C19
+				.class nested public auto ansi beforefieldinit Block_L6C19
 					extends [System.Runtime]System.Object
 				{
 					// Methods
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x21c9
+						// Method begins at RVA 0x21da
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -71,7 +71,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21c0
+					// Method begins at RVA 0x21d1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -89,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b7
+				// Method begins at RVA 0x21c8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -118,13 +118,15 @@
 			)
 			// Method begins at RVA 0x2124
 			// Header size: 12
-			// Code size: 117 (0x75)
+			// Code size: 134 (0x86)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] string,
 				[2] float64,
-				[3] object
+				[3] class Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/Scope_For_L5C9/Block_L5C43,
+				[4] class Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/Scope_For_L5C9/Block_L5C43/Block_L6C19,
+				[5] object
 			)
 
 			IL_0000: ldc.r8 1
@@ -141,37 +143,41 @@
 				IL_0026: ldstr "length"
 				IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
 				IL_0030: clt
-				IL_0032: brfalse IL_0073
+				IL_0032: brfalse IL_0084
 
-				IL_0037: ldloc.2
-				IL_0038: ldc.r8 0.0
-				IL_0041: cgt
-				IL_0043: brfalse IL_0052
+				IL_0037: newobj instance void Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/Scope_For_L5C9/Block_L5C43::.ctor()
+				IL_003c: stloc.3
+				IL_003d: ldloc.2
+				IL_003e: ldc.r8 0.0
+				IL_0047: cgt
+				IL_0049: brfalse IL_0061
 
-				IL_0048: ldloc.1
-				IL_0049: ldarg.2
-				IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_004f: stloc.3
-				IL_0050: ldloc.3
-				IL_0051: stloc.1
+				IL_004e: newobj instance void Modules.ArrowFunction_RestParameters_WithNamedParams/ArrowFunction_L3C17/Scope_For_L5C9/Block_L5C43/Block_L6C19::.ctor()
+				IL_0053: stloc.s 4
+				IL_0055: ldloc.1
+				IL_0056: ldarg.2
+				IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_005c: stloc.s 5
+				IL_005e: ldloc.s 5
+				IL_0060: stloc.1
 
-				IL_0052: ldloc.1
-				IL_0053: ldloc.0
-				IL_0054: ldloc.2
-				IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_005f: stloc.3
-				IL_0060: ldloc.3
-				IL_0061: stloc.1
-				IL_0062: ldloc.2
-				IL_0063: ldc.r8 1
-				IL_006c: add
-				IL_006d: stloc.2
-				IL_006e: br IL_0024
+				IL_0061: ldloc.1
+				IL_0062: ldloc.0
+				IL_0063: ldloc.2
+				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_006e: stloc.s 5
+				IL_0070: ldloc.s 5
+				IL_0072: stloc.1
+				IL_0073: ldloc.2
+				IL_0074: ldc.r8 1
+				IL_007d: add
+				IL_007e: stloc.2
+				IL_007f: br IL_0024
 			// end loop
 
-			IL_0073: ldloc.1
-			IL_0074: ret
+			IL_0084: ldloc.1
+			IL_0085: ret
 		} // end of method ArrowFunction_L3C17::__js_call__
 
 	} // end of class ArrowFunction_L3C17
@@ -183,7 +189,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21a5
+			// Method begins at RVA 0x21b6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -307,7 +313,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d2
+		// Method begins at RVA 0x21e3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

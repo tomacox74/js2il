@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L5C4
+		.class nested public auto ansi beforefieldinit Block_L5C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214d
+				// Method begins at RVA 0x215d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L5C4
 
-		.class nested private auto ansi beforefieldinit Block_L8C12
+		.class nested public auto ansi beforefieldinit Block_L8C12
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2156
+				// Method begins at RVA 0x2166
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2144
+			// Method begins at RVA 0x2154
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,15 +82,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 213 (0xd5)
+		// Code size: 229 (0xe5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] class [System.Runtime]System.Exception,
-			[3] object,
+			[2] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L5C4,
+			[3] class [System.Runtime]System.Exception,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L8C12,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope::.ctor()
@@ -112,63 +114,67 @@
 		IL_0048: stloc.1
 		.try
 		{
-			IL_0049: ldloc.1
-			IL_004a: ldc.r8 3.5
-			IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
-			IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005d: ldstr "no-throw"
-			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0067: pop
-			IL_0068: leave IL_00bd
+			IL_0049: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L5C4::.ctor()
+			IL_004e: stloc.2
+			IL_004f: ldloc.1
+			IL_0050: ldc.r8 3.5
+			IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
+			IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0063: ldstr "no-throw"
+			IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_006d: pop
+			IL_006e: leave IL_00cd
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_006d: stloc.2
-			IL_006e: ldloc.2
-			IL_006f: dup
-			IL_0070: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0073: stloc.3
+			IL_0074: ldloc.3
 			IL_0075: dup
-			IL_0076: brtrue IL_008c
+			IL_0076: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_007b: dup
+			IL_007c: brtrue IL_0092
 
-			IL_007b: pop
-			IL_007c: dup
-			IL_007d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0081: pop
 			IL_0082: dup
-			IL_0083: brtrue IL_0098
+			IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0088: dup
+			IL_0089: brtrue IL_009f
 
-			IL_0088: pop
-			IL_0089: pop
-			IL_008a: rethrow
+			IL_008e: pop
+			IL_008f: pop
+			IL_0090: rethrow
 
-			IL_008c: pop
-			IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0092: stloc.3
-			IL_0093: br IL_009a
+			IL_0092: pop
+			IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0098: stloc.s 4
+			IL_009a: br IL_00a2
 
-			IL_0098: pop
-			IL_0099: stloc.3
+			IL_009f: pop
+			IL_00a0: stloc.s 4
 
-			IL_009a: ldloc.3
-			IL_009b: stloc.s 5
-			IL_009d: ldloc.s 5
-			IL_009f: stloc.s 4
-			IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a6: ldloc.s 4
-			IL_00a8: ldstr "name"
-			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00b7: pop
-			IL_00b8: leave IL_00bd
+			IL_00a2: ldloc.s 4
+			IL_00a4: stloc.s 7
+			IL_00a6: ldloc.s 7
+			IL_00a8: stloc.s 5
+			IL_00aa: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L8C12::.ctor()
+			IL_00af: stloc.s 6
+			IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b6: ldloc.s 5
+			IL_00b8: ldstr "name"
+			IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00c2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00c7: pop
+			IL_00c8: leave IL_00cd
 		} // end handler
 
-		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c2: ldloc.1
-		IL_00c3: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-		IL_00c8: conv.r8
-		IL_00c9: box [System.Runtime]System.Double
-		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d3: pop
-		IL_00d4: ret
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: ldloc.1
+		IL_00d3: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+		IL_00d8: conv.r8
+		IL_00d9: box [System.Runtime]System.Double
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e3: pop
+		IL_00e4: ret
 	} // end of method Array_Length_Set_Fractional_ThrowsRangeError::__js_module_init__
 
 } // end of class Modules.Array_Length_Set_Fractional_ThrowsRangeError
@@ -180,7 +186,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215f
+		// Method begins at RVA 0x216f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

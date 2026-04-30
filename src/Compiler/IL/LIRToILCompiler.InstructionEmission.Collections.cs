@@ -547,54 +547,58 @@ internal sealed partial class LIRToILCompiler
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
                         valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, double, double)
+                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, double, double, bool)
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
-                            parameterTypes: new[] { typeof(object), typeof(double), typeof(double) });
+                            parameterTypes: new[] { typeof(object), typeof(double), typeof(double), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string) &&
                              valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, string, double)
+                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, string, double, bool)
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
-                            parameterTypes: new[] { typeof(object), typeof(string), typeof(double) });
+                            parameterTypes: new[] { typeof(object), typeof(string), typeof(double), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
                     }
                     else if (indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string))
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, string, object)
+                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, string, object, bool)
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
-                            parameterTypes: new[] { typeof(object), typeof(string), typeof(object) });
+                            parameterTypes: new[] { typeof(object), typeof(string), typeof(object), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
                     }
                     else
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, object, object)
+                        // Emit: call JavaScriptRuntime.ObjectRuntime.SetItem(object, object, object, bool)
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTempAsObject(setItem.Index, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
-                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
                     }

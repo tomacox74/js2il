@@ -131,6 +131,7 @@ js2il input.js output                           # Installed tool
 - Prefer **not** to add a duplicate `tests\Js2IL.Tests\...` regression when the `test262` port already covers the runtime behavior clearly. Only keep a `Js2IL.Tests` companion when we need project-specific generator/IL assertions or coverage that does not map cleanly to `test262`.
 - PR #1011 is the reference example for this workflow: the arrow-function restricted `caller` / `arguments` scenario belongs under `tests\Js2IL.Test262.Tests\language\expressions\arrow-function\`, and the parallel `tests\Js2IL.Tests\ArrowFunction\ArrowFunction_RestrictedCallerArgumentsProperties` regression is considered redundant.
 - When a new `test262` case changes the documented support story, update the relevant ECMA-262 docs and changelog entry in the same PR.
+- For the full step-by-step individual porting workflow, use the dedicated Copilot skill in `.github\skills\test262-porting\SKILL.md`.
 
 ### Running Phased Benchmarks Locally (Single Scenario)
 - These phased benchmarks use the open-source BenchmarkDotNet project.

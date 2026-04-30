@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L11C3
+		.class nested public auto ansi beforefieldinit Block_L11C3
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f1
+				// Method begins at RVA 0x20f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20ef
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 140 (0x8c)
+		// Code size: 147 (0x93)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Prime_LargeStep_DoWhileCounter/Scope,
@@ -70,8 +70,9 @@
 			[2] float64,
 			[3] float64,
 			[4] float64,
-			[5] float64,
-			[6] object
+			[5] class Modules.Prime_LargeStep_DoWhileCounter/Scope/Block_L11C3,
+			[6] float64,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Prime_LargeStep_DoWhileCounter/Scope::.ctor()
@@ -85,43 +86,45 @@
 		IL_0024: ldc.r8 0.0
 		IL_002d: stloc.s 4
 		// loop start (head: IL_002f)
-			IL_002f: ldloc.s 4
-			IL_0031: ldc.r8 1
-			IL_003a: add
-			IL_003b: stloc.s 4
-			IL_003d: ldloc.1
-			IL_003e: ldloc.2
-			IL_003f: add
-			IL_0040: stloc.s 5
-			IL_0042: ldloc.s 5
-			IL_0044: stloc.1
-			IL_0045: ldloc.1
-			IL_0046: ldloc.3
-			IL_0047: cgt
-			IL_0049: ldc.i4.0
-			IL_004a: ceq
-			IL_004c: brfalse IL_0056
+			IL_002f: newobj instance void Modules.Prime_LargeStep_DoWhileCounter/Scope/Block_L11C3::.ctor()
+			IL_0034: stloc.s 5
+			IL_0036: ldloc.s 4
+			IL_0038: ldc.r8 1
+			IL_0041: add
+			IL_0042: stloc.s 4
+			IL_0044: ldloc.1
+			IL_0045: ldloc.2
+			IL_0046: add
+			IL_0047: stloc.s 6
+			IL_0049: ldloc.s 6
+			IL_004b: stloc.1
+			IL_004c: ldloc.1
+			IL_004d: ldloc.3
+			IL_004e: cgt
+			IL_0050: ldc.i4.0
+			IL_0051: ceq
+			IL_0053: brfalse IL_005d
 
-			IL_0051: br IL_002f
+			IL_0058: br IL_002f
 		// end loop
 
-		IL_0056: ldloc.s 4
-		IL_0058: box [System.Runtime]System.Double
-		IL_005d: stloc.s 6
-		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0064: ldstr "count"
-		IL_0069: ldloc.s 6
-		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0070: pop
-		IL_0071: ldloc.1
-		IL_0072: box [System.Runtime]System.Double
-		IL_0077: stloc.s 6
-		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007e: ldstr "final"
-		IL_0083: ldloc.s 6
-		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_008a: pop
-		IL_008b: ret
+		IL_005d: ldloc.s 4
+		IL_005f: box [System.Runtime]System.Double
+		IL_0064: stloc.s 7
+		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006b: ldstr "count"
+		IL_0070: ldloc.s 7
+		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0077: pop
+		IL_0078: ldloc.1
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: stloc.s 7
+		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0085: ldstr "final"
+		IL_008a: ldloc.s 7
+		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0091: pop
+		IL_0092: ret
 	} // end of method Prime_LargeStep_DoWhileCounter::__js_module_init__
 
 } // end of class Modules.Prime_LargeStep_DoWhileCounter
@@ -133,7 +136,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fa
+		// Method begins at RVA 0x2101
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

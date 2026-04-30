@@ -10,6 +10,7 @@ namespace JavaScriptRuntime
     {
         private object? _target;
         private object? _handler;
+        private readonly bool _isCallableTarget;
 
         internal static bool IsObjectLikeValue(object? value)
         {
@@ -44,6 +45,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Proxy handler must be an object");
             }
 
+            _isCallableTarget = IsCallableValue(target);
             _target = target;
             _handler = handler;
         }
@@ -51,6 +53,8 @@ namespace JavaScriptRuntime
         internal object Target => _target!;
 
         internal object Handler => _handler!;
+
+        internal bool IsCallableTarget => _isCallableTarget;
 
         internal object GetTarget(string operation)
         {

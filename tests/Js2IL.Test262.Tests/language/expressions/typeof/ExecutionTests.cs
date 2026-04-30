@@ -6,7 +6,7 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.typeof_") { }
 
-    [Fact(DisplayName = "proxy", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "proxy")]
     public Task proxy()
         => ExecutionTest("proxy");
 }

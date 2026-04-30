@@ -67,6 +67,12 @@ namespace JavaScriptRuntime
                 case BigInteger:
                     throw new TypeError("Cannot convert a BigInt value to a number");
             }
+
+            if (TryCoerceObjectToNumber(value, out var coercedNumber))
+            {
+                return coercedNumber;
+            }
+
             try
             {
                 return Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
@@ -94,6 +100,8 @@ namespace JavaScriptRuntime
                 case BigInteger: return "bigint";
                 case JsNull: return "object"; // JS null reports as 'object'
                 case JavaScriptRuntime.Symbol: return "symbol";
+                case JavaScriptRuntime.Proxy proxy:
+                    return proxy.IsCallableTarget ? "function" : "object";
             }
             if (value is ExpandoObject) return "object";
             if (value is JsObject) return "object";
@@ -161,6 +169,90 @@ namespace JavaScriptRuntime
             }
             // Objects (including arrays, functions, expando) are truthy
             return true;
+        }
+
+        private static bool TryCoerceObjectToNumber(object value, out double result)
+        {
+            if (value.GetType().IsValueType || value is string)
+            {
+                result = double.NaN;
+                return false;
+            }
+
+            if (TryInvokeToPrimitiveMethod(value, "number", out var primitive)
+                || TryInvokeOrdinaryToPrimitive(value, out primitive))
+            {
+                result = ToNumber(primitive);
+                return true;
+            }
+
+            result = double.NaN;
+            return false;
+        }
+
+        private static bool TryInvokeToPrimitiveMethod(object receiver, string hint, out object? result)
+        {
+            var toPrimitive = ObjectRuntime.GetProperty(receiver, Symbol.toPrimitive.DebugId);
+            if (!IsCallable(toPrimitive))
+            {
+                result = null;
+                return false;
+            }
+
+            result = InvokeWithThis(receiver, toPrimitive!, hint);
+            return IsPrimitive(result);
+        }
+
+        private static bool TryInvokeOrdinaryToPrimitive(object receiver, out object? result)
+        {
+            foreach (var methodName in new[] { "valueOf", "toString" })
+            {
+                var member = ObjectRuntime.GetProperty(receiver, methodName);
+                if (!IsCallable(member))
+                {
+                    continue;
+                }
+
+                result = InvokeWithThis(receiver, member!);
+                if (IsPrimitive(result))
+                {
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private static object? InvokeWithThis(object receiver, object callable, params object?[] args)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static bool IsCallable(object? value)
+            => value is Delegate || value is ExpandoObject || value is Proxy;
+
+        private static bool IsPrimitive(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return true;
+            }
+
+            if (value is string || value is Symbol || value is BigInteger)
+            {
+                return true;
+            }
+
+            return value.GetType().IsValueType;
         }
     }
 }

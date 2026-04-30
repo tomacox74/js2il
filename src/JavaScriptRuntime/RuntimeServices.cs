@@ -214,7 +214,7 @@ public class RuntimeServices
     /// </summary>
     public static JsObject CreateObjectLiteral()
     {
-        return new JsObject();
+        return JavaScriptRuntime.Object.CreateOrdinaryObject();
     }
 
     /// <summary>

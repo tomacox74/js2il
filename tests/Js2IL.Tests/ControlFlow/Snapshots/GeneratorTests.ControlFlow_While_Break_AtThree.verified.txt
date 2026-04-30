@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L4C15
+		.class nested public auto ansi beforefieldinit Block_L4C15
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c1
+				// Method begins at RVA 0x20c7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x20be
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,12 +62,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 92 (0x5c)
+		// Code size: 98 (0x62)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_While_Break_AtThree/Scope,
 			[1] float64,
-			[2] object
+			[2] class Modules.ControlFlow_While_Break_AtThree/Scope/Block_L4C15,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_While_Break_AtThree/Scope::.ctor()
@@ -78,30 +79,32 @@
 			IL_0010: ldloc.1
 			IL_0011: ldc.r8 10
 			IL_001a: clt
-			IL_001c: brfalse IL_005b
+			IL_001c: brfalse IL_0061
 
-			IL_0021: ldloc.1
-			IL_0022: ldc.r8 3
-			IL_002b: ceq
-			IL_002d: brfalse IL_0037
+			IL_0021: newobj instance void Modules.ControlFlow_While_Break_AtThree/Scope/Block_L4C15::.ctor()
+			IL_0026: stloc.2
+			IL_0027: ldloc.1
+			IL_0028: ldc.r8 3
+			IL_0031: ceq
+			IL_0033: brfalse IL_003d
 
-			IL_0032: br IL_005b
+			IL_0038: br IL_0061
 
-			IL_0037: ldloc.1
-			IL_0038: box [System.Runtime]System.Double
-			IL_003d: stloc.2
-			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0043: ldloc.2
-			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0049: pop
-			IL_004a: ldloc.1
-			IL_004b: ldc.r8 1
-			IL_0054: add
-			IL_0055: stloc.1
-			IL_0056: br IL_0010
+			IL_003d: ldloc.1
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stloc.3
+			IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0049: ldloc.3
+			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004f: pop
+			IL_0050: ldloc.1
+			IL_0051: ldc.r8 1
+			IL_005a: add
+			IL_005b: stloc.1
+			IL_005c: br IL_0010
 		// end loop
 
-		IL_005b: ret
+		IL_0061: ret
 	} // end of method ControlFlow_While_Break_AtThree::__js_module_init__
 
 } // end of class Modules.ControlFlow_While_Break_AtThree
@@ -113,7 +116,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ca
+		// Method begins at RVA 0x20d0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -74,7 +74,7 @@ public record LIRGetItemAsNumberString(TempVariable Object, TempVariable Index, 
 /// Sets an item on an object by index/key (calls JavaScriptRuntime.ObjectRuntime.SetItem).
 /// Returns the assigned value.
 /// </summary>
-public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
+public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result, bool ThrowOnError = true) : LIRInstruction;
 
 /// <summary>
 /// Sets the length on a proven JavaScriptRuntime.Array.

@@ -36,6 +36,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     private Type? _currentType;
 
     private List<string>? _currentKeys;
+    private List<string>? _currentOwnKeys;
     private int _currentIndex;
 
     public ForInIterator(object root)
@@ -76,6 +77,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 if (_currentKeys == null)
                 {
                     _currentKeys = GetOwnEnumerableKeysSingleTarget(_currentTarget);
+                    _currentOwnKeys = GetOwnPropertyKeysSingleTarget(_currentTarget);
                     _currentIndex = 0;
                 }
 
@@ -96,8 +98,17 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                     return IteratorResult.Create(key, done: false);
                 }
 
+                if (_currentOwnKeys != null)
+                {
+                    foreach (var key in _currentOwnKeys)
+                    {
+                        _visited.Add(key);
+                    }
+                }
+
                 // Advance to the next prototype.
                 _currentKeys = null;
+                _currentOwnKeys = null;
                 _currentTarget = PrototypeChain.GetPrototypeOrNull(_currentTarget);
                 continue;
             }
@@ -231,6 +242,46 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         if (target is IDictionary dictObj)
         {
             return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+        }
+
+        return new List<string>();
+    }
+
+    private static List<string> GetOwnPropertyKeysSingleTarget(object target)
+    {
+        if (target is IDictionary<string, object?> || target is IDictionary)
+        {
+            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
+        }
+
+        if (target is JavaScriptRuntime.Array jsArr)
+        {
+            var keys = new List<string>(jsArr.Count);
+            for (int i = 0; i < jsArr.Count; i++)
+            {
+                keys.Add(i.ToString());
+            }
+            return keys;
+        }
+
+        if (target is JavaScriptRuntime.TypedArrayBase typedArray)
+        {
+            var keys = new List<string>((int)typedArray.length);
+            for (int i = 0; i < typedArray.length; i++)
+            {
+                keys.Add(i.ToString());
+            }
+            return keys;
+        }
+
+        if (target is string s)
+        {
+            var keys = new List<string>(s.Length);
+            for (int i = 0; i < s.Length; i++)
+            {
+                keys.Add(i.ToString());
+            }
+            return keys;
         }
 
         return new List<string>();

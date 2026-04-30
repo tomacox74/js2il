@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L8C19
+		.class nested public auto ansi beforefieldinit Block_L8C19
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e1
+				// Method begins at RVA 0x21f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L8C19
 
-		.class nested private auto ansi beforefieldinit Block_L16C4
+		.class nested public auto ansi beforefieldinit Block_L16C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ea
+				// Method begins at RVA 0x21fe
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,14 +51,14 @@
 
 		} // end of class Block_L16C4
 
-		.class nested private auto ansi beforefieldinit Block_L18C12
+		.class nested public auto ansi beforefieldinit Block_L18C12
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f3
+				// Method begins at RVA 0x2207
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21ec
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 362 (0x16a)
+		// Code size: 383 (0x17f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PerfHooks_PerformanceNow_Basic/Scope,
@@ -110,17 +110,20 @@
 			[2] object,
 			[3] float64,
 			[4] float64,
-			[5] object,
-			[6] bool,
-			[7] class [System.Runtime]System.Exception,
-			[8] object,
-			[9] object,
-			[10] float64,
+			[5] class Modules.PerfHooks_PerformanceNow_Basic/Scope/Block_L8C19,
+			[6] object,
+			[7] bool,
+			[8] class Modules.PerfHooks_PerformanceNow_Basic/Scope/Block_L16C4,
+			[9] class [System.Runtime]System.Exception,
+			[10] object,
 			[11] object,
-			[12] float64,
-			[13] bool,
-			[14] float64,
-			[15] object
+			[12] class Modules.PerfHooks_PerformanceNow_Basic/Scope/Block_L18C12,
+			[13] float64,
+			[14] object,
+			[15] float64,
+			[16] bool,
+			[17] float64,
+			[18] object
 		)
 
 		IL_0000: newobj instance void Modules.PerfHooks_PerformanceNow_Basic/Scope::.ctor()
@@ -128,28 +131,28 @@
 		IL_0006: ldarg.1
 		IL_0007: ldstr "perf_hooks"
 		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0011: stloc.s 11
-		IL_0013: ldloc.s 11
+		IL_0011: stloc.s 14
+		IL_0013: ldloc.s 14
 		IL_0015: brfalse IL_0026
 
-		IL_001a: ldloc.s 11
+		IL_001a: ldloc.s 14
 		IL_001c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_0021: brfalse IL_0037
 
-		IL_0026: ldloc.s 11
+		IL_0026: ldloc.s 14
 		IL_0028: ldstr ""
 		IL_002d: ldstr "performance"
 		IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0037: ldloc.s 11
+		IL_0037: ldloc.s 14
 		IL_0039: ldstr "performance"
 		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_0043: stloc.1
 		IL_0044: ldloc.1
 		IL_0045: ldstr "now"
 		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_004f: stloc.s 11
-		IL_0051: ldloc.s 11
+		IL_004f: stloc.s 14
+		IL_0051: ldloc.s 14
 		IL_0053: stloc.2
 		IL_0054: ldc.r8 0.0
 		IL_005d: stloc.3
@@ -159,112 +162,118 @@
 			IL_0069: ldloc.s 4
 			IL_006b: ldc.r8 10000
 			IL_0074: clt
-			IL_0076: brfalse IL_009b
+			IL_0076: brfalse IL_00a2
 
-			IL_007b: ldloc.3
-			IL_007c: ldloc.s 4
-			IL_007e: add
-			IL_007f: stloc.s 12
-			IL_0081: ldloc.s 12
-			IL_0083: stloc.3
-			IL_0084: ldloc.s 4
-			IL_0086: ldc.r8 1
-			IL_008f: add
-			IL_0090: stloc.s 12
-			IL_0092: ldloc.s 12
-			IL_0094: stloc.s 4
-			IL_0096: br IL_0069
+			IL_007b: newobj instance void Modules.PerfHooks_PerformanceNow_Basic/Scope/Block_L8C19::.ctor()
+			IL_0080: stloc.s 5
+			IL_0082: ldloc.3
+			IL_0083: ldloc.s 4
+			IL_0085: add
+			IL_0086: stloc.s 15
+			IL_0088: ldloc.s 15
+			IL_008a: stloc.3
+			IL_008b: ldloc.s 4
+			IL_008d: ldc.r8 1
+			IL_0096: add
+			IL_0097: stloc.s 15
+			IL_0099: ldloc.s 15
+			IL_009b: stloc.s 4
+			IL_009d: br IL_0069
 		// end loop
 
-		IL_009b: ldloc.1
-		IL_009c: ldstr "now"
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00a6: stloc.s 11
-		IL_00a8: ldloc.s 11
-		IL_00aa: stloc.s 5
-		IL_00ac: ldc.i4.1
-		IL_00ad: stloc.s 6
+		IL_00a2: ldloc.1
+		IL_00a3: ldstr "now"
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00ad: stloc.s 14
+		IL_00af: ldloc.s 14
+		IL_00b1: stloc.s 6
+		IL_00b3: ldc.i4.1
+		IL_00b4: stloc.s 7
 		.try
 		{
-			IL_00af: ldloc.1
-			IL_00b0: ldstr "now"
-			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_00ba: pop
-			IL_00bb: leave IL_0105
+			IL_00b6: newobj instance void Modules.PerfHooks_PerformanceNow_Basic/Scope/Block_L16C4::.ctor()
+			IL_00bb: stloc.s 8
+			IL_00bd: ldloc.1
+			IL_00be: ldstr "now"
+			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_00c8: pop
+			IL_00c9: leave IL_011a
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00c0: stloc.s 7
-			IL_00c2: ldloc.s 7
-			IL_00c4: dup
-			IL_00c5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00ca: dup
-			IL_00cb: brtrue IL_00e1
+			IL_00ce: stloc.s 9
+			IL_00d0: ldloc.s 9
+			IL_00d2: dup
+			IL_00d3: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00d8: dup
+			IL_00d9: brtrue IL_00ef
 
-			IL_00d0: pop
-			IL_00d1: dup
-			IL_00d2: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00d7: dup
-			IL_00d8: brtrue IL_00ee
-
-			IL_00dd: pop
 			IL_00de: pop
-			IL_00df: rethrow
+			IL_00df: dup
+			IL_00e0: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00e5: dup
+			IL_00e6: brtrue IL_00fc
 
-			IL_00e1: pop
-			IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00e7: stloc.s 8
-			IL_00e9: br IL_00f1
+			IL_00eb: pop
+			IL_00ec: pop
+			IL_00ed: rethrow
 
-			IL_00ee: pop
-			IL_00ef: stloc.s 8
+			IL_00ef: pop
+			IL_00f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00f5: stloc.s 10
+			IL_00f7: br IL_00ff
 
-			IL_00f1: ldloc.s 8
-			IL_00f3: stloc.s 11
-			IL_00f5: ldloc.s 11
-			IL_00f7: stloc.s 9
-			IL_00f9: ldc.i4.0
-			IL_00fa: stloc.s 13
-			IL_00fc: ldloc.s 13
-			IL_00fe: stloc.s 6
-			IL_0100: leave IL_0105
+			IL_00fc: pop
+			IL_00fd: stloc.s 10
+
+			IL_00ff: ldloc.s 10
+			IL_0101: stloc.s 14
+			IL_0103: ldloc.s 14
+			IL_0105: stloc.s 11
+			IL_0107: newobj instance void Modules.PerfHooks_PerformanceNow_Basic/Scope/Block_L18C12::.ctor()
+			IL_010c: stloc.s 12
+			IL_010e: ldc.i4.0
+			IL_010f: stloc.s 16
+			IL_0111: ldloc.s 16
+			IL_0113: stloc.s 7
+			IL_0115: leave IL_011a
 		} // end handler
 
-		IL_0105: ldloc.s 5
-		IL_0107: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_010c: stloc.s 12
-		IL_010e: ldloc.2
-		IL_010f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0114: stloc.s 14
-		IL_0116: ldloc.s 12
-		IL_0118: ldloc.s 14
-		IL_011a: sub
-		IL_011b: stloc.s 14
-		IL_011d: ldloc.s 14
-		IL_011f: stloc.s 10
-		IL_0121: ldloc.s 6
-		IL_0123: box [System.Runtime]System.Boolean
-		IL_0128: stloc.s 15
-		IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012f: ldstr "hasNow="
-		IL_0134: ldloc.s 15
-		IL_0136: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_013b: pop
-		IL_013c: ldloc.s 10
-		IL_013e: ldc.r8 0.0
-		IL_0147: clt
-		IL_0149: ldc.i4.0
-		IL_014a: ceq
-		IL_014c: stloc.s 13
-		IL_014e: ldloc.s 13
-		IL_0150: box [System.Runtime]System.Boolean
-		IL_0155: stloc.s 15
-		IL_0157: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_015c: ldstr "elapsedMsNonNegative="
-		IL_0161: ldloc.s 15
-		IL_0163: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0168: pop
-		IL_0169: ret
+		IL_011a: ldloc.s 6
+		IL_011c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0121: stloc.s 15
+		IL_0123: ldloc.2
+		IL_0124: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0129: stloc.s 17
+		IL_012b: ldloc.s 15
+		IL_012d: ldloc.s 17
+		IL_012f: sub
+		IL_0130: stloc.s 17
+		IL_0132: ldloc.s 17
+		IL_0134: stloc.s 13
+		IL_0136: ldloc.s 7
+		IL_0138: box [System.Runtime]System.Boolean
+		IL_013d: stloc.s 18
+		IL_013f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0144: ldstr "hasNow="
+		IL_0149: ldloc.s 18
+		IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0150: pop
+		IL_0151: ldloc.s 13
+		IL_0153: ldc.r8 0.0
+		IL_015c: clt
+		IL_015e: ldc.i4.0
+		IL_015f: ceq
+		IL_0161: stloc.s 16
+		IL_0163: ldloc.s 16
+		IL_0165: box [System.Runtime]System.Boolean
+		IL_016a: stloc.s 18
+		IL_016c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0171: ldstr "elapsedMsNonNegative="
+		IL_0176: ldloc.s 18
+		IL_0178: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_017d: pop
+		IL_017e: ret
 	} // end of method PerfHooks_PerformanceNow_Basic::__js_module_init__
 
 } // end of class Modules.PerfHooks_PerformanceNow_Basic
@@ -276,7 +285,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21fc
+		// Method begins at RVA 0x2210
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,6 +22,9 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value)
             => Object.SetProperty(obj, name, value);
 
+        public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
+            => Object.SetProperty(obj, name, value, throwOnError);
+
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
             => DefineObjectLiteralDataPropertyCore(
                 target,
@@ -536,6 +539,9 @@ namespace JavaScriptRuntime
         /// Returns the assigned value to match JavaScript assignment expression semantics.
         /// </summary>
         public static object? SetItem(object? obj, object index, object? value)
+            => SetItem(obj, index, value, throwOnError: true);
+
+        public static object? SetItem(object? obj, object index, object? value, bool throwOnError)
         {
             if (obj is null)
             {
@@ -553,7 +559,7 @@ namespace JavaScriptRuntime
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy)
             {
-                return SetProperty(obj, propName, value);
+                return SetProperty(obj, propName, value, throwOnError);
             }
 
             // Strings are immutable in JS; silently ignore and return value.
@@ -564,7 +570,7 @@ namespace JavaScriptRuntime
 
             if (obj is System.Dynamic.ExpandoObject)
             {
-                return SetProperty(obj, propName, value);
+                return SetProperty(obj, propName, value, throwOnError);
             }
 
             // JS Array index assignment
@@ -573,7 +579,7 @@ namespace JavaScriptRuntime
                 if (!isIndex)
                 {
                     // Non-index keys behave like properties in JS (e.g. "length").
-                    return SetProperty(array, propName, value);
+                    return SetProperty(array, propName, value, throwOnError);
                 }
 
                 if (intIndex < array.Count)
@@ -602,7 +608,7 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(typedArray, propName, value);
+                    return SetProperty(typedArray, propName, value, throwOnError);
                 }
 
                 typedArray[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
@@ -614,7 +620,7 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(buffer, propName, value);
+                    return SetProperty(buffer, propName, value, throwOnError);
                 }
                 // Buffer indexer expects numeric value
                 buffer[(double)intIndex] = value;
@@ -622,7 +628,7 @@ namespace JavaScriptRuntime
             }
 
             // Generic object: treat as property assignment (ToPropertyKey -> string)
-            return SetProperty(obj, propName, value);
+            return SetProperty(obj, propName, value, throwOnError);
         }
 
         /// <summary>
@@ -632,6 +638,9 @@ namespace JavaScriptRuntime
         /// Returns the assigned value to match JavaScript assignment expression semantics.
         /// </summary>
         public static object? SetItem(object? obj, string key, object? value)
+            => SetItem(obj, key, value, throwOnError: true);
+
+        public static object? SetItem(object? obj, string key, object? value, bool throwOnError)
         {
             if (obj is null)
             {
@@ -646,7 +655,7 @@ namespace JavaScriptRuntime
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy)
             {
-                return SetProperty(obj, key, value);
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             // Strings are immutable in JS; silently ignore and return value.
@@ -659,7 +668,7 @@ namespace JavaScriptRuntime
 
             if (obj is System.Dynamic.ExpandoObject)
             {
-                return SetProperty(obj, key, value);
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             // JS Array index assignment
@@ -667,7 +676,7 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(array, key, value);
+                    return SetProperty(array, key, value, throwOnError);
                 }
 
                 if (intIndex < array.Count)
@@ -696,7 +705,7 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(typedArray, key, value);
+                    return SetProperty(typedArray, key, value, throwOnError);
                 }
 
                 typedArray[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
@@ -708,7 +717,7 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(buffer, key, value);
+                    return SetProperty(buffer, key, value, throwOnError);
                 }
                 // Buffer indexer expects numeric value
                 buffer[(double)intIndex] = value;
@@ -716,7 +725,7 @@ namespace JavaScriptRuntime
             }
 
             // Generic object: treat as property assignment
-            return SetProperty(obj, key, value);
+            return SetProperty(obj, key, value, throwOnError);
         }
 
         /// <summary>
@@ -725,6 +734,9 @@ namespace JavaScriptRuntime
         /// Returns the assigned value to match JavaScript assignment expression semantics.
         /// </summary>
         public static object? SetItem(object? obj, string key, double value)
+            => SetItem(obj, key, value, throwOnError: true);
+
+        public static object? SetItem(object? obj, string key, double value, bool throwOnError)
         {
             if (obj is null)
             {
@@ -739,7 +751,7 @@ namespace JavaScriptRuntime
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy)
             {
-                return SetProperty(obj, key, value);
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             // Strings are immutable in JS; silently ignore and return value.
@@ -752,7 +764,7 @@ namespace JavaScriptRuntime
 
             if (obj is System.Dynamic.ExpandoObject)
             {
-                return SetProperty(obj, key, value);
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             // JS Array index assignment
@@ -767,7 +779,7 @@ namespace JavaScriptRuntime
                         return value;
                     }
 
-                    return SetProperty(array, key, value);
+                    return SetProperty(array, key, value, throwOnError);
                 }
 
                 if (intIndex < array.Count)
@@ -796,7 +808,7 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(typedArray, key, value);
+                    return SetProperty(typedArray, key, value, throwOnError);
                 }
 
                 typedArray[(double)intIndex] = value;
@@ -808,14 +820,14 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    return SetProperty(buffer, key, value);
+                    return SetProperty(buffer, key, value, throwOnError);
                 }
                 buffer[(double)intIndex] = value;
                 return value;
             }
 
             // Generic object: treat as property assignment
-            return SetProperty(obj, key, value);
+            return SetProperty(obj, key, value, throwOnError);
         }
 
         /// <summary>
@@ -824,6 +836,9 @@ namespace JavaScriptRuntime
         /// Returns the assigned value (boxed) to match JavaScript assignment expression semantics.
         /// </summary>
         public static object SetItem(object? obj, double index, double value)
+            => SetItem(obj, index, value, throwOnError: true);
+
+        public static object SetItem(object? obj, double index, double value, bool throwOnError)
         {
             if (obj is null)
             {
@@ -835,16 +850,13 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
             }
 
-            int intIndex;
-            if (double.IsNaN(index) || double.IsInfinity(index))
-            {
-                intIndex = 0;
-            }
-            else
-            {
-                try { intIndex = (int)index; }
-                catch { intIndex = 0; }
-            }
+            var indexKey = DotNet2JSConversions.ToString(index);
+            var isCanonicalArrayIndex = !double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue;
+            var intIndex = isCanonicalArrayIndex ? (int)index : 0;
 
             // Strings are immutable in JS; silently ignore and return value.
             if (obj is string)
@@ -855,10 +867,9 @@ namespace JavaScriptRuntime
             // JS Array index assignment
             if (obj is Array array)
             {
-                if (intIndex < 0)
+                if (!isCanonicalArrayIndex)
                 {
-                    // Negative indices behave like properties in JS; treat as property for host safety.
-                    return SetProperty(array, intIndex.ToString(System.Globalization.CultureInfo.InvariantCulture), value) ?? value;
+                    return SetProperty(array, indexKey, value, throwOnError) ?? value;
                 }
 
                 if (intIndex < array.Count)
@@ -885,15 +896,11 @@ namespace JavaScriptRuntime
             // Otherwise treat as no-op (typed arrays do not store non-integer-index properties).
             if (obj is TypedArrayBase typedArray)
             {
-                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                if (isCanonicalArrayIndex)
                 {
-                    if (index >= 0 && index <= int.MaxValue)
+                    if (intIndex < (int)typedArray.length)
                     {
-                        var typedArrayIndex = (int)index;
-                        if (typedArrayIndex < (int)typedArray.length)
-                        {
-                            typedArray.SetFromDouble(typedArrayIndex, value);
-                        }
+                        typedArray.SetFromDouble(intIndex, value);
                     }
                 }
                 return value;
@@ -923,7 +930,7 @@ namespace JavaScriptRuntime
             }
 
             // Fallback: treat numeric index as a property key string.
-            return SetProperty(obj, DotNet2JSConversions.ToString(index), value) ?? value;
+            return SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError) ?? value;
         }
 
         /// <summary>
@@ -939,24 +946,17 @@ namespace JavaScriptRuntime
         {
             if (receiver == null) throw new ArgumentNullException(nameof(receiver));
 
-            // Coerce index to int (JS ToInt32-ish truncation)
-            int i = 0;
-            switch (index)
+            var indexKey = Object.ToPropertyKeyString(index);
+            if (!TryGetCanonicalArrayIndex(index, indexKey, out var i))
             {
-                case int ii: i = ii; break;
-                case double dd: i = (int)dd; break;
-                case float ff: i = (int)ff; break;
-                case long ll: i = (int)ll; break;
-                case short ss: i = ss; break;
-                case byte bb: i = bb; break;
-                case string s when int.TryParse(s, out var pi): i = pi; break;
-                case bool b: i = b ? 1 : 0; break;
-                default:
-                    try { i = Convert.ToInt32(index); }
-                    catch { i = 0; }
-                    break;
+                if (receiver is Array jsArrayLike)
+                {
+                    SetProperty(jsArrayLike, indexKey, value);
+                    return value;
+                }
+
+                return value;
             }
-            if (i < 0) return value; // negative indexes ignored for now
 
             if (receiver is Array jsArray)
             {

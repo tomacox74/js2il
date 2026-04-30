@@ -114,6 +114,9 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(object? a, object? b)
         {
+            a = ToPrimitiveForAddition(a);
+            b = ToPrimitiveForAddition(b);
+
             if (a is double leftDouble && b is double rightDouble)
             {
                 return leftDouble + rightDouble;
@@ -154,6 +157,8 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(double a, object? b)
         {
+            b = ToPrimitiveForAddition(b);
+
             if (b is double db)
             {
                 return a + db;
@@ -182,6 +187,8 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(object? a, double b)
         {
+            a = ToPrimitiveForAddition(a);
+
             if (a is double da)
             {
                 return da + b;
@@ -202,6 +209,87 @@ namespace JavaScriptRuntime
             var numberA = ToNumber(a);
             return numberA + b; // boxed double
         }
+
+        private static object? ToPrimitiveForAddition(object? value)
+        {
+            if (IsPrimitive(value))
+            {
+                return value;
+            }
+
+            if (TryInvokeToPrimitiveMethod(value!, "default", out var primitive))
+            {
+                return primitive;
+            }
+
+            if (TryInvokeOrdinaryToPrimitive(value!, out primitive))
+            {
+                return primitive;
+            }
+
+            return value;
+        }
+
+        private static bool TryInvokeToPrimitiveMethod(object receiver, string hint, out object? result)
+        {
+            var toPrimitive = ObjectRuntime.GetProperty(receiver, Symbol.toPrimitive.DebugId);
+            if (!IsCallable(toPrimitive))
+            {
+                result = null;
+                return false;
+            }
+
+            result = InvokeWithThis(receiver, toPrimitive!, hint);
+            return IsPrimitive(result);
+        }
+
+        private static bool TryInvokeOrdinaryToPrimitive(object receiver, out object? result)
+        {
+            foreach (var methodName in new[] { "valueOf", "toString" })
+            {
+                var member = ObjectRuntime.GetProperty(receiver, methodName);
+                if (!IsCallable(member))
+                {
+                    continue;
+                }
+
+                result = InvokeWithThis(receiver, member!);
+                if (IsPrimitive(result))
+                {
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private static object? InvokeWithThis(object receiver, object callable, params object?[] args)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                return Closure.InvokeWithArgs(callable, System.Array.Empty<object>(), args);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static bool IsPrimitive(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return true;
+            }
+
+            var valueType = TypeUtilities.Typeof(value);
+            return valueType != "object" && valueType != "function";
+        }
+
+        private static bool IsCallable(object? value)
+            => value is Delegate || value is Proxy proxy && proxy.IsCallableTarget;
 
         /// <summary>
         /// Performs JavaScript '+' and immediately applies ToNumber to the result.

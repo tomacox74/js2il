@@ -254,7 +254,7 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder.LoadLocal(0);
                             EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                             ilEncoder.LoadConstantI4(0);
-                            ilEncoder.Branch(ILOpCode.Ble_s, skipRestoreLabel);
+                            ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
                             EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder);
                             ilEncoder.MarkLabel(skipRestoreLabel);
 
@@ -450,7 +450,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
                         ilEncoder.LoadConstantI4(0);
-                        ilEncoder.Branch(ILOpCode.Ble_s, skipRestoreLabel);
+                        ilEncoder.Branch(ILOpCode.Ble, skipRestoreLabel);
                         EmitRestoreVariableSlotsFromAsyncLocalsArray(ilEncoder);
                         ilEncoder.MarkLabel(skipRestoreLabel);
 

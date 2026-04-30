@@ -23,9 +23,23 @@ public sealed partial class HIRToLIRLowerer
 
         var endLabel = CreateLabel();
         _controlFlowStack.Push(new ControlFlowContext(endLabel, null, null));
+        var hadPreviousScope = false;
+        var previousScopeTemp = default(TempVariable);
 
         try
         {
+            if (!string.IsNullOrEmpty(switchStmt.ScopeName))
+            {
+                var scopeName = switchStmt.ScopeName!;
+                var switchScopeTemp = CreateTempVariable();
+                DefineTempStorage(switchScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName));
+                SetTempVariableSlot(switchScopeTemp, CreateAnonymousVariableSlot($"$switch_lexenv_{scopeName}", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: scopeName)));
+                lirInstructions.Add(new LIRCreateScopeInstance(new ScopeId(scopeName), switchScopeTemp));
+
+                hadPreviousScope = _activeScopeTempsByScopeName.TryGetValue(scopeName, out previousScopeTemp);
+                _activeScopeTempsByScopeName[scopeName] = switchScopeTemp;
+            }
+
             // Create a label for each case start.
             var caseLabels = new int[switchStmt.Cases.Length];
             for (int i = 0; i < caseLabels.Length; i++)
@@ -83,6 +97,18 @@ public sealed partial class HIRToLIRLowerer
         }
         finally
         {
+            if (!string.IsNullOrEmpty(switchStmt.ScopeName))
+            {
+                var scopeName = switchStmt.ScopeName!;
+                if (hadPreviousScope)
+                {
+                    _activeScopeTempsByScopeName[scopeName] = previousScopeTemp;
+                }
+                else
+                {
+                    _activeScopeTempsByScopeName.Remove(scopeName);
+                }
+            }
             _controlFlowStack.Pop();
         }
     }

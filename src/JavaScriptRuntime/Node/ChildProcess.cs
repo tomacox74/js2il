@@ -1964,22 +1964,29 @@ namespace JavaScriptRuntime.Node
 
         private void DispatchToEventLoop(object? payload)
         {
+            var messageHandler = MessageReceived;
+            if (messageHandler == null)
+            {
+                return;
+            }
+
+            var errorHandler = Error;
             if (_ioScheduler != null)
             {
-                var dispatch = CreateDispatchPromise();
+                var dispatch = CreateDispatchPromise(messageHandler, errorHandler);
                 _ioScheduler.BeginIo();
                 _ioScheduler.EndIo(dispatch, payload, isError: false);
                 return;
             }
 
-            _queueImmediate(() => MessageReceived?.Invoke(payload));
+            _queueImmediate(() => messageHandler(payload));
         }
 
-        private PromiseWithResolvers CreateDispatchPromise()
+        private PromiseWithResolvers CreateDispatchPromise(Action<object?> messageHandler, Action<Exception>? errorHandler)
         {
             JsFunc1 resolve = (scopes, newTarget, value) =>
             {
-                MessageReceived?.Invoke(value);
+                messageHandler(value);
                 return null;
             };
 
@@ -1987,11 +1994,11 @@ namespace JavaScriptRuntime.Node
             {
                 if (reason is Exception ex)
                 {
-                    Error?.Invoke(ex);
+                    errorHandler?.Invoke(ex);
                 }
                 else if (reason != null)
                 {
-                    Error?.Invoke(new Error(reason.ToString() ?? "child_process IPC dispatch failed."));
+                    errorHandler?.Invoke(new Error(reason.ToString() ?? "child_process IPC dispatch failed."));
                 }
 
                 return null;
@@ -2007,12 +2014,24 @@ namespace JavaScriptRuntime.Node
                 return;
             }
 
-            _queueImmediate(() => Disconnected?.Invoke());
+            var disconnectedHandler = Disconnected;
+            if (disconnectedHandler == null)
+            {
+                return;
+            }
+
+            _queueImmediate(() => disconnectedHandler());
         }
 
         private void SignalError(Exception ex)
         {
-            _queueImmediate(() => Error?.Invoke(ex));
+            var errorHandler = Error;
+            if (errorHandler == null)
+            {
+                return;
+            }
+
+            _queueImmediate(() => errorHandler(ex));
         }
 
         private static bool IsExpectedDisconnectException(Exception ex)

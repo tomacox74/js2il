@@ -88,6 +88,30 @@ namespace JavaScriptRuntime
             InitializeIntrinsicSurface();
         }
 
+        public static object Call()
+        {
+            return new RegExp();
+        }
+
+        public static object Call(object? pattern)
+        {
+            return Call(pattern, null);
+        }
+
+        public static object Call(object? pattern, object? flags)
+        {
+            if (flags == null && pattern is not null and not JsNull)
+            {
+                var constructor = JavaScriptRuntime.ObjectRuntime.GetItem(pattern, "constructor");
+                if (IsSameRegExpConstructor(constructor) && (IsRegExpLike(pattern) || constructor != null))
+                {
+                    return pattern;
+                }
+            }
+
+            return new RegExp(pattern, flags);
+        }
+
         internal Regex Regex => _regex;
         internal bool Global => _global;
         internal bool Sticky => _sticky;
@@ -234,7 +258,30 @@ namespace JavaScriptRuntime
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
             DefineSymbolMethod(prototype, SplitSymbolPropertyKey, SplitSymbolDelegate);
+            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
             return prototype;
+        }
+
+        private static void DefinePrototypeMethod(object target, string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = value
+            });
+        }
+
+        private static object? PrototypeToString(object[] scopes, object?[]? args)
+        {
+            if (RuntimeServices.GetCurrentThis() is not RegExp regExp)
+            {
+                throw new TypeError("RegExp.prototype.toString called on incompatible receiver");
+            }
+
+            return regExp.toString();
         }
 
         private bool HasIntrinsicWellKnownSymbolFastPath(WellKnownSymbolFastPathFlags flag)
@@ -244,6 +291,45 @@ namespace JavaScriptRuntime
         }
 
         internal bool CanUseEnumerateMatchesFastPath => !_sticky && !_unicode;
+
+        private static bool IsRegExpLike(object? value)
+        {
+            if (value is RegExp)
+            {
+                return true;
+            }
+
+            if (value is null or JsNull)
+            {
+                return false;
+            }
+
+            var match = JavaScriptRuntime.ObjectRuntime.GetItem(value, Symbol.match);
+            if (match is null)
+            {
+                return value is RegExp;
+            }
+
+            return TypeUtilities.ToBoolean(match);
+        }
+
+        private static bool IsSameRegExpConstructor(object? value)
+        {
+            if (value is null or JsNull)
+            {
+                return false;
+            }
+
+            var intrinsic = GlobalThis.RegExp;
+            if (ReferenceEquals(value, intrinsic) || Equals(value, intrinsic))
+            {
+                return true;
+            }
+
+            return value is Delegate candidate
+                && intrinsic is Delegate intrinsicDelegate
+                && candidate.Method == intrinsicDelegate.Method;
+        }
 
         internal bool TryInvokeIntrinsicWellKnownSymbol(Symbol symbol, string input, out object? result)
         {

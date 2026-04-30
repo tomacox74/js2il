@@ -10,7 +10,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _proto_fn_name()
         => ExecutionTest("__proto__-fn-name");
 
-    [Fact(DisplayName = "__proto__-permitted-dup-shorthand", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "__proto__-permitted-dup-shorthand")]
     public Task _proto_permitted_dup_shorthand()
         => ExecutionTest("__proto__-permitted-dup-shorthand");
 
@@ -18,7 +18,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _proto_permitted_dup()
         => ExecutionTest("__proto__-permitted-dup");
 
-    [Fact(DisplayName = "11.1.5_3-3-1", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "11.1.5_3-3-1")]
     public Task _11_1_5_3_3_1()
         => ExecutionTest("11.1.5_3-3-1");
 }

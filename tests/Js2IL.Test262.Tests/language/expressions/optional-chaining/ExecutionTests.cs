@@ -6,7 +6,7 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.optional_chaining") { }
 
-    [Fact(DisplayName = "call-expression", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "call-expression")]
     public Task call_expression()
         => ExecutionTest("call-expression");
 

@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L4C4
+		.class nested public auto ansi beforefieldinit Block_L4C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f1
+				// Method begins at RVA 0x2101
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L4C4
 
-		.class nested private auto ansi beforefieldinit Block_L7C12
+		.class nested public auto ansi beforefieldinit Block_L7C12
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fa
+				// Method begins at RVA 0x210a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20f8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,15 +82,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 122 (0x7a)
+		// Code size: 138 (0x8a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ConstReassignmentError/Scope,
 			[1] float64,
-			[2] class [System.Runtime]System.Exception,
-			[3] object,
+			[2] class Modules.Variable_ConstReassignmentError/Scope/Block_L4C4,
+			[3] class [System.Runtime]System.Exception,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] class Modules.Variable_ConstReassignmentError/Scope/Block_L7C12,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ConstReassignmentError/Scope::.ctor()
@@ -99,55 +101,59 @@
 		IL_000f: stloc.1
 		.try
 		{
-			IL_0010: ldstr "Assignment to constant variable."
-			IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-			IL_001a: throw
+			IL_0010: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L4C4::.ctor()
+			IL_0015: stloc.2
+			IL_0016: ldstr "Assignment to constant variable."
+			IL_001b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+			IL_0020: throw
 
-			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0020: ldstr "NO_ERROR"
-			IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002a: pop
-			IL_002b: leave IL_0079
+			IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0026: ldstr "NO_ERROR"
+			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0030: pop
+			IL_0031: leave IL_0089
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0030: stloc.2
-			IL_0031: ldloc.2
-			IL_0032: dup
-			IL_0033: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0036: stloc.3
+			IL_0037: ldloc.3
 			IL_0038: dup
-			IL_0039: brtrue IL_004f
+			IL_0039: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_003e: dup
+			IL_003f: brtrue IL_0055
 
-			IL_003e: pop
-			IL_003f: dup
-			IL_0040: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0044: pop
 			IL_0045: dup
-			IL_0046: brtrue IL_005b
+			IL_0046: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_004b: dup
+			IL_004c: brtrue IL_0062
 
-			IL_004b: pop
-			IL_004c: pop
-			IL_004d: rethrow
+			IL_0051: pop
+			IL_0052: pop
+			IL_0053: rethrow
 
-			IL_004f: pop
-			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0055: stloc.3
-			IL_0056: br IL_005d
+			IL_0055: pop
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_005b: stloc.s 4
+			IL_005d: br IL_0065
 
-			IL_005b: pop
-			IL_005c: stloc.3
+			IL_0062: pop
+			IL_0063: stloc.s 4
 
-			IL_005d: ldloc.3
-			IL_005e: stloc.s 5
-			IL_0060: ldloc.s 5
-			IL_0062: stloc.s 4
-			IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0069: ldstr "CONST_REASSIGN_ERROR"
-			IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0073: pop
-			IL_0074: leave IL_0079
+			IL_0065: ldloc.s 4
+			IL_0067: stloc.s 7
+			IL_0069: ldloc.s 7
+			IL_006b: stloc.s 5
+			IL_006d: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L7C12::.ctor()
+			IL_0072: stloc.s 6
+			IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0079: ldstr "CONST_REASSIGN_ERROR"
+			IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0083: pop
+			IL_0084: leave IL_0089
 		} // end handler
 
-		IL_0079: ret
+		IL_0089: ret
 	} // end of method Variable_ConstReassignmentError::__js_module_init__
 
 } // end of class Modules.Variable_ConstReassignmentError
@@ -159,7 +165,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2103
+		// Method begins at RVA 0x2113
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

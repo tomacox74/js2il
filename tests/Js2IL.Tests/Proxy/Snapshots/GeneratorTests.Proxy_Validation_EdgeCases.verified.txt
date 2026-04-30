@@ -15,14 +15,14 @@
 			extends [System.Runtime]System.Object
 		{
 			// Nested Types
-			.class nested private auto ansi beforefieldinit Block_L4C6
+			.class nested public auto ansi beforefieldinit Block_L4C6
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2991
+					// Method begins at RVA 0x29a1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -35,14 +35,14 @@
 
 			} // end of class Block_L4C6
 
-			.class nested private auto ansi beforefieldinit Block_L7C18
+			.class nested public auto ansi beforefieldinit Block_L7C18
 				extends [System.Runtime]System.Object
 			{
 				// Methods
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x299a
+					// Method begins at RVA 0x29aa
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2988
+				// Method begins at RVA 0x2998
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,94 +90,100 @@
 			)
 			// Method begins at RVA 0x2648
 			// Header size: 12
-			// Code size: 166 (0xa6)
+			// Code size: 181 (0xb5)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] class [System.Runtime]System.Exception,
-				[2] object,
+				[0] class Modules.Proxy_Validation_EdgeCases/log/Scope/Block_L4C6,
+				[1] object,
+				[2] class [System.Runtime]System.Exception,
 				[3] object,
 				[4] object,
-				[5] object
+				[5] class Modules.Proxy_Validation_EdgeCases/log/Scope/Block_L7C18,
+				[6] object,
+				[7] object
 			)
 
 			.try
 			{
-				IL_0000: ldarg.3
-				IL_0001: ldc.i4.1
-				IL_0002: newarr [System.Runtime]System.Object
-				IL_0007: dup
-				IL_0008: ldc.i4.0
-				IL_0009: ldarg.0
-				IL_000a: stelem.ref
-				IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-				IL_0010: stloc.s 4
-				IL_0012: ldloc.s 4
-				IL_0014: stloc.0
-				IL_0015: ldarg.2
-				IL_0016: ldstr ":ok:"
-				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0020: stloc.s 5
-				IL_0022: ldloc.s 5
-				IL_0024: ldloc.0
-				IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002a: stloc.s 5
-				IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0031: ldloc.s 5
-				IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0038: pop
-				IL_0039: leave IL_00a4
+				IL_0000: newobj instance void Modules.Proxy_Validation_EdgeCases/log/Scope/Block_L4C6::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldarg.3
+				IL_0007: ldc.i4.1
+				IL_0008: newarr [System.Runtime]System.Object
+				IL_000d: dup
+				IL_000e: ldc.i4.0
+				IL_000f: ldarg.0
+				IL_0010: stelem.ref
+				IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_0016: stloc.s 6
+				IL_0018: ldloc.s 6
+				IL_001a: stloc.1
+				IL_001b: ldarg.2
+				IL_001c: ldstr ":ok:"
+				IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0026: stloc.s 7
+				IL_0028: ldloc.s 7
+				IL_002a: ldloc.1
+				IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0030: stloc.s 7
+				IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0037: ldloc.s 7
+				IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_003e: pop
+				IL_003f: leave IL_00b3
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_003e: stloc.1
-				IL_003f: ldloc.1
-				IL_0040: dup
-				IL_0041: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0044: stloc.2
+				IL_0045: ldloc.2
 				IL_0046: dup
-				IL_0047: brtrue IL_005d
+				IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_004c: dup
+				IL_004d: brtrue IL_0063
 
-				IL_004c: pop
-				IL_004d: dup
-				IL_004e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0052: pop
 				IL_0053: dup
-				IL_0054: brtrue IL_0069
+				IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0059: dup
+				IL_005a: brtrue IL_006f
 
-				IL_0059: pop
-				IL_005a: pop
-				IL_005b: rethrow
+				IL_005f: pop
+				IL_0060: pop
+				IL_0061: rethrow
 
-				IL_005d: pop
-				IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0063: stloc.2
-				IL_0064: br IL_006b
+				IL_0063: pop
+				IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0069: stloc.3
+				IL_006a: br IL_0071
 
-				IL_0069: pop
-				IL_006a: stloc.2
-
-				IL_006b: ldloc.2
-				IL_006c: stloc.s 4
-				IL_006e: ldloc.s 4
+				IL_006f: pop
 				IL_0070: stloc.3
-				IL_0071: ldarg.2
-				IL_0072: ldstr ":"
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_007c: stloc.s 5
-				IL_007e: ldloc.s 5
-				IL_0080: ldloc.3
-				IL_0081: ldstr "name"
-				IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0090: stloc.s 5
-				IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0097: ldloc.s 5
-				IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_009e: pop
-				IL_009f: leave IL_00a4
+
+				IL_0071: ldloc.3
+				IL_0072: stloc.s 6
+				IL_0074: ldloc.s 6
+				IL_0076: stloc.s 4
+				IL_0078: newobj instance void Modules.Proxy_Validation_EdgeCases/log/Scope/Block_L7C18::.ctor()
+				IL_007d: stloc.s 5
+				IL_007f: ldarg.2
+				IL_0080: ldstr ":"
+				IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_008a: stloc.s 7
+				IL_008c: ldloc.s 7
+				IL_008e: ldloc.s 4
+				IL_0090: ldstr "name"
+				IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_009f: stloc.s 7
+				IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00a6: ldloc.s 7
+				IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00ad: pop
+				IL_00ae: leave IL_00b3
 			} // end handler
 
-			IL_00a4: ldnull
-			IL_00a5: ret
+			IL_00b3: ldnull
+			IL_00b4: ret
 		} // end of method log::__js_call__
 
 	} // end of class log
@@ -193,7 +199,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29a3
+				// Method begins at RVA 0x29b3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -216,7 +222,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x270c
+			// Method begins at RVA 0x271c
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -246,7 +252,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29ac
+				// Method begins at RVA 0x29bc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -269,7 +275,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2734
+			// Method begins at RVA 0x2744
 			// Header size: 12
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -302,7 +308,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29b5
+				// Method begins at RVA 0x29c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -325,7 +331,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2760
+			// Method begins at RVA 0x2770
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -355,7 +361,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29be
+				// Method begins at RVA 0x29ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -378,7 +384,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2788
+			// Method begins at RVA 0x2798
 			// Header size: 12
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -411,7 +417,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29c7
+				// Method begins at RVA 0x29d7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -434,7 +440,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x27b1
+			// Method begins at RVA 0x27c1
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -456,7 +462,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29d0
+				// Method begins at RVA 0x29e0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -482,7 +488,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x27b8
+			// Method begins at RVA 0x27c8
 			// Header size: 12
 			// Code size: 24 (0x18)
 			.maxstack 8
@@ -517,7 +523,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29d9
+				// Method begins at RVA 0x29e9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -543,7 +549,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x27dc
+			// Method begins at RVA 0x27ec
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -569,7 +575,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29e2
+				// Method begins at RVA 0x29f2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -595,7 +601,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x27f0
+			// Method begins at RVA 0x2800
 			// Header size: 12
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -633,7 +639,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29eb
+				// Method begins at RVA 0x29fb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -656,7 +662,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2810
+			// Method begins at RVA 0x2820
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -678,7 +684,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29f4
+				// Method begins at RVA 0x2a04
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -701,7 +707,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2813
+			// Method begins at RVA 0x2823
 			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
@@ -724,7 +730,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x29fd
+				// Method begins at RVA 0x2a0d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -750,7 +756,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2824
+			// Method begins at RVA 0x2834
 			// Header size: 12
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -781,7 +787,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a06
+				// Method begins at RVA 0x2a16
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -804,7 +810,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2844
+			// Method begins at RVA 0x2854
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -827,7 +833,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a0f
+				// Method begins at RVA 0x2a1f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -850,7 +856,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x284c
+			// Method begins at RVA 0x285c
 			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
@@ -873,7 +879,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a18
+				// Method begins at RVA 0x2a28
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -899,7 +905,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x285c
+			// Method begins at RVA 0x286c
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -928,7 +934,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a21
+				// Method begins at RVA 0x2a31
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -954,7 +960,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2876
+			// Method begins at RVA 0x2886
 			// Header size: 1
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -988,7 +994,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a2a
+				// Method begins at RVA 0x2a3a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1014,7 +1020,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x28b4
+			// Method begins at RVA 0x28c4
 			// Header size: 12
 			// Code size: 67 (0x43)
 			.maxstack 8
@@ -1057,7 +1063,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a33
+				// Method begins at RVA 0x2a43
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1080,7 +1086,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2903
+			// Method begins at RVA 0x2913
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -1102,7 +1108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a3c
+				// Method begins at RVA 0x2a4c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1128,7 +1134,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x290c
+			// Method begins at RVA 0x291c
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -1162,7 +1168,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a45
+				// Method begins at RVA 0x2a55
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1185,7 +1191,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2937
+			// Method begins at RVA 0x2947
 			// Header size: 1
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -1212,7 +1218,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2a4e
+				// Method begins at RVA 0x2a5e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1238,7 +1244,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 18 00 00 02
 			)
-			// Method begins at RVA 0x2954
+			// Method begins at RVA 0x2964
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -1295,7 +1301,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x297f
+			// Method begins at RVA 0x298f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1869,7 +1875,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2a57
+		// Method begins at RVA 0x2a67
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -6,19 +6,19 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Object.assign") { }
 
-    [Fact(DisplayName = "ObjectOverride-sameproperty", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "ObjectOverride-sameproperty")]
     public Task ObjectOverride_sameproperty()
         => ExecutionTest("ObjectOverride-sameproperty");
 
-    [Fact(DisplayName = "OnlyOneArgument", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "OnlyOneArgument")]
     public Task OnlyOneArgument()
         => ExecutionTest("OnlyOneArgument");
 
-    [Fact(DisplayName = "Override-notstringtarget", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "Override-notstringtarget")]
     public Task Override_notstringtarget()
         => ExecutionTest("Override-notstringtarget");
 
-    [Fact(DisplayName = "Override", Skip = "Known JS2IL defect")]
+    [Fact(DisplayName = "Override")]
     public Task Override()
         => ExecutionTest("Override");
 }

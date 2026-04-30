@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L4C4
+		.class nested public auto ansi beforefieldinit Block_L4C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210d
+				// Method begins at RVA 0x211d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L4C4
 
-		.class nested private auto ansi beforefieldinit Block_L6C12
+		.class nested public auto ansi beforefieldinit Block_L6C12
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2116
+				// Method begins at RVA 0x2126
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,15 +82,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 149 (0x95)
+		// Code size: 165 (0xa5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope,
-			[1] class [System.Runtime]System.Exception,
-			[2] object,
+			[1] class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L4C4,
+			[2] class [System.Runtime]System.Exception,
 			[3] object,
-			[4] object[],
-			[5] object
+			[4] object,
+			[5] class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L6C12,
+			[6] object[],
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope::.ctor()
@@ -100,62 +102,66 @@
 		IL_0014: starg.s require
 		.try
 		{
-			IL_0016: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_001b: stloc.s 4
-			IL_001d: ldarg.1
-			IL_001e: ldloc.s 4
-			IL_0020: ldstr "fs"
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-			IL_002a: pop
-			IL_002b: leave IL_0094
+			IL_0016: newobj instance void Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L4C4::.ctor()
+			IL_001b: stloc.1
+			IL_001c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0021: stloc.s 6
+			IL_0023: ldarg.1
+			IL_0024: ldloc.s 6
+			IL_0026: ldstr "fs"
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_0030: pop
+			IL_0031: leave IL_00a4
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0030: stloc.1
-			IL_0031: ldloc.1
-			IL_0032: dup
-			IL_0033: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0036: stloc.2
+			IL_0037: ldloc.2
 			IL_0038: dup
-			IL_0039: brtrue IL_004f
+			IL_0039: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_003e: dup
+			IL_003f: brtrue IL_0055
 
-			IL_003e: pop
-			IL_003f: dup
-			IL_0040: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0044: pop
 			IL_0045: dup
-			IL_0046: brtrue IL_005b
+			IL_0046: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_004b: dup
+			IL_004c: brtrue IL_0061
 
-			IL_004b: pop
-			IL_004c: pop
-			IL_004d: rethrow
+			IL_0051: pop
+			IL_0052: pop
+			IL_0053: rethrow
 
-			IL_004f: pop
-			IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0055: stloc.2
-			IL_0056: br IL_005d
+			IL_0055: pop
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_005b: stloc.3
+			IL_005c: br IL_0063
 
-			IL_005b: pop
-			IL_005c: stloc.2
-
-			IL_005d: ldloc.2
-			IL_005e: stloc.s 5
-			IL_0060: ldloc.s 5
+			IL_0061: pop
 			IL_0062: stloc.3
-			IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0068: ldloc.3
-			IL_0069: ldstr "name"
-			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0078: pop
-			IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007e: ldloc.3
-			IL_007f: ldstr "message"
-			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_008e: pop
-			IL_008f: leave IL_0094
+
+			IL_0063: ldloc.3
+			IL_0064: stloc.s 7
+			IL_0066: ldloc.s 7
+			IL_0068: stloc.s 4
+			IL_006a: newobj instance void Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L6C12::.ctor()
+			IL_006f: stloc.s 5
+			IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0076: ldloc.s 4
+			IL_0078: ldstr "name"
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0087: pop
+			IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_008d: ldloc.s 4
+			IL_008f: ldstr "message"
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_009e: pop
+			IL_009f: leave IL_00a4
 		} // end handler
 
-		IL_0094: ret
+		IL_00a4: ret
 	} // end of method CommonJS_Require_Reassigned_Number_ThrowsTypeError::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError
@@ -167,7 +173,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211f
+		// Method begins at RVA 0x212f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

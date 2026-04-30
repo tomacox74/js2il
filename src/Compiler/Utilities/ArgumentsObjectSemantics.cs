@@ -27,6 +27,12 @@ internal static class ArgumentsObjectSemantics
             : [];
     }
 
+    public static bool HasParameterExpressions(Node functionNode)
+    {
+        ArgumentNullException.ThrowIfNull(functionNode);
+        return GetParameters(functionNode).Any(ContainsParameterExpression);
+    }
+
     public static bool IsStrictScope(Scope scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
@@ -82,6 +88,33 @@ internal static class ArgumentsObjectSemantics
             ArrowFunctionExpression arrow => arrow.Params,
             _ => []
         };
+    }
+
+    private static bool ContainsParameterExpression(Node node)
+    {
+        switch (node)
+        {
+            case AssignmentPattern:
+                return true;
+            case RestElement rest:
+                return ContainsParameterExpression(rest.Argument);
+            case ObjectPattern obj:
+                foreach (var propNode in obj.Properties)
+                {
+                    switch (propNode)
+                    {
+                        case Property prop when ContainsParameterExpression(prop.Value):
+                            return true;
+                        case RestElement rest when ContainsParameterExpression(rest.Argument):
+                            return true;
+                    }
+                }
+                return false;
+            case ArrayPattern array:
+                return array.Elements.Any(element => element != null && ContainsParameterExpression(element));
+            default:
+                return false;
+        }
     }
 
     private static bool HasUseStrictDirective(Node node)

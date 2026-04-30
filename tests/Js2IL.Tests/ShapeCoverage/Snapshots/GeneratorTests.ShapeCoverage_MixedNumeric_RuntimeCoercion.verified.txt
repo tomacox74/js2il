@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L9C11
+		.class nested public auto ansi beforefieldinit Block_L9C11
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211c
+				// Method begins at RVA 0x213a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L9C11
 
-		.class nested private auto ansi beforefieldinit Block_L11C7
+		.class nested public auto ansi beforefieldinit Block_L11C7
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2125
+				// Method begins at RVA 0x2143
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,14 +51,14 @@
 
 		} // end of class Block_L11C7
 
-		.class nested private auto ansi beforefieldinit Block_L18C13
+		.class nested public auto ansi beforefieldinit Block_L18C13
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212e
+				// Method begins at RVA 0x214c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -71,14 +71,14 @@
 
 		} // end of class Block_L18C13
 
-		.class nested private auto ansi beforefieldinit Block_L20C7
+		.class nested public auto ansi beforefieldinit Block_L20C7
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2137
+				// Method begins at RVA 0x2155
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2113
+			// Method begins at RVA 0x2131
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -122,15 +122,19 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 183 (0xb7)
+		// Code size: 213 (0xd5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope,
 			[1] float64,
 			[2] object,
-			[3] float64,
-			[4] object,
-			[5] object
+			[3] class Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L9C11,
+			[4] class Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L11C7,
+			[5] float64,
+			[6] object,
+			[7] class Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L18C13,
+			[8] class Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L20C7,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope::.ctor()
@@ -142,56 +146,64 @@
 		IL_0012: ldloc.1
 		IL_0013: ldc.r8 3
 		IL_001c: cgt
-		IL_001e: brfalse IL_003d
+		IL_001e: brfalse IL_0043
 
-		IL_0023: ldloc.1
-		IL_0024: ldc.r8 2
-		IL_002d: mul
-		IL_002e: box [System.Runtime]System.Double
-		IL_0033: stloc.s 5
-		IL_0035: ldloc.s 5
-		IL_0037: stloc.2
-		IL_0038: br IL_0050
+		IL_0023: newobj instance void Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L9C11::.ctor()
+		IL_0028: stloc.3
+		IL_0029: ldloc.1
+		IL_002a: ldc.r8 2
+		IL_0033: mul
+		IL_0034: box [System.Runtime]System.Double
+		IL_0039: stloc.s 9
+		IL_003b: ldloc.s 9
+		IL_003d: stloc.2
+		IL_003e: br IL_005d
 
-		IL_003d: ldc.r8 0.0
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: stloc.s 5
-		IL_004d: ldloc.s 5
-		IL_004f: stloc.2
+		IL_0043: newobj instance void Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L11C7::.ctor()
+		IL_0048: stloc.s 4
+		IL_004a: ldc.r8 0.0
+		IL_0053: box [System.Runtime]System.Double
+		IL_0058: stloc.s 9
+		IL_005a: ldloc.s 9
+		IL_005c: stloc.2
 
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0055: ldloc.2
-		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005b: pop
-		IL_005c: ldc.r8 21
-		IL_0065: stloc.3
-		IL_0066: ldnull
-		IL_0067: stloc.s 4
-		IL_0069: ldloc.3
-		IL_006a: ldc.r8 100
-		IL_0073: cgt
-		IL_0075: brfalse IL_0093
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: ldloc.2
+		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0068: pop
+		IL_0069: ldc.r8 21
+		IL_0072: stloc.s 5
+		IL_0074: ldnull
+		IL_0075: stloc.s 6
+		IL_0077: ldloc.s 5
+		IL_0079: ldc.r8 100
+		IL_0082: cgt
+		IL_0084: brfalse IL_00a9
 
-		IL_007a: ldc.r8 0.0
-		IL_0083: box [System.Runtime]System.Double
-		IL_0088: stloc.s 5
-		IL_008a: ldloc.s 5
-		IL_008c: stloc.s 4
-		IL_008e: br IL_00a9
+		IL_0089: newobj instance void Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L18C13::.ctor()
+		IL_008e: stloc.s 7
+		IL_0090: ldc.r8 0.0
+		IL_0099: box [System.Runtime]System.Double
+		IL_009e: stloc.s 9
+		IL_00a0: ldloc.s 9
+		IL_00a2: stloc.s 6
+		IL_00a4: br IL_00c7
 
-		IL_0093: ldloc.3
-		IL_0094: ldc.r8 2
-		IL_009d: mul
-		IL_009e: box [System.Runtime]System.Double
-		IL_00a3: stloc.s 5
-		IL_00a5: ldloc.s 5
-		IL_00a7: stloc.s 4
+		IL_00a9: newobj instance void Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion/Scope/Block_L20C7::.ctor()
+		IL_00ae: stloc.s 8
+		IL_00b0: ldloc.s 5
+		IL_00b2: ldc.r8 2
+		IL_00bb: mul
+		IL_00bc: box [System.Runtime]System.Double
+		IL_00c1: stloc.s 9
+		IL_00c3: ldloc.s 9
+		IL_00c5: stloc.s 6
 
-		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ae: ldloc.s 4
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b5: pop
-		IL_00b6: ret
+		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cc: ldloc.s 6
+		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d3: pop
+		IL_00d4: ret
 	} // end of method ShapeCoverage_MixedNumeric_RuntimeCoercion::__js_module_init__
 
 } // end of class Modules.ShapeCoverage_MixedNumeric_RuntimeCoercion
@@ -203,7 +215,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2140
+		// Method begins at RVA 0x215e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

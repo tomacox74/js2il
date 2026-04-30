@@ -11,14 +11,14 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Block_L5C4
+		.class nested public auto ansi beforefieldinit Block_L5C4
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2115
+				// Method begins at RVA 0x212d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -31,14 +31,14 @@
 
 		} // end of class Block_L5C4
 
-		.class nested private auto ansi beforefieldinit Block_L7C12
+		.class nested public auto ansi beforefieldinit Block_L7C12
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211e
+				// Method begins at RVA 0x2136
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,14 +51,14 @@
 
 		} // end of class Block_L7C12
 
-		.class nested private auto ansi beforefieldinit Block_L9C10
+		.class nested public auto ansi beforefieldinit Block_L9C10
 			extends [System.Runtime]System.Object
 		{
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2127
+				// Method begins at RVA 0x213f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x2124
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,14 +102,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 148 (0x94)
+		// Code size: 170 (0xaa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatchFinally_ThrowValue/Scope,
-			[1] class [System.Runtime]System.Exception,
-			[2] object,
+			[1] class Modules.TryCatchFinally_ThrowValue/Scope/Block_L5C4,
+			[2] class [System.Runtime]System.Exception,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] class Modules.TryCatchFinally_ThrowValue/Scope/Block_L7C12,
+			[6] class Modules.TryCatchFinally_ThrowValue/Scope/Block_L9C10,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.TryCatchFinally_ThrowValue/Scope::.ctor()
@@ -122,70 +125,76 @@
 		{
 			.try
 			{
-				IL_0016: ldc.r8 123
-				IL_001f: box [System.Runtime]System.Double
-				IL_0024: dup
-				IL_0025: isinst [System.Runtime]System.Exception
+				IL_0016: newobj instance void Modules.TryCatchFinally_ThrowValue/Scope/Block_L5C4::.ctor()
+				IL_001b: stloc.1
+				IL_001c: ldc.r8 123
+				IL_0025: box [System.Runtime]System.Double
 				IL_002a: dup
-				IL_002b: brtrue IL_0037
+				IL_002b: isinst [System.Runtime]System.Exception
+				IL_0030: dup
+				IL_0031: brtrue IL_003d
 
-				IL_0030: pop
-				IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-				IL_0036: throw
+				IL_0036: pop
+				IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+				IL_003c: throw
 
-				IL_0037: pop
-				IL_0038: throw
+				IL_003d: pop
+				IL_003e: throw
 
-				IL_0039: leave IL_0093
+				IL_003f: leave IL_00a9
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_003e: stloc.1
-				IL_003f: ldloc.1
-				IL_0040: dup
-				IL_0041: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_0044: stloc.2
+				IL_0045: ldloc.2
 				IL_0046: dup
-				IL_0047: brtrue IL_005d
+				IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_004c: dup
+				IL_004d: brtrue IL_0063
 
-				IL_004c: pop
-				IL_004d: dup
-				IL_004e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0052: pop
 				IL_0053: dup
-				IL_0054: brtrue IL_0069
+				IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_0059: dup
+				IL_005a: brtrue IL_006f
 
-				IL_0059: pop
-				IL_005a: pop
-				IL_005b: rethrow
+				IL_005f: pop
+				IL_0060: pop
+				IL_0061: rethrow
 
-				IL_005d: pop
-				IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_0063: stloc.2
-				IL_0064: br IL_006b
+				IL_0063: pop
+				IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0069: stloc.3
+				IL_006a: br IL_0071
 
-				IL_0069: pop
-				IL_006a: stloc.2
-
-				IL_006b: ldloc.2
-				IL_006c: stloc.s 4
-				IL_006e: ldloc.s 4
+				IL_006f: pop
 				IL_0070: stloc.3
-				IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0076: ldloc.3
-				IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_007c: pop
-				IL_007d: leave IL_0093
+
+				IL_0071: ldloc.3
+				IL_0072: stloc.s 7
+				IL_0074: ldloc.s 7
+				IL_0076: stloc.s 4
+				IL_0078: newobj instance void Modules.TryCatchFinally_ThrowValue/Scope/Block_L7C12::.ctor()
+				IL_007d: stloc.s 5
+				IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0084: ldloc.s 4
+				IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_008b: pop
+				IL_008c: leave IL_00a9
 			} // end handler
 		} // end .try
 		finally
 		{
-			IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0087: ldstr "c"
-			IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0091: pop
-			IL_0092: endfinally
+			IL_0091: newobj instance void Modules.TryCatchFinally_ThrowValue/Scope/Block_L9C10::.ctor()
+			IL_0096: stloc.s 6
+			IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009d: ldstr "c"
+			IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a7: pop
+			IL_00a8: endfinally
 		} // end handler
 
-		IL_0093: ret
+		IL_00a9: ret
 	} // end of method TryCatchFinally_ThrowValue::__js_module_init__
 
 } // end of class Modules.TryCatchFinally_ThrowValue
@@ -197,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x2148
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

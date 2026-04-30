@@ -662,8 +662,19 @@ namespace JavaScriptRuntime
         {
             get
             {
+                var indexKey = DotNet2JSConversions.ToString(index);
+                var isDenseIndex = !double.IsNaN(index)
+                    && !double.IsInfinity(index)
+                    && index % 1.0 == 0.0
+                    && index >= 0
+                    && index <= int.MaxValue;
+                if (!isDenseIndex)
+                {
+                    return JavaScriptRuntime.ObjectRuntime.GetProperty(this, indexKey);
+                }
+
                 int intIndex = (int)index;
-                if (intIndex < 0 || intIndex >= Count)
+                if (intIndex >= Count)
                 {
                     return null; // undefined
                 }
@@ -672,25 +683,19 @@ namespace JavaScriptRuntime
             }
             set
             {
-                int intIndex;
-                if (double.IsNaN(index) || double.IsInfinity(index))
+                var indexKey = DotNet2JSConversions.ToString(index);
+                var isDenseIndex = !double.IsNaN(index)
+                    && !double.IsInfinity(index)
+                    && index % 1.0 == 0.0
+                    && index >= 0
+                    && index <= int.MaxValue;
+                if (!isDenseIndex)
                 {
-                    intIndex = 0;
-                }
-                else
-                {
-                    try { intIndex = (int)index; }
-                    catch { intIndex = 0; }
-                }
-
-                if (intIndex < 0)
-                {
-                    JavaScriptRuntime.ObjectRuntime.SetProperty(
-                        this,
-                        intIndex.ToString(CultureInfo.InvariantCulture),
-                        value);
+                    JavaScriptRuntime.ObjectRuntime.SetProperty(this, indexKey, value);
                     return;
                 }
+
+                int intIndex = (int)index;
 
                 if (intIndex < Count)
                 {
@@ -794,49 +799,69 @@ namespace JavaScriptRuntime
         /// Supports JavaScriptRuntime.Array, IEnumerable, and Set.
         /// </summary>
         public static Array from(object? source)
+            => from(source, null, null);
+
+        public static Array from(object? source, object? mapFn)
+            => from(source, mapFn, null);
+
+        public static Array from(object? source, object? mapFn, object? thisArg)
         {
             if (source == null) return new Array();
+
+            if (mapFn is not null && mapFn is not JsNull && !IsCallable(mapFn))
+            {
+                throw new TypeError("Array.from: when provided, the second argument must be a function");
+            }
 
             // If already a JS array, return a shallow copy
             if (source is Array jsArr)
             {
-                return new Array(jsArr);
+                return CopyFromIndexedSource(jsArr, (int)jsArr.length, mapFn, thisArg);
             }
 
             if (source is string)
             {
-                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source));
+                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source), mapFn, thisArg);
+            }
+
+            if (TryGetArrayLikeLength(source, out var length))
+            {
+                return CopyFromIndexedSource(source, length, mapFn, thisArg);
             }
 
             if (source is IJavaScriptIterator iterator)
             {
-                return FromIterator(iterator);
+                return FromIterator(iterator, mapFn, thisArg);
             }
 
             var iteratorMethod = JavaScriptRuntime.ObjectRuntime.GetItem(source, Symbol.iterator);
             if (iteratorMethod is not null && iteratorMethod is not JsNull)
             {
-                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source));
+                return FromIterator(JavaScriptRuntime.ObjectRuntime.GetIterator(source), mapFn, thisArg);
             }
 
             // If source is IEnumerable, copy items
             if (source is System.Collections.IEnumerable enumerable)
             {
                 var result = new Array();
+                int index = 0;
                 foreach (var item in enumerable)
                 {
-                    result.Add(item!);
+                    result.Add(ApplyMapFunction(mapFn, thisArg, item, index++));
                 }
                 return result;
             }
 
             // Fallback: wrap single element
-            return new Array(new object[] { source });
+            var fallback = new Array();
+            fallback.Add(ApplyMapFunction(mapFn, thisArg, source, 0));
+            return fallback;
         }
 
-        private static Array FromIterator(IJavaScriptIterator iterator)
+        private static Array FromIterator(IJavaScriptIterator iterator, object? mapFn, object? thisArg)
         {
             var result = new Array();
+            int index = 0;
             while (true)
             {
                 var step = iterator.Next();
@@ -845,11 +870,64 @@ namespace JavaScriptRuntime
                     break;
                 }
 
-                result.Add(step.value);
+                result.Add(ApplyMapFunction(mapFn, thisArg, step.value, index++));
             }
 
             return result;
         }
+
+        private static Array CopyFromIndexedSource(object source, int length, object? mapFn, object? thisArg)
+        {
+            var result = new Array();
+            for (int i = 0; i < length; i++)
+            {
+                var item = JavaScriptRuntime.ObjectRuntime.GetItem(source, i.ToString(CultureInfo.InvariantCulture));
+                result.Add(ApplyMapFunction(mapFn, thisArg, item, i));
+            }
+
+            return result;
+        }
+
+        private static object? ApplyMapFunction(object? mapFn, object? thisArg, object? value, int index)
+        {
+            if (mapFn is null || mapFn is JsNull)
+            {
+                return value;
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(thisArg);
+            try
+            {
+                return Closure.InvokeWithArgs(mapFn, System.Array.Empty<object>(), value, (double)index);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static bool TryGetArrayLikeLength(object source, out int length)
+        {
+            var lengthValue = JavaScriptRuntime.ObjectRuntime.GetProperty(source, "length");
+            if (lengthValue is null || lengthValue is JsNull)
+            {
+                length = 0;
+                return false;
+            }
+
+            var numericLength = JavaScriptRuntime.TypeUtilities.ToNumber(lengthValue);
+            if (double.IsNaN(numericLength) || numericLength < 0)
+            {
+                length = 0;
+                return false;
+            }
+
+            length = (int)global::System.Math.Min(numericLength, int.MaxValue);
+            return true;
+        }
+
+        private static bool IsCallable(object? value)
+            => value is Delegate || value is Proxy proxy && proxy.IsCallableTarget;
 
         /// <summary>
         /// JavaScript Array.isArray(value) static method.

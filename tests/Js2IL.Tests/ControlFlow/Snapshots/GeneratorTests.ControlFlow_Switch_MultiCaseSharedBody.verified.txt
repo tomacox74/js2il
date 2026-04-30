@@ -10,11 +10,33 @@
 	.class nested private auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Switch_L5C0
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x20e7
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Switch_L5C0::.ctor
+
+		} // end of class Switch_L5C0
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20de
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +62,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 130 (0x82)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope,
 			[1] float64,
-			[2] object,
-			[3] bool
+			[2] class Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope/Switch_L5C0,
+			[3] object,
+			[4] bool
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope::.ctor()
@@ -55,37 +78,39 @@
 		IL_000f: stloc.1
 		IL_0010: ldloc.1
 		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.2
-		IL_0017: ldloc.2
-		IL_0018: ldc.r8 1
-		IL_0021: box [System.Runtime]System.Double
-		IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_002b: stloc.3
-		IL_002c: ldloc.3
-		IL_002d: brtrue IL_0052
+		IL_0016: stloc.3
+		IL_0017: newobj instance void Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope/Switch_L5C0::.ctor()
+		IL_001c: stloc.2
+		IL_001d: ldloc.3
+		IL_001e: ldc.r8 1
+		IL_0027: box [System.Runtime]System.Double
+		IL_002c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0031: stloc.s 4
+		IL_0033: ldloc.s 4
+		IL_0035: brtrue IL_005c
 
-		IL_0032: ldloc.2
-		IL_0033: ldc.r8 2
-		IL_003c: box [System.Runtime]System.Double
-		IL_0041: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0046: stloc.3
-		IL_0047: ldloc.3
-		IL_0048: brtrue IL_0052
+		IL_003a: ldloc.3
+		IL_003b: ldc.r8 2
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.s 4
+		IL_0052: brtrue IL_005c
 
-		IL_004d: br IL_0067
+		IL_0057: br IL_0071
 
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldstr "hit"
-		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0061: pop
-		IL_0062: br IL_0077
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: ldstr "hit"
+		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006b: pop
+		IL_006c: br IL_0081
 
-		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006c: ldstr "miss"
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0076: pop
+		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0076: ldstr "miss"
+		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0080: pop
 
-		IL_0077: ret
+		IL_0081: ret
 	} // end of method ControlFlow_Switch_MultiCaseSharedBody::__js_module_init__
 
 } // end of class Modules.ControlFlow_Switch_MultiCaseSharedBody
@@ -97,7 +122,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20dd
+		// Method begins at RVA 0x20f0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

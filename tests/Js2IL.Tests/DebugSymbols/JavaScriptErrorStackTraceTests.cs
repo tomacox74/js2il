@@ -60,7 +60,7 @@ public class JavaScriptErrorStackTraceTests
                 [depFileName] = depJs
             });
 
-        Assert.Contains($"{rootFileName}:line 4", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains($"{rootFileName}:line 5", output, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("rewritten.js", output, StringComparison.OrdinalIgnoreCase);
     }
 

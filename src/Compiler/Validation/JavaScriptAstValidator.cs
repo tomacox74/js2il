@@ -206,8 +206,8 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.WithStatement:
-                    result.Errors.Add($"The 'with' statement is not supported (deprecated and problematic) (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Supported on a best-effort basis so script-mode ports that do not rely on
+                    // dynamic with-environment name resolution can execute.
                     break;
 
                 case NodeType.LabeledStatement:
