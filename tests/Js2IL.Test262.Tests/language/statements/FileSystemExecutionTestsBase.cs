@@ -56,7 +56,10 @@ public abstract class FileSystemExecutionTestsBase
 
     private (string Script, string SourcePath) GetJavaScriptAndSourcePath(string projectRoot, string testName)
     {
-        string sourcePath = Path.Combine(projectRoot, _relativeCategoryPath, "JavaScript", testName + ".js");
+        string normalizedCategoryPath = _relativeCategoryPath
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+        string sourcePath = Path.Combine(projectRoot, normalizedCategoryPath, "JavaScript", testName + ".js");
         if (!File.Exists(sourcePath))
         {
             throw new FileNotFoundException($"JavaScript fixture not found: '{sourcePath}'.", sourcePath);
