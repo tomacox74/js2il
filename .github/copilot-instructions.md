@@ -131,20 +131,7 @@ js2il input.js output                           # Installed tool
 - Prefer **not** to add a duplicate `tests\Js2IL.Tests\...` regression when the `test262` port already covers the runtime behavior clearly. Only keep a `Js2IL.Tests` companion when we need project-specific generator/IL assertions or coverage that does not map cleanly to `test262`.
 - PR #1011 is the reference example for this workflow: the arrow-function restricted `caller` / `arguments` scenario belongs under `tests\Js2IL.Test262.Tests\language\expressions\arrow-function\`, and the parallel `tests\Js2IL.Tests\ArrowFunction\ArrowFunction_RestrictedCallerArgumentsProperties` regression is considered redundant.
 - When a new `test262` case changes the documented support story, update the relevant ECMA-262 docs and changelog entry in the same PR.
-
-### Agent skill: port one `test262` test into `Js2IL.Test262.Tests`
-- Start from one concrete upstream `test262` file and preserve its relative spec path and base filename. The repo fixture should live under the matching folder in `tests\Js2IL.Test262.Tests\...\JavaScript\`, using the same filename so the port still points back to the original source by inspection.
-- Keep the upstream scenario as the source of truth, but adapt it to the execution-test harness used in this repo. Prefer small, explicit rewrites over reinterpreting the test:
-  - convert `assert.sameValue(...)`, `assert(...)`, and similar pass/fail checks into `console.log(...)` output that captures the observable result,
-  - preserve directive prologues such as `"use strict";`,
-  - keep any additional local fixture files when the test depends on sibling modules/scripts, and pass them through the C# test using the existing `additionalFiles` pattern.
-- Add or update the folder's `ExecutionTests.cs` entry so:
-  - the xUnit `DisplayName` is the original `test262` filename,
-  - the C# method name is an identifier-safe version of that filename,
-  - the execution test points at the preserved JavaScript fixture path.
-- Create the matching expected output snapshot under the same folder's `Snapshots\` directory. The snapshot should reflect the rewritten `console.log(...)` behavior, not the original `assert` API.
-- Prefer execution coverage only. Do **not** automatically add a parallel `tests\Js2IL.Tests\...` regression unless we specifically need generator/IL assertions or extra project-specific coverage beyond what the `test262` port already proves.
-- Validate the port with the focused `Js2IL.Test262.Tests` suite. If the case fails, first classify whether it is a porting problem (for example a bad rewrite or wrong snapshot) or a real product bug. Keep the port, fix the correct layer, and avoid masking product defects with ad-hoc test rewrites.
+- For the full step-by-step individual porting workflow, use the dedicated Copilot skill in `.github\skills\test262-porting\SKILL.md`.
 
 ### Running Phased Benchmarks Locally (Single Scenario)
 - These phased benchmarks use the open-source BenchmarkDotNet project.
