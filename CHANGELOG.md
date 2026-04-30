@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.10 - 2026-04-30
+
 - compiler/runtime/node/tests/docs: remove the remaining skipped `Js2IL.Test262.Tests` ports by fixing block/switch lexical-scope materialization and block-scope type visibility, constructor `_scopes` initialization/insertion rules, sloppy assignment `ThrowOnError` behavior, Number wrapper / `RegExp.prototype.toString` gaps, and hosted `child_process.fork()` IPC ordering; refresh the affected generator snapshots, add an on-demand Copilot skill for porting individual `test262` cases, and bring the checked-in `test262` slice to 121 passing tests with 0 skips.
 
 ## v0.9.9 - 2026-04-27
