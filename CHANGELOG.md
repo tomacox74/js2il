@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/test262: port 206 additional representative `test262` execution cases into `tests\Js2IL.Test262.Tests`, preserving upstream-relative paths and filenames, converting assertion checks to `console.log(...)`, marking current product-gap coverage with explicit `Skip` reasons, and expanding the checked-in suite to 327 total tests (261 passing, 66 skipped).
 
 ## v0.9.10 - 2026-04-30
 

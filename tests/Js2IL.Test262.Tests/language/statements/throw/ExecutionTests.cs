@@ -1,0 +1,24 @@
+using Js2IL.Test262.Tests.language.statements;
+
+namespace Js2IL.Test262.Tests.language.statements.throw_;
+
+public class ExecutionTests : FileSystemExecutionTestsBase
+{
+    public ExecutionTests() : base(@"language\statements\throw", "language.statements.throw_") { }
+
+    [Fact(DisplayName = "S12.13_A1")]
+    public Task S12_13_A1()
+        => ExecutionTest("S12.13_A1");
+
+    [Fact(DisplayName = "S12.13_A2_T1")]
+    public Task S12_13_A2_T1()
+        => ExecutionTest("S12.13_A2_T1");
+
+    [Fact(DisplayName = "S12.13_A2_T2")]
+    public Task S12_13_A2_T2()
+        => ExecutionTest("S12.13_A2_T2");
+
+    [Fact(DisplayName = "S12.13_A2_T4")]
+    public Task S12_13_A2_T4()
+        => ExecutionTest("S12.13_A2_T4");
+}
