@@ -2590,7 +2590,7 @@ class HIRMethodBuilder
 
                 var globalThisProperty = typeof(JavaScriptRuntime.GlobalThis).GetProperty(
                     calleeName,
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
                 bool isConstructibleGlobalThisProperty =
                     globalThisProperty != null
                     && (typeof(Delegate).IsAssignableFrom(globalThisProperty.PropertyType)
@@ -2638,7 +2638,7 @@ class HIRMethodBuilder
                     && !string.Equals(calleeName, "Date", StringComparison.Ordinal))
                 {
                     bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
-                    if (isStaticClass)
+                    if (isStaticClass && !isConstructibleGlobalThisProperty)
                     {
                         // Constructible intrinsics must be non-static classes.
                         return false;

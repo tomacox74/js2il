@@ -255,6 +255,12 @@ public static class Function
                 return JavaScriptRuntime.Number.Construct(callArgs, newTarget);
             }
 
+            if (ReferenceEquals(constructor, GlobalThis.String)
+                || (GlobalThis.String is Delegate stringConstructor && constructor.Method == stringConstructor.Method))
+            {
+                return JavaScriptRuntime.String.Construct(callArgs, newTarget);
+            }
+
             var instance = new System.Dynamic.ExpandoObject();
 
             // Default proto: ctor.prototype when it is an object or null; otherwise undefined.

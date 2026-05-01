@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "Math.max_each-element-coerced", Skip = "Math.max does not coerce each element correctly.")]
+    [Fact(DisplayName = "Math.max_each-element-coerced")]
 
     public Task Math_max_each_element_coerced()
 
@@ -46,7 +46,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "zeros", Skip = "Math.max does not handle signed zero correctly.")]
+    [Fact(DisplayName = "zeros")]
 
     public Task zeros()
 

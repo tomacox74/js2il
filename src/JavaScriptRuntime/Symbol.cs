@@ -174,6 +174,9 @@ public sealed class Symbol
         };
     }
 
+    public static bool IsWellKnown(string name)
+        => GetWellKnown(name) != null;
+
     // Useful for debugging, but keep ToString() JS-like.
     public string DebugId => _debugId;
 }

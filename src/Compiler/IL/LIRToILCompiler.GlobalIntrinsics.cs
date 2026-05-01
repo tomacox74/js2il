@@ -16,7 +16,7 @@ internal sealed partial class LIRToILCompiler
     public void EmitLoadIntrinsicGlobalVariable(string variableName, InstructionEncoder ilEncoder)
     {
         var gvType = typeof(JavaScriptRuntime.GlobalThis);
-        var gvProp = gvType.GetProperty(variableName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+        var gvProp = gvType.GetProperty(variableName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
         var getterDecl = gvProp?.GetMethod?.DeclaringType!;
         var getterMref = _memberRefRegistry.GetOrAddMethod(getterDecl!, gvProp!.GetMethod!.Name);
         ilEncoder.OpCode(ILOpCode.Call);
@@ -31,7 +31,7 @@ internal sealed partial class LIRToILCompiler
         var gvType = typeof(JavaScriptRuntime.GlobalThis);
         var methodInfo = gvType.GetMethod(
             functionName,
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
         if (methodInfo == null)
         {
             throw new InvalidOperationException($"Unknown GlobalThis intrinsic function: {functionName}");
@@ -107,7 +107,7 @@ internal sealed partial class LIRToILCompiler
         var gvType = typeof(JavaScriptRuntime.GlobalThis);
         var methodInfo = gvType.GetMethod(
             functionName,
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
         if (methodInfo == null)
         {
             throw new InvalidOperationException($"Unknown GlobalThis intrinsic function: {functionName}");

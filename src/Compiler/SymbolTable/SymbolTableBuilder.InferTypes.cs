@@ -439,53 +439,64 @@ public partial class SymbolTableBuilder
             }
         }
 
-        // now we walk the statements in the scope to check assignments
-        foreach (var statement in scope.AstNode.ChildNodes)
+        void AnalyzeAssignmentLikeNode(INode node)
         {
-            if (statement is ExpressionStatement exprStmt)
+            switch (node)
             {
-                if (exprStmt.Expression is AssignmentExpression assignExpr && assignExpr.Left is Identifier identifier)
-                {
+                case AssignmentExpression assignExpr when assignExpr.Left is Identifier identifier:
                     if (proposedClrTypes.TryGetValue(identifier.Name, out var inferredType))
                     {
-                        // if any assigment conflicts with the inferred type, we remove the proposed type
-                           var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
+                        // If any assignment conflicts with the inferred type, remove the proposed type.
+                        var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
                         if (rightType != inferredType)
                         {
-                            // conflict, remove the proposed type
                             proposedClrTypes.Remove(identifier.Name);
                         }
                     }
-                    else
+                    else if (unitializedClrTypes.Contains(identifier.Name))
                     {
-                        if (unitializedClrTypes.Contains(identifier.Name))
+                        // An uninitialized variable can still be a nullable/reference type.
+                        var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
+                        if (rightType?.IsValueType == false)
                         {
-                            // a uninitialized variable can still be a nullable type (not a value type like number)
-                            // to consider.. use Nullable<T> for value types in future optimizations?
-                            var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
-                            if (rightType?.IsValueType == false)
-                            {
-                                proposedClrTypes[identifier.Name] = rightType;
-                            }
-                            unitializedClrTypes.Remove(identifier.Name);
+                            proposedClrTypes[identifier.Name] = rightType;
                         }
+                        unitializedClrTypes.Remove(identifier.Name);
                     }
-                }
-                else if (exprStmt.Expression is UpdateExpression updateExpr && updateExpr.Argument is Identifier updateVariableIdentity)
-                {
-                    // update expressions only valid for number types
-                    if (proposedClrTypes.TryGetValue(updateVariableIdentity.Name, out var inferredType))
+                    break;
+
+                case UpdateExpression updateExpr when updateExpr.Argument is Identifier updateVariableIdentity:
+                    // Update expressions only valid for number types.
+                    if (proposedClrTypes.TryGetValue(updateVariableIdentity.Name, out var updateInferredType)
+                        && updateInferredType != typeof(double))
                     {
-                        if (inferredType != typeof(double))
-                        {
-                            // conflict, remove the proposed type
-                            proposedClrTypes.Remove(updateVariableIdentity.Name);
-                        }
+                        proposedClrTypes.Remove(updateVariableIdentity.Name);
                     }
 
                     unitializedClrTypes.Remove(updateVariableIdentity.Name);
-                }
+                    break;
             }
+
+            if (node is FunctionDeclaration
+                || node is FunctionExpression
+                || node is ArrowFunctionExpression
+                || node is ClassDeclaration
+                || node is ClassExpression)
+            {
+                return;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                AnalyzeAssignmentLikeNode(child);
+            }
+        }
+
+        // Walk statements recursively so nested assignments (e.g. inside sequence/call expressions)
+        // still invalidate overly-specific stable type proposals.
+        foreach (var statement in scope.AstNode.ChildNodes)
+        {
+            AnalyzeAssignmentLikeNode(statement);
         }
 
         // For uninitialized uncaptured bindings, also consider assignments in nested blocks/scopes.

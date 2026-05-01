@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "S15.1.2.5_A2.6", Skip = "isFinite.prototype is not undefined.")]
+    [Fact(DisplayName = "S15.1.2.5_A2.6")]
 
     public Task S15_1_2_5_A2_6()
 
@@ -38,7 +38,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "tonumber-operations", Skip = "isFinite ToNumber coercion is incorrect.")]
+    [Fact(DisplayName = "tonumber-operations")]
 
     public Task tonumber_operations()
 

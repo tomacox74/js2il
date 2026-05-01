@@ -14,7 +14,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "arg-is-not-number", Skip = "Number.isInteger is not implemented.")]
+    [Fact(DisplayName = "arg-is-not-number")]
 
     public Task arg_is_not_number()
 
@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "infinity", Skip = "Number.isInteger is not implemented.")]
+    [Fact(DisplayName = "infinity")]
 
     public Task infinity()
 
@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "integers", Skip = "Number.isInteger is not implemented.")]
+    [Fact(DisplayName = "integers")]
 
     public Task integers()
 
@@ -38,7 +38,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "nan", Skip = "Number.isInteger is not implemented.")]
+    [Fact(DisplayName = "nan")]
 
     public Task nan()
 
@@ -46,7 +46,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "non-integers", Skip = "Number.isInteger is not implemented.")]
+    [Fact(DisplayName = "non-integers")]
 
     public Task non_integers()
 

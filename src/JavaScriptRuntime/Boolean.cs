@@ -8,11 +8,13 @@ namespace JavaScriptRuntime
         public Boolean()
         {
             _value = false;
+            PrototypeChain.SetPrototype(this, GlobalThis.BooleanPrototypeValue);
         }
 
         public Boolean(object? value)
         {
             _value = TypeUtilities.ToBoolean(value);
+            PrototypeChain.SetPrototype(this, GlobalThis.BooleanPrototypeValue);
         }
 
         public string toString()

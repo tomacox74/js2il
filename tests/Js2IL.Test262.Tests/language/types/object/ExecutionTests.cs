@@ -14,7 +14,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S8_6_A3_T1()
         => ExecutionTest("S8.6_A3_T1");
 
-    [Fact(DisplayName = "S8.6.2_A7", Skip = "Product defect: `new Math` case fails in HIR parsing")]
+    [Fact(DisplayName = "S8.6.2_A7")]
     public Task S8_6_2_A7()
         => ExecutionTest("S8.6.2_A7");
 }

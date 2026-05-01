@@ -6,7 +6,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("language.block_scope.shadowing") { }
 
-    [Fact(DisplayName = "dynamic-lookup-from-closure", Skip = "Product defect: nested closure call lowers to unsupported LIRCallFunction")]
+    [Fact(DisplayName = "dynamic-lookup-from-closure")]
     public Task dynamic_lookup_from_closure()
         => ExecutionTest("dynamic-lookup-from-closure");
 
@@ -18,7 +18,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task let_declarations_shadowing_parameter_name_let_const_and_var()
         => ExecutionTest("let-declarations-shadowing-parameter-name-let-const-and-var");
 
-    [Fact(DisplayName = "lookup-from-closure", Skip = "Product defect: nested closure call lowers to unsupported LIRCallFunction")]
+    [Fact(DisplayName = "lookup-from-closure")]
     public Task lookup_from_closure()
         => ExecutionTest("lookup-from-closure");
 

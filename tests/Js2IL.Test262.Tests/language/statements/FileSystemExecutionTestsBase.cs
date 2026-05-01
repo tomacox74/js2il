@@ -54,6 +54,61 @@ public abstract class FileSystemExecutionTestsBase
         }
     }
 
+    protected async Task CompilationFailureTest(string testName, string expectedFailureText, [CallerFilePath] string sourceFilePath = "")
+    {
+        string projectRoot = FindProjectRoot(sourceFilePath);
+        string outputRoot = Path.Combine(
+            projectRoot,
+            "TestOutput",
+            "Js2IL.Test262.Tests",
+            SanitizePathSegment(_testCategory),
+            SanitizePathSegment(testName),
+            Guid.NewGuid().ToString("N"));
+
+        Directory.CreateDirectory(outputRoot);
+
+        try
+        {
+            Exception? failure = null;
+
+            try
+            {
+                TestCompiler.Compile(
+                    testName,
+                    _testCategory,
+                    outputRoot,
+                    name => GetJavaScriptAndSourcePath(projectRoot, name),
+                    additionalScripts: null,
+                    enableIRMetrics: true);
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+
+            if (failure == null)
+            {
+                throw new InvalidOperationException($"Expected compilation to fail for test {testName}.");
+            }
+
+            if (!failure.ToString().Contains(expectedFailureText, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Compilation failed for test {testName}, but the failure did not contain '{expectedFailureText}'.\nActual failure:\n{failure}");
+            }
+
+            var settings = new VerifySettings(_verifySettings);
+            string snapshotsDirectory = Path.Combine(Path.GetDirectoryName(sourceFilePath)!, "Snapshots");
+            Directory.CreateDirectory(snapshotsDirectory);
+            settings.UseDirectory(snapshotsDirectory);
+            await Verify("true" + Environment.NewLine, settings);
+        }
+        finally
+        {
+            TryDeleteDirectory(outputRoot);
+        }
+    }
+
     private (string Script, string SourcePath) GetJavaScriptAndSourcePath(string projectRoot, string testName)
     {
         string normalizedCategoryPath = _relativeCategoryPath
@@ -146,13 +201,25 @@ public abstract class FileSystemExecutionTestsBase
                 Directory.Delete(path, recursive: true);
                 return;
             }
-            catch (IOException) when (attempt < 2)
+            catch (IOException)
             {
-                Thread.Sleep(50);
+                if (attempt < 2)
+                {
+                    Thread.Sleep(50);
+                    continue;
+                }
+
+                return;
             }
-            catch (UnauthorizedAccessException) when (attempt < 2)
+            catch (UnauthorizedAccessException)
             {
-                Thread.Sleep(50);
+                if (attempt < 2)
+                {
+                    Thread.Sleep(50);
+                    continue;
+                }
+
+                return;
             }
         }
     }

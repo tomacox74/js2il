@@ -22,11 +22,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _8_7_2_8_s()
         => ExecutionTest("8.7.2-8-s");
 
-    [Fact(DisplayName = "8.7.2-3-a-1gs", Skip = "Product defect: unresolvable reference validation rejects this strict-mode case")]
+    [Fact(DisplayName = "8.7.2-3-a-1gs")]
     public Task _8_7_2_3_a_1gs()
         => ExecutionTest("8.7.2-3-a-1gs");
 
-    [Fact(DisplayName = "8.7.2-3-a-2gs", Skip = "Product defect: unresolvable reference validation rejects this strict-mode case")]
+    [Fact(DisplayName = "8.7.2-3-a-2gs")]
     public Task _8_7_2_3_a_2gs()
         => ExecutionTest("8.7.2-3-a-2gs");
 
@@ -34,7 +34,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _8_7_2_5_s()
         => ExecutionTest("8.7.2-5-s");
 
-    [Fact(DisplayName = "get-value-prop-base-primitive", Skip = "Product defect: primitive property get on Symbol throws at runtime")]
+    [Fact(DisplayName = "get-value-prop-base-primitive")]
     public Task get_value_prop_base_primitive()
         => ExecutionTest("get-value-prop-base-primitive");
 }

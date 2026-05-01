@@ -20,6 +20,16 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        if (binaryExpr.Operator == Acornima.Operator.InstanceOf && GetTempVariableSlot(leftTempVar) >= 0)
+        {
+            // Preserve the evaluated LHS before the RHS runs. Without this, a slot-mapped temp like
+            // `object` in `object instanceof (object = 0, Object)` can observe the later assignment.
+            var preservedLeftTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftTempVar, preservedLeftTemp));
+            DefineTempStorage(preservedLeftTemp, GetTempStorage(leftTempVar));
+            leftTempVar = preservedLeftTemp;
+        }
+
         // Handle logical operators with correct short-circuit evaluation.
         // JavaScript logical operators (&&, ||) return one of the operand VALUES (not a boolean).
         if (binaryExpr.Operator == Acornima.Operator.LogicalAnd)

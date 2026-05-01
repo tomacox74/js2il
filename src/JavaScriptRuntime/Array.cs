@@ -60,6 +60,9 @@ namespace JavaScriptRuntime
             return exp;
         }
 
+        public bool hasOwnProperty(object? prop)
+            => JavaScriptRuntime.Object.hasOwn(this, prop);
+
         private int DenseCount => _items.Count;
         private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
 

@@ -18,7 +18,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_8_A9_T2()
         => ExecutionTest("S12.8_A9_T2");
 
-    [Fact(DisplayName = "line-terminators", Skip = "newline-separated break labels hit unsupported global identifier resolution")]
+    [Fact(DisplayName = "line-terminators")]
     public Task line_terminators()
         => ExecutionTest("line-terminators");
 }

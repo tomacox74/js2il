@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _10_6_13_c_2_s()
         => ExecutionTest("10.6-13-c-2-s");
 
-    [Fact(DisplayName = "10.6-13-c-3-s", Skip = "Product defect: strict arguments.callee descriptor access crashes at runtime")]
+    [Fact(DisplayName = "10.6-13-c-3-s")]
     public Task _10_6_13_c_3_s()
         => ExecutionTest("10.6-13-c-3-s");
 }

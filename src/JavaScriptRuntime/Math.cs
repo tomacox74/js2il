@@ -164,13 +164,22 @@ namespace JavaScriptRuntime
         {
             if (args == null || args.Length == 0) return double.NegativeInfinity;
             double max = double.NegativeInfinity;
+            bool sawNaN = false;
             foreach (var a in args)
             {
-                double d = ToNumber(a);
-                if (double.IsNaN(d)) return double.NaN;
-                if (d > max) max = d;
+                double d = TypeUtilities.ToNumber(a);
+                if (double.IsNaN(d))
+                {
+                    sawNaN = true;
+                    continue;
+                }
+
+                if (d > max || (d == 0.0 && max == 0.0 && double.IsNegative(max) && !double.IsNegative(d)))
+                {
+                    max = d;
+                }
             }
-            return max;
+            return sawNaN ? double.NaN : max;
         }
 
         public static double random()

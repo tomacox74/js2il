@@ -17,15 +17,15 @@ public class ExecutionTests
     public Task _11_4_1_0_1()
         => ExecutionTestFromFile("11.4.1-0-1");
 
-    [Fact(DisplayName = "11.4.1-2-2", Skip = "Delete of a function call result does not yet match test262 semantics.")]
+    [Fact(DisplayName = "11.4.1-2-2")]
     public Task _11_4_1_2_2()
         => ExecutionTestFromFile("11.4.1-2-2");
 
-    [Fact(DisplayName = "11.4.1-3-1", Skip = "Expected runtime handling of an unresolved identifier, but JS2IL rejects unresolved globals during compilation.")]
+    [Fact(DisplayName = "11.4.1-3-1")]
     public Task _11_4_1_3_1()
         => ExecutionTestFromFile("11.4.1-3-1");
 
-    [Fact(DisplayName = "11.4.1-3-2", Skip = "Expected runtime ReferenceError inspection, but JS2IL does not currently support this unresolved-reference scenario.")]
+    [Fact(DisplayName = "11.4.1-3-2")]
     public Task _11_4_1_3_2()
         => ExecutionTestFromFile("11.4.1-3-2");
 

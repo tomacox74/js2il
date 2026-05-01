@@ -25,6 +25,46 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
             => Object.SetProperty(obj, name, value, throwOnError);
 
+        public static object? GetGlobalBindingValue(string name)
+        {
+            if (!HasGlobalBinding(name))
+            {
+                throw new ReferenceError($"{name} is not defined");
+            }
+
+            return Object.GetProperty(GlobalThis.globalThis, name);
+        }
+
+        public static object? SetGlobalBindingValue(string name, object? value, bool strict)
+        {
+            if (strict && !HasGlobalBinding(name))
+            {
+                throw new ReferenceError($"{name} is not defined");
+            }
+
+            return Object.SetProperty(GlobalThis.globalThis, name, value, throwOnError: strict);
+        }
+
+        public static bool DeleteGlobalBinding(string name)
+        {
+            if (!HasGlobalBinding(name))
+            {
+                return true;
+            }
+
+            return DeleteProperty(GlobalThis.globalThis, name);
+        }
+
+        public static string TypeOfGlobalBinding(string name)
+        {
+            if (!HasGlobalBinding(name))
+            {
+                return "undefined";
+            }
+
+            return TypeUtilities.Typeof(Object.GetProperty(GlobalThis.globalThis, name));
+        }
+
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
             => DefineObjectLiteralDataPropertyCore(
                 target,
@@ -123,6 +163,17 @@ namespace JavaScriptRuntime
             });
 
             return target;
+        }
+
+        private static bool HasGlobalBinding(string name)
+        {
+            var global = GlobalThis.globalThis;
+            if (global is IDictionary<string, object?> dict && dict.ContainsKey(name))
+            {
+                return true;
+            }
+
+            return PropertyDescriptorStore.TryGetOwn(global, name, out _);
         }
 
         public static bool HasPropertyIn(object? key, object? obj)

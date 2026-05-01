@@ -17,11 +17,11 @@ public class ExecutionTests
     public Task _11_1_4_0()
         => ExecutionTestFromFile("11.1.4-0");
 
-    [Fact(DisplayName = "11.1.4_4-5-1", Skip = "Array.hasOwnProperty instance calls are not yet supported in this scenario.")]
+    [Fact(DisplayName = "11.1.4_4-5-1")]
     public Task _11_1_4_4_5_1()
         => ExecutionTestFromFile("11.1.4_4-5-1");
 
-    [Fact(DisplayName = "11.1.4_5-6-1", Skip = "Array.hasOwnProperty instance calls are not yet supported in this scenario.")]
+    [Fact(DisplayName = "11.1.4_5-6-1")]
     public Task _11_1_4_5_6_1()
         => ExecutionTestFromFile("11.1.4_5-6-1");
 

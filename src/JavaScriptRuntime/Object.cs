@@ -558,6 +558,13 @@ namespace JavaScriptRuntime
                     AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
                 }
             }
+            else if (obj is string str)
+            {
+                for (int i = 0; i < str.Length; i++)
+                {
+                    AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                }
+            }
             else if (obj is JavaScriptRuntime.TypedArrayBase typedArray)
             {
                 for (int i = 0; i < typedArray.length; i++)
@@ -606,7 +613,9 @@ namespace JavaScriptRuntime
                 && obj is not IDictionary<string, object?>
                 && obj is not System.Collections.IDictionary
                 && obj is not JavaScriptRuntime.Array
-                && obj is not JavaScriptRuntime.TypedArrayBase)
+                && obj is not JavaScriptRuntime.TypedArrayBase
+                && obj is not string
+                && !obj.GetType().IsValueType)
             {
                 var type = obj.GetType();
                 foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).OrderBy(property => property.Name, StringComparer.Ordinal))
@@ -1133,18 +1142,24 @@ namespace JavaScriptRuntime
 
         private static void EnumerateOwnEnumerableProperties(object obj, ISet<string> seen, Action<string, object?> processProperty, bool includeEncodedSymbolKeys = false)
         {
-            foreach (var k in GetOwnEnumerableKeysInOrder(obj, includeEncodedSymbolKeys))
+            foreach (var k in GetOrderedOwnKeys(obj, includeEncodedSymbolKeys))
             {
-                if (seen.Add(k))
+                if (!seen.Add(k) || !PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
                 {
-                    object? value = null;
-                    if (!TryGetOwnPropertyValue(obj, k, out value))
+                    continue;
+                }
+
+                if (!TryGetOwnPropertyValue(obj, k, out var value))
+                {
+                    if (!HasOwnProperty(obj, k))
                     {
-                        value = GetProperty(obj, k);
+                        continue;
                     }
 
-                    processProperty(k, value);
+                    value = GetProperty(obj, k);
                 }
+
+                processProperty(k, value);
             }
         }
 
@@ -2036,7 +2051,12 @@ namespace JavaScriptRuntime
                 return IsConstructibleValue(proxy.GetTarget("construct"));
             }
 
-            if (constructor is Type or Delegate)
+            if (constructor is Type type)
+            {
+                return !(type.IsAbstract && type.IsSealed);
+            }
+
+            if (constructor is Delegate)
             {
                 return true;
             }
@@ -2085,6 +2105,11 @@ namespace JavaScriptRuntime
 
             if (constructor is Type type)
             {
+                if (type.IsAbstract && type.IsSealed)
+                {
+                    throw new TypeError("Value is not a constructor");
+                }
+
                 try
                 {
                     return Activator.CreateInstance(type, callArgs);
@@ -2185,10 +2210,10 @@ namespace JavaScriptRuntime
                     keys += ", ...";
                 }
 
-                throw new NotSupportedException($"Value is not constructible: {constructor.GetType().FullName} keys=[{keys}]");
+                throw new TypeError($"Value is not constructible: {constructor.GetType().FullName} keys=[{keys}]");
             }
 
-            throw new NotSupportedException($"Value is not constructible: {constructor.GetType().FullName}");
+            throw new TypeError($"Value is not constructible: {constructor.GetType().FullName}");
         }
 
         /// <summary>
@@ -3007,6 +3032,12 @@ namespace JavaScriptRuntime
                 return dictGeneric.ContainsKey(name);
             }
 
+            if (target is Array array
+                && ObjectRuntime.TryParseCanonicalIndexString(name, out var arrayIndex))
+            {
+                return arrayIndex >= 0 && arrayIndex < array.length;
+            }
+
             if (target is System.Collections.IDictionary dictObj)
             {
                 if (dictObj.Contains(name)) return true;
@@ -3398,10 +3429,36 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (target is string str)
+            {
+                if (string.Equals(propName, "length", StringComparison.Ordinal))
+                {
+                    value = str.Length;
+                    return true;
+                }
+
+                if (ObjectRuntime.TryParseCanonicalIndexString(propName, out var index)
+                    && index >= 0
+                    && index < str.Length)
+                {
+                    value = str[(int)index].ToString();
+                    return true;
+                }
+
+                value = null;
+                return false;
+            }
+
             if (target is Delegate delPrototype
                 && !Closure.IsFunctionPrototypeBoundDelegate(delPrototype)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal))
             {
+                if (GlobalThis.HasUndefinedPrototype(delPrototype))
+                {
+                    value = null;
+                    return true;
+                }
+
                 var protoObj = CreateOrdinaryObject();
                 PropertyDescriptorStore.DefineOrUpdate(delPrototype, "prototype", new JsPropertyDescriptor
                 {
@@ -4688,6 +4745,24 @@ namespace JavaScriptRuntime
             if (obj is string && JavaScriptRuntime.String.TryGetPrototypeProperty(obj, name, out var stringPrototypeValue))
             {
                 return stringPrototypeValue;
+            }
+
+            if (obj is bool boolean)
+            {
+                var booleanWrapper = new JavaScriptRuntime.Boolean(boolean);
+                return TryGetInheritedPropertyValue(booleanWrapper, name, out var booleanInherited) ? booleanInherited : null;
+            }
+
+            if (obj is double or float or int or long or short or byte or System.Numerics.BigInteger)
+            {
+                var numberWrapper = CreatePrimitiveWrapper(obj, GlobalThis.NumberPrototypeValue, includeOwnStringMethods: false);
+                return TryGetInheritedPropertyValue(numberWrapper, name, out var numberInherited) ? numberInherited : null;
+            }
+
+            if (obj is JavaScriptRuntime.Symbol)
+            {
+                var symbolWrapper = CreatePrimitiveWrapper(obj, GlobalThis.SymbolPrototypeValue, includeOwnStringMethods: false);
+                return TryGetInheritedPropertyValue(symbolWrapper, name, out var symbolInherited) ? symbolInherited : null;
             }
 
             return TryGetInheritedPropertyValue(obj, name, out var inherited) ? inherited : null;

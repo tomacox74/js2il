@@ -54,14 +54,15 @@ internal sealed partial class LIRToILCompiler
         EmitInitializeMappedArgumentParameterFieldsIfNeeded(ilEncoder, scopeName, callableId, methodDescriptor);
 
         ilEncoder.LoadLocal(0);
-        // scope.arguments = RuntimeServices.CreateArgumentsObject(scope, mappedParameterNames, includeCallee);
+        // scope.arguments = RuntimeServices.CreateArgumentsObject(scope, mappedParameterNames, includeCallee, restrictCallee);
         ilEncoder.LoadLocal(0);
         EmitLoadArgumentsParameterNamesArray(ilEncoder, callableId.ArgumentsParameterNames);
         ilEncoder.LoadConstantI4(callableId.IncludeCalleeInArgumentsObject ? 1 : 0);
+        ilEncoder.LoadConstantI4(callableId.IncludeCalleeInArgumentsObject ? 0 : 1);
         var createArgsRef = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.RuntimeServices),
             nameof(JavaScriptRuntime.RuntimeServices.CreateArgumentsObject),
-            new[] { typeof(object), typeof(string[]), typeof(bool) });
+            new[] { typeof(object), typeof(string[]), typeof(bool), typeof(bool) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(createArgsRef);
         EmitStoreFieldByName(ilEncoder, scopeName, "arguments");

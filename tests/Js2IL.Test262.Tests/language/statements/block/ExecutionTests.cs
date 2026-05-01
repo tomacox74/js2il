@@ -6,7 +6,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
 {
     public ExecutionTests() : base(@"language\statements\block", "language.statements.block") { }
 
-    [Fact(DisplayName = "S12.1_A2", Skip = "ReferenceError and unresolved global call checks are not supported yet")]
+    [Fact(DisplayName = "S12.1_A2")]
     public Task S12_1_A2()
         => ExecutionTest("S12.1_A2");
 
