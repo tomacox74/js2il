@@ -255,6 +255,14 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (receiver is JavaScriptRuntime.Array array
+                && TryParseCanonicalIndexString(key, out var arrayIndex))
+            {
+                array.DeleteOwnIndex(arrayIndex);
+                PropertyDescriptorStore.Delete(receiver, key);
+                return true;
+            }
+
             // Arrays/typed arrays/strings and other CLR-backed objects: best-effort deletion.
             // We currently only materialize configurable own properties in PropertyDescriptorStore
             // for these receivers, so removing the descriptor is enough for surfaced built-ins like

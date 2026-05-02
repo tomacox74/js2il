@@ -51,6 +51,11 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (right is string str)
+            {
+                return BigInt.TryParseStringToBigInt(str, out var parsed) && left == parsed;
+            }
+
             var rightNumber = ToNumber(right);
             if (!IsFiniteInteger(rightNumber))
             {

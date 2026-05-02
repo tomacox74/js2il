@@ -143,17 +143,19 @@ public static class BigInt
         }
     }
 
-    private static BigInteger ParseStringToBigInt(string str)
+    internal static bool TryParseStringToBigInt(string? str, out BigInteger value)
     {
+        value = BigInteger.Zero;
         if (str == null)
         {
-            throw new TypeError("Cannot convert string to a BigInt");
+            return false;
         }
 
         var trimmed = str.Trim();
         if (trimmed.Length == 0)
         {
-            throw new SyntaxError("Cannot convert empty string to a BigInt");
+            value = BigInteger.Zero;
+            return true;
         }
 
         var sign = 1;
@@ -163,48 +165,59 @@ public static class BigInt
             trimmed = trimmed[1..];
             if (trimmed.Length == 0)
             {
-                throw new SyntaxError("Cannot convert string to a BigInt");
+                return false;
+            }
+
+            if (IsNonDecimalPrefix(trimmed))
+            {
+                return false;
             }
         }
 
         if (TryParseNonDecimal(trimmed, out var nonDecimal))
         {
-            return sign < 0 ? BigInteger.Negate(nonDecimal) : nonDecimal;
+            value = sign < 0 ? BigInteger.Negate(nonDecimal) : nonDecimal;
+            return true;
         }
 
         if (!BigInteger.TryParse(trimmed, NumberStyles.None, CultureInfo.InvariantCulture, out var bi))
         {
-            throw new SyntaxError("Cannot convert string to a BigInt");
+            return false;
         }
 
-        return sign < 0 ? BigInteger.Negate(bi) : bi;
+        value = sign < 0 ? BigInteger.Negate(bi) : bi;
+        return true;
+    }
+
+    private static BigInteger ParseStringToBigInt(string str)
+    {
+        if (str == null)
+        {
+            throw new TypeError("Cannot convert string to a BigInt");
+        }
+
+        if (TryParseStringToBigInt(str, out var value))
+        {
+            return value;
+        }
+
+        throw new SyntaxError("Cannot convert string to a BigInt");
     }
 
     private static bool TryParseNonDecimal(string trimmed, out BigInteger value)
     {
         value = BigInteger.Zero;
-        if (trimmed.Length < 3 || trimmed[0] != '0')
+        if (!IsNonDecimalPrefix(trimmed))
         {
             return false;
         }
 
         var digits = trimmed[2..];
-        var radix = trimmed[1] switch
-        {
-            'b' or 'B' => 2,
-            'o' or 'O' => 8,
-            'x' or 'X' => 16,
-            _ => 0
-        };
-
-        if (radix == 0)
-        {
-            return false;
-        }
+        var radix = GetNonDecimalRadix(trimmed[1]);
 
         if (digits.Length == 0)
         {
-            throw new SyntaxError("Cannot convert string to a BigInt");
+            return false;
         }
 
         foreach (var ch in digits)
@@ -219,7 +232,8 @@ public static class BigInt
 
             if (digit < 0 || digit >= radix)
             {
-                throw new SyntaxError("Cannot convert string to a BigInt");
+                value = BigInteger.Zero;
+                return false;
             }
 
             value = (value * radix) + digit;
@@ -227,4 +241,16 @@ public static class BigInt
 
         return true;
     }
+
+    private static bool IsNonDecimalPrefix(string value)
+        => value.Length >= 2 && value[0] == '0' && GetNonDecimalRadix(value[1]) != 0;
+
+    private static int GetNonDecimalRadix(char prefix)
+        => prefix switch
+        {
+            'b' or 'B' => 2,
+            'o' or 'O' => 8,
+            'x' or 'X' => 16,
+            _ => 0
+        };
 }

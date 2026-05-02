@@ -439,15 +439,41 @@ public partial class SymbolTableBuilder
             }
         }
 
-        void AnalyzeAssignmentLikeNode(INode node)
+        Scope GetScopeForNode(Scope currentScope, INode node)
         {
+            foreach (var childScope in currentScope.Children)
+            {
+                if (ReferenceEquals(childScope.AstNode, node))
+                {
+                    return childScope;
+                }
+            }
+
+            return currentScope;
+        }
+
+        bool ResolvesToCurrentScopeBinding(Scope currentScope, string name)
+        {
+            return scope.Bindings.TryGetValue(name, out var targetBinding)
+                && ReferenceEquals(TryResolveBinding(currentScope, name), targetBinding);
+        }
+
+        void AnalyzeAssignmentLikeNode(INode node, Scope currentScope)
+        {
+            currentScope = GetScopeForNode(currentScope, node);
+
             switch (node)
             {
                 case AssignmentExpression assignExpr when assignExpr.Left is Identifier identifier:
+                    if (!ResolvesToCurrentScopeBinding(currentScope, identifier.Name))
+                    {
+                        break;
+                    }
+
                     if (proposedClrTypes.TryGetValue(identifier.Name, out var inferredType))
                     {
                         // If any assignment conflicts with the inferred type, remove the proposed type.
-                        var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
                         if (rightType != inferredType)
                         {
                             proposedClrTypes.Remove(identifier.Name);
@@ -456,7 +482,7 @@ public partial class SymbolTableBuilder
                     else if (unitializedClrTypes.Contains(identifier.Name))
                     {
                         // An uninitialized variable can still be a nullable/reference type.
-                        var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
                         if (rightType?.IsValueType == false)
                         {
                             proposedClrTypes[identifier.Name] = rightType;
@@ -466,6 +492,11 @@ public partial class SymbolTableBuilder
                     break;
 
                 case UpdateExpression updateExpr when updateExpr.Argument is Identifier updateVariableIdentity:
+                    if (!ResolvesToCurrentScopeBinding(currentScope, updateVariableIdentity.Name))
+                    {
+                        break;
+                    }
+
                     // Update expressions only valid for number types.
                     if (proposedClrTypes.TryGetValue(updateVariableIdentity.Name, out var updateInferredType)
                         && updateInferredType != typeof(double))
@@ -488,7 +519,7 @@ public partial class SymbolTableBuilder
 
             foreach (var child in node.ChildNodes)
             {
-                AnalyzeAssignmentLikeNode(child);
+                AnalyzeAssignmentLikeNode(child, currentScope);
             }
         }
 
@@ -496,7 +527,7 @@ public partial class SymbolTableBuilder
         // still invalidate overly-specific stable type proposals.
         foreach (var statement in scope.AstNode.ChildNodes)
         {
-            AnalyzeAssignmentLikeNode(statement);
+            AnalyzeAssignmentLikeNode(statement, scope);
         }
 
         // For uninitialized uncaptured bindings, also consider assignments in nested blocks/scopes.

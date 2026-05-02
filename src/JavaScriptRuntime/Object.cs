@@ -553,9 +553,9 @@ namespace JavaScriptRuntime
 
             if (obj is JavaScriptRuntime.Array jsArray)
             {
-                for (int i = 0; i < jsArray.Count; i++)
+                foreach (var index in jsArray.GetOwnElementIndices())
                 {
-                    AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                    AddKey(keys, seen, index.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
                 }
             }
             else if (obj is string str)
@@ -3035,7 +3035,7 @@ namespace JavaScriptRuntime
             if (target is Array array
                 && ObjectRuntime.TryParseCanonicalIndexString(name, out var arrayIndex))
             {
-                return arrayIndex >= 0 && arrayIndex < array.length;
+                return array.HasOwnIndex(arrayIndex);
             }
 
             if (target is System.Collections.IDictionary dictObj)
@@ -3193,7 +3193,7 @@ namespace JavaScriptRuntime
                     return true;
                 }
 
-                return ObjectRuntime.TryParseCanonicalIndexString(name, out var index) && index >= 0 && index < jsArray.length;
+                return ObjectRuntime.TryParseCanonicalIndexString(name, out var index) && jsArray.HasOwnIndex(index);
             }
 
             if (target is TypedArrayBase typedArray)
