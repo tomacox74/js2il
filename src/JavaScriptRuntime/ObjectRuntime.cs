@@ -641,24 +641,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, propName, value, throwOnError);
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value!;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                // Extend with undefined (null) up to the index, then add.
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value!;
                 return value;
             }
 
@@ -738,24 +721,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, key, value, throwOnError);
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value!;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                // Extend with undefined (null) up to the index, then add.
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value!;
                 return value;
             }
 
@@ -841,24 +807,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, key, value, throwOnError);
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                // Extend with undefined (null) up to the index, then add.
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value;
                 return value;
             }
 
@@ -931,23 +880,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, indexKey, value, throwOnError) ?? value;
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value;
                 return value;
             }
 

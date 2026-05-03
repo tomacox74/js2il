@@ -13,8 +13,8 @@ namespace JavaScriptRuntime
     public class Array : IEnumerable<object?>
     {
         internal static readonly ExpandoObject Prototype = CreatePrototype();
+        private static readonly object Hole = new();
         private readonly List<object?> _items;
-        private readonly List<bool> _present;
         private int _logicalLength;
 
         private static ExpandoObject CreatePrototype()
@@ -81,8 +81,7 @@ namespace JavaScriptRuntime
 
             while (_items.Count < minCount)
             {
-                _items.Add(null);
-                _present.Add(false);
+                _items.Add(Hole);
             }
         }
 
@@ -509,21 +508,18 @@ namespace JavaScriptRuntime
         public Array()
         {
             _items = new List<object?>();
-            _present = new List<bool>();
             _logicalLength = 0;
             InitializeIntrinsicSurface();
         }
         public Array(int capacity)
         {
             _items = new List<object?>(capacity);
-            _present = new List<bool>(capacity);
             _logicalLength = 0;
             InitializeIntrinsicSurface();
         }
         public Array(System.Collections.IEnumerable collection)
         {
             _items = collection.Cast<object?>().ToList();
-            _present = Enumerable.Repeat(true, _items.Count).ToList();
             _logicalLength = _items.Count;
             InitializeIntrinsicSurface();
         }
@@ -531,14 +527,14 @@ namespace JavaScriptRuntime
         public int Count => LogicalCount;
 
         internal bool HasOwnIndex(int index)
-            => index >= 0 && index < _present.Count && _present[index];
+            => index >= 0 && index < _items.Count && !ReferenceEquals(_items[index], Hole);
 
         internal IEnumerable<int> GetOwnElementIndices()
         {
-            var upperBound = global::System.Math.Min(Count, _present.Count);
+            var upperBound = global::System.Math.Min(Count, _items.Count);
             for (int i = 0; i < upperBound; i++)
             {
-                if (_present[i])
+                if (!ReferenceEquals(_items[i], Hole))
                 {
                     yield return i;
                 }
@@ -552,8 +548,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            _items[index] = null;
-            _present[index] = false;
+            _items[index] = Hole;
             return true;
         }
 
@@ -571,7 +566,8 @@ namespace JavaScriptRuntime
                     return null;
                 }
 
-                return _items[index];
+                var value = _items[index];
+                return ReferenceEquals(value, Hole) ? null : value;
             }
             set
             {
@@ -583,7 +579,6 @@ namespace JavaScriptRuntime
                 if (index < _items.Count)
                 {
                     _items[index] = value;
-                    _present[index] = true;
                     return;
                 }
 
@@ -594,7 +589,6 @@ namespace JavaScriptRuntime
 
                 EnsureDenseStorage(index + 1);
                 _items[index] = value;
-                _present[index] = true;
             }
         }
 
@@ -602,7 +596,6 @@ namespace JavaScriptRuntime
         {
             EnsureDenseStorage(_logicalLength);
             _items.Add(item);
-            _present.Add(true);
             _logicalLength = _items.Count;
         }
 
@@ -612,7 +605,6 @@ namespace JavaScriptRuntime
             foreach (var item in collection)
             {
                 _items.Add(item);
-                _present.Add(true);
             }
             _logicalLength = _items.Count;
         }
@@ -621,7 +613,6 @@ namespace JavaScriptRuntime
         {
             EnsureDenseStorage(Count);
             _items.Insert(index, item);
-            _present.Insert(index, true);
             _logicalLength = _items.Count;
         }
 
@@ -630,7 +621,6 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(Count);
             var items = collection.ToList();
             _items.InsertRange(index, items);
-            _present.InsertRange(index, Enumerable.Repeat(true, items.Count));
             _logicalLength = _items.Count;
         }
 
@@ -638,7 +628,6 @@ namespace JavaScriptRuntime
         {
             EnsureDenseStorage(Count);
             _items.RemoveAt(index);
-            _present.RemoveAt(index);
             _logicalLength = _items.Count;
         }
 
@@ -646,7 +635,6 @@ namespace JavaScriptRuntime
         {
             EnsureDenseStorage(Count);
             _items.RemoveRange(index, count);
-            _present.RemoveRange(index, count);
             _logicalLength = _items.Count;
         }
 
@@ -654,7 +642,6 @@ namespace JavaScriptRuntime
         {
             EnsureDenseStorage(Count);
             _items.Reverse();
-            _present.Reverse();
             _logicalLength = _items.Count;
         }
 
@@ -664,7 +651,7 @@ namespace JavaScriptRuntime
             var presentValues = new List<object?>();
             for (int i = 0; i < _items.Count; i++)
             {
-                if (_present[i])
+                if (!ReferenceEquals(_items[i], Hole))
                 {
                     presentValues.Add(_items[i]);
                 }
@@ -676,12 +663,10 @@ namespace JavaScriptRuntime
                 if (i < presentValues.Count)
                 {
                     _items[i] = presentValues[i];
-                    _present[i] = true;
                 }
                 else
                 {
-                    _items[i] = null;
-                    _present[i] = false;
+                    _items[i] = Hole;
                 }
             }
             _logicalLength = _items.Count;
@@ -690,7 +675,6 @@ namespace JavaScriptRuntime
         public void Clear()
         {
             _items.Clear();
-            _present.Clear();
             _logicalLength = 0;
         }
 
@@ -1059,7 +1043,6 @@ namespace JavaScriptRuntime
                     if (newLen < _items.Count)
                     {
                         _items.RemoveRange(newLen, _items.Count - newLen);
-                        _present.RemoveRange(newLen, _present.Count - newLen);
                     }
                     _logicalLength = newLen;
                     return;
