@@ -17,19 +17,19 @@ public class ExecutionTests
     public Task _11_4_7_4_1()
         => ExecutionTestFromFile("11.4.7-4-1");
 
-    [Fact(DisplayName = "S11.4.7_A1", Skip = "Uses eval, which JS2IL does not support yet.")]
-    public Task S11_4_7_A1()
-        => ExecutionTestFromFile("S11.4.7_A1");
+    [Fact(DisplayName = "S11.4.7_A3_T3")]
+    public Task S11_4_7_A3_T3()
+        => ExecutionTestFromFile("S11.4.7_A3_T3");
 
     [Fact(DisplayName = "S11.4.7_A2.1_T1")]
     public Task S11_4_7_A2_1_T1()
         => ExecutionTestFromFile("S11.4.7_A2.1_T1");
 
-    [Fact(DisplayName = "S11.4.7_A3_T1", Skip = "Unary minus on boxed booleans does not yet match test262 semantics.")]
+    [Fact(DisplayName = "S11.4.7_A3_T1")]
     public Task S11_4_7_A3_T1()
         => ExecutionTestFromFile("S11.4.7_A3_T1");
 
-    [Fact(DisplayName = "S11.4.7_A3_T2", Skip = "Unary minus coercion on boxed numbers does not yet match test262 semantics.")]
+    [Fact(DisplayName = "S11.4.7_A3_T2")]
     public Task S11_4_7_A3_T2()
         => ExecutionTestFromFile("S11.4.7_A3_T2");
 

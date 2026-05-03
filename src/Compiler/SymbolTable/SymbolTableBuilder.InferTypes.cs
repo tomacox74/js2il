@@ -439,53 +439,88 @@ public partial class SymbolTableBuilder
             }
         }
 
-        // now we walk the statements in the scope to check assignments
-        foreach (var statement in scope.AstNode.ChildNodes)
+        Scope GetScopeForNode(Scope currentScope, INode node)
         {
-            if (statement is ExpressionStatement exprStmt)
+            return currentScope.Children.FirstOrDefault(childScope => ReferenceEquals(childScope.AstNode, node))
+                ?? currentScope;
+        }
+
+        bool ResolvesToCurrentScopeBinding(Scope currentScope, string name)
+        {
+            return scope.Bindings.TryGetValue(name, out var targetBinding)
+                && ReferenceEquals(TryResolveBinding(currentScope, name), targetBinding);
+        }
+
+        void AnalyzeAssignmentLikeNode(INode node, Scope currentScope)
+        {
+            currentScope = GetScopeForNode(currentScope, node);
+
+            switch (node)
             {
-                if (exprStmt.Expression is AssignmentExpression assignExpr && assignExpr.Left is Identifier identifier)
-                {
+                case AssignmentExpression assignExpr when assignExpr.Left is Identifier identifier:
+                    if (!ResolvesToCurrentScopeBinding(currentScope, identifier.Name))
+                    {
+                        break;
+                    }
+
                     if (proposedClrTypes.TryGetValue(identifier.Name, out var inferredType))
                     {
-                        // if any assigment conflicts with the inferred type, we remove the proposed type
-                           var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
+                        // If any assignment conflicts with the inferred type, remove the proposed type.
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
                         if (rightType != inferredType)
                         {
-                            // conflict, remove the proposed type
                             proposedClrTypes.Remove(identifier.Name);
                         }
                     }
-                    else
+                    else if (unitializedClrTypes.Contains(identifier.Name))
                     {
-                        if (unitializedClrTypes.Contains(identifier.Name))
+                        // An uninitialized variable can still be a nullable/reference type.
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                        if (rightType?.IsValueType == false)
                         {
-                            // a uninitialized variable can still be a nullable type (not a value type like number)
-                            // to consider.. use Nullable<T> for value types in future optimizations?
-                            var rightType = InferExpressionClrType(assignExpr.Right, scope, proposedClrTypes);
-                            if (rightType?.IsValueType == false)
-                            {
-                                proposedClrTypes[identifier.Name] = rightType;
-                            }
-                            unitializedClrTypes.Remove(identifier.Name);
+                            proposedClrTypes[identifier.Name] = rightType;
                         }
+                        unitializedClrTypes.Remove(identifier.Name);
                     }
-                }
-                else if (exprStmt.Expression is UpdateExpression updateExpr && updateExpr.Argument is Identifier updateVariableIdentity)
-                {
-                    // update expressions only valid for number types
-                    if (proposedClrTypes.TryGetValue(updateVariableIdentity.Name, out var inferredType))
+                    break;
+
+                case UpdateExpression updateExpr when updateExpr.Argument is Identifier updateVariableIdentity:
+                    if (!ResolvesToCurrentScopeBinding(currentScope, updateVariableIdentity.Name))
                     {
-                        if (inferredType != typeof(double))
-                        {
-                            // conflict, remove the proposed type
-                            proposedClrTypes.Remove(updateVariableIdentity.Name);
-                        }
+                        break;
+                    }
+
+                    // Update expressions only valid for number types.
+                    if (proposedClrTypes.TryGetValue(updateVariableIdentity.Name, out var updateInferredType)
+                        && updateInferredType != typeof(double))
+                    {
+                        proposedClrTypes.Remove(updateVariableIdentity.Name);
                     }
 
                     unitializedClrTypes.Remove(updateVariableIdentity.Name);
-                }
+                    break;
             }
+
+            if (node is FunctionDeclaration
+                || node is FunctionExpression
+                || node is ArrowFunctionExpression
+                || node is ClassDeclaration
+                || node is ClassExpression)
+            {
+                return;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                AnalyzeAssignmentLikeNode(child, currentScope);
+            }
+        }
+
+        // Walk statements recursively so nested assignments (e.g. inside sequence/call expressions)
+        // still invalidate overly-specific stable type proposals.
+        foreach (var statement in scope.AstNode.ChildNodes)
+        {
+            AnalyzeAssignmentLikeNode(statement, scope);
         }
 
         // For uninitialized uncaptured bindings, also consider assignments in nested blocks/scopes.
@@ -1666,9 +1701,21 @@ public partial class SymbolTableBuilder
                     var currentScope = scope;
                     while (currentScope != null)
                     {
-                        if (currentScope.Bindings.TryGetValue(id.Name, out var binding) && binding.ClrType != null)
+                        if (currentScope.Bindings.TryGetValue(id.Name, out var binding))
                         {
-                            return binding.ClrType;
+                            if (binding.ClrType != null)
+                            {
+                                return binding.ClrType;
+                            }
+
+                            if (binding.DeclarationNode is VariableDeclarator { Init: not null } declarator)
+                            {
+                                var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes);
+                                if (initializerType != null)
+                                {
+                                    return initializerType;
+                                }
+                            }
                         }
                         currentScope = currentScope.Parent;
                     }

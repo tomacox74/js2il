@@ -6,7 +6,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
 {
     public ExecutionTests() : base(@"language\statements\variable", "language.statements.variable") { }
 
-    [Fact(DisplayName = "S12.2_A2", Skip = "Deleting global vars currently throws a non-exception runtime value")]
+    [Fact(DisplayName = "S12.2_A2")]
     public Task S12_2_A2()
         => ExecutionTest("S12.2_A2");
 
@@ -14,7 +14,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_2_A3()
         => ExecutionTest("S12.2_A3");
 
-    [Fact(DisplayName = "S12.2_A4", Skip = "Unicode global var binding hits an IR storage bug")]
+    [Fact(DisplayName = "S12.2_A4")]
     public Task S12_2_A4()
         => ExecutionTest("S12.2_A4");
 

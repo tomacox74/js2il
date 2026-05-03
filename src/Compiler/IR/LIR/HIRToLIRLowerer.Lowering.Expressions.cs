@@ -604,13 +604,43 @@ public sealed partial class HIRToLIRLowerer
                         return true;
                     }
 
+                    if (binding.Kind == BindingKind.Var && _environmentLayout != null)
+                    {
+                        var storage = _environmentLayout.GetStorage(binding);
+                        if (storage != null)
+                        {
+                            var undefinedTemp = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefinedTemp));
+                            DefineTempStorage(undefinedTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                            if (storage.Kind == BindingStorageKind.LeafScopeField
+                                && !storage.Field.IsNil
+                                && !storage.DeclaringScope.IsNil)
+                            {
+                                var storedUndefinedTemp = EnsureObject(undefinedTemp);
+                                _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, storedUndefinedTemp));
+                                _variableMap[binding] = storedUndefinedTemp;
+                                resultTempVar = storedUndefinedTemp;
+                                return true;
+                            }
+
+                            if (storage.Kind == BindingStorageKind.IlLocal)
+                            {
+                                var slot = GetOrCreateVariableSlot(binding, varExpr.Name.Name, GetTempStorage(undefinedTemp));
+                                resultTempVar = EnsureTempMappedToSlot(slot, undefinedTemp);
+                                _variableMap[binding] = resultTempVar;
+                                return true;
+                            }
+                        }
+                    }
+
                     // Intrinsic globals (e.g., console, process, Infinity, NaN) are exposed via JavaScriptRuntime.GlobalThis.
                     // If this identifier is a Global binding and maps to a GlobalThis static property, emit a load.
                     if (varExpr.Name.Kind == BindingKind.Global)
                     {
                         var globalName = varExpr.Name.Name;
                         var gvType = typeof(JavaScriptRuntime.GlobalThis);
-                        var gvProp = gvType.GetProperty(globalName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                        var gvProp = gvType.GetProperty(globalName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
                         if (gvProp != null)
                         {
                             resultTempVar = CreateTempVariable();
@@ -624,7 +654,7 @@ public sealed partial class HIRToLIRLowerer
                         // e.g., window.setTimeout = setTimeout
                         var gvMethod = gvType.GetMethod(
                             globalName,
-                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
                         if (gvMethod != null)
                         {
                             resultTempVar = CreateTempVariable();
@@ -633,22 +663,16 @@ public sealed partial class HIRToLIRLowerer
                             return true;
                         }
 
-                        // Conservatively support reads of unknown globals by treating them as globalThis properties.
-                        // This enables common library patterns like:
-                        //   var root = (typeof window !== 'undefined' ? window : {});
-                        // where `window` is not declared in Node-like environments.
-                        // NOTE: This is *not* a general replacement for JavaScript's ReferenceError semantics;
-                        // missing globals should still be rejected by validation unless used in safe guarded patterns.
-                        var globalThisTemp = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal("globalThis", globalThisTemp));
-                        DefineTempStorage(globalThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
                         var keyTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstString(globalName, keyTemp));
                         DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
                         resultTempVar = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(globalThisTemp), EnsureObject(keyTemp), resultTempVar));
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue),
+                            new[] { EnsureObject(keyTemp) },
+                            resultTempVar));
                         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                         return true;
                     }
@@ -1094,6 +1118,11 @@ public sealed partial class HIRToLIRLowerer
 
     private Scope? FindDeclaringScope(BindingInfo binding)
     {
+        if (binding.DeclaringScope != null)
+        {
+            return binding.DeclaringScope;
+        }
+
         var current = _scope;
         while (current != null)
         {

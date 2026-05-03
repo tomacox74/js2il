@@ -94,9 +94,9 @@ namespace JavaScriptRuntime
     [IntrinsicObject("ReferenceError", IntrinsicCallKind.BuiltInError)]
     public class ReferenceError : Error
     {
-        public ReferenceError() : base() { Name = "ReferenceError"; }
-        public ReferenceError(string? message) : base(message) { Name = "ReferenceError"; }
-        public ReferenceError(string? message, Exception? inner) : base(message, inner) { Name = "ReferenceError"; }
+        public ReferenceError() : base() { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
+        public ReferenceError(string? message) : base(message) { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
+        public ReferenceError(string? message, Exception? inner) : base(message, inner) { Name = "ReferenceError"; PrototypeChain.SetPrototype(this, GlobalThis.ReferenceErrorPrototypeValue); }
     }
 
     [IntrinsicObject("SyntaxError", IntrinsicCallKind.BuiltInError)]

@@ -318,7 +318,7 @@ public sealed partial class HIRToLIRLowerer
 
                 // PL8.1: Primitive conversion callables: String(x), Number(x), Boolean(x)
                 // Distinct from `new String(...)` sugar handled in NewExpression lowering.
-                if (string.Equals(globalFunctionName, "String", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(globalFunctionName, "String", StringComparison.Ordinal))
                 {
                     if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
@@ -339,7 +339,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (string.Equals(globalFunctionName, "Number", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(globalFunctionName, "Number", StringComparison.Ordinal))
                 {
                     if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
@@ -371,7 +371,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (string.Equals(globalFunctionName, "Boolean", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(globalFunctionName, "Boolean", StringComparison.Ordinal))
                 {
                     if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
@@ -392,7 +392,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (string.Equals(globalFunctionName, "Symbol", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(globalFunctionName, "Symbol", StringComparison.Ordinal))
                 {
                     if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
@@ -412,7 +412,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (string.Equals(globalFunctionName, "BigInt", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(globalFunctionName, "BigInt", StringComparison.Ordinal))
                 {
                     if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var args))
                     {
@@ -435,7 +435,7 @@ public sealed partial class HIRToLIRLowerer
                 var gvType = typeof(JavaScriptRuntime.GlobalThis);
                 var gvMethod = gvType.GetMethod(
                     globalFunctionName,
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
 
                 if (gvMethod != null)
                 {

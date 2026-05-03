@@ -13,6 +13,24 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (unaryExpr.Operator == Acornima.Operator.TypeOf
+            && unaryExpr.Argument is HIRVariableExpression typeOfVarExpr
+            && typeOfVarExpr.Name.Kind == BindingKind.Global)
+        {
+            var globalNameTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(typeOfVarExpr.Name.Name, globalNameTemp));
+            DefineTempStorage(globalNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.TypeOfGlobalBinding),
+                new[] { EnsureObject(globalNameTemp) },
+                resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
         // void operator: evaluate operand for side-effects, then yield `undefined`.
         // This is commonly used by transpiled/compiled JS as `void 0`.
         if (unaryExpr.Operator == Acornima.Operator.Void)
@@ -74,8 +92,28 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
+                case HIRVariableExpression variableExpression:
+                {
+                    var bindingKind = variableExpression.Name.BindingInfo.Kind;
+
+                    if (bindingKind is BindingKind.Var or BindingKind.Let or BindingKind.Const or BindingKind.Function)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        return true;
+                    }
+
+                    // Unresolvable identifiers in non-strict code behave like non-references for delete.
+                    _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
                 default:
-                    // Minimal semantics: delete of non-reference returns true.
+                    if (!TryLowerExpressionDiscardResult(unaryExpr.Argument))
+                    {
+                        return false;
+                    }
+
                     _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
@@ -136,14 +174,6 @@ public sealed partial class HIRToLIRLowerer
         if (unaryExpr.Operator == Acornima.Operator.BitwiseNot)
         {
             resultTempVar = CreateTempVariable();
-            var unaryArgStorage = GetTempStorage(unaryArgTempVar);
-            if (unaryArgStorage.Kind == ValueStorageKind.UnboxedValue && unaryArgStorage.ClrType == typeof(double))
-            {
-                _methodBodyIR.Instructions.Add(new LIRBitwiseNotNumber(unaryArgTempVar, resultTempVar));
-                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
-            }
-
             _methodBodyIR.Instructions.Add(new LIRBitwiseNotDynamic(
                 EnsureObject(unaryArgTempVar),
                 resultTempVar));

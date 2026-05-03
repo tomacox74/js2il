@@ -13,6 +13,7 @@ namespace JavaScriptRuntime
     public class Array : IEnumerable<object?>
     {
         internal static readonly ExpandoObject Prototype = CreatePrototype();
+        private static readonly object Hole = new();
         private readonly List<object?> _items;
         private int _logicalLength;
 
@@ -60,6 +61,9 @@ namespace JavaScriptRuntime
             return exp;
         }
 
+        public bool hasOwnProperty(object? prop)
+            => JavaScriptRuntime.Object.hasOwn(this, prop);
+
         private int DenseCount => _items.Count;
         private int LogicalCount => _logicalLength > DenseCount ? _logicalLength : DenseCount;
 
@@ -77,7 +81,7 @@ namespace JavaScriptRuntime
 
             while (_items.Count < minCount)
             {
-                _items.Add(null);
+                _items.Add(Hole);
             }
         }
 
@@ -522,6 +526,32 @@ namespace JavaScriptRuntime
 
         public int Count => LogicalCount;
 
+        internal bool HasOwnIndex(int index)
+            => index >= 0 && index < _items.Count && !ReferenceEquals(_items[index], Hole);
+
+        internal IEnumerable<int> GetOwnElementIndices()
+        {
+            var upperBound = global::System.Math.Min(Count, _items.Count);
+            for (int i = 0; i < upperBound; i++)
+            {
+                if (!ReferenceEquals(_items[i], Hole))
+                {
+                    yield return i;
+                }
+            }
+        }
+
+        internal bool DeleteOwnIndex(int index)
+        {
+            if (!HasOwnIndex(index))
+            {
+                return false;
+            }
+
+            _items[index] = Hole;
+            return true;
+        }
+
         public object? this[int index]
         {
             get
@@ -536,7 +566,8 @@ namespace JavaScriptRuntime
                     return null;
                 }
 
-                return _items[index];
+                var value = _items[index];
+                return ReferenceEquals(value, Hole) ? null : value;
             }
             set
             {
@@ -571,7 +602,10 @@ namespace JavaScriptRuntime
         public void AddRange(IEnumerable<object?> collection)
         {
             EnsureDenseStorage(_logicalLength);
-            _items.AddRange(collection);
+            foreach (var item in collection)
+            {
+                _items.Add(item);
+            }
             _logicalLength = _items.Count;
         }
 
@@ -585,7 +619,8 @@ namespace JavaScriptRuntime
         public void InsertRange(int index, IEnumerable<object?> collection)
         {
             EnsureDenseStorage(Count);
-            _items.InsertRange(index, collection);
+            var items = collection.ToList();
+            _items.InsertRange(index, items);
             _logicalLength = _items.Count;
         }
 
@@ -613,7 +648,27 @@ namespace JavaScriptRuntime
         public void Sort(Comparison<object?> comparison)
         {
             EnsureDenseStorage(Count);
-            _items.Sort(comparison);
+            var presentValues = new List<object?>();
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (!ReferenceEquals(_items[i], Hole))
+                {
+                    presentValues.Add(_items[i]);
+                }
+            }
+
+            presentValues.Sort(comparison);
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (i < presentValues.Count)
+                {
+                    _items[i] = presentValues[i];
+                }
+                else
+                {
+                    _items[i] = Hole;
+                }
+            }
             _logicalLength = _items.Count;
         }
 
@@ -696,25 +751,7 @@ namespace JavaScriptRuntime
                 }
 
                 int intIndex = (int)index;
-
-                if (intIndex < Count)
-                {
-                    this[intIndex] = value;
-                    return;
-                }
-
-                if (intIndex == Count)
-                {
-                    Add(value);
-                    return;
-                }
-
-                while (Count < intIndex)
-                {
-                    Add(null);
-                }
-
-                Add(value);
+                this[intIndex] = value;
             }
         }
 

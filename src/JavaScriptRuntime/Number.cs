@@ -21,6 +21,20 @@ namespace JavaScriptRuntime
             };
         }
 
+        /// <summary>
+        /// ECMAScript: Number.isInteger(x) returns true only for finite integral Number values.
+        /// </summary>
+        public static bool isInteger(object? value)
+        {
+            return value switch
+            {
+                double d => double.IsFinite(d) && double.IsInteger(d),
+                float f => float.IsFinite(f) && float.IsInteger(f),
+                int or long or short or byte or sbyte or uint or ulong or ushort => true,
+                _ => false
+            };
+        }
+
         internal static bool IsNumberConstructor(Delegate candidate)
         {
             ArgumentNullException.ThrowIfNull(candidate);

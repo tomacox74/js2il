@@ -22,6 +22,9 @@ namespace JavaScriptRuntime
         private readonly ExpandoObject _expando = new();
         private IDictionary<string, object?> Properties => (IDictionary<string, object?>)_expando;
 
+        private static readonly JavaScriptRuntime.Console _defaultConsole = new(new ConsoleOutputSinks());
+        private static readonly JavaScriptRuntime.Node.Process _defaultProcess = new(new DefaultEnvironment());
+
         public GlobalThis()
         {
             SeedGlobalObjectIfMissing();
@@ -73,8 +76,7 @@ namespace JavaScriptRuntime
         // access `Array.prototype.*` members.
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
             throw new NotSupportedException("The Array constructor is not supported as a callable value yet.");
-        private static readonly Func<object[], object?[]?, object?> _arrayIsArrayValue = static (_, args) =>
-            JavaScriptRuntime.Array.isArray(args != null && args.Length > 0 ? args[0] : null);
+        private static readonly Func<object?, bool> _arrayIsArrayValue = JavaScriptRuntime.Array.isArray;
         private static readonly Func<object[], object?[]?, object?> _arrayFromValue = static (_, args) =>
         {
             var source = args != null && args.Length > 0 ? args[0] : null;
@@ -82,6 +84,10 @@ namespace JavaScriptRuntime
             var thisArg = args != null && args.Length > 2 ? args[2] : null;
             return JavaScriptRuntime.Array.from(source, mapFn, thisArg);
         };
+        private static readonly Func<object?, object?, double> _parseIntValue = parseInt;
+        private static readonly Func<object?, bool> _isFiniteValue = isFinite;
+        private static readonly Func<object?, bool> _isNaNValue = isNaN;
+        private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
@@ -119,6 +125,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _errorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.Error(message));
 
+        private static readonly Func<object[], object?[], object?> _referenceErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.ReferenceError(message));
+
         private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
 
@@ -133,6 +142,7 @@ namespace JavaScriptRuntime
 
         // Minimal Error.prototype object. Libraries may attach properties here.
         private static readonly object _errorPrototypeValue = new JsObject();
+        private static readonly object _referenceErrorPrototypeValue = new JsObject();
         private static readonly object _typeErrorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
@@ -141,8 +151,10 @@ namespace JavaScriptRuntime
         private static readonly object _objectPrototypeValue = new JsObject();
         private static readonly object _jsonValue = new JsObject();
         private static readonly object _numberPrototypeValue = new JsObject();
-        private static readonly object _booleanPrototypeValue = new JavaScriptRuntime.Boolean(false);
+        private static readonly object _booleanPrototypeValue = new JsObject();
+        private static readonly object _symbolPrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
+        private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
         // TypedArray intrinsic constructor and prototype
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
@@ -206,7 +218,16 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = JavaScriptRuntime.Array.Prototype
             });
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Array.Prototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _arrayConstructorValue
+            });
             ConfigureBuiltinFunctionObject(_arrayIsArrayValue);
+            DefineUndefinedPrototypeProperty(_arrayIsArrayValue);
             PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "isArray", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -238,16 +259,28 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = _booleanPrototypeValue
             });
+            ConfigureBuiltinFunctionObject(_symbolFunctionValue);
+            PropertyDescriptorStore.DefineOrUpdate(_symbolFunctionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _symbolPrototypeValue
+            });
 
             JavaScriptRuntime.Iterator.ConfigureIntrinsicSurface(_iteratorConstructorValue);
             JavaScriptRuntime.AsyncIterator.ConfigureIntrinsicSurface(_asyncIteratorConstructorValue);
 
             // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(JavaScriptRuntime.Array.Prototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_numberPrototypeValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(_booleanPrototypeValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(_symbolPrototypeValue, _objectPrototypeValue);
             DefineIntrinsicDataProperty(_jsonValue, "parse", (Func<object?, object?>)JavaScriptRuntime.JSON.Parse);
-            DefineIntrinsicDataProperty(_numberPrototypeValue, Symbol.toStringTag.DebugId, "Number");
+            DefineIntrinsicDataProperty(_numberPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Number");
             ConfigureConstructorPrototypeSurface(_regExpConstructorValue, JavaScriptRuntime.RegExp.Prototype);
             ConfigureBuiltinFunctionObject(_numberFunctionValue);
             PropertyDescriptorStore.DefineOrUpdate(_numberFunctionValue, "prototype", new JsPropertyDescriptor
@@ -259,6 +292,9 @@ namespace JavaScriptRuntime
                 Value = _numberPrototypeValue
             });
             DefineIntrinsicDataProperty(_numberPrototypeValue, "constructor", _numberFunctionValue);
+            ConfigureBuiltinFunctionObject(_numberIsIntegerValue);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "isInteger", _numberIsIntegerValue);
+            DefineUndefinedPrototypeProperty(_numberIsIntegerValue);
             PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, "toString", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -275,11 +311,23 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _numberPrototypeValueOfValue
             });
+            DefineIntrinsicDataProperty(_numberFunctionValue, "MAX_VALUE", double.MaxValue);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "MIN_VALUE", double.Epsilon);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "NaN", double.NaN);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "NEGATIVE_INFINITY", double.NegativeInfinity);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "POSITIVE_INFINITY", double.PositiveInfinity);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
+            ConfigureBuiltinFunctionObject(_parseIntValue);
+            ConfigureBuiltinFunctionObject(_isFiniteValue);
+            ConfigureBuiltinFunctionObject(_isNaNValue);
+            DefineUndefinedPrototypeProperty(_parseIntValue);
+            DefineUndefinedPrototypeProperty(_isFiniteValue);
+            DefineUndefinedPrototypeProperty(_isNaNValue);
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             ConfigureErrorIntrinsicSurface(_errorConstructorValue, _errorPrototypeValue, "Error", parentPrototype: _objectPrototypeValue);
+            ConfigureErrorIntrinsicSurface(_referenceErrorConstructorValue, _referenceErrorPrototypeValue, "ReferenceError", parentPrototype: _errorPrototypeValue);
             ConfigureErrorIntrinsicSurface(_typeErrorConstructorValue, _typeErrorPrototypeValue, "TypeError", parentPrototype: _errorPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "constructor", new JsPropertyDescriptor
@@ -306,6 +354,60 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _booleanPrototypeValueOfValue
             });
+            DefineIntrinsicDataProperty(_booleanPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Boolean");
+
+            PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = _symbolFunctionValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "toString", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)((_, __) =>
+                {
+                    var thisValue = RuntimeServices.GetCurrentThis();
+                    return thisValue is JavaScriptRuntime.Symbol symbol
+                        ? symbol.toString()
+                        : throw new TypeError("Symbol.prototype.toString called on incompatible receiver");
+                })
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_symbolPrototypeValue, "valueOf", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)((_, __) =>
+                {
+                    var thisValue = RuntimeServices.GetCurrentThis();
+                    return thisValue is JavaScriptRuntime.Symbol symbol
+                        ? symbol.valueOf()
+                        : throw new TypeError("Symbol.prototype.valueOf called on incompatible receiver");
+                })
+            });
+            DefineIntrinsicDataProperty(_symbolPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Symbol");
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "for", (Func<object?, object>)global::JavaScriptRuntime.Symbol.@for);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "keyFor", (Func<object?, object?>)global::JavaScriptRuntime.Symbol.keyFor);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "iterator", global::JavaScriptRuntime.Symbol.iterator);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "asyncIterator", global::JavaScriptRuntime.Symbol.asyncIterator);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "hasInstance", global::JavaScriptRuntime.Symbol.hasInstance);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "isConcatSpreadable", global::JavaScriptRuntime.Symbol.isConcatSpreadable);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "match", global::JavaScriptRuntime.Symbol.match);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "matchAll", global::JavaScriptRuntime.Symbol.matchAll);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "replace", global::JavaScriptRuntime.Symbol.replace);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "search", global::JavaScriptRuntime.Symbol.search);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "species", global::JavaScriptRuntime.Symbol.species);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "split", global::JavaScriptRuntime.Symbol.split);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "toPrimitive", global::JavaScriptRuntime.Symbol.toPrimitive);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "toStringTag", global::JavaScriptRuntime.Symbol.toStringTag);
+            DefineIntrinsicDataProperty(_symbolFunctionValue, "unscopables", global::JavaScriptRuntime.Symbol.unscopables);
 
             PropertyDescriptorStore.DefineOrUpdate(_errorConstructorValue, "isError", new JsPropertyDescriptor
             {
@@ -529,6 +631,18 @@ namespace JavaScriptRuntime
             });
         }
 
+        private static void DefineUndefinedPrototypeProperty(Delegate functionValue)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+        }
+
         private static bool ShouldExposeGc()
         {
             var serviceProvider = ServiceProvider;
@@ -631,8 +745,17 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.RegExp), RegExp);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.RegExp), dict[nameof(GlobalThis.RegExp)]);
 
+            dict.TryAdd(nameof(GlobalThis.Symbol), Symbol);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Symbol), dict[nameof(GlobalThis.Symbol)]);
+
+            dict.TryAdd(nameof(GlobalThis.Math), Math);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Math), dict[nameof(GlobalThis.Math)]);
+
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
+
+            dict.TryAdd(nameof(GlobalThis.ReferenceError), ReferenceError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.ReferenceError), dict[nameof(GlobalThis.ReferenceError)]);
 
             dict.TryAdd(nameof(GlobalThis.TypeError), TypeError);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.TypeError), dict[nameof(GlobalThis.TypeError)]);
@@ -680,14 +803,17 @@ namespace JavaScriptRuntime
                 DefineNonEnumerableDataProperty(nameof(GlobalThis.gc), dict[nameof(GlobalThis.gc)]);
             }
 
-            dict.TryAdd(nameof(GlobalThis.parseInt), (Func<object?, object?, double>)parseInt);
+            dict.TryAdd(nameof(GlobalThis.parseInt), _parseIntValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.parseInt), dict[nameof(GlobalThis.parseInt)]);
 
             dict.TryAdd(nameof(GlobalThis.parseFloat), (Func<object?, double>)parseFloat);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.parseFloat), dict[nameof(GlobalThis.parseFloat)]);
 
-            dict.TryAdd(nameof(GlobalThis.isFinite), (Func<object?, bool>)isFinite);
+            dict.TryAdd(nameof(GlobalThis.isFinite), _isFiniteValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.isFinite), dict[nameof(GlobalThis.isFinite)]);
+
+            dict.TryAdd(nameof(GlobalThis.isNaN), _isNaNValue);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.isNaN), dict[nameof(GlobalThis.isNaN)]);
         }
 
         /// <summary>
@@ -696,7 +822,13 @@ namespace JavaScriptRuntime
         /// <remarks>Expand as needed in the future.</remarks>
         public static JavaScriptRuntime.Node.Process process
         {
-            get => _serviceProvider.Value!.Resolve<JavaScriptRuntime.Node.Process>();
+            get
+            {
+                var serviceProvider = _serviceProvider.Value;
+                return serviceProvider != null
+                    ? serviceProvider.Resolve<JavaScriptRuntime.Node.Process>()
+                    : _defaultProcess;
+            }
         }
 
         /// <summary>
@@ -705,7 +837,13 @@ namespace JavaScriptRuntime
         /// </summary>
         public static JavaScriptRuntime.Console console 
         {
-            get => _serviceProvider.Value!.Resolve<JavaScriptRuntime.Console>();
+            get
+            {
+                var serviceProvider = _serviceProvider.Value;
+                return serviceProvider != null
+                    ? serviceProvider.Resolve<JavaScriptRuntime.Console>()
+                    : _defaultConsole;
+            }
         }
 
         /// <summary>
@@ -776,6 +914,10 @@ namespace JavaScriptRuntime
 
         public static object JSON => _jsonValue;
 
+        public static Delegate Symbol => _symbolFunctionValue;
+
+        public static Type Math => typeof(JavaScriptRuntime.Math);
+
         public static Delegate RegExp => _regExpConstructorValue;
 
         /// <summary>
@@ -784,6 +926,8 @@ namespace JavaScriptRuntime
         /// access <c>Error.prototype</c>.
         /// </summary>
         public static Func<object[], object?[], object?> Error => _errorConstructorValue;
+
+        public static Func<object[], object?[], object?> ReferenceError => _referenceErrorConstructorValue;
 
         public static Func<object[], object?[], object?> TypeError => _typeErrorConstructorValue;
 
@@ -867,7 +1011,10 @@ namespace JavaScriptRuntime
         {
             if (input == null) return double.NaN;
 
-            var text = DotNet2JSConversions.ToString(input).TrimStart();
+            var text = input is double inputDouble && inputDouble == 0.0
+                ? "0"
+                : DotNet2JSConversions.ToString(input);
+            text = text.TrimStart();
             if (text.Length == 0) return double.NaN;
 
             int sign = 1;
@@ -917,7 +1064,7 @@ namespace JavaScriptRuntime
             int digits = 0;
             foreach (var ch in text)
             {
-                int d = ch switch
+                int digit = ch switch
                 {
                     >= '0' and <= '9' => ch - '0',
                     >= 'a' and <= 'z' => ch - 'a' + 10,
@@ -925,12 +1072,12 @@ namespace JavaScriptRuntime
                     _ => -1
                 };
 
-                if (d < 0 || d >= radixValue)
+                if (digit < 0 || digit >= radixValue)
                 {
                     break;
                 }
 
-                value = (value * radixValue) + d;
+                value = (value * radixValue) + digit;
                 digits++;
             }
 
@@ -1032,6 +1179,14 @@ namespace JavaScriptRuntime
             return !double.IsNaN(d) && !double.IsInfinity(d);
         }
 
+        /// <summary>
+        /// Global isNaN implementation.
+        /// </summary>
+        public static bool isNaN(object? number)
+        {
+            return double.IsNaN(TypeUtilities.ToNumber(number));
+        }
+
         private static Timers GetTimers()
         {
             return _serviceProvider.Value!.Resolve<Timers>();
@@ -1086,7 +1241,7 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = prototypeValue
             });
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, Symbol.species.DebugId, new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, global::JavaScriptRuntime.Symbol.species.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = false,
@@ -1167,8 +1322,21 @@ namespace JavaScriptRuntime
 
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
         internal static object NumberPrototypeValue => _numberPrototypeValue;
+        internal static object BooleanPrototypeValue => _booleanPrototypeValue;
+        internal static object SymbolPrototypeValue => _symbolPrototypeValue;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;
+        internal static object ReferenceErrorPrototypeValue => _referenceErrorPrototypeValue;
         internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
+        internal static bool HasUndefinedPrototype(Delegate functionValue)
+        {
+            ArgumentNullException.ThrowIfNull(functionValue);
+
+            return functionValue.Method == _arrayIsArrayValue.Method
+                || functionValue.Method == _parseIntValue.Method
+                || functionValue.Method == _isFiniteValue.Method
+                || functionValue.Method == _isNaNValue.Method
+                || functionValue.Method == _numberIsIntegerValue.Method;
+        }
 
         private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)
         {
@@ -1238,6 +1406,7 @@ namespace JavaScriptRuntime
             // Keep this aligned with the explicitly exposed built-in error constructor values above.
             var prototype = error switch
             {
+                JavaScriptRuntime.ReferenceError => _referenceErrorPrototypeValue,
                 JavaScriptRuntime.TypeError => _typeErrorPrototypeValue,
                 _ => _errorPrototypeValue
             };
@@ -1248,6 +1417,15 @@ namespace JavaScriptRuntime
         internal static void ConfigureBuiltinFunctionObject(object functionValue)
         {
             JavaScriptRuntime.Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: false);
+        }
+
+        private static object? SymbolCall(object[] scopes, object?[]? args)
+        {
+            var symbol = args != null && args.Length > 0
+                ? (global::JavaScriptRuntime.Symbol)global::JavaScriptRuntime.Symbol.Call(args[0])
+                : (global::JavaScriptRuntime.Symbol)global::JavaScriptRuntime.Symbol.Call();
+            PrototypeChain.SetPrototype(symbol, _symbolPrototypeValue);
+            return symbol;
         }
     }
 }

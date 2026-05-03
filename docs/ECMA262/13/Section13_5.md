@@ -4,107 +4,77 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-03T15:15:02Z
+
+JS2IL covers the unary operator forms exercised by the current repo tests and imported test262 cases. `delete` remains tracked as limited because strict-mode early errors and some host-object deletion edge cases are not yet exhaustively validated.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 13.5 | Unary Operators | Supported | [tc39.es](https://tc39.es/ecma262/#sec-unary-operators) |
+| 13.5 | Unary Operators | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-unary-operators) |
 
 ## Subclauses
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 13.5.1 | The delete Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator) |
-| 13.5.1.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator-static-semantics-early-errors) |
-| 13.5.1.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator-runtime-semantics-evaluation) |
+| 13.5.1 | The delete Operator | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator) |
+| 13.5.1.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator-static-semantics-early-errors) |
+| 13.5.1.2 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-delete-operator-runtime-semantics-evaluation) |
 | 13.5.2 | The void Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-void-operator) |
 | 13.5.2.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-void-operator-runtime-semantics-evaluation) |
-| 13.5.3 | The typeof Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-typeof-operator) |
-| 13.5.3.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-typeof-operator-runtime-semantics-evaluation) |
-| 13.5.4 | Unary + Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-unary-plus-operator) |
-| 13.5.4.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-unary-plus-operator-runtime-semantics-evaluation) |
-| 13.5.5 | Unary - Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-unary-minus-operator) |
-| 13.5.5.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-unary-minus-operator-runtime-semantics-evaluation) |
-| 13.5.6 | Bitwise NOT Operator ( ~ ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator) |
-| 13.5.6.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator-runtime-semantics-evaluation) |
-| 13.5.7 | Logical NOT Operator ( ! ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator) |
-| 13.5.7.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator-runtime-semantics-evaluation) |
+| 13.5.3 | The typeof Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-typeof-operator) |
+| 13.5.3.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-typeof-operator-runtime-semantics-evaluation) |
+| 13.5.4 | Unary + Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-unary-plus-operator) |
+| 13.5.4.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-unary-plus-operator-runtime-semantics-evaluation) |
+| 13.5.5 | Unary - Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-unary-minus-operator) |
+| 13.5.5.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-unary-minus-operator-runtime-semantics-evaluation) |
+| 13.5.6 | Bitwise NOT Operator ( ~ ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator) |
+| 13.5.6.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator-runtime-semantics-evaluation) |
+| 13.5.7 | Logical NOT Operator ( ! ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator) |
+| 13.5.7.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator-runtime-semantics-evaluation) |
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 13.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-delete-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary + (Addition) | Supported | [`BinaryOperator_AddNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js)<br>[`BinaryOperator_AddStringNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddStringNumber.js)<br>[`BinaryOperator_AddStringString.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddStringString.js)<br>[`Classes_ClassConstructor_TwoParams_AddMethod.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js) | Fast-path string concat; general '+' follows JS coercion via runtime helper. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| delete for identifiers, properties, and index accesses | Supported with Limitations | [`11.4.1-0-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-0-1.js)<br>[`11.4.1-2-2.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-2-2.js)<br>[`11.4.1-3-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-3-1.js)<br>[`11.4.1-3-2.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-3-2.js)<br>[`11.4.1-3-3.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/delete/JavaScript/11.4.1-3-3.js) |  | Unary lowering implements property/index deletion through `ObjectRuntime.DeleteProperty` / `DeleteItem`, returns `false` for declared identifier bindings, and returns `true` for the non-strict unresolvable-identifier cases covered by test262. This clause remains limited because strict-mode early-error coverage and some host-object deletion edge cases are not yet exhaustively validated. |
 
 ### 13.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-void-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary - (Subtraction) | Supported | [`BinaryOperator_SubNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_SubNumberNumber.js)<br>[`Classes_ClassConstructor_TwoParams_SubtractMethod.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js) | Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable. |
-| Unary void operator (void) | Supported | [`UnaryOperator_VoidOperator.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_VoidOperator.js) | Evaluates operand for side effects and yields undefined (commonly used as `void 0` by transpiled/compiled JS). Implemented in IR lowering (HIR->LIR). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Unary void operator (void) | Supported | [`UnaryOperator_VoidOperator.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_VoidOperator.js) |  | Evaluates operand for side effects and yields undefined (commonly used as `void 0` by transpiled/compiled JS). Implemented in IR lowering (HIR->LIR). |
 
 ### 13.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-typeof-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary * (Multiplication) | Supported | [`BinaryOperator_MulNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js) |  |
-| Binary / (Division) | Supported | [`BinaryOperator_DivNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_DivNumberNumber.js) |  |
-| Binary % (Remainder) | Supported | [`BinaryOperator_ModNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_ModNumberNumber.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| typeof | Supported | [`UnaryOperator_Typeof.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js)<br>[`proxy.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/typeof/JavaScript/proxy.js) |  | Implemented via unary lowering plus `TypeUtilities.Typeof` / `ObjectRuntime.TypeOfGlobalBinding`, covering ordinary values, undeclared global identifiers, and proxy callability cases (`typeof proxy === "function"` for callable proxies). |
 
 ### 13.5.4 ([tc39.es](https://tc39.es/ecma262/#sec-unary-plus-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary ** (Exponentiation) | Supported | [`BinaryOperator_ExpNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_ExpNumberNumber.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Unary + | Supported | [`11.4.6-2-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-plus/JavaScript/11.4.6-2-1.js)<br>[`S11.4.6_A2.1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-plus/JavaScript/S11.4.6_A2.1_T1.js) |  | Implements JavaScript `ToNumber` coercion for unary plus through the compiler's numeric conversion path. Current test coverage includes empty-string and primitive/reference coercion cases imported from test262. |
+
+### 13.5.5 ([tc39.es](https://tc39.es/ecma262/#sec-unary-minus-operator))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Unary - | Supported | [`UnaryOperator_UnaryNegation_CoercesToNumber.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_UnaryNegation_CoercesToNumber.js)<br>[`11.4.7-4-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-minus/JavaScript/11.4.7-4-1.js)<br>[`S11.4.7_A2.1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-minus/JavaScript/S11.4.7_A2.1_T1.js) |  | Supports numeric negation with both typed fast-paths and dynamic coercion through the runtime unary-minus helper. Repo tests cover string-to-number coercion, signed zero, and imported test262 GetValue/coercion cases. |
 
 ### 13.5.6 ([tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary & (Bitwise AND) | Supported | [`BinaryOperator_BitwiseAndNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseAndNumberNumber.js) |  |
-| Binary ^ (Bitwise XOR) | Supported | [`BinaryOperator_BitwiseXorNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseXorNumberNumber.js) |  |
-| Binary \| (Bitwise OR) | Supported | [`BinaryOperator_BitwiseOrNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseOrNumberNumber.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Bitwise NOT (~) | Supported | [`UnaryOperator_BitwiseNot.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js)<br>[`S11.4.8_A2.1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/bitwise-not/JavaScript/S11.4.8_A2.1_T1.js) |  | Implements JavaScript int32-style bitwise negation, including property/reference GetValue cases from test262. The runtime helper also has a BigInt path, while the cited tests cover the numeric cases currently exercised in-repo. |
 
 ### 13.5.7 ([tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary << (Left shift) | Supported | [`BinaryOperator_LeftShiftNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LeftShiftNumberNumber.js) |  |
-| Binary >> (Signed right shift) | Supported | [`BinaryOperator_RightShiftNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_RightShiftNumberNumber.js) |  |
-| Binary >>> (Unsigned right shift) | Supported | [`BinaryOperator_UnsignedRightShiftNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_UnsignedRightShiftNumberNumber.js) |  |
-
-### 13.5.8 ([tc39.es](https://tc39.es/ecma262/#sec-relational-operators))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary < (Less than) | Supported | [`BinaryOperator_LessThan.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js) |  |
-| Binary <= (Less than or equal) | Supported | [`BinaryOperator_LessThanOrEqual.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js) |  |
-| Binary > (Greater than) | Supported | [`BinaryOperator_GreaterThan.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js) |  |
-| Binary >= (Greater than or equal) | Supported | [`BinaryOperator_GreaterThanOrEqual.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js) |  |
-
-### 13.5.9 ([tc39.es](https://tc39.es/ecma262/#sec-equality-operators))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary != (Inequality) | Supported | [`BinaryOperator_NotEqual.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js)<br>[`ControlFlow_If_NotEqual.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotEqual.js) | Value result emitted via Ceq inversion; conditional form branches with bne.un. Unboxing/coercion rules mirror equality operator handling for numbers/booleans. |
-| Binary !== (Strict inequality) | Supported |  | Implemented alongside != in the IL generator (value + branching). Dedicated tests to be added; semantics match JavaScript strict inequality (no type coercion). |
-| Binary == (Equality) | Supported | [`BinaryOperator_Equal.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js)<br>[`Function_IsEven_CompareResultToTrue.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_IsEven_CompareResultToTrue.js) | Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: tests/Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt. |
-
-### 13.5.10 ([tc39.es](https://tc39.es/ecma262/#sec-binary-logical-operators))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Binary && (Logical AND) with short-circuit | Supported | [`BinaryOperator_LogicalAnd_Value.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js)<br>[`BinaryOperator_LogicalAnd_ShortCircuit.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_ShortCircuit.js) | Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. |
-| Binary \|\| (Logical OR) with short-circuit | Supported | [`BinaryOperator_LogicalOr_Value.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js)<br>[`BinaryOperator_LogicalOr_ShortCircuit.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_ShortCircuit.js) | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 \|\| id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons. |
-| Binary in (property existence on object) | Supported | [`BinaryOperator_In_Object_OwnAndMissing.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js) | Implements key in obj via JavaScriptRuntime.Operators.In / runtime helpers. Supports own-property checks for ExpandoObject/object literals and array-like indices, with optional prototype-chain traversal when prototype-chain mode is enabled. Does not yet implement full spec TypeError behavior for non-object RHS beyond null/undefined and does not support symbols. |
-
-### 13.5.16 ([tc39.es](https://tc39.es/ecma262/#sec-conditional-operator))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Conditional operator (?:) | Supported | [`ControlFlow_Conditional_Ternary.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js)<br>[`ControlFlow_Conditional_Ternary_ShortCircuit.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary_ShortCircuit.js) | Expression-level branching with both arms coerced to object where needed; only the selected arm is evaluated. Verified via generator and execution tests in ControlFlow subgroup. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Logical NOT (!) | Supported | [`UnaryOperator_LogicalNot.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js)<br>[`UnaryOperator_DoubleNot_NaNTruthiness.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_DoubleNot_NaNTruthiness.js)<br>[`S11.4.9_A2.1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/logical-not/JavaScript/S11.4.9_A2.1_T1.js) |  | Supported end-to-end in the IR pipeline through `LIRLogicalNot`, using JavaScript truthiness coercion before inversion. Coverage includes both direct `!` / `!!` cases and imported test262 GetValue checks. |
 

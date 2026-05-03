@@ -609,6 +609,28 @@ public sealed partial class HIRToLIRLowerer
 
         var lirInstructions = _methodBodyIR.Instructions;
 
+        if (binding.Kind == BindingKind.Global)
+        {
+            var nameTemp = CreateTempVariable();
+            lirInstructions.Add(new LIRConstString(binding.Name, nameTemp));
+            DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var strictTemp = CreateTempVariable();
+            lirInstructions.Add(new LIRConstBoolean(UsesStrictAssignmentSemantics(), strictTemp));
+            DefineTempStorage(strictTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            storedValue = CreateTempVariable();
+            var boxedValue = EnsureObject(valueToStore);
+            lirInstructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.SetGlobalBindingValue),
+                new[] { EnsureObject(nameTemp), boxedValue, strictTemp },
+                storedValue));
+            DefineTempStorage(storedValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            InvalidateNumericRefinement(binding, storedValue);
+            return true;
+        }
+
         // Per-iteration environments: if this binding lives in an active materialized scope instance
         // (e.g., for-loop iteration scope), store into that scope temp.
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
@@ -930,6 +952,11 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Store the value to the appropriate location
+        if (binding.Kind == BindingKind.Global)
+        {
+            return TryStoreToBinding(binding, valueToStore, out resultTempVar);
+        }
+
         // Per-iteration environments: if this binding lives in an active materialized scope instance,
         // store into that scope temp.
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))

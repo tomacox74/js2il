@@ -13,23 +13,23 @@ public class ExecutionTests
         _verifySettings.DisableDiff();
     }
 
-    [Fact(DisplayName = "S11.4.8_A1", Skip = "Uses eval, which JS2IL does not support yet.")]
-    public Task S11_4_8_A1()
-        => ExecutionTestFromFile("S11.4.8_A1");
+    [Fact(DisplayName = "S11.4.8_A3_T3")]
+    public Task S11_4_8_A3_T3()
+        => ExecutionTestFromFile("S11.4.8_A3_T3");
 
     [Fact(DisplayName = "S11.4.8_A2.1_T1")]
     public Task S11_4_8_A2_1_T1()
         => ExecutionTestFromFile("S11.4.8_A2.1_T1");
 
-    [Fact(DisplayName = "S11.4.8_A2.1_T2", Skip = "Expected runtime ReferenceError for an unresolved identifier, but JS2IL rejects unresolved globals during compilation.")]
+    [Fact(DisplayName = "S11.4.8_A2.1_T2")]
     public Task S11_4_8_A2_1_T2()
         => ExecutionTestFromFile("S11.4.8_A2.1_T2");
 
-    [Fact(DisplayName = "S11.4.8_A3_T1", Skip = "Unary bitwise-not on boxed booleans does not yet match test262 semantics.")]
+    [Fact(DisplayName = "S11.4.8_A3_T1")]
     public Task S11_4_8_A3_T1()
         => ExecutionTestFromFile("S11.4.8_A3_T1");
 
-    [Fact(DisplayName = "S11.4.8_A3_T2", Skip = "Unary bitwise-not coercion on boxed numbers does not yet match test262 semantics.")]
+    [Fact(DisplayName = "S11.4.8_A3_T2")]
     public Task S11_4_8_A3_T2()
         => ExecutionTestFromFile("S11.4.8_A3_T2");
 

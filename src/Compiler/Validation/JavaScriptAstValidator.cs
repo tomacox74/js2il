@@ -596,32 +596,6 @@ public class JavaScriptAstValidator : IAstValidator
             return false;
         }
 
-        bool IsIntrinsicObjectName(string name)
-        {
-            try
-            {
-                return JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name) != null;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        void ReportMissingGlobal(string name, Node node, bool calledAsFunction)
-        {
-            var line = node.Location.Start.Line;
-            if (calledAsFunction)
-            {
-                result.Errors.Add($"Global function '{name}' is not yet supported (line {line}).");
-            }
-            else
-            {
-                result.Errors.Add($"Global identifier '{name}' is not yet supported (line {line}).");
-            }
-            result.IsValid = false;
-        }
-
         static bool IsUnsupportedEvalIdentifier(string name)
             => string.Equals(name, "eval", StringComparison.Ordinal);
 
@@ -972,90 +946,11 @@ public class JavaScriptAstValidator : IAstValidator
                                 break;
                             }
 
-                            // Determine if this identifier is in a call/new callee position.
-                            bool calledAsFunction = parent is CallExpression ce && ReferenceEquals(ce.Callee, id);
-                            bool calledAsConstructor = parent is NewExpression ne && ReferenceEquals(ne.Callee, id);
-                            bool invoked = calledAsFunction || calledAsConstructor;
-
-                            if (invoked)
-                            {
-                                if (AllowedGlobalCallables.Value.Contains(name))
-                                {
-                                    break;
-                                }
-
-                                JavaScriptRuntime.IntrinsicObjectInfo? intrinsicInfo = null;
-                                try
-                                {
-                                    intrinsicInfo = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
-                                }
-                                catch
-                                {
-                                    intrinsicInfo = null;
-                                }
-
-                                // Many intrinsics are constructible (e.g., Promise, Int32Array) but do not need a special
-                                // intrinsic call kind: the compiler maps `new X(...)` to the intrinsic CLR type/ctor.
-                                if (calledAsConstructor)
-                                {
-                                    if (intrinsicInfo != null)
-                                    {
-                                        break;
-                                    }
-
-                                    if (GlobalThisPropertyNames.Value.Contains(name))
-                                    {
-                                        break;
-                                    }
-
-                                    ReportMissingGlobal(name, id, calledAsFunction: true);
-                                    break;
-                                }
-
-                                // Callable intrinsics (e.g., Error(...), Symbol(...), BigInt(...))
-                                if (intrinsicInfo != null && intrinsicInfo.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
-                                {
-                                    break;
-                                }
-
-                                // GlobalThis static method callables (e.g., parseInt, setTimeout)
-                                if (GlobalThisMethodNames.Value.Contains(name))
-                                {
-                                    break;
-                                }
-
-                                ReportMissingGlobal(name, id, calledAsFunction: true);
-                                break;
-                            }
-
-                            // Identifier used as a value.
-                            // Intrinsic objects (e.g., Math, JSON) are supported when used as the base of a member access
-                            // (Math.abs, JSON.parse) or when invoked/constructed. They are not generally supported as
-                            // first-class values unless explicitly exposed via a GlobalThis value property.
-                            if (GlobalThisPropertyNames.Value.Contains(name))
-                            {
-                                break;
-                            }
-
-                            // Host-provided globals exposed as GlobalThis static methods (e.g., setTimeout) must also be
-                            // usable as first-class values so libraries can assign/forward them.
-                            if (GlobalThisMethodNames.Value.Contains(name))
-                            {
-                                break;
-                            }
-
-                            var isIntrinsic = IsIntrinsicObjectName(name);
-                            var usedAsMemberBase = parent is MemberExpression meObj && ReferenceEquals(meObj.Object, id);
-                            var usedAsExtendsBase = (parent is ClassDeclaration cd && ReferenceEquals(cd.SuperClass, id))
-                                || (parent is ClassExpression classExpr && ReferenceEquals(classExpr.SuperClass, id));
-                            if (isIntrinsic && (usedAsMemberBase || usedAsExtendsBase))
-                            {
-                                break;
-                            }
-
-                            ReportMissingGlobal(name, id, calledAsFunction: false);
+                            // Unresolved identifiers are modeled as runtime global-reference lookups.
+                            // This preserves JavaScript semantics such as runtime ReferenceError,
+                            // sloppy-mode global writes, and typeof-on-missing bindings.
+                            break;
                         }
-                        break;
                 }
             },
             exitNode: node =>

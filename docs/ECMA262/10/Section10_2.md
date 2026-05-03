@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T02:30:25Z
+> Last generated (UTC): 2026-05-03T15:15:02Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -33,29 +33,29 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 10.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Function calls, this binding, and arguments snapshots | Supported with Limitations | [`Function_Arguments_Basics.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js)<br>[`Function_Call_Basic.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`Classes_ClassMethod_ReturnsThis_IsSelf_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js) | Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, and a lazily materialized arguments array when the binding is referenced. The runtime still does not implement the full Arguments Exotic Object or every environment-record edge case from the spec. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Function calls, this binding, and lazy arguments object materialization | Supported with Limitations | [`Function_Arguments_Basics.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js)<br>[`Function_Arguments_MappedParameterAliasing.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js)<br>[`Function_Arguments_Unmapped_StrictAndComplex.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js)<br>[`Function_Call_Basic.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`Classes_ClassMethod_ReturnsThis_IsSelf_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js) |  | Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, and lazy materialization of a dedicated arguments object when the implicit binding is referenced. Non-arrow functions use mapped arguments objects for non-strict simple parameter lists and unmapped arguments objects for strict-mode or complex parameter lists; remaining gaps are the narrower 10.4.4 descriptor/invariant edge cases rather than wholesale lack of arguments-object support. |
 
 ### 10.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-ecmascript-function-objects-construct-argumentslist-newtarget))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Constructor calls and new.target-aware function execution | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) | JS2IL constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Constructor calls and new.target-aware function execution | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) |  | JS2IL constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete. |
 
 ### 10.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-makeconstructor))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Function prototype objects and constructor-style metadata | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js)<br>[`Function_Prototype_ToString_Basic.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) | Delegate-backed functions lazily synthesize prototype, constructor, name, length, and toString metadata so common library patterns continue to work. These properties are inferred from CLR delegates rather than being installed through the exact SetFunctionName / SetFunctionLength / MakeConstructor abstract-operation flow. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Function prototype objects and constructor-style metadata | Supported with Limitations | [`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js)<br>[`Function_Prototype_ToString_Basic.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js) |  | Delegate-backed functions lazily synthesize prototype, constructor, name, length, and toString metadata so common library patterns continue to work. These properties are inferred from CLR delegates rather than being installed through the exact SetFunctionName / SetFunctionLength / MakeConstructor abstract-operation flow. |
 
 ### 10.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-functiondeclarationinstantiation))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Function declaration instantiation and closures | Supported with Limitations | [`Function_ClosureMutatesOuterVariable.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ClosureMutatesOuterVariable.js)<br>[`Function_NestedFunctionAccessesMultipleScopes.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) | Scope-as-class lowering gives functions stable lexical captures and nested-scope access. Parameter environments, rest/arguments interactions, and strict-mode corner cases are supported only to the extent needed by the current compiler/runtime feature set. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Function declaration instantiation and closures | Supported with Limitations | [`Function_ClosureMutatesOuterVariable.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ClosureMutatesOuterVariable.js)<br>[`Function_NestedFunctionAccessesMultipleScopes.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) |  | Scope-as-class lowering gives functions stable lexical captures and nested-scope access. Non-arrow functions lazily install the implicit arguments binding, with mapped aliasing for simple non-strict parameter lists and unmapped semantics for strict-mode or complex parameter lists; remaining limitations are concentrated in stricter environment-record and exotic-object edge cases. |
 

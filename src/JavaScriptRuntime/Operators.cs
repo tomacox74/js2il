@@ -46,6 +46,16 @@ namespace JavaScriptRuntime
 
         private static bool BigIntLooseEquals(BigInteger left, object? right)
         {
+            if (right is null or JsNull or Symbol)
+            {
+                return false;
+            }
+
+            if (right is string str)
+            {
+                return BigInt.TryParseStringToBigInt(str, out var parsed) && left == parsed;
+            }
+
             var rightNumber = ToNumber(right);
             if (!IsFiniteInteger(rightNumber))
             {
@@ -78,32 +88,21 @@ namespace JavaScriptRuntime
                 case bool bo:
                     return bo ? 1d : 0d;
                 case string str:
-                    // JS ToNumber on strings: trim; empty -> 0; 0x.. hex allowed; otherwise parse as float
-                    var trimmed = str.Trim();
-                    if (trimmed.Length == 0)
-                        return 0d;
-                    if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (long.TryParse(trimmed.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var hex))
-                            return (double)hex;
-                        return double.NaN;
-                    }
-                    return double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
-                        ? parsed
-                        : double.NaN;
+                    return TypeUtilities.ParseStringNumber(str);
+                case JavaScriptRuntime.Boolean booleanObject:
+                    return booleanObject.valueOf() ? 1d : 0d;
                 case JsNull:
                     return 0d;
                 case BigInteger:
                     throw new TypeError("Cannot convert a BigInt value to a number");
             }
-            try
+
+            if (JavaScriptRuntime.Number.TryGetWrappedNumberValue(value, out var wrappedNumberValue))
             {
-                return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+                return wrappedNumberValue;
             }
-            catch
-            {
-                return double.NaN;
-            }
+
+            return TypeUtilities.ToNumber(value);
         }
         /// <summary>
         /// Implements JavaScript '+' semantics for two operands boxed as objects.
@@ -995,9 +994,16 @@ namespace JavaScriptRuntime
                 // Note: JavaScript uses IEEE 754 floating-point comparison semantics
                 if ((a is double || a is int) && (b is double || b is int))
                 {
-                    return ToNumber(a) == ToNumber(b);
+                    var left = ToNumber(a);
+                    var right = ToNumber(b);
+                    return !double.IsNaN(left) && !double.IsNaN(right) && left == right;
                 }
                 return false;
+            }
+
+            if (a is double leftDouble && b is double rightDouble)
+            {
+                return !double.IsNaN(leftDouble) && !double.IsNaN(rightDouble) && leftDouble == rightDouble;
             }
 
             // Same type, value comparison
@@ -1023,8 +1029,11 @@ namespace JavaScriptRuntime
         /// </remarks>
         public static bool In(object? property, object? obj)
         {
-            if (obj == null)
-                return false;
+            if (obj == null || obj is JsNull)
+                throw new TypeError("Right-hand side of 'in' should be an object");
+
+            if (obj is string || obj.GetType().IsValueType)
+                throw new TypeError("Right-hand side of 'in' should be an object");
 
             // Proxy has trap
             if (obj is JavaScriptRuntime.Proxy proxy)
@@ -1045,6 +1054,11 @@ namespace JavaScriptRuntime
             
             static bool HasOwn(object target, string name)
             {
+                if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
+                {
+                    return true;
+                }
+
                 if (target is System.Collections.IDictionary dict)
                 {
                     return dict.Contains(name);
@@ -1144,12 +1158,6 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool InstanceOf(object? value, object? ctor)
         {
-            // Primitives (including undefined/null) are never instances.
-            if (value is null) return false;
-            if (value is JsNull) return false;
-            if (value is string) return false;
-            if (value.GetType().IsValueType) return false;
-
             if (ctor is null || ctor is JsNull)
             {
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
@@ -1160,6 +1168,12 @@ namespace JavaScriptRuntime
             {
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }
+
+            // Primitives (including undefined/null) are never instances once the RHS is validated.
+            if (value is null) return false;
+            if (value is JsNull) return false;
+            if (value is string) return false;
+            if (value.GetType().IsValueType) return false;
 
             // Spec: let proto = ctor.prototype; if proto is not an object, throw.
             var proto = JavaScriptRuntime.ObjectRuntime.GetItem(ctor, "prototype");

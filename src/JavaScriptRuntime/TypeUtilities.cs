@@ -49,23 +49,20 @@ namespace JavaScriptRuntime
                 case short s: return s;
                 case byte b: return b;
                 case bool bo: return bo ? 1d : 0d;
+                case JavaScriptRuntime.Symbol:
+                    throw new TypeError("Cannot convert a Symbol value to a number");
                 case string str:
-                    {
-                        var trimmed = str.Trim();
-                        if (trimmed.Length == 0) return 0d;
-                        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (long.TryParse(trimmed.Substring(2), System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out var hex))
-                                return (double)hex;
-                            return double.NaN;
-                        }
-                        return double.TryParse(trimmed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
-                            ? parsed
-                            : double.NaN;
-                    }
+                    return ParseStringNumber(str);
+                case JavaScriptRuntime.Boolean booleanObject:
+                    return booleanObject.valueOf() ? 1d : 0d;
                 case JsNull: return 0d; // JS ToNumber(null) => +0 (JsNull represents JS null)
                 case BigInteger:
                     throw new TypeError("Cannot convert a BigInt value to a number");
+            }
+
+            if (JavaScriptRuntime.Number.TryGetWrappedNumberValue(value, out var wrappedNumberValue))
+            {
+                return wrappedNumberValue;
             }
 
             if (TryCoerceObjectToNumber(value, out var coercedNumber))
@@ -169,6 +166,49 @@ namespace JavaScriptRuntime
             }
             // Objects (including arrays, functions, expando) are truthy
             return true;
+        }
+
+        internal static double ParseStringNumber(string str)
+        {
+            var trimmed = str.Trim();
+            if (trimmed.Length == 0)
+            {
+                return 0d;
+            }
+
+            if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                if (long.TryParse(trimmed.Substring(2), System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out var hex))
+                {
+                    return (double)hex;
+                }
+
+                return double.NaN;
+            }
+
+            return trimmed switch
+            {
+                "Infinity" or "+Infinity" => double.PositiveInfinity,
+                "-Infinity" => double.NegativeInfinity,
+                "NaN" => double.NaN,
+                _ when ContainsDisallowedAlphaNumericCharacters(trimmed) => double.NaN,
+                _ => double.TryParse(trimmed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+                    ? parsed
+                    : double.NaN
+            };
+        }
+
+        private static bool ContainsDisallowedAlphaNumericCharacters(string value)
+        {
+            foreach (var ch in value)
+            {
+                if (char.IsLetter(ch) && ch is not 'e' and not 'E')
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool TryCoerceObjectToNumber(object value, out double result)

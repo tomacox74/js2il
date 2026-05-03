@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "primitive-numbers", Skip = "Object.values throws for number primitives.")]
+    [Fact(DisplayName = "primitive-numbers")]
 
     public Task primitive_numbers()
 
@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "primitive-strings", Skip = "Object.values returns incorrect values for string primitives.")]
+    [Fact(DisplayName = "primitive-strings")]
 
     public Task primitive_strings()
 
@@ -46,7 +46,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "getter-removing-future-key", Skip = "Object.values iteration order is incorrect after deleting a future key.")]
+    [Fact(DisplayName = "getter-removing-future-key")]
 
     public Task getter_removing_future_key()
 

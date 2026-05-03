@@ -192,24 +192,24 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_MissingGlobalFunction_ReportsError()
+    public void Validate_MissingGlobalFunction_IsAllowedAsRuntimeLookup()
     {
         // A global function call that is not implemented/exposed by the runtime.
         var js = "queueMicrotask(() => console.log('x'));";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Global function 'queueMicrotask'", StringComparison.Ordinal));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
-    public void Validate_MissingGlobalIdentifier_ReportsError()
+    public void Validate_MissingGlobalIdentifier_IsAllowedAsRuntimeLookup()
     {
         var js = "var x = window;";
         var ast = ParseStrict(js);
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Global identifier 'window'", StringComparison.Ordinal));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

@@ -138,10 +138,10 @@ public class RuntimeServices
     /// This captures the full runtime argument list (including extra args beyond formal parameters)
     /// and optionally maps simple-parameter indices back to leaf-scope parameter storage.
     /// </summary>
-    public static ArgumentsObject CreateArgumentsObject(object? scopeInstance, string[]? parameterNames, bool includeCallee)
+    public static ArgumentsObject CreateArgumentsObject(object? scopeInstance, string[]? parameterNames, bool includeCallee, bool restrictCallee)
     {
         var args = _currentArguments.Value;
-        return new ArgumentsObject(args, scopeInstance, parameterNames, includeCallee ? _currentCallee.Value : null);
+        return new ArgumentsObject(args, scopeInstance, parameterNames, includeCallee ? _currentCallee.Value : null, restrictCallee);
     }
 
     /// <summary>

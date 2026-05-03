@@ -25,8 +25,8 @@ public abstract class DiskExecutionTestsBase
             throw new FileNotFoundException($"JavaScript fixture not found: {jsPath}", jsPath);
         }
 
-        var outputRoot = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", _testCategory + ".ExecutionTests", Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(outputRoot);
+        var outputRoot = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", _testCategory + ".ExecutionTests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputRoot);
 
         try
         {
@@ -45,10 +45,10 @@ public abstract class DiskExecutionTestsBase
         {
             try
             {
-                if (Directory.Exists(outputRoot))
-                {
-                    Directory.Delete(outputRoot, recursive: true);
-                }
+                if (Directory.Exists(outputRoot))
+                {
+                    Directory.Delete(outputRoot, recursive: true);
+                }
             }
             catch
             {

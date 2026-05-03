@@ -17,15 +17,15 @@ public class ExecutionTests
     public Task _11_4_6_2_1()
         => ExecutionTestFromFile("11.4.6-2-1");
 
-    [Fact(DisplayName = "S11.4.6_A1", Skip = "Uses eval, which JS2IL does not support yet.")]
-    public Task S11_4_6_A1()
-        => ExecutionTestFromFile("S11.4.6_A1");
+    [Fact(DisplayName = "S11.4.6_A3_T3")]
+    public Task S11_4_6_A3_T3()
+        => ExecutionTestFromFile("S11.4.6_A3_T3");
 
     [Fact(DisplayName = "S11.4.6_A2.1_T1")]
     public Task S11_4_6_A2_1_T1()
         => ExecutionTestFromFile("S11.4.6_A2.1_T1");
 
-    [Fact(DisplayName = "S11.4.6_A3_T1", Skip = "Unary plus on boxed booleans does not yet match test262 semantics.")]
+    [Fact(DisplayName = "S11.4.6_A3_T1")]
     public Task S11_4_6_A3_T1()
         => ExecutionTestFromFile("S11.4.6_A3_T1");
 

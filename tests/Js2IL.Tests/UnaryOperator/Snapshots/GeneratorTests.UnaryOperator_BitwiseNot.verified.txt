@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20e4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,48 +40,49 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 120 (0x78)
+		// Code size: 136 (0x88)
 		.maxstack 8
-		.locals (
-			[0] class Modules.UnaryOperator_BitwiseNot/Scope
+		.locals init (
+			[0] class Modules.UnaryOperator_BitwiseNot/Scope,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.UnaryOperator_BitwiseNot/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldc.r8 5
-		IL_0014: conv.i4
-		IL_0015: not
-		IL_0016: conv.r8
-		IL_0017: box [System.Runtime]System.Double
-		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0021: pop
-		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0027: ldc.r8 0.0
-		IL_0030: conv.i4
-		IL_0031: not
-		IL_0032: conv.r8
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003d: pop
-		IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0043: ldc.r8 1
-		IL_004c: neg
-		IL_004d: conv.i4
-		IL_004e: not
-		IL_004f: conv.r8
+		IL_0006: ldc.r8 5
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_0019: stloc.1
+		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001f: ldloc.1
+		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0025: pop
+		IL_0026: ldc.r8 0.0
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_0039: stloc.1
+		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003f: ldloc.1
+		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0045: pop
+		IL_0046: ldc.r8 1
+		IL_004f: neg
 		IL_0050: box [System.Runtime]System.Double
-		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005a: pop
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_005a: stloc.1
 		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0060: ldc.r8 42
-		IL_0069: conv.i4
-		IL_006a: not
-		IL_006b: conv.r8
-		IL_006c: box [System.Runtime]System.Double
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0076: pop
-		IL_0077: ret
+		IL_0060: ldloc.1
+		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0066: pop
+		IL_0067: ldc.r8 42
+		IL_0070: box [System.Runtime]System.Double
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::BitwiseNot(object)
+		IL_007a: stloc.1
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: ldloc.1
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0086: pop
+		IL_0087: ret
 	} // end of method UnaryOperator_BitwiseNot::__js_module_init__
 
 } // end of class Modules.UnaryOperator_BitwiseNot
@@ -93,7 +94,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20dd
+		// Method begins at RVA 0x20ed
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

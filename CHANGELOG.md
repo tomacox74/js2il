@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- tests/test262: port 206 additional representative `test262` execution cases into `tests\Js2IL.Test262.Tests`, preserving upstream-relative paths and filenames, converting assertion checks to `console.log(...)`, marking current product-gap coverage with explicit `Skip` reasons, and expanding the checked-in suite to 327 total tests (261 passing, 66 skipped).
+- compiler/runtime/tests/test262: remove the remaining skipped representative `test262` execution ports by fixing block/function scope materialization, hosted global service resolution, sloppy assignment and unary lowering edge cases, and several built-in/runtime semantics gaps (including `Object.values`, `Number.isInteger`, `parseInt`, `isNaN`, `isFinite`, `Array.isArray`, loose BigInt equality, and non-constructible intrinsics), bringing the checked-in `Js2IL.Test262.Tests` slice to 326 passing tests with 0 skips.
 
 ## v0.9.10 - 2026-04-30
 

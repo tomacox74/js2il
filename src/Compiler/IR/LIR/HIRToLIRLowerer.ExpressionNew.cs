@@ -86,31 +86,7 @@ public sealed partial class HIRToLIRLowerer
         // PL3.3e: String constructor sugar
         if (string.Equals(ctorName, "String", StringComparison.Ordinal))
         {
-            if (newExpr.Arguments.Count > 1)
-            {
-                return false;
-            }
-
-            TempVariable source;
-            if (newExpr.Arguments.Count == 0)
-            {
-                source = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConstUndefined(source));
-                DefineTempStorage(source, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            }
-            else
-            {
-                if (!TryLowerExpression(newExpr.Arguments[0], out var argTemp))
-                {
-                    return false;
-                }
-                source = EnsureObject(argTemp);
-            }
-
-            resultTempVar = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConvertToString(source, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-            return true;
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
         }
 
         // PL3.3f: Boolean constructor object semantics
@@ -167,7 +143,7 @@ public sealed partial class HIRToLIRLowerer
             bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
             if (isStaticClass)
             {
-                return false;
+                return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
             }
 
             if (newExpr.Arguments.Count > 3)

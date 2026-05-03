@@ -20,7 +20,7 @@ public sealed partial class HIRToLIRLowerer
         if (propAccessExpr.Object is HIRVariableExpression intrinsicVar
             && intrinsicVar.Name.Kind == BindingKind.Global
             && string.Equals(intrinsicVar.Name.Name, "Symbol", StringComparison.Ordinal)
-            && JavaScriptRuntime.IntrinsicObjectRegistry.Get("Symbol") != null)
+            && JavaScriptRuntime.Symbol.IsWellKnown(propAccessExpr.PropertyName))
         {
             var intrinsicKeyTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, intrinsicKeyTemp));
@@ -378,6 +378,23 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLoadVariable(BindingInfo binding, out TempVariable result)
     {
         result = default;
+
+        if (binding.Kind == BindingKind.Global)
+        {
+            var nameTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, nameTemp));
+            DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            result = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.GetGlobalBindingValue),
+                new[] { EnsureObject(nameTemp) },
+                result));
+            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _tempBindingOrigin[result] = binding;
+            return true;
+        }
 
         // Flow-sensitive numeric refinement: if this binding was previously proven to hold an
         // unboxed double (e.g. via an earlier Number(x) call or EnsureNumber coercion), return

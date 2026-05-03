@@ -11,27 +11,31 @@ namespace JavaScriptRuntime;
 public sealed class ArgumentsObject : IDictionary<string, object?>
 {
     private static readonly ConcurrentDictionary<(Type ScopeType, string Name), FieldInfo?> _fieldCache = new();
+    private static readonly Func<object[], object?[], object?> _restrictedCalleeAccessor = static (_, __) =>
+        throw new TypeError("Cannot access restricted arguments property 'callee'");
 
     private readonly object?[] _indexedValues;
     private readonly bool[] _indexedPresent;
     private readonly string?[] _mappedParameterNames;
     private readonly object? _scopeInstance;
+    private readonly bool _hasRestrictedCalleeProperty;
     private Dictionary<string, object?>? _extraProperties;
     private object? _lengthValue;
     private bool _hasLengthProperty = true;
     private object? _calleeValue;
     private bool _hasCalleeProperty;
 
-    public ArgumentsObject(object?[]? args, object? scopeInstance, string[]? parameterNames, object? calleeValue)
+    public ArgumentsObject(object?[]? args, object? scopeInstance, string[]? parameterNames, object? calleeValue, bool restrictCallee = false)
     {
         _indexedValues = args != null && args.Length > 0 ? (object?[])args.Clone() : [];
         _indexedPresent = new bool[_indexedValues.Length];
         System.Array.Fill(_indexedPresent, true);
         _mappedParameterNames = BuildMappedParameterNames(parameterNames, _indexedValues.Length);
         _scopeInstance = scopeInstance;
+        _hasRestrictedCalleeProperty = restrictCallee;
         _lengthValue = (double)_indexedValues.Length;
         _calleeValue = calleeValue;
-        _hasCalleeProperty = calleeValue is not null;
+        _hasCalleeProperty = calleeValue is not null || restrictCallee;
         UpdateLengthDescriptor();
         UpdateCalleeDescriptor();
     }
@@ -101,6 +105,11 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
         if (string.Equals(key, "callee", StringComparison.Ordinal))
         {
+            if (_hasRestrictedCalleeProperty)
+            {
+                return false;
+            }
+
             if (!_hasCalleeProperty)
             {
                 return false;
@@ -143,6 +152,11 @@ public sealed class ArgumentsObject : IDictionary<string, object?>
 
         if (string.Equals(key, "callee", StringComparison.Ordinal))
         {
+            if (_hasRestrictedCalleeProperty)
+            {
+                throw new TypeError("Cannot access restricted arguments property 'callee'");
+            }
+
             value = _calleeValue;
             return _hasCalleeProperty;
         }
@@ -370,6 +384,11 @@ descriptorKeys:
 
         if (string.Equals(key, "callee", StringComparison.Ordinal))
         {
+            if (_hasRestrictedCalleeProperty)
+            {
+                throw new TypeError("Cannot access restricted arguments property 'callee'");
+            }
+
             _calleeValue = value;
             _hasCalleeProperty = true;
             UpdateCalleeDescriptor();
@@ -409,6 +428,19 @@ descriptorKeys:
         if (!_hasCalleeProperty)
         {
             PropertyDescriptorStore.Delete(this, "callee");
+            return;
+        }
+
+        if (_hasRestrictedCalleeProperty)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, "callee", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = false,
+                Get = _restrictedCalleeAccessor,
+                Set = _restrictedCalleeAccessor
+            });
             return;
         }
 

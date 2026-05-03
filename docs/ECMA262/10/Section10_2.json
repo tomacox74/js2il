@@ -110,16 +110,18 @@
     "entries": [
       {
         "clause": "10.2.1",
-        "feature": "Function calls, this binding, and arguments snapshots",
+        "feature": "Function calls, this binding, and lazy arguments object materialization",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-function-objects-call-thisargument-argumentslist",
         "testScripts": [
           "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js",
           "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js",
           "tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js"
         ],
-        "notes": "Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, and a lazily materialized arguments array when the binding is referenced. The runtime still does not implement the full Arguments Exotic Object or every environment-record edge case from the spec."
+        "notes": "Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, and lazy materialization of a dedicated arguments object when the implicit binding is referenced. Non-arrow functions use mapped arguments objects for non-strict simple parameter lists and unmapped arguments objects for strict-mode or complex parameter lists; remaining gaps are the narrower 10.4.4 descriptor/invariant edge cases rather than wholesale lack of arguments-object support."
       },
       {
         "clause": "10.2.2",
@@ -156,7 +158,7 @@
           "tests/Js2IL.Tests/Function/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js",
           "tests/Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js"
         ],
-        "notes": "Scope-as-class lowering gives functions stable lexical captures and nested-scope access. Parameter environments, rest/arguments interactions, and strict-mode corner cases are supported only to the extent needed by the current compiler/runtime feature set."
+        "notes": "Scope-as-class lowering gives functions stable lexical captures and nested-scope access. Non-arrow functions lazily install the implicit arguments binding, with mapped aliasing for simple non-strict parameter lists and unmapped semantics for strict-mode or complex parameter lists; remaining limitations are concentrated in stricter environment-record and exotic-object edge cases."
       }
     ]
   }

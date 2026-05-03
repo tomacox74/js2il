@@ -13,6 +13,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("String")]
     public static class String
     {
+        internal const string StringDataPropertyName = "[[StringData]]";
         private const int MaxRepeatResultLength = 50_000_000;
         private static readonly string MatchSymbolPropertyKey = Symbol.match.DebugId;
         private static readonly string MatchAllSymbolPropertyKey = Symbol.matchAll.DebugId;
@@ -263,8 +264,43 @@ namespace JavaScriptRuntime
                 string s => s,
                 char[] chars => new string(chars),
                 StringBuilder builder => builder.ToString(),
+                _ when value is not null
+                    && PropertyDescriptorStore.TryGetOwn(value, StringDataPropertyName, out var descriptor)
+                    && descriptor.Kind == JsPropertyDescriptorKind.Data
+                    => DotNet2JSConversions.ToString(descriptor.Value),
                 _ => throw new TypeError("String.prototype method called on incompatible receiver")
             };
+        }
+
+        internal static object Construct(object?[]? args, object? newTarget)
+        {
+            var value = args != null && args.Length > 0
+                ? DotNet2JSConversions.ToString(args[0])
+                : string.Empty;
+
+            var wrapper = Object.CreateOrdinaryObject();
+            object? prototype = Prototype;
+
+            if (newTarget is not null and not JsNull)
+            {
+                var candidatePrototype = ObjectRuntime.GetItem(newTarget, "prototype");
+                if (candidatePrototype is JsNull || TypeUtilities.IsConstructorReturnOverride(candidatePrototype))
+                {
+                    prototype = candidatePrototype;
+                }
+            }
+
+            PrototypeChain.SetPrototype(wrapper, prototype);
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, StringDataPropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = value
+            });
+
+            return wrapper;
         }
 
         private static double ToIntegerOrInfinity(object? value, double defaultValue)
@@ -318,6 +354,11 @@ namespace JavaScriptRuntime
             value = null;
             if (!PropertyDescriptorStore.TryGetOwn(target, propertyKey, out var descriptor))
             {
+                if (target is IDictionary<string, object?> dict && dict.TryGetValue(propertyKey, out value))
+                {
+                    return true;
+                }
+
                 return false;
             }
 

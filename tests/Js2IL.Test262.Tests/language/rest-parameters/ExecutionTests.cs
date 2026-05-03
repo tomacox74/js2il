@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task rest_parameters_call()
         => ExecutionTest("rest-parameters-call");
 
-    [Fact(DisplayName = "rest-parameters-produce-an-array", Skip = "Product defect: rest parameter array constructor is incorrect at runtime")]
+    [Fact(DisplayName = "rest-parameters-produce-an-array")]
     public Task rest_parameters_produce_an_array()
         => ExecutionTest("rest-parameters-produce-an-array");
 }

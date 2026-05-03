@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "15.4.3.2-0-2", Skip = "Array.isArray.length is incorrect.")]
+    [Fact(DisplayName = "15.4.3.2-0-2")]
 
     public Task _15_4_3_2_0_2()
 

@@ -14,7 +14,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "return-false-not-nan-numbers", Skip = "Global isNaN is not yet supported.")]
+    [Fact(DisplayName = "return-false-not-nan-numbers")]
 
     public Task return_false_not_nan_numbers()
 
@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "S15.1.2.4_A2.6", Skip = "Global isNaN is not yet supported.")]
+    [Fact(DisplayName = "S15.1.2.4_A2.6")]
 
     public Task S15_1_2_4_A2_6()
 
@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "tonumber-operations", Skip = "Global isNaN is not yet supported.")]
+    [Fact(DisplayName = "tonumber-operations")]
 
     public Task tonumber_operations()
 
@@ -38,7 +38,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "return-abrupt-from-tonumber-number-symbol", Skip = "Global isNaN is not yet supported.")]
+    [Fact(DisplayName = "return-abrupt-from-tonumber-number-symbol")]
 
     public Task return_abrupt_from_tonumber_number_symbol()
 
@@ -46,7 +46,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "toprimitive-valid-result", Skip = "Global isNaN is not yet supported.")]
+    [Fact(DisplayName = "toprimitive-valid-result")]
 
     public Task toprimitive_valid_result()
 

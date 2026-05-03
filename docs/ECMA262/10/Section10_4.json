@@ -405,16 +405,18 @@
       },
       {
         "clause": "10.4.4",
-        "feature": "Arguments objects materialize with mapped/unmapped exotic-object basics",
+        "feature": "Arguments objects materialize lazily with mapped/unmapped aliasing semantics",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects",
         "testScripts": [
           "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
           "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Mapped_ForOf.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Length_Delete.js",
           "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_ForOfAliasing.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js",
+          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-12-2.js",
+          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-13-c-2-s.js",
+          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-13-c-3-s.js"
         ],
         "test262Suites": [
           "pr",
@@ -431,7 +433,7 @@
           "test/language/arguments-object/10.6-12-1.js",
           "test/language/statements/for-of/arguments-unmapped-aliasing.js"
         ],
-        "notes": "When referenced, non-arrow functions now materialize a dedicated arguments object. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped snapshot semantics. Basic length/indexed access, deletion, own-key enumeration, and for..of value iteration now work for the covered cases, but full [[DefineOwnProperty]] invariants, callee/caller legacy details, and the exact accessor-helper machinery from 10.4.4.7 remain incomplete. The current bounded test262 MVP suites exercise both parse-negative strict-mode handling and mapped/unmapped arguments cases in this area."
+        "notes": "When referenced, non-arrow functions lazily materialize a dedicated ArgumentsObject. Non-strict functions with simple parameter lists use mapped aliasing against parameter storage, while strict-mode and complex-parameter functions use unmapped semantics; covered cases include indexed reads/writes, length property access and deletion, own-key enumeration, for..of value iteration, non-strict callee data descriptors, and strict restricted callee accessors. Remaining gaps are mainly full [[DefineOwnProperty]] invariants, exhaustive legacy caller/callee edge cases, and exact abstract-operation factoring for 10.4.4.7 rather than absence of mapped arguments support."
       },
       {
         "clause": "10.4.5",

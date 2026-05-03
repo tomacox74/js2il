@@ -13,23 +13,23 @@ public class ExecutionTests
         _verifySettings.DisableDiff();
     }
 
-    [Fact(DisplayName = "S11.8.6_A1", Skip = "Uses eval, which JS2IL does not support yet.")]
-    public Task S11_8_6_A1()
-        => ExecutionTestFromFile("S11.8.6_A1");
+    [Fact(DisplayName = "S11.8.6_A2.4_T1")]
+    public Task S11_8_6_A2_4_T1()
+        => ExecutionTestFromFile("S11.8.6_A2.4_T1");
 
     [Fact(DisplayName = "S11.8.6_A2.1_T1")]
     public Task S11_8_6_A2_1_T1()
         => ExecutionTestFromFile("S11.8.6_A2.1_T1");
 
-    [Fact(DisplayName = "S11.8.6_A2.1_T2", Skip = "Expected runtime ReferenceError for an unresolved identifier, but JS2IL rejects unresolved globals during compilation.")]
+    [Fact(DisplayName = "S11.8.6_A2.1_T2")]
     public Task S11_8_6_A2_1_T2()
         => ExecutionTestFromFile("S11.8.6_A2.1_T2");
 
-    [Fact(DisplayName = "S11.8.6_A2.1_T3", Skip = "Expected runtime ReferenceError for an unresolved identifier, but JS2IL rejects unresolved globals during compilation.")]
+    [Fact(DisplayName = "S11.8.6_A2.1_T3")]
     public Task S11_8_6_A2_1_T3()
         => ExecutionTestFromFile("S11.8.6_A2.1_T3");
 
-    [Fact(DisplayName = "S11.8.6_A3", Skip = "The instanceof TypeError behavior does not yet match test262 for primitive operands.")]
+    [Fact(DisplayName = "S11.8.6_A3")]
     public Task S11_8_6_A3()
         => ExecutionTestFromFile("S11.8.6_A3");
 

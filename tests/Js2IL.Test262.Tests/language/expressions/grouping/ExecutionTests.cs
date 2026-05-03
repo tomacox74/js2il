@@ -13,15 +13,15 @@ public class ExecutionTests
         _verifySettings.DisableDiff();
     }
 
-    [Fact(DisplayName = "S11.1.6_A1", Skip = "Uses eval, which JS2IL does not support yet.")]
-    public Task S11_1_6_A1()
-        => ExecutionTestFromFile("S11.1.6_A1");
+    [Fact(DisplayName = "S11.1.6_A3_T4")]
+    public Task S11_1_6_A3_T4()
+        => ExecutionTestFromFile("S11.1.6_A3_T4");
 
     [Fact(DisplayName = "S11.1.6_A2_T1")]
     public Task S11_1_6_A2_T1()
         => ExecutionTestFromFile("S11.1.6_A2_T1");
 
-    [Fact(DisplayName = "S11.1.6_A2_T2", Skip = "Deleting an unresolved parenthesized identifier is not yet supported.")]
+    [Fact(DisplayName = "S11.1.6_A2_T2")]
     public Task S11_1_6_A2_T2()
         => ExecutionTestFromFile("S11.1.6_A2_T2");
 

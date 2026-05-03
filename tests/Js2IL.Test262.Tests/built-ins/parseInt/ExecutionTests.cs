@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "S15.1.2.2_A1_T2", Skip = "parseInt mishandles number primitive coercion.")]
+    [Fact(DisplayName = "S15.1.2.2_A1_T2")]
 
     public Task S15_1_2_2_A1_T2()
 

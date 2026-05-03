@@ -14,11 +14,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_11_A1_T2()
         => ExecutionTest("S12.11_A1_T2");
 
-    [Fact(DisplayName = "S12.11_A1_T3", Skip = "Switch case mix throws a non-exception runtime value")]
+    [Fact(DisplayName = "S12.11_A1_T3")]
     public Task S12_11_A1_T3()
         => ExecutionTest("S12.11_A1_T3");
 
-    [Fact(DisplayName = "S12.11_A1_T4", Skip = "isNaN global resolution is not supported yet")]
+    [Fact(DisplayName = "S12.11_A1_T4")]
     public Task S12_11_A1_T4()
         => ExecutionTest("S12.11_A1_T4");
 

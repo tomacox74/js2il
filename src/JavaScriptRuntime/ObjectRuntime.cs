@@ -25,6 +25,46 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
             => Object.SetProperty(obj, name, value, throwOnError);
 
+        public static object? GetGlobalBindingValue(string name)
+        {
+            if (!HasGlobalBinding(name))
+            {
+                throw new ReferenceError($"{name} is not defined");
+            }
+
+            return Object.GetProperty(GlobalThis.globalThis, name);
+        }
+
+        public static object? SetGlobalBindingValue(string name, object? value, bool strict)
+        {
+            if (strict && !HasGlobalBinding(name))
+            {
+                throw new ReferenceError($"{name} is not defined");
+            }
+
+            return Object.SetProperty(GlobalThis.globalThis, name, value, throwOnError: strict);
+        }
+
+        public static bool DeleteGlobalBinding(string name)
+        {
+            if (!HasGlobalBinding(name))
+            {
+                return true;
+            }
+
+            return DeleteProperty(GlobalThis.globalThis, name);
+        }
+
+        public static string TypeOfGlobalBinding(string name)
+        {
+            if (!HasGlobalBinding(name))
+            {
+                return "undefined";
+            }
+
+            return TypeUtilities.Typeof(Object.GetProperty(GlobalThis.globalThis, name));
+        }
+
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
             => DefineObjectLiteralDataPropertyCore(
                 target,
@@ -125,6 +165,17 @@ namespace JavaScriptRuntime
             return target;
         }
 
+        private static bool HasGlobalBinding(string name)
+        {
+            var global = GlobalThis.globalThis;
+            if (global is IDictionary<string, object?> dict && dict.ContainsKey(name))
+            {
+                return true;
+            }
+
+            return PropertyDescriptorStore.TryGetOwn(global, name, out _);
+        }
+
         public static bool HasPropertyIn(object? key, object? obj)
             => Object.HasPropertyIn(key, obj);
 
@@ -200,6 +251,14 @@ namespace JavaScriptRuntime
                     dictObj.Remove(match);
                 }
 
+                PropertyDescriptorStore.Delete(receiver, key);
+                return true;
+            }
+
+            if (receiver is JavaScriptRuntime.Array array
+                && TryParseCanonicalIndexString(key, out var arrayIndex))
+            {
+                array.DeleteOwnIndex(arrayIndex);
                 PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
@@ -582,24 +641,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, propName, value, throwOnError);
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value!;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                // Extend with undefined (null) up to the index, then add.
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value!;
                 return value;
             }
 
@@ -679,24 +721,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, key, value, throwOnError);
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value!;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                // Extend with undefined (null) up to the index, then add.
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value!;
                 return value;
             }
 
@@ -782,24 +807,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, key, value, throwOnError);
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                // Extend with undefined (null) up to the index, then add.
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value;
                 return value;
             }
 
@@ -872,23 +880,7 @@ namespace JavaScriptRuntime
                     return SetProperty(array, indexKey, value, throwOnError) ?? value;
                 }
 
-                if (intIndex < array.Count)
-                {
-                    array[intIndex] = value;
-                    return value;
-                }
-
-                if (intIndex == array.Count)
-                {
-                    array.Add(value);
-                    return value;
-                }
-
-                while (array.Count < intIndex)
-                {
-                    array.Add(null);
-                }
-                array.Add(value);
+                array[intIndex] = value;
                 return value;
             }
 

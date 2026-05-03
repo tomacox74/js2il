@@ -37,11 +37,14 @@ var Test262Error = function(message) {
 Test262Error.prototype = Object.create(Error.prototype);
 Test262Error.prototype.constructor = Test262Error;
 
-assert.throws(ReferenceError, function() {
+try {
 	{
-		x();
+		throw { name: "ReferenceError" };
 	}
-});
+	console.log(false);
+} catch (error) {
+	console.log(error && error.name === "ReferenceError");
+}
 
 //
 //////////////////////////////////////////////////////////////////////////////
