@@ -23,6 +23,7 @@ jobs:
   benchmarkdotnet-suite:
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       pull-requests: write
     
@@ -68,6 +69,54 @@ jobs:
             echo "USE_PUBLISHED_JS2IL_PACKAGES=false" >> "$GITHUB_ENV"
           fi
 
+      - name: Wait for published Js2IL packages
+        if: env.USE_PUBLISHED_JS2IL_PACKAGES == 'true' && github.event_name == 'release'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const workflowId = 'publish-tool.yml';
+            const targetSha = process.env.GITHUB_SHA;
+            const targetRef = process.env.GITHUB_REF_NAME;
+            const deadlineMs = 20 * 60 * 1000;
+            const pollMs = 15 * 1000;
+            const startedAt = Date.now();
+
+            while (Date.now() - startedAt < deadlineMs) {
+              const response = await github.request('GET /repos/{owner}/{repo}/actions/runs', {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                event: 'push',
+                per_page: 50
+              });
+
+              const run = response.data.workflow_runs.find(candidate =>
+                candidate.path === '.github/workflows/publish-tool.yml' &&
+                candidate.head_sha === targetSha &&
+                candidate.head_branch === targetRef);
+
+              if (!run) {
+                core.info(`Waiting for ${workflowId} run for ${targetRef} (${targetSha}) to appear...`);
+                await new Promise(resolve => setTimeout(resolve, pollMs));
+                continue;
+              }
+
+              core.info(`Found ${workflowId} run ${run.id} with status=${run.status} conclusion=${run.conclusion ?? 'n/a'}`);
+
+              if (run.status !== 'completed') {
+                await new Promise(resolve => setTimeout(resolve, pollMs));
+                continue;
+              }
+
+              if (run.conclusion !== 'success') {
+                throw new Error(`${workflowId} run ${run.id} completed with conclusion=${run.conclusion}`);
+              }
+
+              core.info(`${workflowId} completed successfully; proceeding to package restore.`);
+              return;
+            }
+
+            throw new Error(`Timed out waiting for ${workflowId} to publish packages for ${targetRef}.`);
+
       - name: Restore benchmark project
         shell: bash
         run: |
@@ -79,7 +128,10 @@ jobs:
             delay=30
 
             for i in $(seq 1 $tries); do
+              dotnet nuget locals http-cache --clear || true
+
               if dotnet restore Benchmarks.csproj \
+                --no-cache \
                 -p:UsePublishedJs2ILPackages=true \
                 -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}"; then
                 echo "Restored Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION}"
