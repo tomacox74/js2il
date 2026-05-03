@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2166
+					// Method begins at RVA 0x2158
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -47,37 +47,40 @@
 				)
 				// Method begins at RVA 0x20ec
 				// Header size: 12
-				// Code size: 92 (0x5c)
+				// Code size: 78 (0x4e)
 				.maxstack 8
 				.locals init (
 					[0] string,
-					[1] object
+					[1] string,
+					[2] object
 				)
 
-				IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
-				IL_0005: ldstr "moduleValue"
-				IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_000f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-				IL_0014: ldstr ","
-				IL_0019: call string [System.Runtime]System.String::Concat(string, string)
-				IL_001e: stloc.0
-				IL_001f: ldloc.0
-				IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
-				IL_0025: ldstr "localValue"
-				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_002f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-				IL_0034: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0039: ldstr ","
-				IL_003e: call string [System.Runtime]System.String::Concat(string, string)
-				IL_0043: stloc.0
-				IL_0044: ldloc.0
-				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
-				IL_004a: ldstr "dynamicFnVisible"
-				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0059: stloc.1
-				IL_005a: ldloc.1
-				IL_005b: ret
+				IL_0000: ldstr "moduleValue"
+				IL_0005: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::TypeOfGlobalBinding(string)
+				IL_000a: stloc.0
+				IL_000b: ldloc.0
+				IL_000c: ldstr ","
+				IL_0011: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0016: stloc.0
+				IL_0017: ldstr "localValue"
+				IL_001c: call string [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::TypeOfGlobalBinding(string)
+				IL_0021: stloc.1
+				IL_0022: ldloc.0
+				IL_0023: ldloc.1
+				IL_0024: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0029: stloc.1
+				IL_002a: ldloc.1
+				IL_002b: ldstr ","
+				IL_0030: call string [System.Runtime]System.String::Concat(string, string)
+				IL_0035: stloc.1
+				IL_0036: ldloc.1
+				IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
+				IL_003c: ldstr "dynamicFnVisible"
+				IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_004b: stloc.2
+				IL_004c: ldloc.2
+				IL_004d: ret
 			} // end of method '<>DynamicFunction_L9C15'::__js_call__
 
 		} // end of class <>DynamicFunction_L9C15
@@ -89,7 +92,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215d
+				// Method begins at RVA 0x214f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -168,7 +171,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2146
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -229,7 +232,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216f
+		// Method begins at RVA 0x2161
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1701,9 +1701,21 @@ public partial class SymbolTableBuilder
                     var currentScope = scope;
                     while (currentScope != null)
                     {
-                        if (currentScope.Bindings.TryGetValue(id.Name, out var binding) && binding.ClrType != null)
+                        if (currentScope.Bindings.TryGetValue(id.Name, out var binding))
                         {
-                            return binding.ClrType;
+                            if (binding.ClrType != null)
+                            {
+                                return binding.ClrType;
+                            }
+
+                            if (binding.DeclarationNode is VariableDeclarator { Init: not null } declarator)
+                            {
+                                var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes);
+                                if (initializerType != null)
+                                {
+                                    return initializerType;
+                                }
+                            }
                         }
                         currentScope = currentScope.Parent;
                     }

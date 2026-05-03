@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ae
+			// Method begins at RVA 0x20d8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,39 +40,58 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 124 (0x7c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_New_Sugar/Scope,
-			[1] string
+			[1] object,
+			[2] class [System.Runtime]System.Func`3<object[], object, string>
 		)
 
 		IL_0000: newobj instance void Modules.String_New_Sugar/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldnull
-		IL_0007: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_000c: stloc.1
-		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0012: ldloc.1
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0018: pop
-		IL_0019: ldc.r8 123
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_002c: stloc.1
-		IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0032: ldloc.1
-		IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0038: pop
-		IL_0039: ldc.i4.0
-		IL_003a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_003f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0044: stloc.1
-		IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004a: ldloc.1
-		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0050: pop
-		IL_0051: ret
+		IL_0006: call class [System.Runtime]System.Func`3<object[], object, string> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_String()
+		IL_000b: ldc.i4.0
+		IL_000c: newarr [System.Runtime]System.Object
+		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0016: stloc.1
+		IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001c: ldloc.1
+		IL_001d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0022: pop
+		IL_0023: call class [System.Runtime]System.Func`3<object[], object, string> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_String()
+		IL_0028: stloc.2
+		IL_0029: ldloc.2
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldc.r8 123
+		IL_003b: box [System.Runtime]System.Double
+		IL_0040: stelem.ref
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0046: stloc.1
+		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004c: ldloc.1
+		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0052: pop
+		IL_0053: call class [System.Runtime]System.Func`3<object[], object, string> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_String()
+		IL_0058: stloc.2
+		IL_0059: ldloc.2
+		IL_005a: ldc.i4.1
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldc.i4.0
+		IL_0063: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0068: stelem.ref
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_006e: stloc.1
+		IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0074: ldloc.1
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007a: pop
+		IL_007b: ret
 	} // end of method String_New_Sugar::__js_module_init__
 
 } // end of class Modules.String_New_Sugar
@@ -84,7 +103,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b7
+		// Method begins at RVA 0x20e1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
