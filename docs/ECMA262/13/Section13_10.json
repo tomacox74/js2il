@@ -12,14 +12,31 @@
     {
       "clause": "13.10.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-relational-operators-runtime-semantics-evaluation"
     },
     {
       "clause": "13.10.2",
       "title": "InstanceofOperator ( V , target )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-instanceofoperator"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.10.2",
+        "feature": "instanceof",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-instanceofoperator",
+        "testScripts": [
+          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.1_T1.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A2.4_T1.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/instanceof/JavaScript/S11.8.6_A3.js"
+        ],
+        "notes": "Implemented through the compiler's `LIRInstanceOfOperator` lowering and `JavaScriptRuntime.Operators.InstanceOf`, with coverage for prototype-chain matches, left-to-right evaluation order, and TypeError on primitive/non-callable right-hand sides. This remains limited because the runtime currently targets delegate-backed constructors plus prototype-chain lookup/built-in error special cases, not the full `@@hasInstance` / exotic callable surface."
+      }
+    ]
+  }
 }

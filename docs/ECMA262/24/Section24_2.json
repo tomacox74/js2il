@@ -299,7 +299,7 @@
         "testScripts": [
           "tests/Js2IL.Tests/Set/JavaScript/Set_Algebra_Methods.js"
         ],
-        "notes": "The ES2025 Set operation methods are implemented, but non-Set operands are normalized through new Set(iterable) rather than the full spec set-like-object protocol."
+        "notes": "The ES2025 Set algebra methods are implemented for Set inputs and generic iterables, but JS2IL currently normalizes non-Set operands through new Set(iterable) instead of the full ES2025 set-like protocol (GetSetRecord/size/has/keys)."
       },
       {
         "clause": "24.2.6.1",
@@ -307,6 +307,17 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createsetiterator",
         "notes": "Set instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %SetIteratorPrototype%[@@toStringTag] remains incomplete."
+      },
+      {
+        "clause": "24.2.6.2.2",
+        "feature": "%SetIteratorPrototype%[@@toStringTag]",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%",
+        "testScripts": [
+          "tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js",
+          "tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js"
+        ],
+        "notes": "Set iterators currently implement the runtime next()/return() protocol used by values(), keys(), entries(), and @@iterator, but JS2IL does not yet install the spec %SetIteratorPrototype% Symbol.toStringTag metadata."
       }
     ]
   }

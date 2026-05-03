@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T06:55:11Z
+> Last generated (UTC): 2026-05-03T15:15:03Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -54,42 +54,48 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 24.2.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-set-iterable))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| new Set() | Supported | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js)<br>[`Require_Util_Types_Expanded.js`](../../../tests/Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js) | Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize. |
-| new Set(iterable) | Supported | [`Set_Constructor_Iterable.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js) | JavaScriptRuntime.Set now accepts a single iterable argument and consumes it with the runtime iterator protocol, preserving insertion order and ignoring duplicates. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| new Set() | Supported | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js)<br>[`Require_Util_Types_Expanded.js`](../../../tests/Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js) |  | Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize. |
+| new Set(iterable) | Supported | [`Set_Constructor_Iterable.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js) |  | JavaScriptRuntime.Set now accepts a single iterable argument and consumes it with the runtime iterator protocol, preserving insertion order and ignoring duplicates. |
 
 ### 24.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) | JS2IL now exposes globalThis.Set as a constructor value, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.Set as a constructor value, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete. |
 
 ### 24.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator | Supported | [`Set_Core_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) | JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator | Supported | [`Set_Core_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) |  | JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries. |
 
 ### 24.2.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype.clear))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Core Set prototype members (clear, delete, entries, forEach, keys, values, @@iterator) | Supported | [`Set_Core_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) | These members are available on Set instances and use native iterator objects for keys/values/entries. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Core Set prototype members (clear, delete, entries, forEach, keys, values, @@iterator) | Supported | [`Set_Core_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) |  | These members are available on Set instances and use native iterator objects for keys/values/entries. |
 
 ### 24.2.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype.difference))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| New Set methods (difference, intersection, isDisjointFrom, isSubsetOf, isSupersetOf, symmetricDifference, union) | Supported with Limitations | [`Set_Algebra_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Algebra_Methods.js) | The ES2025 Set operation methods are implemented, but non-Set operands are normalized through new Set(iterable) rather than the full spec set-like-object protocol. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| New Set methods (difference, intersection, isDisjointFrom, isSubsetOf, isSupersetOf, symmetricDifference, union) | Supported with Limitations | [`Set_Algebra_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Algebra_Methods.js) |  | The ES2025 Set algebra methods are implemented for Set inputs and generic iterables, but JS2IL currently normalizes non-Set operands through new Set(iterable) instead of the full ES2025 set-like protocol (GetSetRecord/size/has/keys). |
 
 ### 24.2.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-createsetiterator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Set iteration in for-of and other runtime iterator consumers | Supported with Limitations |  | Set instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %SetIteratorPrototype%[@@toStringTag] remains incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Set iteration in for-of and other runtime iterator consumers | Supported with Limitations |  |  | Set instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %SetIteratorPrototype%[@@toStringTag] remains incomplete. |
+
+### 24.2.6.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-%setiteratorprototype%-%symbol.tostringtag%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %SetIteratorPrototype%[@@toStringTag] | Not Yet Supported | [`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) |  | Set iterators currently implement the runtime next()/return() protocol used by values(), keys(), entries(), and @@iterator, but JS2IL does not yet install the spec %SetIteratorPrototype% Symbol.toStringTag metadata. |
 

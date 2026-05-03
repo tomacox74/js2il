@@ -55,22 +55,22 @@
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js",
-            "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
-            "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js",
-            "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js",
-            "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js",
-            "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_RestrictedCallerArgumentsProperties.js"
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js",
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js",
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js",
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js"
         ],
         "test262Suites": [
-            "pr",
-            "nightly"
-          ],
-          "test262Paths": [
-            "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-1.js",
-            "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-2.js",
-            "test/language/expressions/arrow-function/ArrowFunction_restricted-properties.js"
-          ],
-          "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). The current bounded test262 MVP suites provide additional evidence for concise-body parsing and invocation in the common non-async arrow path, including the restricted inherited caller/arguments accessors required for arrow function objects."
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-1.js",
+          "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-2.js",
+          "test/language/expressions/arrow-function/ArrowFunction_restricted-properties.js"
+        ],
+        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). They do not create their own arguments object: when arguments is referenced, it resolves through the nearest non-arrow function scope, while the current bounded test262 MVP suites also cover the restricted caller/arguments accessors required on arrow function objects."
       },
       {
         "clause": "15.3.2",

@@ -278,6 +278,17 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createmapiterator",
         "notes": "Map instances now expose Symbol.iterator and the keys/values/entries methods return native iterator objects. Iterator prototype metadata such as %MapIteratorPrototype%[@@toStringTag] remains incomplete."
+      },
+      {
+        "clause": "24.1.5.2.2",
+        "feature": "%MapIteratorPrototype%[@@toStringTag]",
+        "status": "Not Yet Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-%mapiteratorprototype%-%symbol.tostringtag%",
+        "testScripts": [
+          "tests/Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js",
+          "tests/Js2IL.Tests/Map/JavaScript/Map_Symbol_Iterator.js"
+        ],
+        "notes": "Map iterators currently implement the runtime next()/return() protocol used by entries(), keys(), values(), and @@iterator, but JS2IL does not yet install the spec %MapIteratorPrototype% Symbol.toStringTag metadata."
       }
     ]
   }
