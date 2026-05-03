@@ -441,15 +441,8 @@ public partial class SymbolTableBuilder
 
         Scope GetScopeForNode(Scope currentScope, INode node)
         {
-            foreach (var childScope in currentScope.Children)
-            {
-                if (ReferenceEquals(childScope.AstNode, node))
-                {
-                    return childScope;
-                }
-            }
-
-            return currentScope;
+            return currentScope.Children.FirstOrDefault(childScope => ReferenceEquals(childScope.AstNode, node))
+                ?? currentScope;
         }
 
         bool ResolvesToCurrentScopeBinding(Scope currentScope, string name)
