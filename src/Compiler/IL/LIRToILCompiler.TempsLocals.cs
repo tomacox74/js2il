@@ -914,7 +914,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
                     }
 
-                    EmitLoadTemp(getI32.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsDouble(getI32.Index, ilEncoder, allocation, methodDescriptor);
 
                     var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
