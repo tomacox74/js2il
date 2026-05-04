@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.13 - 2026-05-04
+
 - compiler/tests: infer stable primitive parameter types (`number`, `boolean`, and `string`) for direct class method calls when all visible call sites agree, allowing generated IL to use typed parameters and direct primitive operations while keeping delegate-backed callables on the object ABI.
 
 ## v0.9.12 - 2026-05-04
