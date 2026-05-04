@@ -1,6 +1,7 @@
 using System;
 using System.Dynamic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime
 {
@@ -36,13 +37,20 @@ namespace JavaScriptRuntime
         }
 
         // JS ToNumber coercion used by codegen slow paths when operand type is uncertain
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double ToNumber(object? value)
         {
+            if (value is double d) return d;
             // JS ToNumber(undefined) => NaN (undefined is represented as CLR null)
             if (value == null) return double.NaN;
+
+            return ToNumberSlow(value);
+        }
+
+        private static double ToNumberSlow(object value)
+        {
             switch (value)
             {
-                case double d: return d;
                 case float f: return (double)f;
                 case int i: return i;
                 case long l: return l;

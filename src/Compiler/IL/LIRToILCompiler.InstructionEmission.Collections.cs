@@ -360,7 +360,7 @@ internal sealed partial class LIRToILCompiler
                     }
 
                     // Index must be numeric double
-                    EmitLoadTemp(getI32.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsDouble(getI32.Index, ilEncoder, allocation, methodDescriptor);
 
                     var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
