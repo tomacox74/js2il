@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.12 - 2026-05-04
+
 - compiler/runtime/tests: fix the prime benchmark regression by restoring direct `Int32Array` numeric-index hot paths (including boxed numeric indexes) instead of falling back to generic item helpers, repairing the corresponding inline typed-array IL emission for verifier-safe direct reads, and adding a boxed-double `TypeUtilities.ToNumber(...)` fast path to reduce coercion overhead in hot loops.
 
 ## v0.9.11 - 2026-05-03
