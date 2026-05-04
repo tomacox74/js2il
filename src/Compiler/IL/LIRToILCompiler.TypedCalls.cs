@@ -99,7 +99,8 @@ internal sealed partial class LIRToILCompiler
 
         for (int i = 0; i < argsToPass; i++)
         {
-            EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+            var parameterClrType = i < instruction.ParameterClrTypes.Count ? instruction.ParameterClrTypes[i] : null;
+            EmitLoadTempAsParameterType(instruction.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
         }
 
         for (int i = argsToPass; i < jsParamCount; i++)
@@ -138,7 +139,8 @@ internal sealed partial class LIRToILCompiler
         int argsToPass = Math.Min(instruction.Arguments.Count, jsParamCount);
         for (int i = 0; i < argsToPass; i++)
         {
-            EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+            var parameterClrType = i < instruction.ParameterClrTypes.Count ? instruction.ParameterClrTypes[i] : null;
+            EmitLoadTempAsParameterType(instruction.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
         }
 
         for (int i = argsToPass; i < jsParamCount; i++)

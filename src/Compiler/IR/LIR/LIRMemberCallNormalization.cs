@@ -101,7 +101,8 @@ internal static class LIRMemberCallNormalization
                     out var returnClrType,
                     out var returnTypeHandle,
                     out var hasScopesParam,
-                    out var maxParamCount))
+                    out var maxParamCount,
+                    out var parameterClrTypes))
             {
                 continue;
             }
@@ -124,6 +125,7 @@ internal static class LIRMemberCallNormalization
                     hasScopesParam,
                     returnClrType,
                     maxParamCount,
+                    parameterClrTypes,
                     arguments,
                     result);
 
@@ -157,6 +159,7 @@ internal static class LIRMemberCallNormalization
                 hasScopesParam,
                 returnClrType,
                 maxParamCount,
+                parameterClrTypes,
                 arguments,
                 result);
 

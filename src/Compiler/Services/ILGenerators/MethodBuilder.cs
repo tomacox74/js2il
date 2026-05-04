@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
@@ -18,7 +19,8 @@ namespace Js2IL.Services.ILGenerators
             bool hasScopesParam,
             bool returnsVoid,
             Type? returnClrType = null,
-            EntityHandle returnTypeHandle = default)
+            EntityHandle returnTypeHandle = default,
+            IReadOnlyList<Type?>? jsParameterClrTypes = null)
         {
             if (hasScopesParam && paramCount == 0)
             {
@@ -76,11 +78,33 @@ namespace Js2IL.Services.ILGenerators
 
                     for (int i = 0; i < remaining; i++)
                     {
-                        parameters.AddParameter().Type().Object();
+                        EmitParameterType(parameters.AddParameter().Type(), jsParameterClrTypes != null && i < jsParameterClrTypes.Count
+                            ? jsParameterClrTypes[i]
+                            : null);
                     }
                 });
 
             return metadata.GetOrAddBlob(sig);
+        }
+
+        private static void EmitParameterType(SignatureTypeEncoder typeEncoder, Type? clrType)
+        {
+            if (clrType == typeof(double))
+            {
+                typeEncoder.Double();
+            }
+            else if (clrType == typeof(bool))
+            {
+                typeEncoder.Boolean();
+            }
+            else if (clrType == typeof(string))
+            {
+                typeEncoder.String();
+            }
+            else
+            {
+                typeEncoder.Object();
+            }
         }
     }
 }

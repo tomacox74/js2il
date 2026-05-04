@@ -1,10 +1,12 @@
 using Acornima.Ast;
 using Js2IL.IR;
+using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
@@ -496,10 +498,16 @@ internal sealed partial class LIRToILCompiler
                     // Match the declared signature (ignore extra args, pad missing args with null).
                     int jsParamCount = callUserClass.MaxParamCount;
                     int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
+                    IReadOnlyList<Type?> parameterClrTypes = Array.Empty<Type?>();
+                    if (_serviceProvider.GetService<ClassRegistry>() is { } classRegistry)
+                    {
+                        classRegistry.TryGetMethodParameterClrTypes(callUserClass.RegistryClassName, callUserClass.MethodName, out parameterClrTypes);
+                    }
 
                     for (int i = 0; i < argsToPass; i++)
                     {
-                        EmitLoadTemp(callUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                        var parameterClrType = i < parameterClrTypes.Count ? parameterClrTypes[i] : null;
+                        EmitLoadTempAsParameterType(callUserClass.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
                     }
 
                     for (int i = argsToPass; i < jsParamCount; i++)
@@ -770,9 +778,15 @@ internal sealed partial class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
-                    foreach (var arg in callDeclared.Arguments)
+                    var signature = reader.GetSignature(callDeclared.CallableId);
+                    var jsArgumentOffset = (signature?.RequiresScopesParameter == true ? 1 : 0) + 1;
+                    for (var i = 0; i < callDeclared.Arguments.Count; i++)
                     {
-                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                        var jsParameterIndex = i - jsArgumentOffset;
+                        var parameterClrType = signature?.ParameterClrTypes != null && jsParameterIndex >= 0 && jsParameterIndex < signature.ParameterClrTypes.Count
+                            ? signature.ParameterClrTypes[jsParameterIndex]
+                            : null;
+                        EmitLoadTempAsParameterType(callDeclared.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
                     }
 
                     ilEncoder.OpCode(ILOpCode.Call);

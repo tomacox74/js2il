@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -802,6 +803,7 @@ namespace Js2IL.Services.ILGenerators
                 // (leading object[] scopes) so the state machine can bind/resume correctly.
                 // We keep ClassRegistry min/max counts as JS parameter counts (excluding scopes).
                 var hasScopesParam = isAsyncMethod || isGeneratorMethod;
+                var parameterClrTypes = GetStableParameterClrTypes(methodScope, jsParamCount);
 
                 var sig = MethodBuilder.BuildMethodSignature(
                     _metadata,
@@ -810,7 +812,8 @@ namespace Js2IL.Services.ILGenerators
                     hasScopesParam: hasScopesParam,
                     returnsVoid: false,
                     returnClrType: returnClrType,
-                    returnTypeHandle: returnTypeHandle);
+                    returnTypeHandle: returnTypeHandle,
+                    jsParameterClrTypes: parameterClrTypes);
 
                 _classRegistry.RegisterMethod(
                     registryClassName,
@@ -821,10 +824,36 @@ namespace Js2IL.Services.ILGenerators
                     returnTypeHandle,
                     hasScopesParam,
                     minParams,
-                    jsParamCount);
+                    jsParamCount,
+                    parameterClrTypes);
             }
 
             return typeHandle;
+        }
+
+        private static IReadOnlyList<Type?> GetStableParameterClrTypes(Scope? methodScope, int parameterCount)
+        {
+            if (parameterCount <= 0)
+            {
+                return Array.Empty<Type?>();
+            }
+
+            var result = new Type?[parameterCount];
+            if (methodScope == null)
+            {
+                return result;
+            }
+
+            foreach (var (index, type) in methodScope.StableParameterClrTypes)
+            {
+                if (index >= 0 && index < result.Length
+                    && (type == typeof(double) || type == typeof(bool) || type == typeof(string)))
+                {
+                    result[index] = type;
+                }
+            }
+
+            return result;
         }
 
         private static bool ContainsYieldExpression(Node node, Node functionBoundaryNode)

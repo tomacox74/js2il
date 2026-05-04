@@ -75,6 +75,8 @@ namespace Js2IL.SymbolTables
             InferVariableClrTypes(globalScope);
             InferClassInstanceFieldClrTypes(globalScope);
             InferVariableClrTypes(globalScope);
+            InferCallableParameterClrTypes(globalScope);
+            InferVariableClrTypes(globalScope);
             InferCallableReturnClrTypes(globalScope);
 
             // Finally, re-run variable inference so locals can benefit from stable callable return types

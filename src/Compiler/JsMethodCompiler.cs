@@ -163,6 +163,14 @@ internal sealed class JsMethodCompiler
         return new LIRToILCompiler(_metadataBuilder, _typeReferenceRegistry, _memberReferenceRegistry, _bclReferences, _scopeMetadataRegistry, _serviceProvider);
     }
 
+    private static Type GetStableParameterClrTypeOrObject(Scope scope, int jsParameterIndex)
+    {
+        return scope.StableParameterClrTypes.TryGetValue(jsParameterIndex, out var clrType)
+            && (clrType == typeof(double) || clrType == typeof(bool) || clrType == typeof(string))
+            ? clrType
+            : typeof(object);
+    }
+
     #region Public API - Entry Points
 
     public CompiledCallableBody CompileClassConstructorBodyTwoPhase(
@@ -436,9 +444,11 @@ internal sealed class JsMethodCompiler
             parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
         }
 
-        foreach (var paramName in lirMethod!.Parameters)
+        for (var i = 0; i < lirMethod!.Parameters.Count; i++)
         {
-            parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
+            parameters.Add(new MethodParameterDescriptor(
+                lirMethod.Parameters[i],
+                GetStableParameterClrTypeOrObject(scope, i)));
         }
 
         // Dummy TypeBuilder (body-only compilation does not emit a TypeDef).
@@ -568,10 +578,12 @@ internal sealed class JsMethodCompiler
         }
         parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
         
-        // Add JS function parameters (all typed as object)
-        foreach (var paramName in lirMethod!.Parameters)
+        // Add JS function parameters.
+        for (var i = 0; i < lirMethod!.Parameters.Count; i++)
         {
-            parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
+            parameters.Add(new MethodParameterDescriptor(
+                lirMethod.Parameters[i],
+                GetStableParameterClrTypeOrObject(scope, i)));
         }
 
         var methodDescriptor = new MethodDescriptor(
@@ -655,10 +667,12 @@ internal sealed class JsMethodCompiler
             new MethodParameterDescriptor("newTarget", typeof(object))
         };
         
-        // Add JS function parameters (all typed as object)
-        foreach (var paramName in lirMethod!.Parameters)
+        // Add JS function parameters.
+        for (var i = 0; i < lirMethod!.Parameters.Count; i++)
         {
-            parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
+            parameters.Add(new MethodParameterDescriptor(
+                lirMethod.Parameters[i],
+                GetStableParameterClrTypeOrObject(scope, i)));
         }
 
         var methodDescriptor = new MethodDescriptor(

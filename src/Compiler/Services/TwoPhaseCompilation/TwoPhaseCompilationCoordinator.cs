@@ -1585,6 +1585,7 @@ public sealed class TwoPhaseCompilationCoordinator
         foreach (var callable in _discoveredCallables)
         {
             var (scopeAbiKind, singleScopeScopeName) = ComputeCallableScopeAbi(callable, symbolTable);
+            var parameterClrTypes = GetCallableParameterClrTypes(callable, symbolTable);
 
             // Build CallableSignature from CallableId
             // Placeholder owner type handle (is set during token allocation)
@@ -1594,6 +1595,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 ScopeAbiKind = scopeAbiKind,
                 SingleScopeScopeName = singleScopeScopeName,
                 JsParamCount = callable.JsParamCount,
+                ParameterClrTypes = parameterClrTypes,
                 InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
                 IsInstanceMethod = callable.Kind == CallableKind.ClassMethod,
                 ILMethodName = GetILMethodName(callable)
@@ -1677,6 +1679,44 @@ public sealed class TwoPhaseCompilationCoordinator
         if (string.IsNullOrWhiteSpace(prop)) return null;
         return $"{accessorKind}_{prop}";
     }
+
+    private static IReadOnlyList<Type?> GetCallableParameterClrTypes(CallableId callable, SymbolTable symbolTable)
+    {
+        if (callable.JsParamCount <= 0)
+        {
+            return Array.Empty<Type?>();
+        }
+
+        if (callable.AstNode == null)
+        {
+            return Enumerable.Repeat<Type?>(null, callable.JsParamCount).ToArray();
+        }
+
+        var scope = symbolTable.FindScopeByAstNode(callable.AstNode);
+        if (scope == null && callable.AstNode is Acornima.Ast.MethodDefinition methodDefinition)
+        {
+            scope = symbolTable.FindScopeByAstNode(methodDefinition.Value);
+        }
+
+        if (scope == null)
+        {
+            return Enumerable.Repeat<Type?>(null, callable.JsParamCount).ToArray();
+        }
+
+        var parameterTypes = new Type?[callable.JsParamCount];
+        foreach (var (index, type) in scope.StableParameterClrTypes)
+        {
+            if (index >= 0 && index < parameterTypes.Length && IsSupportedStableParameterClrType(type))
+            {
+                parameterTypes[index] = type;
+            }
+        }
+
+        return parameterTypes;
+    }
+
+    private static bool IsSupportedStableParameterClrType(Type? type)
+        => type == typeof(double) || type == typeof(bool) || type == typeof(string);
 
     private static bool IsResumableCallable(CallableId callable)
     {

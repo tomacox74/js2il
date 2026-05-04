@@ -533,7 +533,7 @@ public sealed partial class HIRToLIRLowerer
                                     }
                                     else
                                     {
-                                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                        DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                         _tempBindingOrigin[resultTempVar] = binding;
                                     }
                                     return true;
@@ -589,8 +589,7 @@ public sealed partial class HIRToLIRLowerer
                     }
                     else
                     {
-                        // Parameters are typically treated as object (unknown type)
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                         _tempBindingOrigin[resultTempVar] = binding;
                     }
                     return true;

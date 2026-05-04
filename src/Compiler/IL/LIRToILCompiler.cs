@@ -102,6 +102,14 @@ internal sealed partial class LIRToILCompiler
                     {
                         parameters.AddParameter().Type().String();
                     }
+                    else if (parameterDefinition.ParameterType == typeof(double))
+                    {
+                        parameters.AddParameter().Type().Double();
+                    }
+                    else if (parameterDefinition.ParameterType == typeof(bool))
+                    {
+                        parameters.AddParameter().Type().Boolean();
+                    }
                     else if (parameterDefinition.ParameterType.IsArray
                         && parameterDefinition.ParameterType.GetElementType() == typeof(object))
                     {
@@ -448,26 +456,33 @@ internal sealed partial class LIRToILCompiler
     private void EmitLoadTempAsDouble(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
         var storage = GetTempStorage(value);
-        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        var materializedStorage = GetMaterializedTempStorage(value, allocation);
+        if (materializedStorage.Kind == ValueStorageKind.UnboxedValue && materializedStorage.ClrType == typeof(double))
         {
             EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
             return;
         }
 
+        // Peephole: avoid boxing a known double just to immediately coerce it back to double.
+        // This happens when lowering inserts ConvertToObject around numeric call arguments.
+        if (TryFindDefInstruction(value) is LIRConvertToObject convertToObject
+            && convertToObject.SourceType == typeof(double)
+            && (!IsMaterialized(value, allocation) || IsMaterialized(convertToObject.Source, allocation)))
+        {
+            EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
         // Fast-path: boxed double -> unbox.any double (avoid ToNumber runtime call)
-        if (storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double))
+        if ((storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(double))
+            || (storage.Kind == ValueStorageKind.UnboxedValue
+                && storage.ClrType == typeof(double)
+                && materializedStorage.Kind == ValueStorageKind.Reference
+                && materializedStorage.ClrType == typeof(object)))
         {
             EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
             ilEncoder.OpCode(ILOpCode.Unbox_any);
             ilEncoder.Token(_bclReferences.DoubleType);
-            return;
-        }
-
-        // Peephole: avoid boxing a known double just to immediately coerce it back to double.
-        // This happens when lowering inserts ConvertToObject around numeric literals/constants.
-        if (!IsMaterialized(value, allocation) && TryFindDefInstruction(value) is LIRConvertToObject convertToObject && convertToObject.SourceType == typeof(double))
-        {
-            EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
             return;
         }
 
@@ -483,9 +498,30 @@ internal sealed partial class LIRToILCompiler
     private void EmitLoadTempAsBoolean(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
         var storage = GetTempStorage(value);
-        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        var materializedStorage = GetMaterializedTempStorage(value, allocation);
+        if (materializedStorage.Kind == ValueStorageKind.UnboxedValue && materializedStorage.ClrType == typeof(bool))
         {
             EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (TryFindDefInstruction(value) is LIRConvertToObject convertToObject
+            && convertToObject.SourceType == typeof(bool)
+            && (!IsMaterialized(value, allocation) || IsMaterialized(convertToObject.Source, allocation)))
+        {
+            EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if ((storage.Kind == ValueStorageKind.BoxedValue && storage.ClrType == typeof(bool))
+            || (storage.Kind == ValueStorageKind.UnboxedValue
+                && storage.ClrType == typeof(bool)
+                && materializedStorage.Kind == ValueStorageKind.Reference
+                && materializedStorage.ClrType == typeof(object)))
+        {
+            EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Unbox_any);
+            ilEncoder.Token(_bclReferences.BooleanType);
             return;
         }
 
@@ -501,7 +537,8 @@ internal sealed partial class LIRToILCompiler
     private void EmitLoadTempAsString(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
         var storage = GetTempStorage(value);
-        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        var materializedStorage = GetMaterializedTempStorage(value, allocation);
+        if (materializedStorage.Kind == ValueStorageKind.Reference && materializedStorage.ClrType == typeof(string))
         {
             EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
             return;
@@ -510,6 +547,31 @@ internal sealed partial class LIRToILCompiler
         EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
         ilEncoder.OpCode(ILOpCode.Castclass);
         ilEncoder.Token(_bclReferences.StringType);
+    }
+
+    private void EmitLoadTempAsParameterType(
+        TempVariable value,
+        Type? parameterClrType,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (parameterClrType == typeof(double))
+        {
+            EmitLoadTempAsDouble(value, ilEncoder, allocation, methodDescriptor);
+        }
+        else if (parameterClrType == typeof(bool))
+        {
+            EmitLoadTempAsBoolean(value, ilEncoder, allocation, methodDescriptor);
+        }
+        else if (parameterClrType == typeof(string))
+        {
+            EmitLoadTempAsString(value, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+        }
     }
 
     private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)

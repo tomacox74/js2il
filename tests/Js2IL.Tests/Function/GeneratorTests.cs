@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Js2IL.Tests.Function
@@ -239,6 +240,19 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_RestParameters_MultipleNamed() { var testName = nameof(Function_RestParameters_MultipleNamed); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature()
+        {
+            var testName = nameof(Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var functionType = moduleType.GetNestedType("add", BindingFlags.Public | BindingFlags.NonPublic)!;
+                var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+                Assert.Equal(new[] { typeof(object), typeof(object) }, callMethod.GetParameters().Select(p => p.ParameterType).Skip(1).ToArray());
+            });
+        }
 
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]

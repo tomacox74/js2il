@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 
 namespace Js2IL.Services
@@ -28,9 +29,9 @@ namespace Js2IL.Services
         // and validate instead of rebuilding duplicate member references.
         // MinParamCount = required params (no defaults), MaxParamCount = all params (including defaults)
         private readonly Dictionary<string, (MethodDefinitionHandle Ctor, BlobHandle Signature, bool HasScopesParam, int MinParamCount, int MaxParamCount)> _constructors = new(StringComparer.Ordinal);
-        // Track instance methods: className -> methodName -> (MethodDef, Signature, ReturnClrType, ReturnTypeHandle, HasScopesParam, MinParams, MaxParams)
+        // Track instance methods: className -> methodName -> (MethodDef, Signature, ReturnClrType, ReturnTypeHandle, HasScopesParam, MinParams, MaxParams, ParameterClrTypes)
         // NOTE: Min/MaxParamCount are JS parameter counts (do NOT include scopes), kept for call-site validation/padding.
-        private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount)>> _methods = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount, IReadOnlyList<Type?> ParameterClrTypes)>> _methods = new(StringComparer.Ordinal);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -288,15 +289,15 @@ namespace Js2IL.Services
             return false;
         }
 
-        public void RegisterMethod(string className, string methodName, MethodDefinitionHandle methodHandle, BlobHandle signature, Type returnClrType, EntityHandle returnTypeHandle, bool hasScopesParam, int minParamCount, int maxParamCount)
+        public void RegisterMethod(string className, string methodName, MethodDefinitionHandle methodHandle, BlobHandle signature, Type returnClrType, EntityHandle returnTypeHandle, bool hasScopesParam, int minParamCount, int maxParamCount, IReadOnlyList<Type?>? parameterClrTypes = null)
         {
             if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(methodName)) return;
             if (!_methods.TryGetValue(className, out var methods))
             {
-                methods = new Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount)>(StringComparer.Ordinal);
+                methods = new Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, EntityHandle ReturnTypeHandle, bool HasScopesParam, int MinParamCount, int MaxParamCount, IReadOnlyList<Type?> ParameterClrTypes)>(StringComparer.Ordinal);
                 _methods[className] = methods;
             }
-            methods[methodName] = (methodHandle, signature, returnClrType ?? typeof(object), returnTypeHandle, hasScopesParam, minParamCount, maxParamCount);
+            methods[methodName] = (methodHandle, signature, returnClrType ?? typeof(object), returnTypeHandle, hasScopesParam, minParamCount, maxParamCount, parameterClrTypes?.ToArray() ?? Array.Empty<Type?>());
         }
 
         public bool TryGetMethod(string className, string methodName, out MethodDefinitionHandle methodHandle, out BlobHandle signature, out Type returnClrType, out bool hasScopesParam, out int minParamCount, out int maxParamCount)
@@ -316,6 +317,18 @@ namespace Js2IL.Services
                 hasScopesParam = info.HasScopesParam;
                 minParamCount = info.MinParamCount;
                 maxParamCount = info.MaxParamCount;
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryGetMethodParameterClrTypes(string className, string methodName, out IReadOnlyList<Type?> parameterClrTypes)
+        {
+            parameterClrTypes = Array.Empty<Type?>();
+            if (_methods.TryGetValue(className, out var methods) &&
+                methods.TryGetValue(methodName, out var info))
+            {
+                parameterClrTypes = info.ParameterClrTypes;
                 return true;
             }
             return false;
@@ -360,7 +373,8 @@ namespace Js2IL.Services
             out Type returnClrType,
             out EntityHandle returnTypeHandle,
             out bool hasScopesParam,
-            out int maxParamCount)
+            out int maxParamCount,
+            out IReadOnlyList<Type?> parameterClrTypes)
         {
             registryClassName = string.Empty;
             typeHandle = default;
@@ -369,6 +383,7 @@ namespace Js2IL.Services
             returnTypeHandle = default;
             hasScopesParam = false;
             maxParamCount = 0;
+            parameterClrTypes = Array.Empty<Type?>();
 
             if (string.IsNullOrEmpty(methodName))
             {
@@ -381,6 +396,7 @@ namespace Js2IL.Services
             Type matchReturnClrType = typeof(object);
             EntityHandle matchReturnTypeHandle = default;
             bool matchHasScopesParam = false;
+            IReadOnlyList<Type?> matchParameterClrTypes = Array.Empty<Type?>();
 
             foreach (var kvp in _methods)
             {
@@ -410,6 +426,7 @@ namespace Js2IL.Services
                 matchReturnClrType = info.ReturnClrType;
                 matchReturnTypeHandle = info.ReturnTypeHandle;
                 matchHasScopesParam = info.HasScopesParam;
+                matchParameterClrTypes = info.ParameterClrTypes;
             }
 
             if (matchClass == null)
@@ -429,6 +446,7 @@ namespace Js2IL.Services
             returnTypeHandle = matchReturnTypeHandle;
             hasScopesParam = matchHasScopesParam;
             maxParamCount = matchMaxParams;
+            parameterClrTypes = matchParameterClrTypes;
             return true;
         }
     }

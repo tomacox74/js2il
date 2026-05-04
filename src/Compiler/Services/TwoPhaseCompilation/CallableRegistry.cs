@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
@@ -255,13 +257,31 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
             (_, existing) =>
             {
                 // Allow re-declaration with same signature (idempotent)
-                if (!Equals(existing.Signature, signature))
+                if (!SignaturesEquivalent(existing.Signature, signature))
                 {
                     throw new InvalidOperationException(
                         $"Callable '{id.DisplayName}' re-declared with a different signature.");
                 }
                 return existing;
             });
+    }
+
+    private static bool SignaturesEquivalent(CallableSignature? left, CallableSignature? right)
+    {
+        if (left == null || right == null)
+        {
+            return left == right;
+        }
+
+        return EqualityComparer<TypeDefinitionHandle>.Default.Equals(left.OwnerTypeHandle, right.OwnerTypeHandle)
+            && left.ILMethodName == right.ILMethodName
+            && left.JsParamCount == right.JsParamCount
+            && left.ScopeAbiKind == right.ScopeAbiKind
+            && left.SingleScopeScopeName == right.SingleScopeScopeName
+            && left.InvokeShape == right.InvokeShape
+            && left.IsInstanceMethod == right.IsInstanceMethod
+            && left.SignatureBlob == right.SignatureBlob
+            && left.ParameterClrTypes.SequenceEqual(right.ParameterClrTypes);
     }
 
     public void SetToken(CallableId id, MethodDefinitionHandle token)
