@@ -465,6 +465,91 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_Primitives()
+    {
+        var source = @"
+                function format(a, b, enabled, prefix) {
+                    return enabled ? prefix + (a + b) : 'off';
+                }
+
+                format(1, 2, true, 'sum=');
+                format(4, 5, true, 'sum=');
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "format", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        AssertStableParameterTypes(
+            functionScope!,
+            ("a", typeof(double)),
+            ("b", typeof(double)),
+            ("enabled", typeof(bool)),
+            ("prefix", typeof(string)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_EscapedFunctionKeepsObjectParameters()
+    {
+        var source = @"
+                function add(a, b) {
+                    return a + b;
+                }
+
+                module.exports = add;
+                add(1, 2);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "add", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "a");
+        AssertObjectParameter(functionScope, "b");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_ClassMethod_DirectThisCalls()
+    {
+        var source = @"
+                class Accumulator {
+                    run() {
+                        this.add(2, 3);
+                        this.add(10, 20);
+                    }
+
+                    add(a, b) {
+                        return a + b;
+                    }
+                }
+
+                new Accumulator().run();
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var classScope = FindClassScope(symbolTable.Root, "Accumulator");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "add", StringComparison.Ordinal));
+
+        Assert.NotNull(methodScope);
+        AssertStableParameterTypes(
+            methodScope!,
+            ("a", typeof(double)),
+            ("b", typeof(double)));
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_DromaeoGenerateTestStrings_ReturnType_IsArray()
     {
         const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js";
@@ -729,6 +814,33 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_PrimeJavaScript_SetBitsTrue_InfersNumericParameters()
+    {
+        const string resourceName = "Js2IL.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var classScope = FindClassScope(symbolTable.Root, "BitArray");
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Class
+            && string.Equals(s.Name, "setBitsTrue", StringComparison.Ordinal));
+
+        Assert.NotNull(methodScope);
+        AssertStableParameterTypes(
+            methodScope!,
+            ("range_start", typeof(double)),
+            ("step", typeof(double)),
+            ("range_stop", typeof(double)));
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_PrimeStyle_TypedArrayElementRead_InfersWordValueIsNumber()
     {
         // This reproduces the PrimeJavaScript pattern:
@@ -831,6 +943,31 @@ public class SymbolTableTypeInferenceTests
         }
         
         return null;
+    }
+
+    private static void AssertStableParameterTypes(
+        Js2IL.SymbolTables.Scope scope,
+        params (string Name, Type ClrType)[] expected)
+    {
+        Assert.Equal(expected.Length, scope.StableParameterClrTypes.Count);
+
+        for (var i = 0; i < expected.Length; i++)
+        {
+            var (name, clrType) = expected[i];
+            Assert.True(scope.StableParameterClrTypes.TryGetValue(i, out var actualType), $"Expected stable parameter type for '{name}' at index {i}.");
+            Assert.Equal(clrType, actualType);
+
+            Assert.True(scope.Bindings.TryGetValue(name, out var binding), $"Expected binding for parameter '{name}'.");
+            Assert.True(binding!.IsStableType);
+            Assert.Equal(clrType, binding.ClrType);
+        }
+    }
+
+    private static void AssertObjectParameter(Js2IL.SymbolTables.Scope scope, string parameterName)
+    {
+        Assert.True(scope.Bindings.TryGetValue(parameterName, out var binding), $"Expected binding for parameter '{parameterName}'.");
+        Assert.False(binding!.IsStableType);
+        Assert.Null(binding.ClrType);
     }
 
     private SymbolTable BuildSymbolTable(string source)
