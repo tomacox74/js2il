@@ -182,7 +182,7 @@ internal static class LIRIntrinsicNormalization
 
                 // Int32Array element access (numeric index).
                 if (receiverType == typeof(JavaScriptRuntime.Int32Array)
-                    && IsUnboxedDouble(methodBody, getItem.Index))
+                    && IsNumericDouble(methodBody, getItem.Index))
                 {
                     // Rewrite: GetItem(receiver, indexDouble, result) -> GetInt32ArrayElement(receiver, indexDouble, result)
                     methodBody.Instructions[i] = new LIRGetInt32ArrayElement(getItem.Object, getItem.Index, getItem.Result);
@@ -225,6 +225,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRGetItemAsNumber getItemAsNumber)
             {
+                if (knownSpecializedReceiverClrTypes.TryGetValue(getItemAsNumber.Object.Index, out var receiverType)
+                    && receiverType == typeof(JavaScriptRuntime.Int32Array)
+                    && IsNumericDouble(methodBody, getItemAsNumber.Index))
+                {
+                    methodBody.Instructions[i] = new LIRGetInt32ArrayElement(
+                        getItemAsNumber.Object,
+                        getItemAsNumber.Index,
+                        getItemAsNumber.Result);
+                    methodBody.TempStorages[getItemAsNumber.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
                 if (IsTempStringReference(methodBody, getItemAsNumber.Index))
                 {
                     methodBody.Instructions[i] = new LIRGetItemAsNumberString(

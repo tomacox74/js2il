@@ -113,12 +113,17 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(object? a, object? b)
         {
-            a = ToPrimitiveForAddition(a);
-            b = ToPrimitiveForAddition(b);
-
             if (a is double leftDouble && b is double rightDouble)
             {
                 return leftDouble + rightDouble;
+            }
+
+            a = ToPrimitiveForAddition(a);
+            b = ToPrimitiveForAddition(b);
+
+            if (a is double leftPrimitiveDouble && b is double rightPrimitiveDouble)
+            {
+                return leftPrimitiveDouble + rightPrimitiveDouble;
             }
 
             // If either is a string, concatenate string representations
@@ -156,11 +161,16 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(double a, object? b)
         {
-            b = ToPrimitiveForAddition(b);
-
             if (b is double db)
             {
                 return a + db;
+            }
+
+            b = ToPrimitiveForAddition(b);
+
+            if (b is double primitiveDouble)
+            {
+                return a + primitiveDouble;
             }
 
             if (b is string)
@@ -186,11 +196,16 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object Add(object? a, double b)
         {
-            a = ToPrimitiveForAddition(a);
-
             if (a is double da)
             {
                 return da + b;
+            }
+
+            a = ToPrimitiveForAddition(a);
+
+            if (a is double primitiveDouble)
+            {
+                return primitiveDouble + b;
             }
 
             if (a is string)
