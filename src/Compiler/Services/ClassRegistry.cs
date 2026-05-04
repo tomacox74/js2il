@@ -373,7 +373,8 @@ namespace Js2IL.Services
             out Type returnClrType,
             out EntityHandle returnTypeHandle,
             out bool hasScopesParam,
-            out int maxParamCount)
+            out int maxParamCount,
+            out IReadOnlyList<Type?> parameterClrTypes)
         {
             registryClassName = string.Empty;
             typeHandle = default;
@@ -382,6 +383,7 @@ namespace Js2IL.Services
             returnTypeHandle = default;
             hasScopesParam = false;
             maxParamCount = 0;
+            parameterClrTypes = Array.Empty<Type?>();
 
             if (string.IsNullOrEmpty(methodName))
             {
@@ -394,6 +396,7 @@ namespace Js2IL.Services
             Type matchReturnClrType = typeof(object);
             EntityHandle matchReturnTypeHandle = default;
             bool matchHasScopesParam = false;
+            IReadOnlyList<Type?> matchParameterClrTypes = Array.Empty<Type?>();
 
             foreach (var kvp in _methods)
             {
@@ -423,6 +426,7 @@ namespace Js2IL.Services
                 matchReturnClrType = info.ReturnClrType;
                 matchReturnTypeHandle = info.ReturnTypeHandle;
                 matchHasScopesParam = info.HasScopesParam;
+                matchParameterClrTypes = info.ParameterClrTypes;
             }
 
             if (matchClass == null)
@@ -442,6 +446,7 @@ namespace Js2IL.Services
             returnTypeHandle = matchReturnTypeHandle;
             hasScopesParam = matchHasScopesParam;
             maxParamCount = matchMaxParams;
+            parameterClrTypes = matchParameterClrTypes;
             return true;
         }
     }

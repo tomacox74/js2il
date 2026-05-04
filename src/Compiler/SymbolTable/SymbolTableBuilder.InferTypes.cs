@@ -242,6 +242,11 @@ public partial class SymbolTableBuilder
             return false;
         }
 
+        if (scope.Parent?.Kind != ScopeKind.Class)
+        {
+            return false;
+        }
+
         if (!TryGetSimpleParameterNames(scope.AstNode, out var parameterNames))
         {
             return false;

@@ -201,6 +201,7 @@ public record LIRCallTypedMember(
     bool HasScopesParameter,
     Type ReturnClrType,
     int MaxParamCount,
+    IReadOnlyList<Type?> ParameterClrTypes,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
 
@@ -221,6 +222,7 @@ public record LIRCallTypedMemberWithFallback(
     bool HasScopesParameter,
     Type ReturnClrType,
     int MaxParamCount,
+    IReadOnlyList<Type?> ParameterClrTypes,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
 

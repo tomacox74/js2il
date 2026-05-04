@@ -465,7 +465,7 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
-    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_Primitives()
+    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_DirectCallsKeepObjectParameters()
     {
         var source = @"
                 function format(a, b, enabled, prefix) {
@@ -483,12 +483,11 @@ public class SymbolTableTypeInferenceTests
             && string.Equals(s.Name, "format", StringComparison.Ordinal));
 
         Assert.NotNull(functionScope);
-        AssertStableParameterTypes(
-            functionScope!,
-            ("a", typeof(double)),
-            ("b", typeof(double)),
-            ("enabled", typeof(bool)),
-            ("prefix", typeof(string)));
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "a");
+        AssertObjectParameter(functionScope, "b");
+        AssertObjectParameter(functionScope, "enabled");
+        AssertObjectParameter(functionScope, "prefix");
     }
 
     [Fact]

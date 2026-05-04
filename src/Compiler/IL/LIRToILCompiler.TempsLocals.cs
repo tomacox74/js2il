@@ -1967,8 +1967,8 @@ internal sealed partial class LIRToILCompiler
         // Load the temp value
         EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
 
-        // Check if boxing is needed based on storage type
-        var storage = GetTempStorage(temp);
+        // Check if boxing is needed based on the value actually on the stack.
+        var storage = GetMaterializedTempStorage(temp, allocation);
         if (storage.Kind == ValueStorageKind.UnboxedValue)
         {
             ilEncoder.OpCode(ILOpCode.Box);
@@ -1998,7 +1998,7 @@ internal sealed partial class LIRToILCompiler
     /// </summary>
     private void EmitLoadTempAsNumber(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
-        var storage = GetTempStorage(temp);
+        var storage = GetMaterializedTempStorage(temp, allocation);
 
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {

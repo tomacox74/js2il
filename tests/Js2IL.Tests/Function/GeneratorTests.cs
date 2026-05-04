@@ -242,19 +242,6 @@ namespace Js2IL.Tests.Function
         public Task Function_RestParameters_MultipleNamed() { var testName = nameof(Function_RestParameters_MultipleNamed); return GenerateTest(testName); }
 
         [Fact]
-        public Task Function_ParameterTypeInference_DirectFunction_Primitives()
-        {
-            var testName = nameof(Function_ParameterTypeInference_DirectFunction_Primitives);
-            return GenerateTest(testName, verifyAssembly: assembly =>
-            {
-                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
-                var functionType = moduleType.GetNestedType("formatSum", BindingFlags.Public | BindingFlags.NonPublic)!;
-                var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
-                Assert.Equal(new[] { typeof(double), typeof(double), typeof(bool), typeof(string) }, callMethod.GetParameters().Select(p => p.ParameterType).Skip(1).ToArray());
-            });
-        }
-
-        [Fact]
         public Task Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature()
         {
             var testName = nameof(Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature);
