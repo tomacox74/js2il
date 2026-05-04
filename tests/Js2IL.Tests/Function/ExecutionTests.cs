@@ -258,6 +258,12 @@ namespace Js2IL.Tests.Function
         [Fact]
         public Task Function_RestParameters_MultipleNamed() { var testName = nameof(Function_RestParameters_MultipleNamed); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task Function_ParameterTypeInference_DirectFunction_Primitives() { var testName = nameof(Function_ParameterTypeInference_DirectFunction_Primitives); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature() { var testName = nameof(Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature); return ExecutionTest(testName); }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return ExecutionTest(testName); }

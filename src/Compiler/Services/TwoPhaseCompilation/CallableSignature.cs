@@ -1,3 +1,4 @@
+using System;
 using System.Reflection.Metadata;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
@@ -62,6 +63,12 @@ public sealed record CallableSignature
     /// The number of JavaScript parameters (excluding the scopes parameter).
     /// </summary>
     public int JsParamCount { get; init; }
+
+    /// <summary>
+    /// Optional stable CLR parameter types for JavaScript parameters, indexed by JS parameter index.
+    /// Null entries keep the default object-typed JavaScript value ABI.
+    /// </summary>
+    public IReadOnlyList<Type?> ParameterClrTypes { get; init; } = Array.Empty<Type?>();
     
     /// <summary>
     /// The invoke shape (delegate type) for this callable.

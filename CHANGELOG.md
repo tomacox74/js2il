@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/tests: infer stable primitive parameter types (`number`, `boolean`, and `string`) for non-escaped function declarations and direct class method calls when all visible call sites agree, allowing generated IL to use typed parameters and direct primitive operations while keeping escaped callables on the object ABI.
 
 ## v0.9.12 - 2026-05-04
 

@@ -102,6 +102,14 @@ internal sealed partial class LIRToILCompiler
                     {
                         parameters.AddParameter().Type().String();
                     }
+                    else if (parameterDefinition.ParameterType == typeof(double))
+                    {
+                        parameters.AddParameter().Type().Double();
+                    }
+                    else if (parameterDefinition.ParameterType == typeof(bool))
+                    {
+                        parameters.AddParameter().Type().Boolean();
+                    }
                     else if (parameterDefinition.ParameterType.IsArray
                         && parameterDefinition.ParameterType.GetElementType() == typeof(object))
                     {
@@ -510,6 +518,31 @@ internal sealed partial class LIRToILCompiler
         EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
         ilEncoder.OpCode(ILOpCode.Castclass);
         ilEncoder.Token(_bclReferences.StringType);
+    }
+
+    private void EmitLoadTempAsParameterType(
+        TempVariable value,
+        Type? parameterClrType,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (parameterClrType == typeof(double))
+        {
+            EmitLoadTempAsDouble(value, ilEncoder, allocation, methodDescriptor);
+        }
+        else if (parameterClrType == typeof(bool))
+        {
+            EmitLoadTempAsBoolean(value, ilEncoder, allocation, methodDescriptor);
+        }
+        else if (parameterClrType == typeof(string))
+        {
+            EmitLoadTempAsString(value, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+        }
     }
 
     private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)

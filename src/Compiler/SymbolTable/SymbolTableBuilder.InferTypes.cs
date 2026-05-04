@@ -25,6 +25,528 @@ public partial class SymbolTableBuilder
         InferCallableReturnClrTypesRecursively(scope);
     }
 
+    private void InferCallableParameterClrTypes(Scope root)
+    {
+        foreach (var functionScope in EnumerateScopes(root).Where(s => s.Kind == ScopeKind.Function))
+        {
+            functionScope.StableParameterClrTypes.Clear();
+        }
+
+        // Iterate so parameter types inferred for one callable can become call-site evidence
+        // for another callable that receives that parameter.
+        for (var iteration = 0; iteration < 4; iteration++)
+        {
+            var changed = InferCallableParameterClrTypesOnce(root);
+            if (!changed)
+            {
+                break;
+            }
+        }
+    }
+
+    private bool InferCallableParameterClrTypesOnce(Scope root)
+    {
+        var candidatesByScope = new Dictionary<Scope, ParameterInferenceCandidate>();
+        foreach (var scope in EnumerateScopes(root).Where(s => s.Kind == ScopeKind.Function))
+        {
+            if (TryCreateParameterInferenceCandidate(scope, out var candidate))
+            {
+                candidatesByScope[scope] = candidate;
+            }
+        }
+
+        if (candidatesByScope.Count == 0)
+        {
+            return false;
+        }
+
+        var parentMap = BuildParentMap(root.AstNode);
+        foreach (var candidate in candidatesByScope.Values)
+        {
+            if (candidate.Scope.AstNode is FunctionExpression or ArrowFunctionExpression
+                && parentMap.TryGetValue(candidate.Scope.AstNode, out var parent)
+                && parent is not Acornima.Ast.MethodDefinition)
+            {
+                candidate.IsUnsafe = true;
+            }
+        }
+
+        var candidatesByMethodName = candidatesByScope.Values
+            .Where(c => c.Scope.Parent?.Kind == ScopeKind.Class)
+            .GroupBy(c => c.Scope.Name, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.ToArray(), StringComparer.Ordinal);
+
+        var nodeScopes = BuildNodeScopeMap(root);
+        var walker = new Js2IL.Utilities.AstWalker();
+
+        walker.Visit(root.AstNode, node =>
+        {
+            nodeScopes.TryGetValue(node, out var currentScope);
+            currentScope ??= root;
+            parentMap.TryGetValue(node, out var parent);
+
+            if (node is CallExpression call)
+            {
+                if (TryResolveParameterInferenceCallTarget(call, currentScope, candidatesByScope, out var target))
+                {
+                    target.RecordCall(call, currentScope, this);
+                }
+                return;
+            }
+
+            if (node is Identifier id)
+            {
+                if (parent is MemberExpression memberParent
+                    && ReferenceEquals(memberParent.Property, id)
+                    && !memberParent.Computed)
+                {
+                    return;
+                }
+
+                if (IsIdentifierDeclarationName(id, parent))
+                {
+                    return;
+                }
+
+                var binding = TryResolveBinding(currentScope, id.Name);
+                var referencedScope = TryGetCallableScopeForBinding(root, binding);
+                if (referencedScope != null
+                    && candidatesByScope.TryGetValue(referencedScope, out var referencedCandidate)
+                    && !IsDirectIdentifierCall(id, parent))
+                {
+                    referencedCandidate.IsUnsafe = true;
+                }
+
+                if (binding?.DeclarationNode is ClassDeclaration classDecl
+                    && !IsNewExpressionCallee(id, parent))
+                {
+                    var classScope = FindScopeByAstNode(root, classDecl);
+                    if (classScope != null)
+                    {
+                        MarkClassMethodCandidatesUnsafe(classScope, candidatesByScope);
+                    }
+                }
+            }
+
+            if (node is MemberExpression member
+                && !member.Computed
+                && member.Property is Identifier methodId
+                && candidatesByMethodName.TryGetValue(methodId.Name, out var methodCandidates)
+                && !(parent is CallExpression memberCall
+                     && ReferenceEquals(memberCall.Callee, member)
+                     && TryResolveParameterInferenceCallTarget(memberCall, currentScope, candidatesByScope, out var resolvedMethod)
+                     && methodCandidates.Contains(resolvedMethod)))
+            {
+                foreach (var methodCandidate in methodCandidates)
+                {
+                    methodCandidate.IsUnsafe = true;
+                }
+            }
+        });
+
+        var changed = false;
+        foreach (var candidate in candidatesByScope.Values)
+        {
+            if (candidate.IsUnsafe)
+            {
+                continue;
+            }
+
+            for (var i = 0; i < candidate.ParameterNames.Count; i++)
+            {
+                if (!candidate.HasEvidence[i] || candidate.InferredTypes[i] == null)
+                {
+                    continue;
+                }
+
+                var inferredType = candidate.InferredTypes[i]!;
+                if (!candidate.Scope.StableParameterClrTypes.TryGetValue(i, out var existing) || existing != inferredType)
+                {
+                    candidate.Scope.StableParameterClrTypes[i] = inferredType;
+                    changed = true;
+                }
+
+                var parameterName = candidate.ParameterNames[i];
+                if (candidate.Scope.Bindings.TryGetValue(parameterName, out var binding)
+                    && (!binding.IsStableType || binding.ClrType != inferredType))
+                {
+                    binding.ClrType = inferredType;
+                    binding.IsStableType = true;
+                    changed = true;
+                }
+            }
+        }
+
+        return changed;
+    }
+
+    private sealed class ParameterInferenceCandidate
+    {
+        public ParameterInferenceCandidate(Scope scope, IReadOnlyList<string> parameterNames)
+        {
+            Scope = scope;
+            ParameterNames = parameterNames;
+            InferredTypes = new Type?[parameterNames.Count];
+            HasEvidence = new bool[parameterNames.Count];
+        }
+
+        public Scope Scope { get; }
+        public IReadOnlyList<string> ParameterNames { get; }
+        public Type?[] InferredTypes { get; }
+        public bool[] HasEvidence { get; }
+        public bool IsUnsafe { get; set; }
+
+        public void RecordCall(CallExpression call, Scope callScope, SymbolTableBuilder builder)
+        {
+            if (call.Arguments.Count < ParameterNames.Count)
+            {
+                IsUnsafe = true;
+                return;
+            }
+
+            for (var i = 0; i < ParameterNames.Count; i++)
+            {
+                if (call.Arguments[i] is not Node arg)
+                {
+                    IsUnsafe = true;
+                    return;
+                }
+
+                var argType = builder.InferExpressionClrType(arg, callScope);
+                if (!IsSupportedStableParameterType(argType))
+                {
+                    IsUnsafe = true;
+                    return;
+                }
+
+                if (!HasEvidence[i])
+                {
+                    HasEvidence[i] = true;
+                    InferredTypes[i] = argType;
+                }
+                else if (InferredTypes[i] != argType)
+                {
+                    IsUnsafe = true;
+                    return;
+                }
+            }
+        }
+    }
+
+    private bool TryCreateParameterInferenceCandidate(Scope scope, out ParameterInferenceCandidate candidate)
+    {
+        candidate = null!;
+
+        if (scope.IsAsync || scope.IsGenerator || scope.NeedsArgumentsObject || scope.HasRestParameters)
+        {
+            return false;
+        }
+
+        if (!TryGetSimpleParameterNames(scope.AstNode, out var parameterNames))
+        {
+            return false;
+        }
+
+        if (parameterNames.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (var parameterName in parameterNames)
+        {
+            if (!scope.Bindings.TryGetValue(parameterName, out var binding)
+                || binding.HasWrite
+                || binding.IsCaptured)
+            {
+                return false;
+            }
+        }
+
+        candidate = new ParameterInferenceCandidate(scope, parameterNames);
+        return true;
+    }
+
+    private static bool TryGetSimpleParameterNames(Node callableNode, out IReadOnlyList<string> parameterNames)
+    {
+        parameterNames = Array.Empty<string>();
+
+        NodeList<Node> parameters = callableNode switch
+        {
+            FunctionDeclaration functionDeclaration => functionDeclaration.Params,
+            FunctionExpression functionExpression => functionExpression.Params,
+            ArrowFunctionExpression arrowFunction => arrowFunction.Params,
+            MethodDefinition { Value: FunctionExpression methodFunction } => methodFunction.Params,
+            _ => default
+        };
+
+        var names = new List<string>(parameters.Count);
+        foreach (var parameter in parameters)
+        {
+            if (parameter is Identifier id)
+            {
+                names.Add(id.Name);
+                continue;
+            }
+
+            return false;
+        }
+
+        parameterNames = names;
+        return true;
+    }
+
+    private bool TryResolveParameterInferenceCallTarget(
+        CallExpression call,
+        Scope callScope,
+        IReadOnlyDictionary<Scope, ParameterInferenceCandidate> candidatesByScope,
+        out ParameterInferenceCandidate candidate)
+    {
+        candidate = null!;
+
+        Scope? targetScope = null;
+        if (call.Callee is Identifier calleeId)
+        {
+            var binding = TryResolveBinding(callScope, calleeId.Name);
+            targetScope = TryGetCallableScopeForBinding(FindRootScope(callScope) ?? callScope, binding);
+        }
+        else if (call.Callee is FunctionExpression or ArrowFunctionExpression)
+        {
+            var root = FindRootScope(callScope) ?? callScope;
+            targetScope = FindScopeByAstNode(root, call.Callee);
+        }
+        else if (call.Callee is MemberExpression member
+                 && !member.Computed
+                 && member.Property is Identifier methodId)
+        {
+            targetScope = TryGetClassMethodScopeForReceiver(callScope, member.Object, methodId.Name);
+        }
+
+        return targetScope != null && candidatesByScope.TryGetValue(targetScope, out candidate!);
+    }
+
+    private Scope? TryGetCallableScopeForBinding(Scope root, BindingInfo? binding)
+    {
+        if (binding == null)
+        {
+            return null;
+        }
+
+        return binding.DeclarationNode switch
+        {
+            FunctionDeclaration functionDeclaration => FindScopeByAstNode(root, functionDeclaration),
+            FunctionExpression functionExpression => FindScopeByAstNode(root, functionExpression),
+            VariableDeclarator { Init: FunctionExpression functionExpression } => FindScopeByAstNode(root, functionExpression),
+            VariableDeclarator { Init: ArrowFunctionExpression arrowFunction } => FindScopeByAstNode(root, arrowFunction),
+            _ => null
+        };
+    }
+
+    private Scope? TryGetClassMethodScopeForReceiver(Scope callScope, Node receiver, string methodName)
+    {
+        if (receiver is ThisExpression)
+        {
+            var classScope = FindEnclosingClassScope(callScope);
+            return classScope?.Children.FirstOrDefault(s =>
+                s.Kind == ScopeKind.Function
+                && s.Parent == classScope
+                && string.Equals(s.Name, methodName, StringComparison.Ordinal));
+        }
+
+        if (receiver is MemberExpression
+            {
+                Object: ThisExpression,
+                Computed: false,
+                Property: Identifier fieldId
+            })
+        {
+            var classScope = FindEnclosingClassScope(callScope);
+            if (classScope != null
+                && classScope.StableInstanceFieldUserClassNames.TryGetValue(fieldId.Name, out var receiverClassName))
+            {
+                var root = FindRootScope(classScope);
+                var receiverClassScope = root != null ? FindClassScopeRecursive(root, receiverClassName) : null;
+                return receiverClassScope?.Children.FirstOrDefault(s =>
+                    s.Kind == ScopeKind.Function
+                    && s.Parent == receiverClassScope
+                    && string.Equals(s.Name, methodName, StringComparison.Ordinal));
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsSupportedStableParameterType(Type? type)
+        => type == typeof(double) || type == typeof(bool) || type == typeof(string);
+
+    private static bool IsDirectIdentifierCall(Identifier id, Node? parent)
+        => parent is CallExpression call && ReferenceEquals(call.Callee, id);
+
+    private static bool IsNewExpressionCallee(Identifier id, Node? parent)
+        => parent is NewExpression newExpression && ReferenceEquals(newExpression.Callee, id);
+
+    private static bool IsIdentifierDeclarationName(Identifier id, Node? parent)
+        => parent switch
+        {
+            FunctionDeclaration functionDeclaration when ReferenceEquals(functionDeclaration.Id, id) => true,
+            FunctionExpression functionExpression when ReferenceEquals(functionExpression.Id, id) => true,
+            VariableDeclarator variableDeclarator when ReferenceEquals(variableDeclarator.Id, id) => true,
+            ClassDeclaration classDeclaration when ReferenceEquals(classDeclaration.Id, id) => true,
+            _ => false
+        };
+
+    private static void MarkClassMethodCandidatesUnsafe(
+        Scope classScope,
+        IReadOnlyDictionary<Scope, ParameterInferenceCandidate> candidatesByScope)
+    {
+        foreach (var methodScope in classScope.Children.Where(s => s.Kind == ScopeKind.Function))
+        {
+            if (candidatesByScope.TryGetValue(methodScope, out var candidate))
+            {
+                candidate.IsUnsafe = true;
+            }
+        }
+    }
+
+    private static Dictionary<Node, Node> BuildParentMap(Node rootNode)
+    {
+        var parentMap = new Dictionary<Node, Node>(ReferenceEqualityComparer.Instance);
+        var stack = new Stack<Node>();
+        var walker = new Js2IL.Utilities.AstWalker();
+        walker.VisitWithContext(
+            rootNode,
+            node =>
+            {
+                if (stack.Count > 0)
+                {
+                    parentMap[node] = stack.Peek();
+                }
+                stack.Push(node);
+            },
+            node =>
+            {
+                if (stack.Count > 0 && ReferenceEquals(stack.Peek(), node))
+                {
+                    stack.Pop();
+                }
+            });
+        return parentMap;
+    }
+
+    private Dictionary<Node, Scope> BuildNodeScopeMap(Scope root)
+    {
+        var scopeMap = new Dictionary<Node, Scope>(ReferenceEqualityComparer.Instance);
+        var scopeStack = new Stack<Scope>();
+        var pushedScopes = new Stack<Scope?>();
+        scopeStack.Push(root);
+
+        var walker = new Js2IL.Utilities.AstWalker();
+        walker.VisitWithContext(
+            root.AstNode,
+            node =>
+            {
+                Scope? pushed = null;
+                if (!ReferenceEquals(node, root.AstNode))
+                {
+                    var nodeScope = FindScopeByAstNode(root, node);
+                    if (nodeScope != null && !ReferenceEquals(nodeScope, scopeStack.Peek()))
+                    {
+                        scopeStack.Push(nodeScope);
+                        pushed = nodeScope;
+                    }
+                }
+
+                pushedScopes.Push(pushed);
+                scopeMap[node] = scopeStack.Peek();
+            },
+            _ =>
+            {
+                var pushed = pushedScopes.Pop();
+                if (pushed != null)
+                {
+                    scopeStack.Pop();
+                }
+            });
+
+        return scopeMap;
+    }
+
+    private static IEnumerable<Scope> EnumerateScopes(Scope scope)
+    {
+        yield return scope;
+        foreach (var child in scope.Children)
+        {
+            foreach (var nested in EnumerateScopes(child))
+            {
+                yield return nested;
+            }
+        }
+    }
+
+    private static Scope? FindRootScope(Scope? scope)
+    {
+        var current = scope;
+        while (current?.Parent != null)
+        {
+            current = current.Parent;
+        }
+
+        return current;
+    }
+
+    private static Scope? FindScopeByAstNode(Scope scope, Node astNode)
+    {
+        if (ReferenceEquals(scope.AstNode, astNode))
+        {
+            return scope;
+        }
+
+        foreach (var child in scope.Children)
+        {
+            var found = FindScopeByAstNode(child, astNode);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    private static Scope? FindClassScopeRecursive(Scope scope, string className)
+    {
+        if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
+        {
+            return scope;
+        }
+
+        foreach (var child in scope.Children)
+        {
+            var found = FindClassScopeRecursive(child, className);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    private static Scope? FindEnclosingClassScope(Scope? scope)
+    {
+        var current = scope;
+        while (current != null)
+        {
+            if (current.Kind == ScopeKind.Class)
+            {
+                return current;
+            }
+
+            current = current.Parent;
+        }
+
+        return null;
+    }
+
     private void InferCallableReturnClrTypesRecursively(Scope scope)
     {
         // Very conservative: only infer stable return types when we can trivially prove

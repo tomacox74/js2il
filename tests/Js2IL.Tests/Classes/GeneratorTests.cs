@@ -92,6 +92,19 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_AccessorMethods_InstanceAndStatic() { var testName = nameof(Classes_AccessorMethods_InstanceAndStatic); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
 
+        [Fact]
+        public Task Classes_ClassMethod_ParameterTypeInference_DirectThis_Number()
+        {
+            var testName = nameof(Classes_ClassMethod_ParameterTypeInference_DirectThis_Number);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var classType = moduleType.GetNestedType("Accumulator", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)!;
+                var addMethod = classType.GetMethod("add", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+                Assert.Equal(new[] { typeof(double), typeof(double) }, addMethod.GetParameters().Select(p => p.ParameterType).ToArray());
+            });
+        }
+
         // Test parameter destructuring in class methods
         [Fact]
         public Task Classes_ClassMethod_ParameterDestructuring()

@@ -1,0 +1,217 @@
+﻿// IL code: Function_ParameterTypeInference_DirectFunction_Primitives
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Function_ParameterTypeInference_DirectFunction_Primitives
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit formatSum
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested private auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L4C17
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2149
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L4C17::.ctor
+
+			} // end of class Block_L4C17
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2140
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				float64 a,
+				float64 b,
+				bool enabled,
+				string prefix
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x210c
+			// Header size: 12
+			// Code size: 31 (0x1f)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.Function_ParameterTypeInference_DirectFunction_Primitives/formatSum/Scope/Block_L4C17,
+				[1] object
+			)
+
+			IL_0000: ldarg.3
+			IL_0001: brfalse IL_0019
+
+			IL_0006: newobj instance void Modules.Function_ParameterTypeInference_DirectFunction_Primitives/formatSum/Scope/Block_L4C17::.ctor()
+			IL_000b: stloc.0
+			IL_000c: ldarg.s prefix
+			IL_000e: ldarg.1
+			IL_000f: ldarg.2
+			IL_0010: add
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ret
+
+			IL_0019: ldstr "off"
+			IL_001e: ret
+		} // end of method formatSum::__js_call__
+
+	} // end of class formatSum
+
+	.class nested private auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 1b 53 63 6f 70 65 20 66 6f 72 6d 61 74 53
+			75 6d 3d 7b 66 6f 72 6d 61 74 53 75 6d 7d 00 00
+		)
+		// Fields
+		.field public object formatSum
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2137
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 173 (0xad)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Function_ParameterTypeInference_DirectFunction_Primitives/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.Function_ParameterTypeInference_DirectFunction_Primitives/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.Function_ParameterTypeInference_DirectFunction_Primitives/formatSum::__js_call__(object, float64, float64, bool, string)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes4::.ctor(object, native int)
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
+		IL_0017: stloc.2
+		IL_0018: ldloc.2
+		IL_0019: stloc.1
+		IL_001a: ldnull
+		IL_001b: ldc.r8 1
+		IL_0024: box [System.Runtime]System.Double
+		IL_0029: unbox.any [System.Runtime]System.Double
+		IL_002e: ldc.r8 2
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: unbox.any [System.Runtime]System.Double
+		IL_0041: ldc.i4.1
+		IL_0042: box [System.Runtime]System.Boolean
+		IL_0047: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_004c: ldstr "sum="
+		IL_0051: call object Modules.Function_ParameterTypeInference_DirectFunction_Primitives/formatSum::__js_call__(object, float64, float64, bool, string)
+		IL_0056: stloc.2
+		IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005c: ldloc.2
+		IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0062: pop
+		IL_0063: ldnull
+		IL_0064: ldc.r8 4
+		IL_006d: box [System.Runtime]System.Double
+		IL_0072: unbox.any [System.Runtime]System.Double
+		IL_0077: ldc.r8 5
+		IL_0080: box [System.Runtime]System.Double
+		IL_0085: unbox.any [System.Runtime]System.Double
+		IL_008a: ldc.i4.1
+		IL_008b: box [System.Runtime]System.Boolean
+		IL_0090: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_0095: ldstr "sum="
+		IL_009a: call object Modules.Function_ParameterTypeInference_DirectFunction_Primitives/formatSum::__js_call__(object, float64, float64, bool, string)
+		IL_009f: stloc.2
+		IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a5: ldloc.2
+		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ab: pop
+		IL_00ac: ret
+	} // end of method Function_ParameterTypeInference_DirectFunction_Primitives::__js_module_init__
+
+} // end of class Modules.Function_ParameterTypeInference_DirectFunction_Primitives
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2152
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Function_ParameterTypeInference_DirectFunction_Primitives::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

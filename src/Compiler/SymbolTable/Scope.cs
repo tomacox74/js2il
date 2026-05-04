@@ -87,6 +87,13 @@ public class Scope
     /// so chained calls can lower to direct user-class calls.
     /// </summary>
     public bool StableReturnIsThis { get; set; }
+
+    /// <summary>
+    /// Stable inferred CLR types for simple JavaScript parameters by 0-based parameter index.
+    /// Populated only when all visible safe direct call sites pass the same supported primitive type.
+    /// </summary>
+    public Dictionary<int, Type> StableParameterClrTypes { get; } = new();
+
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>
