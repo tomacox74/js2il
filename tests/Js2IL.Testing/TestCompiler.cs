@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Js2IL.Tests
 {
@@ -13,10 +12,6 @@ namespace Js2IL.Tests
     /// </summary>
     public static class TestCompiler
     {
-        private static readonly Regex NoStrictFlagRegex = new(
-            @"flags\s*:\s*\[[^\]]*\bnoStrict\b[^\]]*\]",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
         /// <summary>
         /// Compiles JavaScript test code to a .NET assembly.
         /// </summary>
@@ -86,12 +81,6 @@ namespace Js2IL.Tests
                 || testCategory.StartsWith("built-ins.", StringComparison.OrdinalIgnoreCase)
                 || testCategory.StartsWith("built_ins.", StringComparison.OrdinalIgnoreCase))
             {
-                options.StrictMode = StrictModeDirectivePrologueMode.Warn;
-
-                if (NoStrictFlagRegex.IsMatch(js))
-                {
-                    options.StrictMode = StrictModeDirectivePrologueMode.Ignore;
-                }
             }
 
             var testLogger = new TestLogger();

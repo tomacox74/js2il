@@ -241,7 +241,7 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public void Convert_NonStrictJs_DefaultStrictMode_Fails()
+        public void Convert_NonStrictJs_Succeeds()
         {
             var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("n"));
             Directory.CreateDirectory(tempRoot);
@@ -252,31 +252,9 @@ namespace Js2IL.Tests
             try
             {
                 var (code, stdout, stderr) = RunOutOfProc(jsFile, "-o", outDir);
-                Assert.NotEqual(0, code);
-                Assert.Contains("requires strict mode", stdout + stderr, StringComparison.OrdinalIgnoreCase);
-            }
-            finally
-            {
-                try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
-            }
-        }
-
-        [Fact]
-        public void Convert_NonStrictJs_StrictModeWarn_Succeeds()
-        {
-            var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("n"));
-            Directory.CreateDirectory(tempRoot);
-            var jsFile = Path.Combine(tempRoot, "nonstrict.js");
-            File.WriteAllText(jsFile, "console.log('hello');\n");
-            var outDir = Path.Combine(tempRoot, "out");
-
-            try
-            {
-                var (code, stdout, stderr) = RunOutOfProc(jsFile, "-o", outDir, "--strictMode", "warn");
-
                 Assert.Equal(0, code);
                 Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
-                Assert.Contains("strict", stdout, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains("Compilation succeeded", stdout, StringComparison.OrdinalIgnoreCase);
 
                 var baseName = Path.GetFileNameWithoutExtension(jsFile);
                 var dllPath = Path.Combine(outDir, baseName + ".dll");

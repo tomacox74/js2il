@@ -80,8 +80,6 @@ You can set metadata per item or apply defaults with properties:
   - Defaults to `true` for Debug builds and `false` otherwise.
 - `Verbose` / `Js2ILVerbose`
 - `AnalyzeUnused` / `Js2ILAnalyzeUnused`
-- `StrictMode` / `Js2ILStrictMode`
-  - `Error`, `Warn`, or `Ignore`
 - `DiagnosticFilePath` / `Js2ILDiagnosticFilePath`
 
 ## MSBuild outputs

@@ -4,7 +4,7 @@
 
 [Back to Section11](Section11.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-06T09:50:24Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -21,11 +21,11 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 11.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-directive-prologues-and-the-use-strict-directive))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Directive prologues; configurable enforcement of "use strict" | Supported with Limitations |  | JS2IL recognizes directive prologues and (by default) requires a top-level "use strict" directive. For third-party CommonJS modules that omit the directive, the compiler can downgrade the missing prologue to a warning via --strictMode=Warn (or suppress via --strictMode=Ignore). JS2IL still compiles using strict-mode semantics; this option only changes reporting severity for the missing directive prologue. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Directive prologues; optional top-level "use strict" | Supported with Limitations |  |  | JS2IL recognizes directive prologues and accepts scripts with or without a top-level "use strict" directive. |
 

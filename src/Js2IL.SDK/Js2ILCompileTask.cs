@@ -82,11 +82,6 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        if (!TryGetStrictMode(source, out var strictMode))
-        {
-            return false;
-        }
-
         var diagnosticFilePath = source.GetMetadata("ResolvedDiagnosticFilePath");
         if (!EnsureDiagnosticDirectoryExists(diagnosticFilePath))
         {
@@ -99,8 +94,7 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
             Verbose = verbose,
             DiagnosticFilePath = string.IsNullOrWhiteSpace(diagnosticFilePath) ? null : diagnosticFilePath,
             AnalyzeUnused = analyzeUnused,
-            EmitPdb = emitPdb,
-            StrictMode = strictMode
+            EmitPdb = emitPdb
         };
 
         var logger = new MsBuildCompilerOutput(Log, sourcePath);
@@ -264,24 +258,6 @@ public sealed class Js2ILCompileTask : Microsoft.Build.Utilities.Task
             Log.LogError($"Cannot create the diagnostic output directory for '{diagnosticFilePath}': {ex.Message}");
             return false;
         }
-    }
-
-    private bool TryGetStrictMode(ITaskItem source, out StrictModeDirectivePrologueMode strictMode)
-    {
-        var raw = source.GetMetadata("StrictMode");
-        if (string.IsNullOrWhiteSpace(raw))
-        {
-            strictMode = StrictModeDirectivePrologueMode.Error;
-            return true;
-        }
-
-        if (Enum.TryParse(raw, ignoreCase: true, out strictMode))
-        {
-            return true;
-        }
-
-        Log.LogError($"Invalid StrictMode value '{raw}' for Js2IL source '{source.ItemSpec}'. Use Error, Warn, or Ignore.");
-        return false;
     }
 
     private bool TryGetBooleanMetadata(ITaskItem item, string metadataName, out bool value)
