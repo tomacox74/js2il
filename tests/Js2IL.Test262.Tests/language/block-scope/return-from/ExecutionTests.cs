@@ -6,7 +6,11 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.block_scope.return_from") { }
 
-    [Fact(DisplayName = "block-const")]
+[Fact(DisplayName = "block-const")]
     public Task block_const()
         => ExecutionTest("block-const");
+
+[Fact(DisplayName = "block-let")]
+    public Task block_let()
+        => ExecutionTest("block-let");
 }
