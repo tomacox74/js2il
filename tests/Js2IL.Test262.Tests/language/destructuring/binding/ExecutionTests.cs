@@ -17,4 +17,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "initialization-requires-object-coercible-undefined")]
     public Task initialization_requires_object_coercible_undefined()
         => ExecutionTest("initialization-requires-object-coercible-undefined");
+
+    [Fact(DisplayName = "keyed-destructuring-property-reference-target-evaluation-order-with-bindings", Skip = "Binding evaluation order with with + Proxy is unstable.")]
+    public Task keyed_destructuring_property_reference_target_evaluation_order_with_bindings()
+        => ExecutionTest("keyed-destructuring-property-reference-target-evaluation-order-with-bindings");
+
 }

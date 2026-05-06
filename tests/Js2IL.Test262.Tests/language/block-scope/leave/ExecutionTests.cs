@@ -41,4 +41,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "x-before-continue")]
     public Task x_before_continue()
         => ExecutionTest("x-before-continue");
+
+    [Fact(DisplayName = "outermost-binding-updated-in-catch-block-nested-block-let-declaration-unseen-outside-of-block", Skip = "eval is not supported by JS2IL.")]
+    public Task outermost_binding_updated_in_catch_block_nested_block_let_declaration_unseen_outside_of_block()
+        => ExecutionTest("outermost-binding-updated-in-catch-block-nested-block-let-declaration-unseen-outside-of-block");
+
 }

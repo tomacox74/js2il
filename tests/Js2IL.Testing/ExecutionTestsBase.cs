@@ -360,6 +360,20 @@ namespace Js2IL.Tests
             {
                 if (stream == null)
                 {
+                    var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath);
+                    if (!string.IsNullOrWhiteSpace(sourceDirectory))
+                    {
+                        var scriptPath = Path.Combine(
+                            sourceDirectory,
+                            "JavaScript",
+                            testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
+
+                        if (File.Exists(scriptPath))
+                        {
+                            return (File.ReadAllText(scriptPath), scriptPath);
+                        }
+                    }
+
                     throw new InvalidOperationException($"Resource '{categorySpecific}' or '{legacy}' not found in assembly '{assembly.FullName}'.");
                 }
                 using (var reader = new StreamReader(stream))

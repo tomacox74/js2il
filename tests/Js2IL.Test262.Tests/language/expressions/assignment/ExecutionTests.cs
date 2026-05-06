@@ -21,4 +21,13 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "8.14.4-8-b_1")]
     public Task _8_14_4_8_b_1()
         => ExecutionTest("8.14.4-8-b_1");
+
+    [Fact(DisplayName = "11.13.1-1-6-s")]
+    public Task _11_13_1_1_6_s()
+        => ExecutionTest("11.13.1-1-6-s");
+
+    [Fact(DisplayName = "11.13.1-1-s")]
+    public Task _11_13_1_1_s()
+        => ExecutionTest("11.13.1-1-s");
+
 }

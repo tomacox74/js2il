@@ -21,4 +21,21 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "param-eval-non-strict-is-correct-value")]
     public Task param_eval_non_strict_is_correct_value()
         => ExecutionTest("param-eval-non-strict-is-correct-value");
+
+    [Fact(DisplayName = "S10.1.1_A1_T2")]
+    public Task S10_1_1_A1_T2()
+        => ExecutionTest("S10.1.1_A1_T2");
+
+    [Fact(DisplayName = "length-dflt", Skip = "Function length descriptors with default parameters are incorrect.")]
+    public Task length_dflt()
+        => ExecutionTest("length-dflt");
+
+    [Fact(DisplayName = "name-arguments-non-strict")]
+    public Task name_arguments_non_strict()
+        => ExecutionTest("name-arguments-non-strict");
+
+    [Fact(DisplayName = "name-eval-non-strict")]
+    public Task name_eval_non_strict()
+        => ExecutionTest("name-eval-non-strict");
+
 }

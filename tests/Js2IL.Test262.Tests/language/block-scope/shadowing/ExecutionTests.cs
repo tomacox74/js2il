@@ -25,4 +25,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "lookup-in-and-through-block-contexts")]
     public Task lookup_in_and_through_block_contexts()
         => ExecutionTest("lookup-in-and-through-block-contexts");
+
+    [Fact(DisplayName = "catch-parameter-shadowing-catch-parameter")]
+    public Task catch_parameter_shadowing_catch_parameter()
+        => ExecutionTest("catch-parameter-shadowing-catch-parameter");
+
 }

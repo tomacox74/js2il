@@ -13,4 +13,17 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "destructuring-object-parameters-function-arguments-length")]
     public Task destructuring_object_parameters_function_arguments_length()
         => ExecutionTest("destructuring-object-parameters-function-arguments-length");
+
+    [Fact(DisplayName = "array-elements-with-initializer")]
+    public Task array_elements_with_initializer()
+        => ExecutionTest("array-elements-with-initializer");
+
+    [Fact(DisplayName = "array-elements-with-object-patterns")]
+    public Task array_elements_with_object_patterns()
+        => ExecutionTest("array-elements-with-object-patterns");
+
+    [Fact(DisplayName = "array-elements-without-initializer")]
+    public Task array_elements_without_initializer()
+        => ExecutionTest("array-elements-without-initializer");
+
 }
