@@ -36,7 +36,7 @@ public class ModuleLoader
         Microsoft.Extensions.Logging.ILogger<ModuleLoader>? diagnosticLogger = null)
     {
         _diagnosticsEnabled = options.DiagnosticsEnabled;
-        _validator = new JavaScriptAstValidator(options.StrictMode);
+        _validator = new JavaScriptAstValidator();
         _fileSystem = fileSystem;
         _moduleResolver = moduleResolver;
         _ux = ux;

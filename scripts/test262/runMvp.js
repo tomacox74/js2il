@@ -1109,7 +1109,6 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
 
   const compositeSourcePath = path.join(caseDirectory, 'input.js');
   fs.writeFileSync(compositeSourcePath, buildCompositeSource(rootPath, testCase), 'utf8');
-  const compilerArgs = ['--strictMode', 'Ignore'];
   const diagnosticContext = createDiagnosticContext(rootPath, outputRoot);
 
   const compileResult = compileWithJs2IL(
@@ -1117,7 +1116,7 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
     path.join(caseDirectory, 'compile'),
     js2il,
     args.compileTimeoutSeconds * 1000,
-    compilerArgs,
+    [],
   );
 
   const negative = testCase.metadata.negative;

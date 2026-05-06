@@ -39,10 +39,6 @@ public class Js2ILArgs
     [ArgShortcut("--pdb")]
     public bool EmitPdb { get; set; }
 
-    [ArgDescription("Strict-mode directive prologue enforcement: Error, Warn, or Ignore")]
-    [ArgShortcut("--strictMode")]
-    public StrictModeDirectivePrologueMode StrictMode { get; set; } = StrictModeDirectivePrologueMode.Error;
-
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
@@ -86,8 +82,7 @@ class Program
                 Verbose = parsed.Verbose,
                 DiagnosticFilePath = diagnosticFilePath,
                 AnalyzeUnused = parsed.AnalyzeUnused,
-                EmitPdb = parsed.EmitPdb,
-                StrictMode = parsed.StrictMode
+                EmitPdb = parsed.EmitPdb
             });
             var logger = servicesProvider.GetRequiredService<ICompilerOutput>();
 
@@ -168,7 +163,6 @@ class Program
         logger.WriteLineError("--diagnostic-file <path> Write diagnostics output to a text file");
         logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");
         logger.WriteLineError("--pdb                  Emit Portable PDB debug symbols (.pdb)");
-        logger.WriteLineError("--strictMode           Strict-mode directive prologue enforcement: Error, Warn, or Ignore");
         logger.WriteLineError("--version              Show version information and exit");
         logger.WriteLineError("-h, -?, --help         Show help and exit");
     }

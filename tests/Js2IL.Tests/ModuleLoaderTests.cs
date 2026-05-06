@@ -27,7 +27,7 @@ public class ModuleLoaderTests
     }
 
     [Fact]
-    public void LoadModules_DependencyMissingUseStrict_ReturnsNullAndLogsErrors()
+    public void LoadModules_DependencyMissingUseStrict_LoadsSuccessfully()
     {
         var fileSystem = new MockFileSystem();
         var logger = new TestLogger();
@@ -43,13 +43,13 @@ public class ModuleLoaderTests
 
         var modules = loader.LoadModules(rootPath);
 
-        Assert.Null(modules);
-        Assert.Contains("Validation Errors", logger.Errors);
-        Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(modules);
+        Assert.True(string.IsNullOrWhiteSpace(logger.Errors));
+        Assert.True(string.IsNullOrWhiteSpace(logger.Warnings));
     }
 
     [Fact]
-    public void LoadModules_MultipleDependenciesMissingUseStrict_ReturnsNullAndLogsAllErrorsWithModuleNames()
+    public void LoadModules_MultipleDependenciesMissingUseStrict_LoadsSuccessfully()
     {
         var fileSystem = new MockFileSystem();
         var logger = new TestLogger();
@@ -67,35 +67,9 @@ public class ModuleLoaderTests
 
         var modules = loader.LoadModules(rootPath);
 
-        Assert.Null(modules);
-        Assert.Contains("Validation Errors", logger.Errors);
-
-        // Both dependencies should be reported (fail-fast hides one of these).
-        Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(Path.GetFileName(depAPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(Path.GetFileName(depBPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void LoadModules_DependencyMissingUseStrict_StrictModeWarn_LoadsAndLogsWarning()
-    {
-        var fileSystem = new MockFileSystem();
-        var logger = new TestLogger();
-        var options = new CompilerOptions { Verbose = false, StrictMode = StrictModeDirectivePrologueMode.Warn };
-        var resolver = new NodeModuleResolver(fileSystem);
-        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
-
-        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.js"));
-        var depPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "dep.js"));
-
-        fileSystem.AddFile(rootPath, "\"use strict\";\nconst d = require('./dep');\nconsole.log(d);\n");
-        fileSystem.AddFile(depPath, "module.exports = 1;\n");
-
-        var modules = loader.LoadModules(rootPath);
-
         Assert.NotNull(modules);
         Assert.True(string.IsNullOrWhiteSpace(logger.Errors));
-        Assert.Contains("requires strict mode", logger.Warnings, StringComparison.OrdinalIgnoreCase);
+        Assert.True(string.IsNullOrWhiteSpace(logger.Warnings));
     }
 
     [Fact]
@@ -117,7 +91,7 @@ public class ModuleLoaderTests
             + "require('./missingA');\n"
             + "require('./missingB');\n"
         );
-        fileSystem.AddFile(okPath, "module.exports = 1;\n");
+        fileSystem.AddFile(okPath, "module.exports = ;\n");
 
         var modules = loader.LoadModules(rootPath);
 
@@ -125,7 +99,6 @@ public class ModuleLoaderTests
         Assert.Contains("require('./missingA')", logger.Errors);
         Assert.Contains("require('./missingB')", logger.Errors);
         Assert.Contains(Path.GetFileName(okPath), logger.Errors, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("requires strict mode", logger.Errors, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

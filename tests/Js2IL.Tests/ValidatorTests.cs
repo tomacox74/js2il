@@ -22,26 +22,14 @@ public class ValidatorTests
         => _parser.ParseJavaScript("\"use strict\";\n" + js, "test.js");
 
     [Fact]
-    public void Validate_MissingUseStrict_ReportsError()
+    public void Validate_MissingUseStrict_ReturnsValid()
     {
         var js = "var x = 1;";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("requires strict mode", StringComparison.OrdinalIgnoreCase));
-    }
-
-    [Fact]
-    public void Validate_MissingUseStrict_StrictModeWarn_ReportsWarning()
-    {
-        var js = "var x = 1;";
-        var ast = _parser.ParseJavaScript(js, "test.js");
-        var warnValidator = new JavaScriptAstValidator(StrictModeDirectivePrologueMode.Warn);
-        var result = warnValidator.Validate(ast);
-
         Assert.True(result.IsValid);
         Assert.Empty(result.Errors);
-        Assert.Contains(result.Warnings, w => w.Contains("requires strict mode", StringComparison.OrdinalIgnoreCase));
+        Assert.Empty(result.Warnings);
     }
 
     [Fact]
