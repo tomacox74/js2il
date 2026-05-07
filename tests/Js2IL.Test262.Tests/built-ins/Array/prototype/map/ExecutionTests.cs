@@ -1,104 +1,72 @@
-using Js2IL.Tests;
-
-namespace Js2IL.Test262.Tests.built_ins.Array.prototype.map;
-
-public class ExecutionTests : ExecutionTestsBase
-{
-    public ExecutionTests() : base("built_ins.Array.prototype.map") { }
-
-[Fact(DisplayName = "15.4.4.19-1-1", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_1()
-        => ExecutionTest("15.4.4.19-1-1");
-
-[Fact(DisplayName = "15.4.4.19-1-10", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_10()
-        => ExecutionTest("15.4.4.19-1-10");
-
-[Fact(DisplayName = "15.4.4.19-1-11", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_11()
-        => ExecutionTest("15.4.4.19-1-11");
-
-[Fact(DisplayName = "15.4.4.19-1-12", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_12()
-        => ExecutionTest("15.4.4.19-1-12");
-
-[Fact(DisplayName = "15.4.4.19-1-13", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_13()
-        => ExecutionTest("15.4.4.19-1-13");
-
-[Fact(DisplayName = "15.4.4.19-1-14", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_14()
-        => ExecutionTest("15.4.4.19-1-14");
-
-[Fact(DisplayName = "15.4.4.19-1-15", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_15()
-        => ExecutionTest("15.4.4.19-1-15");
-
-[Fact(DisplayName = "15.4.4.19-1-2", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_2()
-        => ExecutionTest("15.4.4.19-1-2");
-
-[Fact(DisplayName = "15.4.4.19-1-1", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_1()
-        => ExecutionTest("15.4.4.19-1-1");
-
-[Fact(DisplayName = "15.4.4.19-1-10", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_10()
-        => ExecutionTest("15.4.4.19-1-10");
-
-[Fact(DisplayName = "15.4.4.19-1-11", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_11()
-        => ExecutionTest("15.4.4.19-1-11");
-
-[Fact(DisplayName = "15.4.4.19-1-12", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_12()
-        => ExecutionTest("15.4.4.19-1-12");
-
-[Fact(DisplayName = "15.4.4.19-1-13", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_13()
-        => ExecutionTest("15.4.4.19-1-13");
-
-[Fact(DisplayName = "15.4.4.19-1-14", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_14()
-        => ExecutionTest("15.4.4.19-1-14");
-
-[Fact(DisplayName = "15.4.4.19-1-15", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_15()
-        => ExecutionTest("15.4.4.19-1-15");
-
-[Fact(DisplayName = "15.4.4.19-1-2", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_2()
-        => ExecutionTest("15.4.4.19-1-2");
-
-[Fact(DisplayName = "15.4.4.19-1-1", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_1()
-        => ExecutionTest("15.4.4.19-1-1");
-
-[Fact(DisplayName = "15.4.4.19-1-10", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_10()
-        => ExecutionTest("15.4.4.19-1-10");
-
-[Fact(DisplayName = "15.4.4.19-1-11", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_11()
-        => ExecutionTest("15.4.4.19-1-11");
-
-[Fact(DisplayName = "15.4.4.19-1-12", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
-    public Task _15_4_4_19_1_12()
-        => ExecutionTest("15.4.4.19-1-12");
-
-[Fact(DisplayName = "15.4.4.19-1-13", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_13()
-        => ExecutionTest("15.4.4.19-1-13");
-
-[Fact(DisplayName = "15.4.4.19-1-14", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_14()
-        => ExecutionTest("15.4.4.19-1-14");
-
-[Fact(DisplayName = "15.4.4.19-1-15", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_15()
-        => ExecutionTest("15.4.4.19-1-15");
-
-[Fact(DisplayName = "15.4.4.19-1-2", Skip = "Known JS2IL compiler/runtime limitation")]
-    public Task _15_4_4_19_1_2()
-        => ExecutionTest("15.4.4.19-1-2");
-}
+using Js2IL.Test262.Tests.built_ins;
+
+namespace Js2IL.Test262.Tests.built_ins.Array.prototype.map;
+
+public class ExecutionTests : DiskExecutionTestsBase
+{
+    public ExecutionTests() : base("built_ins.Array.prototype.map") { }
+
+    [Fact(DisplayName = "15.4.4.19-1-1", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
+    public Task _15_4_4_19_1_1()
+        => ExecutionTestFromFile("15.4.4.19-1-1");
+
+    [Fact(DisplayName = "15.4.4.19-1-10", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
+    public Task _15_4_4_19_1_10()
+        => ExecutionTestFromFile("15.4.4.19-1-10");
+
+    [Fact(DisplayName = "15.4.4.19-1-11", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
+    public Task _15_4_4_19_1_11()
+        => ExecutionTestFromFile("15.4.4.19-1-11");
+
+    [Fact(DisplayName = "15.4.4.19-1-12", Skip = "Array.prototype.map null/undefined receiver handling is incomplete.")]
+    public Task _15_4_4_19_1_12()
+        => ExecutionTestFromFile("15.4.4.19-1-12");
+
+    [Fact(DisplayName = "15.4.4.19-1-13", Skip = "Known JS2IL compiler/runtime limitation")]
+    public Task _15_4_4_19_1_13()
+        => ExecutionTestFromFile("15.4.4.19-1-13");
+
+    [Fact(DisplayName = "15.4.4.19-1-14", Skip = "Known JS2IL compiler/runtime limitation")]
+    public Task _15_4_4_19_1_14()
+        => ExecutionTestFromFile("15.4.4.19-1-14");
+
+    [Fact(DisplayName = "15.4.4.19-1-15", Skip = "Known JS2IL compiler/runtime limitation")]
+    public Task _15_4_4_19_1_15()
+        => ExecutionTestFromFile("15.4.4.19-1-15");
+
+    [Fact(DisplayName = "15.4.4.19-1-2", Skip = "Known JS2IL compiler/runtime limitation")]
+    public Task _15_4_4_19_1_2()
+        => ExecutionTestFromFile("15.4.4.19-1-2");
+
+    [Fact(DisplayName = "15.4.4.19-1-3", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    public Task _15_4_4_19_1_3()
+        => ExecutionTestFromFile("15.4.4.19-1-3");
+
+    [Fact(DisplayName = "15.4.4.19-1-4", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    public Task _15_4_4_19_1_4()
+        => ExecutionTestFromFile("15.4.4.19-1-4");
+
+    [Fact(DisplayName = "15.4.4.19-1-5", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    public Task _15_4_4_19_1_5()
+        => ExecutionTestFromFile("15.4.4.19-1-5");
+
+    [Fact(DisplayName = "15.4.4.19-1-6", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    public Task _15_4_4_19_1_6()
+        => ExecutionTestFromFile("15.4.4.19-1-6");
+
+    [Fact(DisplayName = "15.4.4.19-1-7", Skip = "Known issue: runtime failure in this test262 scenario")]
+    public Task _15_4_4_19_1_7()
+        => ExecutionTestFromFile("15.4.4.19-1-7");
+
+    [Fact(DisplayName = "15.4.4.19-1-8", Skip = "Known issue: runtime failure in this test262 scenario")]
+    public Task _15_4_4_19_1_8()
+        => ExecutionTestFromFile("15.4.4.19-1-8");
+
+    [Fact(DisplayName = "15.4.4.19-1-9", Skip = "Known issue: runtime failure in this test262 scenario")]
+    public Task _15_4_4_19_1_9()
+        => ExecutionTestFromFile("15.4.4.19-1-9");
+
+    [Fact(DisplayName = "15.4.4.19-2-1", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    public Task _15_4_4_19_2_1()
+        => ExecutionTestFromFile("15.4.4.19-2-1");
+}
