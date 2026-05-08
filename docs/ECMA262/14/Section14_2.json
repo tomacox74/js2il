@@ -48,7 +48,16 @@
         "specUrl": "https://tc39.es/ecma262/#sec-blockdeclarationinstantiation",
         "testScripts": [
           "tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js"
-        ]
+        ],
+        "test262Paths": [
+          "test/language/block-scope/leave/verify-context-in-finally-block.js",
+          "test/language/block-scope/leave/verify-context-in-for-loop-block.js",
+          "test/language/block-scope/leave/verify-context-in-labelled-block.js",
+          "test/language/block-scope/shadowing/lookup-in-and-through-block-contexts.js",
+          "test/language/block-scope/shadowing/dynamic-lookup-from-closure.js",
+          "test/language/block-scope/shadowing/catch-parameter-shadowing-let-declaration.js"
+        ],
+        "notes": "Lexical block environments preserve shadowing through nested blocks, labelled/finally exits, and closure lookups. Current bounded test262 coverage also exercises catch-parameter shadowing and block-scope restoration after control flow leaves the block."
       },
       {
         "clause": "14.2.3",

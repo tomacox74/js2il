@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-06T09:50:24Z
+> Last generated (UTC): 2026-05-08T17:35:30Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -105,7 +105,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.entries | Supported with Limitations | [`Object_Entries_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js) |  | Implemented in JavaScriptRuntime.Object.entries. Returns an array of [key, value] pairs for own enumerable properties. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
+| Object.entries | Supported with Limitations | [`Object_Entries_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js) | `test/built-ins/Object/entries/exception-during-enumeration.js`<br>`test/built-ins/Object/entries/function-length.js`<br>`test/built-ins/Object/entries/function-name.js`<br>`test/built-ins/Object/entries/function-property-descriptor.js`<br>`test/built-ins/Object/entries/inherited-properties-omitted.js`<br>`test/built-ins/Object/entries/primitive-strings.js`<br>`test/built-ins/Object/entries/return-order.js`<br>`test/built-ins/Object/entries/symbols-omitted.js` | Implemented in JavaScriptRuntime.Object.entries. Returns an array of [key, value] pairs for own enumerable properties. Current bounded test262 coverage exercises primitive boxing, inherited/symbol-key omission, ordinary own-property ordering, and abrupt completion when enumeration getters throw. Full proxy and other exotic-object ordering guarantees remain limited. |
 
 ### 20.1.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-object.freeze))
 
@@ -123,7 +123,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.getOwnPropertyDescriptor | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`Object_SymbolKey_Descriptors_And_Enumeration.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js) |  | Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary js2il objects, with simplified fallbacks for plain dynamic-object properties. Full host-object descriptor fidelity remains limited. |
+| Object.getOwnPropertyDescriptor | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`Object_SymbolKey_Descriptors_And_Enumeration.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js) | `test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-0-1.js`<br>`test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-1-1.js`<br>`test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-2-1.js`<br>`test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-2-18.js` | Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary js2il objects, and the current bounded test262 coverage also exercises descriptor reflection for several ordinary/built-in receivers. Full host-object descriptor fidelity remains limited. |
 
 ### 20.1.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptors))
 

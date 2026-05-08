@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-08T17:35:31Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -17,7 +17,7 @@
 | 25.5.1 | JSON.parse ( text [ , reviver ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-json.parse) |
 | 25.5.1.1 | ParseJSON ( text ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ParseJSON) |
 | 25.5.1.2 | InternalizeJSONProperty ( holder , name , reviver ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-internalizejsonproperty) |
-| 25.5.2 | JSON.stringify ( value [ , replacer [ , space ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-json.stringify) |
+| 25.5.2 | JSON.stringify ( value [ , replacer [ , space ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-json.stringify) |
 | 25.5.2.1 | JSON Serialization Record | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-json-serialization-record) |
 | 25.5.2.2 | SerializeJSONProperty ( state , key , holder ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-serializejsonproperty) |
 | 25.5.2.3 | QuoteJSONString ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-quotejsonstring) |
@@ -28,11 +28,17 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 25.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-json.parse))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| JSON.parse | Supported with Limitations | `tests/Js2IL.Tests/JSONRuntimeTests.cs` | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| JSON.parse | Supported with Limitations | `tests/Js2IL.Tests/JSONRuntimeTests.cs` | `test/built-ins/JSON/parse/15.12.1.1-0-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-0-4.js`<br>`test/built-ins/JSON/parse/15.12.1.1-0-9.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g1-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g1-4.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g2-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g2-4.js` | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Current bounded test262 coverage exercises representative grammar acceptance and primitive/whitespace handling. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. |
+
+### 25.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-json.stringify))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| JSON.stringify | Supported with Limitations |  | `test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/prop-desc.js`<br>`test/built-ins/JSON/stringify/replacer-array-number.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js` | JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata) plus representative array-replacer handling and revoked-proxy abrupt completion. Property-order and several exotic replacer edge cases remain open. |
 

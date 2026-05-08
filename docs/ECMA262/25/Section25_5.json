@@ -30,7 +30,7 @@
     {
       "clause": "25.5.2",
       "title": "JSON.stringify ( value [ , replacer [ , space ] ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-json.stringify"
     },
     {
@@ -86,7 +86,31 @@
         "testScripts": [
           "tests/Js2IL.Tests/JSONRuntimeTests.cs"
         ],
-        "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+        "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Current bounded test262 coverage exercises representative grammar acceptance and primitive/whitespace handling. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double.",
+        "test262Paths": [
+          "test/built-ins/JSON/parse/15.12.1.1-0-1.js",
+          "test/built-ins/JSON/parse/15.12.1.1-0-4.js",
+          "test/built-ins/JSON/parse/15.12.1.1-0-9.js",
+          "test/built-ins/JSON/parse/15.12.1.1-g1-1.js",
+          "test/built-ins/JSON/parse/15.12.1.1-g1-4.js",
+          "test/built-ins/JSON/parse/15.12.1.1-g2-1.js",
+          "test/built-ins/JSON/parse/15.12.1.1-g2-4.js"
+        ]
+      },
+      {
+        "clause": "25.5.2",
+        "feature": "JSON.stringify",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-json.stringify",
+        "test262Paths": [
+          "test/built-ins/JSON/stringify/builtin.js",
+          "test/built-ins/JSON/stringify/length.js",
+          "test/built-ins/JSON/stringify/name.js",
+          "test/built-ins/JSON/stringify/prop-desc.js",
+          "test/built-ins/JSON/stringify/replacer-array-number.js",
+          "test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js"
+        ],
+        "notes": "JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata) plus representative array-replacer handling and revoked-proxy abrupt completion. Property-order and several exotic replacer edge cases remain open."
       }
     ]
   }

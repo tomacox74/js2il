@@ -181,9 +181,18 @@
           "test/built-ins/Function/prototype/bind/15.3.4.5-0-1.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-1.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-10-1.js",
-          "test/built-ins/Function/prototype/bind/15.3.4.5-16-1.js"
+          "test/built-ins/Function/prototype/bind/15.3.4.5-16-1.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-11-1.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-16-2.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-10.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-11.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-12.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-13.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-14.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-15.js",
+          "test/built-ins/Function/prototype/bind/15.3.4.5-2-16.js"
         ],
-        "notes": "Implemented for delegate-backed function values via Function.prototype and the runtime member-call dispatcher. Supports binding this and partial application of arguments, routes `new` on bound constructors through the target function with spec-aligned `new.target` rewriting, derives bound `length` / `name` metadata from the target, and keeps bound functions from surfacing an own `prototype` property. Full exotic-function edge cases beyond the current delegate-backed model are not implemented."
+        "notes": "Implemented for delegate-backed function values via Function.prototype and the runtime member-call dispatcher. Supports binding this and partial application of arguments, routes `new` on bound constructors through the target function with spec-aligned `new.target` rewriting, derives bound `length` / `name` metadata from the target, and keeps bound functions from surfacing an own `prototype` property. Current bounded test262 coverage also exercises broader bound-function metadata and boxed/ordinary thisArg cases. Full exotic-function edge cases beyond the current delegate-backed model are not implemented."
       },
       {
         "clause": "20.2.3.3",
@@ -199,9 +208,14 @@
         "test262Paths": [
           "test/built-ins/Function/prototype/call/15.3.4.4-1-s.js",
           "test/built-ins/Function/prototype/call/S15.3.4.4_A1_T1.js",
-          "test/built-ins/Function/prototype/call/S15.3.4.4_A10.js"
+          "test/built-ins/Function/prototype/call/S15.3.4.4_A10.js",
+          "test/built-ins/Function/prototype/call/15.3.4.4-2-s.js",
+          "test/built-ins/Function/prototype/call/15.3.4.4-3-s.js",
+          "test/built-ins/Function/prototype/call/S15.3.4.4_A1_T2.js",
+          "test/built-ins/Function/prototype/call/S15.3.4.4_A15.js",
+          "test/built-ins/Function/prototype/call/S15.3.4.4_A16.js"
         ],
-        "notes": "Implemented for delegate-backed function values via JavaScriptRuntime.Function.Call. Non-delegate callable objects and full CreateListFromArrayLike semantics are not implemented."
+        "notes": "Implemented for delegate-backed function values via JavaScriptRuntime.Function.Call. Current bounded test262 coverage also exercises direct argument forwarding and additional primitive/ordinary thisArg cases. Non-delegate callable objects and full CreateListFromArrayLike semantics are not implemented."
       },
       {
         "clause": "20.2.4",

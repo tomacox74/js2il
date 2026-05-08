@@ -38,13 +38,20 @@
     "entries": [
       {
         "clause": "19.4.2",
-        "feature": "JSON intrinsic object is available (JSON.parse)",
+        "feature": "JSON intrinsic object is available (JSON.parse, JSON.stringify)",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-json",
         "testScripts": [
           "tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
         ],
-        "notes": "JavaScriptRuntime.JSON implements JSON.parse only. JSON.stringify and the optional reviver/replacer behaviors are not implemented. Parsing errors are translated to JavaScript SyntaxError."
+        "notes": "JavaScriptRuntime.JSON exposes both JSON.parse and JSON.stringify. The current bounded test262 coverage exercises the intrinsic object surface plus JSON.stringify function metadata; reviver support and several exotic replacer/order edge cases remain limited. Parsing errors are translated to JavaScript SyntaxError.",
+        "test262Paths": [
+          "test/built-ins/JSON/parse/15.12.1.1-0-1.js",
+          "test/built-ins/JSON/stringify/builtin.js",
+          "test/built-ins/JSON/stringify/length.js",
+          "test/built-ins/JSON/stringify/name.js",
+          "test/built-ins/JSON/stringify/prop-desc.js"
+        ]
       },
       {
         "clause": "19.4.3",

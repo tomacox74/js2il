@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T15:05:12Z
+> Last generated (UTC): 2026-05-08T17:35:30Z
 
 JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.
 
@@ -86,7 +86,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Bound functions created by Function.prototype.bind | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js) | `test/built-ins/Function/prototype/bind/15.3.4.5-0-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-10-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-16-1.js` | bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. The current delegate-backed model supports bound calls plus the constructor/new.target path JS2IL uses in practice, but true [[BoundTargetFunction]] / [[BoundArguments]] slot fidelity and broader exotic-function invariants remain incomplete. |
+| Bound functions created by Function.prototype.bind | Supported with Limitations | [`Function_Bind_Basic_PartialApplication.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js)<br>[`Function_Bind_ThisBinding_IgnoresCallReceiver.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js)<br>[`Function_Prototype_Bind_PropertyExists.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js) | `test/built-ins/Function/prototype/bind/15.3.4.5-0-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-10-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-16-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-11-1.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-16-2.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-10.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-11.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-12.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-13.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-14.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-15.js`<br>`test/built-ins/Function/prototype/bind/15.3.4.5-2-16.js` | bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. Current bounded test262 coverage also exercises bound length/name metadata, constructor forwarding, and ordinary-object/boxed thisArg cases. True [[BoundTargetFunction]] / [[BoundArguments]] slot fidelity and broader exotic-function invariants remain incomplete. |
 
 ### 10.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-array-exotic-objects))
 
