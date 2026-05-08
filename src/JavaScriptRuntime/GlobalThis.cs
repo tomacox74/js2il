@@ -189,6 +189,8 @@ namespace JavaScriptRuntime
         {
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.RestrictedPropertiesPrototype, JavaScriptRuntime.Function.Prototype);
+            DefineIntrinsicDataProperty(Math, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Math");
+            DefineIntrinsicDataProperty(JSON, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "JSON");
 
             // Attach minimal prototypes to callable globals so patterns like
             // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only

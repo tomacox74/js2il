@@ -38,23 +38,23 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_3_4_5_2_11()
         => ExecutionTestFromFile("15.3.4.5-2-11");
 
-    [Fact(DisplayName = "15.3.4.5-2-12", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "15.3.4.5-2-12")]
     public Task _15_3_4_5_2_12()
         => ExecutionTestFromFile("15.3.4.5-2-12");
 
-    [Fact(DisplayName = "15.3.4.5-2-13", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "15.3.4.5-2-13")]
     public Task _15_3_4_5_2_13()
         => ExecutionTestFromFile("15.3.4.5-2-13");
 
-    [Fact(DisplayName = "15.3.4.5-2-14", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "15.3.4.5-2-14")]
     public Task _15_3_4_5_2_14()
         => ExecutionTestFromFile("15.3.4.5-2-14");
 
-    [Fact(DisplayName = "15.3.4.5-2-15", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "15.3.4.5-2-15")]
     public Task _15_3_4_5_2_15()
         => ExecutionTestFromFile("15.3.4.5-2-15");
 
-    [Fact(DisplayName = "15.3.4.5-2-16", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "15.3.4.5-2-16")]
     public Task _15_3_4_5_2_16()
         => ExecutionTestFromFile("15.3.4.5-2-16");
 

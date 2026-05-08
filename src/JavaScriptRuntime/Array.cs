@@ -22,10 +22,13 @@ namespace JavaScriptRuntime
             var exp = new ExpandoObject();
             var dict = (IDictionary<string, object?>)exp;
             var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
-            dict["push"] = (Func<object[], object?[], object?>)PrototypePush;
-            dict["reduce"] = (Func<object[], object?[], object?>)PrototypeReduce;
-            dict["reduceRight"] = (Func<object[], object?[], object?>)PrototypeReduceRight;
-            dict["indexOf"] = (Func<object[], object?[], object?>)PrototypeIndexOf;
+            DefinePrototypeMethod(exp, "push", (Func<object[], object?[]?, object?>)PrototypePush, 1);
+            DefinePrototypeMethod(exp, "reduce", (Func<object[], object?[]?, object?>)PrototypeReduce, 1);
+            DefinePrototypeMethod(exp, "reduceRight", (Func<object[], object?[]?, object?>)PrototypeReduceRight, 1);
+            DefinePrototypeMethod(exp, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
+            DefinePrototypeMethod(exp, "every", (Func<object[], object?[]?, object?>)PrototypeEvery, 1);
+            DefinePrototypeMethod(exp, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
+            DefinePrototypeMethod(exp, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
             PropertyDescriptorStore.DefineOrUpdate(exp, "entries", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -59,6 +62,35 @@ namespace JavaScriptRuntime
                 Value = prototypeValues
             });
             return exp;
+        }
+
+        private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
+        {
+            JavaScriptRuntime.Function.ConfigureCallableObject(method, hasRestrictedProperties: false);
+            PropertyDescriptorStore.DefineOrUpdate(method, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = length
+            });
+            PropertyDescriptorStore.DefineOrUpdate(method, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = method
+            });
         }
 
         public bool hasOwnProperty(object? prop)
@@ -161,7 +193,9 @@ namespace JavaScriptRuntime
                 throw new TypeError("callback is not a function");
             }
 
-            int length = ToArrayLikeLength(receiver);
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
             int k;
 
             object? accumulator;
@@ -178,9 +212,9 @@ namespace JavaScriptRuntime
                 k = 0;
                 for (int i = 0; i < length; i++)
                 {
-                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
                     {
-                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
+                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                         k = i + 1;
                         found = true;
                         break;
@@ -195,17 +229,17 @@ namespace JavaScriptRuntime
 
             for (int i = k; i < length; i++)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
                 {
                     continue;
                 }
-                var current = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
+                var current = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
                     accumulator,
                     current,
                     (double)i,
-                    receiver
+                    callbackReceiver
                 });
             }
 
@@ -258,7 +292,9 @@ namespace JavaScriptRuntime
                 throw new TypeError("callback is not a function");
             }
 
-            int length = ToArrayLikeLength(receiver);
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            int length = ToArrayLikeLength(iterationReceiver);
             int k;
             object? accumulator;
             if (args.Length >= 2)
@@ -274,9 +310,9 @@ namespace JavaScriptRuntime
                 k = length - 1;
                 for (int i = length - 1; i >= 0; i--)
                 {
-                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
+                    if (JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
                     {
-                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
+                        accumulator = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                         k = i - 1;
                         found = true;
                         break;
@@ -291,17 +327,17 @@ namespace JavaScriptRuntime
 
             for (int i = k; i >= 0; i--)
             {
-                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, receiver))
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
                 {
                     continue;
                 }
-                var current = JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)i);
+                var current = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
                 accumulator = JavaScriptRuntime.Function.Call(callbackDel, null, new object?[]
                 {
                     accumulator,
                     current,
                     (double)i,
-                    receiver
+                    callbackReceiver
                 });
             }
 
@@ -392,6 +428,162 @@ namespace JavaScriptRuntime
             }
 
             return -1d;
+        }
+
+        private static object? PrototypeEvery(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("every");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var callback = RequireCallback(args, "every");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            int length = ToArrayLikeLength(iterationReceiver);
+
+            for (int i = 0; i < length; i++)
+            {
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                {
+                    continue;
+                }
+
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                var result = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                if (!JavaScriptRuntime.Operators.IsTruthy(result))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static object? PrototypeFilter(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("filter");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var callback = RequireCallback(args, "filter");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            int length = ToArrayLikeLength(iterationReceiver);
+            var result = new Array();
+
+            for (int i = 0; i < length; i++)
+            {
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                {
+                    continue;
+                }
+
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                var keep = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                if (JavaScriptRuntime.Operators.IsTruthy(keep))
+                {
+                    result.Add(value);
+                }
+            }
+
+            return result;
+        }
+
+        private static object? PrototypeMap(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("map");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var callback = RequireCallback(args, "map");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            int length = ToArrayLikeLength(iterationReceiver);
+            var result = new Array
+            {
+                length = length
+            };
+
+            for (int i = 0; i < length; i++)
+            {
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                {
+                    continue;
+                }
+
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                result[i] = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+            }
+
+            return result;
+        }
+
+        private static object RequireArrayLikeReceiver(string methodName)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError($"Array.prototype.{methodName} called on null or undefined");
+            }
+
+            return receiver;
+        }
+
+        private static Delegate RequireCallback(object?[]? args, string methodName)
+        {
+            if (args == null || args.Length == 0 || args[0] is null || args[0] is JsNull)
+            {
+                throw new TypeError($"Array.prototype.{methodName} requires a callback function");
+            }
+
+            if (args[0] is not Delegate callback)
+            {
+                throw new TypeError("callback is not a function");
+            }
+
+            return callback;
+        }
+
+        private static object GetArrayMethodIterationReceiver(object receiver)
+        {
+            if (receiver is string)
+            {
+                return receiver;
+            }
+
+            if (TryGetStringObjectValue(receiver, out var stringValue))
+            {
+                return stringValue;
+            }
+
+            return GetArrayMethodCallbackReceiver(receiver);
+        }
+
+        private static object GetArrayMethodCallbackReceiver(object receiver)
+        {
+            if (receiver is bool boolean)
+            {
+                return new JavaScriptRuntime.Boolean(boolean);
+            }
+
+            if (receiver is string str)
+            {
+                return JavaScriptRuntime.String.Construct(new object?[] { str }, null);
+            }
+
+            if (receiver is double or float or int or long or short or byte or System.Numerics.BigInteger)
+            {
+                return JavaScriptRuntime.Number.Construct(new object?[] { receiver }, null);
+            }
+
+            return receiver;
+        }
+
+        private static bool TryGetStringObjectValue(object receiver, out string value)
+        {
+            if (PropertyDescriptorStore.TryGetOwn(receiver, JavaScriptRuntime.String.StringDataPropertyName, out var descriptor)
+                && descriptor.Kind == JsPropertyDescriptorKind.Data)
+            {
+                value = DotNet2JSConversions.ToString(descriptor.Value);
+                return true;
+            }
+
+            value = string.Empty;
+            return false;
         }
 
         private static int ToArrayLikeLength(object receiver)
