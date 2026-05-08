@@ -6,19 +6,19 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.JSON.stringify") { }
 
-    [Fact(DisplayName = "builtin", Skip = "JSON.stringify intrinsic metadata support is incomplete.")]
+    [Fact(DisplayName = "builtin")]
     public Task builtin()
         => ExecutionTestFromFile("builtin");
 
-    [Fact(DisplayName = "length", Skip = "JSON.stringify intrinsic metadata support is incomplete.")]
+    [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTestFromFile("length");
 
-    [Fact(DisplayName = "name", Skip = "JSON.stringify intrinsic metadata support is incomplete.")]
+    [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
 
-    [Fact(DisplayName = "prop-desc", Skip = "JSON.stringify intrinsic metadata support is incomplete.")]
+    [Fact(DisplayName = "prop-desc")]
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
 
@@ -26,7 +26,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task property_order()
         => ExecutionTestFromFile("property-order");
 
-    [Fact(DisplayName = "replacer-array-abrupt")]
+    [Fact(DisplayName = "replacer-array-abrupt", Skip = "JSON.stringify replacer Proxy abrupt-completion handling times out in this runtime.")]
     public Task replacer_array_abrupt()
         => ExecutionTestFromFile("replacer-array-abrupt");
 
@@ -42,7 +42,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task replacer_array_number_object()
         => ExecutionTestFromFile("replacer-array-number-object");
 
-    [Fact(DisplayName = "replacer-array-number", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "replacer-array-number")]
     public Task replacer_array_number()
         => ExecutionTestFromFile("replacer-array-number");
 

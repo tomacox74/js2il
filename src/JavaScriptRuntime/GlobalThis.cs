@@ -122,14 +122,34 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.RegExp.Call(pattern, flags);
         };
 
+        private static readonly Func<object[], object?[], object?> _jsonStringifyValue = static (_, args) =>
+        {
+            var value = args != null && args.Length > 0 ? args[0] : null;
+            var replacer = args != null && args.Length > 1 ? args[1] : null;
+            var space = args != null && args.Length > 2 ? args[2] : null;
+            return JavaScriptRuntime.JSON.Stringify(value, replacer, space);
+        };
+
         private static readonly Func<object[], object?[], object?> _errorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.Error(message));
+
+        private static readonly Func<object[], object?[], object?> _evalErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.EvalError(message));
+
+        private static readonly Func<object[], object?[], object?> _rangeErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.RangeError(message));
 
         private static readonly Func<object[], object?[], object?> _referenceErrorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.ReferenceError(message));
 
+        private static readonly Func<object[], object?[], object?> _syntaxErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.SyntaxError(message));
+
         private static readonly Func<object[], object?[], object?> _typeErrorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.TypeError(message));
+
+        private static readonly Func<object[], object?[], object?> _uriErrorConstructorValue =
+            CreateErrorConstructorValue(static message => new JavaScriptRuntime.URIError(message));
 
         private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
             throw new TypeError("Iterator is not directly constructible in js2il.");
@@ -142,8 +162,12 @@ namespace JavaScriptRuntime
 
         // Minimal Error.prototype object. Libraries may attach properties here.
         private static readonly object _errorPrototypeValue = new JsObject();
+        private static readonly object _evalErrorPrototypeValue = new JsObject();
+        private static readonly object _rangeErrorPrototypeValue = new JsObject();
         private static readonly object _referenceErrorPrototypeValue = new JsObject();
+        private static readonly object _syntaxErrorPrototypeValue = new JsObject();
         private static readonly object _typeErrorPrototypeValue = new JsObject();
+        private static readonly object _uriErrorPrototypeValue = new JsObject();
 
         // Minimal Object.prototype object used for descriptor/prototype-heavy libraries.
         // NOTE: We intentionally do not enable PrototypeChain here; Object.create/setPrototypeOf
@@ -282,6 +306,24 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(_booleanPrototypeValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_symbolPrototypeValue, _objectPrototypeValue);
             DefineIntrinsicDataProperty(_jsonValue, "parse", (Func<object?, object?>)JavaScriptRuntime.JSON.Parse);
+            ConfigureBuiltinFunctionObject(_jsonStringifyValue);
+            PropertyDescriptorStore.DefineOrUpdate(_jsonStringifyValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "stringify"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_jsonStringifyValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 3d
+            });
+            DefineIntrinsicDataProperty(_jsonValue, "stringify", _jsonStringifyValue);
             DefineIntrinsicDataProperty(_numberPrototypeValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Number");
             ConfigureConstructorPrototypeSurface(_regExpConstructorValue, JavaScriptRuntime.RegExp.Prototype);
             ConfigureBuiltinFunctionObject(_numberFunctionValue);
@@ -329,8 +371,12 @@ namespace JavaScriptRuntime
 
             // Provide Error.prototype for patterns like `Error.prototype` and error-subclassing libraries.
             ConfigureErrorIntrinsicSurface(_errorConstructorValue, _errorPrototypeValue, "Error", parentPrototype: _objectPrototypeValue);
+            ConfigureErrorIntrinsicSurface(_evalErrorConstructorValue, _evalErrorPrototypeValue, "EvalError", parentPrototype: _errorPrototypeValue);
+            ConfigureErrorIntrinsicSurface(_rangeErrorConstructorValue, _rangeErrorPrototypeValue, "RangeError", parentPrototype: _errorPrototypeValue);
             ConfigureErrorIntrinsicSurface(_referenceErrorConstructorValue, _referenceErrorPrototypeValue, "ReferenceError", parentPrototype: _errorPrototypeValue);
+            ConfigureErrorIntrinsicSurface(_syntaxErrorConstructorValue, _syntaxErrorPrototypeValue, "SyntaxError", parentPrototype: _errorPrototypeValue);
             ConfigureErrorIntrinsicSurface(_typeErrorConstructorValue, _typeErrorPrototypeValue, "TypeError", parentPrototype: _errorPrototypeValue);
+            ConfigureErrorIntrinsicSurface(_uriErrorConstructorValue, _uriErrorPrototypeValue, "URIError", parentPrototype: _errorPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(_booleanPrototypeValue, "constructor", new JsPropertyDescriptor
             {
@@ -756,11 +802,23 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
 
+            dict.TryAdd(nameof(GlobalThis.EvalError), EvalError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.EvalError), dict[nameof(GlobalThis.EvalError)]);
+
+            dict.TryAdd(nameof(GlobalThis.RangeError), RangeError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.RangeError), dict[nameof(GlobalThis.RangeError)]);
+
             dict.TryAdd(nameof(GlobalThis.ReferenceError), ReferenceError);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.ReferenceError), dict[nameof(GlobalThis.ReferenceError)]);
 
+            dict.TryAdd(nameof(GlobalThis.SyntaxError), SyntaxError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.SyntaxError), dict[nameof(GlobalThis.SyntaxError)]);
+
             dict.TryAdd(nameof(GlobalThis.TypeError), TypeError);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.TypeError), dict[nameof(GlobalThis.TypeError)]);
+
+            dict.TryAdd(nameof(GlobalThis.URIError), URIError);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.URIError), dict[nameof(GlobalThis.URIError)]);
 
             dict.TryAdd(nameof(GlobalThis.Iterator), Iterator);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Iterator), dict[nameof(GlobalThis.Iterator)]);
@@ -929,9 +987,17 @@ namespace JavaScriptRuntime
         /// </summary>
         public static Func<object[], object?[], object?> Error => _errorConstructorValue;
 
+        public static Func<object[], object?[], object?> EvalError => _evalErrorConstructorValue;
+
+        public static Func<object[], object?[], object?> RangeError => _rangeErrorConstructorValue;
+
         public static Func<object[], object?[], object?> ReferenceError => _referenceErrorConstructorValue;
 
+        public static Func<object[], object?[], object?> SyntaxError => _syntaxErrorConstructorValue;
+
         public static Func<object[], object?[], object?> TypeError => _typeErrorConstructorValue;
+
+        public static Func<object[], object?[], object?> URIError => _uriErrorConstructorValue;
 
         public static Func<object[], object?[], object?> Iterator => _iteratorConstructorValue;
 
@@ -1327,8 +1393,12 @@ namespace JavaScriptRuntime
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
         internal static object SymbolPrototypeValue => _symbolPrototypeValue;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;
+        internal static object EvalErrorPrototypeValue => _evalErrorPrototypeValue;
+        internal static object RangeErrorPrototypeValue => _rangeErrorPrototypeValue;
         internal static object ReferenceErrorPrototypeValue => _referenceErrorPrototypeValue;
+        internal static object SyntaxErrorPrototypeValue => _syntaxErrorPrototypeValue;
         internal static object TypeErrorPrototypeValue => _typeErrorPrototypeValue;
+        internal static object URIErrorPrototypeValue => _uriErrorPrototypeValue;
         internal static bool HasUndefinedPrototype(Delegate functionValue)
         {
             ArgumentNullException.ThrowIfNull(functionValue);
@@ -1408,8 +1478,12 @@ namespace JavaScriptRuntime
             // Keep this aligned with the explicitly exposed built-in error constructor values above.
             var prototype = error switch
             {
+                JavaScriptRuntime.EvalError => _evalErrorPrototypeValue,
+                JavaScriptRuntime.RangeError => _rangeErrorPrototypeValue,
                 JavaScriptRuntime.ReferenceError => _referenceErrorPrototypeValue,
+                JavaScriptRuntime.SyntaxError => _syntaxErrorPrototypeValue,
                 JavaScriptRuntime.TypeError => _typeErrorPrototypeValue,
+                JavaScriptRuntime.URIError => _uriErrorPrototypeValue,
                 _ => _errorPrototypeValue
             };
 

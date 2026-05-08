@@ -615,6 +615,7 @@ namespace JavaScriptRuntime
                 && obj is not JavaScriptRuntime.Array
                 && obj is not JavaScriptRuntime.TypedArrayBase
                 && obj is not string
+                && obj is not JavaScriptRuntime.Symbol
                 && !obj.GetType().IsValueType)
             {
                 var type = obj.GetType();
@@ -871,6 +872,7 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "defineProperties", _objectDefinePropertiesValue);
             DefineBuiltinDataProperty(objectConstructorValue, "defineProperty", _objectDefinePropertyValue);
             DefineBuiltinDataProperty(objectConstructorValue, "entries", _objectEntriesValue);
+            DefineBuiltinFunctionName(_objectEntriesValue, "entries");
             DefineBuiltinDataProperty(objectConstructorValue, "freeze", _objectFreezeValue);
             DefineBuiltinDataProperty(objectConstructorValue, "fromEntries", _objectFromEntriesValue);
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyDescriptor", _objectGetOwnPropertyDescriptorValue);
@@ -901,6 +903,18 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectPrototypeValue, "__defineSetter__", _objectPrototypeDefineSetterValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "__lookupGetter__", _objectPrototypeLookupGetterValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "__lookupSetter__", _objectPrototypeLookupSetterValue, enumerable: false, configurable: true, writable: true);
+        }
+
+        private static void DefineBuiltinFunctionName(object functionValue, string name)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = name
+            });
         }
 
         /// <summary>

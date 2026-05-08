@@ -18,7 +18,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_5_4_13_A1_T1()
         => ExecutionTestFromFile("S15.5.4.13_A1_T1");
 
-    [Fact(DisplayName = "S15.5.4.13_A1_T10", Skip = "String.prototype.slice boxed-string/object coercion handling is incomplete.")]
+    [Fact(DisplayName = "S15.5.4.13_A1_T10")]
     public Task S15_5_4_13_A1_T10()
         => ExecutionTestFromFile("S15.5.4.13_A1_T10");
 

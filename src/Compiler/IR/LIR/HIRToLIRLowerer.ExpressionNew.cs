@@ -118,6 +118,11 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
         }
 
+        if (string.Equals(ctorName, "Object", StringComparison.Ordinal))
+        {
+            return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+        }
+
         if (string.Equals(ctorName, "Date", StringComparison.Ordinal))
         {
             var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
