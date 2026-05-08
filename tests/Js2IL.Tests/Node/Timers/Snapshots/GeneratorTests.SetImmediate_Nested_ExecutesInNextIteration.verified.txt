@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x212c
+					// Method begins at RVA 0x213c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -45,7 +45,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x20fc
+				// Method begins at RVA 0x210c
 				// Header size: 12
 				// Code size: 18 (0x12)
 				.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2123
+				// Method begins at RVA 0x2133
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -93,9 +93,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20a8
+			// Method begins at RVA 0x20b0
 			// Header size: 12
-			// Code size: 70 (0x46)
+			// Code size: 77 (0x4d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L3C14/Scope,
@@ -114,15 +114,18 @@
 			IL_0022: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
-			IL_0036: stloc.1
-			IL_0037: ldloc.1
-			IL_0038: ldc.i4.0
-			IL_0039: newarr [System.Runtime]System.Object
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-			IL_0043: pop
-			IL_0044: ldnull
-			IL_0045: ret
+			IL_0031: ldc.i4.0
+			IL_0032: conv.r8
+			IL_0033: ldstr ""
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+			IL_003d: stloc.1
+			IL_003e: ldloc.1
+			IL_003f: ldc.i4.0
+			IL_0040: newarr [System.Runtime]System.Object
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+			IL_004a: pop
+			IL_004b: ldnull
+			IL_004c: ret
 		} // end of method ArrowFunction_L3C14::__js_call__
 
 	} // end of class ArrowFunction_L3C14
@@ -134,7 +137,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211a
+			// Method begins at RVA 0x212a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -160,7 +163,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 81 (0x51)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope,
@@ -180,18 +183,21 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
-		IL_002b: stloc.1
-		IL_002c: ldloc.1
-		IL_002d: ldc.i4.0
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0038: pop
-		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003e: ldstr "scheduled nested immediates."
-		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0048: pop
-		IL_0049: ret
+		IL_0026: ldc.i4.0
+		IL_0027: conv.r8
+		IL_0028: ldstr ""
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_0032: stloc.1
+		IL_0033: ldloc.1
+		IL_0034: ldc.i4.0
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_003f: pop
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldstr "scheduled nested immediates."
+		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004f: pop
+		IL_0050: ret
 	} // end of method SetImmediate_Nested_ExecutesInNextIteration::__js_module_init__
 
 } // end of class Modules.SetImmediate_Nested_ExecutesInNextIteration
@@ -203,7 +209,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x2145
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

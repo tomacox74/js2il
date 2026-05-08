@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228e
+				// Method begins at RVA 0x229d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x210b
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -86,7 +86,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2285
+				// Method begins at RVA 0x2294
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,7 +110,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x2120
 			// Header size: 12
 			// Code size: 252 (0xfc)
 			.maxstack 8
@@ -222,7 +222,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226a
+				// Method begins at RVA 0x2279
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -242,7 +242,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2273
+				// Method begins at RVA 0x2282
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -262,7 +262,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227c
+				// Method begins at RVA 0x228b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -288,7 +288,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2220
+			// Method begins at RVA 0x2228
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -307,9 +307,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2230
+			// Method begins at RVA 0x2238
 			// Header size: 12
-			// Code size: 37 (0x25)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Async_ArrowFunction_LexicalThis/Counter/Scope_makeGetter,
@@ -324,10 +324,13 @@
 			IL_0012: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
 			IL_0017: ldarg.0
 			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object)
-			IL_0022: stloc.1
-			IL_0023: ldloc.1
-			IL_0024: ret
+			IL_001d: ldc.i4.0
+			IL_001e: conv.r8
+			IL_001f: ldstr ""
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: ret
 		} // end of method Counter::makeGetter
 
 	} // end of class Counter
@@ -339,7 +342,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2261
+			// Method begins at RVA 0x2270
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -365,7 +368,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 168 (0xa8)
+		// Code size: 175 (0xaf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Async_ArrowFunction_LexicalThis/Scope,
@@ -417,18 +420,21 @@
 		IL_0076: stelem.ref
 		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
-		IL_0086: stloc.s 7
-		IL_0088: ldloc.s 6
-		IL_008a: ldstr "then"
-		IL_008f: ldloc.s 7
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0096: pop
-		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009c: ldstr "After calling async getter"
-		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a6: pop
-		IL_00a7: ret
+		IL_0081: ldc.i4.1
+		IL_0082: conv.r8
+		IL_0083: ldstr ""
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_008d: stloc.s 7
+		IL_008f: ldloc.s 6
+		IL_0091: ldstr "then"
+		IL_0096: ldloc.s 7
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_009d: pop
+		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a3: ldstr "After calling async getter"
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ad: pop
+		IL_00ae: ret
 	} // end of method Async_ArrowFunction_LexicalThis::__js_module_init__
 
 } // end of class Modules.Async_ArrowFunction_LexicalThis
@@ -440,7 +446,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2297
+		// Method begins at RVA 0x22a6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

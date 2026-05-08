@@ -33,7 +33,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25e9
+				// Method begins at RVA 0x25fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -57,7 +57,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c4
+			// Method begins at RVA 0x20d8
 			// Header size: 12
 			// Code size: 556 (0x22c)
 			.maxstack 8
@@ -311,7 +311,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25f2
+				// Method begins at RVA 0x2606
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -335,7 +335,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22fc
+			// Method begins at RVA 0x2310
 			// Header size: 12
 			// Code size: 728 (0x2d8)
 			.maxstack 8
@@ -665,7 +665,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x25e0
+			// Method begins at RVA 0x25f4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -691,7 +691,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 104 (0x68)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.AsyncGenerator_BasicNext/Scope,
@@ -709,34 +709,41 @@
 		IL_000f: stelem.ref
 		IL_0010: ldftn object Modules.AsyncGenerator_BasicNext/g::__js_call__(object[], object)
 		IL_0016: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object)
-		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorFunction::InitializeFunctionObject(object)
-		IL_0025: stloc.1
-		IL_0026: ldloc.0
-		IL_0027: ldloc.1
-		IL_0028: stfld object Modules.AsyncGenerator_BasicNext/Scope::g
-		IL_002d: ldnull
-		IL_002e: ldftn object Modules.AsyncGenerator_BasicNext/ArrowFunction_L9C2::__js_call__(object[], object)
-		IL_0034: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldloc.0
-		IL_0042: stelem.ref
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object)
-		IL_0052: stloc.1
-		IL_0053: ldc.i4.0
-		IL_0054: newarr [System.Runtime]System.Object
-		IL_0059: stloc.2
-		IL_005a: ldloc.1
-		IL_005b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0060: ldloc.2
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0066: pop
-		IL_0067: ret
+		IL_001b: ldc.i4.0
+		IL_001c: conv.r8
+		IL_001d: ldstr "g"
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string)
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.GeneratorObject::InitializeGeneratorFunctionSurface(object)
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncGeneratorFunction::InitializeFunctionObject(object)
+		IL_0031: stloc.1
+		IL_0032: ldloc.0
+		IL_0033: ldloc.1
+		IL_0034: stfld object Modules.AsyncGenerator_BasicNext/Scope::g
+		IL_0039: ldnull
+		IL_003a: ldftn object Modules.AsyncGenerator_BasicNext/ArrowFunction_L9C2::__js_call__(object[], object)
+		IL_0040: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.0
+		IL_004e: stelem.ref
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0059: ldc.i4.0
+		IL_005a: conv.r8
+		IL_005b: ldstr ""
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string)
+		IL_0065: stloc.1
+		IL_0066: ldc.i4.0
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: stloc.2
+		IL_006d: ldloc.1
+		IL_006e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0073: ldloc.2
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0079: pop
+		IL_007a: ret
 	} // end of method AsyncGenerator_BasicNext::__js_module_init__
 
 } // end of class Modules.AsyncGenerator_BasicNext
@@ -748,7 +755,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25fb
+		// Method begins at RVA 0x260f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
