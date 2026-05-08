@@ -1071,7 +1071,7 @@ class HIRMethodBuilder
             JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
             NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
             HasRestParameters = functionScope.HasRestParameters,
-            AstNode = null
+            AstNode = funcExpr
         };
 
         return new HIRFunctionExpression(callableId, functionScope);
@@ -1265,7 +1265,7 @@ class HIRMethodBuilder
                     JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
                     HasRestParameters = functionScope.HasRestParameters,
-                    AstNode = null
+                    AstNode = fd
                 };
 
                 var funcValue = new HIRFunctionExpression(callableId, functionScope);
@@ -2934,7 +2934,7 @@ class HIRMethodBuilder
                     JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
                     HasRestParameters = arrowScope.HasRestParameters,
-                    AstNode = null
+                    AstNode = arrowExpr
                 };
 
                 hirExpr = new HIRArrowFunctionExpression(arrowCallableId, arrowScope);

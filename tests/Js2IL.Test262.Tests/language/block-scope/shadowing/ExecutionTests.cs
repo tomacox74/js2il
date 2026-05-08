@@ -34,7 +34,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task catch_parameter_shadowing_function_parameter_name()
         => ExecutionTest("catch-parameter-shadowing-function-parameter-name");
 
-    [Fact(DisplayName = "catch-parameter-shadowing-let-declaration", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "catch-parameter-shadowing-let-declaration")]
     public Task catch_parameter_shadowing_let_declaration()
         => ExecutionTest("catch-parameter-shadowing-let-declaration");
 

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2193
+				// Method begins at RVA 0x219b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x215c
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -83,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219c
+				// Method begins at RVA 0x21a4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,7 +103,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a5
+				// Method begins at RVA 0x21ad
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -125,7 +125,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217f
+			// Method begins at RVA 0x2187
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -154,7 +154,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 232 (0xe8)
+		// Code size: 239 (0xef)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TemporalDeadZoneCapturedRead/Scope,
@@ -180,87 +180,90 @@
 		IL_0012: castclass Modules.Variable_TemporalDeadZoneCapturedRead/Scope
 		IL_0017: ldftn object Modules.Variable_TemporalDeadZoneCapturedRead/readValue::__js_call__(class Modules.Variable_TemporalDeadZoneCapturedRead/Scope, object)
 		IL_001d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
-		IL_0027: stloc.s 7
-		IL_0029: ldloc.s 7
-		IL_002b: stloc.1
+		IL_0022: ldc.i4.0
+		IL_0023: conv.r8
+		IL_0024: ldstr "readValue"
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_002e: stloc.s 7
+		IL_0030: ldloc.s 7
+		IL_0032: stloc.1
 		.try
 		{
-			IL_002c: newobj instance void Modules.Variable_TemporalDeadZoneCapturedRead/Scope/Block_L7C4::.ctor()
-			IL_0031: stloc.2
-			IL_0032: ldc.i4.1
-			IL_0033: newarr [System.Runtime]System.Object
-			IL_0038: dup
-			IL_0039: ldc.i4.0
-			IL_003a: ldloc.0
-			IL_003b: stelem.ref
-			IL_003c: ldc.i4.0
-			IL_003d: ldelem.ref
-			IL_003e: castclass Modules.Variable_TemporalDeadZoneCapturedRead/Scope
-			IL_0043: ldftn object Modules.Variable_TemporalDeadZoneCapturedRead/readValue::__js_call__(class Modules.Variable_TemporalDeadZoneCapturedRead/Scope, object)
-			IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_004e: ldnull
-			IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-			IL_0054: pop
-			IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005a: ldstr "NO_TDZ"
-			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0064: pop
-			IL_0065: leave IL_00bd
+			IL_0033: newobj instance void Modules.Variable_TemporalDeadZoneCapturedRead/Scope/Block_L7C4::.ctor()
+			IL_0038: stloc.2
+			IL_0039: ldc.i4.1
+			IL_003a: newarr [System.Runtime]System.Object
+			IL_003f: dup
+			IL_0040: ldc.i4.0
+			IL_0041: ldloc.0
+			IL_0042: stelem.ref
+			IL_0043: ldc.i4.0
+			IL_0044: ldelem.ref
+			IL_0045: castclass Modules.Variable_TemporalDeadZoneCapturedRead/Scope
+			IL_004a: ldftn object Modules.Variable_TemporalDeadZoneCapturedRead/readValue::__js_call__(class Modules.Variable_TemporalDeadZoneCapturedRead/Scope, object)
+			IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0055: ldnull
+			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+			IL_005b: pop
+			IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0061: ldstr "NO_TDZ"
+			IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_006b: pop
+			IL_006c: leave IL_00c4
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_006a: stloc.3
-			IL_006b: ldloc.3
-			IL_006c: dup
-			IL_006d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0072: dup
-			IL_0073: brtrue IL_0089
-
-			IL_0078: pop
+			IL_0071: stloc.3
+			IL_0072: ldloc.3
+			IL_0073: dup
+			IL_0074: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
 			IL_0079: dup
-			IL_007a: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_007f: dup
-			IL_0080: brtrue IL_0096
+			IL_007a: brtrue IL_0090
 
-			IL_0085: pop
-			IL_0086: pop
-			IL_0087: rethrow
+			IL_007f: pop
+			IL_0080: dup
+			IL_0081: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0086: dup
+			IL_0087: brtrue IL_009d
 
-			IL_0089: pop
-			IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_008f: stloc.s 4
-			IL_0091: br IL_0099
+			IL_008c: pop
+			IL_008d: pop
+			IL_008e: rethrow
 
-			IL_0096: pop
-			IL_0097: stloc.s 4
+			IL_0090: pop
+			IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0096: stloc.s 4
+			IL_0098: br IL_00a0
 
-			IL_0099: ldloc.s 4
-			IL_009b: stloc.s 7
-			IL_009d: ldloc.s 7
-			IL_009f: stloc.s 5
-			IL_00a1: newobj instance void Modules.Variable_TemporalDeadZoneCapturedRead/Scope/Block_L10C12::.ctor()
-			IL_00a6: stloc.s 6
-			IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ad: ldstr "TDZ_CAPTURED"
-			IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00b7: pop
-			IL_00b8: leave IL_00bd
+			IL_009d: pop
+			IL_009e: stloc.s 4
+
+			IL_00a0: ldloc.s 4
+			IL_00a2: stloc.s 7
+			IL_00a4: ldloc.s 7
+			IL_00a6: stloc.s 5
+			IL_00a8: newobj instance void Modules.Variable_TemporalDeadZoneCapturedRead/Scope/Block_L10C12::.ctor()
+			IL_00ad: stloc.s 6
+			IL_00af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b4: ldstr "TDZ_CAPTURED"
+			IL_00b9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00be: pop
+			IL_00bf: leave IL_00c4
 		} // end handler
 
-		IL_00bd: ldloc.0
-		IL_00be: ldstr "ready"
-		IL_00c3: stfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-		IL_00c8: ldloc.0
-		IL_00c9: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
-		IL_00ce: ldstr "Cannot access 'value' before initialization"
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00d8: stloc.s 7
-		IL_00da: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00df: ldloc.s 7
-		IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e6: pop
-		IL_00e7: ret
+		IL_00c4: ldloc.0
+		IL_00c5: ldstr "ready"
+		IL_00ca: stfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+		IL_00cf: ldloc.0
+		IL_00d0: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
+		IL_00d5: ldstr "Cannot access 'value' before initialization"
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00df: stloc.s 7
+		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e6: ldloc.s 7
+		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ed: pop
+		IL_00ee: ret
 	} // end of method Variable_TemporalDeadZoneCapturedRead::__js_module_init__
 
 } // end of class Modules.Variable_TemporalDeadZoneCapturedRead
@@ -272,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ae
+		// Method begins at RVA 0x21b6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -59,5 +59,5 @@ assert.throws = function(ExpectedError, fn) {
   }
 };
 
-eval("({foo : 1, get foo(){}});");
+({foo : 1, get foo(){}});
 

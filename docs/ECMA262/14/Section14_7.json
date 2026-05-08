@@ -350,7 +350,14 @@
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LetClosureCapture_Continue.js"
         ],
-        "notes": "Implements CreatePerIterationEnvironment by materializing a dedicated loop-head scope instance per iteration and capturing that scope in closures, so closures observe 0,1,2 rather than the final value."
+        "notes": "Implements CreatePerIterationEnvironment by materializing a dedicated loop-head scope instance per iteration and capturing that scope in closures, so closures observe 0,1,2 rather than the final value. Current bounded test262 coverage also exercises fresh lexical bindings across multiple iterations and completion paths.",
+        "test262Paths": [
+          "test/language/statements/for/12.6.3_2-3-a-ii-1.js",
+          "test/language/statements/for/12.6.3_2-3-a-ii-2.js",
+          "test/language/statements/for/12.6.3_2-3-a-ii-3.js",
+          "test/language/statements/for/12.6.3_2-3-a-ii-20.js",
+          "test/language/statements/for/12.6.3_2-3-a-ii-21.js"
+        ]
       },
       {
         "clause": "14.7.4.2",
@@ -401,9 +408,15 @@
           "test/language/statements/for-of/Array.prototype.keys.js",
           "test/language/statements/for-of/array-expand.js",
           "test/language/statements/for-of/array-key-get-error.js",
-          "test/language/statements/for-of/body-dstr-assign-error.js"
+          "test/language/statements/for-of/body-dstr-assign-error.js",
+          "test/language/statements/for-of/arguments-mapped.js",
+          "test/language/statements/for-of/arguments-mapped-aliasing.js",
+          "test/language/statements/for-of/arguments-mapped-mutation.js",
+          "test/language/statements/for-of/arguments-unmapped.js",
+          "test/language/statements/for-of/arguments-unmapped-mutation.js",
+          "test/language/statements/for-of/array.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator]() for-of cases in the bounded test262 MVP coverage compile successfully."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator]() and arguments-object for-of cases in the bounded test262 coverage compile successfully."
       },
       {
         "clause": "14.7.5.7",
@@ -426,9 +439,14 @@
         "test262Paths": [
           "test/language/statements/for-in/cptn-decl-itr.js",
           "test/language/statements/for-in/cptn-decl-skip-itr.js",
-          "test/language/statements/for-in/cptn-decl-abrupt-empty.js"
+          "test/language/statements/for-in/cptn-decl-abrupt-empty.js",
+          "test/language/statements/for-in/12.6.4-1.js",
+          "test/language/statements/for-in/12.6.4-2.js",
+          "test/language/statements/for-in/head-const-fresh-binding-per-iteration.js",
+          "test/language/statements/for-in/S12.6.4_A1.js",
+          "test/language/statements/for-in/S12.6.4_A2.js"
         ],
-        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
+        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings for for-in heads. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
       },
       {
         "clause": "14.7.5",

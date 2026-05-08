@@ -59,6 +59,12 @@ namespace JavaScriptRuntime
                 return ToString(wrappedNumber);
             }
 
+            if (PropertyDescriptorStore.TryGetOwn(value, JavaScriptRuntime.String.StringDataPropertyName, out var stringDataDescriptor)
+                && stringDataDescriptor.Kind == JsPropertyDescriptorKind.Data)
+            {
+                return ToString(stringDataDescriptor.Value);
+            }
+
             if (value is IDictionary<string, object?> dictObject)
             {
                 return FormatObject(dictObject);
@@ -67,30 +73,7 @@ namespace JavaScriptRuntime
             // Numbers: normalize to JS-like string forms using invariant culture and exact tokens
             if (value is double dd)
             {
-                if (double.IsNaN(dd)) return "NaN";
-                if (double.IsPositiveInfinity(dd)) return "Infinity";
-                if (double.IsNegativeInfinity(dd)) return "-Infinity";
-                // Preserve -0
-                if (dd == 0.0 && double.IsNegative(dd)) return "-0";
-
-                // Cross-platform stabilization: if a finite non-zero double is extremely close
-                // to an integer (common from transcendental ops on some runtimes), format it
-                // as an integer to match JS Number#toString minimal representation.
-                // Avoid snapping to zero to preserve tiny magnitudes like 1e-16.
-                if (!double.IsNaN(dd) && !double.IsInfinity(dd))
-                {
-                    double nearest = global::System.Math.Round(dd);
-                    if (nearest != 0.0)
-                    {
-                        double delta = global::System.Math.Abs(dd - nearest);
-                        // A conservative epsilon for double near-unit magnitudes
-                        if (delta <= 1e-12)
-                        {
-                            return nearest.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        }
-                    }
-                }
-                return dd.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return NumberToString(dd);
             }
             if (value is float ff)
             {
@@ -125,6 +108,63 @@ namespace JavaScriptRuntime
                 return formattable.ToString(null, System.Globalization.CultureInfo.InvariantCulture);
             }
             return value!.ToString()!;
+        }
+
+        private static string NumberToString(double value)
+        {
+            if (double.IsNaN(value)) return "NaN";
+            if (double.IsPositiveInfinity(value)) return "Infinity";
+            if (double.IsNegativeInfinity(value)) return "-Infinity";
+            if (value == 0.0) return double.IsNegative(value) ? "-0" : "0";
+
+            var abs = global::System.Math.Abs(value);
+            if (double.IsInteger(value))
+            {
+                if (abs >= 1e21)
+                {
+                    return NormalizeExponent(value.ToString("0.#################e+0", System.Globalization.CultureInfo.InvariantCulture));
+                }
+
+                if (abs >= 1e-6)
+                {
+                    return value.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+                }
+            }
+
+            double nearest = global::System.Math.Round(value);
+            if (nearest != 0.0 && global::System.Math.Abs(value - nearest) <= 1e-12 && global::System.Math.Abs(nearest) < 1e21)
+            {
+                return nearest.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return NormalizeExponent(value.ToString("G15", System.Globalization.CultureInfo.InvariantCulture));
+        }
+
+        private static string NormalizeExponent(string value)
+        {
+            var normalized = value.Replace('E', 'e');
+            var exponentIndex = normalized.IndexOf('e');
+            if (exponentIndex < 0)
+            {
+                return normalized;
+            }
+
+            var mantissa = normalized[..exponentIndex].TrimEnd('0').TrimEnd('.');
+            var exponent = normalized[(exponentIndex + 1)..];
+            var sign = string.Empty;
+            if (exponent.StartsWith("+", StringComparison.Ordinal) || exponent.StartsWith("-", StringComparison.Ordinal))
+            {
+                sign = exponent[..1];
+                exponent = exponent[1..];
+            }
+
+            exponent = exponent.TrimStart('0');
+            if (exponent.Length == 0)
+            {
+                exponent = "0";
+            }
+
+            return $"{mantissa}e{sign}{exponent}";
         }
 
         private static string FormatObject(IDictionary<string, object?> dict)

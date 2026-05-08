@@ -22,11 +22,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task accessor_name_static_computed_yield_expr()
         => ExecutionTest("accessor-name-static-computed-yield-expr");
 
-    [Fact(DisplayName = "class-name-ident-await-escaped", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "class-name-ident-await-escaped")]
     public Task class_name_ident_await_escaped()
         => ExecutionTest("class-name-ident-await-escaped");
 
-    [Fact(DisplayName = "class-name-ident-await", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "class-name-ident-await")]
     public Task class_name_ident_await()
         => ExecutionTest("class-name-ident-await");
 

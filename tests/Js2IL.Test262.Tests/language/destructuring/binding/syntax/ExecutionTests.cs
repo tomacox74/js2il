@@ -38,27 +38,27 @@ public class ExecutionTests : ExecutionTestsBase
     public Task array_rest_elements()
         => ExecutionTest("array-rest-elements");
 
-    [Fact(DisplayName = "object-pattern-with-no-property-list", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "object-pattern-with-no-property-list")]
     public Task object_pattern_with_no_property_list()
         => ExecutionTest("object-pattern-with-no-property-list");
 
-    [Fact(DisplayName = "property-list-bindings-elements", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "property-list-bindings-elements")]
     public Task property_list_bindings_elements()
         => ExecutionTest("property-list-bindings-elements");
 
-    [Fact(DisplayName = "property-list-followed-by-a-single-comma", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "property-list-followed-by-a-single-comma")]
     public Task property_list_followed_by_a_single_comma()
         => ExecutionTest("property-list-followed-by-a-single-comma");
 
-    [Fact(DisplayName = "property-list-single-name-bindings", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "property-list-single-name-bindings")]
     public Task property_list_single_name_bindings()
         => ExecutionTest("property-list-single-name-bindings");
 
-    [Fact(DisplayName = "property-list-with-property-list", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "property-list-with-property-list")]
     public Task property_list_with_property_list()
         => ExecutionTest("property-list-with-property-list");
 
-    [Fact(DisplayName = "recursive-array-and-object-patterns", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "recursive-array-and-object-patterns")]
     public Task recursive_array_and_object_patterns()
         => ExecutionTest("recursive-array-and-object-patterns");
 }

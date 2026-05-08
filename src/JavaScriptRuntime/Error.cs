@@ -78,17 +78,17 @@ namespace JavaScriptRuntime
     [IntrinsicObject("EvalError", IntrinsicCallKind.BuiltInError)]
     public class EvalError : Error
     {
-        public EvalError() : base() { Name = "EvalError"; }
-        public EvalError(string? message) : base(message) { Name = "EvalError"; }
-        public EvalError(string? message, Exception? inner) : base(message, inner) { Name = "EvalError"; }
+        public EvalError() : base() { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
+        public EvalError(string? message) : base(message) { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
+        public EvalError(string? message, Exception? inner) : base(message, inner) { Name = "EvalError"; PrototypeChain.SetPrototype(this, GlobalThis.EvalErrorPrototypeValue); }
     }
 
     [IntrinsicObject("RangeError", IntrinsicCallKind.BuiltInError)]
     public class RangeError : Error
     {
-        public RangeError() : base() { Name = "RangeError"; }
-        public RangeError(string? message) : base(message) { Name = "RangeError"; }
-        public RangeError(string? message, Exception? inner) : base(message, inner) { Name = "RangeError"; }
+        public RangeError() : base() { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
+        public RangeError(string? message) : base(message) { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
+        public RangeError(string? message, Exception? inner) : base(message, inner) { Name = "RangeError"; PrototypeChain.SetPrototype(this, GlobalThis.RangeErrorPrototypeValue); }
     }
 
     [IntrinsicObject("ReferenceError", IntrinsicCallKind.BuiltInError)]
@@ -102,9 +102,9 @@ namespace JavaScriptRuntime
     [IntrinsicObject("SyntaxError", IntrinsicCallKind.BuiltInError)]
     public class SyntaxError : Error
     {
-        public SyntaxError() : base() { Name = "SyntaxError"; }
-        public SyntaxError(string? message) : base(message) { Name = "SyntaxError"; }
-        public SyntaxError(string? message, Exception? inner) : base(message, inner) { Name = "SyntaxError"; }
+        public SyntaxError() : base() { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
+        public SyntaxError(string? message) : base(message) { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
+        public SyntaxError(string? message, Exception? inner) : base(message, inner) { Name = "SyntaxError"; PrototypeChain.SetPrototype(this, GlobalThis.SyntaxErrorPrototypeValue); }
     }
 
     [IntrinsicObject("TypeError", IntrinsicCallKind.BuiltInError)]
@@ -118,9 +118,9 @@ namespace JavaScriptRuntime
     [IntrinsicObject("URIError", IntrinsicCallKind.BuiltInError)]
     public class URIError : Error
     {
-        public URIError() : base() { Name = "URIError"; }
-        public URIError(string? message) : base(message) { Name = "URIError"; }
-        public URIError(string? message, Exception? inner) : base(message, inner) { Name = "URIError"; }
+        public URIError() : base() { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
+        public URIError(string? message) : base(message) { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
+        public URIError(string? message, Exception? inner) : base(message, inner) { Name = "URIError"; PrototypeChain.SetPrototype(this, GlobalThis.URIErrorPrototypeValue); }
     }
 
     [IntrinsicObject("AggregateError", IntrinsicCallKind.BuiltInError)]

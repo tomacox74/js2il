@@ -53,6 +53,19 @@ public static class AsyncFunction
         return functionValue;
     }
 
+    public static object InitializeFunctionInstance(object functionValue, double length, string? name)
+    {
+        InitializeFunctionInstance(functionValue);
+
+        if (functionValue is Delegate del)
+        {
+            Function.DefineMetadataProperty(del, "length", length);
+            Function.DefineMetadataProperty(del, "name", name ?? string.Empty);
+        }
+
+        return functionValue;
+    }
+
     private static object CreatePrototype()
     {
         return new JsObject();

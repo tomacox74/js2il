@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-08T17:35:30Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -21,17 +21,17 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 19.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-json))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| JSON intrinsic object is available (JSON.parse) | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js) | JavaScriptRuntime.JSON implements JSON.parse only. JSON.stringify and the optional reviver/replacer behaviors are not implemented. Parsing errors are translated to JavaScript SyntaxError. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| JSON intrinsic object is available (JSON.parse, JSON.stringify) | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js) | `test/built-ins/JSON/parse/15.12.1.1-0-1.js`<br>`test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/prop-desc.js` | JavaScriptRuntime.JSON exposes both JSON.parse and JSON.stringify. The current bounded test262 coverage exercises the intrinsic object surface plus JSON.stringify function metadata; reviver support and several exotic replacer/order edge cases remain limited. Parsing errors are translated to JavaScript SyntaxError. |
 
 ### 19.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-math))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Math intrinsic object is available (common Math.* functions and constants) | Supported with Limitations | [`Math_Ceil_Sqrt_Basic.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js)<br>[`Math_Imul_Clz32_Basics.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js)<br>[`Math_Min_Max_NaN_EmptyArgs.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js) | Implemented by JavaScriptRuntime.Math, backed by System.Math with JS-style argument coercions. Coverage is partial (Supported with Limitations). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math intrinsic object is available (common Math.* functions and constants) | Supported with Limitations | [`Math_Ceil_Sqrt_Basic.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js)<br>[`Math_Imul_Clz32_Basics.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js)<br>[`Math_Min_Max_NaN_EmptyArgs.js`](../../../tests/Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js) |  | Implemented by JavaScriptRuntime.Math, backed by System.Math with JS-style argument coercions. Coverage is partial (Supported with Limitations). |
 

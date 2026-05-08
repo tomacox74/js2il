@@ -261,6 +261,8 @@ namespace JavaScriptRuntime
         {
             return value switch
             {
+                null => throw new TypeError("String.prototype method called on null or undefined"),
+                JsNull => throw new TypeError("String.prototype method called on null or undefined"),
                 string s => s,
                 char[] chars => new string(chars),
                 StringBuilder builder => builder.ToString(),
@@ -268,7 +270,8 @@ namespace JavaScriptRuntime
                     && PropertyDescriptorStore.TryGetOwn(value, StringDataPropertyName, out var descriptor)
                     && descriptor.Kind == JsPropertyDescriptorKind.Data
                     => DotNet2JSConversions.ToString(descriptor.Value),
-                _ => throw new TypeError("String.prototype method called on incompatible receiver")
+                Symbol => throw new TypeError("Cannot convert a Symbol value to a string"),
+                _ => DotNet2JSConversions.ToString(value)
             };
         }
 

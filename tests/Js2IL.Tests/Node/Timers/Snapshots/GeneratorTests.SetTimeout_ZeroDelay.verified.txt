@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20d2
+				// Method begins at RVA 0x20d9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20b6
+			// Method begins at RVA 0x20bd
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -63,7 +63,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c9
+			// Method begins at RVA 0x20d0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -89,7 +89,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 97 (0x61)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetTimeout_ZeroDelay/Scope,
@@ -110,22 +110,25 @@
 		IL_001b: stelem.ref
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object)
-		IL_002b: stloc.2
-		IL_002c: ldloc.2
-		IL_002d: stloc.1
-		IL_002e: ldloc.1
-		IL_002f: ldc.r8 0.0
-		IL_0038: box [System.Runtime]System.Double
-		IL_003d: ldc.i4.0
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
-		IL_0048: pop
-		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004e: ldstr "setTimeout with zero delay scheduled."
-		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0058: pop
-		IL_0059: ret
+		IL_0026: ldc.i4.0
+		IL_0027: conv.r8
+		IL_0028: ldstr ""
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_0032: stloc.2
+		IL_0033: ldloc.2
+		IL_0034: stloc.1
+		IL_0035: ldloc.1
+		IL_0036: ldc.r8 0.0
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: ldc.i4.0
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setTimeout(object, object, object[])
+		IL_004f: pop
+		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0055: ldstr "setTimeout with zero delay scheduled."
+		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005f: pop
+		IL_0060: ret
 	} // end of method SetTimeout_ZeroDelay::__js_module_init__
 
 } // end of class Modules.SetTimeout_ZeroDelay
@@ -137,7 +140,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20db
+		// Method begins at RVA 0x20e2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

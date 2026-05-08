@@ -1434,11 +1434,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
-                        createArrow.IsAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
-                        nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-                        new[] { typeof(object) }));
+                    EmitInitializeFunctionInstance(createArrow.CallableId, createArrow.IsAsync, ilEncoder);
                     // Result stays on stack
                     break;
                 }
@@ -1489,6 +1485,8 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
+                    EmitInitializeFunctionInstance(createFunc.CallableId, createFunc.IsAsync, ilEncoder);
+                    EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
 
                     if (createFunc.IsAsyncGeneratorFunction)
                     {

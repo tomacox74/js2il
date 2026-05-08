@@ -10,7 +10,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task accessors()
         => ExecutionTest("accessors");
 
-    [Fact(DisplayName = "basics", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "basics", Skip = "Class constructor prototype/name semantics are incomplete; Object.getPrototypeOf(C.prototype) currently observes undefined.")]
     public Task basics()
         => ExecutionTest("basics");
 }

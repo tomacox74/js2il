@@ -6,7 +6,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Object.entries") { }
 
-    [Fact(DisplayName = "exception-during-enumeration", Skip = "Global RangeError constructor exposure is incomplete.")]
+    [Fact(DisplayName = "exception-during-enumeration")]
     public Task exception_during_enumeration()
         => ExecutionTestFromFile("exception-during-enumeration");
 
@@ -18,7 +18,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task function_length()
         => ExecutionTestFromFile("function-length");
 
-    [Fact(DisplayName = "function-name", Skip = "Object.entries intrinsic metadata support is incomplete.")]
+    [Fact(DisplayName = "function-name")]
     public Task function_name()
         => ExecutionTestFromFile("function-name");
 
@@ -62,7 +62,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task primitive_strings()
         => ExecutionTestFromFile("primitive-strings");
 
-    [Fact(DisplayName = "primitive-symbols", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "primitive-symbols")]
     public Task primitive_symbols()
         => ExecutionTestFromFile("primitive-symbols");
 

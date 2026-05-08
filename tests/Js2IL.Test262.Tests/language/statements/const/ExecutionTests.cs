@@ -22,19 +22,19 @@ public class ExecutionTests : ExecutionTestsBase
     public Task cptn_value()
         => ExecutionTest("cptn-value");
 
-    [Fact(DisplayName = "fn-name-arrow", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "fn-name-arrow", Skip = "Product gap: inferred name for const-bound anonymous functions is incomplete.")]
     public Task fn_name_arrow()
         => ExecutionTest("fn-name-arrow");
 
-    [Fact(DisplayName = "fn-name-class", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "fn-name-class", Skip = "Product gap: inferred name for const-bound anonymous classes is incomplete.")]
     public Task fn_name_class()
         => ExecutionTest("fn-name-class");
 
-    [Fact(DisplayName = "fn-name-cover", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "fn-name-cover", Skip = "Product gap: inferred name for const-bound covered functions is incomplete.")]
     public Task fn_name_cover()
         => ExecutionTest("fn-name-cover");
 
-    [Fact(DisplayName = "fn-name-fn", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "fn-name-fn", Skip = "Product gap: inferred name for const-bound anonymous functions is incomplete.")]
     public Task fn_name_fn()
         => ExecutionTest("fn-name-fn");
 

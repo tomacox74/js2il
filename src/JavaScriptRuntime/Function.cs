@@ -22,20 +22,42 @@ public static class Function
         public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
     }
 
+    private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
+
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
-
-    private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
 
     private static ExpandoObject CreatePrototype()
     {
         var exp = new ExpandoObject();
         var dict = (IDictionary<string, object?>)exp;
-            dict["apply"] = (Func<object[], object?[], object?>)PrototypeApply;
-            dict["call"] = (Func<object[], object?[], object?>)PrototypeCall;
-            dict["bind"] = (Func<object[], object?[], object?>)PrototypeBind;
-        dict["toString"] = (Func<object[], object?[], object?>)PrototypeToString;
+            dict["apply"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeApply, 2);
+            dict["call"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeCall, 1);
+            dict["bind"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeBind, 1);
+        dict["toString"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeToString, 0);
         return exp;
+    }
+
+    private static Func<object[], object?[]?, object?> CreateBuiltinPrototypeFunction(Func<object[], object?[]?, object?> method, double length)
+    {
+        ConfigureCallableObject(method, hasRestrictedProperties: false);
+        PropertyDescriptorStore.DefineOrUpdate(method, "length", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = false,
+            Value = length
+        });
+        PropertyDescriptorStore.DefineOrUpdate(method, "prototype", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = false,
+            Writable = false,
+            Value = null
+        });
+        return method;
     }
 
     private static ExpandoObject CreateRestrictedPropertiesPrototype()
@@ -220,6 +242,33 @@ public static class Function
             }
 
             return functionValue;
+        }
+
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name)
+        {
+            InitializeFunctionInstance(functionValue);
+
+            if (functionValue is Delegate del)
+            {
+                DefineMetadataProperty(del, "length", length);
+                DefineMetadataProperty(del, "name", name ?? string.Empty);
+            }
+
+            return functionValue;
+        }
+
+        internal static void DefineMetadataProperty(Delegate target, string propName, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, propName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = value
+            });
+
+            ClearDeletedMetadataProperty(target, propName);
         }
 
         public static object? Construct(Delegate constructor, object?[]? args)

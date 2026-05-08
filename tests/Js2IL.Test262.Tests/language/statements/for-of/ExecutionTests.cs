@@ -42,7 +42,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task arguments_unmapped_mutation()
         => ExecutionTest("arguments-unmapped-mutation");
 
-    [Fact(DisplayName = "arguments-unmapped", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "arguments-unmapped")]
     public Task arguments_unmapped()
         => ExecutionTest("arguments-unmapped");
 
@@ -54,23 +54,23 @@ public class ExecutionTests : ExecutionTestsBase
     public Task ArgumentsObject_unmapped_aliasing()
         => ExecutionTest("ArgumentsObject_unmapped-aliasing");
 
-    [Fact(DisplayName = "array-contract-expand", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "array-contract-expand")]
     public Task array_contract_expand()
         => ExecutionTest("array-contract-expand");
 
-    [Fact(DisplayName = "array-contract", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "array-contract")]
     public Task array_contract()
         => ExecutionTest("array-contract");
 
-    [Fact(DisplayName = "array-expand-contract", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "array-expand-contract")]
     public Task array_expand_contract()
         => ExecutionTest("array-expand-contract");
 
-    [Fact(DisplayName = "array-expand", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    [Fact(DisplayName = "array-expand", Skip = "Known issue: unstable timeout in this test262 scenario")]
     public Task array_expand()
         => ExecutionTest("array-expand");
 
-    [Fact(DisplayName = "array-key-get-error", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "array-key-get-error")]
     public Task array_key_get_error()
         => ExecutionTest("array-key-get-error");
 

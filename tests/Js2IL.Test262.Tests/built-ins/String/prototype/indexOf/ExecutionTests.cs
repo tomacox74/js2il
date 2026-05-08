@@ -26,7 +26,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_5_4_7_A1_T12()
         => ExecutionTestFromFile("S15.5.4.7_A1_T12");
 
-    [Fact(DisplayName = "S15.5.4.7_A1_T2", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "S15.5.4.7_A1_T2")]
     public Task S15_5_4_7_A1_T2()
         => ExecutionTestFromFile("S15.5.4.7_A1_T2");
 

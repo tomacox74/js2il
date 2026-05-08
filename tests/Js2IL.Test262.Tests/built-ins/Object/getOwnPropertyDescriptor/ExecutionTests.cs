@@ -58,15 +58,15 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_2_3_3_2_15()
         => ExecutionTestFromFile("15.2.3.3-2-15");
 
-    [Fact(DisplayName = "15.2.3.3-2-16", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "15.2.3.3-2-16")]
     public Task _15_2_3_3_2_16()
         => ExecutionTestFromFile("15.2.3.3-2-16");
 
-    [Fact(DisplayName = "15.2.3.3-2-17", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "15.2.3.3-2-17")]
     public Task _15_2_3_3_2_17()
         => ExecutionTestFromFile("15.2.3.3-2-17");
 
-    [Fact(DisplayName = "15.2.3.3-2-18", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "15.2.3.3-2-18")]
     public Task _15_2_3_3_2_18()
         => ExecutionTestFromFile("15.2.3.3-2-18");
 }

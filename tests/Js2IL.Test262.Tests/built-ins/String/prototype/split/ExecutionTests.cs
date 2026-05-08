@@ -54,11 +54,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task argument_is_void_0_and_instance_is_string_object_object_have_overrided_to_string_function()
         => ExecutionTestFromFile("argument-is-void-0-and-instance-is-string-object-object-have-overrided-to-string-function");
 
-    [Fact(DisplayName = "arguments-are-boolean-expression-function-call-and-null-and-instance-is-boolean", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    [Fact(DisplayName = "arguments-are-boolean-expression-function-call-and-null-and-instance-is-boolean")]
     public Task arguments_are_boolean_expression_function_call_and_null_and_instance_is_boolean()
         => ExecutionTestFromFile("arguments-are-boolean-expression-function-call-and-null-and-instance-is-boolean");
 
-    [Fact(DisplayName = "arguments-are-false-and-true-and-instance-is-object", Skip = "Known issue: focused validation failure")]
+    [Fact(DisplayName = "arguments-are-false-and-true-and-instance-is-object")]
     public Task arguments_are_false_and_true_and_instance_is_object()
         => ExecutionTestFromFile("arguments-are-false-and-true-and-instance-is-object");
 

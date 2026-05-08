@@ -50,11 +50,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task try_block_let_declaration_only_shadows_outer_parameter_value_2()
         => ExecutionTest("try-block-let-declaration-only-shadows-outer-parameter-value-2");
 
-    [Fact(DisplayName = "verify-context-in-finally-block", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "verify-context-in-finally-block")]
     public Task verify_context_in_finally_block()
         => ExecutionTest("verify-context-in-finally-block");
 
-    [Fact(DisplayName = "verify-context-in-for-loop-block", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "verify-context-in-for-loop-block")]
     public Task verify_context_in_for_loop_block()
         => ExecutionTest("verify-context-in-for-loop-block");
 
