@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/test262: close issue #1047 by fixing JSON.stringify array-replacer/property-order semantics, ordinary-object key ordering after assignment/delete/defineProperty mutations, function-object Object.entries enumeration, and numeric -0 property-key normalization, unskipping the related JSON/Object test262 ports and refreshing ECMA-262 support docs.
 
 ## v0.9.14 - 2026-05-08
 

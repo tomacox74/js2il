@@ -480,7 +480,7 @@ namespace JavaScriptRuntime
 
         private static bool TryGetCanonicalArrayIndexKey(string key, out uint index)
         {
-            if (string.IsNullOrEmpty(key)
+            if (key is null
                 || IsEncodedSymbolKey(key)
                 || !uint.TryParse(key, out index)
                 || index == uint.MaxValue)
@@ -500,7 +500,7 @@ namespace JavaScriptRuntime
 
             foreach (var key in encounteredKeys)
             {
-                if (string.IsNullOrEmpty(key))
+                if (key is null)
                 {
                     continue;
                 }
@@ -540,7 +540,7 @@ namespace JavaScriptRuntime
 
             static void AddKey(List<string> keys, HashSet<string> seen, string? key)
             {
-                if (string.IsNullOrEmpty(key))
+                if (key is null)
                 {
                     return;
                 }
@@ -549,6 +549,11 @@ namespace JavaScriptRuntime
                 {
                     keys.Add(key);
                 }
+            }
+
+            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                AddKey(keys, seen, key);
             }
 
             if (obj is JavaScriptRuntime.Array jsArray)
@@ -604,11 +609,6 @@ namespace JavaScriptRuntime
                 }
             }
 
-            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
-            {
-                AddKey(keys, seen, key);
-            }
-
             if (obj is not ExpandoObject
                 && obj is not IDictionary<string, object?>
                 && obj is not System.Collections.IDictionary
@@ -616,6 +616,7 @@ namespace JavaScriptRuntime
                 && obj is not JavaScriptRuntime.TypedArrayBase
                 && obj is not string
                 && obj is not JavaScriptRuntime.Symbol
+                && obj is not Delegate
                 && !obj.GetType().IsValueType)
             {
                 var type = obj.GetType();
@@ -3028,6 +3029,16 @@ namespace JavaScriptRuntime
                 return encoded;
             }
 
+            if (key is double d && d == 0d)
+            {
+                return "0";
+            }
+
+            if (key is float f && f == 0f)
+            {
+                return "0";
+            }
+
             return DotNet2JSConversions.ToString(key);
         }
 
@@ -4287,6 +4298,12 @@ namespace JavaScriptRuntime
 
         private static void SetSpreadTargetProperty(object target, string key, object? value)
         {
+            if (target is JsObject)
+            {
+                SetProperty(target, key, value);
+                return;
+            }
+
             if (target is IDictionary<string, object?> dict)
             {
                 dict[key] = value;
@@ -4757,6 +4774,20 @@ namespace JavaScriptRuntime
                 return ownValue;
             }
 
+            if (obj is Array indexedArray
+                && ObjectRuntime.TryParseCanonicalIndexString(name, out var arrayIndex))
+            {
+                return indexedArray.HasOwnIndex(arrayIndex) ? indexedArray[arrayIndex] : null;
+            }
+
+            if (obj is TypedArrayBase indexedTypedArray
+                && ObjectRuntime.TryParseCanonicalIndexString(name, out var typedArrayIndex)
+                && typedArrayIndex >= 0
+                && typedArrayIndex < indexedTypedArray.length)
+            {
+                return indexedTypedArray[(double)typedArrayIndex];
+            }
+
             // Legacy __proto__ accessor (opt-in) only applies when there is no own "__proto__" property.
             if (PrototypeChain.Enabled && string.Equals(name, "__proto__", StringComparison.Ordinal))
             {
@@ -4847,7 +4878,6 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
-            if (string.IsNullOrEmpty(name)) return value;
             InvalidateRegExpWellKnownSymbolFastPath(obj, name);
             var hasOwn = HasOwnProperty(obj, name);
             // Proxy set trap
@@ -4943,17 +4973,39 @@ namespace JavaScriptRuntime
                 }
 
                 dict[name] = value;
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = value,
+                    Writable = true,
+                    Enumerable = true,
+                    Configurable = true
+                });
                 return value;
             }
 
             if (obj is IDictionary<string, object?> dictGeneric)
             {
+                if (obj is ArgumentsObject)
+                {
+                    dictGeneric[name] = value;
+                    return value;
+                }
+
                 if (!dictGeneric.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
                 }
 
                 dictGeneric[name] = value;
+                PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = value,
+                    Writable = true,
+                    Enumerable = true,
+                    Configurable = true
+                });
                 return value;
             }
 

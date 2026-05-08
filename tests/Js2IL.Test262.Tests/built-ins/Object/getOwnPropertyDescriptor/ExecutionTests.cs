@@ -34,7 +34,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_2_3_3_2_1()
         => ExecutionTestFromFile("15.2.3.3-2-1");
 
-    [Fact(DisplayName = "15.2.3.3-2-10", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "15.2.3.3-2-10")]
     public Task _15_2_3_3_2_10()
         => ExecutionTestFromFile("15.2.3.3-2-10");
 

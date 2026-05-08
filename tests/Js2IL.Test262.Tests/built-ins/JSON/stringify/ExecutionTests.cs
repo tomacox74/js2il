@@ -22,23 +22,23 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
 
-    [Fact(DisplayName = "property-order", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "property-order")]
     public Task property_order()
         => ExecutionTestFromFile("property-order");
 
-    [Fact(DisplayName = "replacer-array-abrupt", Skip = "JSON.stringify replacer Proxy abrupt-completion handling times out in this runtime.")]
+    [Fact(DisplayName = "replacer-array-abrupt")]
     public Task replacer_array_abrupt()
         => ExecutionTestFromFile("replacer-array-abrupt");
 
-    [Fact(DisplayName = "replacer-array-duplicates", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "replacer-array-duplicates")]
     public Task replacer_array_duplicates()
         => ExecutionTestFromFile("replacer-array-duplicates");
 
-    [Fact(DisplayName = "replacer-array-empty", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "replacer-array-empty")]
     public Task replacer_array_empty()
         => ExecutionTestFromFile("replacer-array-empty");
 
-    [Fact(DisplayName = "replacer-array-number-object", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "replacer-array-number-object")]
     public Task replacer_array_number_object()
         => ExecutionTestFromFile("replacer-array-number-object");
 
@@ -46,11 +46,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task replacer_array_number()
         => ExecutionTestFromFile("replacer-array-number");
 
-    [Fact(DisplayName = "replacer-array-order", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "replacer-array-order")]
     public Task replacer_array_order()
         => ExecutionTestFromFile("replacer-array-order");
 
-    [Fact(DisplayName = "replacer-array-proxy-revoked-realm", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "replacer-array-proxy-revoked-realm")]
     public Task replacer_array_proxy_revoked_realm()
         => ExecutionTestFromFile("replacer-array-proxy-revoked-realm");
 
@@ -58,15 +58,15 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task replacer_array_proxy_revoked()
         => ExecutionTestFromFile("replacer-array-proxy-revoked");
 
-    [Fact(DisplayName = "replacer-array-proxy", Skip = "Known issue: runtime failure in this test262 scenario")]
+    [Fact(DisplayName = "replacer-array-proxy")]
     public Task replacer_array_proxy()
         => ExecutionTestFromFile("replacer-array-proxy");
 
-    [Fact(DisplayName = "replacer-array-string-object", Skip = "Known issue: runtime failure in this test262 scenario")]
+    [Fact(DisplayName = "replacer-array-string-object")]
     public Task replacer_array_string_object()
         => ExecutionTestFromFile("replacer-array-string-object");
 
-    [Fact(DisplayName = "replacer-array-undefined", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    [Fact(DisplayName = "replacer-array-undefined")]
     public Task replacer_array_undefined()
         => ExecutionTestFromFile("replacer-array-undefined");
 }
