@@ -4298,6 +4298,12 @@ namespace JavaScriptRuntime
 
         private static void SetSpreadTargetProperty(object target, string key, object? value)
         {
+            if (target is JsObject)
+            {
+                SetProperty(target, key, value);
+                return;
+            }
+
             if (target is IDictionary<string, object?> dict)
             {
                 dict[key] = value;
@@ -4980,6 +4986,12 @@ namespace JavaScriptRuntime
 
             if (obj is IDictionary<string, object?> dictGeneric)
             {
+                if (obj is ArgumentsObject)
+                {
+                    dictGeneric[name] = value;
+                    return value;
+                }
+
                 if (!dictGeneric.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
