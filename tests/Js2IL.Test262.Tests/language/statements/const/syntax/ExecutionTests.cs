@@ -22,15 +22,15 @@ public class ExecutionTests : ExecutionTestsBase
     public Task const_outer_inner_let_bindings()
         => ExecutionTest("const-outer-inner-let-bindings");
 
-    [Fact(DisplayName = "const", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "const")]
     public Task const_()
         => ExecutionTest("const");
 
-    [Fact(DisplayName = "with-initializer-case-expression-statement-list", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "with-initializer-case-expression-statement-list")]
     public Task with_initializer_case_expression_statement_list()
         => ExecutionTest("with-initializer-case-expression-statement-list");
 
-    [Fact(DisplayName = "with-initializer-default-statement-list", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "with-initializer-default-statement-list")]
     public Task with_initializer_default_statement_list()
         => ExecutionTest("with-initializer-default-statement-list");
 }

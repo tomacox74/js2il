@@ -42,7 +42,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _12_6_3_2_3_a_ii_17()
         => ExecutionTest("12.6.3_2-3-a-ii-17");
 
-    [Fact(DisplayName = "12.6.3_2-3-a-ii-18", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-18", Skip = "Known issue: unstable timeout in this test262 scenario")]
     public Task _12_6_3_2_3_a_ii_18()
         => ExecutionTest("12.6.3_2-3-a-ii-18");
 
@@ -50,19 +50,19 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _12_6_3_2_3_a_ii_19()
         => ExecutionTest("12.6.3_2-3-a-ii-19");
 
-    [Fact(DisplayName = "12.6.3_2-3-a-ii-2", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-2")]
     public Task _12_6_3_2_3_a_ii_2()
         => ExecutionTest("12.6.3_2-3-a-ii-2");
 
-    [Fact(DisplayName = "12.6.3_2-3-a-ii-20", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-20")]
     public Task _12_6_3_2_3_a_ii_20()
         => ExecutionTest("12.6.3_2-3-a-ii-20");
 
-    [Fact(DisplayName = "12.6.3_2-3-a-ii-21", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-21")]
     public Task _12_6_3_2_3_a_ii_21()
         => ExecutionTest("12.6.3_2-3-a-ii-21");
 
-    [Fact(DisplayName = "12.6.3_2-3-a-ii-3", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-3")]
     public Task _12_6_3_2_3_a_ii_3()
         => ExecutionTest("12.6.3_2-3-a-ii-3");
 

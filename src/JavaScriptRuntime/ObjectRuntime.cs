@@ -380,6 +380,10 @@ namespace JavaScriptRuntime
                 {
                     return GetProperty(array, propName)!;
                 }
+                if (PropertyDescriptorStore.TryGetOwn(array, propName, out _))
+                {
+                    return GetProperty(array, propName)!;
+                }
                 // Bounds check: return undefined (null) when OOB to mimic JS behavior
                 if (intIndex < 0 || intIndex >= array.Count)
                 {
@@ -444,6 +448,11 @@ namespace JavaScriptRuntime
 
             if (obj is Array array)
             {
+                var propName = Object.ToPropertyKeyString(index);
+                if (PropertyDescriptorStore.TryGetOwn(array, propName, out _))
+                {
+                    return GetProperty(array, propName)!;
+                }
                 // Bounds check: return undefined (null) when OOB to mimic JS behavior
                 if (intIndex < 0 || intIndex >= array.Count)
                 {

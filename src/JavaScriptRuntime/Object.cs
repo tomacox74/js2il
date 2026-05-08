@@ -1360,6 +1360,13 @@ namespace JavaScriptRuntime
                 ? ApplyRequestedDescriptorToExisting(existingDescriptor, requested)
                 : CreateDescriptorForNewProperty(requested);
 
+            if (obj is JavaScriptRuntime.Array array
+                && ObjectRuntime.TryParseCanonicalIndexString(key, out var arrayIndex)
+                && arrayIndex >= array.Count)
+            {
+                array.length = (double)arrayIndex + 1;
+            }
+
             if (obj is IDictionary<string, object?> dict)
             {
                 if (appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
@@ -4593,7 +4600,7 @@ namespace JavaScriptRuntime
         {
             if (obj is null || obj is JsNull)
             {
-                throw new JavaScriptRuntime.TypeError("Right-hand side of 'for...in' should be an object");
+                return new ForInIterator(new JsObject());
             }
 
             return new ForInIterator(obj);

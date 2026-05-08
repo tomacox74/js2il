@@ -18,7 +18,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task head_const_fresh_binding_per_iteration()
         => ExecutionTest("head-const-fresh-binding-per-iteration");
 
-    [Fact(DisplayName = "S12.6.4_A1", Skip = "for-in null/undefined handling is incomplete.")]
+    [Fact(DisplayName = "S12.6.4_A1")]
     public Task S12_6_4_A1()
         => ExecutionTest("S12.6.4_A1");
 
@@ -26,7 +26,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task S12_6_4_A14_T2()
         => ExecutionTest("S12.6.4_A14_T2");
 
-    [Fact(DisplayName = "S12.6.4_A2", Skip = "for-in null/undefined handling is incomplete.")]
+    [Fact(DisplayName = "S12.6.4_A2")]
     public Task S12_6_4_A2()
         => ExecutionTest("S12.6.4_A2");
 
@@ -50,19 +50,19 @@ public class ExecutionTests : ExecutionTestsBase
     public Task S12_6_4_A5_1()
         => ExecutionTest("S12.6.4_A5.1");
 
-    [Fact(DisplayName = "S12.6.4_A5", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "S12.6.4_A5")]
     public Task S12_6_4_A5()
         => ExecutionTest("S12.6.4_A5");
 
-    [Fact(DisplayName = "S12.6.4_A6.1", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "S12.6.4_A6.1")]
     public Task S12_6_4_A6_1()
         => ExecutionTest("S12.6.4_A6.1");
 
-    [Fact(DisplayName = "S12.6.4_A6", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "S12.6.4_A6")]
     public Task S12_6_4_A6()
         => ExecutionTest("S12.6.4_A6");
 
-    [Fact(DisplayName = "S12.6.4_A7_T1", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "S12.6.4_A7_T1")]
     public Task S12_6_4_A7_T1()
         => ExecutionTest("S12.6.4_A7_T1");
 
