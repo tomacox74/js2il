@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - compiler/cli/sdk/tests/docs: remove the top-level `"use strict"` requirement and its configurable warning/error flag so JS2IL accepts both strict and non-strict scripts by default.
+- tests/docs: port 400 additional crosscutting `test262` cases into `tests/Js2IL.Test262.Tests`, keep currently unsupported/failing cases checked in as skipped coverage, sync the linked ECMA-262 evidence docs for the newly strengthened areas, and remove stray PR-1010 function snapshot files that should never have been added.
 
 ## v0.9.13 - 2026-05-04
 

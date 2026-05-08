@@ -396,7 +396,12 @@
           "test/language/statements/for-of/array-contract.js",
           "test/language/statements/for-of/array-contract-expand.js",
           "test/language/statements/for-of/array-expand-contract.js",
-          "test/language/statements/for-of/arguments-unmapped-aliasing.js"
+          "test/language/statements/for-of/arguments-unmapped-aliasing.js",
+          "test/language/statements/for-of/Array.prototype.entries.js",
+          "test/language/statements/for-of/Array.prototype.keys.js",
+          "test/language/statements/for-of/array-expand.js",
+          "test/language/statements/for-of/array-key-get-error.js",
+          "test/language/statements/for-of/body-dstr-assign-error.js"
         ],
         "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator]() for-of cases in the bounded test262 MVP coverage compile successfully."
       },
@@ -413,7 +418,15 @@
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js",
           "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_ClassFields_BaseAndDerived.js",
-          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js"
+          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Shadowing_NoDuplicateKeys.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-itr.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-skip-itr.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-in/JavaScript/cptn-decl-abrupt-empty.js"
+        ],
+        "test262Paths": [
+          "test/language/statements/for-in/cptn-decl-itr.js",
+          "test/language/statements/for-in/cptn-decl-skip-itr.js",
+          "test/language/statements/for-in/cptn-decl-abrupt-empty.js"
         ],
         "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
       },

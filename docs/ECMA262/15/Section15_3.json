@@ -59,7 +59,9 @@
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js",
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterExpression.js",
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/arrow-function/JavaScript/ArrowFunction_restricted-properties.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/arrow-function/JavaScript/ArrowFunction_default-parameter-abrupt-initializer.js"
         ],
         "test262Suites": [
           "pr",
@@ -68,9 +70,10 @@
         "test262Paths": [
           "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-1.js",
           "test/language/expressions/arrow-function/arrow/concisebody-lookahead-assignmentexpression-2.js",
-          "test/language/expressions/arrow-function/ArrowFunction_restricted-properties.js"
+          "test/language/expressions/arrow-function/ArrowFunction_restricted-properties.js",
+          "test/language/expressions/arrow-function/ArrowFunction_default-parameter-abrupt-initializer.js"
         ],
-        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). They do not create their own arguments object: when arguments is referenced, it resolves through the nearest non-arrow function scope, while the current bounded test262 MVP suites also cover the restricted caller/arguments accessors required on arrow function objects."
+        "notes": "Arrow functions compile via the IR pipeline and are emitted as callable methods (see JavaScriptArrowFunctionGenerator). They do not create their own arguments object: when arguments is referenced, it resolves through the nearest non-arrow function scope, while the current bounded test262 coverage also exercises the restricted caller/arguments accessors required on arrow function objects and abrupt completion from default parameter initializers."
       },
       {
         "clause": "15.3.2",
@@ -94,7 +97,8 @@
         "testScripts": [
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_ConstructorAssigned.js",
           "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js",
-          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_TopLevelCallback.js"
+          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_TopLevelCallback.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/arrow-function/JavaScript/ArrowFunction_cannot-override-this-with-thisArg.js"
         ],
         "test262Paths": [
           "test/language/expressions/arrow-function/cannot-override-this-with-thisArg.js"
