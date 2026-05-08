@@ -55,12 +55,12 @@ public class ExecutionTests : ExecutionTestsBase
         => ExecutionTest("S12.6.4_A5");
 
     [Fact(DisplayName = "S12.6.4_A6.1")]
-    public Task S12_6_4_A6_1()
-        => ExecutionTest("S12.6.4_A6.1");
-
+    public Task S12_6_4_A6_1()
+        => ExecutionTest("S12.6.4_A6.1", preferOutOfProc: true);
+
     [Fact(DisplayName = "S12.6.4_A6")]
-    public Task S12_6_4_A6()
-        => ExecutionTest("S12.6.4_A6");
+    public Task S12_6_4_A6()
+        => ExecutionTest("S12.6.4_A6", preferOutOfProc: true);
 
     [Fact(DisplayName = "S12.6.4_A7_T1")]
     public Task S12_6_4_A7_T1()
