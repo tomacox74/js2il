@@ -91,7 +91,7 @@ namespace JavaScriptRuntime
 
             if (item is string || item.GetType().IsValueType)
             {
-                key = DotNet2JSConversions.ToString(item);
+                key = ToJsonPropertyKeyString(item);
                 return true;
             }
 
@@ -108,7 +108,7 @@ namespace JavaScriptRuntime
 
             if (Number.TryGetWrappedNumberValue(item, out var numberValue))
             {
-                key = DotNet2JSConversions.ToString(numberValue);
+                key = ToJsonPropertyKeyString(numberValue);
                 return true;
             }
 
@@ -200,6 +200,26 @@ namespace JavaScriptRuntime
             if (!double.IsFinite(value))
             {
                 return "null";
+            }
+
+            if (value == 0d)
+            {
+                return "0";
+            }
+
+            return DotNet2JSConversions.ToString(value);
+        }
+
+        private static string ToJsonPropertyKeyString(object? value)
+        {
+            if (value is double d && d == 0d)
+            {
+                return "0";
+            }
+
+            if (value is float f && f == 0f)
+            {
+                return "0";
             }
 
             return DotNet2JSConversions.ToString(value);

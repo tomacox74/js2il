@@ -364,17 +364,28 @@
         "testScripts": [
           "tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.entries. Returns an array of [key, value] pairs for own enumerable properties. Current bounded test262 coverage exercises primitive boxing, inherited/symbol-key omission, ordinary own-property ordering, and abrupt completion when enumeration getters throw. Full proxy and other exotic-object ordering guarantees remain limited.",
         "test262Paths": [
           "test/built-ins/Object/entries/exception-during-enumeration.js",
+          "test/built-ins/Object/entries/exception-not-object-coercible.js",
           "test/built-ins/Object/entries/function-length.js",
           "test/built-ins/Object/entries/function-name.js",
           "test/built-ins/Object/entries/function-property-descriptor.js",
+          "test/built-ins/Object/entries/getter-adding-key.js",
+          "test/built-ins/Object/entries/getter-making-future-key-nonenumerable.js",
+          "test/built-ins/Object/entries/getter-removing-future-key.js",
           "test/built-ins/Object/entries/inherited-properties-omitted.js",
+          "test/built-ins/Object/entries/order-after-define-property.js",
+          "test/built-ins/Object/entries/order-after-define-property-with-function.js",
+          "test/built-ins/Object/entries/primitive-booleans.js",
+          "test/built-ins/Object/entries/primitive-numbers.js",
           "test/built-ins/Object/entries/primitive-strings.js",
+          "test/built-ins/Object/entries/primitive-symbols.js",
           "test/built-ins/Object/entries/return-order.js",
-          "test/built-ins/Object/entries/symbols-omitted.js"
-        ]
+          "test/built-ins/Object/entries/symbols-omitted.js",
+          "test/built-ins/Object/entries/tamper-with-global-object.js",
+          "test/built-ins/Object/entries/tamper-with-object-keys.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.entries. Returns an array of [key, value] pairs for own enumerable properties. Current bounded test262 coverage exercises primitive boxing, inherited/symbol-key omission, getter mutation during enumeration, ordinary own-property ordering, defineProperty preserving string-key creation order, function-object entries, and resilience when global Object/Object.keys are tampered with. Full proxy and other exotic-object ordering guarantees remain limited."
       },
       {
         "clause": "20.1.2.6",
@@ -407,11 +418,12 @@
           "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
           "tests/Js2IL.Tests/Object/JavaScript/Object_SymbolKey_Descriptors_And_Enumeration.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary js2il objects, and the current bounded test262 coverage also exercises descriptor reflection for several ordinary/built-in receivers. Full host-object descriptor fidelity remains limited.",
+        "notes": "Implemented in JavaScriptRuntime.Object.getOwnPropertyDescriptor. Returns descriptor objects for own string and symbol keys on ordinary js2il objects, and the current bounded test262 coverage also exercises descriptor reflection for several ordinary/built-in receivers, including property-key normalization for numeric -0. Full host-object descriptor fidelity remains limited.",
         "test262Paths": [
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-0-1.js",
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-1-1.js",
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-2-1.js",
+          "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-2-10.js",
           "test/built-ins/Object/getOwnPropertyDescriptor/15.2.3.3-2-18.js"
         ]
       },

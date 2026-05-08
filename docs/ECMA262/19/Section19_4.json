@@ -44,13 +44,25 @@
         "testScripts": [
           "tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
         ],
-        "notes": "JavaScriptRuntime.JSON exposes both JSON.parse and JSON.stringify. The current bounded test262 coverage exercises the intrinsic object surface plus JSON.stringify function metadata; reviver support and several exotic replacer/order edge cases remain limited. Parsing errors are translated to JavaScript SyntaxError.",
+        "notes": "JavaScriptRuntime.JSON exposes both JSON.parse and JSON.stringify. The current bounded test262 coverage exercises the intrinsic object surface plus JSON.stringify function metadata, ordinary property ordering, array replacer filtering/order/deduplication, boxed string/number replacer entries, ignored undefined/sparse replacer entries, and proxy abrupt-completion paths. Reviver support, replacer functions, toJSON, space formatting, cyclic structures, and broader exotic/cross-realm behavior remain limited. Parsing errors are translated to JavaScript SyntaxError.",
         "test262Paths": [
           "test/built-ins/JSON/parse/15.12.1.1-0-1.js",
           "test/built-ins/JSON/stringify/builtin.js",
           "test/built-ins/JSON/stringify/length.js",
           "test/built-ins/JSON/stringify/name.js",
-          "test/built-ins/JSON/stringify/prop-desc.js"
+          "test/built-ins/JSON/stringify/property-order.js",
+          "test/built-ins/JSON/stringify/prop-desc.js",
+          "test/built-ins/JSON/stringify/replacer-array-abrupt.js",
+          "test/built-ins/JSON/stringify/replacer-array-duplicates.js",
+          "test/built-ins/JSON/stringify/replacer-array-empty.js",
+          "test/built-ins/JSON/stringify/replacer-array-number.js",
+          "test/built-ins/JSON/stringify/replacer-array-number-object.js",
+          "test/built-ins/JSON/stringify/replacer-array-order.js",
+          "test/built-ins/JSON/stringify/replacer-array-proxy.js",
+          "test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js",
+          "test/built-ins/JSON/stringify/replacer-array-proxy-revoked-realm.js",
+          "test/built-ins/JSON/stringify/replacer-array-string-object.js",
+          "test/built-ins/JSON/stringify/replacer-array-undefined.js"
         ]
       },
       {

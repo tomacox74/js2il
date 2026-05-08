@@ -26,19 +26,31 @@ public sealed class JsObject : IDictionary<string, object?>
 
     /// <summary>Stores a numeric property without boxing the double value.</summary>
     public void SetNumber(string key, double value)
-        => GetOrCreateDict()[key] = JsValue.FromNumber(value);
+    {
+        GetOrCreateDict()[key] = JsValue.FromNumber(value);
+        DefineDataDescriptor(key, value);
+    }
 
     /// <summary>Stores a boolean property without boxing the bool value.</summary>
     public void SetBoolean(string key, bool value)
-        => GetOrCreateDict()[key] = JsValue.FromBoolean(value);
+    {
+        GetOrCreateDict()[key] = JsValue.FromBoolean(value);
+        DefineDataDescriptor(key, value);
+    }
 
     /// <summary>Stores a string property.</summary>
     public void SetString(string key, string? value)
-        => GetOrCreateDict()[key] = JsValue.FromString(value);
+    {
+        GetOrCreateDict()[key] = JsValue.FromString(value);
+        DefineDataDescriptor(key, value);
+    }
 
     /// <summary>Stores an arbitrary object value.</summary>
     public void SetValue(string key, object? value)
-        => GetOrCreateDict()[key] = JsValue.FromObject(value);
+    {
+        GetOrCreateDict()[key] = JsValue.FromObject(value);
+        DefineDataDescriptor(key, value);
+    }
 
     /// <summary>Stores an arbitrary object value (alias used by newer IL emit paths).</summary>
     public void SetObject(string key, object? value)
@@ -167,4 +179,14 @@ public sealed class JsObject : IDictionary<string, object?>
 
     private Dictionary<string, JsValue> GetOrCreateDict()
         => _properties ??= new Dictionary<string, JsValue>(StringComparer.Ordinal);
+
+    private void DefineDataDescriptor(string key, object? value)
+        => PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = value,
+            Writable = true,
+            Enumerable = true,
+            Configurable = true
+        });
 }

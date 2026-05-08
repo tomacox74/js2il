@@ -224,7 +224,7 @@ function fakeObject() {
 }
 fakeObject.entries = Object.entries;
 
-var global = Function('return this;')();
+var global = globalThis;
 global.Object = fakeObject;
 
 assert.sameValue(Object, fakeObject, 'Sanity check failed: could not modify the global Object');

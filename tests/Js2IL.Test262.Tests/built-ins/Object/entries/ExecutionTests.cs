@@ -42,7 +42,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task inherited_properties_omitted()
         => ExecutionTestFromFile("inherited-properties-omitted");
 
-    [Fact(DisplayName = "order-after-define-property-with-function", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "order-after-define-property-with-function")]
     public Task order_after_define_property_with_function()
         => ExecutionTestFromFile("order-after-define-property-with-function");
 
@@ -66,7 +66,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task primitive_symbols()
         => ExecutionTestFromFile("primitive-symbols");
 
-    [Fact(DisplayName = "return-order", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "return-order")]
     public Task return_order()
         => ExecutionTestFromFile("return-order");
 
@@ -74,7 +74,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task symbols_omitted()
         => ExecutionTestFromFile("symbols-omitted");
 
-    [Fact(DisplayName = "tamper-with-global-object", Skip = "Known issue: runtime failure in this test262 scenario")]
+    [Fact(DisplayName = "tamper-with-global-object")]
     public Task tamper_with_global_object()
         => ExecutionTestFromFile("tamper-with-global-object");
 

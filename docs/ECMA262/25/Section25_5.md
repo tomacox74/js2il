@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T17:35:31Z
+> Last generated (UTC): 2026-05-08T21:28:48Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -40,5 +40,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| JSON.stringify | Supported with Limitations |  | `test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/prop-desc.js`<br>`test/built-ins/JSON/stringify/replacer-array-number.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js` | JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata) plus representative array-replacer handling and revoked-proxy abrupt completion. Property-order and several exotic replacer edge cases remain open. |
+| JSON.stringify | Supported with Limitations |  | `test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/property-order.js`<br>`test/built-ins/JSON/stringify/prop-desc.js`<br>`test/built-ins/JSON/stringify/replacer-array-abrupt.js`<br>`test/built-ins/JSON/stringify/replacer-array-duplicates.js`<br>`test/built-ins/JSON/stringify/replacer-array-empty.js`<br>`test/built-ins/JSON/stringify/replacer-array-number.js`<br>`test/built-ins/JSON/stringify/replacer-array-number-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-order.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked-realm.js`<br>`test/built-ins/JSON/stringify/replacer-array-string-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-undefined.js` | JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata), ordinary property-order serialization, array-replacer ordering/filtering/deduplication, boxed string/number replacer entries, ignored undefined/sparse replacer entries, and proxy/revoked-proxy abrupt completion. Replacer functions, toJSON, space formatting, cyclic structures, and broader exotic/cross-realm behavior remain limited. |
 
