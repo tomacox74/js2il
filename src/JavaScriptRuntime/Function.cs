@@ -244,6 +244,33 @@ public static class Function
             return functionValue;
         }
 
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name)
+        {
+            InitializeFunctionInstance(functionValue);
+
+            if (functionValue is Delegate del)
+            {
+                DefineMetadataProperty(del, "length", length);
+                DefineMetadataProperty(del, "name", name ?? string.Empty);
+            }
+
+            return functionValue;
+        }
+
+        internal static void DefineMetadataProperty(Delegate target, string propName, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, propName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = value
+            });
+
+            ClearDeletedMetadataProperty(target, propName);
+        }
+
         public static object? Construct(Delegate constructor, object?[]? args)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));

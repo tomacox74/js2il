@@ -66,11 +66,14 @@ namespace JavaScriptRuntime
         }
 
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
-            => DefineObjectLiteralDataPropertyCore(
+        {
+            ConfigureFunctionNameFromPropertyKey(prop, value);
+            return DefineObjectLiteralDataPropertyCore(
                 target,
                 Object.ToPropertyKeyString(prop),
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue));
+        }
 
         public static object DefineObjectLiteralDataProperty(object target, string prop, double value)
             => DefineObjectLiteralDataPropertyCore(
@@ -85,6 +88,16 @@ namespace JavaScriptRuntime
                 prop,
                 value,
                 static (jsObject, key, boolValue) => jsObject.SetBoolean(key, boolValue));
+
+        public static object DefineObjectLiteralDataProperty(object target, string prop, object? value)
+        {
+            ConfigureFunctionNameFromPropertyKey(prop, value);
+            return DefineObjectLiteralDataPropertyCore(
+                target,
+                prop,
+                value,
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue));
+        }
 
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
         {
@@ -163,6 +176,26 @@ namespace JavaScriptRuntime
             });
 
             return target;
+        }
+
+        private static void ConfigureFunctionNameFromPropertyKey(object? propertyKey, object? value)
+        {
+            if (value is not Delegate del)
+            {
+                return;
+            }
+
+            if (Function.TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
+                && nameDescriptor.Value is string existingName
+                && !string.IsNullOrEmpty(existingName))
+            {
+                return;
+            }
+
+            var functionName = propertyKey is Symbol sym
+                ? sym.Description is null ? string.Empty : $"[{sym.Description}]"
+                : Object.ToPropertyKeyString(propertyKey);
+            Function.DefineMetadataProperty(del, "name", functionName);
         }
 
         private static bool HasGlobalBinding(string name)

@@ -26,7 +26,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task S10_1_1_A1_T2()
         => ExecutionTest("S10.1.1_A1_T2");
 
-    [Fact(DisplayName = "length-dflt", Skip = "Function length descriptors with default parameters are incorrect.")]
+    [Fact(DisplayName = "length-dflt")]
     public Task length_dflt()
         => ExecutionTest("length-dflt");
 
@@ -42,7 +42,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task name_eval_stricteval()
         => ExecutionTest("name-eval-stricteval");
 
-    [Fact(DisplayName = "name", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTest("name");
 
@@ -54,7 +54,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task param_duplicated_non_strict()
         => ExecutionTest("param-duplicated-non-strict");
 
-    [Fact(DisplayName = "param-eval-non-strict", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "param-eval-non-strict")]
     public Task param_eval_non_strict()
         => ExecutionTest("param-eval-non-strict");
 
@@ -62,11 +62,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task param_eval_stricteval()
         => ExecutionTest("param-eval-stricteval");
 
-    [Fact(DisplayName = "params-dflt-args-unmapped", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "params-dflt-args-unmapped")]
     public Task params_dflt_args_unmapped()
         => ExecutionTest("params-dflt-args-unmapped");
 
-    [Fact(DisplayName = "params-dflt-ref-arguments", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "params-dflt-ref-arguments")]
     public Task params_dflt_ref_arguments()
         => ExecutionTest("params-dflt-ref-arguments");
 

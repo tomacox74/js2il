@@ -10,7 +10,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task computed_property_name_yield_expression()
         => ExecutionTest("computed-property-name-yield-expression");
 
-    [Fact(DisplayName = "fn-name-fn", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "fn-name-fn")]
     public Task fn_name_fn()
         => ExecutionTest("fn-name-fn");
 

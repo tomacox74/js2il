@@ -22,6 +22,51 @@ internal sealed partial class LIRToILCompiler
             _ => false
         };
 
+    private static int GetExpectedFunctionLength(CallableId callableId)
+        => callableId.AstNode switch
+        {
+            FunctionDeclaration functionDeclaration => CountExpectedFunctionLength(functionDeclaration.Params),
+            FunctionExpression functionExpression => CountExpectedFunctionLength(functionExpression.Params),
+            ArrowFunctionExpression arrowFunctionExpression => CountExpectedFunctionLength(arrowFunctionExpression.Params),
+            _ => callableId.JsParamCount
+        };
+
+    private static int CountExpectedFunctionLength(NodeList<Node> parameters)
+    {
+        var count = 0;
+        foreach (var parameter in parameters)
+        {
+            if (parameter is RestElement or AssignmentPattern)
+            {
+                break;
+            }
+
+            count++;
+        }
+
+        return count;
+    }
+
+    private static string GetFunctionName(CallableId callableId)
+        => callableId.AstNode switch
+        {
+            FunctionDeclaration { Id: Identifier id } => id.Name,
+            FunctionExpression { Id: Identifier id } => id.Name,
+            _ => callableId.Name ?? string.Empty
+        };
+
+    private void EmitInitializeFunctionInstance(CallableId callableId, bool isAsync, InstructionEncoder ilEncoder)
+    {
+        ilEncoder.LoadConstantI4(GetExpectedFunctionLength(callableId));
+        ilEncoder.OpCode(ILOpCode.Conv_r8);
+        ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+            isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
+            nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
+            new[] { typeof(object), typeof(double), typeof(string) }));
+    }
+
     private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)
     {
         if (!IsGeneratorCallable(callableId))
@@ -873,11 +918,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.BindArrow), new[] { typeof(object), typeof(object[]), typeof(object) });
                     ilEncoder.Token(bindRef);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
-                        createArrow.IsAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
-                        nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-                        new[] { typeof(object) }));
+                    EmitInitializeFunctionInstance(createArrow.CallableId, createArrow.IsAsync, ilEncoder);
 
                     EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
                     break;
@@ -938,11 +979,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
-                        createFunc.IsAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
-                        nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-                        new[] { typeof(object) }));
+                    EmitInitializeFunctionInstance(createFunc.CallableId, createFunc.IsAsync, ilEncoder);
                     EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
 
                     if (createFunc.IsAsyncGeneratorFunction)

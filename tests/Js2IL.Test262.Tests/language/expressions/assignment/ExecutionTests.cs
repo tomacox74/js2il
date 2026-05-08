@@ -38,11 +38,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _11_13_1_3_s()
         => ExecutionTest("11.13.1-3-s");
 
-    [Fact(DisplayName = "11.13.1-4-1", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "11.13.1-4-1")]
     public Task _11_13_1_4_1()
         => ExecutionTest("11.13.1-4-1");
 
-    [Fact(DisplayName = "11.13.1-4-14-s", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "11.13.1-4-14-s")]
     public Task _11_13_1_4_14_s()
         => ExecutionTest("11.13.1-4-14-s");
 

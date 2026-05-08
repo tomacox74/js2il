@@ -355,11 +355,11 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = _numberPrototypeValueOfValue
             });
-            DefineIntrinsicDataProperty(_numberFunctionValue, "MAX_VALUE", double.MaxValue);
-            DefineIntrinsicDataProperty(_numberFunctionValue, "MIN_VALUE", double.Epsilon);
-            DefineIntrinsicDataProperty(_numberFunctionValue, "NaN", double.NaN);
-            DefineIntrinsicDataProperty(_numberFunctionValue, "NEGATIVE_INFINITY", double.NegativeInfinity);
-            DefineIntrinsicDataProperty(_numberFunctionValue, "POSITIVE_INFINITY", double.PositiveInfinity);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MAX_VALUE", double.MaxValue);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MIN_VALUE", double.Epsilon);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "NaN", double.NaN);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "NEGATIVE_INFINITY", double.NegativeInfinity);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "POSITIVE_INFINITY", double.PositiveInfinity);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_parseIntValue);
@@ -675,6 +675,18 @@ namespace JavaScriptRuntime
                 Enumerable = false,
                 Configurable = true,
                 Writable = true,
+                Value = value
+            });
+        }
+
+        private static void DefineIntrinsicConstantDataProperty(object target, string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
                 Value = value
             });
         }
