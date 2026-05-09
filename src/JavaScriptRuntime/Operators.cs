@@ -1089,6 +1089,21 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
+                // For JS Array objects, check index existence
+                if (target is JavaScriptRuntime.Array jsArray)
+                {
+                    if (int.TryParse(name, out var arrIndex))
+                    {
+                        return arrIndex >= 0 && jsArray.HasOwnIndex(arrIndex);
+                    }
+                    // Check non-index own properties
+                    if (JavaScriptRuntime.Object.hasOwn(jsArray, name) is bool b)
+                    {
+                        return b;
+                    }
+                    return false;
+                }
+
                 // For generic objects (ExpandoObject, JsObject, IDictionary-backed objects)
                 if (target is System.Collections.Generic.IDictionary<string, object?> dictGeneric)
                 {
@@ -1178,8 +1193,8 @@ namespace JavaScriptRuntime
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }
 
-            // Minimal: require a callable delegate-backed function value.
-            if (ctor is not Delegate)
+            // Minimal: require a callable delegate-backed function value or a JS2IL class constructor Type.
+            if (ctor is not Delegate && ctor is not Type && ctor is not ClassConstructorValue)
             {
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }

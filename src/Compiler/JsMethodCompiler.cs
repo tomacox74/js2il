@@ -265,8 +265,10 @@ internal sealed class JsMethodCompiler
             return irBody;
         }
 
+        var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+        var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $"\nIR failure: {lastFailure}";
         throw new NotSupportedException(
-            $"IR pipeline could not compile class static initializer body for callable '{callable}' (node={classNode.Type}, scope='{classScope.GetQualifiedName()}').");
+            $"IR pipeline could not compile class static initializer body for callable '{callable}' (node={classNode.Type}, scope='{classScope.GetQualifiedName()}').{extra}");
     }
 
     public CompiledCallableBody CompileClassMethodBodyTwoPhase(
@@ -314,7 +316,7 @@ internal sealed class JsMethodCompiler
             scopesFieldHandle = scopesField;
         }
 
-        var callableKindOverride = ScopesCallableKind.ClassMethod;
+        var callableKindOverride = methodDef.Static ? ScopesCallableKind.ClassStaticMethod : ScopesCallableKind.ClassMethod;
         var irBody = TryCompileCallableBody(
             callable: callable,
             expectedMethodDef: expectedMethodDef,

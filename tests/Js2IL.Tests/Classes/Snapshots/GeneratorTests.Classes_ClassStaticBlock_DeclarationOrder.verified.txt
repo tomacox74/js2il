@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2154
+				// Method begins at RVA 0x21a6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2088
+			// Method begins at RVA 0x2174
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -67,56 +67,12 @@
 		.method private hidebysig specialname rtspecialname static 
 			void .cctor () cil managed 
 		{
-			// Method begins at RVA 0x20a4
-			// Header size: 12
-			// Code size: 144 (0x90)
+			// Method begins at RVA 0x2190
+			// Header size: 1
+			// Code size: 1 (0x1)
 			.maxstack 8
-			.locals init (
-				[0] class [System.Runtime]System.Type,
-				[1] object,
-				[2] object
-			)
 
-			IL_0000: ldc.r8 1
-			IL_0009: box [System.Runtime]System.Double
-			IL_000e: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-			IL_0013: ldc.r8 1
-			IL_001c: box [System.Runtime]System.Double
-			IL_0021: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-			IL_0026: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
-			IL_002b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0030: stloc.0
-			IL_0031: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-			IL_0036: stloc.1
-			IL_0037: ldloc.1
-			IL_0038: ldc.r8 2
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0046: stloc.2
-			IL_0047: ldloc.0
-			IL_0048: ldstr "value"
-			IL_004d: ldloc.2
-			IL_004e: ldc.i4.1
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_0054: pop
-			IL_0055: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-			IL_005a: stloc.1
-			IL_005b: ldstr "block:"
-			IL_0060: ldloc.1
-			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0066: stloc.2
-			IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006c: ldloc.2
-			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0072: pop
-			IL_0073: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-			IL_0078: stloc.1
-			IL_0079: ldloc.1
-			IL_007a: ldc.r8 3
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0088: stloc.2
-			IL_0089: ldloc.2
-			IL_008a: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-			IL_008f: ret
+			IL_0000: ret
 		} // end of method Example::.cctor
 
 	} // end of class Example
@@ -135,7 +91,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2192
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -164,28 +120,104 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 43 (0x2b)
+		// Code size: 279 (0x117)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassStaticBlock_DeclarationOrder/Scope,
-			[1] object
+			[1] object[],
+			[2] class [System.Runtime]System.Type,
+			[3] object,
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassStaticBlock_DeclarationOrder/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_000b: stloc.1
-		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0011: ldloc.1
-		IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0017: pop
-		IL_0018: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-		IL_001d: stloc.1
-		IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0023: ldloc.1
-		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0029: pop
-		IL_002a: ret
+		IL_0006: ldc.r8 1
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_0019: ldc.i4.1
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldloc.0
+		IL_0022: stelem.ref
+		IL_0023: stloc.1
+		IL_0024: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
+		IL_0029: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_002e: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
+		IL_0033: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0038: stloc.2
+		IL_0039: ldloc.2
+		IL_003a: ldloc.1
+		IL_003b: ldc.r8 0.0
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_004e: stloc.3
+		IL_004f: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_0054: stloc.s 4
+		IL_0056: ldloc.s 4
+		IL_0058: ldc.r8 2
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_0066: stloc.s 5
+		IL_0068: ldloc.3
+		IL_0069: ldstr "value"
+		IL_006e: ldloc.s 5
+		IL_0070: ldc.i4.1
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0076: pop
+		IL_0077: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_007c: stloc.3
+		IL_007d: ldstr "block:"
+		IL_0082: ldloc.3
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0088: stloc.s 5
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: ldloc.s 5
+		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0096: pop
+		IL_0097: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_009c: stloc.3
+		IL_009d: ldloc.3
+		IL_009e: ldc.r8 3
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00ac: stloc.s 5
+		IL_00ae: ldloc.s 5
+		IL_00b0: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
+		IL_00b5: ldc.i4.1
+		IL_00b6: newarr [System.Runtime]System.Object
+		IL_00bb: dup
+		IL_00bc: ldc.i4.0
+		IL_00bd: ldloc.0
+		IL_00be: stelem.ref
+		IL_00bf: stloc.1
+		IL_00c0: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
+		IL_00c5: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00ca: ldtoken Modules.Classes_ClassStaticBlock_DeclarationOrder/Example
+		IL_00cf: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00d4: stloc.2
+		IL_00d5: ldloc.2
+		IL_00d6: ldloc.1
+		IL_00d7: ldc.r8 0.0
+		IL_00e0: box [System.Runtime]System.Double
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_00ea: stloc.3
+		IL_00eb: ldloc.0
+		IL_00ec: ldloc.3
+		IL_00ed: stfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Scope::Example
+		IL_00f2: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_00f7: stloc.3
+		IL_00f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fd: ldloc.3
+		IL_00fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0103: pop
+		IL_0104: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
+		IL_0109: stloc.3
+		IL_010a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010f: ldloc.3
+		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0115: pop
+		IL_0116: ret
 	} // end of method Classes_ClassStaticBlock_DeclarationOrder::__js_module_init__
 
 } // end of class Modules.Classes_ClassStaticBlock_DeclarationOrder
@@ -197,7 +229,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215d
+		// Method begins at RVA 0x21af
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

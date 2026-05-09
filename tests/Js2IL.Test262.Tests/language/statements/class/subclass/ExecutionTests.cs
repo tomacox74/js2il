@@ -6,7 +6,7 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.class_.subclass") { }
 
-    [Fact(DisplayName = "binding", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "binding")]
     public Task binding()
         => ExecutionTest("binding");
 }

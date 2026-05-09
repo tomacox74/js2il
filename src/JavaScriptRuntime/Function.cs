@@ -27,7 +27,7 @@ public static class Function
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
 
-    private static ExpandoObject CreatePrototype()
+        private static ExpandoObject CreatePrototype()
     {
         var exp = new ExpandoObject();
         var dict = (IDictionary<string, object?>)exp;
@@ -37,6 +37,11 @@ public static class Function
         dict["toString"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeToString, 0);
         return exp;
     }
+
+        internal static bool TryGetPrototypeValue(string name, out object? value)
+        {
+            return ((IDictionary<string, object?>)Prototype).TryGetValue(name, out value);
+        }
 
     private static Func<object[], object?[]?, object?> CreateBuiltinPrototypeFunction(Func<object[], object?[]?, object?> method, double length)
     {
@@ -117,6 +122,26 @@ public static class Function
         private static object? PrototypeBind(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
+            if (target is ClassConstructorValue classConstructorValue)
+            {
+                var thisArgForClass = args != null && args.Length > 0 ? args[0] : null;
+                var boundClassArgs = args != null && args.Length > 1
+                    ? args.Skip(1).ToArray()
+                    : System.Array.Empty<object?>();
+
+                return BindClassConstructor(classConstructorValue, thisArgForClass, boundClassArgs);
+            }
+
+            if (target is Type classConstructor)
+            {
+                var thisArgForClass = args != null && args.Length > 0 ? args[0] : null;
+                var boundClassArgs = args != null && args.Length > 1
+                    ? args.Skip(1).ToArray()
+                    : System.Array.Empty<object?>();
+
+                return BindClassConstructor(new ClassConstructorValue(classConstructor, RuntimeServices.EmptyScopes), thisArgForClass, boundClassArgs);
+            }
+
             if (target is not Delegate del)
             {
                 throw new TypeError("Function.prototype.bind called on non-function");
@@ -128,6 +153,23 @@ public static class Function
                 : System.Array.Empty<object?>();
 
             return Bind(del, thisArg, boundArgs);
+        }
+
+        private static object BindClassConstructor(ClassConstructorValue target, object? thisArg, object?[] boundArgs)
+        {
+            var bound = new ExpandoObject();
+            var dict = (IDictionary<string, object?>)bound;
+            dict["Construct"] = (Func<object[], object?[]?, object?>)((_, args) =>
+            {
+                var callArgs = boundArgs
+                    .Concat(args ?? System.Array.Empty<object?>())
+                    .Select(arg => arg!)
+                    .ToArray();
+                return JavaScriptRuntime.Object.ConstructValue(target, callArgs);
+            });
+            dict["prototype"] = JavaScriptRuntime.Object.GetProperty(target.Type, "prototype");
+            PrototypeChain.SetPrototype(bound, Prototype);
+            return bound;
         }
 
         private static object? PrototypeToString(object[] scopes, object?[]? args)

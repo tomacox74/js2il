@@ -6,7 +6,7 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.class_.strict_mode") { }
 
-    [Fact(DisplayName = "arguments-callee", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "arguments-callee")]
     public Task arguments_callee()
         => ExecutionTest("arguments-callee");
 }

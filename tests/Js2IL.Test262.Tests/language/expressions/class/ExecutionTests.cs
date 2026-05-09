@@ -6,19 +6,19 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.class_") { }
 
-    [Fact(DisplayName = "accessor-name-inst-computed-in", Skip = "Computed class accessor names using in are not compiled yet.")]
+    [Fact(DisplayName = "accessor-name-inst-computed-in")]
     public Task accessor_name_inst_computed_in()
         => ExecutionTest("accessor-name-inst-computed-in");
 
-    [Fact(DisplayName = "accessor-name-inst-computed-yield-expr", Skip = "Computed class accessor names with yield are not compiled yet.")]
+    [Fact(DisplayName = "accessor-name-inst-computed-yield-expr")]
     public Task accessor_name_inst_computed_yield_expr()
         => ExecutionTest("accessor-name-inst-computed-yield-expr");
 
-    [Fact(DisplayName = "accessor-name-static-computed-in", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "accessor-name-static-computed-in")]
     public Task accessor_name_static_computed_in()
         => ExecutionTest("accessor-name-static-computed-in");
 
-    [Fact(DisplayName = "accessor-name-static-computed-yield-expr", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "accessor-name-static-computed-yield-expr")]
     public Task accessor_name_static_computed_yield_expr()
         => ExecutionTest("accessor-name-static-computed-yield-expr");
 
@@ -30,11 +30,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task class_name_ident_await()
         => ExecutionTest("class-name-ident-await");
 
-    [Fact(DisplayName = "constructor-this-tdz-during-initializers", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "constructor-this-tdz-during-initializers")]
     public Task constructor_this_tdz_during_initializers()
         => ExecutionTest("constructor-this-tdz-during-initializers");
 
-    [Fact(DisplayName = "gen-method-length-dflt", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    [Fact(DisplayName = "gen-method-length-dflt")]
     public Task gen_method_length_dflt()
         => ExecutionTest("gen-method-length-dflt");
 }

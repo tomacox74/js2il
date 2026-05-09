@@ -22,6 +22,23 @@ public sealed partial class HIRToLIRLowerer
                 IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
                 return false;
             }
+
+            if (exprStmt.Initializer is HIRInitializedUserClassTypeExpression initializedClassExpr
+                && initializedClassExpr.ClassScope.AstNode is ClassExpression { Id: null }
+                && !string.IsNullOrWhiteSpace(exprStmt.Name.Name))
+            {
+                var inferredNameTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(exprStmt.Name.Name, inferredNameTemp));
+                DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var namedClassValueTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                    Arguments: new[] { EnsureObject(value), EnsureObject(inferredNameTemp) },
+                    Result: namedClassValueTemp));
+                DefineTempStorage(namedClassValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                value = namedClassValueTemp;
+            }
         }
         else
         {

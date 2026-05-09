@@ -47,7 +47,9 @@ internal sealed partial class LIRToILCompiler
 
                     // Instance fields are stored on the runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
-                    // - In static JS callables (functions/arrows): receiver is RuntimeServices.CurrentThis.
+                    // - In static JS callables (functions/arrows): use ObjectRuntime.SetItem because
+                    //   `this` may be a ClassConstructorValue (the class itself, e.g. for static accessors),
+                    //   not a CLR instance, so castclass+stfld would fail.
                     if (methodDescriptor.IsStatic)
                     {
                         var getThisRef = _memberRefRegistry.GetOrAddMethod(
@@ -56,18 +58,21 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getThisRef);
 
-                        if (!classRegistry.TryGet(storeInstanceField.RegistryClassName, out var thisTypeHandle))
-                        {
-                            return false;
-                        }
+                        ilEncoder.Ldstr(_metadataBuilder, storeInstanceField.FieldName);
+                        EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(0); // non-strict
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(string), typeof(object), typeof(bool) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                        ilEncoder.OpCode(ILOpCode.Pop); // pop SetItem's return value
+                        break;
+                    }
 
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(thisTypeHandle);
-                    }
-                    else
-                    {
-                        ilEncoder.LoadArgument(0);
-                    }
+                    ilEncoder.LoadArgument(0);
+
                     var fieldClrType = GetDeclaredUserClassFieldClrType(
                         classRegistry,
                         storeInstanceField.RegistryClassName,
@@ -243,7 +248,9 @@ internal sealed partial class LIRToILCompiler
 
                     // Instance fields are loaded from the runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
-                    // - In static JS callables (functions/arrows): receiver is RuntimeServices.CurrentThis.
+                    // - In static JS callables (functions/arrows): use ObjectRuntime.GetItem because
+                    //   `this` may be a ClassConstructorValue (the class itself, e.g. for static accessors),
+                    //   not a CLR instance, so castclass+ldfld would fail.
                     if (methodDescriptor.IsStatic)
                     {
                         var getThisRef = _memberRefRegistry.GetOrAddMethod(
@@ -252,18 +259,19 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getThisRef);
 
-                        if (!classRegistry.TryGet(loadInstanceField.RegistryClassName, out var thisTypeHandle))
-                        {
-                            return false;
-                        }
+                        ilEncoder.Ldstr(_metadataBuilder, loadInstanceField.FieldName);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                        // GetItem returns object; no boxing needed.
+                        EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);
+                        break;
+                    }
 
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(thisTypeHandle);
-                    }
-                    else
-                    {
-                        ilEncoder.LoadArgument(0);
-                    }
+                    ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
 

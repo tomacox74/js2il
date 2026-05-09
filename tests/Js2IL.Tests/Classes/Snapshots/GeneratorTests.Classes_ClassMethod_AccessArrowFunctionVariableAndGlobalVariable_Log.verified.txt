@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x216b
+					// Method begins at RVA 0x21d7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2174
+					// Method begins at RVA 0x21e0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -68,7 +68,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2100
+				// Method begins at RVA 0x216c
 				// Header size: 12
 				// Code size: 16 (0x10)
 				.maxstack 8
@@ -92,7 +92,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x211c
+				// Method begins at RVA 0x2188
 				// Header size: 1
 				// Code size: 60 (0x3c)
 				.maxstack 8
@@ -136,7 +136,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2162
+				// Method begins at RVA 0x21ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -164,12 +164,16 @@
 			)
 			// Method begins at RVA 0x20bc
 			// Header size: 12
-			// Code size: 53 (0x35)
+			// Code size: 162 (0xa2)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/Scope,
 				[1] object,
-				[2] class Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
+				[2] object,
+				[3] class [System.Runtime]System.Type,
+				[4] object[],
+				[5] object,
+				[6] class Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
 			)
 
 			IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/Scope::.ctor()
@@ -177,26 +181,60 @@
 			IL_0006: ldloc.0
 			IL_0007: ldstr "Hello from function"
 			IL_000c: stfld string Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/Scope::FUNCTION_VALUE
-			IL_0011: ldc.i4.2
-			IL_0012: newarr [System.Runtime]System.Object
-			IL_0017: dup
-			IL_0018: ldc.i4.0
-			IL_0019: ldarg.0
-			IL_001a: stelem.ref
-			IL_001b: dup
-			IL_001c: ldc.i4.1
-			IL_001d: ldloc.0
-			IL_001e: stelem.ref
-			IL_001f: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass::.ctor(object[])
-			IL_0024: stloc.2
-			IL_0025: ldloc.2
-			IL_0026: stloc.1
-			IL_0027: ldloc.1
-			IL_0028: castclass Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
-			IL_002d: callvirt instance object Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass::logValues()
-			IL_0032: pop
-			IL_0033: ldnull
-			IL_0034: ret
+			IL_0011: ldtoken Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
+			IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_001b: ldtoken Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
+			IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0025: stloc.3
+			IL_0026: ldc.i4.2
+			IL_0027: newarr [System.Runtime]System.Object
+			IL_002c: dup
+			IL_002d: ldc.i4.0
+			IL_002e: ldarg.0
+			IL_002f: stelem.ref
+			IL_0030: dup
+			IL_0031: ldc.i4.1
+			IL_0032: ldloc.0
+			IL_0033: stelem.ref
+			IL_0034: stloc.s 4
+			IL_0036: ldloc.3
+			IL_0037: ldloc.s 4
+			IL_0039: ldc.r8 0.0
+			IL_0042: box [System.Runtime]System.Double
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+			IL_004c: stloc.s 5
+			IL_004e: ldloc.s 5
+			IL_0050: stloc.1
+			IL_0051: ldc.i4.2
+			IL_0052: newarr [System.Runtime]System.Object
+			IL_0057: dup
+			IL_0058: ldc.i4.0
+			IL_0059: ldarg.0
+			IL_005a: stelem.ref
+			IL_005b: dup
+			IL_005c: ldc.i4.1
+			IL_005d: ldloc.0
+			IL_005e: stelem.ref
+			IL_005f: ldc.i4.0
+			IL_0060: newarr [System.Runtime]System.Object
+			IL_0065: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_006a: newobj instance void Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass::.ctor(object[])
+			IL_006f: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_0074: stloc.s 6
+			IL_0076: ldloc.s 6
+			IL_0078: ldtoken Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
+			IL_007d: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0082: ldstr "prototype"
+			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+			IL_008c: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_0091: ldloc.s 6
+			IL_0093: stloc.2
+			IL_0094: ldloc.2
+			IL_0095: castclass Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass
+			IL_009a: callvirt instance object Modules.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_L5C27/MyClass::logValues()
+			IL_009f: pop
+			IL_00a0: ldnull
+			IL_00a1: ret
 		} // end of method ArrowFunction_L5C27::__js_call__
 
 	} // end of class ArrowFunction_L5C27
@@ -216,7 +254,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2159
+			// Method begins at RVA 0x21c5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -297,7 +335,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217d
+		// Method begins at RVA 0x21e9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

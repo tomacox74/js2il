@@ -963,6 +963,12 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.Function.GetPrototypeObject(del);
             }
 
+            // Class constructor values are functions — their prototype is Function.prototype.
+            if (obj is ClassConstructorValue)
+            {
+                return JavaScriptRuntime.Function.Prototype;
+            }
+
             if (!PrototypeChain.TryGetPrototype(obj, out var prototype))
             {
                 return null;
@@ -2078,6 +2084,11 @@ namespace JavaScriptRuntime
                 return !(type.IsAbstract && type.IsSealed);
             }
 
+            if (constructor is ClassConstructorValue classConstructor)
+            {
+                return !(classConstructor.Type.IsAbstract && classConstructor.Type.IsSealed);
+            }
+
             if (constructor is Delegate)
             {
                 return true;
@@ -2127,14 +2138,34 @@ namespace JavaScriptRuntime
 
             if (constructor is Type type)
             {
+                return ConstructTypeValue(type, callArgs, RuntimeServices.EmptyScopes);
+            }
+
+            if (constructor is ClassConstructorValue classConstructor)
+            {
+                return ConstructTypeValue(classConstructor.Type, callArgs, classConstructor.Scopes);
+            }
+
+            object? ConstructTypeValue(Type type, object[] callArgs, object[] scopes)
+            {
                 if (type.IsAbstract && type.IsSealed)
                 {
                     throw new TypeError("Value is not a constructor");
                 }
 
+                object? AttachClassPrototype(object? instance)
+                {
+                    if (instance is not null && instance is not JsNull)
+                    {
+                        PrototypeChain.SetPrototype(instance, GetProperty(type, "prototype"));
+                    }
+
+                    return instance;
+                }
+
                 try
                 {
-                    return Activator.CreateInstance(type, callArgs);
+                    return AttachClassPrototype(Activator.CreateInstance(type, callArgs));
                 }
                 catch (MissingMethodException)
                 {
@@ -2146,28 +2177,36 @@ namespace JavaScriptRuntime
                     foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
                     {
                         var parameters = ctor.GetParameters();
-                        if (!IsViableConstructorCall(parameters, callArgs))
+                        var hasHiddenScopesParameter = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
+                        var jsParameters = hasHiddenScopesParameter ? parameters.Skip(1).ToArray() : parameters;
+                        if (!IsViableConstructorCall(jsParameters, callArgs))
                         {
                             continue;
                         }
 
                         var invokeArgs = new object?[parameters.Length];
-                        for (int i = 0; i < parameters.Length; i++)
+                        if (hasHiddenScopesParameter)
                         {
+                            invokeArgs[0] = scopes;
+                        }
+
+                        for (int i = 0; i < jsParameters.Length; i++)
+                        {
+                            var invokeIndex = hasHiddenScopesParameter ? i + 1 : i;
                             if (i < callArgs.Length)
                             {
-                                _ = TryCoerceConstructorArg(callArgs[i], parameters[i].ParameterType, out var coerced);
-                                invokeArgs[i] = coerced;
+                                _ = TryCoerceConstructorArg(callArgs[i], jsParameters[i].ParameterType, out var coerced);
+                                invokeArgs[invokeIndex] = coerced;
                             }
                             else
                             {
-                                invokeArgs[i] = null;
+                                invokeArgs[invokeIndex] = null;
                             }
                         }
 
                         try
                         {
-                            return ctor.Invoke(invokeArgs);
+                            return AttachClassPrototype(ctor.Invoke(invokeArgs));
                         }
                         catch (TargetInvocationException tie) when (tie.InnerException != null)
                         {
@@ -3382,6 +3421,117 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            // Check if target is a class prototype object (has constructor = Type in PropertyDescriptorStore)
+            // and the property corresponds to CLR get_/set_ accessor methods on that class.
+            if (PropertyDescriptorStore.TryGetOwn(target, "constructor", out var ctorDesc)
+                && ctorDesc.Kind == JsPropertyDescriptorKind.Data
+                && ctorDesc.Value is Type instanceClassType)
+            {
+                var instanceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
+                var getter = FindAccessorMethod(instanceClassType, "get", propName, instanceFlags, parameterCount: 0);
+                var setter = FindAccessorMethod(instanceClassType, "set", propName, instanceFlags, parameterCount: 1);
+
+                if (getter != null || setter != null)
+                {
+                    Func<object?>? getDelegate = null;
+                    Action<object?>? setDelegate = null;
+
+                    if (getter != null)
+                    {
+                        var capturedGetter = getter;
+                        getDelegate = () =>
+                        {
+                            var recv = RuntimeServices.GetCurrentThis();
+                            try { return capturedGetter.Invoke(recv, System.Array.Empty<object>()); }
+                            catch (TargetInvocationException tie) when (tie.InnerException != null)
+                            { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); throw; }
+                        };
+                    }
+
+                    if (setter != null)
+                    {
+                        var capturedSetter = setter;
+                        setDelegate = (value) =>
+                        {
+                            var recv = RuntimeServices.GetCurrentThis();
+                            try { capturedSetter.Invoke(recv, new object?[] { value }); }
+                            catch (TargetInvocationException tie) when (tie.InnerException != null)
+                            { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); }
+                        };
+                    }
+
+                    descriptor = new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Accessor,
+                        Configurable = true,
+                        Enumerable = false,
+                        Get = getDelegate,
+                        Set = setDelegate
+                    };
+                    // Cache so that subsequent lookups (including prototype chain walks) find it.
+                    PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
+                    return true;
+                }
+            }
+
+            // Check if target is a ClassConstructorValue or Type (class constructor) and the property
+            // corresponds to a static CLR get_/set_ accessor method.
+            {
+                Type? staticClassType = target switch
+                {
+                    ClassConstructorValue ccv => ccv.Type,
+                    Type t => t,
+                    _ => null
+                };
+
+                if (staticClassType != null)
+                {
+                    var staticFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase;
+                    var getter = FindAccessorMethod(staticClassType, "get", propName, staticFlags, parameterCount: 0);
+                    var setter = FindAccessorMethod(staticClassType, "set", propName, staticFlags, parameterCount: 1);
+
+                    if (getter != null || setter != null)
+                    {
+                        Func<object?>? getDelegate = null;
+                        Action<object?>? setDelegate = null;
+
+                        if (getter != null)
+                        {
+                            var capturedGetter = getter;
+                            getDelegate = () =>
+                            {
+                                try { return capturedGetter.Invoke(null, System.Array.Empty<object>()); }
+                                catch (TargetInvocationException tie) when (tie.InnerException != null)
+                                { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); throw; }
+                            };
+                        }
+
+                        if (setter != null)
+                        {
+                            var capturedSetter = setter;
+                            setDelegate = (value) =>
+                            {
+                                try { capturedSetter.Invoke(null, new object?[] { value }); }
+                                catch (TargetInvocationException tie) when (tie.InnerException != null)
+                                { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); }
+                            };
+                        }
+
+                        descriptor = new JsPropertyDescriptor
+                        {
+                            Kind = JsPropertyDescriptorKind.Accessor,
+                            Configurable = true,
+                            Enumerable = false,
+                            Get = getDelegate,
+                            Set = setDelegate
+                        };
+                        // Cache on the target (ClassConstructorValue or Type) for future lookups.
+                        PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
+                        return true;
+                    }
+                }
+            }
+
             // No implicit descriptor support for arrays/typed arrays/strings here.
             descriptor = null!;
             return false;
@@ -3518,7 +3668,50 @@ namespace JavaScriptRuntime
             {
                 if (target is Type staticType)
                 {
-                    return TryGetClrMemberValue(staticType, instance: null, propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase, out value);
+                    if (string.Equals(propName, "name", StringComparison.Ordinal))
+                    {
+                        value = staticType.Name;
+                        return true;
+                    }
+
+                    if (string.Equals(propName, "prototype", StringComparison.Ordinal))
+                    {
+                        var protoObj = CreateOrdinaryObject();
+                        PropertyDescriptorStore.DefineOrUpdate(staticType, "prototype", new JsPropertyDescriptor
+                        {
+                            Kind = JsPropertyDescriptorKind.Data,
+                            Enumerable = false,
+                            Configurable = false,
+                            Writable = false,
+                            Value = protoObj
+                        });
+
+                        PropertyDescriptorStore.DefineOrUpdate(protoObj, "constructor", new JsPropertyDescriptor
+                        {
+                            Kind = JsPropertyDescriptorKind.Data,
+                            Enumerable = false,
+                            Configurable = true,
+                            Writable = true,
+                            Value = staticType
+                        });
+
+                        value = protoObj;
+                        return true;
+                    }
+
+                    if (string.Equals(propName, "bind", StringComparison.Ordinal)
+                        && JavaScriptRuntime.Function.TryGetPrototypeValue("bind", out var bindValue))
+                    {
+                        value = bindValue;
+                        return true;
+                    }
+
+                    return TryGetClrMemberValue(staticType, instance: null, propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, out value);
+                }
+
+                if (target is ClassConstructorValue classConstructorValue)
+                {
+                    return TryGetOwnPropertyValue(classConstructorValue.Type, propName, receiverForAccessors, out value);
                 }
 
                 return TryGetClrMemberValue(target.GetType(), target, propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase, out value);
@@ -5060,12 +5253,23 @@ namespace JavaScriptRuntime
                 return value;
             }
 
+            if (obj is ClassConstructorValue classConstructorValue)
+            {
+                return SetProperty(classConstructorValue.Type, name, value, throwOnError);
+            }
+
+            if (obj is Type staticTypeForPrototype
+                && string.Equals(name, "prototype", StringComparison.Ordinal))
+            {
+                throw new TypeError("Cannot assign to read only property 'prototype' of object");
+            }
+
             // Reflection fallback: settable property or public field
             try
             {
                 if (obj is Type staticType)
                 {
-                    if (TrySetClrMemberValue(staticType, instance: null, name, value, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase))
+                    if (TrySetClrMemberValue(staticType, instance: null, name, value, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase))
                     {
                         return value;
                     }

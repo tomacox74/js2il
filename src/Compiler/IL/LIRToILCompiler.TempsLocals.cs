@@ -1528,7 +1528,8 @@ internal sealed partial class LIRToILCompiler
 
                     // Inline instance-field load from runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
-                    // - In static JS callables (functions/arrows): receiver is RuntimeServices.CurrentThis.
+                    // - In static JS callables (functions/arrows): use ObjectRuntime.GetItem because
+                    //   `this` may be a ClassConstructorValue (e.g. for static accessors), not a CLR instance.
                     if (methodDescriptor.IsStatic)
                     {
                         var getThisRef = _memberRefRegistry.GetOrAddMethod(
@@ -1537,28 +1538,29 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getThisRef);
 
-                        if (!classRegistry.TryGet(loadInstanceField.RegistryClassName, out var thisTypeHandle))
-                        {
-                            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing class '{loadInstanceField.RegistryClassName}' for this-cast");
-                        }
-
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(thisTypeHandle);
+                        ilEncoder.Ldstr(_metadataBuilder, loadInstanceField.FieldName);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                        // GetItem returns object; leave on stack (value is now boxed).
                     }
                     else
                     {
                         ilEncoder.LoadArgument(0);
-                    }
-                    ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(fieldHandle);
+                        ilEncoder.OpCode(ILOpCode.Ldfld);
+                        ilEncoder.Token(fieldHandle);
 
-                    var fieldClrType = GetDeclaredUserClassFieldClrType(
-                        classRegistry,
-                        loadInstanceField.RegistryClassName,
-                        loadInstanceField.FieldName,
-                        loadInstanceField.IsPrivateField,
-                        isStaticField: false);
-                    EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
+                        var fieldClrType = GetDeclaredUserClassFieldClrType(
+                            classRegistry,
+                            loadInstanceField.RegistryClassName,
+                            loadInstanceField.FieldName,
+                            loadInstanceField.IsPrivateField,
+                            isStaticField: false);
+                        EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
+                    }
                     break;
                 }
 

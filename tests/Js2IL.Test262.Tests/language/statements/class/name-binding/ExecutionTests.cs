@@ -10,7 +10,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task basic()
         => ExecutionTest("basic");
 
-    [Fact(DisplayName = "const", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "const")]
     public Task const_()
         => ExecutionTest("const");
 }

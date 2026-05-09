@@ -1100,6 +1100,14 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (classDecl.Body.Body.Any(element =>
+            element is Acornima.Ast.PropertyDefinition
+            || element is Acornima.Ast.StaticBlock
+            || element is Acornima.Ast.MethodDefinition { Computed: true }))
+        {
+            return true;
+        }
+
         // Match ClassesGenerator's heuristic for when a class must capture parent scopes:
         // if any constructor/method contains nested functions or news a class that itself
         // requires parent scopes.

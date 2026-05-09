@@ -102,6 +102,20 @@ public sealed record CallableAbi(
     }
 
     /// <summary>
+    /// Creates a CallableAbi for a class static method (getter, setter, or regular static).
+    /// Static CLR method with no scopes access — cannot read this._scopes.
+    /// </summary>
+    public static CallableAbi ForClassStaticMethod(int jsParameterCount)
+    {
+        return new CallableAbi(
+            IsInstanceMethod: false,
+            HasScopesParam: false,
+            ScopesSource: ScopesSource.None,
+            JsParameterCount: jsParameterCount
+        );
+    }
+
+    /// <summary>
     /// Creates a CallableAbi for a module Main method.
     /// Static method with no scopes parameter.
     /// </summary>

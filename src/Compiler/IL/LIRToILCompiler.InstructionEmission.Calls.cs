@@ -589,6 +589,32 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing ctor token");
                     }
 
+                    // Push all actual JS arguments into _currentArguments so that the 'arguments' keyword
+                    // inside the base constructor reflects the values passed to super(...), not the outer ctor args.
+                    // Only push when there are explicit JS args; if no args are passed (e.g., synthesized default
+                    // constructor calls super() with 0 args), the outer _currentArguments remains visible to Base.
+                    int allArgc = callBaseCtor.AllJsArguments.Count;
+                    if (allArgc > 0)
+                    {
+                        var pushCurrentArguments = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentArguments),
+                            parameterTypes: new[] { typeof(object[]) });
+
+                        ilEncoder.LoadConstantI4(allArgc);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+                        for (int i = 0; i < allArgc; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.LoadConstantI4(i);
+                            EmitLoadTemp(callBaseCtor.AllJsArguments[i], ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        }
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(pushCurrentArguments);
+                    }
+
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
                     if (callBaseCtor.HasScopesParameter)
@@ -610,6 +636,17 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callBaseCtor.ConstructorHandle);
+
+                    // Restore _currentArguments to its pre-super-call state (only if we pushed above).
+                    if (allArgc > 0)
+                    {
+                        var popCurrentArguments = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PopCurrentArguments),
+                            parameterTypes: Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(popCurrentArguments);
+                    }
                     break;
                 }
 

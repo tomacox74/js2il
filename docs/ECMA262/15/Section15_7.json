@@ -79,7 +79,7 @@
     {
       "clause": "15.7.12",
       "title": "Runtime Semantics: EvaluateClassStaticBlockBody",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-evaluateclassstaticblockbody"
     },
     {
@@ -307,7 +307,7 @@
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
         ],
-        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Private accessors are compiled as hidden callable members. Computed class accessors still have limitations."
+        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Object.getOwnPropertyDescriptor() correctly identifies getter/setter descriptors on class prototypes and static class objects. Static accessor methods use the correct CLR static ABI. Private accessors are compiled as hidden callable members. Computed class accessors still have limitations."
       },
       {
         "clause": "15.7.1",
@@ -316,9 +316,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_NestedClassExtendsGlobal.js"
         ],
-        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods."
+        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported."
       },
       {
         "clause": "15.7.1",
@@ -446,7 +447,7 @@
           "tests/Js2IL.Tests/ValidatorTests.cs",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
         ],
-        "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization."
+        "notes": "Static blocks are emitted into the synthesized class .cctor and execute once in declaration order relative to static field initialization. Class identifier bindings in static blocks correctly use the SSA-map (post-assignment) value, avoiding spurious TDZ errors during static initialization."
       }
     ]
   }

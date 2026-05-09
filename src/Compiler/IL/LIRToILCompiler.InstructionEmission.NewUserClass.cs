@@ -60,6 +60,34 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
                     }
 
+                    // Before the newobj call, push all actual call-site arguments into _currentArguments so that
+                    // the 'arguments' keyword inside the constructor chain (including base constructors) reflects
+                    // the actual values passed by the caller — even when MaxArgCount is 0 (default derived ctor).
+                    {
+                        var pushCurrentArguments = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PushCurrentArguments),
+                            parameterTypes: new[] { typeof(object[]) });
+
+                        // Build object[] of all argc arguments. The array itself is consumed by PushCurrentArguments
+                        // (void return), so this block does not perturb the eval stack (scopes may already be pushed).
+                        ilEncoder.LoadConstantI4(argc);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+
+                        for (int i = 0; i < argc; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.LoadConstantI4(i);
+                            EmitLoadTemp(newUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(pushCurrentArguments);
+                        // Stack unchanged: [] or [scopes] (PushCurrentArguments is void)
+                    }
+
                     // In JavaScript, extra constructor arguments are evaluated (side effects) but ignored.
                     // LIR lowering already evaluates all arguments; here we only pass the declared maximum.
                     int argsToPass = Math.Min(argc, newUserClass.MaxArgCount);
@@ -76,19 +104,82 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorDef);
+                    // Stack: [instance]
 
-                    if (!IsMaterialized(newUserClass.Result, allocation))
+                    // Restore _currentArguments to its pre-construction state.
+                    {
+                        var popCurrentArguments = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PopCurrentArguments),
+                            parameterTypes: Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(popCurrentArguments);
+                        // Stack: [instance] (unchanged — PopCurrentArguments returns void)
+                    }
+
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    var classTypeForPrototype = default(TypeDefinitionHandle);
+                    bool hasPrototype = classRegistry != null
+                        && classRegistry.TryGet(newUserClass.RegistryClassName, out classTypeForPrototype);
+
+                    bool resultUsed = IsMaterialized(newUserClass.Result, allocation);
+
+                    if (!resultUsed && !hasPrototype)
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
                         break;
                     }
 
-                    // Store the constructed instance as the default result.
-                    EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                    if (resultUsed)
+                    {
+                        // Store the constructed instance as the default result.
+                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                    }
+
+                    if (hasPrototype)
+                    {
+                        if (resultUsed)
+                        {
+                            // Reload instance from result local.
+                            EmitLoadTemp(newUserClass.Result, ilEncoder, allocation, methodDescriptor);
+                        }
+                        // Else: instance is still on the stack from newobj — use it directly.
+                        // Stack: [instance]
+
+                        ilEncoder.OpCode(ILOpCode.Ldtoken);
+                        ilEncoder.Token(classTypeForPrototype);
+                        var getTypeFromHandleForPrototype = _memberRefRegistry.GetOrAddMethod(
+                            typeof(Type),
+                            nameof(Type.GetTypeFromHandle),
+                            parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getTypeFromHandleForPrototype);
+
+                        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("prototype"));
+                        var getProperty = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetProperty),
+                            parameterTypes: new[] { typeof(object), typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getProperty);
+
+                        var setPrototype = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PrototypeChain),
+                            nameof(JavaScriptRuntime.PrototypeChain.SetPrototype),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setPrototype);
+                        // Stack: [] (instance consumed by SetPrototype)
+                    }
+
+                    if (!resultUsed)
+                    {
+                        // Prototype was set; instance was consumed. Nothing left to do.
+                        break;
+                    }
 
                     // PL5.4a: If the JS constructor explicitly returned an object, new-expr evaluates to that object;
                     // if it returned a primitive/null/undefined, the constructed instance is used.
-                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
                     if (classRegistry != null
                         && classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out var ctorReturnField)
                         && classRegistry.TryGet(newUserClass.RegistryClassName, out var classTypeHandle))

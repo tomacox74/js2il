@@ -39,8 +39,10 @@ public sealed partial class HIRToLIRLowerer
                 && _classRegistry.TryGetConstructor(baseRegistryClassName, out var baseCtorHandle, out var baseCtorHasScopesParam, out var _, out var baseCtorMaxParamCount))
             {
                 var callArgs = new List<TempVariable>();
+                var allJsArgs = new List<TempVariable>();
 
-                // Lower JS arguments (extras are evaluated for side effects, but ignored).
+                // Lower JS arguments. All args are captured for AllJsArguments (arguments object);
+                // only args within MaxParamCount are passed as formal parameters to the .NET method.
                 for (int i = 0; i < callExpr.Arguments.Length; i++)
                 {
                     if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
@@ -48,9 +50,11 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
+                    var objArg = EnsureObject(argTemp);
+                    allJsArgs.Add(objArg);
                     if (i < baseCtorMaxParamCount)
                     {
-                        callArgs.Add(EnsureObject(argTemp));
+                        callArgs.Add(objArg);
                     }
                 }
 
@@ -68,7 +72,8 @@ public sealed partial class HIRToLIRLowerer
                     baseCtorHandle,
                     baseCtorHasScopesParam,
                     baseCtorMaxParamCount,
-                    callArgs));
+                    callArgs,
+                    allJsArgs));
             }
             else
             {

@@ -14,6 +14,14 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        if (propAccessExpr.Object is HIRSuperExpression
+            && _callableKind == CallableKind.Constructor
+            && _isDerivedConstructor
+            && !_superConstructorCalled)
+        {
+            return TryLowerExpression(new HIRThisExpression(), out resultTempVar);
+        }
+
         // Intrinsic object property read: support well-known Symbol properties (e.g., Symbol.iterator).
         // We lower this as a static intrinsic call so `Symbol` does not need to be representable
         // as a normal runtime value.
@@ -94,6 +102,36 @@ public sealed partial class HIRToLIRLowerer
                 ? ValueStorageKind.UnboxedValue
                 : ValueStorageKind.Reference;
             DefineTempStorage(resultTempVar, new ValueStorage(storageKind, staticFieldClrType));
+            return true;
+        }
+
+        if (propAccessExpr.Object is HIRSuperExpression
+            && TryGetEnclosingBaseClassRegistryName(out var baseClassRegistryName)
+            && baseClassRegistryName != null)
+        {
+            if (!TryLowerExpression(new HIRThisExpression(), out _))
+            {
+                return false;
+            }
+
+            var baseTypeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(baseClassRegistryName, baseTypeTemp));
+            DefineTempStorage(baseTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+            var prototypeKeyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString("prototype", prototypeKeyTemp));
+            DefineTempStorage(prototypeKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var prototypeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(baseTypeTemp), EnsureObject(prototypeKeyTemp), prototypeTemp));
+            DefineTempStorage(prototypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            var propertyKeyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, propertyKeyTemp));
+            DefineTempStorage(propertyKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(prototypeTemp), EnsureObject(propertyKeyTemp), resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 
@@ -289,6 +327,50 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        if (indexAccessExpr.Object is HIRSuperExpression
+            && _callableKind == CallableKind.Constructor
+            && _isDerivedConstructor
+            && !_superConstructorCalled)
+        {
+            return TryLowerExpression(new HIRThisExpression(), out resultTempVar);
+        }
+
+        if (indexAccessExpr.Object is HIRSuperExpression
+            && TryGetEnclosingBaseClassRegistryName(out var baseClassRegistryName)
+            && baseClassRegistryName != null)
+        {
+            if (!TryLowerExpression(new HIRThisExpression(), out _))
+            {
+                return false;
+            }
+
+            var baseTypeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(baseClassRegistryName, baseTypeTemp));
+            DefineTempStorage(baseTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+            var prototypeKeyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString("prototype", prototypeKeyTemp));
+            DefineTempStorage(prototypeKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var prototypeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(baseTypeTemp), EnsureObject(prototypeKeyTemp), prototypeTemp));
+            DefineTempStorage(prototypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            if (!TryLowerExpression(indexAccessExpr.Index, out var superIndexTemp))
+            {
+                return false;
+            }
+
+            var superIndexStorage = GetTempStorage(superIndexTemp);
+            TempVariable superIndexForGet = superIndexStorage.Kind == ValueStorageKind.UnboxedValue && superIndexStorage.ClrType == typeof(double)
+                ? superIndexTemp
+                : EnsureObject(superIndexTemp);
+
+            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(prototypeTemp), superIndexForGet, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // User-defined class instance field access via bracket notation (e.g., this["wordArray"]).
         // If the receiver is `this` and the index is a constant string that matches a known field on the
         // generated CLR type, lower directly to an instance field load (ldfld) instead of dynamic GetItem.
@@ -462,8 +544,11 @@ public sealed partial class HIRToLIRLowerer
                         break;
 
                     case BindingStorageKind.ParentScopeField:
-                        // Captured variable in parent scope
-                        if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
+                        // Captured variable in parent scope — only loadable when parent scopes are accessible.
+                        // Static CLR methods (e.g., property getters/setters) have ScopesSource.None and
+                        // cannot load parent scope fields; return false to allow fallback paths.
+                        if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil
+                            && _environmentLayout?.Abi.ScopesSource is ScopesSource.Argument or ScopesSource.ThisField)
                         {
                             result = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, result));
