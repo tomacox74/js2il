@@ -1551,14 +1551,16 @@ class HIRMethodBuilder
                     // binding is still in TDZ, so only expose the binding once the spec-visible initialization
                     // phase that can reference the class name begins.
                     var cdClassName = (classDecl.Id as Identifier)?.Name;
-                    if (classNameBindingInsertIndex >= 0
-                        && cdClassName != null
+                    if (cdClassName != null
                         && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true)
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(cdRegistryClassName, classScope, []);
                         var classSymbol = new Symbol(cdClassBinding);
-                        staticInitStatements.Insert(classNameBindingInsertIndex, new HIRExpressionStatement(
+                        var bindingInsertionIndex = classNameBindingInsertIndex >= 0
+                            ? classNameBindingInsertIndex
+                            : staticInitStatements.Count;
+                        staticInitStatements.Insert(bindingInsertionIndex, new HIRExpressionStatement(
                             new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
                     }
 
