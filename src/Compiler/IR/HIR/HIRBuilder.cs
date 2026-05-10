@@ -1534,17 +1534,19 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    // After static initialization, store the ClassConstructorValue to the class name binding
-                    // in the enclosing scope. This ensures all references to the class name (inside class
-                    // methods or from the outer scope) return the same object identity, satisfying ===.
+                    // Store the ClassConstructorValue to the class name binding before static initialization.
+                    // Class field initializers and static blocks can legally reference the class name while the
+                    // class is being initialized, and they must observe the same constructor object identity
+                    // that becomes visible in the outer scope after initialization completes.
                     var cdClassName = (classDecl.Id as Identifier)?.Name;
                     if (cdClassName != null && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true)
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
-                        // Empty init statements: static init was already emitted above.
+                        // Static initialization is emitted as separate statements below so references within
+                        // those statements resolve through the already-assigned binding instead of the TDZ slot.
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(cdRegistryClassName, classScope, []);
                         var classSymbol = new Symbol(cdClassBinding);
-                        staticInitStatements.Add(new HIRExpressionStatement(
+                        staticInitStatements.Insert(0, new HIRExpressionStatement(
                             new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
                     }
 
