@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bf
+				// Method begins at RVA 0x223b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c8
+				// Method begins at RVA 0x2244
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d1
+				// Method begins at RVA 0x224d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21da
+				// Method begins at RVA 0x2256
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,7 +104,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x213c
 			// Header size: 12
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -146,7 +146,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2108
+			// Method begins at RVA 0x2184
 			// Header size: 12
 			// Code size: 71 (0x47)
 			.maxstack 8
@@ -202,7 +202,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x215c
+			// Method begins at RVA 0x21d8
 			// Header size: 12
 			// Code size: 78 (0x4e)
 			.maxstack 8
@@ -266,7 +266,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b6
+			// Method begins at RVA 0x2232
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -292,41 +292,80 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 222 (0xde)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_BitShiftInCtor_Int32Array/Scope,
 			[1] object,
-			[2] class Modules.Classes_BitShiftInCtor_Int32Array/BitBag,
-			[3] float64
+			[2] object,
+			[3] object[],
+			[4] class [System.Runtime]System.Type,
+			[5] object,
+			[6] class Modules.Classes_BitShiftInCtor_Int32Array/BitBag,
+			[7] float64
 		)
 
 		IL_0000: newobj instance void Modules.Classes_BitShiftInCtor_Int32Array/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.r8 64
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: newobj instance void Modules.Classes_BitShiftInCtor_Int32Array/BitBag::.ctor(object)
-		IL_0019: stloc.2
-		IL_001a: ldloc.2
-		IL_001b: stloc.1
-		IL_001c: ldloc.1
-		IL_001d: castclass Modules.Classes_BitShiftInCtor_Int32Array/BitBag
-		IL_0022: ldc.r8 1
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: callvirt instance object Modules.Classes_BitShiftInCtor_Int32Array/BitBag::set(object)
-		IL_0035: pop
-		IL_0036: ldloc.1
-		IL_0037: castclass Modules.Classes_BitShiftInCtor_Int32Array/BitBag
-		IL_003c: ldc.r8 1
-		IL_0045: box [System.Runtime]System.Double
-		IL_004a: callvirt instance float64 Modules.Classes_BitShiftInCtor_Int32Array/BitBag::test(object)
-		IL_004f: stloc.3
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0055: ldloc.3
-		IL_0056: box [System.Runtime]System.Double
-		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0060: pop
-		IL_0061: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.3
+		IL_0011: ldtoken Modules.Classes_BitShiftInCtor_Int32Array/BitBag
+		IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001b: ldtoken Modules.Classes_BitShiftInCtor_Int32Array/BitBag
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: stloc.s 4
+		IL_0027: ldloc.s 4
+		IL_0029: ldloc.3
+		IL_002a: ldc.r8 1
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_003d: stloc.s 5
+		IL_003f: ldloc.s 5
+		IL_0041: stloc.1
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldc.r8 64
+		IL_0053: box [System.Runtime]System.Double
+		IL_0058: stelem.ref
+		IL_0059: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_005e: ldc.r8 64
+		IL_0067: box [System.Runtime]System.Double
+		IL_006c: newobj instance void Modules.Classes_BitShiftInCtor_Int32Array/BitBag::.ctor(object)
+		IL_0071: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0076: stloc.s 6
+		IL_0078: ldloc.s 6
+		IL_007a: ldtoken Modules.Classes_BitShiftInCtor_Int32Array/BitBag
+		IL_007f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0084: ldstr "prototype"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_008e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0093: ldloc.s 6
+		IL_0095: stloc.2
+		IL_0096: ldloc.2
+		IL_0097: castclass Modules.Classes_BitShiftInCtor_Int32Array/BitBag
+		IL_009c: ldc.r8 1
+		IL_00a5: box [System.Runtime]System.Double
+		IL_00aa: callvirt instance object Modules.Classes_BitShiftInCtor_Int32Array/BitBag::set(object)
+		IL_00af: pop
+		IL_00b0: ldloc.2
+		IL_00b1: castclass Modules.Classes_BitShiftInCtor_Int32Array/BitBag
+		IL_00b6: ldc.r8 1
+		IL_00bf: box [System.Runtime]System.Double
+		IL_00c4: callvirt instance float64 Modules.Classes_BitShiftInCtor_Int32Array/BitBag::test(object)
+		IL_00c9: stloc.s 7
+		IL_00cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d0: ldloc.s 7
+		IL_00d2: box [System.Runtime]System.Double
+		IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00dc: pop
+		IL_00dd: ret
 	} // end of method Classes_BitShiftInCtor_Int32Array::__js_module_init__
 
 } // end of class Modules.Classes_BitShiftInCtor_Int32Array
@@ -338,7 +377,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e3
+		// Method begins at RVA 0x225f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

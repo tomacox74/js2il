@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2172
+				// Method begins at RVA 0x21ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,14 +41,14 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20eb
+			// Method begins at RVA 0x2167
 			// Header size: 1
 			// Code size: 16 (0x10)
 			.maxstack 8
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0005: castclass Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
-			IL_000a: ldfld object Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter::x
+			IL_0005: ldstr "x"
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_000f: ret
 		} // end of method ArrowFunction_L6C21::__js_call__
 
@@ -65,7 +65,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2160
+				// Method begins at RVA 0x21dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -85,7 +85,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2169
+				// Method begins at RVA 0x21e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,7 +114,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x2178
 			// Header size: 12
 			// Code size: 79 (0x4f)
 			.maxstack 8
@@ -169,7 +169,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2157
+			// Method begins at RVA 0x21d3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -195,15 +195,17 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 143 (0x8f)
+		// Code size: 267 (0x10b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Scope,
 			[1] object,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[3] object[],
-			[4] class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter,
-			[5] object
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] object[],
+			[5] class [System.Runtime]System.Type,
+			[6] object,
+			[7] class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Scope::.ctor()
@@ -214,43 +216,78 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: stloc.3
-		IL_0011: ldloc.3
-		IL_0012: ldc.r8 5
-		IL_001b: box [System.Runtime]System.Double
-		IL_0020: newobj instance void Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter::.ctor(object[], object)
-		IL_0025: stloc.s 4
-		IL_0027: ldloc.s 4
-		IL_0029: stloc.1
-		IL_002a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_002f: dup
-		IL_0030: ldstr "x"
-		IL_0035: ldc.r8 9
-		IL_003e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0043: dup
-		IL_0044: ldstr "getX"
-		IL_0049: ldloc.1
-		IL_004a: ldstr "getX"
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0059: stloc.2
-		IL_005a: ldloc.1
-		IL_005b: ldstr "getX"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0065: stloc.s 5
-		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006c: ldloc.s 5
-		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0073: pop
-		IL_0074: ldloc.2
-		IL_0075: ldstr "getX"
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_007f: stloc.s 5
-		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0086: ldloc.s 5
-		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008d: pop
-		IL_008e: ret
+		IL_0010: stloc.s 4
+		IL_0012: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
+		IL_0017: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001c: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
+		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0026: stloc.s 5
+		IL_0028: ldloc.s 5
+		IL_002a: ldloc.s 4
+		IL_002c: ldc.r8 1
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_003f: stloc.s 6
+		IL_0041: ldloc.s 6
+		IL_0043: stloc.1
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.0
+		IL_004d: stelem.ref
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.s 4
+		IL_0052: ldc.i4.1
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldc.r8 5
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: stelem.ref
+		IL_0069: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_006e: ldc.r8 5
+		IL_0077: box [System.Runtime]System.Double
+		IL_007c: newobj instance void Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter::.ctor(object[], object)
+		IL_0081: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0086: stloc.s 7
+		IL_0088: ldloc.s 7
+		IL_008a: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
+		IL_008f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0094: ldstr "prototype"
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_009e: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00a3: ldloc.s 7
+		IL_00a5: stloc.2
+		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_00ab: dup
+		IL_00ac: ldstr "x"
+		IL_00b1: ldc.r8 9
+		IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00bf: dup
+		IL_00c0: ldstr "getX"
+		IL_00c5: ldloc.2
+		IL_00c6: ldstr "getX"
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d5: stloc.3
+		IL_00d6: ldloc.2
+		IL_00d7: ldstr "getX"
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00e1: stloc.s 6
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e8: ldloc.s 6
+		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ef: pop
+		IL_00f0: ldloc.3
+		IL_00f1: ldstr "getX"
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00fb: stloc.s 6
+		IL_00fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0102: ldloc.s 6
+		IL_0104: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0109: pop
+		IL_010a: ret
 	} // end of method ArrowFunction_LexicalThis_ConstructorAssigned::__js_module_init__
 
 } // end of class Modules.ArrowFunction_LexicalThis_ConstructorAssigned
@@ -262,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217b
+		// Method begins at RVA 0x21f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

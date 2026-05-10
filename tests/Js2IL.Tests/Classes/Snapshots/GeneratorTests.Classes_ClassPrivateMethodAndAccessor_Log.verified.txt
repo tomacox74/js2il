@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2190
+				// Method begins at RVA 0x2220
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2199
+				// Method begins at RVA 0x2229
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a2
+				// Method begins at RVA 0x2232
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ab
+				// Method begins at RVA 0x223b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b4
+				// Method begins at RVA 0x2244
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,26 +114,37 @@
 
 		// Fields
 		.field private object __js2il_priv_value
+		.field private object[] _scopes
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+			instance void .ctor (
+				object[] scopes
+			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
-				01 00 00 00 00 00 00 00
+				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20bf
-			// Header size: 1
-			// Code size: 27 (0x1b)
+			// Method begins at RVA 0x213c
+			// Header size: 12
+			// Code size: 36 (0x24)
 			.maxstack 8
+			.locals init (
+				[0] object[]
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldc.r8 2
-			IL_0010: box [System.Runtime]System.Double
-			IL_0015: stfld object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::__js2il_priv_value
-			IL_001a: ret
+			IL_0006: ldarg.1
+			IL_0007: stloc.0
+			IL_0008: ldarg.0
+			IL_0009: ldloc.0
+			IL_000a: stfld object[] Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::_scopes
+			IL_000f: ldarg.0
+			IL_0010: ldc.r8 2
+			IL_0019: box [System.Runtime]System.Double
+			IL_001e: stfld object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::__js2il_priv_value
+			IL_0023: ret
 		} // end of method Counter::.ctor
 
 		.method public hidebysig 
@@ -142,7 +153,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x2194
 			// Header size: 12
 			// Code size: 33 (0x21)
 			.maxstack 8
@@ -172,7 +183,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20dc
+			// Method begins at RVA 0x216c
 			// Header size: 12
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -200,7 +211,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x217d
+			// Method begins at RVA 0x220d
 			// Header size: 1
 			// Code size: 9 (0x9)
 			.maxstack 8
@@ -218,7 +229,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2134
+			// Method begins at RVA 0x21c4
 			// Header size: 12
 			// Code size: 61 (0x3d)
 			.maxstack 8
@@ -258,7 +269,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2187
+			// Method begins at RVA 0x2217
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -284,50 +295,89 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 99 (0x63)
+		// Code size: 222 (0xde)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Scope,
 			[1] object,
-			[2] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter,
-			[3] object
+			[2] object,
+			[3] object[],
+			[4] class [System.Runtime]System.Type,
+			[5] object,
+			[6] class Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::.ctor()
-		IL_000b: stloc.2
-		IL_000c: ldloc.2
-		IL_000d: stloc.1
-		IL_000e: ldloc.1
-		IL_000f: castclass Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
-		IL_0014: callvirt instance object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::log()
-		IL_0019: pop
-		IL_001a: ldloc.1
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_0020: stloc.3
-		IL_0021: ldloc.3
-		IL_0022: ldstr "includes"
-		IL_0027: ldstr "#double"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0031: stloc.3
-		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0037: ldloc.3
-		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003d: pop
-		IL_003e: ldloc.1
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
-		IL_0044: stloc.3
-		IL_0045: ldloc.3
-		IL_0046: ldstr "includes"
-		IL_004b: ldstr "#secret"
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0055: stloc.3
-		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005b: ldloc.3
-		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0061: pop
-		IL_0062: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.3
+		IL_0011: ldtoken Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
+		IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001b: ldtoken Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: stloc.s 4
+		IL_0027: ldloc.s 4
+		IL_0029: ldloc.3
+		IL_002a: ldc.r8 0.0
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_003d: stloc.s 5
+		IL_003f: ldloc.s 5
+		IL_0041: stloc.1
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldloc.0
+		IL_004b: stelem.ref
+		IL_004c: ldc.i4.0
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0057: newobj instance void Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::.ctor(object[])
+		IL_005c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0061: stloc.s 6
+		IL_0063: ldloc.s 6
+		IL_0065: ldtoken Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
+		IL_006a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_006f: ldstr "prototype"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0079: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_007e: ldloc.s 6
+		IL_0080: stloc.2
+		IL_0081: ldloc.2
+		IL_0082: castclass Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter
+		IL_0087: callvirt instance object Modules.Classes_ClassPrivateMethodAndAccessor_Log/Counter::log()
+		IL_008c: pop
+		IL_008d: ldloc.2
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_0093: stloc.s 5
+		IL_0095: ldloc.s 5
+		IL_0097: ldstr "includes"
+		IL_009c: ldstr "#double"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a6: stloc.s 5
+		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ad: ldloc.s 5
+		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b4: pop
+		IL_00b5: ldloc.2
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::getOwnPropertyNames(object)
+		IL_00bb: stloc.s 5
+		IL_00bd: ldloc.s 5
+		IL_00bf: ldstr "includes"
+		IL_00c4: ldstr "#secret"
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ce: stloc.s 5
+		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d5: ldloc.s 5
+		IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00dc: pop
+		IL_00dd: ret
 	} // end of method Classes_ClassPrivateMethodAndAccessor_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateMethodAndAccessor_Log
@@ -339,7 +389,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bd
+		// Method begins at RVA 0x224d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

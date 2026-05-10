@@ -167,6 +167,53 @@ public sealed partial class HIRToLIRLowerer
         };
     }
 
+    private Js2IL.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForCurrentClassStaticMethod(
+        MethodDefinition methodDef,
+        string methodName,
+        int declaredParamCount)
+    {
+        if (_scope == null)
+        {
+            return null;
+        }
+
+        var classScope = _scope;
+        while (classScope != null && classScope.Kind != ScopeKind.Class)
+        {
+            classScope = classScope.Parent;
+        }
+
+        if (classScope == null)
+        {
+            return null;
+        }
+
+        var declaringScope = classScope.Parent ?? classScope;
+        var root = declaringScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var moduleName = root.Name;
+        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
+            ? moduleName
+            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
+
+        var callableName = JavaScriptCallableNaming.MakeClassMethodCallableName(classScope.Name, methodName);
+        var location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
+
+        return new Js2IL.Services.TwoPhaseCompilation.CallableId
+        {
+            Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
+            DeclaringScopeName = declaringScopeName,
+            Name = callableName,
+            Location = location,
+            JsParamCount = declaredParamCount,
+            AstNode = methodDef
+        };
+    }
+
     /// <summary>
     /// Builds an object[] scopes array for the current caller context.
     /// This is used for indirect calls where we cannot statically determine the callee scope chain.

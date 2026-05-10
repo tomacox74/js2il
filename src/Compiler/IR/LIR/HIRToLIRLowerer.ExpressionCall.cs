@@ -39,8 +39,10 @@ public sealed partial class HIRToLIRLowerer
                 && _classRegistry.TryGetConstructor(baseRegistryClassName, out var baseCtorHandle, out var baseCtorHasScopesParam, out var _, out var baseCtorMaxParamCount))
             {
                 var callArgs = new List<TempVariable>();
+                var allJsArgs = new List<TempVariable>();
 
-                // Lower JS arguments (extras are evaluated for side effects, but ignored).
+                // Lower JS arguments. All args are captured for AllJsArguments (arguments object);
+                // only args within MaxParamCount are passed as formal parameters to the .NET method.
                 for (int i = 0; i < callExpr.Arguments.Length; i++)
                 {
                     if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
@@ -48,9 +50,11 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
+                    var objArg = EnsureObject(argTemp);
+                    allJsArgs.Add(objArg);
                     if (i < baseCtorMaxParamCount)
                     {
-                        callArgs.Add(EnsureObject(argTemp));
+                        callArgs.Add(objArg);
                     }
                 }
 
@@ -68,7 +72,8 @@ public sealed partial class HIRToLIRLowerer
                     baseCtorHandle,
                     baseCtorHasScopesParam,
                     baseCtorMaxParamCount,
-                    callArgs));
+                    callArgs,
+                    allJsArgs));
             }
             else
             {
@@ -821,6 +826,93 @@ public sealed partial class HIRToLIRLowerer
         // Case 2b.2: User-defined class static method call (e.g., Greeter.helloWorld()).
         // If the receiver is a class identifier (ClassDeclaration binding) and the member is a static method,
         // emit a direct call to the declared method token via CallableRegistry.
+        if (calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: not null }
+            && _scope != null)
+        {
+            var classScope = _scope;
+            while (classScope != null && classScope.Kind != ScopeKind.Class)
+            {
+                classScope = classScope.Parent;
+            }
+
+            var classBody = classScope?.AstNode switch
+            {
+                ClassDeclaration enclosingClassDecl => enclosingClassDecl.Body,
+                ClassExpression enclosingClassExpr => enclosingClassExpr.Body,
+                _ => null
+            };
+
+            if (classBody != null)
+            {
+                var memberName = calleePropAccess.PropertyName;
+                var member = classBody.Body
+                    .OfType<MethodDefinition>()
+                    .FirstOrDefault(m =>
+                        m.Static
+                        && string.Equals(ClassElementNames.GetMethodRegistryName(m), memberName, StringComparison.Ordinal));
+
+                if (member?.Value is FunctionExpression memberFunc)
+                {
+                    var callableId = TryCreateCallableIdForCurrentClassStaticMethod(member, memberName, memberFunc.Params.Count);
+                    if (callableId == null)
+                    {
+                        return false;
+                    }
+
+                    TempVariable? scopesArgTemp = null;
+                    bool needsScopesArg = memberFunc.Async
+                        || memberFunc.Generator
+                        || (memberFunc.Body != null && ContainsYieldExpression(memberFunc.Body, memberFunc));
+                    if (needsScopesArg)
+                    {
+                        scopesArgTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), scopesArgTemp.Value));
+                        DefineTempStorage(scopesArgTemp.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                    }
+
+                    var callArgTemps = new List<TempVariable>(memberFunc.Params.Count + (scopesArgTemp.HasValue ? 2 : 0));
+
+                    if (scopesArgTemp.HasValue)
+                    {
+                        callArgTemps.Add(scopesArgTemp.Value);
+
+                        var newTargetUndefTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(newTargetUndefTemp));
+                        DefineTempStorage(newTargetUndefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        callArgTemps.Add(newTargetUndefTemp);
+                    }
+
+                    for (int i = 0; i < callExpr.Arguments.Length; i++)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                        {
+                            return false;
+                        }
+
+                        argTemp = EnsureObject(argTemp);
+
+                        if (i < memberFunc.Params.Count)
+                        {
+                            callArgTemps.Add(argTemp);
+                        }
+                    }
+
+                    var expectedArgs = memberFunc.Params.Count + (scopesArgTemp.HasValue ? 2 : 0);
+                    while (callArgTemps.Count < expectedArgs)
+                    {
+                        var undefTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
+                        DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        callArgTemps.Add(undefTemp);
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+            }
+        }
+
         if (calleePropAccess.Object is HIRVariableExpression classVarExpr &&
             classVarExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration classDecl)
         {

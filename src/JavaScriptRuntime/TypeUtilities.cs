@@ -113,6 +113,8 @@ namespace JavaScriptRuntime
             if (value is Array) return "object";
             // Functions are delegates in our model; detect common delegate base
             if (value is Delegate) return "function";
+            // Class constructor values (CLR Type + scopes) behave as functions
+            if (value is ClassConstructorValue) return "function";
             return "object";
         }
 

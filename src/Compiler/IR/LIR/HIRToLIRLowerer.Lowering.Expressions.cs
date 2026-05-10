@@ -87,10 +87,29 @@ public sealed partial class HIRToLIRLowerer
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
                 return true;
 
-            case HIRThisExpression:
+            case HIRThisExpression thisExpr:
                 // PL3.5: ThisExpression.
+                if (thisExpr.StaticClassRegistryName != null)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(thisExpr.StaticClassRegistryName, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    return true;
+                }
+
+                if (_callableKind == CallableKind.ClassStaticInitializer
+                    && TryGetEnclosingClassRegistryName(out var staticInitializerClass)
+                    && staticInitializerClass != null)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(staticInitializerClass, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                    return true;
+                }
+
                 // Only supported for instance callables where IL arg0 is the receiver.
                 if (_callableKind is not CallableKind.ClassMethod
+                    and not CallableKind.ClassStaticMethod
                     and not CallableKind.Constructor
                     and not CallableKind.Function
                     and not CallableKind.ModuleMain)
@@ -379,9 +398,39 @@ public sealed partial class HIRToLIRLowerer
                 // (e.g., `module.exports = { Counter }`).
                 if (binding.DeclarationNode is ClassDeclaration classDecl)
                 {
+                    // Prefer the already-initialized binding value so class identity is stable across
+                    // constructor/method/accessor reads. During evaluation-before-initialization, the
+                    // scope-field load will still surface the TDZ sentinel as the correct runtime error.
+                    if (_variableMap.TryGetValue(binding, out resultTempVar))
+                    {
+                        return true;
+                    }
+
+                    if (TryLoadVariable(binding, out resultTempVar))
+                    {
+                        return true;
+                    }
+
                     if (!TryGetRegistryClassNameForClassDeclaration(classDecl, out var registryClassName))
                     {
                         return false;
+                    }
+
+                    if (_scope != null)
+                    {
+                        var rootScope = _scope;
+                        while (rootScope.Parent != null)
+                        {
+                            rootScope = rootScope.Parent;
+                        }
+
+                        var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
+                        if (classScope != null && TryLowerClassConstructorValue(registryClassName, classScope, out resultTempVar))
+                        {
+                            return true;
+                        }
+                        // Fall through: TryLowerClassConstructorValue failed (e.g. static method with no
+                        // scopes access), emit a simple type token instead.
                     }
 
                     resultTempVar = CreateTempVariable();
@@ -486,16 +535,7 @@ public sealed partial class HIRToLIRLowerer
                         //
                         // This is only valid for captured bindings that are stored as fields on their
                         // declaring scope type.
-                        var declaringScope = _scope;
-                        while (declaringScope != null)
-                        {
-                            if (declaringScope.Bindings.TryGetValue(binding.Name, out var candidate)
-                                && ReferenceEquals(candidate, binding))
-                            {
-                                break;
-                            }
-                            declaringScope = declaringScope.Parent;
-                        }
+                        var declaringScope = binding.DeclaringScope;
 
                         if (declaringScope != null)
                         {
@@ -506,6 +546,12 @@ public sealed partial class HIRToLIRLowerer
                             if (!ReferenceEquals(declaringScope, _scope))
                             {
                                 var parentIndex = _environmentLayout.ScopeChain.IndexOf(declaringRegistryName);
+                                if (parentIndex < 0
+                                    && declaringScope.Kind == ScopeKind.Global
+                                    && _environmentLayout.Abi.ScopesSource is ScopesSource.Argument or ScopesSource.ThisField)
+                                {
+                                    parentIndex = 0;
+                                }
                                 if (parentIndex >= 0)
                                 {
                                     storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentIndex);
@@ -729,17 +775,78 @@ public sealed partial class HIRToLIRLowerer
                 return TryLowerArrowFunctionExpression(arrowExpr, out resultTempVar);
             case HIRFunctionExpression funcExpr:
                 return TryLowerFunctionExpression(funcExpr, out resultTempVar);
+            case HIRInitializedUserClassTypeExpression initializedUserClassType:
+                foreach (var initStatement in initializedUserClassType.InitializationStatements)
+                {
+                    if (!TryLowerStatement(initStatement))
+                    {
+                        resultTempVar = default;
+                        return false;
+                    }
+                }
+
+                if (TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out resultTempVar))
+                {
+                    return true;
+                }
+                // Fall through: TryLowerClassConstructorValue failed (e.g., caller has no parent scopes).
+                // Emit a simple type token so the runtime can still resolve the class.
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+                return true;
             case Js2IL.HIR.HIRUserClassTypeExpression userClassType:
                 resultTempVar = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRGetUserClassType(userClassType.RegistryClassName, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 return true;
+            case HIRDefineClassDataPropertyExpression defineClassDataProperty:
+                return TryLowerDefineClassDataPropertyExpression(defineClassDataProperty, out resultTempVar);
+            case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
+                return TryLowerDefineClassAccessorPropertyExpression(defineClassAccessorProperty, out resultTempVar);
             // Handle different expression types here
             default:
                 // Unsupported expression type
                 IRPipelineMetrics.RecordFailure($"HIR->LIR: unsupported expression type {expression.GetType().Name}");
                 return false;
         }
+    }
+
+    private bool TryLowerClassConstructorValue(string registryClassName, Scope classScope, out TempVariable resultTempVar)
+    {
+        // Build scopes array first — if this fails, nothing has been emitted yet so the caller
+        // can fall back to a simple LIRGetUserClassType without leaving orphaned IR instructions.
+        // This happens in static CLR methods (property getters/setters) that have ScopesSource.None.
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp))
+        {
+            resultTempVar = default;
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        var typeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
+        DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+        // Look up the formal parameter count for Function.length semantics (params before defaults/rest).
+        int minParamCount = 0;
+        if (_classRegistry != null && _classRegistry.TryGetConstructor(registryClassName, out _, out _, out var minP, out _))
+        {
+            minParamCount = minP;
+        }
+
+        var paramCountTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstNumber((double)minParamCount, paramCountTemp));
+        DefineTempStorage(paramCountTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName: nameof(JavaScriptRuntime.RuntimeServices.CreateClassConstructorValue),
+            Arguments: new[] { EnsureObject(typeTemp), EnsureObject(scopesTemp), EnsureObject(paramCountTemp) },
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
     }
 
     private bool TryLowerFunctionExpression(HIRFunctionExpression funcExpr, out TempVariable resultTempVar)

@@ -257,7 +257,8 @@ public record LIRCallUserClassBaseConstructor(
     MethodDefinitionHandle ConstructorHandle,
     bool HasScopesParameter,
     int MaxParamCount,
-    IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
+    IReadOnlyList<TempVariable> Arguments,
+    IReadOnlyList<TempVariable> AllJsArguments) : LIRInstruction;
 
 /// <summary>
 /// Calls a base class instance method directly on the implicit 'this' (i.e., JavaScript <c>super.m(...)</c>).

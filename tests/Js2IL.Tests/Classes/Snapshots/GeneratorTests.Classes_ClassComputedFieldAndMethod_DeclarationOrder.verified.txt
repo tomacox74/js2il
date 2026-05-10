@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e4
+				// Method begins at RVA 0x216c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ed
+				// Method begins at RVA 0x2175
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -54,26 +54,37 @@
 
 		// Fields
 		.field public object 'field'
+		.field private object[] _scopes
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
+			instance void .ctor (
+				object[] scopes
+			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
-				01 00 00 00 00 00 00 00
+				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2099
-			// Header size: 1
-			// Code size: 27 (0x1b)
+			// Method begins at RVA 0x2110
+			// Header size: 12
+			// Code size: 36 (0x24)
 			.maxstack 8
+			.locals init (
+				[0] object[]
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldc.r8 7
-			IL_0010: box [System.Runtime]System.Double
-			IL_0015: stfld object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'field'
-			IL_001a: ret
+			IL_0006: ldarg.1
+			IL_0007: stloc.0
+			IL_0008: ldarg.0
+			IL_0009: ldloc.0
+			IL_000a: stfld object[] Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::_scopes
+			IL_000f: ldarg.0
+			IL_0010: ldc.r8 7
+			IL_0019: box [System.Runtime]System.Double
+			IL_001e: stfld object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'field'
+			IL_0023: ret
 		} // end of method Example::.ctor
 
 		.method public hidebysig 
@@ -82,7 +93,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x2140
 			// Header size: 12
 			// Code size: 23 (0x17)
 			.maxstack 8
@@ -108,7 +119,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20db
+			// Method begins at RVA 0x2163
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -134,36 +145,75 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 61 (0x3d)
+		// Code size: 178 (0xb2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Scope,
 			[1] object,
-			[2] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example,
-			[3] object
+			[2] object,
+			[3] object[],
+			[4] class [System.Runtime]System.Type,
+			[5] object,
+			[6] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::.ctor()
-		IL_000b: stloc.2
-		IL_000c: ldloc.2
-		IL_000d: stloc.1
-		IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0013: ldloc.1
-		IL_0014: ldstr "field"
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0023: pop
-		IL_0024: ldloc.1
-		IL_0025: castclass Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
-		IL_002a: callvirt instance object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'method'()
-		IL_002f: stloc.3
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldloc.3
-		IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003b: pop
-		IL_003c: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.3
+		IL_0011: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
+		IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001b: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: stloc.s 4
+		IL_0027: ldloc.s 4
+		IL_0029: ldloc.3
+		IL_002a: ldc.r8 0.0
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_003d: stloc.s 5
+		IL_003f: ldloc.s 5
+		IL_0041: stloc.1
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldloc.0
+		IL_004b: stelem.ref
+		IL_004c: ldc.i4.0
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0057: newobj instance void Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::.ctor(object[])
+		IL_005c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0061: stloc.s 6
+		IL_0063: ldloc.s 6
+		IL_0065: ldtoken Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
+		IL_006a: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_006f: ldstr "prototype"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0079: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_007e: ldloc.s 6
+		IL_0080: stloc.2
+		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0086: ldloc.2
+		IL_0087: ldstr "field"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0096: pop
+		IL_0097: ldloc.2
+		IL_0098: castclass Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
+		IL_009d: callvirt instance object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'method'()
+		IL_00a2: stloc.s 5
+		IL_00a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a9: ldloc.s 5
+		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b0: pop
+		IL_00b1: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DeclarationOrder::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder
@@ -175,7 +225,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f6
+		// Method begins at RVA 0x217e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

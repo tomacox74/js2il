@@ -6,11 +6,11 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.class_.arguments") { }
 
-    [Fact(DisplayName = "access", Skip = "Class body arguments semantics are not implemented yet.")]
+    [Fact(DisplayName = "access")]
     public Task access()
         => ExecutionTest("access");
 
-    [Fact(DisplayName = "default-constructor", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "default-constructor")]
     public Task default_constructor()
         => ExecutionTest("default-constructor");
 }

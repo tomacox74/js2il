@@ -546,6 +546,10 @@ internal static class TempLocalAllocator
                 {
                     yield return a;
                 }
+                foreach (var a in callBaseCtor.AllJsArguments)
+                {
+                    yield return a;
+                }
                 break;
 
             case LIRCallIntrinsicBaseConstructor callIntrinsicBaseCtor:

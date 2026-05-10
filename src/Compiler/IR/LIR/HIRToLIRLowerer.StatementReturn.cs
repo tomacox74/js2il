@@ -67,13 +67,22 @@ public sealed partial class HIRToLIRLowerer
                 }
             }
 
-            // Default ABI returns object. Preserve typed returns where the callable ABI supports them:
-            // - class methods
-            // - function/arrow callables with stable string returns
-            var stableReturnClrType = (_scope is { Kind: ScopeKind.Function } functionScope
-                && (functionScope.Parent?.Kind == ScopeKind.Class || functionScope.StableReturnClrType == typeof(string)))
-                ? functionScope.StableReturnClrType
-                : null;
+            // Default ABI returns object. Preserve typed returns only when the callable ABI actually
+            // supports them:
+            // - class methods/static methods may return stable primitive values directly
+            // - function/arrow callables keep the historical string fast-path only
+            Type? stableReturnClrType = null;
+            if (_scope is { Kind: ScopeKind.Function } functionScope)
+            {
+                if (_callableKind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
+                {
+                    stableReturnClrType = functionScope.StableReturnClrType;
+                }
+                else if (functionScope.StableReturnClrType == typeof(string))
+                {
+                    stableReturnClrType = functionScope.StableReturnClrType;
+                }
+            }
             if (stableReturnClrType == typeof(double))
             {
                 returnTempVar = EnsureNumber(returnTempVar);

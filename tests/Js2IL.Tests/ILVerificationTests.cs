@@ -16,12 +16,14 @@ public sealed class ILVerificationTests
 {
     private readonly ITestOutputHelper _output;
     private readonly string _outputPath;
+    private readonly string _repoRoot;
     private readonly JavaScriptParser _parser;
 
     public ILVerificationTests(ITestOutputHelper output)
     {
         _output = output;
         _parser = new JavaScriptParser();
+        _repoRoot = GetRepositoryRoot();
         
         // Use a unique per-run directory to avoid file locks
         var root = Path.Combine(Path.GetTempPath(), "Js2IL.Tests.ILVerification");
@@ -150,11 +152,12 @@ public sealed class ILVerificationTests
         var startInfo = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = $"ilverify \"{assemblyPath}\" --system-module System.Runtime -r \"{runtimePath}/*.dll\" -r \"{outputDir}/*.dll\"",
+            Arguments = $"tool run ilverify -- \"{assemblyPath}\" --system-module System.Runtime -r \"{runtimePath}/*.dll\" -r \"{outputDir}/*.dll\"",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
+            WorkingDirectory = _repoRoot
         };
 
         using var process = Process.Start(startInfo);
@@ -219,5 +222,22 @@ public sealed class ILVerificationTests
         }
 
         return Path.Combine(sharedPath, versions[0]!);
+    }
+
+    private static string GetRepositoryRoot()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current != null)
+        {
+            if (Directory.Exists(Path.Combine(current.FullName, ".config"))
+                && File.Exists(Path.Combine(current.FullName, ".config", "dotnet-tools.json")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new InvalidOperationException("Could not locate repository root containing .config\\dotnet-tools.json.");
     }
 }

@@ -20,15 +20,26 @@ internal sealed partial class LIRToILCompiler
         switch (instruction)
         {
             case LIRGetUserClassType getUserClassType:
-                if (!IsMaterialized(getUserClassType.Result, allocation))
-                {
-                    break;
-                }
                 {
                     var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
                     if (classRegistry == null || !classRegistry.TryGet(getUserClassType.RegistryClassName, out var typeDef))
                     {
                         throw new InvalidOperationException($"Class not found in registry: '{getUserClassType.RegistryClassName}'");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldtoken);
+                    ilEncoder.Token(typeDef);
+
+                    var runClassConstructor = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Runtime.CompilerServices.RuntimeHelpers),
+                        nameof(System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor),
+                        parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(runClassConstructor);
+
+                    if (!IsMaterialized(getUserClassType.Result, allocation))
+                    {
+                        break;
                     }
 
                     ilEncoder.OpCode(ILOpCode.Ldtoken);

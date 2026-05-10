@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20bd
+				// Method begins at RVA 0x2129
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c6
+				// Method begins at RVA 0x2132
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2080
+			// Method begins at RVA 0x20ec
 			// Header size: 12
 			// Code size: 40 (0x28)
 			.maxstack 8
@@ -107,7 +107,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b4
+			// Method begins at RVA 0x2120
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -133,12 +133,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 36 (0x24)
+		// Code size: 141 (0x8d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope,
 			[1] object,
-			[2] class Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass
+			[2] object,
+			[3] object[],
+			[4] class [System.Runtime]System.Type,
+			[5] object,
+			[6] class Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/Scope::.ctor()
@@ -152,11 +156,41 @@
 		IL_0018: ldc.i4.0
 		IL_0019: ldloc.0
 		IL_001a: stelem.ref
-		IL_001b: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass::.ctor(object[])
-		IL_0020: stloc.2
-		IL_0021: ldloc.2
-		IL_0022: stloc.1
-		IL_0023: ret
+		IL_001b: stloc.3
+		IL_001c: ldtoken Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass
+		IL_0021: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0026: ldtoken Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass
+		IL_002b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0030: stloc.s 4
+		IL_0032: ldloc.s 4
+		IL_0034: ldloc.3
+		IL_0035: ldc.r8 0.0
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_0048: stloc.s 5
+		IL_004a: ldloc.s 5
+		IL_004c: stloc.1
+		IL_004d: ldc.i4.1
+		IL_004e: newarr [System.Runtime]System.Object
+		IL_0053: dup
+		IL_0054: ldc.i4.0
+		IL_0055: ldloc.0
+		IL_0056: stelem.ref
+		IL_0057: ldc.i4.0
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0062: newobj instance void Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass::.ctor(object[])
+		IL_0067: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_006c: stloc.s 6
+		IL_006e: ldloc.s 6
+		IL_0070: ldtoken Modules.Classes_ClassConstructor_AccessGlobalVariable_Log/MyClass
+		IL_0075: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_007a: ldstr "prototype"
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0084: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0089: ldloc.s 6
+		IL_008b: stloc.2
+		IL_008c: ret
 	} // end of method Classes_ClassConstructor_AccessGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessGlobalVariable_Log
@@ -168,7 +202,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20cf
+		// Method begins at RVA 0x213b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

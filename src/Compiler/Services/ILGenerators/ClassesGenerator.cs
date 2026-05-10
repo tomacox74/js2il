@@ -247,7 +247,8 @@ namespace Js2IL.Services.ILGenerators
                 : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
             // Determine whether this class needs to capture parent scopes.
-            bool classNeedsParentScopes = classScope.ReferencesParentScopeVariables;
+            bool classNeedsParentScopes = classScope.ReferencesParentScopeVariables
+                || ClassElementsMayEvaluateInClassDefinitionEnvironment(classBody);
             if (!classNeedsParentScopes)
             {
                 var ctor = classBody.Body.OfType<Acornima.Ast.MethodDefinition>()
@@ -293,6 +294,7 @@ namespace Js2IL.Services.ILGenerators
                     if (!baseNeedsParentScopes && baseScope.AstNode is (ClassDeclaration or ClassExpression))
                     {
                         var baseBody = baseScope.AstNode is ClassDeclaration bcd ? bcd.Body : ((ClassExpression)baseScope.AstNode).Body;
+                        baseNeedsParentScopes = ClassElementsMayEvaluateInClassDefinitionEnvironment(baseBody);
                         var baseCtor = baseBody.Body.OfType<Acornima.Ast.MethodDefinition>()
                             .FirstOrDefault(ClassElementNames.IsConstructor);
                         if (baseCtor?.Value is FunctionExpression baseCtorExpr)
@@ -889,6 +891,14 @@ namespace Js2IL.Services.ILGenerators
 
             Walk(node);
             return found;
+        }
+
+        private static bool ClassElementsMayEvaluateInClassDefinitionEnvironment(ClassBody classBody)
+        {
+            return classBody.Body.Any(element =>
+                element is Acornima.Ast.PropertyDefinition
+                || element is Acornima.Ast.StaticBlock
+                || element is Acornima.Ast.MethodDefinition { Computed: true });
         }
 
         private static string ManglePrivateFieldName(string name)

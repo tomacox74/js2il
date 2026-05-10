@@ -12,6 +12,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
+    [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
@@ -42,6 +43,62 @@ public class RuntimeServices
         return previous;
     }
 
+    public static object CreateClassConstructorValue(object typeValue, object scopesValue, object formalParamCountValue)
+    {
+        if (typeValue is not Type type)
+        {
+            throw new TypeError("Class constructor value requires a CLR Type");
+        }
+
+        var scopes = scopesValue as object[] ?? EmptyScopes;
+        var classConstructorValue = new ClassConstructorValue(type, scopes);
+
+        int length = 0;
+        if (formalParamCountValue is double d) length = (int)d;
+
+        // Store Function.length (number of formal parameters, per ECMA-262 §20.2.4.1)
+        PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "length", new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = (double)length,
+            Writable = false,
+            Enumerable = false,
+            Configurable = true
+        });
+
+        return classConstructorValue;
+    }
+
+    public static object SetClassConstructorInferredName(object constructorValue, object nameValue)
+    {
+        if (nameValue is not string inferredName || string.IsNullOrWhiteSpace(inferredName))
+        {
+            return constructorValue;
+        }
+
+        var descriptor = new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = inferredName,
+            Writable = false,
+            Enumerable = false,
+            Configurable = true
+        };
+
+        if (constructorValue is ClassConstructorValue classConstructorValue)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "name", descriptor);
+            return classConstructorValue;
+        }
+
+        if (constructorValue is Type staticType)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(staticType, "name", descriptor);
+        }
+
+        return constructorValue;
+    }
+
     public static object?[]? GetCurrentArguments()
     {
         return _currentArguments.Value;
@@ -52,6 +109,30 @@ public class RuntimeServices
         var previous = _currentArguments.Value;
         _currentArguments.Value = value;
         return previous;
+    }
+
+    /// <summary>
+    /// Saves the current arguments onto a thread-local stack and sets new arguments.
+    /// Called before <c>newobj</c> so that the constructor chain can observe the actual call-site arguments
+    /// via the <c>arguments</c> keyword.
+    /// </summary>
+    public static void PushCurrentArguments(object?[]? value)
+    {
+        _constructorArgStack ??= new Stack<object?[]?>();
+        _constructorArgStack.Push(_currentArguments.Value);
+        _currentArguments.Value = value;
+    }
+
+    /// <summary>
+    /// Restores the previous arguments from the thread-local stack.
+    /// Called after <c>newobj</c> completes.
+    /// </summary>
+    public static void PopCurrentArguments()
+    {
+        if (_constructorArgStack?.Count > 0)
+        {
+            _currentArguments.Value = _constructorArgStack.Pop();
+        }
     }
 
     public static object? GetCurrentNewTarget()

@@ -16,6 +16,8 @@ public enum CallableKind
     Constructor,
     /// <summary>Class instance method.</summary>
     ClassMethod,
+    /// <summary>Class static method (getter, setter, or regular static method).</summary>
+    ClassStaticMethod,
     /// <summary>Class static initializer (.cctor).</summary>
     ClassStaticInitializer,
     /// <summary>Module Main entry point.</summary>
@@ -64,6 +66,7 @@ public class EnvironmentLayoutBuilder
             CallableKind.Function => CallableAbi.ForFunction(jsParameterCount, needsParentScopes),
             CallableKind.Constructor => CallableAbi.ForConstructor(jsParameterCount, needsParentScopes),
             CallableKind.ClassMethod => CallableAbi.ForClassMethod(jsParameterCount, needsParentScopes),
+            CallableKind.ClassStaticMethod => CallableAbi.ForClassStaticMethod(jsParameterCount),
             CallableKind.ClassStaticInitializer => CallableAbi.ForModuleMain(0),
             CallableKind.ModuleMain => CallableAbi.ForModuleMain(jsParameterCount),
             _ => throw new ArgumentException($"Unknown callable kind: {kind}", nameof(kind))
@@ -105,6 +108,13 @@ public class EnvironmentLayoutBuilder
             // Only include ancestor scopes that can contribute bindings to the environment chain.
             // Empty block scopes are elided since they have no runtime-observable bindings and
             // the IR pipeline does not materialize instances for them.
+            // Class scopes don't have runtime scope instances — they're compiled as CLR types
+            // and cannot be passed via the scopes array.
+            if (current.Kind == ScopeKind.Class)
+            {
+                current = current.Parent;
+                continue;
+            }
             if (current.Kind != ScopeKind.Block || current.Bindings.Count > 0)
             {
                 ancestorScopes.Add(current);
