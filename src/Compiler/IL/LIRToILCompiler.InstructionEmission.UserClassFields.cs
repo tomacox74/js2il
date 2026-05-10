@@ -246,9 +246,16 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadInstanceField.RegistryClassName,
+                        loadInstanceField.FieldName,
+                        loadInstanceField.IsPrivateField,
+                        isStaticField: false);
+
                     // Instance fields are loaded from the runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
-                    // - In static JS callables (functions/arrows): use ObjectRuntime.GetItem because
+                    // - In static JS callables (functions/arrows): use runtime helpers because
                     //   `this` may be a ClassConstructorValue (the class itself, e.g. for static accessors),
                     //   not a CLR instance, so castclass+ldfld would fail.
                     if (methodDescriptor.IsStatic)
@@ -260,13 +267,25 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(getThisRef);
 
                         ilEncoder.Ldstr(_metadataBuilder, loadInstanceField.FieldName);
-                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
-                            parameterTypes: new[] { typeof(object), typeof(string) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getItemMethod);
-                        // GetItem returns object; no boxing needed.
+                        if (fieldClrType == typeof(double))
+                        {
+                            var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.GetItemAsNumber),
+                                parameterTypes: new[] { typeof(object), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getItemAsNumberMethod);
+                            EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(loadInstanceField.Result), ilEncoder);
+                        }
+                        else
+                        {
+                            var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                                parameterTypes: new[] { typeof(object), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getItemMethod);
+                        }
                         EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);
                         break;
                     }
@@ -274,13 +293,6 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
-
-                    var fieldClrType = GetDeclaredUserClassFieldClrType(
-                        classRegistry,
-                        loadInstanceField.RegistryClassName,
-                        loadInstanceField.FieldName,
-                        loadInstanceField.IsPrivateField,
-                        isStaticField: false);
                     EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(loadInstanceField.Result), ilEncoder);
 
                     EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);

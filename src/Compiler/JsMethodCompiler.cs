@@ -436,11 +436,13 @@ internal sealed class JsMethodCompiler
                 : new MethodParameterDescriptor("scopes", typeof(object[])));
         }
 
-        // Add hidden new.target parameter for functions (always present for function ABI).
-        // This includes regular functions and resumable class methods (async/generator).
-        // For no-scopes optimization: still include newTarget for proper `new` vs call semantics.
+        // Add hidden new.target parameter for function-style ABIs.
+        // This includes regular functions and resumable class methods (async/generator),
+        // including static class methods that are lowered through the standard scopes/newTarget
+        // calling convention for state-machine emission.
         var hasNewTargetParameter = callableKind == ScopesCallableKind.Function 
-            || (hasScopesParameter && callableKind == ScopesCallableKind.ClassMethod);
+            || (hasScopesParameter && (callableKind == ScopesCallableKind.ClassMethod
+                || callableKind == ScopesCallableKind.ClassStaticMethod));
         if (hasNewTargetParameter)
         {
             parameters.Add(new MethodParameterDescriptor("newTarget", typeof(object)));
@@ -461,7 +463,7 @@ internal sealed class JsMethodCompiler
         Type? inferredReturnClrType = null;
         if (scope.Kind == ScopeKind.Function)
         {
-            if (scope.Parent?.Kind == ScopeKind.Class)
+            if (callableKind is ScopesCallableKind.ClassMethod or ScopesCallableKind.ClassStaticMethod)
             {
                 inferredReturnClrType = scope.StableReturnClrType;
             }
@@ -499,6 +501,7 @@ internal sealed class JsMethodCompiler
         if (!returnsVoid
             && !lirMethod.IsGenerator
             && scope.Kind == ScopeKind.Function
+            && callableKind == ScopesCallableKind.ClassMethod
             && scope.Parent?.Kind == ScopeKind.Class
             && scope.StableReturnIsThis)
         {

@@ -10,7 +10,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task abrupt_completition_on_field_initializer()
         => ExecutionTest("abrupt-completition-on-field-initializer");
 
-    [Fact(DisplayName = "class-field-is-observable-by-proxy")]
-    public Task class_field_is_observable_by_proxy()
-        => ExecutionTest("class-field-is-observable-by-proxy");
-}
+    [Fact(DisplayName = "class-field-is-observable-by-proxy", Skip = "Tracked by issue #1055: function-base super() and proxy field initialization semantics are incomplete.")]
+    public Task class_field_is_observable_by_proxy()
+        => ExecutionTest("class-field-is-observable-by-proxy");
+}

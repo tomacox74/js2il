@@ -239,6 +239,13 @@ public sealed class TwoPhaseCompilationCoordinator
             {
                 if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
                 {
+                    if (_diagnosticsEnabled)
+                    {
+                        _diagnosticLogger.LogInformation(
+                            "[TwoPhase] Reusing preallocated non-class token 0x{Token:X8} for {Callable}.",
+                            MetadataTokens.GetToken((MethodDefinitionHandle)existingToken),
+                            callable.DisplayName);
+                    }
                     continue;
                 }
 
@@ -247,6 +254,14 @@ public sealed class TwoPhaseCompilationCoordinator
                 if (callable.AstNode != null)
                 {
                     _registry.SetDeclaredTokenForAstNode(callable.AstNode, preallocated);
+                }
+
+                if (_diagnosticsEnabled)
+                {
+                    _diagnosticLogger.LogInformation(
+                        "[TwoPhase] Preallocated non-class token 0x{Token:X8} for {Callable}.",
+                        MetadataTokens.GetToken(preallocated),
+                        callable.DisplayName);
                 }
             }
 
@@ -799,11 +814,26 @@ public sealed class TwoPhaseCompilationCoordinator
             {
                 if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
                 {
+                    if (_diagnosticsEnabled)
+                    {
+                        _diagnosticLogger.LogInformation(
+                            "[TwoPhase] Reusing preallocated class token 0x{Token:X8} for {Callable}.",
+                            MetadataTokens.GetToken((MethodDefinitionHandle)existingToken),
+                            callable.DisplayName);
+                    }
                     continue;
                 }
 
                 var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
                 _registry.SetToken(callable, preallocated);
+
+                if (_diagnosticsEnabled)
+                {
+                    _diagnosticLogger.LogInformation(
+                        "[TwoPhase] Preallocated class token 0x{Token:X8} for {Callable}.",
+                        MetadataTokens.GetToken(preallocated),
+                        callable.DisplayName);
+                }
             }
         }
 
@@ -1015,6 +1045,17 @@ public sealed class TwoPhaseCompilationCoordinator
                     throw new InvalidOperationException($"[TwoPhase] Missing compiled body for class callable: {callable.DisplayName}");
                 }
 
+                if (_diagnosticsEnabled)
+                {
+                    var nextActualToken = MetadataTokens.GetToken(
+                        MetadataTokens.MethodDefinitionHandle(metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1));
+                    _diagnosticLogger.LogInformation(
+                        "[TwoPhase] Emitting class callable {Callable}: expected 0x{Expected:X8}, next actual 0x{Actual:X8}.",
+                        callable.DisplayName,
+                        MetadataTokens.GetToken(body.ExpectedMethodDef),
+                        nextActualToken);
+                }
+
                 _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body, bclReferences);
             }
         }
@@ -1039,6 +1080,7 @@ public sealed class TwoPhaseCompilationCoordinator
     private IEnumerable<CallableId> GetClassCallablesInDeclarationOrder(Scope classScope, ClassBody classBody)
     {
         var className = classScope.Name;
+        var expectedDeclaringScopeName = GetCallableDeclaringScopeName(classScope.Parent ?? classScope);
 
         // Constructor (explicit or synthetic)
         var ctorMember = classBody.Body
@@ -1051,7 +1093,10 @@ public sealed class TwoPhaseCompilationCoordinator
         }
         else
         {
-            var synthCtor = _discoveredCallables!.FirstOrDefault(c => c.Kind == CallableKind.ClassConstructor && string.Equals(c.Name, className, StringComparison.Ordinal));
+            var synthCtor = _discoveredCallables!.FirstOrDefault(c =>
+                c.Kind == CallableKind.ClassConstructor
+                && string.Equals(c.Name, className, StringComparison.Ordinal)
+                && string.Equals(c.DeclaringScopeName, expectedDeclaringScopeName, StringComparison.Ordinal));
             if (synthCtor != null)
             {
                 yield return synthCtor;
@@ -1079,12 +1124,29 @@ public sealed class TwoPhaseCompilationCoordinator
             || element is Acornima.Ast.MethodDefinition methodDefinition && methodDefinition.Static && methodDefinition.Computed);
         if (hasStaticClassEvaluation)
         {
-            var cctor = _discoveredCallables!.FirstOrDefault(c => c.Kind == CallableKind.ClassStaticInitializer && string.Equals(c.Name, className, StringComparison.Ordinal));
+            var cctor = _discoveredCallables!.FirstOrDefault(c =>
+                c.Kind == CallableKind.ClassStaticInitializer
+                && string.Equals(c.Name, className, StringComparison.Ordinal)
+                && string.Equals(c.DeclaringScopeName, expectedDeclaringScopeName, StringComparison.Ordinal));
             if (cctor != null)
             {
                 yield return cctor;
             }
         }
+    }
+
+    private static string GetCallableDeclaringScopeName(Scope scope)
+    {
+        var root = scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var moduleName = root.Name;
+        return scope.Kind == ScopeKind.Global
+            ? moduleName
+            : $"{moduleName}/{scope.GetQualifiedName()}";
     }
 
     private static (Scope ClassScope, Node ClassNode, string ClassName) ResolveClassScope(SymbolTable symbolTable, CallableId callable)

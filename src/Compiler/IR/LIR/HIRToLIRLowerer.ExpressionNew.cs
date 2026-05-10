@@ -18,6 +18,11 @@ public sealed partial class HIRToLIRLowerer
         // If those don't apply, fall back to dynamic construction via JavaScriptRuntime.Object.ConstructValue.
         var calleeVar = newExpr.Callee as HIRVariableExpression;
 
+        if (newExpr.Callee is HIRInitializedUserClassTypeExpression initializedClassExpr)
+        {
+            return TryLowerNewInitializedUserClass(initializedClassExpr, newExpr.Arguments, out resultTempVar);
+        }
+
         // User-defined class: `new ClassName(...)`
         // Note: top-level classes live in the global scope but still have a declaration node.
         if (calleeVar != null && calleeVar.Name.BindingInfo.DeclarationNode is ClassDeclaration declaredClass)
@@ -178,6 +183,23 @@ public sealed partial class HIRToLIRLowerer
         return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
     }
 
+    private bool TryLowerNewInitializedUserClass(
+        HIRInitializedUserClassTypeExpression initializedClassExpr,
+        IReadOnlyList<HIRExpression> args,
+        out TempVariable resultTempVar)
+    {
+        foreach (var initStatement in initializedClassExpr.InitializationStatements)
+        {
+            if (!TryLowerStatement(initStatement))
+            {
+                resultTempVar = default;
+                return false;
+            }
+        }
+
+        return TryLowerNewUserDefinedClass(initializedClassExpr.RegistryClassName, initializedClassExpr.ClassScope, args, out resultTempVar);
+    }
+
     private bool TryLowerDynamicNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -259,7 +281,34 @@ public sealed partial class HIRToLIRLowerer
         // This allows IL emission to look up type/field handles for the class.
         var registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
 
-        bool needsScopes = DoesClassNeedParentScopes(classDecl, classScope);
+        return TryLowerNewUserDefinedClass(registryClassName, classScope, args, out resultTempVar);
+    }
+
+    private bool TryLowerNewUserDefinedClass(
+        string registryClassName,
+        Scope classScope,
+        IReadOnlyList<HIRExpression> args,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        if (classScope.AstNode is not (ClassDeclaration or ClassExpression))
+        {
+            return false;
+        }
+
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        bool needsScopes = DoesClassNeedParentScopes(classScope);
 
         // If the registered constructor ABI includes a leading scopes array (e.g., because the
         // class or its base class needs parent scopes), ensure call-sites pass it.
@@ -291,7 +340,18 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Compute ctor arg range from AST (min required vs max including defaults)
-        var ctorMember = classDecl.Body.Body
+        var classBody = classScope.AstNode switch
+        {
+            ClassDeclaration classDeclaration => classDeclaration.Body,
+            ClassExpression classExpression => classExpression.Body,
+            _ => null
+        };
+        if (classBody == null)
+        {
+            return false;
+        }
+
+        var ctorMember = classBody.Body
             .OfType<MethodDefinition>()
             .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
 
@@ -334,7 +394,12 @@ public sealed partial class HIRToLIRLowerer
             ? moduleName
             : $"{moduleName}/{classScope.Parent.GetQualifiedName()}";
 
-        var className = classDecl.Id is Identifier cid ? cid.Name : classScope.Name;
+        var className = classScope.AstNode switch
+        {
+            ClassDeclaration { Id: Identifier cid } => cid.Name,
+            ClassExpression { Id: Identifier cid } => cid.Name,
+            _ => classScope.Name
+        };
         var ctorCallableId = new TwoPhase.CallableId
         {
             Kind = TwoPhase.CallableKind.ClassConstructor,

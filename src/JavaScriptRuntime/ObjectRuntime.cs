@@ -144,6 +144,78 @@ namespace JavaScriptRuntime
             return target;
         }
 
+        public static object DefineClassElementDataProperty(object target, object? prop, object? value)
+        {
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            var key = Object.ToPropertyKeyString(prop);
+            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+            ConfigureFunctionNameFromPropertyKey(prop, value);
+
+            if (target is JsObject jsObject)
+            {
+                jsObject.SetObject(key, value);
+            }
+            else if (target is IDictionary<string, object?> dict)
+            {
+                dict[key] = value;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = value,
+                Writable = true,
+                Enumerable = false,
+                Configurable = true
+            });
+
+            return target;
+        }
+
+        public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)
+        {
+            if (target is null || target is JsNull)
+            {
+                throw new TypeError("Cannot convert undefined or null to object");
+            }
+
+            if (getter is not null && getter is not JsNull && getter is not Delegate)
+            {
+                throw new TypeError("Getter must be a function");
+            }
+
+            if (setter is not null && setter is not JsNull && setter is not Delegate)
+            {
+                throw new TypeError("Setter must be a function");
+            }
+
+            var key = Object.ToPropertyKeyString(prop);
+            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
+
+            object? existingGetter = null;
+            object? existingSetter = null;
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing) && existing.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                existingGetter = existing.Get;
+                existingSetter = existing.Set;
+            }
+
+            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = getter is null || getter is JsNull ? existingGetter : getter,
+                Set = setter is null || setter is JsNull ? existingSetter : setter
+            });
+
+            return target;
+        }
+
         private static object DefineObjectLiteralDataPropertyCore<TValue>(
             object target,
             string key,

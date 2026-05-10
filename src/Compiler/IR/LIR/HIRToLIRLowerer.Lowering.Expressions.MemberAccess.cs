@@ -46,20 +46,28 @@ public sealed partial class HIRToLIRLowerer
         // User-defined class instance field access (e.g., this.wordArray).
         // If the receiver is `this` and we know the generated CLR type has a field with this name,
         // lower directly to an instance field load (ldfld) instead of dynamic property access.
-        if (_classRegistry != null
-            && propAccessExpr.Object is HIRThisExpression
+        if (propAccessExpr.Object is HIRThisExpression
             && TryGetEnclosingClassRegistryName(out var currentClass)
-            && currentClass != null
-            && _classRegistry.TryGetField(currentClass, propAccessExpr.PropertyName, out _))
+            && currentClass != null)
         {
+            var stableFieldClrType = TryGetStableThisFieldClrType(propAccessExpr.PropertyName);
+            var hasRegisteredField = _classRegistry != null
+                && _classRegistry.TryGetField(currentClass, propAccessExpr.PropertyName, out _);
+            if (!hasRegisteredField && stableFieldClrType == null)
+            {
+                goto LowerGenericPropertyAccess;
+            }
+
             _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
                 RegistryClassName: currentClass,
                 FieldName: propAccessExpr.PropertyName,
                 IsPrivateField: false,
                 Result: resultTempVar));
-            if (!_classRegistry.TryGetFieldClrType(currentClass, propAccessExpr.PropertyName, out var fieldClrType))
+            if (!hasRegisteredField
+                || _classRegistry == null
+                || !_classRegistry.TryGetFieldClrType(currentClass, propAccessExpr.PropertyName, out var fieldClrType))
             {
-                fieldClrType = typeof(object);
+                fieldClrType = stableFieldClrType ?? typeof(object);
             }
             var storageKind = (fieldClrType == typeof(double)
                 || fieldClrType == typeof(bool)
@@ -216,9 +224,20 @@ public sealed partial class HIRToLIRLowerer
         DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
         var boxedObjectGeneric = EnsureObject(objectTemp);
-        var boxedKey = EnsureObject(keyTemp);
-        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObjectGeneric, boxedKey, resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var stableThisFieldClrType = propAccessExpr.Object is HIRThisExpression
+            ? TryGetStableThisFieldClrType(propAccessExpr.PropertyName)
+            : null;
+        if (stableThisFieldClrType == typeof(double))
+        {
+            _methodBodyIR.Instructions.Add(new LIRGetItemAsNumberString(boxedObjectGeneric, keyTemp, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        }
+        else
+        {
+            var boxedKey = EnsureObject(keyTemp);
+            _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObjectGeneric, boxedKey, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
         return true;
     }
 
@@ -374,23 +393,31 @@ public sealed partial class HIRToLIRLowerer
         // User-defined class instance field access via bracket notation (e.g., this["wordArray"]).
         // If the receiver is `this` and the index is a constant string that matches a known field on the
         // generated CLR type, lower directly to an instance field load (ldfld) instead of dynamic GetItem.
-        if (_classRegistry != null
-            && indexAccessExpr.Object is HIRThisExpression
+        if (indexAccessExpr.Object is HIRThisExpression
             && indexAccessExpr.Index is HIRLiteralExpression literalIndex
             && literalIndex.Kind == JavascriptType.String
             && literalIndex.Value is string literalFieldName
             && TryGetEnclosingClassRegistryName(out var currentClass)
-            && currentClass != null
-            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+            && currentClass != null)
         {
+            var stableFieldClrType = TryGetStableThisFieldClrType(literalFieldName);
+            var hasRegisteredField = _classRegistry != null
+                && _classRegistry.TryGetField(currentClass, literalFieldName, out _);
+            if (!hasRegisteredField && stableFieldClrType == null)
+            {
+                goto ContinueWithGenericIndexAccess;
+            }
+
             _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
                 RegistryClassName: currentClass,
                 FieldName: literalFieldName,
                 IsPrivateField: false,
                 Result: resultTempVar));
-            if (!_classRegistry.TryGetFieldClrType(currentClass, literalFieldName, out var fieldClrType))
+            if (!hasRegisteredField
+                || _classRegistry == null
+                || !_classRegistry.TryGetFieldClrType(currentClass, literalFieldName, out var fieldClrType))
             {
-                fieldClrType = typeof(object);
+                fieldClrType = stableFieldClrType ?? typeof(object);
             }
             var storageKind = (fieldClrType == typeof(double)
                 || fieldClrType == typeof(bool)
@@ -401,6 +428,7 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+    ContinueWithGenericIndexAccess:
         // Lower the object expression
         if (!TryLowerExpression(indexAccessExpr.Object, out var objectTemp))
         {
@@ -418,6 +446,14 @@ public sealed partial class HIRToLIRLowerer
         TempVariable indexForGet = indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double)
             ? indexTemp
             : EnsureObject(indexTemp);
+        if (indexAccessExpr.Object is HIRThisExpression
+            && indexAccessExpr.Index is HIRLiteralExpression { Kind: JavascriptType.String, Value: string literalKey }
+            && TryGetStableThisFieldClrType(literalKey) == typeof(double))
+        {
+            _methodBodyIR.Instructions.Add(new LIRGetItemAsNumberString(boxedObject, EnsureStringKey(indexTemp, literalKey), resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
         _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
 
         // If the receiver is statically known to be an Int32Array and the index is numeric,
@@ -452,6 +488,20 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return true;
+    }
+
+    private TempVariable EnsureStringKey(TempVariable keyTemp, string literalKey)
+    {
+        var keyStorage = GetTempStorage(keyTemp);
+        if (keyStorage.Kind == ValueStorageKind.Reference && keyStorage.ClrType == typeof(string))
+        {
+            return keyTemp;
+        }
+
+        var stringKeyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(literalKey, stringKeyTemp));
+        DefineTempStorage(stringKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        return stringKeyTemp;
     }
 
     /// <summary>
@@ -515,6 +565,37 @@ public sealed partial class HIRToLIRLowerer
         if (_environmentLayout != null)
         {
             var storage = _environmentLayout.GetStorage(binding);
+            if (storage == null && _scope != null && binding.IsCaptured)
+            {
+                var declaringScope = binding.DeclaringScope;
+
+                if (declaringScope != null)
+                {
+                    var declaringRegistryName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                    var scopeId = new ScopeId(declaringRegistryName);
+                    var fieldId = new FieldId(declaringRegistryName, binding.Name);
+
+                    if (!ReferenceEquals(declaringScope, _scope))
+                    {
+                        var parentIndex = _environmentLayout.ScopeChain.IndexOf(declaringRegistryName);
+                        if (parentIndex < 0
+                            && declaringScope.Kind == ScopeKind.Global
+                            && _environmentLayout.Abi.ScopesSource is ScopesSource.Argument or ScopesSource.ThisField)
+                        {
+                            parentIndex = 0;
+                        }
+
+                        if (parentIndex >= 0)
+                        {
+                            storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentIndex);
+                        }
+                    }
+                    else
+                    {
+                        storage = BindingStorage.ForLeafScopeField(fieldId, scopeId);
+                    }
+                }
+            }
             if (storage != null)
             {
                 switch (storage.Kind)

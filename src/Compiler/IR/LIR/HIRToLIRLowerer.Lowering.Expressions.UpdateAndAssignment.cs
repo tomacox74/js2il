@@ -1134,6 +1134,54 @@ public sealed partial class HIRToLIRLowerer
         return false;
     }
 
+    private bool DoesClassNeedParentScopes(Scope classScope)
+    {
+        return classScope.AstNode switch
+        {
+            ClassDeclaration classDecl => DoesClassNeedParentScopes(classDecl, classScope),
+            ClassExpression classExpr => DoesClassNeedParentScopes(classExpr.Body, classScope),
+            _ => classScope.ReferencesParentScopeVariables
+        };
+    }
+
+    private bool DoesClassNeedParentScopes(ClassBody classBody, Scope classScope)
+    {
+        if (classScope.ReferencesParentScopeVariables)
+        {
+            return true;
+        }
+
+        if (classBody.Body.Any(element =>
+            element is Acornima.Ast.PropertyDefinition
+            || element is Acornima.Ast.StaticBlock
+            || element is Acornima.Ast.MethodDefinition { Computed: true }))
+        {
+            return true;
+        }
+
+        var ctor = classBody.Body.OfType<MethodDefinition>()
+            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+        if (ctor?.Value is FunctionExpression ctorExpr && MethodBodyRequiresParentScopes(ctorExpr.Body, classScope))
+        {
+            return true;
+        }
+
+        foreach (var funcExpr in classBody.Body
+            .OfType<MethodDefinition>()
+            .Where(m => (m.Key as Identifier)?.Name != "constructor")
+            .Select(m => m.Value)
+            .OfType<FunctionExpression>())
+        {
+            if (MethodBodyRequiresParentScopes(funcExpr.Body, classScope))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private bool MethodBodyRequiresParentScopes(Node? body, Scope classScope)
     {
         bool found = false;

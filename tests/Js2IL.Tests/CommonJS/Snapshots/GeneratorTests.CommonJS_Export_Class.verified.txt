@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c9
+			// Method begins at RVA 0x21f9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -140,7 +140,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21db
+				// Method begins at RVA 0x220b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -160,7 +160,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e4
+				// Method begins at RVA 0x2214
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -180,7 +180,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ed
+				// Method begins at RVA 0x221d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -201,7 +201,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2188
+			// Method begins at RVA 0x21b7
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -220,7 +220,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2190
+			// Method begins at RVA 0x21c0
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -245,7 +245,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a8
+			// Method begins at RVA 0x21d8
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -273,7 +273,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d2
+			// Method begins at RVA 0x2202
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -299,25 +299,45 @@
 	{
 		// Method begins at RVA 0x215c
 		// Header size: 12
-		// Code size: 32 (0x20)
+		// Code size: 79 (0x4f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_Class_Lib/Scope,
-			[1] class [System.Runtime]System.Type
+			[1] object,
+			[2] object[],
+			[3] class [System.Runtime]System.Type,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_Class_Lib/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
-		IL_000b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0010: stloc.1
-		IL_0011: ldarg.2
-		IL_0012: ldstr "exports"
-		IL_0017: ldloc.1
-		IL_0018: ldc.i4.1
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_001e: pop
-		IL_001f: ret
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.2
+		IL_0011: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
+		IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001b: ldtoken Modules.CommonJS_Export_Class_Lib/Calculator
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: ldloc.2
+		IL_0028: ldc.r8 0.0
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_003b: stloc.s 4
+		IL_003d: ldloc.s 4
+		IL_003f: stloc.1
+		IL_0040: ldarg.2
+		IL_0041: ldstr "exports"
+		IL_0046: ldloc.1
+		IL_0047: ldc.i4.1
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_004d: pop
+		IL_004e: ret
 	} // end of method CommonJS_Export_Class_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Class_Lib
@@ -329,7 +349,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f6
+		// Method begins at RVA 0x2226
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

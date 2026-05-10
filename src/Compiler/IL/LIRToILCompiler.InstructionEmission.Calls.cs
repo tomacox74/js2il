@@ -19,6 +19,7 @@ internal sealed partial class LIRToILCompiler
         {
             FunctionDeclaration { Generator: true } => true,
             FunctionExpression { Generator: true } => true,
+            Acornima.Ast.MethodDefinition { Value: FunctionExpression { Generator: true } } => true,
             _ => false
         };
 
@@ -28,6 +29,7 @@ internal sealed partial class LIRToILCompiler
             FunctionDeclaration functionDeclaration => CountExpectedFunctionLength(functionDeclaration.Params),
             FunctionExpression functionExpression => CountExpectedFunctionLength(functionExpression.Params),
             ArrowFunctionExpression arrowFunctionExpression => CountExpectedFunctionLength(arrowFunctionExpression.Params),
+            Acornima.Ast.MethodDefinition { Value: FunctionExpression methodFunction } => CountExpectedFunctionLength(methodFunction.Params),
             _ => callableId.JsParamCount
         };
 

@@ -2437,6 +2437,11 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (TryCallStaticClassMethod(receiver, methodName, callArgs, out var staticClassResult))
+            {
+                return staticClassResult;
+            }
+
             // 4) Fallback to reflection on receiver type
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
@@ -5510,6 +5515,62 @@ namespace JavaScriptRuntime
                 }
 
                 return InvokeChosen(coerced);
+            }
+        }
+
+        private static bool TryCallStaticClassMethod(object receiver, string methodName, object[] args, out object? result)
+        {
+            result = null;
+
+            var staticType = receiver switch
+            {
+                ClassConstructorValue classConstructorValue => classConstructorValue.Type,
+                Type type => type,
+                _ => null
+            };
+
+            if (staticType == null)
+            {
+                return false;
+            }
+
+            var methods = staticType.GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Where(m => string.Equals(m.Name, methodName, StringComparison.Ordinal))
+                .ToList();
+
+            if (methods.Count == 0)
+            {
+                return false;
+            }
+
+            var srcArgs = args ?? System.Array.Empty<object>();
+
+            MethodInfo? chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == srcArgs.Length);
+
+            if (chosen == null)
+            {
+                chosen = methods.OrderBy(mi => mi.GetParameters().Length).First();
+            }
+
+            var invokeArgs = srcArgs.Cast<object?>().ToArray();
+
+            try
+            {
+                var previousThis = RuntimeServices.SetCurrentThis(receiver);
+                try
+                {
+                    result = chosen.Invoke(null, invokeArgs);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
+                return true;
+            }
+            catch (TargetInvocationException tie) when (tie.InnerException != null)
+            {
+                ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                throw;
             }
         }
 

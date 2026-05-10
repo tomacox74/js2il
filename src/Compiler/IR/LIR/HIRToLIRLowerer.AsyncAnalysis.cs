@@ -115,6 +115,23 @@ public sealed partial class HIRToLIRLowerer
             case HIRPropertyAccessExpression propAccessExpr:
                 count += CountAwaitExpressionsInExpression(propAccessExpr.Object);
                 break;
+            case HIRDefineClassDataPropertyExpression defineClassDataProperty:
+                count += CountAwaitExpressionsInExpression(defineClassDataProperty.Target);
+                count += CountAwaitExpressionsInExpression(defineClassDataProperty.Key);
+                count += CountAwaitExpressionsInExpression(defineClassDataProperty.Value);
+                break;
+            case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
+                count += CountAwaitExpressionsInExpression(defineClassAccessorProperty.Target);
+                count += CountAwaitExpressionsInExpression(defineClassAccessorProperty.Key);
+                if (defineClassAccessorProperty.Getter != null)
+                {
+                    count += CountAwaitExpressionsInExpression(defineClassAccessorProperty.Getter);
+                }
+                if (defineClassAccessorProperty.Setter != null)
+                {
+                    count += CountAwaitExpressionsInExpression(defineClassAccessorProperty.Setter);
+                }
+                break;
             case HIRConditionalExpression condExpr:
                 count += CountAwaitExpressionsInExpression(condExpr.Test);
                 count += CountAwaitExpressionsInExpression(condExpr.Consequent);

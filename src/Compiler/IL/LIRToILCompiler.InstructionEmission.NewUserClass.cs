@@ -23,17 +23,24 @@ internal sealed partial class LIRToILCompiler
             case LIRNewUserClass newUserClass:
                 {
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
-                    if (reader == null)
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+
+                    MethodDefinitionHandle ctorDef;
+                    if (reader != null
+                        && reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token)
+                        && token.Kind == HandleKind.MethodDefinition)
+                    {
+                        ctorDef = (MethodDefinitionHandle)token;
+                    }
+                    else if (classRegistry != null
+                        && classRegistry.TryGetConstructor(newUserClass.RegistryClassName, out var registeredCtorDef, out _, out _, out _))
+                    {
+                        ctorDef = registeredCtorDef;
+                    }
+                    else
                     {
                         return false;
                     }
-
-                    if (!reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
-                    {
-                        return false;
-                    }
-
-                    var ctorDef = (MethodDefinitionHandle)token;
 
                     int argc = newUserClass.Arguments.Count;
                     if (argc < newUserClass.MinArgCount)
@@ -117,7 +124,6 @@ internal sealed partial class LIRToILCompiler
                         // Stack: [instance] (unchanged — PopCurrentArguments returns void)
                     }
 
-                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
                     var classTypeForPrototype = default(TypeDefinitionHandle);
                     bool hasPrototype = classRegistry != null
                         && classRegistry.TryGet(newUserClass.RegistryClassName, out classTypeForPrototype);

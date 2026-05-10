@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x238b
+				// Method begins at RVA 0x245b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,7 +48,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x222b
+			// Method begins at RVA 0x22fc
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a6
+				// Method begins at RVA 0x2476
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
-			// Method begins at RVA 0x2230
+			// Method begins at RVA 0x2300
 			// Header size: 12
 			// Code size: 50 (0x32)
 			.maxstack 8
@@ -137,7 +137,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2394
+				// Method begins at RVA 0x2464
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -157,7 +157,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239d
+				// Method begins at RVA 0x246d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -183,7 +183,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2270
+			// Method begins at RVA 0x2340
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -207,7 +207,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x228c
+			// Method begins at RVA 0x235c
 			// Header size: 12
 			// Code size: 62 (0x3e)
 			.maxstack 8
@@ -259,7 +259,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2382
+			// Method begins at RVA 0x2452
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -285,13 +285,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 239 (0xef)
+		// Code size: 344 (0x158)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Basic/Scope,
 			[1] object,
 			[2] object,
-			[3] class Modules.CommonJS_Require_Basic/CommonClassName
+			[3] object,
+			[4] object[],
+			[5] class [System.Runtime]System.Type,
+			[6] class Modules.CommonJS_Require_Basic/CommonClassName
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_Basic/Scope::.ctor()
@@ -311,8 +314,8 @@
 		IL_0023: conv.r8
 		IL_0024: ldstr "commonFunctionName"
 		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_002e: stloc.2
-		IL_002f: ldloc.2
+		IL_002e: stloc.3
+		IL_002f: ldloc.3
 		IL_0030: stloc.1
 		IL_0031: ldnull
 		IL_0032: ldftn object Modules.CommonJS_Require_Basic/ArrowFunction_L3C9::__js_call__(object, object)
@@ -329,7 +332,7 @@
 		IL_0052: conv.r8
 		IL_0053: ldstr ""
 		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_005d: stloc.2
+		IL_005d: stloc.3
 		IL_005e: ldc.i4.1
 		IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0064: dup
@@ -340,7 +343,7 @@
 		IL_0079: newarr [System.Runtime]System.Object
 		IL_007e: dup
 		IL_007f: ldc.i4.0
-		IL_0080: ldloc.2
+		IL_0080: ldloc.3
 		IL_0081: stelem.ref
 		IL_0082: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
 		IL_0087: pop
@@ -361,27 +364,57 @@
 		IL_00b6: ldc.i4.0
 		IL_00b7: ldloc.0
 		IL_00b8: stelem.ref
-		IL_00b9: newobj instance void Modules.CommonJS_Require_Basic/CommonClassName::.ctor(object[])
-		IL_00be: stloc.3
-		IL_00bf: ldloc.3
-		IL_00c0: ldstr "Log"
-		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00ca: pop
-		IL_00cb: ldc.i4.1
-		IL_00cc: newarr [System.Runtime]System.Object
-		IL_00d1: dup
-		IL_00d2: ldc.i4.0
-		IL_00d3: ldloc.0
-		IL_00d4: stelem.ref
-		IL_00d5: ldc.i4.0
-		IL_00d6: ldelem.ref
-		IL_00d7: castclass Modules.CommonJS_Require_Basic/Scope
-		IL_00dc: ldftn object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(class Modules.CommonJS_Require_Basic/Scope, object)
-		IL_00e2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00e7: ldnull
-		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_00ed: pop
-		IL_00ee: ret
+		IL_00b9: stloc.s 4
+		IL_00bb: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
+		IL_00c0: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00c5: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
+		IL_00ca: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00cf: stloc.s 5
+		IL_00d1: ldloc.s 5
+		IL_00d3: ldloc.s 4
+		IL_00d5: ldc.r8 0.0
+		IL_00de: box [System.Runtime]System.Double
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_00e8: stloc.3
+		IL_00e9: ldloc.3
+		IL_00ea: stloc.2
+		IL_00eb: ldc.i4.1
+		IL_00ec: newarr [System.Runtime]System.Object
+		IL_00f1: dup
+		IL_00f2: ldc.i4.0
+		IL_00f3: ldloc.0
+		IL_00f4: stelem.ref
+		IL_00f5: ldc.i4.0
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0100: newobj instance void Modules.CommonJS_Require_Basic/CommonClassName::.ctor(object[])
+		IL_0105: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_010a: stloc.s 6
+		IL_010c: ldloc.s 6
+		IL_010e: ldtoken Modules.CommonJS_Require_Basic/CommonClassName
+		IL_0113: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0118: ldstr "prototype"
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0122: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0127: ldloc.s 6
+		IL_0129: ldstr "Log"
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0133: pop
+		IL_0134: ldc.i4.1
+		IL_0135: newarr [System.Runtime]System.Object
+		IL_013a: dup
+		IL_013b: ldc.i4.0
+		IL_013c: ldloc.0
+		IL_013d: stelem.ref
+		IL_013e: ldc.i4.0
+		IL_013f: ldelem.ref
+		IL_0140: castclass Modules.CommonJS_Require_Basic/Scope
+		IL_0145: ldftn object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(class Modules.CommonJS_Require_Basic/Scope, object)
+		IL_014b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0150: ldnull
+		IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_0156: pop
+		IL_0157: ret
 	} // end of method CommonJS_Require_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Basic
@@ -407,7 +440,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b8
+				// Method begins at RVA 0x2488
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -431,7 +464,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22d6
+			// Method begins at RVA 0x23a6
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -453,7 +486,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d3
+				// Method begins at RVA 0x24a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -479,7 +512,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x22dc
+			// Method begins at RVA 0x23ac
 			// Header size: 12
 			// Code size: 50 (0x32)
 			.maxstack 8
@@ -520,7 +553,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c1
+				// Method begins at RVA 0x2491
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -540,7 +573,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ca
+				// Method begins at RVA 0x249a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -566,7 +599,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x231c
+			// Method begins at RVA 0x23ec
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -590,7 +623,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2338
+			// Method begins at RVA 0x2408
 			// Header size: 12
 			// Code size: 62 (0x3e)
 			.maxstack 8
@@ -642,7 +675,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23af
+			// Method begins at RVA 0x247f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -666,15 +699,18 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x21b4
 		// Header size: 12
-		// Code size: 211 (0xd3)
+		// Code size: 316 (0x13c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Dependency/Scope,
 			[1] object,
 			[2] object,
-			[3] class Modules.CommonJS_Require_Dependency/CommonClassName
+			[3] object,
+			[4] object[],
+			[5] class [System.Runtime]System.Type,
+			[6] class Modules.CommonJS_Require_Dependency/CommonClassName
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_Dependency/Scope::.ctor()
@@ -694,8 +730,8 @@
 		IL_0023: conv.r8
 		IL_0024: ldstr "commonFunctionName"
 		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_002e: stloc.2
-		IL_002f: ldloc.2
+		IL_002e: stloc.3
+		IL_002f: ldloc.3
 		IL_0030: stloc.1
 		IL_0031: ldnull
 		IL_0032: ldftn object Modules.CommonJS_Require_Dependency/ArrowFunction_L3C9::__js_call__(object, object)
@@ -712,7 +748,7 @@
 		IL_0052: conv.r8
 		IL_0053: ldstr ""
 		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_005d: stloc.2
+		IL_005d: stloc.3
 		IL_005e: ldc.i4.1
 		IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0064: dup
@@ -723,7 +759,7 @@
 		IL_0079: newarr [System.Runtime]System.Object
 		IL_007e: dup
 		IL_007f: ldc.i4.0
-		IL_0080: ldloc.2
+		IL_0080: ldloc.3
 		IL_0081: stelem.ref
 		IL_0082: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
 		IL_0087: pop
@@ -736,27 +772,57 @@
 		IL_009a: ldc.i4.0
 		IL_009b: ldloc.0
 		IL_009c: stelem.ref
-		IL_009d: newobj instance void Modules.CommonJS_Require_Dependency/CommonClassName::.ctor(object[])
-		IL_00a2: stloc.3
-		IL_00a3: ldloc.3
-		IL_00a4: ldstr "Log"
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00ae: pop
-		IL_00af: ldc.i4.1
-		IL_00b0: newarr [System.Runtime]System.Object
-		IL_00b5: dup
-		IL_00b6: ldc.i4.0
-		IL_00b7: ldloc.0
-		IL_00b8: stelem.ref
-		IL_00b9: ldc.i4.0
-		IL_00ba: ldelem.ref
-		IL_00bb: castclass Modules.CommonJS_Require_Dependency/Scope
-		IL_00c0: ldftn object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(class Modules.CommonJS_Require_Dependency/Scope, object)
-		IL_00c6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00cb: ldnull
-		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_00d1: pop
-		IL_00d2: ret
+		IL_009d: stloc.s 4
+		IL_009f: ldtoken Modules.CommonJS_Require_Dependency/CommonClassName
+		IL_00a4: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00a9: ldtoken Modules.CommonJS_Require_Dependency/CommonClassName
+		IL_00ae: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00b3: stloc.s 5
+		IL_00b5: ldloc.s 5
+		IL_00b7: ldloc.s 4
+		IL_00b9: ldc.r8 0.0
+		IL_00c2: box [System.Runtime]System.Double
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_00cc: stloc.3
+		IL_00cd: ldloc.3
+		IL_00ce: stloc.2
+		IL_00cf: ldc.i4.1
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: dup
+		IL_00d6: ldc.i4.0
+		IL_00d7: ldloc.0
+		IL_00d8: stelem.ref
+		IL_00d9: ldc.i4.0
+		IL_00da: newarr [System.Runtime]System.Object
+		IL_00df: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00e4: newobj instance void Modules.CommonJS_Require_Dependency/CommonClassName::.ctor(object[])
+		IL_00e9: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00ee: stloc.s 6
+		IL_00f0: ldloc.s 6
+		IL_00f2: ldtoken Modules.CommonJS_Require_Dependency/CommonClassName
+		IL_00f7: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00fc: ldstr "prototype"
+		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0106: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_010b: ldloc.s 6
+		IL_010d: ldstr "Log"
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0117: pop
+		IL_0118: ldc.i4.1
+		IL_0119: newarr [System.Runtime]System.Object
+		IL_011e: dup
+		IL_011f: ldc.i4.0
+		IL_0120: ldloc.0
+		IL_0121: stelem.ref
+		IL_0122: ldc.i4.0
+		IL_0123: ldelem.ref
+		IL_0124: castclass Modules.CommonJS_Require_Dependency/Scope
+		IL_0129: ldftn object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(class Modules.CommonJS_Require_Dependency/Scope, object)
+		IL_012f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0134: ldnull
+		IL_0135: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_013a: pop
+		IL_013b: ret
 	} // end of method CommonJS_Require_Dependency::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Dependency
@@ -768,7 +834,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23dc
+		// Method begins at RVA 0x24ac
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

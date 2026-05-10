@@ -1526,9 +1526,16 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadInstanceField.RegistryClassName,
+                        loadInstanceField.FieldName,
+                        loadInstanceField.IsPrivateField,
+                        isStaticField: false);
+
                     // Inline instance-field load from runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
-                    // - In static JS callables (functions/arrows): use ObjectRuntime.GetItem because
+                    // - In static JS callables (functions/arrows): use runtime helpers because
                     //   `this` may be a ClassConstructorValue (e.g. for static accessors), not a CLR instance.
                     if (methodDescriptor.IsStatic)
                     {
@@ -1539,26 +1546,32 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(getThisRef);
 
                         ilEncoder.Ldstr(_metadataBuilder, loadInstanceField.FieldName);
-                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
-                            parameterTypes: new[] { typeof(object), typeof(string) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getItemMethod);
-                        // GetItem returns object; leave on stack (value is now boxed).
+                        if (fieldClrType == typeof(double))
+                        {
+                            var getItemAsNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.GetItemAsNumber),
+                                parameterTypes: new[] { typeof(object), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getItemAsNumberMethod);
+                            EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
+                        }
+                        else
+                        {
+                            var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.ObjectRuntime),
+                                nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                                parameterTypes: new[] { typeof(object), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getItemMethod);
+                            // GetItem returns object; leave on stack.
+                        }
                     }
                     else
                     {
                         ilEncoder.LoadArgument(0);
                         ilEncoder.OpCode(ILOpCode.Ldfld);
                         ilEncoder.Token(fieldHandle);
-
-                        var fieldClrType = GetDeclaredUserClassFieldClrType(
-                            classRegistry,
-                            loadInstanceField.RegistryClassName,
-                            loadInstanceField.FieldName,
-                            loadInstanceField.IsPrivateField,
-                            isStaticField: false);
                         EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                     }
                     break;
@@ -1817,6 +1830,21 @@ internal sealed partial class LIRToILCompiler
                 var convertToObjectSourceStorage = GetTempStorage(convertToObject.Source);
                 if (convertToObjectSourceStorage.Kind == ValueStorageKind.Reference
                     || convertToObjectSourceStorage.Kind == ValueStorageKind.BoxedValue)
+                {
+                    EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
+                // Generic member/item reads already leave an object on the stack. If a stale SourceType
+                // hint reaches ConvertToObject here, boxing it would reinterpret the object reference as
+                // a value type (e.g. `GetItem(...); box double`), producing invalid runtime behavior.
+                var convertToObjectSourceDef = TryFindDefInstruction(convertToObject.Source);
+                while (convertToObjectSourceDef is LIRCopyTemp copyTempDef)
+                {
+                    convertToObjectSourceDef = TryFindDefInstruction(copyTempDef.Source);
+                }
+
+                if (convertToObjectSourceDef is LIRGetItem)
                 {
                     EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
                     return true;

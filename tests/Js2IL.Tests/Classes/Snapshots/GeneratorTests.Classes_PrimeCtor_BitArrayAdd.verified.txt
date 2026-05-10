@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2108
+				// Method begins at RVA 0x21bc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2111
+				// Method begins at RVA 0x21c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f0
+			// Method begins at RVA 0x21a4
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -90,7 +90,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211a
+				// Method begins at RVA 0x21ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,7 +110,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2123
+				// Method begins at RVA 0x21d7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -139,7 +139,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2094
+			// Method begins at RVA 0x2148
 			// Header size: 12
 			// Code size: 80 (0x50)
 			.maxstack 8
@@ -200,7 +200,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ff
+			// Method begins at RVA 0x21b3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -226,11 +226,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 55 (0x37)
+		// Code size: 233 (0xe9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_PrimeCtor_BitArrayAdd/Scope,
-			[1] object[]
+			[1] object,
+			[2] object[],
+			[3] class [System.Runtime]System.Type,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/Scope::.ctor()
@@ -241,17 +244,71 @@
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.0
 		IL_000f: stelem.ref
-		IL_0010: stloc.1
-		IL_0011: ldloc.1
-		IL_0012: ldc.r8 100
-		IL_001b: box [System.Runtime]System.Double
-		IL_0020: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::.ctor(object[], object)
-		IL_0025: pop
-		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002b: ldstr "Classes_PrimeCtor_BitArrayAdd"
-		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0035: pop
-		IL_0036: ret
+		IL_0010: stloc.2
+		IL_0011: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/BitArray
+		IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001b: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/BitArray
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: ldloc.2
+		IL_0028: ldc.r8 1
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_003b: stloc.s 4
+		IL_003d: ldloc.0
+		IL_003e: ldloc.s 4
+		IL_0040: stfld object Modules.Classes_PrimeCtor_BitArrayAdd/Scope::BitArray
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.0
+		IL_004e: stelem.ref
+		IL_004f: stloc.2
+		IL_0050: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve
+		IL_0055: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_005a: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve
+		IL_005f: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0064: stloc.3
+		IL_0065: ldloc.3
+		IL_0066: ldloc.2
+		IL_0067: ldc.r8 1
+		IL_0070: box [System.Runtime]System.Double
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_007a: stloc.s 4
+		IL_007c: ldloc.s 4
+		IL_007e: stloc.1
+		IL_007f: ldc.i4.1
+		IL_0080: newarr [System.Runtime]System.Object
+		IL_0085: dup
+		IL_0086: ldc.i4.0
+		IL_0087: ldloc.0
+		IL_0088: stelem.ref
+		IL_0089: stloc.2
+		IL_008a: ldloc.2
+		IL_008b: ldc.i4.1
+		IL_008c: newarr [System.Runtime]System.Object
+		IL_0091: dup
+		IL_0092: ldc.i4.0
+		IL_0093: ldc.r8 100
+		IL_009c: box [System.Runtime]System.Double
+		IL_00a1: stelem.ref
+		IL_00a2: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_00a7: ldc.r8 100
+		IL_00b0: box [System.Runtime]System.Double
+		IL_00b5: newobj instance void Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve::.ctor(object[], object)
+		IL_00ba: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_00bf: ldtoken Modules.Classes_PrimeCtor_BitArrayAdd/PrimeSieve
+		IL_00c4: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00c9: ldstr "prototype"
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_00d3: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00d8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00dd: ldstr "Classes_PrimeCtor_BitArrayAdd"
+		IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e7: pop
+		IL_00e8: ret
 	} // end of method Classes_PrimeCtor_BitArrayAdd::__js_module_init__
 
 } // end of class Modules.Classes_PrimeCtor_BitArrayAdd
@@ -263,7 +320,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x21e0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

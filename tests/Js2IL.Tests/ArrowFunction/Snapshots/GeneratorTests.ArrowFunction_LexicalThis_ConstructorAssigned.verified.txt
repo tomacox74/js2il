@@ -47,8 +47,8 @@
 			.maxstack 8
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0005: castclass Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
-			IL_000a: ldfld object Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter::x
+			IL_0005: ldstr "x"
+			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_000f: ret
 		} // end of method ArrowFunction_L6C21::__js_call__
 
@@ -202,28 +202,28 @@
 			[1] object,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] class [System.Runtime]System.Type,
-			[5] object[],
+			[4] object[],
+			[5] class [System.Runtime]System.Type,
 			[6] object,
 			[7] class Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
-		IL_000b: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0010: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
-		IL_0015: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_001a: stloc.s 4
-		IL_001c: ldc.i4.1
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldloc.0
-		IL_0025: stelem.ref
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: stelem.ref
+		IL_0010: stloc.s 4
+		IL_0012: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
+		IL_0017: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001c: ldtoken Modules.ArrowFunction_LexicalThis_ConstructorAssigned/Counter
+		IL_0021: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0026: stloc.s 5
-		IL_0028: ldloc.s 4
-		IL_002a: ldloc.s 5
+		IL_0028: ldloc.s 5
+		IL_002a: ldloc.s 4
 		IL_002c: ldc.r8 1
 		IL_0035: box [System.Runtime]System.Double
 		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
@@ -236,8 +236,8 @@
 		IL_004b: ldc.i4.0
 		IL_004c: ldloc.0
 		IL_004d: stelem.ref
-		IL_004e: stloc.s 5
-		IL_0050: ldloc.s 5
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.s 4
 		IL_0052: ldc.i4.1
 		IL_0053: newarr [System.Runtime]System.Object
 		IL_0058: dup

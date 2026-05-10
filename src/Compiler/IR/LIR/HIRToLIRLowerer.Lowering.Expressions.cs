@@ -109,6 +109,7 @@ public sealed partial class HIRToLIRLowerer
 
                 // Only supported for instance callables where IL arg0 is the receiver.
                 if (_callableKind is not CallableKind.ClassMethod
+                    and not CallableKind.ClassStaticMethod
                     and not CallableKind.Constructor
                     and not CallableKind.Function
                     and not CallableKind.ModuleMain)
@@ -397,10 +398,15 @@ public sealed partial class HIRToLIRLowerer
                 // (e.g., `module.exports = { Counter }`).
                 if (binding.DeclarationNode is ClassDeclaration classDecl)
                 {
-                    // Only read from the SSA map (not the scope field) — scope field contains a TDZ sentinel
-                    // until the class is fully initialized (after CreateClassConstructorValue completes),
-                    // so reading from scope storage here would trigger a spurious TDZ error.
+                    // Prefer the already-initialized binding value so class identity is stable across
+                    // constructor/method/accessor reads. During evaluation-before-initialization, the
+                    // scope-field load will still surface the TDZ sentinel as the correct runtime error.
                     if (_variableMap.TryGetValue(binding, out resultTempVar))
+                    {
+                        return true;
+                    }
+
+                    if (TryLoadVariable(binding, out resultTempVar))
                     {
                         return true;
                     }
@@ -529,16 +535,7 @@ public sealed partial class HIRToLIRLowerer
                         //
                         // This is only valid for captured bindings that are stored as fields on their
                         // declaring scope type.
-                        var declaringScope = _scope;
-                        while (declaringScope != null)
-                        {
-                            if (declaringScope.Bindings.TryGetValue(binding.Name, out var candidate)
-                                && ReferenceEquals(candidate, binding))
-                            {
-                                break;
-                            }
-                            declaringScope = declaringScope.Parent;
-                        }
+                        var declaringScope = binding.DeclaringScope;
 
                         if (declaringScope != null)
                         {
@@ -549,6 +546,12 @@ public sealed partial class HIRToLIRLowerer
                             if (!ReferenceEquals(declaringScope, _scope))
                             {
                                 var parentIndex = _environmentLayout.ScopeChain.IndexOf(declaringRegistryName);
+                                if (parentIndex < 0
+                                    && declaringScope.Kind == ScopeKind.Global
+                                    && _environmentLayout.Abi.ScopesSource is ScopesSource.Argument or ScopesSource.ThisField)
+                                {
+                                    parentIndex = 0;
+                                }
                                 if (parentIndex >= 0)
                                 {
                                     storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentIndex);
@@ -797,6 +800,10 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRGetUserClassType(userClassType.RegistryClassName, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 return true;
+            case HIRDefineClassDataPropertyExpression defineClassDataProperty:
+                return TryLowerDefineClassDataPropertyExpression(defineClassDataProperty, out resultTempVar);
+            case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
+                return TryLowerDefineClassAccessorPropertyExpression(defineClassAccessorProperty, out resultTempVar);
             // Handle different expression types here
             default:
                 // Unsupported expression type

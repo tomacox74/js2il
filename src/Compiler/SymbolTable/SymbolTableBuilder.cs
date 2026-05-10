@@ -17,7 +17,20 @@ namespace Js2IL.SymbolTables
         // reaches the same AST node via multiple paths (explicit handling + reflective walk).
         private readonly HashSet<Node> _visitedArrowFunctions = new();
         private readonly HashSet<Node> _visitedFunctionExpressions = new();
+        private readonly HashSet<Node> _visitedClasses = new();
         private readonly JavaScriptParser _parser = new();
+
+        private static string BuildClassRegistryNamespace(Scope globalScope, Scope currentScope, Node classNode, bool forceUniqueSuffix)
+        {
+            var baseNamespace = DefaultClassesNamespace + "." + globalScope.Name;
+            if (!forceUniqueSuffix && currentScope.Kind == ScopeKind.Global)
+            {
+                return baseNamespace;
+            }
+
+            var loc = classNode.Location.Start;
+            return $"{baseNamespace}.L{loc.Line}C{loc.Column + 1}";
+        }
 
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
@@ -396,11 +409,15 @@ namespace Js2IL.SymbolTables
 
                 // Classes: check method bodies for free variable references
                 case ClassDeclaration classDecl:
-                    // Iterate through class methods and check their bodies
                     foreach (var element in classDecl.Body.Body)
                     {
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
                         {
+                            if (mdef.Computed && ContainsFreeVariable(mdef.Key as Node, localVariables))
+                            {
+                                return true;
+                            }
+
                             // Build local variables set for this method (includes parameters)
                             var methodLocals = new HashSet<string>(localVariables);
                             foreach (var param in mfunc.Params)
@@ -425,6 +442,11 @@ namespace Js2IL.SymbolTables
                         }
                         else if (element is PropertyDefinition propDef)
                         {
+                            if (propDef.Computed && ContainsFreeVariable(propDef.Key as Node, localVariables))
+                            {
+                                return true;
+                            }
+
                             // Check field initializer expressions (instance or static fields)
                             if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
                             {
@@ -439,6 +461,11 @@ namespace Js2IL.SymbolTables
                     {
                         if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
                         {
+                            if (mdef.Computed && ContainsFreeVariable(mdef.Key as Node, localVariables))
+                            {
+                                return true;
+                            }
+
                             var methodLocals = new HashSet<string>(localVariables);
                             foreach (var param in mfunc.Params)
                             {
@@ -461,6 +488,11 @@ namespace Js2IL.SymbolTables
                         }
                         else if (element is PropertyDefinition propDef)
                         {
+                            if (propDef.Computed && ContainsFreeVariable(propDef.Key as Node, localVariables))
+                            {
+                                return true;
+                            }
+
                             if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
                             {
                                 return true;
@@ -606,14 +638,28 @@ namespace Js2IL.SymbolTables
                 }
                 
                 // Also check class field initializers directly
-                if (!scope.ReferencesParentScopeVariables && scope.AstNode is ClassDeclaration classDecl)
+                if (!scope.ReferencesParentScopeVariables
+                    && (scope.AstNode is ClassDeclaration || scope.AstNode is ClassExpression))
                 {
                     var localVariables = new HashSet<string>(scope.Bindings.Keys);
-                    foreach (var element in classDecl.Body.Body)
+                    var classBody = scope.AstNode switch
                     {
-                        if (element is PropertyDefinition propDef && propDef.Value != null)
+                        ClassDeclaration classDecl => classDecl.Body.Body,
+                        ClassExpression classExpr => classExpr.Body.Body,
+                        _ => default
+                    };
+
+                    foreach (var element in classBody)
+                    {
+                        if (element is PropertyDefinition propDef)
                         {
-                            if (ContainsFreeVariable(propDef.Value, localVariables))
+                            if (propDef.Computed && ContainsFreeVariable(propDef.Key as Node, localVariables))
+                            {
+                                scope.ReferencesParentScopeVariables = true;
+                                break;
+                            }
+
+                            if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
                             {
                                 scope.ReferencesParentScopeVariables = true;
                                 break;
@@ -668,11 +714,15 @@ namespace Js2IL.SymbolTables
                         BuildScopeRecursive(globalScope, statement, currentScope);
                     break;
                 case ClassDeclaration classDecl:
+                    if (_visitedClasses.Contains(classDecl))
+                    {
+                        break;
+                    }
+                    _visitedClasses.Add(classDecl);
                     var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
                     var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
                     // Author authoritative .NET naming for classes here
-                    classScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name; 
-                    // Per user guidance, keep type name same as scope name for now
+                    classScope.DotNetNamespace = BuildClassRegistryNamespace(globalScope, currentScope, classDecl, forceUniqueSuffix: currentScope.Kind != ScopeKind.Global);
                     classScope.DotNetTypeName = SanitizeForMetadata(className);
                     currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, currentScope, classDecl);
                     // Process class body members for nested functions or fields later if needed
@@ -779,6 +829,11 @@ namespace Js2IL.SymbolTables
                     break;
 
                 case ClassExpression classExpr:
+                    if (_visitedClasses.Contains(classExpr))
+                    {
+                        break;
+                    }
+                    _visitedClasses.Add(classExpr);
                     // Model class expressions as a class scope so the IR pipeline and class emitters can
                     // treat `module.exports = class Foo { ... }` as exporting the compiled class type.
                     // NOTE: The class name (if present) is a binding within the class body, not the
@@ -792,7 +847,7 @@ namespace Js2IL.SymbolTables
                     }
 
                     var classExprScope = new Scope(classExprName!, ScopeKind.Class, currentScope, classExpr);
-                    classExprScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name;
+                    classExprScope.DotNetNamespace = BuildClassRegistryNamespace(globalScope, currentScope, classExpr, forceUniqueSuffix: true);
                     classExprScope.DotNetTypeName = SanitizeForMetadata(classExprName!);
 
                     // Named class expressions create an internal binding for the class name that is only
