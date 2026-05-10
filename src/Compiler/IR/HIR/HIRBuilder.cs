@@ -1198,9 +1198,11 @@ class HIRMethodBuilder
     public bool TryBuildClassStaticInitializationStatements(
         [In, NotNull] Node classNode,
         [In, NotNull] Scope classScope,
-        out List<HIRStatement> statements)
+        out List<HIRStatement> statements,
+        out int classNameBindingInsertIndex)
     {
         statements = new List<HIRStatement>();
+        classNameBindingInsertIndex = -1;
 
         var classBody = classNode switch
         {
@@ -1230,6 +1232,11 @@ class HIRMethodBuilder
                 {
                     case PropertyDefinition propertyDefinition when propertyDefinition.Static:
                     {
+                        if (classNameBindingInsertIndex < 0)
+                        {
+                            classNameBindingInsertIndex = statements.Count;
+                        }
+
                         var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
                             ? propertyInit
                             : null;
@@ -1342,6 +1349,11 @@ class HIRMethodBuilder
 
                     case StaticBlock staticBlock:
                     {
+                        if (classNameBindingInsertIndex < 0)
+                        {
+                            classNameBindingInsertIndex = statements.Count;
+                        }
+
                         if (!TryParseStatementsToList(staticBlock.Body, out var staticBlockStatements))
                         {
                             return false;
@@ -1529,24 +1541,24 @@ class HIRMethodBuilder
                         return true;
                     }
 
-                    if (!TryBuildClassStaticInitializationStatements(classDecl, classScope, out var staticInitStatements))
+                    if (!TryBuildClassStaticInitializationStatements(classDecl, classScope, out var staticInitStatements, out var classNameBindingInsertIndex))
                     {
                         return false;
                     }
 
-                    // Store the ClassConstructorValue to the class name binding before static initialization.
-                    // Class field initializers and static blocks can legally reference the class name while the
-                    // class is being initialized, and they must observe the same constructor object identity
-                    // that becomes visible in the outer scope after initialization completes.
+                    // Store the ClassConstructorValue to the class name binding before static field initializers
+                    // or static blocks run. Computed class element names are evaluated earlier, while the outer
+                    // binding is still in TDZ, so only expose the binding once the spec-visible initialization
+                    // phase that can reference the class name begins.
                     var cdClassName = (classDecl.Id as Identifier)?.Name;
-                    if (cdClassName != null && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true)
+                    if (classNameBindingInsertIndex >= 0
+                        && cdClassName != null
+                        && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true)
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
-                        // Static initialization is emitted as separate statements below so references within
-                        // those statements resolve through the already-assigned binding instead of the TDZ slot.
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(cdRegistryClassName, classScope, []);
                         var classSymbol = new Symbol(cdClassBinding);
-                        staticInitStatements.Insert(0, new HIRExpressionStatement(
+                        staticInitStatements.Insert(classNameBindingInsertIndex, new HIRExpressionStatement(
                             new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
                     }
 
@@ -2962,7 +2974,7 @@ class HIRMethodBuilder
                     }
 
                     var registryClassName = $"{(classExprScope.DotNetNamespace ?? "Classes")}.{(classExprScope.DotNetTypeName ?? classExprScope.Name)}";
-                    if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements))
+                    if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements, out _))
                     {
                         return false;
                     }
