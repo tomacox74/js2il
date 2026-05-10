@@ -254,52 +254,10 @@ namespace JavaScriptRuntime
             return (double)count;
         }
 
-        private static double ToNumber(object? x)
-        {
-            if (x is null) return double.NaN; // undefined => NaN
-            switch (x)
-            {
-                case JsNull: return 0d; // null => +0
-                case double dd: return dd;
-                case float ff: return ff;
-                case int ii: return ii;
-                case long ll: return ll;
-                case short ss: return ss;
-                case byte bb: return bb;
-                case bool b: return b ? 1d : 0d;
-                case string s:
-                    if (double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed))
-                        return parsed;
-                    return double.NaN;
-            }
-            try { return Convert.ToDouble(x, System.Globalization.CultureInfo.InvariantCulture); }
-            catch { return double.NaN; }
-        }
+        private static double ToNumber(object? x) => TypeUtilities.ToNumber(x);
 
-        private static int ToInt32(object? x)
-        {
-            double d = ToNumber(x);
-            if (double.IsNaN(d) || double.IsInfinity(d) || d == 0) return 0;
-            // ECMAScript ToInt32: modulo 2^32 into the signed range [-2^31, 2^31-1]
-            double two32 = 4294967296.0; // 2^32
-            double two31 = 2147483648.0; // 2^31
-            double n = System.Math.Floor(System.Math.Abs(d));
-            double int32bit = System.Math.IEEERemainder(n, two32);
-            if (int32bit < 0) int32bit += two32;
-            if (d < 0) int32bit = -int32bit;
-            double signed = int32bit >= two31 ? int32bit - two32 : int32bit;
-            return (int)signed;
-        }
+        private static int ToInt32(object? x) => TypeUtilities.ToInt32(x);
 
-        private static uint ToUint32(object? x)
-        {
-            double d = ToNumber(x);
-            if (double.IsNaN(d) || double.IsInfinity(d) || d == 0) return 0u;
-            double two32 = 4294967296.0; // 2^32
-            double n = System.Math.Floor(System.Math.Abs(d));
-            double uint32bit = n % two32;
-            if (d < 0) uint32bit = two32 - uint32bit;
-            return (uint)uint32bit;
-        }
+        private static uint ToUint32(object? x) => TypeUtilities.ToUint32(x);
     }
 }

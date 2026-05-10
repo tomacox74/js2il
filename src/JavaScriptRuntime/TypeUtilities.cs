@@ -140,6 +140,28 @@ namespace JavaScriptRuntime
             return unchecked((int)(long)number);
         }
 
+        /// <summary>
+        /// ECMA-262 §7.1.7 ToUint32 ( argument ).
+        /// Converts argument to an unsigned 32-bit integer in the range [0, 2^32-1].
+        /// </summary>
+        public static uint ToUint32(object? value)
+        {
+            var number = ToNumber(value);
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            const double two32 = 4294967296.0;
+            var uint32bit = global::System.Math.Floor(global::System.Math.Abs(number)) % two32;
+            if (number < 0)
+            {
+                uint32bit = two32 - uint32bit;
+            }
+
+            return (uint)uint32bit;
+        }
+
         // JS ToBoolean coercion used in conditional tests and logical contexts
         public static bool ToBoolean(double value)
         {

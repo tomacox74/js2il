@@ -68,38 +68,65 @@ namespace JavaScriptRuntime
         public static object DefineObjectLiteralDataProperty(object target, object? prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
-            return DefineObjectLiteralDataPropertyCore(
+            return DefineDataPropertyCore(
                 target,
                 Object.ToPropertyKeyString(prop),
                 value,
-                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue));
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
+                enumerable: true);
         }
 
         public static object DefineObjectLiteralDataProperty(object target, string prop, double value)
-            => DefineObjectLiteralDataPropertyCore(
+            => DefineDataPropertyCore(
                 target,
                 prop,
                 value,
-                static (jsObject, key, numberValue) => jsObject.SetNumber(key, numberValue));
+                static (jsObject, key, numberValue) => jsObject.SetNumber(key, numberValue),
+                enumerable: true);
 
         public static object DefineObjectLiteralDataProperty(object target, string prop, bool value)
-            => DefineObjectLiteralDataPropertyCore(
+            => DefineDataPropertyCore(
                 target,
                 prop,
                 value,
-                static (jsObject, key, boolValue) => jsObject.SetBoolean(key, boolValue));
+                static (jsObject, key, boolValue) => jsObject.SetBoolean(key, boolValue),
+                enumerable: true);
 
         public static object DefineObjectLiteralDataProperty(object target, string prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
-            return DefineObjectLiteralDataPropertyCore(
+            return DefineDataPropertyCore(
                 target,
                 prop,
                 value,
-                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue));
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
+                enumerable: true);
         }
 
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
+            => DefineAccessorProperty(target, prop, getter, setter, enumerable: true, createDictionarySlot: true);
+
+        public static object DefineClassElementDataProperty(object target, object? prop, object? value)
+        {
+            ConfigureFunctionNameFromPropertyKey(prop, value);
+            return DefineDataPropertyCore(
+                target,
+                Object.ToPropertyKeyString(prop),
+                value,
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
+                enumerable: false);
+        }
+
+        public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)
+            => DefineAccessorProperty(target, prop, getter, setter, enumerable: false, createDictionarySlot: false);
+
+        private static object DefineAccessorProperty(
+            object target,
+            object? prop,
+            object? getter,
+            object? setter,
+            bool enumerable,
+            bool createDictionarySlot)
         {
             if (target is null || target is JsNull)
             {
@@ -130,13 +157,13 @@ namespace JavaScriptRuntime
             PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = true,
+                Enumerable = enumerable,
                 Configurable = true,
                 Get = getter is null || getter is JsNull ? existingGetter : getter,
                 Set = setter is null || setter is JsNull ? existingSetter : setter
             });
 
-            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
+            if (createDictionarySlot && target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
             {
                 dict[key] = null;
             }
@@ -144,83 +171,12 @@ namespace JavaScriptRuntime
             return target;
         }
 
-        public static object DefineClassElementDataProperty(object target, object? prop, object? value)
-        {
-            if (target is null || target is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            var key = Object.ToPropertyKeyString(prop);
-            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
-            ConfigureFunctionNameFromPropertyKey(prop, value);
-
-            if (target is JsObject jsObject)
-            {
-                jsObject.SetObject(key, value);
-            }
-            else if (target is IDictionary<string, object?> dict)
-            {
-                dict[key] = value;
-            }
-
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Value = value,
-                Writable = true,
-                Enumerable = false,
-                Configurable = true
-            });
-
-            return target;
-        }
-
-        public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)
-        {
-            if (target is null || target is JsNull)
-            {
-                throw new TypeError("Cannot convert undefined or null to object");
-            }
-
-            if (getter is not null && getter is not JsNull && getter is not Delegate)
-            {
-                throw new TypeError("Getter must be a function");
-            }
-
-            if (setter is not null && setter is not JsNull && setter is not Delegate)
-            {
-                throw new TypeError("Setter must be a function");
-            }
-
-            var key = Object.ToPropertyKeyString(prop);
-            Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
-
-            object? existingGetter = null;
-            object? existingSetter = null;
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var existing) && existing.Kind == JsPropertyDescriptorKind.Accessor)
-            {
-                existingGetter = existing.Get;
-                existingSetter = existing.Set;
-            }
-
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = false,
-                Configurable = true,
-                Get = getter is null || getter is JsNull ? existingGetter : getter,
-                Set = setter is null || setter is JsNull ? existingSetter : setter
-            });
-
-            return target;
-        }
-
-        private static object DefineObjectLiteralDataPropertyCore<TValue>(
+        private static object DefineDataPropertyCore<TValue>(
             object target,
             string key,
             TValue value,
-            Action<JsObject, string, TValue> setJsObjectValue)
+            Action<JsObject, string, TValue> setJsObjectValue,
+            bool enumerable)
         {
             if (target is null || target is JsNull)
             {
@@ -243,7 +199,7 @@ namespace JavaScriptRuntime
                 Kind = JsPropertyDescriptorKind.Data,
                 Value = value,
                 Writable = true,
-                Enumerable = true,
+                Enumerable = enumerable,
                 Configurable = true
             });
 
