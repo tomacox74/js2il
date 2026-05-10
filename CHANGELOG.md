@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.15 - 2026-05-10
+
 - compiler/runtime/tests/docs: fix issue #1048 - class static method ABI now uses the correct CLR-static calling convention, fixing parameter-index misalignment for static class methods with parameters. `Object.getOwnPropertyDescriptor()` correctly identifies getter/setter descriptors on class prototypes and static class objects. Class static block declaration order is fixed by using SSA-map lookups (avoiding spurious TDZ sentinel reads during static initialization). Nested classes that extend a globally-scoped parent class now compile correctly. Net improvement: 618→622 Test262 passing, 17→13 failing.
 - runtime/tests/docs/test262: close issue #1047 by fixing JSON.stringify array-replacer/property-order semantics, ordinary-object key ordering after assignment/delete/defineProperty mutations, function-object Object.entries enumeration, and numeric -0 property-key normalization, unskipping the related JSON/Object test262 ports and refreshing ECMA-262 support docs.
 
