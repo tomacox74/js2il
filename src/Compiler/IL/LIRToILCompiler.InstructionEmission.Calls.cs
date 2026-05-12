@@ -639,6 +639,14 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callBaseCtor.ConstructorHandle);
 
+                    var initializeDerivedThis = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.InitializeDerivedConstructorThisBinding),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(initializeDerivedThis);
+
                     // Restore _currentArguments to its pre-super-call state (only if we pushed above).
                     if (allArgc > 0)
                     {
@@ -941,9 +949,11 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
                     // Capture lexical 'this' at arrow creation time.
+                    // - In derived constructors: capture the mutable derived-this binding
+                    //   so arrows created before super() observe TDZ first and the receiver after super().
                     // - In instance methods: ldarg.0
                     // - In static methods: RuntimeServices.GetCurrentThis()
-                    if (methodDescriptor.IsStatic)
+                    if (methodDescriptor.IsDerivedConstructor || methodDescriptor.IsStatic)
                     {
                         var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
                         ilEncoder.OpCode(ILOpCode.Call);

@@ -458,6 +458,7 @@ public record LIRNewUserClass(
     TempVariable? ScopesArray,
     int MinArgCount,
     int MaxArgCount,
+    bool IsDerivedConstructor,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
 

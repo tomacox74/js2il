@@ -50,5 +50,13 @@ internal sealed partial class LIRToILCompiler
 
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(initRef);
+
+        var initializeDerivedThis = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.RuntimeServices),
+            nameof(JavaScriptRuntime.RuntimeServices.InitializeDerivedConstructorThisBinding),
+            parameterTypes: new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(initializeDerivedThis);
     }
 }

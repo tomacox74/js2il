@@ -101,7 +101,7 @@ namespace JavaScriptRuntime
 
         private static T InvokeWithThis<T>(object? boundThis, Func<T> invoke)
         {
-            var previous = RuntimeServices.SetCurrentThis(boundThis);
+            var previous = RuntimeServices.SetCurrentThis(RuntimeServices.ResolveLexicalThis(boundThis));
             try
             {
                 return invoke();

@@ -112,6 +112,7 @@ internal sealed partial class LIRToILCompiler
             //
             // Only apply when we can preserve JS semantics without requiring PL5.4a ctor return override handling.
             if (instruction is LIRNewUserClass newUserClass
+                && !newUserClass.IsDerivedConstructor
                 && i + 1 < MethodBody.Instructions.Count
                 && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeInstanceField
                 && storeInstanceField.Value.Equals(newUserClass.Result))

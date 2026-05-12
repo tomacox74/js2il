@@ -361,6 +361,9 @@ namespace Js2IL.SymbolTables
                 case UnaryExpression ue:
                     return ContainsFreeVariable(ue.Argument, localVariables);
 
+                case SequenceExpression se:
+                    return se.Expressions.Any(expr => ContainsFreeVariable(expr, localVariables));
+
                 case CallExpression ce:
                     return ContainsFreeVariable(ce.Callee, localVariables) ||
                            ce.Arguments.Any(arg => ContainsFreeVariable(arg as Node, localVariables));
@@ -1955,6 +1958,13 @@ namespace Js2IL.SymbolTables
                 case TaggedTemplateExpression tagged:
                     CollectFreeVariables(tagged.Tag, localVariables, targetVariables, result);
                     CollectFreeVariables(tagged.Quasi, localVariables, targetVariables, result);
+                    break;
+
+                case SequenceExpression se:
+                    foreach (var expr in se.Expressions)
+                    {
+                        CollectFreeVariables(expr, localVariables, targetVariables, result);
+                    }
                     break;
 
                 case AssignmentExpression ae:

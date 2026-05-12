@@ -95,6 +95,18 @@ internal sealed partial class LIRToILCompiler
                         // Stack unchanged: [] or [scopes] (PushCurrentArguments is void)
                     }
 
+                    if (newUserClass.IsDerivedConstructor)
+                    {
+                        var pushDerivedThis = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PushDerivedConstructorThisBinding),
+                            parameterTypes: Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(pushDerivedThis);
+                        // Stack unchanged: [] or [scopes]. The binding is mutable so arrows created
+                        // before super() can observe initialization after the super() call.
+                    }
+
                     // In JavaScript, extra constructor arguments are evaluated (side effects) but ignored.
                     // LIR lowering already evaluates all arguments; here we only pass the declared maximum.
                     int argsToPass = Math.Min(argc, newUserClass.MaxArgCount);
@@ -122,6 +134,17 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(popCurrentArguments);
                         // Stack: [instance] (unchanged — PopCurrentArguments returns void)
+                    }
+
+                    if (newUserClass.IsDerivedConstructor)
+                    {
+                        var popDerivedThis = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.PopDerivedConstructorThisBinding),
+                            parameterTypes: Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(popDerivedThis);
+                        // Stack: [instance] (unchanged — PopDerivedConstructorThisBinding returns void)
                     }
 
                     var classTypeForPrototype = default(TypeDefinitionHandle);

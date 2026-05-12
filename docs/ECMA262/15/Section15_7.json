@@ -393,8 +393,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js"
-        ]
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_ThisBeforeSuper_Throws.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js"
+        ],
+        "notes": "Derived constructor this remains in TDZ before super(); arrows created before super capture the deferred this binding and observe the initialized receiver once super() completes before instance field initializers."
       },
       {
         "clause": "15.7.1",

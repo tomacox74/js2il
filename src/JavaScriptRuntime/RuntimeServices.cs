@@ -13,6 +13,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
+    [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
 
@@ -20,6 +21,11 @@ public class RuntimeServices
     // NOTE: Consumers must treat scopes arrays as immutable.
     public static readonly object[] EmptyScopes = new object[1];
     public static readonly object TemporalDeadZoneSentinel = new();
+
+    private sealed class DerivedConstructorThisBinding
+    {
+        public object? Value = TemporalDeadZoneSentinel;
+    }
 
 #if DEBUG
     public static void AssertEmptyScopesUnmodified()
@@ -41,6 +47,49 @@ public class RuntimeServices
         var previous = _currentThis.Value;
         _currentThis.Value = value;
         return previous;
+    }
+
+    public static void PushDerivedConstructorThisBinding()
+    {
+        _derivedConstructorThisStack ??= new Stack<object?>();
+        _derivedConstructorThisStack.Push(_currentThis.Value);
+        _currentThis.Value = new DerivedConstructorThisBinding();
+    }
+
+    public static void InitializeDerivedConstructorThisBinding(object? value)
+    {
+        if (_currentThis.Value is DerivedConstructorThisBinding binding)
+        {
+            binding.Value = value;
+            return;
+        }
+
+        _currentThis.Value = value;
+    }
+
+    public static void PopDerivedConstructorThisBinding()
+    {
+        if (_derivedConstructorThisStack is { Count: > 0 } stack)
+        {
+            _currentThis.Value = stack.Pop();
+            return;
+        }
+
+        _currentThis.Value = null;
+    }
+
+    public static object? ResolveLexicalThis(object? boundThis)
+    {
+        var value = boundThis is DerivedConstructorThisBinding binding
+            ? binding.Value
+            : boundThis;
+
+        if (ReferenceEquals(value, TemporalDeadZoneSentinel))
+        {
+            throw new ReferenceError("Cannot access 'this' before super()");
+        }
+
+        return value;
     }
 
     public static object CreateClassConstructorValue(object typeValue, object scopesValue, object formalParamCountValue)
