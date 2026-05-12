@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c3
+				// Method begins at RVA 0x21d3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21cc
+				// Method begins at RVA 0x21dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -62,7 +62,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x218c
+			// Method begins at RVA 0x2196
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -88,7 +88,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d5
+				// Method begins at RVA 0x21e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -108,7 +108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21de
+				// Method begins at RVA 0x21ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -132,17 +132,19 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a3
+			// Method begins at RVA 0x21ad
 			// Header size: 1
-			// Code size: 22 (0x16)
+			// Code size: 28 (0x1c)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Base::.ctor()
 			IL_0006: ldarg.0
-			IL_0007: ldc.r8 2
-			IL_0010: stfld float64 Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived::derived
-			IL_0015: ret
+			IL_0007: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::InitializeDerivedConstructorThisBinding(object)
+			IL_000c: ldarg.0
+			IL_000d: ldc.r8 2
+			IL_0016: stfld float64 Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived::derived
+			IL_001b: ret
 		} // end of method Derived::.ctor
 
 	} // end of class Derived
@@ -154,7 +156,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ba
+			// Method begins at RVA 0x21ca
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -178,7 +180,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f0
+				// Method begins at RVA 0x2200
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -196,7 +198,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21e7
+			// Method begins at RVA 0x21f7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -222,7 +224,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 304 (0x130)
+		// Code size: 314 (0x13a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Scope,
@@ -286,64 +288,66 @@
 		IL_0082: ldc.i4.0
 		IL_0083: newarr [System.Runtime]System.Object
 		IL_0088: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_008d: newobj instance void Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived::.ctor()
-		IL_0092: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0097: stloc.s 11
-		IL_0099: ldloc.s 11
-		IL_009b: ldtoken Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived
-		IL_00a0: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00a5: ldstr "prototype"
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_00af: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00b4: ldloc.s 11
-		IL_00b6: stloc.3
-		IL_00b7: ldc.i4.0
-		IL_00b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00bd: stloc.s 4
-		IL_00bf: ldloc.3
-		IL_00c0: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
-		IL_00c5: stloc.s 5
-		// loop start (head: IL_00c7)
-			IL_00c7: ldloc.s 5
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_00ce: stloc.s 10
-			IL_00d0: ldloc.s 10
-			IL_00d2: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_00d7: stloc.s 12
-			IL_00d9: ldloc.s 12
-			IL_00db: brtrue IL_0103
+		IL_008d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+		IL_0092: newobj instance void Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived::.ctor()
+		IL_0097: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_009c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_00a1: stloc.s 11
+		IL_00a3: ldloc.s 11
+		IL_00a5: ldtoken Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Derived
+		IL_00aa: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00af: ldstr "prototype"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_00b9: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00be: ldloc.s 11
+		IL_00c0: stloc.3
+		IL_00c1: ldc.i4.0
+		IL_00c2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00c7: stloc.s 4
+		IL_00c9: ldloc.3
+		IL_00ca: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+		IL_00cf: stloc.s 5
+		// loop start (head: IL_00d1)
+			IL_00d1: ldloc.s 5
+			IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+			IL_00d8: stloc.s 10
+			IL_00da: ldloc.s 10
+			IL_00dc: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+			IL_00e1: stloc.s 12
+			IL_00e3: ldloc.s 12
+			IL_00e5: brtrue IL_010d
 
-			IL_00e0: ldloc.s 10
-			IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_00e7: stloc.s 10
-			IL_00e9: ldloc.s 10
-			IL_00eb: stloc.s 6
-			IL_00ed: newobj instance void Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Scope_ForIn_L18C5/Block_L18C19::.ctor()
-			IL_00f2: stloc.s 7
-			IL_00f4: ldloc.s 4
-			IL_00f6: ldloc.s 6
-			IL_00f8: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_00fd: pop
-			IL_00fe: br IL_00c7
+			IL_00ea: ldloc.s 10
+			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+			IL_00f1: stloc.s 10
+			IL_00f3: ldloc.s 10
+			IL_00f5: stloc.s 6
+			IL_00f7: newobj instance void Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived/Scope_ForIn_L18C5/Block_L18C19::.ctor()
+			IL_00fc: stloc.s 7
+			IL_00fe: ldloc.s 4
+			IL_0100: ldloc.s 6
+			IL_0102: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0107: pop
+			IL_0108: br IL_00d1
 		// end loop
 
-		IL_0103: ldloc.s 4
-		IL_0105: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort()
-		IL_010a: pop
-		IL_010b: ldloc.s 4
-		IL_010d: ldc.i4.1
-		IL_010e: newarr [System.Runtime]System.Object
-		IL_0113: dup
-		IL_0114: ldc.i4.0
-		IL_0115: ldstr ","
-		IL_011a: stelem.ref
-		IL_011b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0120: stloc.s 13
-		IL_0122: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0127: ldloc.s 13
-		IL_0129: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_012e: pop
-		IL_012f: ret
+		IL_010d: ldloc.s 4
+		IL_010f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort()
+		IL_0114: pop
+		IL_0115: ldloc.s 4
+		IL_0117: ldc.i4.1
+		IL_0118: newarr [System.Runtime]System.Object
+		IL_011d: dup
+		IL_011e: ldc.i4.0
+		IL_011f: ldstr ","
+		IL_0124: stelem.ref
+		IL_0125: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_012a: stloc.s 13
+		IL_012c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0131: ldloc.s 13
+		IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0138: pop
+		IL_0139: ret
 	} // end of method ControlFlow_ForIn_ClassFields_BaseAndDerived::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_ClassFields_BaseAndDerived
@@ -355,7 +359,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f9
+		// Method begins at RVA 0x2209
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
