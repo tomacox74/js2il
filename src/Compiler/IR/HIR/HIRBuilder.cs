@@ -274,7 +274,7 @@ public static class HIRBuilder
                         {
                             case PropertyDefinition propertyDefinition when !propertyDefinition.Static:
                             {
-                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                                var initBuilder = new HIRMethodBuilder(scope);
                                 var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
                                     ? propertyInit
                                     : null;
@@ -427,7 +427,7 @@ public static class HIRBuilder
                         {
                             case PropertyDefinition propertyDefinition when !propertyDefinition.Static:
                             {
-                                var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                                var initBuilder = new HIRMethodBuilder(scope);
                                 var propertyValueExpr = propertyDefinition.Value is Expression propertyInit
                                     ? propertyInit
                                     : null;

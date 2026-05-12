@@ -2153,6 +2153,12 @@ namespace JavaScriptRuntime
                     throw new TypeError("Value is not a constructor");
                 }
 
+                var isDerivedClassType = type.BaseType is { } baseType && baseType != typeof(object);
+                if (isDerivedClassType)
+                {
+                    RuntimeServices.PushDerivedConstructorThisBinding();
+                }
+
                 object? AttachClassPrototype(object? instance)
                 {
                     if (instance is not null && instance is not JsNull)
@@ -2165,60 +2171,70 @@ namespace JavaScriptRuntime
 
                 try
                 {
-                    return AttachClassPrototype(Activator.CreateInstance(type, callArgs));
-                }
-                catch (MissingMethodException)
-                {
-                    // JS semantics allow missing arguments; treat them as null/undefined.
-                    // Reflection activation does not pad arguments, so fall back to selecting a
-                    // public instance ctor and padding missing args with null.
-                    var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-
-                    foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
+                    try
                     {
-                        var parameters = ctor.GetParameters();
-                        var hasHiddenScopesParameter = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
-                        var jsParameters = hasHiddenScopesParameter ? parameters.Skip(1).ToArray() : parameters;
-                        if (!IsViableConstructorCall(jsParameters, callArgs))
-                        {
-                            continue;
-                        }
-
-                        var invokeArgs = new object?[parameters.Length];
-                        if (hasHiddenScopesParameter)
-                        {
-                            invokeArgs[0] = scopes;
-                        }
-
-                        for (int i = 0; i < jsParameters.Length; i++)
-                        {
-                            var invokeIndex = hasHiddenScopesParameter ? i + 1 : i;
-                            if (i < callArgs.Length)
-                            {
-                                _ = TryCoerceConstructorArg(callArgs[i], jsParameters[i].ParameterType, out var coerced);
-                                invokeArgs[invokeIndex] = coerced;
-                            }
-                            else
-                            {
-                                invokeArgs[invokeIndex] = null;
-                            }
-                        }
-
-                        try
-                        {
-                            return AttachClassPrototype(ctor.Invoke(invokeArgs));
-                        }
-                        catch (TargetInvocationException tie) when (tie.InnerException != null)
-                        {
-                            throw tie.InnerException;
-                        }
+                        return AttachClassPrototype(Activator.CreateInstance(type, callArgs));
                     }
+                    catch (MissingMethodException)
+                    {
+                        // JS semantics allow missing arguments; treat them as null/undefined.
+                        // Reflection activation does not pad arguments, so fall back to selecting a
+                        // public instance ctor and padding missing args with null.
+                        var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
 
-                    throw;
+                        foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
+                        {
+                            var parameters = ctor.GetParameters();
+                            var hasHiddenScopesParameter = parameters.Length > 0 && parameters[0].ParameterType == typeof(object[]);
+                            var jsParameters = hasHiddenScopesParameter ? parameters.Skip(1).ToArray() : parameters;
+                            if (!IsViableConstructorCall(jsParameters, callArgs))
+                            {
+                                continue;
+                            }
+
+                            var invokeArgs = new object?[parameters.Length];
+                            if (hasHiddenScopesParameter)
+                            {
+                                invokeArgs[0] = scopes;
+                            }
+
+                            for (int i = 0; i < jsParameters.Length; i++)
+                            {
+                                var invokeIndex = hasHiddenScopesParameter ? i + 1 : i;
+                                if (i < callArgs.Length)
+                                {
+                                    _ = TryCoerceConstructorArg(callArgs[i], jsParameters[i].ParameterType, out var coerced);
+                                    invokeArgs[invokeIndex] = coerced;
+                                }
+                                else
+                                {
+                                    invokeArgs[invokeIndex] = null;
+                                }
+                            }
+
+                            try
+                            {
+                                return AttachClassPrototype(ctor.Invoke(invokeArgs));
+                            }
+                            catch (TargetInvocationException tie) when (tie.InnerException != null)
+                            {
+                                throw tie.InnerException;
+                            }
+                        }
+
+                        throw;
+                    }
+                    catch (TargetInvocationException tie) when (tie.InnerException != null)
+                    {
+                        throw tie.InnerException;
+                    }
                 }
-                catch (TargetInvocationException tie) when (tie.InnerException != null)
+                finally
                 {
-                    throw tie.InnerException;
+                    if (isDerivedClassType)
+                    {
+                        RuntimeServices.PopDerivedConstructorThisBinding();
+                    }
                 }
             }
 

@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/docs: close issue #1058 by modeling derived-constructor `this` as a mutable TDZ binding that stays uninitialized until `super()` completes, so arrows created before `super()` observe the initialized receiver during instance field initializers while non-derived/simple constructor paths keep their direct fast path behavior.
 
 ## v0.9.15 - 2026-05-10
 
