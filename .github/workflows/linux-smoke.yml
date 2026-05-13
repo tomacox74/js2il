@@ -127,9 +127,11 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Build Jint Comparison Project
+      - name: Build Jint and Okojo comparison projects
         run: |
           cd tests/performance/JintComparison
+          dotnet build -c Release
+          cd ../OkojoComparison
           dotnet build -c Release
 
       - name: Shutdown build server

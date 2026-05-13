@@ -41,9 +41,11 @@ jobs:
         run: |
           dotnet tool install --global --add-source ./src/Cli/bin/Release js2il
       
-      - name: Build Jint Comparison Project
+      - name: Build Jint and Okojo comparison projects
         run: |
           cd tests/performance/JintComparison
+          dotnet build -c Release
+          cd ../OkojoComparison
           dotnet build -c Release
       
       - name: Shutdown build server

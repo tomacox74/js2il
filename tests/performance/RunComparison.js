@@ -1,5 +1,5 @@
 // Performance Comparison Script
-// Compares Node.js vs Jint vs JS2IL performance on PrimeJavaScript.js
+// Compares Node.js vs Jint vs Okojo vs YantraJS vs JS2IL performance on PrimeJavaScript.js
 
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -159,9 +159,48 @@ try {
 console.log();
 
 // ============================================================================
-// 4. JS2IL Benchmark
+// 4. Okojo Benchmark
 // ============================================================================
-log("4. Compiling with JS2IL...", 'yellow');
+log("4. Running Okojo benchmark...", 'yellow');
+try {
+    const okojoDir = path.join(__dirname, 'OkojoComparison');
+    const okojoResult = execSync('dotnet run -c Release', {
+        cwd: okojoDir,
+        encoding: 'utf8',
+        stdio: 'pipe'
+    });
+
+    const okojoTimeMatch = okojoResult.match(/=== Okojo Total Execution Time: (\d+)ms \(([\d.]+)s\) ===/);
+    let okojoMs = 0;
+    if (okojoTimeMatch) {
+        okojoMs = parseInt(okojoTimeMatch[1]);
+    }
+
+    const okojoMatch = okojoResult.match(/rogiervandam-okojo;(\d+);([\d.]+);/);
+    if (okojoMatch) {
+        const okojoPasses = parseInt(okojoMatch[1]);
+        const okojoDuration = parseFloat(okojoMatch[2]);
+        log(`   [OK] Okojo completed: ${okojoMs} ms total`, 'green');
+        log(`        Passes: ${okojoPasses} in ${okojoDuration} s`, 'gray');
+
+        results.push({
+            runtime: "Okojo",
+            totalTimeMs: okojoMs,
+            passes: okojoPasses,
+            passDuration: okojoDuration,
+            passesPerSecond: Math.round((okojoPasses / okojoDuration) * 100) / 100
+        });
+    }
+} catch (error) {
+    log(`   [ERROR] Okojo failed: ${error.message}`, 'red');
+}
+
+console.log();
+
+// ============================================================================
+// 5. JS2IL Benchmark
+// ============================================================================
+log("5. Compiling with JS2IL...", 'yellow');
 try {
     const compileStart = Date.now();
     execSync(`js2il "${path.join(__dirname, 'PrimeJavaScript.js')}" "${path.join(js2ilOutput, 'PrimeJavaScript')}"`, {
@@ -173,7 +212,7 @@ try {
     log(`   [OK] Compilation completed in: ${compileDuration} ms`, 'green');
 
     console.log();
-    log("5. Running JS2IL compiled benchmark...", 'yellow');
+    log("6. Running JS2IL compiled benchmark...", 'yellow');
     const js2ilStart = Date.now();
     const js2ilResult = execSync(`dotnet "${path.join(js2ilOutput, 'PrimeJavaScript', 'PrimeJavaScript.dll')}"`, {
         encoding: 'utf8',
@@ -246,12 +285,23 @@ header("KEY FINDINGS");
 // Calculate comparisons
 const nodeResult = results.find(r => r.runtime === "Node.js");
 const jintResult = results.find(r => r.runtime === "Jint");
+const okojoResult = results.find(r => r.runtime === "Okojo");
 const yantraResult = results.find(r => r.runtime === "YantraJS");
 const js2ilResult = results.find(r => r.runtime === "JS2IL");
 
 if (js2ilResult && jintResult) {
     const js2ilVsJint = Math.round((js2ilResult.passes / jintResult.passes) * 100) / 100;
     log(`  * JS2IL is ${js2ilVsJint}x faster than Jint (interpreted .NET)`, 'green');
+}
+
+if (js2ilResult && okojoResult) {
+    if (js2ilResult.passes > okojoResult.passes) {
+        const js2ilVsOkojo = Math.round((js2ilResult.passes / okojoResult.passes) * 100) / 100;
+        log(`  * JS2IL is ${js2ilVsOkojo}x faster than Okojo`, 'green');
+    } else {
+        const okojoVsJs2il = Math.round((okojoResult.passes / js2ilResult.passes) * 100) / 100;
+        log(`  * Okojo is ${okojoVsJs2il}x faster than JS2IL`, 'yellow');
+    }
 }
 
 if (js2ilResult && yantraResult) {
@@ -279,6 +329,11 @@ if (nodeResult && jintResult) {
     log(`  * Node.js is ${nodeVsJint}x faster than Jint`, 'cyan');
 }
 
+if (nodeResult && okojoResult) {
+    const nodeVsOkojo = Math.round((nodeResult.passes / okojoResult.passes) * 100) / 100;
+    log(`  * Node.js is ${nodeVsOkojo}x faster than Okojo`, 'cyan');
+}
+
 if (nodeResult && yantraResult) {
     const nodeVsYantra = Math.round((nodeResult.passes / yantraResult.passes) * 100) / 100;
     log(`  * Node.js is ${nodeVsYantra}x faster than YantraJS`, 'cyan');
@@ -298,10 +353,12 @@ const jsonOutput = {
     results: {
         node: nodeResult ? { passes: nodeResult.passes, passesPerSecond: nodeResult.passesPerSecond } : null,
         js2il: js2ilResult ? { passes: js2ilResult.passes, passesPerSecond: js2ilResult.passesPerSecond, compileDuration: js2ilResult.compileDuration } : null,
+        okojo: okojoResult ? { passes: okojoResult.passes, passesPerSecond: okojoResult.passesPerSecond } : null,
         yantraJS: yantraResult ? { passes: yantraResult.passes, passesPerSecond: yantraResult.passesPerSecond } : null,
         jint: jintResult ? { passes: jintResult.passes, passesPerSecond: jintResult.passesPerSecond } : null
     },
     comparisons: {
+        vsOkojo: js2ilResult && okojoResult ? Math.round((js2ilResult.passes / okojoResult.passes) * 100) / 100 : null,
         vsYantraJS: js2ilResult && yantraResult ? Math.round((js2ilResult.passes / yantraResult.passes) * 100) / 100 : null,
         vsJint: js2ilResult && jintResult ? Math.round((js2ilResult.passes / jintResult.passes) * 100) / 100 : null,
         vsNode: js2ilResult && nodeResult ? Math.round((nodeResult.passes / js2ilResult.passes) * 100) / 100 : null
