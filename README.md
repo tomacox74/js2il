@@ -120,7 +120,7 @@ dotnet publish -c Release
 ## Release pipeline
 
 
-When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build/test the solution, then pack and publish the coordinated NuGet package set: `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
+When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build the solution, run the coordinated `npm run release:validate` gate, then pack and publish the coordinated NuGet package set: `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK`. The same workflow also supports manual dispatch with a release-tag input so a failed tagged publish can be retried without moving the release tag.
 
 The legacy `.github/workflows/release.yml` workflow still produces a published artifact bundle, but NuGet publishing happens in `.github/workflows/publish-tool.yml`.
 
