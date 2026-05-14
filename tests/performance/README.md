@@ -8,7 +8,7 @@ This directory provides two complementary performance testing approaches:
 
 ### 1. Quick Comparison Harness (Legacy)
 
-**Location:** `RunComparison.js`, `JintComparison/`, `YantraJSComparison/`
+**Location:** `RunComparison.js`, `JintComparison/`, `OkojoComparison/`, `YantraJSComparison/`
 
 **Purpose:** Fast, simple throughput comparisons for smoke testing
 
@@ -76,9 +76,20 @@ dotnet run -c Release
 Node.js script that:
 1. Runs the Node.js benchmark
 2. Runs the Jint benchmark
-3. Compiles the JavaScript using JS2IL
-4. Runs the JS2IL-compiled native code
-5. Compares all three results with detailed statistics
+3. Runs the Okojo benchmark
+4. Runs the YantraJS benchmark
+5. Compiles the JavaScript using JS2IL
+6. Runs the JS2IL-compiled native code
+7. Compares all results with detailed statistics
+
+### OkojoComparison/
+A C# console application that uses the fully managed Okojo JavaScript engine to execute the benchmark with lightweight host shims for `console`, `process.argv`, and `perf_hooks`.
+
+**Build & Run:**
+```powershell
+cd OkojoComparison
+dotnet run -c Release
+```
 
 **Run:**
 ```bash
