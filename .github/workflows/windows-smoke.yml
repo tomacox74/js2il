@@ -139,11 +139,14 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Build Jint Comparison Project
+      - name: Build Jint and Okojo comparison projects
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           Set-Location tests/performance/JintComparison
+          dotnet build -c Release
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Set-Location ..\OkojoComparison
           dotnet build -c Release
           if ($LASTEXITCODE -ne 0) { exit 1 }
 

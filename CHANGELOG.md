@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tooling/perf/docs: add Okojo to the prime benchmark comparison harness, build the new comparison project in the Linux/Windows smoke and performance workflows, and refresh the performance comparison docs.
 
 ## v0.9.16 - 2026-05-12
 
