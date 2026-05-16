@@ -10,7 +10,7 @@ Successfully implemented a comprehensive BenchmarkDotNet-based performance bench
 
 ```
 tests/performance/Benchmarks/
-├── Scenarios/              # 5 JavaScript benchmark scripts
+├── Scenarios/              # Jint-derived JavaScript benchmark scripts
 │   ├── minimal.js
 │   ├── evaluation.js
 │   ├── evaluation-modern.js
@@ -42,7 +42,7 @@ Three runtime adapters implementing `IJavaScriptRuntime`:
 
 ### 3. Benchmark Scenarios
 
-5 scenarios ported from Jint benchmark suite (BSD-2-Clause licensed):
+The suite started with 5 scenarios ported from the Jint benchmark suite, and now benchmarks the full checked-in root scenario catalog (currently 19 scripts) for cross-runtime comparisons.
 
 1. **minimal.js** (21 chars) - Basic arithmetic (`1 + 1 === 2`)
 2. **evaluation.js** (252 chars) - Object properties, recursion (fibonacci)
@@ -56,7 +56,7 @@ All scenarios include "use strict" directive for js2il compatibility.
 
 - **JavaScriptRuntimeBenchmarks**: Cross-runtime comparison
   - Benchmarks: Node.js, Jint, js2il (compile+execute)
-  - Parameterized across all 5 scenarios
+  - Parameterized across the full checked-in root scenario catalog
   
 - **Js2ILPhasedBenchmarks**: Separate compile/execute phases
   - Benchmarks: js2il compile, js2il execute (pre-compiled)
@@ -120,7 +120,7 @@ Comprehensive validation test (`ValidationTest.cs`):
 - ✅ Jint: ~77ms execution
 - ✅ Node.js: ~31ms execution (fastest)
 - ✅ js2il: ~280-360ms compile + ~42-65ms execution
-- ✅ All 5 scenarios present and loadable
+- ✅ Representative scenarios across the expanded root catalog are present and loadable
 - ✅ Build successful (0 warnings, 0 errors)
 
 ## Technical Highlights
@@ -169,7 +169,7 @@ All benchmark scripts properly attributed:
 ### Validation Tests Passed
 
 - ✅ All runtime adapters execute minimal.js successfully
-- ✅ All 5 scenarios load without errors
+- ✅ Representative scenarios from the expanded catalog load without errors
 - ✅ Build succeeds in Release mode
 - ✅ No blocking issues found
 

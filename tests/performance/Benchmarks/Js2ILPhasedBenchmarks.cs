@@ -45,21 +45,19 @@ public class Js2ILPhasedBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        // Load all benchmark scripts
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
-        
-        var scriptFiles = Directory.GetFiles(scriptsDir, "*.js")
-            .Where(path => !TemporarilyExcludedScriptNames.Contains(Path.GetFileNameWithoutExtension(path)))
-            .OrderBy(path => path, StringComparer.Ordinal)
+
+        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
+            .Where(scenario => !TemporarilyExcludedScriptNames.Contains(scenario.ScriptName))
             .ToArray();
 
-        for (int i = 0; i < scriptFiles.Length; i++)
+        for (int i = 0; i < scenarios.Length; i++)
         {
-            var scriptPath = scriptFiles[i];
-            var scriptFile = Path.GetFileName(scriptPath);
-            var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-            var scenarioKey = scriptName;
-            var scriptContent = File.ReadAllText(scriptPath);
+            var scenario = scenarios[i];
+            var scenarioKey = scenario.Key;
+            var scriptName = scenario.ScriptName;
+            var scriptFile = scriptName + ".js";
+            var scriptContent = scenario.Content;
             _scripts[scenarioKey] = scriptContent;
             _scenarioKeyToScriptName[scenarioKey] = scriptName;
             _jintPreparedScripts[scenarioKey] = Engine.PrepareScript(scriptContent, scriptFile);
@@ -168,15 +166,10 @@ public class Js2ILPhasedBenchmarks
         }
 
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
-        if (!Directory.Exists(scriptsDir))
-        {
-            return Array.Empty<string>();
-        }
-
-        return Directory.GetFiles(scriptsDir, "*.js")
-            .Select(Path.GetFileNameWithoutExtension)
+        return BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
+            .Select(scenario => scenario.Key)
             .Where(name => !string.IsNullOrWhiteSpace(name) && !TemporarilyExcludedScriptNames.Contains(name))
-            .OrderBy(name => name)!;
+            .OrderBy(name => name, StringComparer.Ordinal);
     }
 
     [Benchmark(Description = "js2il compile")]

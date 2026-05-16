@@ -20,6 +20,7 @@ namespace Benchmarks;
 public class JavaScriptRuntimeBenchmarks
 {
     private readonly Dictionary<string, string> _scripts = new();
+    private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly JintRuntime _jintRuntime = new();
     private readonly NodeJsRuntime _nodeRuntime = new();
     private readonly Js2ILRuntime _js2ilRuntime = new();
@@ -27,30 +28,12 @@ public class JavaScriptRuntimeBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        // Load all benchmark scripts
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
-        
-        var scriptFiles = new[]
-        {
-            "minimal.js",
-            "evaluation.js",
-            "evaluation-modern.js",
-            "stopwatch.js",
-            "array-stress.js"
-        };
 
-        foreach (var scriptFile in scriptFiles)
+        foreach (var scenario in BenchmarkScenarioCatalog.LoadScenarios(scriptsDir))
         {
-            var path = Path.Combine(scriptsDir, scriptFile);
-            if (File.Exists(path))
-            {
-                var scriptName = Path.GetFileNameWithoutExtension(scriptFile);
-                _scripts[scriptName] = File.ReadAllText(path);
-            }
-            else
-            {
-                Console.WriteLine($"Warning: Script not found: {path}");
-            }
+            _scripts[scenario.Key] = scenario.Content;
+            _scenarioKeyToScriptName[scenario.Key] = scenario.ScriptName;
         }
 
         if (_scripts.Count == 0)
@@ -66,26 +49,19 @@ public class JavaScriptRuntimeBenchmarks
     {
         if (_scripts.Count > 0)
         {
-            return _scripts.Keys;
+            return _scripts.Keys.OrderBy(name => name, StringComparer.Ordinal);
         }
 
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
-        if (!Directory.Exists(scriptsDir))
-        {
-            return Array.Empty<string>();
-        }
-
-        return Directory.GetFiles(scriptsDir, "*.js")
-            .Select(Path.GetFileNameWithoutExtension)
-            .Where(name => !string.IsNullOrWhiteSpace(name))
-            .OrderBy(name => name)!;
+        return BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
+            .Select(scenario => scenario.Key);
     }
 
     [Benchmark(Description = "Node.js")]
     public void NodeJs()
     {
         var script = _scripts[ScriptName];
-        var result = _nodeRuntime.Execute(script, $"{ScriptName}.js");
+        var result = _nodeRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
         
         if (!result.Success)
         {
@@ -97,7 +73,7 @@ public class JavaScriptRuntimeBenchmarks
     public void Jint()
     {
         var script = _scripts[ScriptName];
-        var result = _jintRuntime.Execute(script, $"{ScriptName}.js");
+        var result = _jintRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
         
         if (!result.Success)
         {
@@ -109,11 +85,18 @@ public class JavaScriptRuntimeBenchmarks
     public void Js2IL_Total()
     {
         var script = _scripts[ScriptName];
-        var result = _js2ilRuntime.Execute(script, $"{ScriptName}.js");
+        var result = _js2ilRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
         
         if (!result.Success)
         {
             throw new Exception($"js2il execution failed: {result.Error}");
         }
+    }
+
+    private string ResolveScriptName(string scenarioKey)
+    {
+        return _scenarioKeyToScriptName.TryGetValue(scenarioKey, out var scriptName)
+            ? scriptName
+            : scenarioKey;
     }
 }
