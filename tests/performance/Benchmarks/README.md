@@ -98,6 +98,8 @@ Benchmarks js2il compile and execute phases separately, alongside Jint prepare a
 dotnet run -c Release -- --phased
 ```
 
+If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
+
 #### Late-Bound Dispatch Comparison
 Runs a research-only microbenchmark that compares `JavaScriptRuntime.Object.CallMember*` against CLR-focused DLR call sites produced by C# `dynamic` and by a custom runtime-name `CallSiteBinder`:
 

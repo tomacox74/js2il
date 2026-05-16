@@ -33,13 +33,6 @@ public class Js2ILPhasedBenchmarks
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
     private readonly Dictionary<string, string> _compiledModuleIds = new();
     private readonly Dictionary<string, string> _js2IlCompileFailures = new();
-    // TODO: Fix these scenarios for phased js2il benchmarks or delete them, then remove this temporary exclusion.
-    private static readonly HashSet<string> TemporarilyExcludedScriptNames = new(StringComparer.Ordinal)
-    {
-        "evaluation",
-        "evaluation-modern",
-        "linq-js"
-    };
     private string _tempDir = "";
 
     [GlobalSetup]
@@ -47,11 +40,9 @@ public class Js2ILPhasedBenchmarks
     {
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
 
-        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
-            .Where(scenario => !TemporarilyExcludedScriptNames.Contains(scenario.ScriptName))
-            .ToArray();
+        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir);
 
-        for (int i = 0; i < scenarios.Length; i++)
+        for (int i = 0; i < scenarios.Count; i++)
         {
             var scenario = scenarios[i];
             var scenarioKey = scenario.Key;
@@ -156,30 +147,19 @@ public class Js2ILPhasedBenchmarks
     {
         if (_scripts.Count > 0)
         {
-            var names = _scripts.Keys.AsEnumerable();
-            if (_js2IlCompileFailures.Count > 0)
-            {
-                names = names.Where(name => !_js2IlCompileFailures.ContainsKey(name));
-            }
-
-            return names.OrderBy(name => name, StringComparer.Ordinal);
+            return _scripts.Keys.OrderBy(name => name, StringComparer.Ordinal);
         }
 
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
         return BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
             .Select(scenario => scenario.Key)
-            .Where(name => !string.IsNullOrWhiteSpace(name) && !TemporarilyExcludedScriptNames.Contains(name))
+            .Where(name => !string.IsNullOrWhiteSpace(name))
             .OrderBy(name => name, StringComparer.Ordinal);
     }
 
     [Benchmark(Description = "js2il compile")]
     public void Js2IL_Compile()
     {
-        if (_js2IlCompileFailures.TryGetValue(ScriptName, out _))
-        {
-            return;
-        }
-
         var script = _scripts[ScriptName];
         var resolvedScriptName = ResolveScriptName(ScriptName);
         var tempScriptFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.js");
@@ -193,7 +173,10 @@ public class Js2ILPhasedBenchmarks
             var options = new CompilerOptions { OutputDirectory = tempOutputDir };
             var serviceProvider = CompilerServices.BuildServiceProvider(options);
             var compiler = serviceProvider.GetRequiredService<Compiler>();
-            compiler.Compile(tempScriptFile, resolvedScriptName);
+            if (!compiler.Compile(tempScriptFile, resolvedScriptName))
+            {
+                throw new InvalidOperationException($"js2il compile benchmark failed for scenario '{resolvedScriptName}'.");
+            }
         }
         finally
         {
@@ -214,9 +197,10 @@ public class Js2ILPhasedBenchmarks
     [Benchmark(Description = "js2il execute (pre-compiled)")]
     public void Js2IL_ExecuteOnly()
     {
-        if (_js2IlCompileFailures.TryGetValue(ScriptName, out _))
+        if (_js2IlCompileFailures.TryGetValue(ScriptName, out var failure))
         {
-            return;
+            throw new InvalidOperationException(
+                $"js2il phased setup failed for scenario '{ResolveScriptName(ScriptName)}': {failure}");
         }
 
         var assembly = _compiledAssemblies[ScriptName];

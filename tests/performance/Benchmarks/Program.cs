@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Reports;
+using BenchmarkDotNet.Running;
 using Benchmarks;
 
 // Run benchmarks based on command line arguments
@@ -14,7 +15,8 @@ else
     if (programArgs.Length > 0 && programArgs[0] == "--dispatch")
     {
         // Run the focused late-bound dispatch microbenchmarks without interactive benchmark selection.
-        BenchmarkRunner.Run<LateBoundDispatchBenchmarks>(args: programArgs.Skip(1).ToArray());
+        var summary = BenchmarkRunner.Run<LateBoundDispatchBenchmarks>(args: programArgs.Skip(1).ToArray());
+        SetExitCodeFromSummaries([summary]);
     }
     else
     {
@@ -39,7 +41,8 @@ else
             switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks)]);
         }
 
-        switcher.Run(benchmarkArgs);
+        var summaries = switcher.Run(benchmarkArgs);
+        SetExitCodeFromSummaries(summaries);
     }
 }
 
@@ -51,3 +54,40 @@ Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch 
 Console.WriteLine("  dotnet run -c Release --phased # Run js2il phased + Jint prepared comparison");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
+
+static void SetExitCodeFromSummaries(IEnumerable<Summary> summaries)
+{
+    var summaryList = summaries.ToArray();
+    var failedBenchmarks = summaryList
+        .SelectMany(summary => summary.Reports
+            .Where(report => !report.Success)
+            .Select(report => report.BenchmarkCase.ToString()))
+        .Distinct(StringComparer.Ordinal)
+        .ToArray();
+
+    var hasValidationFailures = summaryList.Any(summary =>
+        summary.HasCriticalValidationErrors || summary.ValidationErrors.Any());
+
+    if (!hasValidationFailures && failedBenchmarks.Length == 0)
+    {
+        return;
+    }
+
+    if (failedBenchmarks.Length > 0)
+    {
+        Console.Error.WriteLine();
+        Console.Error.WriteLine("Benchmark run failed. Cases with issues:");
+        foreach (var failedBenchmark in failedBenchmarks)
+        {
+            Console.Error.WriteLine($"  {failedBenchmark}");
+        }
+    }
+
+    if (hasValidationFailures)
+    {
+        Console.Error.WriteLine();
+        Console.Error.WriteLine("Benchmark run failed due to BenchmarkDotNet validation errors.");
+    }
+
+    Environment.ExitCode = 1;
+}
