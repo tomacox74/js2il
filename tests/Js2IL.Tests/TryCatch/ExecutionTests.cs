@@ -36,5 +36,8 @@ namespace Js2IL.Tests.TryCatch
 
         [Fact]
         public Task TryCatch_CallMember_MissingMethod_IsTypeError() { var testName = nameof(TryCatch_CallMember_MissingMethod_IsTypeError); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task TryCatch_NewExpression_UnknownGlobalIdentifier() { var testName = nameof(TryCatch_NewExpression_UnknownGlobalIdentifier); return ExecutionTest(testName); }
     }
 }

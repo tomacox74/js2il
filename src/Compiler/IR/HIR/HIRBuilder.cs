@@ -2684,6 +2684,16 @@ class HIRMethodBuilder
                     && (typeof(Delegate).IsAssignableFrom(globalThisProperty.PropertyType)
                         || typeof(Type).IsAssignableFrom(globalThisProperty.PropertyType));
 
+                var newArgExprs = new List<HIRExpression>();
+                foreach (var arg in newExpr.Arguments)
+                {
+                    if (!TryParseExpression(arg, out var argHirExpr))
+                    {
+                        return false;
+                    }
+                    newArgExprs.Add(argHirExpr!);
+                }
+
                 if (!isBuiltInError
                     && !isArrayCtor
                     && !isStringCtor
@@ -2693,17 +2703,10 @@ class HIRMethodBuilder
                     && intrinsicType == null
                     && !isConstructibleGlobalThisProperty)
                 {
-                    return false;
-                }
-
-                var newArgExprs = new List<HIRExpression>();
-                foreach (var arg in newExpr.Arguments)
-                {
-                    if (!TryParseExpression(arg, out var argHirExpr))
-                    {
-                        return false;
-                    }
-                    newArgExprs.Add(argHirExpr!);
+                    // Unknown global constructor values (for example legacy host globals like Enumerator)
+                    // should lower through the dynamic ConstructValue path rather than being rejected.
+                    hirExpr = new HIRNewExpression(new HIRVariableExpression(newCalleeSymbol), newArgExprs);
+                    return true;
                 }
 
                 if (isBuiltInError && newArgExprs.Count > 1)
