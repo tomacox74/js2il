@@ -41,7 +41,7 @@ Benchmarks/
 
 ### Core Scenarios
 
-Benchmark runners discover all `Scenarios/*.js` files at runtime (currently 19). The list below highlights the core scenarios.
+Benchmark runners discover the full root-level `Scenarios\*.js` catalog at runtime (currently 19 scenarios in the checked-in Jint-derived slice). The list below highlights a few representative scenarios.
 
 1. **minimal.js** - Simple arithmetic (`1 + 1 === 2`)
    - Purpose: Baseline minimal execution overhead
@@ -62,6 +62,8 @@ Benchmark runners discover all `Scenarios/*.js` files at runtime (currently 19).
 5. **array-stress.js** - Array manipulation stress test
    - Purpose: Array performance (push, pop, shift, unshift, splice, slice)
    - Tests: High-volume array operations
+
+Additional discovered scenarios include the broader Dromaeo-derived object/string/regexp/base64 cases, `linq-js`, and the modern stopwatch variants. The cross-runtime suite now runs this full file-backed catalog rather than the original five-script bootstrap subset.
 
 ## Running Benchmarks
 
@@ -95,6 +97,8 @@ Benchmarks js2il compile and execute phases separately, alongside Jint prepare a
 ```powershell
 dotnet run -c Release -- --phased
 ```
+
+If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
 
 #### Late-Bound Dispatch Comparison
 Runs a research-only microbenchmark that compares `JavaScriptRuntime.Object.CallMember*` against CLR-focused DLR call sites produced by C# `dynamic` and by a custom runtime-name `CallSiteBinder`:
@@ -153,8 +157,8 @@ dotnet run -c Release -- --exporters html,json,markdown
 
 When comparing runtimes, consider:
 
-1. **Jint vs js2il**: js2il typically 5-10x faster (AOT vs interpreted)
-2. **Node.js vs js2il**: Node.js typically 10-50x faster (mature JIT vs young AOT)
+1. **Jint vs js2il**: js2il should generally win on steady-state .NET execution, but the exact ratio is scenario-dependent
+2. **Node.js vs js2il**: Node.js often remains ahead on mature JIT-heavy workloads
 3. **Compile overhead**: js2il compile time can exceed execution for short-running scripts
 
 ## Output
@@ -270,10 +274,9 @@ Check js2il logs in `BenchmarkDotNet.Artifacts/logs/`.
 When adding new scenarios:
 
 1. Add JavaScript file to `Scenarios/`
-2. Update scenario list in benchmark classes
-3. Document provenance in `Compliance/PROVENANCE.md`
-4. Verify all three runtimes can execute the script
-5. Update this README with scenario description
+2. Document provenance in `Compliance/PROVENANCE.md`
+3. Verify all three runtimes can execute the script
+4. Update this README with scenario description if it adds a new workload family
 
 ## References
 

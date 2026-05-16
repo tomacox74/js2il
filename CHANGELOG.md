@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tooling/perf/docs: expand the BenchmarkDotNet scenario catalog, make phased js2il benchmark failures surface explicitly instead of being skipped, and make benchmark runs exit non-zero when any benchmark case fails so broken perf scripts are not misreported as successful timings.
 
 ## v0.9.17 - 2026-05-14
 

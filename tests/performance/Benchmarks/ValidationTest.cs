@@ -11,8 +11,27 @@ public static class ValidationTest
     {
         // Test runtime adapters with minimal.js
         var script = "\"use strict\";\nvar x = 1 + 1 === 2;";
+        var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
+        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir);
+        var requiredScenarios = new[]
+        {
+            "minimal",
+            "dromaeo-object-array",
+            "linq-js",
+            "stopwatch-modern"
+        };
 
         Console.WriteLine("Testing runtime adapters...\n");
+
+        Console.WriteLine($"Discovered {scenarios.Count} BenchmarkDotNet scenarios.");
+        foreach (var requiredScenario in requiredScenarios)
+        {
+            if (!scenarios.Any(scenario => string.Equals(scenario.Key, requiredScenario, StringComparison.Ordinal)))
+            {
+                throw new InvalidOperationException($"Expected benchmark scenario '{requiredScenario}' was not found.");
+            }
+        }
+        Console.WriteLine($"Verified representative scenario discovery: {string.Join(", ", requiredScenarios)}");
 
         // Test Jint
         Console.WriteLine("1. Testing Jint...");
