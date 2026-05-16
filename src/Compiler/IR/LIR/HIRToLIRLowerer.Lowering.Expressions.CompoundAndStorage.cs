@@ -14,8 +14,16 @@ public sealed partial class HIRToLIRLowerer
     {
         result = CreateTempVariable();
 
-        var leftType = GetTempStorage(currentValue).ClrType;
-        var rightType = GetTempStorage(rhsValue).ClrType;
+        var leftStorage = GetTempStorage(currentValue);
+        var rightStorage = GetTempStorage(rhsValue);
+        var leftType = leftStorage.ClrType;
+        var rightType = rightStorage.ClrType;
+
+        bool LeftIsUnboxedDouble() =>
+            leftStorage.Kind == ValueStorageKind.UnboxedValue && leftType == typeof(double);
+
+        bool RightIsUnboxedDouble() =>
+            rightStorage.Kind == ValueStorageKind.UnboxedValue && rightType == typeof(double);
 
         // Most compound operators follow JS numeric semantics (ToNumber / ToInt32 / ToUint32 depending on op).
         // In IR lowering, index/property reads come back as object, so we must support numeric coercion here.
@@ -23,6 +31,8 @@ public sealed partial class HIRToLIRLowerer
         {
             currentValue = EnsureNumber(currentValue);
             rhsValue = EnsureNumber(rhsValue);
+            leftStorage = GetTempStorage(currentValue);
+            rightStorage = GetTempStorage(rhsValue);
             leftType = typeof(double);
             rightType = typeof(double);
             return true;
@@ -32,7 +42,7 @@ public sealed partial class HIRToLIRLowerer
         {
             case Acornima.Operator.AdditionAssignment:
                 // Number + Number
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRAddNumber(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -46,7 +56,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
                 // Dynamic addition (unknown types). Prefer avoiding boxing if exactly one side is already an unboxed double.
-                if (leftType == typeof(double) && rightType != typeof(double))
+                if (LeftIsUnboxedDouble() && !RightIsUnboxedDouble())
                 {
                     var rightBoxedForAdd = EnsureObject(rhsValue);
                     _methodBodyIR.Instructions.Add(new LIRAddDynamicDoubleObject(currentValue, rightBoxedForAdd, result));
@@ -54,7 +64,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                if (leftType != typeof(double) && rightType == typeof(double))
+                if (!LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     var leftBoxedForAdd = EnsureObject(currentValue);
                     _methodBodyIR.Instructions.Add(new LIRAddDynamicObjectDouble(leftBoxedForAdd, rhsValue, result));
@@ -70,11 +80,11 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case Acornima.Operator.SubtractionAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRSubNumber(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -84,7 +94,7 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.MultiplicationAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
@@ -94,11 +104,11 @@ public sealed partial class HIRToLIRLowerer
                 return true;
 
             case Acornima.Operator.DivisionAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRDivNumber(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -108,11 +118,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.RemainderAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRModNumber(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -122,11 +132,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.ExponentiationAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRExpNumber(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -136,11 +146,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseAndAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -150,11 +160,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseOrAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRBitwiseOr(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -164,11 +174,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseXorAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRBitwiseXor(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -178,11 +188,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.LeftShiftAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRLeftShift(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -192,11 +202,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.RightShiftAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRRightShift(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
@@ -206,11 +216,11 @@ public sealed partial class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.UnsignedRightShiftAssignment:
-                if (leftType != typeof(double) || rightType != typeof(double))
+                if (!LeftIsUnboxedDouble() || !RightIsUnboxedDouble())
                 {
                     EnsureNumericOperands();
                 }
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (LeftIsUnboxedDouble() && RightIsUnboxedDouble())
                 {
                     _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(currentValue, rhsValue, result));
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
