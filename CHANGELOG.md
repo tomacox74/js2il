@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.19 - 2026-05-17
+
 - tooling/perf/docs: replace the default BenchmarkDotNet direct Node.js process-per-iteration comparison with ClearScript hosted V8, so the .NET benchmark suite compares in-process JavaScript execution paths instead of mixing Node process startup into runtime timings.
 
 ## v0.9.18 - 2026-05-16
