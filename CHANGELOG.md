@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/docs: fix issue #1059 by supporting `super()` calls to regular function-valued class bases, preserving returned replacement objects/proxies as the derived receiver, routing public field initialization through proxy-observable define-property semantics for replacement receivers, and unskipping the related test262 class tests.
 
 ## v0.9.19 - 2026-05-17
 

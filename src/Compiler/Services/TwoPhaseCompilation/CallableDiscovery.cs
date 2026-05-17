@@ -181,6 +181,33 @@ public sealed class CallableDiscovery
         {
             return;
         }
+
+        var superClassExpression = astNode switch
+        {
+            ClassDeclaration cd => cd.SuperClass,
+            ClassExpression ce => ce.SuperClass,
+            _ => null
+        };
+        superClassExpression = UnwrapExpression(superClassExpression);
+
+        if (superClassExpression is FunctionExpression superFunc
+            && TryFindDescendantScopeForAstNode(classScope, superFunc, out var superFuncScope))
+        {
+            _discovered.Add(new CallableId
+            {
+                Kind = CallableKind.FunctionExpression,
+                DeclaringScopeName = $"{parentScopeName}/{className}",
+                Name = (superFunc.Id as Identifier)?.Name,
+                Location = SourceLocation.FromNode(superFunc),
+                JsParamCount = CountJsParameters(superFunc.Params),
+                NeedsArgumentsObject = HasImplicitArgumentsBinding(superFuncScope),
+                HasRestParameters = superFuncScope.HasRestParameters,
+                UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(superFuncScope),
+                ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(superFuncScope),
+                IncludeCalleeInArgumentsObject = false,
+                AstNode = superFunc
+            });
+        }
         
         // Discover constructor
         var ctor = classBody.Body
@@ -415,10 +442,48 @@ public sealed class CallableDiscovery
         return null;
     }
 
+    private static bool TryFindDescendantScopeForAstNode(Scope scope, Node astNode, out Scope found)
+    {
+        foreach (var child in scope.Children)
+        {
+            if (ReferenceEquals(child.AstNode, astNode))
+            {
+                found = child;
+                return true;
+            }
+
+            if (TryFindDescendantScopeForAstNode(child, astNode, out found))
+            {
+                return true;
+            }
+        }
+
+        found = null!;
+        return false;
+    }
+
     private static bool HasImplicitArgumentsBinding(Scope functionScope)
     {
         return functionScope.Bindings.TryGetValue("arguments", out var binding)
             && ReferenceEquals(binding.DeclarationNode, functionScope.AstNode);
+    }
+
+    private static Expression? UnwrapExpression(Expression? expression)
+    {
+        while (true)
+        {
+            expression = expression switch
+            {
+                ParenthesizedExpression parenthesized => parenthesized.Expression,
+                ChainExpression chain => chain.Expression,
+                _ => expression
+            };
+
+            if (expression is not ParenthesizedExpression and not ChainExpression)
+            {
+                return expression;
+            }
+        }
     }
     
     /// <summary>

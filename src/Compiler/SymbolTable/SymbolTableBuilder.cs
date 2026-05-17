@@ -728,6 +728,10 @@ namespace Js2IL.SymbolTables
                     classScope.DotNetNamespace = BuildClassRegistryNamespace(globalScope, currentScope, classDecl, forceUniqueSuffix: currentScope.Kind != ScopeKind.Global);
                     classScope.DotNetTypeName = SanitizeForMetadata(className);
                     currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, currentScope, classDecl);
+                    if (UnwrapExpression(classDecl.SuperClass) is FunctionExpression classSuperFunction)
+                    {
+                        BuildScopeRecursive(globalScope, classSuperFunction, classScope);
+                    }
                     // Process class body members for nested functions or fields later if needed
                     foreach (var element in classDecl.Body.Body)
                     {
@@ -858,6 +862,11 @@ namespace Js2IL.SymbolTables
                     if (!classExprScope.Bindings.ContainsKey(classExprName!))
                     {
                         classExprScope.Bindings[classExprName!] = new BindingInfo(classExprName!, BindingKind.Let, classExprScope, classExpr);
+                    }
+
+                    if (UnwrapExpression(classExpr.SuperClass) is FunctionExpression classExprSuperFunction)
+                    {
+                        BuildScopeRecursive(globalScope, classExprSuperFunction, classExprScope);
                     }
 
                     foreach (var element in classExpr.Body.Body)
@@ -1702,6 +1711,24 @@ namespace Js2IL.SymbolTables
                 }
 
                 scope = scope.Parent;
+            }
+        }
+
+        private static Expression? UnwrapExpression(Expression? expression)
+        {
+            while (true)
+            {
+                expression = expression switch
+                {
+                    ParenthesizedExpression parenthesized => parenthesized.Expression,
+                    ChainExpression chain => chain.Expression,
+                    _ => expression
+                };
+
+                if (expression is not ParenthesizedExpression and not ChainExpression)
+                {
+                    return expression;
+                }
             }
         }
 

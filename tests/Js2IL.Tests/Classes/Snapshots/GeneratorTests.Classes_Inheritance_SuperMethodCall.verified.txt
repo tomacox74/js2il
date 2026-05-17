@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2184
+				// Method begins at RVA 0x2190
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218d
+				// Method begins at RVA 0x2199
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2132
+			// Method begins at RVA 0x213e
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -75,7 +75,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x217c
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -97,7 +97,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2196
+				// Method begins at RVA 0x21a2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -117,7 +117,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219f
+				// Method begins at RVA 0x21ab
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -138,7 +138,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x213a
+			// Method begins at RVA 0x2146
 			// Header size: 1
 			// Code size: 13 (0xd)
 			.maxstack 8
@@ -156,7 +156,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2154
 			// Header size: 12
 			// Code size: 28 (0x1c)
 			.maxstack 8
@@ -188,7 +188,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217b
+			// Method begins at RVA 0x2187
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -214,7 +214,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 214 (0xd6)
+		// Code size: 226 (0xe2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Inheritance_SuperMethodCall/Scope,
@@ -274,23 +274,26 @@
 		IL_0089: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
 		IL_008e: newobj instance void Modules.Classes_Inheritance_SuperMethodCall/D::.ctor()
 		IL_0093: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0098: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_009d: stloc.s 6
-		IL_009f: ldloc.s 6
-		IL_00a1: ldtoken Modules.Classes_Inheritance_SuperMethodCall/D
-		IL_00a6: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00ab: ldstr "prototype"
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_00b5: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00ba: ldloc.s 6
-		IL_00bc: ldstr "m"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00c6: stloc.s 5
-		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cd: ldloc.s 5
-		IL_00cf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d4: pop
-		IL_00d5: ret
+		IL_0098: stloc.s 6
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+		IL_00a4: stloc.s 6
+		IL_00a6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+		IL_00ab: ldloc.s 6
+		IL_00ad: ldtoken Modules.Classes_Inheritance_SuperMethodCall/D
+		IL_00b2: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00b7: ldstr "prototype"
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_00c6: ldloc.s 6
+		IL_00c8: ldstr "m"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00d2: stloc.s 5
+		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d9: ldloc.s 5
+		IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e0: pop
+		IL_00e1: ret
 	} // end of method Classes_Inheritance_SuperMethodCall::__js_module_init__
 
 } // end of class Modules.Classes_Inheritance_SuperMethodCall
@@ -302,7 +305,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a8
+		// Method begins at RVA 0x21b4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

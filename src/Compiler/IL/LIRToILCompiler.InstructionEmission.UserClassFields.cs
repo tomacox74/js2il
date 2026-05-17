@@ -13,6 +13,53 @@ namespace Js2IL.IL;
 
 internal sealed partial class LIRToILCompiler
 {
+    private void EmitStoreInstanceFieldValue(
+        LIRStoreUserClassInstanceField storeInstanceField,
+        Type fieldClrType,
+        ClassRegistry classRegistry,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (fieldClrType == typeof(double))
+        {
+            EmitLoadTempAsDouble(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+        }
+        else if (fieldClrType == typeof(bool))
+        {
+            EmitLoadTempAsBoolean(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+        }
+        else if (fieldClrType == typeof(string))
+        {
+            EmitLoadTempAsString(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+        }
+
+        if (TryGetDeclaredUserClassFieldTypeHandle(
+            classRegistry,
+            storeInstanceField.RegistryClassName,
+            storeInstanceField.FieldName,
+            storeInstanceField.IsPrivateField,
+            isStaticField: false,
+            out var declaredTypeHandle))
+        {
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(declaredTypeHandle);
+        }
+        else if (fieldClrType != typeof(object)
+            && fieldClrType != typeof(string)
+            && fieldClrType != typeof(double)
+            && fieldClrType != typeof(bool)
+            && !fieldClrType.IsValueType)
+        {
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+        }
+    }
+
     private bool? TryCompileInstructionToIL_UserClassFields(
         LIRInstruction instruction,
         InstructionEncoder ilEncoder,
@@ -45,6 +92,62 @@ internal sealed partial class LIRToILCompiler
                         }
                     }
 
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false);
+
+                    if (methodDescriptor.IsDerivedConstructor && !storeInstanceField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGet(storeInstanceField.RegistryClassName, out var classTypeHandle))
+                        {
+                            return false;
+                        }
+
+                        var directStore = ilEncoder.DefineLabel();
+                        var done = ilEncoder.DefineLabel();
+
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+
+                        var resolveThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(resolveThisRef);
+
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.LoadArgument(0);
+                        ilEncoder.Branch(ILOpCode.Beq, directStore);
+
+                        ilEncoder.Ldstr(_metadataBuilder, storeInstanceField.FieldName);
+                        EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                        var defineClassField = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.ObjectRuntime),
+                            nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty),
+                            parameterTypes: new[] { typeof(object), typeof(string), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(defineClassField);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                        ilEncoder.Branch(ILOpCode.Br, done);
+
+                        ilEncoder.MarkLabel(directStore);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(classTypeHandle);
+                        EmitStoreInstanceFieldValue(storeInstanceField, fieldClrType, classRegistry, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Stfld);
+                        ilEncoder.Token(fieldHandle);
+
+                        ilEncoder.MarkLabel(done);
+                        break;
+                    }
+
                     // Instance fields are stored on the runtime `this`.
                     // - In instance methods (class methods/ctors): receiver is IL arg0.
                     // - In static JS callables (functions/arrows): use ObjectRuntime.SetItem because
@@ -73,54 +176,7 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.LoadArgument(0);
 
-                    var fieldClrType = GetDeclaredUserClassFieldClrType(
-                        classRegistry,
-                        storeInstanceField.RegistryClassName,
-                        storeInstanceField.FieldName,
-                        storeInstanceField.IsPrivateField,
-                        isStaticField: false);
-
-                    if (fieldClrType == typeof(double))
-                    {
-                        EmitLoadTempAsDouble(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
-                    }
-                    else if (fieldClrType == typeof(bool))
-                    {
-                        EmitLoadTempAsBoolean(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
-                    }
-                    else if (fieldClrType == typeof(string))
-                    {
-                        EmitLoadTempAsString(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
-                    }
-                    else
-                    {
-                        EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
-                    }
-
-                    // If the field is declared as a user class type (not object/string), cast before stfld.
-                    // This keeps IL verification correct since `object` is not assignable to a specific class type.
-                    if (TryGetDeclaredUserClassFieldTypeHandle(
-                        classRegistry,
-                        storeInstanceField.RegistryClassName,
-                        storeInstanceField.FieldName,
-                        storeInstanceField.IsPrivateField,
-                        isStaticField: false,
-                        out var declaredTypeHandle))
-                    {
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(declaredTypeHandle);
-                    }
-                    else if (fieldClrType != typeof(object)
-                        && fieldClrType != typeof(string)
-                        && fieldClrType != typeof(double)
-                        && fieldClrType != typeof(bool)
-                        && !fieldClrType.IsValueType)
-                    {
-                        // Typed CLR reference field (e.g., JavaScriptRuntime.Int32Array). If the value is currently
-                        // flowing as object (common in our temps), cast to keep IL verification correct.
-                        ilEncoder.OpCode(ILOpCode.Castclass);
-                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
-                    }
+                    EmitStoreInstanceFieldValue(storeInstanceField, fieldClrType, classRegistry, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;

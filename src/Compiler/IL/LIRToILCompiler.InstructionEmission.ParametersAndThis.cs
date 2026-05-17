@@ -54,6 +54,22 @@ internal sealed partial class LIRToILCompiler
                         break;
                     }
 
+                    if (methodDescriptor.IsDerivedConstructor)
+                    {
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+
+                        var resolveThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(resolveThisRef);
+                        EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
+                        break;
+                    }
+
                     ilEncoder.LoadArgument(0);
                     EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
                     break;

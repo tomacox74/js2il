@@ -15,6 +15,7 @@ public sealed partial class HIRToLIRLowerer
     private readonly EnvironmentLayout? _environmentLayout;
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
     private readonly Js2IL.Services.ClassRegistry? _classRegistry;
+    private readonly TwoPhase.CallableRegistry? _callableRegistry;
     private readonly CallableKind _callableKind;
     private readonly bool _isAsync;
     private readonly bool _isDerivedConstructor;
@@ -59,12 +60,13 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, TwoPhase.CallableRegistry? callableRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
         _classRegistry = classRegistry;
+        _callableRegistry = callableRegistry;
         _callableKind = callableKind;
         _isAsync = isAsync;
         _isGenerator = isGenerator;
@@ -72,7 +74,7 @@ public sealed partial class HIRToLIRLowerer
         InitializeParameters(parameters);
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null)
     {
         lirMethod = null;
 
@@ -103,7 +105,7 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync, isGenerator, isDerivedConstructor);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableRegistry, callableKind, hirMethod.Parameters, isAsync, isGenerator, isDerivedConstructor);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -248,6 +250,7 @@ public sealed partial class HIRToLIRLowerer
             ClassExpression ce => ce.SuperClass,
             _ => null
         };
+        superExpr = UnwrapExpression(superExpr);
 
         if (superExpr is not Identifier superId)
         {
@@ -302,6 +305,7 @@ public sealed partial class HIRToLIRLowerer
             ClassExpression ce => ce.SuperClass,
             _ => null
         };
+        superExpr = UnwrapExpression(superExpr);
 
         if (superExpr is not Identifier superId)
         {
@@ -325,6 +329,108 @@ public sealed partial class HIRToLIRLowerer
         {
             return null;
         }
+    }
+
+    private bool TryGetEnclosingSuperClassExpression(out HIRExpression? superClassExpression)
+    {
+        superClassExpression = null;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        var current = _scope;
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        if (current == null)
+        {
+            return false;
+        }
+
+        var superExpr = current.AstNode switch
+        {
+            ClassDeclaration cd => cd.SuperClass,
+            ClassExpression ce => ce.SuperClass,
+            _ => null
+        };
+        superExpr = UnwrapExpression(superExpr);
+
+        switch (superExpr)
+        {
+            case Identifier superId:
+                superClassExpression = new HIRVariableExpression(current.FindSymbol(superId.Name));
+                return true;
+
+            case FunctionExpression funcExpr
+                when _callableRegistry != null
+                     && _callableRegistry.TryGetCallableIdForAstNode(funcExpr, out var callableId)
+                     && TryFindScopeForAstNode(funcExpr, out var functionScope):
+                superClassExpression = new HIRFunctionExpression(callableId, functionScope);
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    private static Expression? UnwrapExpression(Expression? expression)
+    {
+        while (true)
+        {
+            expression = expression switch
+            {
+                ParenthesizedExpression parenthesized => parenthesized.Expression,
+                ChainExpression chain => chain.Expression,
+                _ => expression
+            };
+
+            if (expression is not ParenthesizedExpression and not ChainExpression)
+            {
+                return expression;
+            }
+        }
+    }
+
+    private bool TryFindScopeForAstNode(Node astNode, out Scope scope)
+    {
+        scope = null!;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        var root = _scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        return TryFindScopeForAstNode(root, astNode, out scope);
+    }
+
+    private static bool TryFindScopeForAstNode(Scope current, Node astNode, out Scope scope)
+    {
+        if (ReferenceEquals(current.AstNode, astNode))
+        {
+            scope = current;
+            return true;
+        }
+
+        foreach (var child in current.Children)
+        {
+            if (TryFindScopeForAstNode(child, astNode, out scope))
+            {
+                return true;
+            }
+        }
+
+        scope = null!;
+        return false;
     }
 
     /// <summary>

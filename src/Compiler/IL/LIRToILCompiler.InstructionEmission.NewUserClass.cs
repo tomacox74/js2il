@@ -125,6 +125,13 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(ctorDef);
                     // Stack: [instance]
 
+                    var classTypeForPrototype = default(TypeDefinitionHandle);
+                    bool hasPrototype = classRegistry != null
+                        && classRegistry.TryGet(newUserClass.RegistryClassName, out classTypeForPrototype);
+
+                    bool resultUsed = IsMaterialized(newUserClass.Result, allocation);
+                    bool resultAlreadyStored = false;
+
                     // Restore _currentArguments to its pre-construction state.
                     {
                         var popCurrentArguments = _memberRefRegistry.GetOrAddMethod(
@@ -134,6 +141,29 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(popCurrentArguments);
                         // Stack: [instance] (unchanged — PopCurrentArguments returns void)
+                    }
+
+                    if (newUserClass.IsDerivedConstructor && resultUsed)
+                    {
+                        // The derived constructor's result is the initialized lexical `this` binding,
+                        // which may be a replacement object returned by a function-valued base constructor.
+                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                        resultAlreadyStored = true;
+
+                        var getThis = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis),
+                            parameterTypes: Type.EmptyTypes);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThis);
+
+                        var resolveThis = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.ResolveLexicalThis),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(resolveThis);
+                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
                     }
 
                     if (newUserClass.IsDerivedConstructor)
@@ -147,12 +177,6 @@ internal sealed partial class LIRToILCompiler
                         // Stack: [instance] (unchanged — PopDerivedConstructorThisBinding returns void)
                     }
 
-                    var classTypeForPrototype = default(TypeDefinitionHandle);
-                    bool hasPrototype = classRegistry != null
-                        && classRegistry.TryGet(newUserClass.RegistryClassName, out classTypeForPrototype);
-
-                    bool resultUsed = IsMaterialized(newUserClass.Result, allocation);
-
                     if (!resultUsed && !hasPrototype)
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
@@ -161,8 +185,11 @@ internal sealed partial class LIRToILCompiler
 
                     if (resultUsed)
                     {
-                        // Store the constructed instance as the default result.
-                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                        if (!resultAlreadyStored)
+                        {
+                            // Store the constructed instance as the default result.
+                            EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                        }
                     }
 
                     if (hasPrototype)

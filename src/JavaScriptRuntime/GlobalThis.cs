@@ -215,6 +215,7 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.RestrictedPropertiesPrototype, JavaScriptRuntime.Function.Prototype);
             DefineIntrinsicDataProperty(Math, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Math");
             DefineIntrinsicDataProperty(JSON, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "JSON");
+            DefineIntrinsicDataProperty(Reflect, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Reflect");
 
             // Attach minimal prototypes to callable globals so patterns like
             // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
@@ -811,6 +812,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Math), Math);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Math), dict[nameof(GlobalThis.Math)]);
 
+            dict.TryAdd(nameof(GlobalThis.Reflect), Reflect);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Reflect), dict[nameof(GlobalThis.Reflect)]);
+
             dict.TryAdd(nameof(GlobalThis.Error), Error);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Error), dict[nameof(GlobalThis.Error)]);
 
@@ -989,6 +993,8 @@ namespace JavaScriptRuntime
         public static Delegate Symbol => _symbolFunctionValue;
 
         public static Type Math => typeof(JavaScriptRuntime.Math);
+
+        public static Type Reflect => typeof(JavaScriptRuntime.Reflect);
 
         public static Delegate RegExp => _regExpConstructorValue;
 
@@ -1517,4 +1523,3 @@ namespace JavaScriptRuntime
         }
     }
 }
-

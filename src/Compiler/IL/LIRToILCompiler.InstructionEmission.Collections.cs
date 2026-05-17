@@ -198,11 +198,6 @@ internal sealed partial class LIRToILCompiler
 
             case LIRGetItem getItem:
                 {
-                    if (!IsMaterialized(getItem.Result, allocation))
-                    {
-                        break;
-                    }
-
                     var indexStorage = GetTempStorage(getItem.Index);
                     var resultStorage = GetTempStorage(getItem.Result);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
@@ -281,7 +276,14 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_bclReferences.StringType);
                     }
 
-                    EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                    if (IsMaterialized(getItem.Result, allocation))
+                    {
+                        EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     break;
                 }
 

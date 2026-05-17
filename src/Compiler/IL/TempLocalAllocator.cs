@@ -495,6 +495,10 @@ internal static class TempLocalAllocator
                 yield return constructValue.ConstructorValue;
                 yield return constructValue.ArgumentsArray;
                 break;
+            case LIRCallFunctionBaseConstructor callFunctionBase:
+                yield return callFunctionBase.ConstructorValue;
+                yield return callFunctionBase.ArgumentsArray;
+                break;
             case LIRCallMember callMember:
                 yield return callMember.Receiver;
                 yield return callMember.ArgumentsArray;

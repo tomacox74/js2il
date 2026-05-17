@@ -525,6 +525,21 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallFunctionBaseConstructor callFunctionBase:
+                {
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    EmitLoadTempAsObject(callFunctionBase.ConstructorValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callFunctionBase.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var mref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.ConstructDerivedFunctionBase),
+                        new[] { typeof(object), typeof(object), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(mref);
+                    break;
+                }
+
             case LIRCallUserClassInstanceMethod callUserClass:
                 {
                     if (callUserClass.MethodHandle.IsNil)
