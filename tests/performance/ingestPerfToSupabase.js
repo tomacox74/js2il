@@ -63,6 +63,7 @@ function decodeHtmlEntities(value) {
 
 function normalizeRuntime(raw) {
     const text = String(raw ?? '').toLowerCase();
+    if (text.includes('clearscript')) return 'clearscript';
     if (text.includes('node')) return 'node';
     if (text.includes('yantra')) return 'yantrajs';
     if (text.includes('jint') && text.includes('prepared')) return 'jint-execute-prepared';

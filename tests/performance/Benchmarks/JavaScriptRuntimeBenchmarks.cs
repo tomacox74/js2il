@@ -8,7 +8,7 @@ using Benchmarks.Runtimes;
 namespace Benchmarks;
 
 /// <summary>
-/// Cross-runtime JavaScript benchmark suite comparing Node.js, Jint, and js2il.
+/// Cross-runtime JavaScript benchmark suite comparing hosted .NET JavaScript runtimes and js2il.
 /// </summary>
 [MemoryDiagnoser]
 [Config(typeof(FullParamsConfig))]
@@ -22,7 +22,7 @@ public class JavaScriptRuntimeBenchmarks
     private readonly Dictionary<string, string> _scripts = new();
     private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly JintRuntime _jintRuntime = new();
-    private readonly NodeJsRuntime _nodeRuntime = new();
+    private readonly ClearScriptRuntime _clearScriptRuntime = new();
     private readonly Js2ILRuntime _js2ilRuntime = new();
 
     [GlobalSetup]
@@ -57,15 +57,15 @@ public class JavaScriptRuntimeBenchmarks
             .Select(scenario => scenario.Key);
     }
 
-    [Benchmark(Description = "Node.js")]
-    public void NodeJs()
+    [Benchmark(Description = "ClearScript")]
+    public void ClearScript()
     {
         var script = _scripts[ScriptName];
-        var result = _nodeRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
+        var result = _clearScriptRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
         
         if (!result.Success)
         {
-            throw new Exception($"Node.js execution failed: {result.Error}");
+            throw new Exception($"ClearScript execution failed: {result.Error}");
         }
     }
 
