@@ -80,6 +80,39 @@ public static class HIRBuilder
             };
         }
 
+        static Expression? UnwrapExpression(Expression? expression)
+        {
+            while (true)
+            {
+                expression = expression switch
+                {
+                    ParenthesizedExpression parenthesized => parenthesized.Expression,
+                    ChainExpression chain => chain.Expression,
+                    _ => expression
+                };
+
+                if (expression is not ParenthesizedExpression and not ChainExpression)
+                {
+                    return expression;
+                }
+            }
+        }
+
+        static bool TryParseSuperClassExpression(Scope classScope, Node classNode, out HIRExpression? superClassExpression)
+        {
+            superClassExpression = null;
+
+            var superClass = UnwrapExpression(GetClassSuperClass(classNode));
+            if (superClass == null)
+            {
+                return true;
+            }
+
+            var builder = new HIRMethodBuilder(classScope);
+            return builder.TryParseExpressionForPrologue(superClass, out superClassExpression)
+                && superClassExpression != null;
+        }
+
         static string GetRegistryClassName(Scope classScope)
         {
             var ns = classScope.DotNetNamespace ?? "Classes";
@@ -227,8 +260,15 @@ public static class HIRBuilder
                     // and passing them through to the implicit super call.
                     var parameterPatterns = new List<HIRPattern>();
                     var superArgs = new List<HIRExpression>();
+                    HIRExpression? superClassExpression = null;
                     if (isDerivedConstructor)
                     {
+                        if (!TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
+                        {
+                            method = null!;
+                            return false;
+                        }
+
                         var argCount = GetMaxSuperCtorArgCount(enclosingClassScope, enclosingClassNode);
                         for (int i = 0; i < argCount; i++)
                         {
@@ -354,6 +394,7 @@ public static class HIRBuilder
                     method = new HIRMethod
                     {
                         Parameters = parameterPatterns,
+                        SuperClassExpression = superClassExpression,
                         Body = new HIRBlock(ctorStatements)
                     };
 
@@ -406,6 +447,15 @@ public static class HIRBuilder
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
                     var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null;
+                    HIRExpression? superClassExpression = null;
+                    if (isDerivedConstructor
+                        && !TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
+                    {
+                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            "HIR parse failed for constructor superclass expression");
+                        method = null!;
+                        return false;
+                    }
 
                     var initStatements = new List<HIRStatement>();
 
@@ -537,6 +587,7 @@ public static class HIRBuilder
                     method = new HIRMethod
                     {
                         Parameters = methodParams,
+                        SuperClassExpression = superClassExpression,
                         Body = new HIRBlock(bodyStatements)
                     };
 
@@ -610,6 +661,15 @@ public static class HIRBuilder
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
                     var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null;
+                    HIRExpression? superClassExpression = null;
+                    if (isDerivedConstructor
+                        && !TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
+                    {
+                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            "HIR parse failed for function-expression constructor superclass expression");
+                        method = null!;
+                        return false;
+                    }
 
                     var initStatements = new List<HIRStatement>();
 
@@ -745,6 +805,7 @@ public static class HIRBuilder
                     method = new HIRMethod
                     {
                         Parameters = funcParams,
+                        SuperClassExpression = superClassExpression,
                         Body = new HIRBlock(bodyStatements)
                     };
 
