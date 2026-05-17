@@ -198,6 +198,13 @@ internal sealed partial class LIRToILCompiler
 
             case LIRGetItem getItem:
                 {
+                    // Used-but-unmaterialized temps are emitted inline at the load site. Only force
+                    // evaluation here when the temp is materialized or completely unused.
+                    if (!IsMaterialized(getItem.Result, allocation) && HasAnyUses(getItem.Result))
+                    {
+                        break;
+                    }
+
                     var indexStorage = GetTempStorage(getItem.Index);
                     var resultStorage = GetTempStorage(getItem.Result);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
