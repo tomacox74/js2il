@@ -28,8 +28,9 @@ internal static class LIRTypeNormalization
         // This enables strongly-typed locals for materialized temps and allows the IL emitter to
         // avoid redundant castclass instructions.
         //
-        // Skip classes with PL5.4a ctor-return override semantics: the result temp may be overwritten
-        // with an arbitrary value (not necessarily an instance of the constructed CLR type).
+        // Skip classes with PL5.4a ctor-return override semantics or derived-constructor lexical-this
+        // rewrites: the result temp may be overwritten with an arbitrary value (not necessarily an
+        // instance of the constructed CLR type).
         foreach (var instr in methodBody.Instructions)
         {
             if (instr is not LIRNewUserClass newUserClass)
@@ -47,7 +48,8 @@ internal static class LIRTypeNormalization
                 continue;
             }
 
-            if (classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+            if (newUserClass.IsDerivedConstructor
+                || classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
             {
                 continue;
             }

@@ -2346,6 +2346,11 @@ internal sealed partial class LIRToILCompiler
         return null;
     }
 
+    private bool HasAnyUses(TempVariable temp)
+    {
+        return MethodBody.Instructions.Any(i => TempLocalAllocator.EnumerateUsedTemps(i).Any(u => u == temp));
+    }
+
     /// <summary>
     /// Marks stackifiable temps as non-materialized in the peephole mask.
     /// This prevents TempLocalAllocator from allocating IL local slots for temps that can stay on the stack.

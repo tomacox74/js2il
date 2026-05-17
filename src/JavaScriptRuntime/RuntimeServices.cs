@@ -67,6 +67,25 @@ public class RuntimeServices
         _currentThis.Value = value;
     }
 
+    public static void ConstructDerivedFunctionBase(object receiver, object constructor, object[] args)
+    {
+        object? constructed;
+        if (constructor is Delegate del)
+        {
+            constructed = JavaScriptRuntime.Function.ConstructWithReceiver(del, receiver, args, constructor);
+        }
+        else if (constructor is JavaScriptRuntime.Proxy)
+        {
+            constructed = JavaScriptRuntime.Object.ConstructValue(constructor, args);
+        }
+        else
+        {
+            throw new TypeError($"Class extends value is not a constructor: it has type {TypeUtilities.Typeof(constructor)}.");
+        }
+
+        InitializeDerivedConstructorThisBinding(constructed);
+    }
+
     public static void PopDerivedConstructorThisBinding()
     {
         if (_derivedConstructorThisStack is { Count: > 0 } stack)

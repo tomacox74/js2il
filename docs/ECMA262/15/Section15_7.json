@@ -317,9 +317,11 @@
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_NestedClassExtendsGlobal.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_NestedClassExtendsGlobal.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/strict-mode/JavaScript/arguments-callee.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/elements/JavaScript/class-field-is-observable-by-proxy.js"
         ],
-        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported."
+        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported. Function-valued base constructors are supported for super(), including object/proxy replacement returns from the base constructor."
       },
       {
         "clause": "15.7.1",
@@ -384,8 +386,11 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js"
-        ]
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/strict-mode/JavaScript/arguments-callee.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/elements/JavaScript/class-field-is-observable-by-proxy.js"
+        ],
+        "notes": "super(...) supports compiled class bases, Array intrinsic bases, and regular function-valued bases. For regular function bases, the base constructor is invoked with derived-constructor semantics and a returned object/proxy initializes the derived this binding; public field initialization targets that resolved receiver."
       },
       {
         "clause": "15.7.1",

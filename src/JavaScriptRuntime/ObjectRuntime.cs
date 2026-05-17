@@ -117,6 +117,17 @@ namespace JavaScriptRuntime
                 enumerable: false);
         }
 
+        public static object DefineClassFieldDataProperty(object target, string prop, object? value)
+        {
+            ConfigureFunctionNameFromPropertyKey(prop, value);
+            return DefineDataPropertyCore(
+                target,
+                prop,
+                value,
+                static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
+                enumerable: true);
+        }
+
         public static object DefineClassElementAccessorProperty(object target, object? prop, object? getter, object? setter)
             => DefineAccessorProperty(target, prop, getter, setter, enumerable: false, createDictionarySlot: false);
 
@@ -185,6 +196,11 @@ namespace JavaScriptRuntime
 
             Object.InvalidateRegExpWellKnownSymbolFastPath(target, key);
 
+            if (target is JavaScriptRuntime.Proxy)
+            {
+                return Object.defineProperty(target, key, CreateDataPropertyDescriptor(value, enumerable));
+            }
+
             if (target is JsObject jsObject)
             {
                 setJsObjectValue(jsObject, key, value);
@@ -204,6 +220,17 @@ namespace JavaScriptRuntime
             });
 
             return target;
+        }
+
+        private static object CreateDataPropertyDescriptor(object? value, bool enumerable)
+        {
+            var descriptor = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)descriptor;
+            dict["value"] = value;
+            dict["writable"] = true;
+            dict["enumerable"] = enumerable;
+            dict["configurable"] = true;
+            return descriptor;
         }
 
         private static void ConfigureFunctionNameFromPropertyKey(object? propertyKey, object? value)
@@ -401,6 +428,12 @@ namespace JavaScriptRuntime
         {
             var propName = Object.ToPropertyKeyString(index);
 
+            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
+                && (string.Equals(propName, "caller", StringComparison.Ordinal) || string.Equals(propName, "arguments", StringComparison.Ordinal)))
+            {
+                throw new TypeError($"Cannot access restricted function property '{propName}'");
+            }
+
             // Proxy get trap: treat item access as property access using ToPropertyKey
             if (obj is JavaScriptRuntime.Proxy)
             {
@@ -557,6 +590,12 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object GetItem(object obj, string key)
         {
+            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
+                && (string.Equals(key, "caller", StringComparison.Ordinal) || string.Equals(key, "arguments", StringComparison.Ordinal)))
+            {
+                throw new TypeError($"Cannot access restricted function property '{key}'");
+            }
+
             // Proxy get trap: treat item access as property access
             if (obj is JavaScriptRuntime.Proxy)
             {

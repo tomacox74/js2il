@@ -35,6 +35,8 @@ public static class Function
             dict["call"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeCall, 1);
             dict["bind"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeBind, 1);
         dict["toString"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeToString, 0);
+        DefineRestrictedProperty(exp, "caller");
+        DefineRestrictedProperty(exp, "arguments");
         return exp;
     }
 
@@ -367,6 +369,36 @@ public static class Function
             {
                 var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), newTarget, callArgs);
                 return TypeUtilities.IsConstructorReturnOverride(result) ? result : instance;
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        internal static object? ConstructWithReceiver(Delegate constructor, object receiver, object?[]? args, object? newTarget)
+        {
+            if (constructor is null) throw new ArgumentNullException(nameof(constructor));
+            if (receiver is null) throw new ArgumentNullException(nameof(receiver));
+
+            var callArgs = args ?? System.Array.Empty<object?>();
+
+            if (Closure.TryGetFunctionPrototypeBoundMetadata(constructor, out var boundTarget, out var boundArgs))
+            {
+                var finalArgs = boundArgs.Length == 0
+                    ? callArgs
+                    : boundArgs.Concat(callArgs).ToArray();
+                var effectiveNewTarget = ReferenceEquals(newTarget, constructor)
+                    ? boundTarget
+                    : newTarget;
+                return ConstructWithReceiver(boundTarget, receiver, finalArgs, effectiveNewTarget);
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(receiver);
+            try
+            {
+                var result = Closure.InvokeWithArgsWithNewTarget(constructor, System.Array.Empty<object>(), newTarget, callArgs);
+                return TypeUtilities.IsConstructorReturnOverride(result) ? result : receiver;
             }
             finally
             {

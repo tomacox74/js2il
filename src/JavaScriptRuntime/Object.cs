@@ -1357,6 +1357,22 @@ namespace JavaScriptRuntime
             InvalidateRegExpWellKnownSymbolFastPath(obj, key);
             var requested = ParseRequestedPropertyDescriptor(attributes!);
 
+            if (obj is JavaScriptRuntime.Proxy proxy)
+            {
+                var target = proxy.GetTarget("defineProperty");
+                if (proxy.TryInvokeTrap("defineProperty", "defineProperty", new object?[] { target, key, attributes }, out var trapResult))
+                {
+                    if (!TypeUtilities.ToBoolean(trapResult))
+                    {
+                        throw new TypeError("Proxy defineProperty trap returned false");
+                    }
+
+                    return obj;
+                }
+
+                obj = target;
+            }
+
             if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
             {
                 throw new TypeError("Cannot define property on non-extensible object");
@@ -4952,6 +4968,12 @@ namespace JavaScriptRuntime
         {
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
+            if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
+                && (string.Equals(name, "caller", StringComparison.Ordinal) || string.Equals(name, "arguments", StringComparison.Ordinal)))
+            {
+                throw new TypeError($"Cannot access restricted function property '{name}'");
+            }
+
             // Proxy get trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {

@@ -198,7 +198,9 @@ internal sealed partial class LIRToILCompiler
 
             case LIRGetItem getItem:
                 {
-                    if (!IsMaterialized(getItem.Result, allocation))
+                    // Used-but-unmaterialized temps are emitted inline at the load site. Only force
+                    // evaluation here when the temp is materialized or completely unused.
+                    if (!IsMaterialized(getItem.Result, allocation) && HasAnyUses(getItem.Result))
                     {
                         break;
                     }
@@ -281,7 +283,14 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_bclReferences.StringType);
                     }
 
-                    EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                    if (IsMaterialized(getItem.Result, allocation))
+                    {
+                        EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     break;
                 }
 

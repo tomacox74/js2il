@@ -233,6 +233,11 @@ public record LIRCallTypedMemberWithFallback(
 public record LIRConstructValue(TempVariable ConstructorValue, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Invokes a regular function-valued base constructor from a derived class constructor.
+/// </summary>
+public record LIRCallFunctionBaseConstructor(TempVariable ConstructorValue, TempVariable ArgumentsArray) : LIRInstruction;
+
+/// <summary>
 /// Calls a user-defined JavaScript class instance method directly on the implicit 'this'.
 /// The method handle and max parameter count are resolved during lowering via <see cref="Js2IL.Services.ClassRegistry"/>
 /// and carried through to IL emission to avoid repeating lookup work.

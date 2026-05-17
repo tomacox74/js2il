@@ -9,5 +9,11 @@ public sealed class HIRMethod : HIRNode
     /// </summary>
     public IReadOnlyList<HIRPattern> Parameters { get; init; } = Array.Empty<HIRPattern>();
 
+    /// <summary>
+    /// HIR representation of a derived class constructor's heritage expression.
+    /// This is populated by HIR construction so HIR-to-LIR lowering does not synthesize HIR nodes.
+    /// </summary>
+    public HIRExpression? SuperClassExpression { get; init; }
+
     public required HIRBlock Body { get; init; } 
 }

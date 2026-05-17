@@ -16,6 +16,7 @@ public sealed partial class HIRToLIRLowerer
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
     private readonly Js2IL.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
+    private readonly HIRExpression? _superClassExpression;
     private readonly bool _isAsync;
     private readonly bool _isDerivedConstructor;
     private bool _superConstructorCalled;
@@ -59,20 +60,21 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
         _classRegistry = classRegistry;
         _callableKind = callableKind;
+        _superClassExpression = superClassExpression;
         _isAsync = isAsync;
         _isGenerator = isGenerator;
         _isDerivedConstructor = isDerivedConstructor;
         InitializeParameters(parameters);
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null)
     {
         lirMethod = null;
 
@@ -103,7 +105,7 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync, isGenerator, isDerivedConstructor);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, hirMethod.SuperClassExpression, isAsync, isGenerator, isDerivedConstructor);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -248,6 +250,7 @@ public sealed partial class HIRToLIRLowerer
             ClassExpression ce => ce.SuperClass,
             _ => null
         };
+        superExpr = UnwrapExpression(superExpr);
 
         if (superExpr is not Identifier superId)
         {
@@ -302,6 +305,7 @@ public sealed partial class HIRToLIRLowerer
             ClassExpression ce => ce.SuperClass,
             _ => null
         };
+        superExpr = UnwrapExpression(superExpr);
 
         if (superExpr is not Identifier superId)
         {
@@ -324,6 +328,30 @@ public sealed partial class HIRToLIRLowerer
         catch
         {
             return null;
+        }
+    }
+
+    private bool TryGetEnclosingSuperClassExpression(out HIRExpression? superClassExpression)
+    {
+        superClassExpression = _superClassExpression;
+        return superClassExpression != null;
+    }
+
+    private static Expression? UnwrapExpression(Expression? expression)
+    {
+        while (true)
+        {
+            expression = expression switch
+            {
+                ParenthesizedExpression parenthesized => parenthesized.Expression,
+                ChainExpression chain => chain.Expression,
+                _ => expression
+            };
+
+            if (expression is not ParenthesizedExpression and not ChainExpression)
+            {
+                return expression;
+            }
         }
     }
 

@@ -80,22 +80,45 @@ public sealed partial class HIRToLIRLowerer
                 // Fallback: intrinsic base class (e.g., `extends Array`).
                 // For intrinsics, we preserve JS argument list semantics (do not truncate/pad).
                 var intrinsicName = GetEnclosingSuperClassIntrinsicName();
-                if (intrinsicName == null)
+                if (intrinsicName != null)
                 {
-                    return false;
-                }
+                    var callArgs = new List<TempVariable>();
+                    for (int i = 0; i < callExpr.Arguments.Length; i++)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                        {
+                            return false;
+                        }
+                        callArgs.Add(EnsureObject(argTemp));
+                    }
 
-                var callArgs = new List<TempVariable>();
-                for (int i = 0; i < callExpr.Arguments.Length; i++)
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicBaseConstructor(intrinsicName, callArgs));
+                }
+                else
                 {
-                    if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                    if (!TryGetEnclosingSuperClassExpression(out var superClassExpression)
+                        || superClassExpression == null
+                        || !TryLowerExpression(superClassExpression, out var constructorTemp))
                     {
                         return false;
                     }
-                    callArgs.Add(EnsureObject(argTemp));
-                }
 
-                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicBaseConstructor(intrinsicName, callArgs));
+                    var callArgs = new List<TempVariable>();
+                    for (int i = 0; i < callExpr.Arguments.Length; i++)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                        {
+                            return false;
+                        }
+
+                        callArgs.Add(EnsureObject(argTemp));
+                    }
+
+                    var argsArrayTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgs, argsArrayTemp));
+                    DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                    _methodBodyIR.Instructions.Add(new LIRCallFunctionBaseConstructor(EnsureObject(constructorTemp), argsArrayTemp));
+                }
             }
 
             // After super() the constructor is considered initialized.
