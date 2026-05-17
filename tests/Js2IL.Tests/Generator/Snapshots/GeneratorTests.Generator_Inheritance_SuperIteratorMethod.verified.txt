@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22eb
+				// Method begins at RVA 0x22ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22f4
+				// Method begins at RVA 0x22f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x212b
+			// Method begins at RVA 0x2130
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -78,7 +78,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21ac
+			// Method begins at RVA 0x21b0
 			// Header size: 12
 			// Code size: 298 (0x12a)
 			.maxstack 8
@@ -217,7 +217,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22fd
+				// Method begins at RVA 0x2301
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -237,7 +237,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2306
+				// Method begins at RVA 0x230a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -258,7 +258,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2133
+			// Method begins at RVA 0x2138
 			// Header size: 1
 			// Code size: 13 (0xd)
 			.maxstack 8
@@ -276,7 +276,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2144
+			// Method begins at RVA 0x2148
 			// Header size: 12
 			// Code size: 89 (0x59)
 			.maxstack 8
@@ -329,7 +329,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22e2
+			// Method begins at RVA 0x22e6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -355,7 +355,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 207 (0xcf)
+		// Code size: 212 (0xd4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_Inheritance_SuperIteratorMethod/Scope,
@@ -363,8 +363,7 @@
 			[2] object,
 			[3] object[],
 			[4] class [System.Runtime]System.Type,
-			[5] object,
-			[6] class Modules.Generator_Inheritance_SuperIteratorMethod/Derived
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Generator_Inheritance_SuperIteratorMethod/Scope::.ctor()
@@ -415,21 +414,22 @@
 		IL_0089: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
 		IL_008e: newobj instance void Modules.Generator_Inheritance_SuperIteratorMethod/Derived::.ctor()
 		IL_0093: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_0098: stloc.s 6
+		IL_0098: stloc.s 5
 		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
 		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-		IL_00a4: stloc.s 6
+		IL_00a4: stloc.s 5
 		IL_00a6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-		IL_00ab: ldloc.s 6
+		IL_00ab: ldloc.s 5
 		IL_00ad: ldtoken Modules.Generator_Inheritance_SuperIteratorMethod/Derived
 		IL_00b2: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_00b7: ldstr "prototype"
 		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
 		IL_00c1: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_00c6: ldloc.s 6
-		IL_00c8: callvirt instance object Modules.Generator_Inheritance_SuperIteratorMethod/Derived::run()
-		IL_00cd: pop
-		IL_00ce: ret
+		IL_00c6: ldloc.s 5
+		IL_00c8: castclass Modules.Generator_Inheritance_SuperIteratorMethod/Derived
+		IL_00cd: callvirt instance object Modules.Generator_Inheritance_SuperIteratorMethod/Derived::run()
+		IL_00d2: pop
+		IL_00d3: ret
 	} // end of method Generator_Inheritance_SuperIteratorMethod::__js_module_init__
 
 } // end of class Modules.Generator_Inheritance_SuperIteratorMethod
@@ -441,7 +441,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x230f
+		// Method begins at RVA 0x2313
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
