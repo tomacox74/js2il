@@ -1,8 +1,8 @@
 # BenchmarkDotNet Performance Suite
 
-This directory contains a comprehensive BenchmarkDotNet-based performance benchmark suite for comparing JavaScript execution across multiple runtimes:
+This directory contains a comprehensive BenchmarkDotNet-based performance benchmark suite for comparing JavaScript execution across multiple hosted .NET runtimes:
 
-- **Node.js** - V8 JIT-compiled JavaScript (industry baseline)
+- **ClearScript** - .NET-hosted V8 runtime
 - **Jint** - .NET JavaScript interpreter
 - **js2il** - JavaScript-to-IL AOT compiler
 
@@ -29,7 +29,7 @@ Benchmarks/
 │   └── ... (additional imported Jint scenarios)
 ├── Runtimes/            # Runtime adapter implementations
 │   ├── IJavaScriptRuntime.cs
-│   ├── NodeJsRuntime.cs
+│   ├── ClearScriptRuntime.cs
 │   ├── JintRuntime.cs
 │   └── Js2ILRuntime.cs
 ├── Compliance/          # Licensing and provenance tracking
@@ -70,7 +70,6 @@ Additional discovered scenarios include the broader Dromaeo-derived object/strin
 ### Prerequisites
 
 - .NET 10.0 SDK or later
-- Node.js (for Node.js benchmarks)
 - BenchmarkDotNet (installed via NuGet)
 
 ### Build
@@ -85,7 +84,7 @@ By default this project references the checked-out `src\Js2IL.Core` and `src\Jav
 ### Run Benchmarks
 
 #### Default: Cross-Runtime Comparison
-Compares all three runtimes across all scenarios:
+Compares the hosted .NET runtimes across all scenarios:
 
 ```powershell
 dotnet run -c Release
@@ -158,7 +157,7 @@ dotnet run -c Release -- --exporters html,json,markdown
 When comparing runtimes, consider:
 
 1. **Jint vs js2il**: js2il should generally win on steady-state .NET execution, but the exact ratio is scenario-dependent
-2. **Node.js vs js2il**: Node.js often remains ahead on mature JIT-heavy workloads
+2. **ClearScript vs js2il**: ClearScript represents a .NET client hosting V8 in-process, avoiding the process-spawn cost that made direct Node.js numbers misleading in this suite
 3. **Compile overhead**: js2il compile time can exceed execution for short-running scripts
 
 ## Output
@@ -178,7 +177,7 @@ Intel Core i7-9700K CPU 3.60GHz (Coffee Lake), 1 CPU, 8 logical and 8 physical c
 
 | Method       | ScriptName | Mean         | Error      | StdDev     | Rank |
 |------------- |----------- |-------------:|-----------:|-----------:|-----:|
-| Node.js      | minimal    |     12.45 ms |   0.24 ms |   0.22 ms |    1 |
+| ClearScript  | minimal    |     12.45 ms |   0.24 ms |   0.22 ms |    1 |
 | js2il (...)  | minimal    |    234.12 ms |   4.56 ms |   4.27 ms |    2 |
 | Jint         | minimal    |  2,345.67 ms |  45.23 ms |  42.31 ms |    3 |
 ```
@@ -187,9 +186,11 @@ Intel Core i7-9700K CPU 3.60GHz (Coffee Lake), 1 CPU, 8 logical and 8 physical c
 
 ### Runtime Lifecycle
 
-- **Node.js**: Process spawned per benchmark iteration
+- **ClearScript**: New hosted V8 engine instance per iteration
 - **Jint**: New engine instance per iteration
 - **js2il**: Pre-compiled or compile+execute per iteration
+
+Direct Node.js process-per-iteration measurements are intentionally excluded from the default cross-runtime suite because they include temp-file creation, process startup, stdout/stderr capture, and process teardown. Those numbers are useful as a CLI cold-start metric, but they are not a fair comparison to in-process .NET runtimes. ClearScript is used instead as the .NET-hosted V8 comparison point.
 
 ### Measurement Approach
 
@@ -258,12 +259,9 @@ dotnet clean
 dotnet build -c Release
 ```
 
-### Node.js Not Found
+### ClearScript Native V8 Load Errors
 
-Install Node.js or skip Node.js benchmarks:
-```powershell
-dotnet run -c Release -- --filter *Jint* *js2il*
-```
+ClearScript requires a native V8 package for the current platform. The benchmark project references the Windows x64 and Linux x64 native packages used by local and GitHub Actions runs.
 
 ### Compilation Errors
 
@@ -275,12 +273,12 @@ When adding new scenarios:
 
 1. Add JavaScript file to `Scenarios/`
 2. Document provenance in `Compliance/PROVENANCE.md`
-3. Verify all three runtimes can execute the script
+3. Verify all hosted runtimes can execute the script
 4. Update this README with scenario description if it adds a new workload family
 
 ## References
 
 - [BenchmarkDotNet Documentation](https://benchmarkdotnet.org/)
+- [ClearScript Documentation](https://microsoft.github.io/ClearScript/)
 - [Jint Repository](https://github.com/sebastienros/jint)
-- [Node.js Documentation](https://nodejs.org/)
 - [js2il Repository](https://github.com/tomacox74/js2il)

@@ -51,17 +51,17 @@ public static class ValidationTest
             Console.WriteLine($"   Exception: {ex.Message}");
         }
 
-        // Test Node.js
-        Console.WriteLine("\n2. Testing Node.js...");
+        // Test ClearScript
+        Console.WriteLine("\n2. Testing ClearScript...");
         try
         {
-            var nodeRuntime = new NodeJsRuntime();
-            var nodeResult = nodeRuntime.Execute(script, "minimal.js");
-            Console.WriteLine($"   Success: {nodeResult.Success}");
-            Console.WriteLine($"   Execution Time: {nodeResult.ExecutionTime.TotalMilliseconds}ms");
-            if (!nodeResult.Success)
+            var clearScriptRuntime = new ClearScriptRuntime();
+            var clearScriptResult = clearScriptRuntime.Execute(script, "minimal.js");
+            Console.WriteLine($"   Success: {clearScriptResult.Success}");
+            Console.WriteLine($"   Execution Time: {clearScriptResult.ExecutionTime.TotalMilliseconds}ms");
+            if (!clearScriptResult.Success)
             {
-                Console.WriteLine($"   Error: {nodeResult.Error}");
+                Console.WriteLine($"   Error: {clearScriptResult.Error}");
             }
         }
         catch (Exception ex)

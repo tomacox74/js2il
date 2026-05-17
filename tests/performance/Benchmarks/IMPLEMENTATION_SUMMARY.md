@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully implemented a comprehensive BenchmarkDotNet-based performance benchmark suite for comparing JavaScript execution across Node.js, Jint, and js2il runtimes.
+Successfully implemented a comprehensive BenchmarkDotNet-based performance benchmark suite for comparing JavaScript execution across ClearScript, Jint, and js2il runtimes.
 
 ## What Was Built
 
@@ -18,7 +18,7 @@ tests/performance/Benchmarks/
 │   └── array-stress.js
 ├── Runtimes/               # Runtime adapter implementations
 │   ├── IJavaScriptRuntime.cs
-│   ├── NodeJsRuntime.cs
+│   ├── ClearScriptRuntime.cs
 │   ├── JintRuntime.cs
 │   └── Js2ILRuntime.cs
 ├── Compliance/             # Licensing and provenance
@@ -34,9 +34,9 @@ tests/performance/Benchmarks/
 
 ### 2. Runtime Adapters
 
-Three runtime adapters implementing `IJavaScriptRuntime`:
+Three default runtime adapters implementing `IJavaScriptRuntime`:
 
-- **NodeJsRuntime**: Spawns Node.js process, captures timing and output
+- **ClearScriptRuntime**: Executes JavaScript through a .NET-hosted V8 engine
 - **JintRuntime**: In-process JavaScript interpreter
 - **Js2ILRuntime**: Compiles JavaScript to IL, separates compile/execute phases
 
@@ -55,7 +55,7 @@ All scenarios include "use strict" directive for js2il compatibility.
 ### 4. Benchmark Classes
 
 - **JavaScriptRuntimeBenchmarks**: Cross-runtime comparison
-  - Benchmarks: Node.js, Jint, js2il (compile+execute)
+  - Benchmarks: ClearScript, Jint, js2il (compile+execute)
   - Parameterized across the full checked-in root scenario catalog
   
 - **Js2ILPhasedBenchmarks**: Separate compile/execute phases
@@ -118,7 +118,7 @@ Comprehensive validation test (`ValidationTest.cs`):
 
 **Validation Results**:
 - ✅ Jint: ~77ms execution
-- ✅ Node.js: ~31ms execution (fastest)
+- ✅ ClearScript: hosted V8 execution
 - ✅ js2il: ~280-360ms compile + ~42-65ms execution
 - ✅ Representative scenarios across the expanded root catalog are present and loadable
 - ✅ Build successful (0 warnings, 0 errors)
@@ -247,9 +247,9 @@ tests/performance/Benchmarks/Js2ILPhasedBenchmarks.cs
 tests/performance/Benchmarks/Program.cs
 tests/performance/Benchmarks/README.md
 tests/performance/Benchmarks/Runtimes/IJavaScriptRuntime.cs
+tests/performance/Benchmarks/Runtimes/ClearScriptRuntime.cs
 tests/performance/Benchmarks/Runtimes/JintRuntime.cs
 tests/performance/Benchmarks/Runtimes/Js2ILRuntime.cs
-tests/performance/Benchmarks/Runtimes/NodeJsRuntime.cs
 tests/performance/Benchmarks/Scenarios/array-stress.js
 tests/performance/Benchmarks/Scenarios/evaluation-modern.js
 tests/performance/Benchmarks/Scenarios/evaluation.js
@@ -267,7 +267,7 @@ tests/performance/README.md
 
 - **Total Lines Added**: ~1,500
 - **Files Created**: 18
-- **Runtime Adapters**: 3
+- **Runtime Adapters**: 3 default adapters
 - **Benchmark Scenarios**: 5
 - **Documentation Pages**: 3
 - **Commits**: 4
@@ -279,7 +279,7 @@ Successfully delivered a production-ready BenchmarkDotNet performance suite that
 
 1. ✅ Provides rigorous statistical benchmarking
 2. ✅ Separates js2il compile and execute phases
-3. ✅ Supports multiple runtimes (Node.js, Jint, js2il)
+3. ✅ Supports multiple runtimes (ClearScript, Jint, js2il)
 4. ✅ Includes comprehensive documentation
 5. ✅ Integrates with CI (informational-only)
 6. ✅ Maintains licensing compliance
