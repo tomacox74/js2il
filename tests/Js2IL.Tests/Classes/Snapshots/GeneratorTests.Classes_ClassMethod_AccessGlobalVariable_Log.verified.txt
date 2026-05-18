@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213d
+				// Method begins at RVA 0x21e9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2146
+				// Method begins at RVA 0x21f2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x21a4
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -88,7 +88,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x21c0
 			// Header size: 1
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -123,7 +123,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2134
+			// Method begins at RVA 0x21e0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -149,15 +149,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 153 (0x99)
+		// Code size: 326 (0x146)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope,
 			[1] object,
 			[2] object,
-			[3] object[],
-			[4] class [System.Runtime]System.Type,
-			[5] object,
+			[3] class [System.Runtime]System.Type,
+			[4] object,
+			[5] object[],
 			[6] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
 		)
 
@@ -166,51 +166,125 @@
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from global"
 		IL_000c: stfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
-		IL_0011: ldc.i4.1
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldloc.0
-		IL_001a: stelem.ref
-		IL_001b: stloc.3
-		IL_001c: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-		IL_0021: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0026: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-		IL_002b: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0030: stloc.s 4
-		IL_0032: ldloc.s 4
-		IL_0034: ldloc.3
-		IL_0035: ldc.r8 0.0
-		IL_003e: box [System.Runtime]System.Double
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0048: stloc.s 5
-		IL_004a: ldloc.s 5
-		IL_004c: stloc.1
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldloc.0
-		IL_0056: stelem.ref
-		IL_0057: ldc.i4.0
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-		IL_0062: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::.ctor(object[])
-		IL_0067: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-		IL_006c: stloc.s 6
-		IL_006e: ldloc.s 6
-		IL_0070: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-		IL_0075: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_007a: ldstr "prototype"
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0084: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-		IL_0089: ldloc.s 6
-		IL_008b: stloc.2
-		IL_008c: ldloc.2
-		IL_008d: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-		IL_0092: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
-		IL_0097: pop
-		IL_0098: ret
+		IL_0011: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_0016: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_001b: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: ldstr "prototype"
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0031: stloc.s 4
+		IL_0033: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_0038: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_003d: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_0042: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0047: stloc.3
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: stloc.s 5
+		IL_0054: ldc.i4.s 11
+		IL_0056: newarr [System.Runtime]System.Object
+		IL_005b: dup
+		IL_005c: ldc.i4.0
+		IL_005d: ldloc.s 4
+		IL_005f: stelem.ref
+		IL_0060: dup
+		IL_0061: ldc.i4.1
+		IL_0062: ldstr "logGlobal"
+		IL_0067: stelem.ref
+		IL_0068: dup
+		IL_0069: ldc.i4.2
+		IL_006a: ldloc.3
+		IL_006b: stelem.ref
+		IL_006c: dup
+		IL_006d: ldc.i4.3
+		IL_006e: ldstr "logGlobal"
+		IL_0073: stelem.ref
+		IL_0074: dup
+		IL_0075: ldc.i4.4
+		IL_0076: ldc.r8 0.0
+		IL_007f: box [System.Runtime]System.Double
+		IL_0084: stelem.ref
+		IL_0085: dup
+		IL_0086: ldc.i4.5
+		IL_0087: ldstr "logGlobal"
+		IL_008c: stelem.ref
+		IL_008d: dup
+		IL_008e: ldc.i4.6
+		IL_008f: ldc.i4.0
+		IL_0090: box [System.Runtime]System.Boolean
+		IL_0095: stelem.ref
+		IL_0096: dup
+		IL_0097: ldc.i4.7
+		IL_0098: ldc.i4.0
+		IL_0099: box [System.Runtime]System.Boolean
+		IL_009e: stelem.ref
+		IL_009f: dup
+		IL_00a0: ldc.i4.8
+		IL_00a1: ldc.i4.0
+		IL_00a2: box [System.Runtime]System.Boolean
+		IL_00a7: stelem.ref
+		IL_00a8: dup
+		IL_00a9: ldc.i4.s 9
+		IL_00ab: ldc.i4.0
+		IL_00ac: box [System.Runtime]System.Boolean
+		IL_00b1: stelem.ref
+		IL_00b2: dup
+		IL_00b3: ldc.i4.s 10
+		IL_00b5: ldloc.s 5
+		IL_00b7: stelem.ref
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassMethodDataProperty(object[])
+		IL_00bd: pop
+		IL_00be: ldc.i4.1
+		IL_00bf: newarr [System.Runtime]System.Object
+		IL_00c4: dup
+		IL_00c5: ldc.i4.0
+		IL_00c6: ldloc.0
+		IL_00c7: stelem.ref
+		IL_00c8: stloc.s 5
+		IL_00ca: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_00cf: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00d4: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_00d9: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00de: stloc.3
+		IL_00df: ldloc.3
+		IL_00e0: ldloc.s 5
+		IL_00e2: ldc.r8 0.0
+		IL_00eb: box [System.Runtime]System.Double
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_00f5: stloc.s 4
+		IL_00f7: ldloc.s 4
+		IL_00f9: stloc.1
+		IL_00fa: ldc.i4.1
+		IL_00fb: newarr [System.Runtime]System.Object
+		IL_0100: dup
+		IL_0101: ldc.i4.0
+		IL_0102: ldloc.0
+		IL_0103: stelem.ref
+		IL_0104: ldc.i4.0
+		IL_0105: newarr [System.Runtime]System.Object
+		IL_010a: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_010f: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::.ctor(object[])
+		IL_0114: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_0119: stloc.s 6
+		IL_011b: ldloc.s 6
+		IL_011d: ldtoken Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_0122: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0127: ldstr "prototype"
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0131: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0136: ldloc.s 6
+		IL_0138: stloc.2
+		IL_0139: ldloc.2
+		IL_013a: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_013f: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
+		IL_0144: pop
+		IL_0145: ret
 	} // end of method Classes_ClassMethod_AccessGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessGlobalVariable_Log
@@ -222,7 +296,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214f
+		// Method begins at RVA 0x21fb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

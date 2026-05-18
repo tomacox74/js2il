@@ -4,7 +4,7 @@
 
 [Back to Section9](Section9.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-18T20:54:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,17 +20,17 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 9.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-privateenvironment-record-operations))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| PrivateEnvironment record operations for class private fields | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js) | Private field declarations/access use compiler-managed metadata and runtime helpers; private methods/accessors are still incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| PrivateEnvironment record operations for class private fields | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js) |  | Private field declarations/access use compiler-managed metadata and runtime helpers. Supported private methods use the generated class private-name surface and enforce receiver checks; private accessors remain incomplete. |
 
 ### 9.2.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-resolve-private-identifier))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| ResolvePrivateIdentifier in supported class forms | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>`tests/Js2IL.Tests/ValidatorTests.cs` | Private identifier resolution is supported for private fields/properties; validator rejects unsupported private methods/accessors. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| ResolvePrivateIdentifier in supported class forms | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js)<br>`tests/Js2IL.Tests/ValidatorTests.cs` |  | Private identifier resolution is supported for private fields/properties and supported private methods. Unsupported private accessor forms are still rejected. |
 

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace JavaScriptRuntime;
 
@@ -135,6 +137,163 @@ public class RuntimeServices
         });
 
         return classConstructorValue;
+    }
+
+    public static object DefineClassMethodDataProperty(
+        object targetValue,
+        object keyValue,
+        object ownerValue,
+        object clrMethodNameValue,
+        object lengthValue,
+        object functionNameValue,
+        object isStaticValue,
+        object isPrivateValue,
+        object isGeneratorValue,
+        object isAsyncValue,
+        object scopesValue)
+    {
+        ArgumentNullException.ThrowIfNull(targetValue);
+
+        var ownerType = ResolveClassOwnerType(ownerValue);
+        var scopes = scopesValue as object[]
+            ?? (ownerValue is ClassConstructorValue classConstructorValue
+                ? classConstructorValue.Scopes
+                : EmptyScopes);
+        var clrMethodName = clrMethodNameValue as string
+            ?? throw new TypeError("Class method definition requires a CLR method name");
+        var key = JavaScriptRuntime.Object.ToPropertyKeyString(keyValue);
+        var functionName = functionNameValue as string ?? key;
+        var length = lengthValue is double d ? d : 0d;
+        var isStatic = TypeUtilities.ToBoolean(isStaticValue);
+        var isPrivate = TypeUtilities.ToBoolean(isPrivateValue);
+        var isGenerator = TypeUtilities.ToBoolean(isGeneratorValue);
+        var isAsync = TypeUtilities.ToBoolean(isAsyncValue);
+
+        var flags = (isStatic ? BindingFlags.Static : BindingFlags.Instance)
+            | BindingFlags.Public
+            | BindingFlags.NonPublic;
+        var method = ownerType.GetMethod(clrMethodName, flags)
+            ?? throw new TypeError($"Class method '{clrMethodName}' was not found on {ownerType.FullName}");
+
+        Func<object[], object?[]?, object?> functionValue = (_, args) =>
+            InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, args);
+
+        if (isAsync)
+        {
+            AsyncFunction.InitializeFunctionInstance(functionValue, length, functionName);
+        }
+        else
+        {
+            Function.InitializeFunctionInstance(functionValue, length, functionName);
+        }
+
+        if (isGenerator)
+        {
+            GeneratorObject.InitializeGeneratorFunctionSurface(functionValue);
+        }
+
+        PropertyDescriptorStore.DefineOrUpdate(targetValue, key, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = functionValue,
+            Writable = true,
+            Enumerable = false,
+            Configurable = true
+        });
+
+        return targetValue;
+    }
+
+    private static Type ResolveClassOwnerType(object ownerValue)
+        => ownerValue switch
+        {
+            Type type => type,
+            ClassConstructorValue classConstructorValue => classConstructorValue.Type,
+            _ => throw new TypeError("Class method definition requires a class constructor value")
+        };
+
+    private static object? InvokeClassMethodFunction(
+        Type ownerType,
+        MethodInfo method,
+        object[] scopes,
+        bool isStatic,
+        bool isPrivate,
+        object?[]? args)
+    {
+        var receiver = ResolveLexicalThis(GetCurrentThis());
+        if (isPrivate && !HasClassPrivateMethodBrand(receiver, ownerType, isStatic))
+        {
+            throw new TypeError("Receiver does not have the requested private method");
+        }
+
+        object? instance = null;
+        if (!isStatic)
+        {
+            if (receiver is null || receiver is JsNull || !ownerType.IsInstanceOfType(receiver))
+            {
+                throw new TypeError("Class method receiver is incompatible with its declaring class");
+            }
+
+            instance = receiver;
+        }
+
+        var invokeArgs = BuildClassMethodInvokeArguments(method, scopes, args);
+        try
+        {
+            return method.Invoke(instance, invokeArgs);
+        }
+        catch (TargetInvocationException tie) when (tie.InnerException != null)
+        {
+            ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+            throw;
+        }
+    }
+
+    private static bool HasClassPrivateMethodBrand(object? receiver, Type ownerType, bool isStatic)
+    {
+        if (receiver is null || receiver is JsNull)
+        {
+            return false;
+        }
+
+        if (isStatic)
+        {
+            return receiver switch
+            {
+                Type type => type == ownerType,
+                ClassConstructorValue classConstructorValue => classConstructorValue.Type == ownerType,
+                _ => false
+            };
+        }
+
+        return ownerType.IsInstanceOfType(receiver);
+    }
+
+    private static object?[] BuildClassMethodInvokeArguments(MethodInfo method, object[] scopes, object?[]? args)
+    {
+        var parameters = method.GetParameters();
+        if (parameters.Length == 0)
+        {
+            return System.Array.Empty<object?>();
+        }
+
+        var invokeArgs = new object?[parameters.Length];
+        var sourceArgs = args ?? System.Array.Empty<object?>();
+        var jsArgIndex = 0;
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            if (i == 0 && parameters[i].ParameterType == typeof(object[]))
+            {
+                invokeArgs[i] = scopes;
+                continue;
+            }
+
+            invokeArgs[i] = jsArgIndex < sourceArgs.Length ? sourceArgs[jsArgIndex] : null;
+            jsArgIndex++;
+        }
+
+        return invokeArgs;
     }
 
     public static object SetClassConstructorInferredName(object constructorValue, object nameValue)

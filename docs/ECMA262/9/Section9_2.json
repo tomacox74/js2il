@@ -37,9 +37,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-privateenvironment-record-operations",
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
         ],
-        "notes": "Private field declarations/access use compiler-managed metadata and runtime helpers; private methods/accessors are still incomplete."
+        "notes": "Private field declarations/access use compiler-managed metadata and runtime helpers. Supported private methods use the generated class private-name surface and enforce receiver checks; private accessors remain incomplete."
       },
       {
         "clause": "9.2.1.2",
@@ -48,9 +49,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-resolve-private-identifier",
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js",
           "tests/Js2IL.Tests/ValidatorTests.cs"
         ],
-        "notes": "Private identifier resolution is supported for private fields/properties; validator rejects unsupported private methods/accessors."
+        "notes": "Private identifier resolution is supported for private fields/properties and supported private methods. Unsupported private accessor forms are still rejected."
       }
     ]
   }

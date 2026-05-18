@@ -1379,6 +1379,47 @@ class HIRMethodBuilder
                         break;
                     }
 
+                    case MethodDefinition methodDefinition
+                        when !ClassElementNames.IsConstructor(methodDefinition)
+                            && methodDefinition.Kind != PropertyKind.Get
+                            && methodDefinition.Kind != PropertyKind.Set
+                            && (!methodDefinition.Computed
+                                || ClassElementNames.TryGetPropertyName(methodDefinition.Key, computed: true, out _)):
+                    {
+                        if (methodDefinition.Value is not FunctionExpression methodFunction)
+                        {
+                            break;
+                        }
+
+                        var isPrivate = methodDefinition.Key is PrivateIdentifier;
+                        var clrMethodName = ClassElementNames.GetMethodRegistryName(methodDefinition);
+                        var propertyKey = isPrivate
+                            ? clrMethodName
+                            : ClassElementNames.TryGetPropertyName(methodDefinition.Key, methodDefinition.Computed, out var resolvedName)
+                                && !string.IsNullOrWhiteSpace(resolvedName)
+                                    ? resolvedName!
+                                    : clrMethodName;
+                        var functionName = methodDefinition.Key is PrivateIdentifier privateIdentifier
+                            ? $"#{privateIdentifier.Name}"
+                            : propertyKey;
+
+                        var definitionExpression = new HIRDefineClassMethodDataPropertyExpression(
+                            methodDefinition.Static ? classTypeExpr : prototypeTypeExpr,
+                            new HIRLiteralExpression(JavascriptType.String, propertyKey),
+                            classTypeExpr,
+                            classScope,
+                            clrMethodName,
+                            CountExpectedFunctionLength(methodFunction.Params),
+                            functionName,
+                            methodDefinition.Static,
+                            isPrivate,
+                            methodFunction.Generator,
+                            methodFunction.Async);
+
+                        statements.Add(new HIRExpressionStatement(definitionExpression));
+                        break;
+                    }
+
                     case MethodDefinition methodDefinition when methodDefinition.Computed
                         && !ClassElementNames.TryGetPropertyName(methodDefinition.Key, computed: true, out _):
                     {
@@ -1445,6 +1486,22 @@ class HIRMethodBuilder
             _staticThisRegistryClassName = staticThisRegistryClassName
         };
         return builder;
+    }
+
+    private static int CountExpectedFunctionLength(NodeList<Node> parameters)
+    {
+        var count = 0;
+        foreach (var parameter in parameters)
+        {
+            if (parameter is RestElement or AssignmentPattern)
+            {
+                break;
+            }
+
+            count++;
+        }
+
+        return count;
     }
 
     public bool TryParseStatements([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, IReadOnlyList<HIRPattern> parameters, out HIRMethod? method)

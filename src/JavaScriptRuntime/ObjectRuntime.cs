@@ -117,6 +117,27 @@ namespace JavaScriptRuntime
                 enumerable: false);
         }
 
+        public static object DefineClassMethodDataProperty(object[] args)
+        {
+            if (args.Length != 11)
+            {
+                throw new ArgumentException("Class method definition requires 11 arguments.", nameof(args));
+            }
+
+            return RuntimeServices.DefineClassMethodDataProperty(
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                args[6],
+                args[7],
+                args[8],
+                args[9],
+                args[10]);
+        }
+
         public static object DefineClassFieldDataProperty(object target, string prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);

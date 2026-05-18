@@ -84,9 +84,20 @@
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
         ],
-        "notes": "Covers instance/static methods and super method calls. Limitations are tracked under Class Definitions (for example computed method names and private methods/accessors remain unsupported)."
+        "notes": "Covers instance/static methods, super method calls, and function-valued method properties on constructors/prototypes. Limitations are tracked under Class Definitions (for example arbitrary runtime-computed method names and some private accessor cases remain limited)."
+      },
+      {
+        "clause": "15.4.5",
+        "feature": "Class method function object metadata",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/gen-method-length-dflt.js"
+        ],
+        "notes": "Class methods are exposed as JavaScript function-valued data properties on the prototype or constructor with non-enumerable configurable descriptors. Function.length is computed from the formal parameter list before the first default/rest parameter; broader function metadata limitations are tracked with function object support."
       },
       {
         "clause": "15.4.5",

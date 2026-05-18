@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-12T09:32:09Z
+> Last generated (UTC): 2026-05-18T20:54:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -138,11 +138,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| PrivateElementFind for private fields | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js) |  | Private field access works for supported class forms; private methods/accessors and complete validation coverage are not yet implemented. |
+| PrivateElementFind for private fields | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js) |  | Private field access works for supported class forms. Supported private methods participate in receiver brand checks, including static private methods rejecting proxy receivers; private accessors and complete validation coverage remain limited. |
 
 ### 7.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-initializeinstanceelements))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| InitializeInstanceElements (class fields + private fields) | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`constructor-this-tdz-during-initializers.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js) |  | Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks, private methods/accessors, and some inheritance details are incomplete. |
+| InitializeInstanceElements (class fields + private fields) | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`constructor-this-tdz-during-initializers.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js) |  | Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks and supported private methods are implemented; private accessors and some inheritance details remain incomplete. |
 
