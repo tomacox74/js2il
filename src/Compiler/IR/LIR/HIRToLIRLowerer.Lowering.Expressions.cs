@@ -827,9 +827,12 @@ public sealed partial class HIRToLIRLowerer
         }
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        var typeTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
-        DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+        if (!_classMethodOwnerTempsByRegistryName.Remove(registryClassName, out var typeTemp))
+        {
+            typeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
+            DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+        }
 
         // Look up the formal parameter count for Function.length semantics (params before defaults/rest).
         int minParamCount = 0;

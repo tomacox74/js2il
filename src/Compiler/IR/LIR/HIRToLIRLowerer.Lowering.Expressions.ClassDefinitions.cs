@@ -90,6 +90,11 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        if (expression.Owner is HIRUserClassTypeExpression ownerClassType)
+        {
+            _classMethodOwnerTempsByRegistryName[ownerClassType.RegistryClassName] = ownerTemp;
+        }
+
         TempVariable? prototypeTemp = null;
         var needsPrototype = false;
         foreach (var methodDefinition in expression.MethodDefinitions)

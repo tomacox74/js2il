@@ -37,6 +37,10 @@ public sealed partial class HIRToLIRLowerer
     // (e.g., per-iteration loop environments).
     private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
 
+    // Class method property initialization needs the class Type as the method owner; class constructor
+    // value creation immediately afterward can reuse that temp instead of re-emitting RunClassConstructor.
+    private readonly Dictionary<string, TempVariable> _classMethodOwnerTempsByRegistryName = new(StringComparer.Ordinal);
+
     // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double
     // temp that holds its value.  Used to avoid redundant TypeUtilities.ToNumber calls when the
     // same variable is used in multiple numeric contexts without any intervening write.
