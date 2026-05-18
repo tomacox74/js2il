@@ -889,6 +889,7 @@ class HIRMethodBuilder
     readonly Scope _rootScope;
     Scope _currentScope;
     readonly List<HIRStatement> _statements = new();
+    readonly Dictionary<ClassDeclaration, bool> _eagerClassMetadataOmissionCache = new();
     string? _staticThisRegistryClassName;
 
     public HIRMethodBuilder(Scope scope)
@@ -1267,7 +1268,7 @@ class HIRMethodBuilder
 
         var classBody = classNode switch
         {
-            ClassDeclaration classDeclaration => classDeclaration.Body,
+            ClassDeclaration classDeclarationNode => classDeclarationNode.Body,
             ClassExpression classExpression => classExpression.Body,
             _ => null
         };
@@ -1280,6 +1281,8 @@ class HIRMethodBuilder
         var registryClassName = GetRegistryClassName(classScope);
         var classTypeExpr = new HIRUserClassTypeExpression(registryClassName);
         var prototypeTypeExpr = new HIRPropertyAccessExpression(classTypeExpr, "prototype");
+        var omitEagerMetadata = classNode is ClassDeclaration classDeclaration
+            && CanOmitEagerClassMetadata(classDeclaration);
         var previousScope = _currentScope;
         var previousStaticThisRegistryClassName = _staticThisRegistryClassName;
         _currentScope = classScope;
@@ -1391,6 +1394,11 @@ class HIRMethodBuilder
                             break;
                         }
 
+                        if (omitEagerMetadata)
+                        {
+                            break;
+                        }
+
                         var isPrivate = methodDefinition.Key is PrivateIdentifier;
                         var clrMethodName = ClassElementNames.GetMethodRegistryName(methodDefinition);
                         var propertyKey = isPrivate
@@ -1483,6 +1491,277 @@ class HIRMethodBuilder
             _staticThisRegistryClassName = staticThisRegistryClassName
         };
         return builder;
+    }
+
+    private bool CanOmitEagerClassMetadata(ClassDeclaration classDeclaration)
+    {
+        if (_eagerClassMetadataOmissionCache.TryGetValue(classDeclaration, out var cachedResult))
+        {
+            return cachedResult;
+        }
+
+        var result = CanOmitEagerClassMetadataCore(classDeclaration);
+        _eagerClassMetadataOmissionCache[classDeclaration] = result;
+        return result;
+    }
+
+    private bool CanOmitEagerClassMetadataCore(ClassDeclaration classDeclaration)
+    {
+        if (classDeclaration.Id is not Identifier classIdentifier
+            || string.IsNullOrWhiteSpace(classIdentifier.Name)
+            || classDeclaration.SuperClass != null)
+        {
+            return false;
+        }
+
+        var directMethodNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var element in classDeclaration.Body.Body)
+        {
+            switch (element)
+            {
+                case MethodDefinition methodDefinition when ClassElementNames.IsConstructor(methodDefinition):
+                    break;
+                case MethodDefinition methodDefinition:
+                    if (methodDefinition.Static
+                        || methodDefinition.Computed
+                        || methodDefinition.Kind is PropertyKind.Get or PropertyKind.Set
+                        || methodDefinition.Key is not Identifier methodIdentifier
+                        || methodDefinition.Value is not FunctionExpression methodFunction
+                        || methodFunction.Async
+                        || methodFunction.Generator)
+                    {
+                        return false;
+                    }
+
+                    directMethodNames.Add(methodIdentifier.Name);
+                    break;
+                case PropertyDefinition propertyDefinition:
+                    if (propertyDefinition.Static
+                        || propertyDefinition.Computed
+                        || propertyDefinition.Key is PrivateIdentifier)
+                    {
+                        return false;
+                    }
+                    break;
+                case StaticBlock:
+                    return false;
+            }
+        }
+
+        var className = classIdentifier.Name;
+        var directInstanceNames = new HashSet<string>(StringComparer.Ordinal);
+        var canOmit = true;
+
+        void CollectDirectInstances(Node? node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            if (node is VariableDeclarator declarator
+                && declarator.Id is Identifier declaredIdentifier
+                && IsDirectNewOfClass(declarator.Init as Expression, className))
+            {
+                directInstanceNames.Add(declaredIdentifier.Name);
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                CollectDirectInstances(child);
+            }
+        }
+
+        void Walk(Node? node, Node? parent = null, Node? grandparent = null)
+        {
+            if (!canOmit || node == null)
+            {
+                return;
+            }
+
+            switch (node)
+            {
+                case ClassDeclaration nestedClass when ReferenceEquals(nestedClass, classDeclaration):
+                    Walk(nestedClass.Body, nestedClass, parent);
+                    return;
+
+                case VariableDeclarator declarator
+                    when declarator.Id is Identifier declaredIdentifier
+                        && IsDirectNewOfClass(declarator.Init as Expression, className):
+                    directInstanceNames.Add(declaredIdentifier.Name);
+                    foreach (var argument in ((NewExpression)UnwrapMetadataAnalysisExpression(declarator.Init as Expression)!).Arguments)
+                    {
+                        Walk(argument as Node, declarator, parent);
+                    }
+                    return;
+
+                case NewExpression newExpression when IsDirectNewOfClass(newExpression, className):
+                    if (!IsAllowedDirectNewUse(newExpression, parent, grandparent, directMethodNames))
+                    {
+                        canOmit = false;
+                        return;
+                    }
+
+                    foreach (var argument in newExpression.Arguments)
+                    {
+                        Walk(argument as Node, newExpression, parent);
+                    }
+                    return;
+
+                case MemberExpression memberExpression when memberExpression.Object is ThisExpression:
+                    if (!IsAllowedThisMemberUse(memberExpression, parent, directMethodNames))
+                    {
+                        canOmit = false;
+                    }
+                    return;
+
+                case Identifier identifier when string.Equals(identifier.Name, className, StringComparison.Ordinal):
+                    if (!IsAllowedClassIdentifierUse(identifier, parent, classDeclaration))
+                    {
+                        canOmit = false;
+                    }
+                    return;
+
+                case Identifier identifier when directInstanceNames.Contains(identifier.Name):
+                    if (!IsAllowedDirectInstanceUse(identifier, parent, grandparent, directMethodNames))
+                    {
+                        canOmit = false;
+                    }
+                    return;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                Walk(child, node, parent);
+                if (!canOmit)
+                {
+                    return;
+                }
+            }
+        }
+
+        CollectDirectInstances(_rootScope.AstNode);
+        Walk(_rootScope.AstNode);
+        return canOmit;
+    }
+
+    private static Expression? UnwrapMetadataAnalysisExpression(Expression? expression)
+    {
+        while (expression is ParenthesizedExpression parenthesized)
+        {
+            expression = parenthesized.Expression;
+        }
+
+        return expression;
+    }
+
+    private static bool IsDirectNewOfClass(Expression? expression, string className)
+    {
+        expression = UnwrapMetadataAnalysisExpression(expression);
+        return expression is NewExpression { Callee: Identifier callee }
+            && string.Equals(callee.Name, className, StringComparison.Ordinal);
+    }
+
+    private static bool IsAllowedDirectNewUse(
+        NewExpression newExpression,
+        Node? parent,
+        Node? grandparent,
+        HashSet<string> directMethodNames)
+    {
+        if (parent is VariableDeclarator declarator && ReferenceEquals(declarator.Init, newExpression))
+        {
+            return true;
+        }
+
+        if (parent is ExpressionStatement expressionStatement && ReferenceEquals(expressionStatement.Expression, newExpression))
+        {
+            return true;
+        }
+
+        return parent is MemberExpression memberExpression
+            && ReferenceEquals(memberExpression.Object, newExpression)
+            && IsDirectMethodCall(memberExpression, grandparent, directMethodNames);
+    }
+
+    private static bool IsAllowedClassIdentifierUse(
+        Identifier identifier,
+        Node? parent,
+        ClassDeclaration classDeclaration)
+    {
+        if (parent is ClassDeclaration parentClass
+            && ReferenceEquals(parentClass, classDeclaration)
+            && ReferenceEquals(parentClass.Id, identifier))
+        {
+            return true;
+        }
+
+        if (parent is NewExpression newExpression && ReferenceEquals(newExpression.Callee, identifier))
+        {
+            return true;
+        }
+
+        if (parent is MemberExpression { Computed: false } memberExpression
+            && ReferenceEquals(memberExpression.Property, identifier))
+        {
+            return true;
+        }
+
+        if (parent is MethodDefinition { Computed: false } methodDefinition
+            && ReferenceEquals(methodDefinition.Key, identifier))
+        {
+            return true;
+        }
+
+        return parent is Property { Computed: false } property
+            && ReferenceEquals(property.Key, identifier);
+    }
+
+    private static bool IsAllowedDirectInstanceUse(
+        Identifier identifier,
+        Node? parent,
+        Node? grandparent,
+        HashSet<string> directMethodNames)
+        => parent is MemberExpression memberExpression
+            && ReferenceEquals(memberExpression.Object, identifier)
+            && IsDirectMethodCall(memberExpression, grandparent, directMethodNames);
+
+    private static bool IsDirectMethodCall(
+        MemberExpression memberExpression,
+        Node? parent,
+        HashSet<string> directMethodNames)
+    {
+        if (memberExpression.Computed
+            || memberExpression.Property is not Identifier methodIdentifier
+            || !directMethodNames.Contains(methodIdentifier.Name))
+        {
+            return false;
+        }
+
+        return parent is CallExpression callExpression
+            && ReferenceEquals(callExpression.Callee, memberExpression);
+    }
+
+    private static bool IsAllowedThisMemberUse(
+        MemberExpression memberExpression,
+        Node? parent,
+        HashSet<string> directMethodNames)
+    {
+        if (memberExpression.Computed
+            || memberExpression.Property is not Identifier propertyIdentifier)
+        {
+            return false;
+        }
+
+        var propertyName = propertyIdentifier.Name;
+        if (string.Equals(propertyName, "constructor", StringComparison.Ordinal)
+            || string.Equals(propertyName, "__proto__", StringComparison.Ordinal)
+            || string.Equals(propertyName, "prototype", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return !directMethodNames.Contains(propertyName)
+            || IsDirectMethodCall(memberExpression, parent, directMethodNames);
     }
 
     private static void AppendClassMethodDataPropertyDefinition(
@@ -1688,7 +1967,8 @@ class HIRMethodBuilder
                     // phase that can reference the class name begins.
                     var cdClassName = (classDecl.Id as Identifier)?.Name;
                     if (cdClassName != null
-                        && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true)
+                        && _currentScope?.Bindings.TryGetValue(cdClassName, out var cdClassBinding) == true
+                        && !CanOmitEagerClassMetadata(classDecl))
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(cdRegistryClassName, classScope, []);

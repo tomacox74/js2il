@@ -60,6 +60,7 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassMethod_ReturnsThis_IsSelf_Log() { var testName = nameof(Classes_ClassMethod_ReturnsThis_IsSelf_Log); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassMethod_MethodValueRequiresMetadata() { var testName = nameof(Classes_ClassMethod_MethodValueRequiresMetadata); return ExecutionTest(testName); }
         [Fact] public Task Classes_AccessorMethods_InstanceAndStatic() { var testName = nameof(Classes_AccessorMethods_InstanceAndStatic); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_ParameterTypeInference_DirectThis_Number() { var testName = nameof(Classes_ClassMethod_ParameterTypeInference_DirectThis_Number); return ExecutionTest(testName); }
