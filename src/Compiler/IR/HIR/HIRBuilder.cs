@@ -1403,11 +1403,8 @@ class HIRMethodBuilder
                             ? $"#{privateIdentifier.Name}"
                             : propertyKey;
 
-                        var definitionExpression = new HIRDefineClassMethodDataPropertyExpression(
-                            methodDefinition.Static ? classTypeExpr : prototypeTypeExpr,
-                            new HIRLiteralExpression(JavascriptType.String, propertyKey),
-                            classTypeExpr,
-                            classScope,
+                        var definition = new HIRClassMethodDataPropertyDefinition(
+                            propertyKey,
                             clrMethodName,
                             CountExpectedFunctionLength(methodFunction.Params),
                             functionName,
@@ -1416,7 +1413,7 @@ class HIRMethodBuilder
                             methodFunction.Generator,
                             methodFunction.Async);
 
-                        statements.Add(new HIRExpressionStatement(definitionExpression));
+                        AppendClassMethodDataPropertyDefinition(statements, classTypeExpr, classScope, definition);
                         break;
                     }
 
@@ -1486,6 +1483,27 @@ class HIRMethodBuilder
             _staticThisRegistryClassName = staticThisRegistryClassName
         };
         return builder;
+    }
+
+    private static void AppendClassMethodDataPropertyDefinition(
+        List<HIRStatement> statements,
+        HIRExpression classTypeExpr,
+        Scope classScope,
+        HIRClassMethodDataPropertyDefinition definition)
+    {
+        if (statements.Count > 0
+            && statements[^1] is HIRExpressionStatement { Expression: HIRDefineClassMethodDataPropertiesExpression existing }
+            && ReferenceEquals(existing.ClassScope, classScope))
+        {
+            existing.MethodDefinitions.Add(definition);
+            return;
+        }
+
+        statements.Add(new HIRExpressionStatement(
+            new HIRDefineClassMethodDataPropertiesExpression(
+                classTypeExpr,
+                classScope,
+                new List<HIRClassMethodDataPropertyDefinition> { definition })));
     }
 
     private static int CountExpectedFunctionLength(NodeList<Node> parameters)

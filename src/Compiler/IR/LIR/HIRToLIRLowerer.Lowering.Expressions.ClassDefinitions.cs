@@ -76,24 +76,40 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerDefineClassMethodDataPropertyExpression(HIRDefineClassMethodDataPropertyExpression expression, out TempVariable resultTempVar)
+    private bool TryLowerDefineClassMethodDataPropertiesExpression(HIRDefineClassMethodDataPropertiesExpression expression, out TempVariable resultTempVar)
     {
         resultTempVar = default;
 
-        if (!TryLowerExpression(expression.Key, out var keyTemp)
-            || !TryLowerExpression(expression.Target, out var targetTemp)
-            || !TryLowerExpression(expression.Owner, out var ownerTemp))
+        if (expression.MethodDefinitions.Count == 0)
         {
             return false;
         }
 
-        var clrMethodNameTemp = CreateStringConstant(expression.ClrMethodName);
-        var lengthTemp = CreateNumberConstant(expression.Length);
-        var functionNameTemp = CreateStringConstant(expression.FunctionName);
-        var isStaticTemp = CreateBooleanConstant(expression.IsStatic);
-        var isPrivateTemp = CreateBooleanConstant(expression.IsPrivate);
-        var isGeneratorTemp = CreateBooleanConstant(expression.IsGenerator);
-        var isAsyncTemp = CreateBooleanConstant(expression.IsAsync);
+        if (!TryLowerExpression(expression.Owner, out var ownerTemp))
+        {
+            return false;
+        }
+
+        TempVariable? prototypeTemp = null;
+        var needsPrototype = false;
+        foreach (var methodDefinition in expression.MethodDefinitions)
+        {
+            if (!methodDefinition.IsStatic)
+            {
+                needsPrototype = true;
+                break;
+            }
+        }
+
+        if (needsPrototype)
+        {
+            var prototypeKeyTemp = CreateStringConstant("prototype");
+            var resolvedPrototypeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(ownerTemp), EnsureObject(prototypeKeyTemp), resolvedPrototypeTemp));
+            DefineTempStorage(resolvedPrototypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            prototypeTemp = resolvedPrototypeTemp;
+        }
+
         var scopesTemp = CreateTempVariable();
         if (!TryBuildScopesArrayForClassConstructor(expression.ClassScope, scopesTemp, allowEmptyOnUnmappedGlobal: true))
         {
@@ -101,26 +117,42 @@ public sealed partial class HIRToLIRLowerer
         }
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        resultTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
-            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.DefineClassMethodDataProperty),
-            Arguments: new[]
-            {
-                EnsureObject(targetTemp),
-                EnsureObject(keyTemp),
-                EnsureObject(ownerTemp),
-                EnsureObject(clrMethodNameTemp),
-                EnsureObject(lengthTemp),
-                EnsureObject(functionNameTemp),
-                EnsureObject(isStaticTemp),
-                EnsureObject(isPrivateTemp),
-                EnsureObject(isGeneratorTemp),
-                EnsureObject(isAsyncTemp),
-                EnsureObject(scopesTemp)
-            },
-            Result: resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        foreach (var methodDefinition in expression.MethodDefinitions)
+        {
+            var targetTemp = methodDefinition.IsStatic
+                ? ownerTemp
+                : prototypeTemp!.Value;
+            var keyTemp = CreateStringConstant(methodDefinition.PropertyKey);
+            var clrMethodNameTemp = CreateStringConstant(methodDefinition.ClrMethodName);
+            var lengthTemp = CreateNumberConstant(methodDefinition.Length);
+            var functionNameTemp = CreateStringConstant(methodDefinition.FunctionName);
+            var isStaticTemp = CreateBooleanConstant(methodDefinition.IsStatic);
+            var isPrivateTemp = CreateBooleanConstant(methodDefinition.IsPrivate);
+            var isGeneratorTemp = CreateBooleanConstant(methodDefinition.IsGenerator);
+            var isAsyncTemp = CreateBooleanConstant(methodDefinition.IsAsync);
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.DefineClassMethodDataProperty),
+                Arguments: new[]
+                {
+                    EnsureObject(targetTemp),
+                    EnsureObject(keyTemp),
+                    EnsureObject(ownerTemp),
+                    EnsureObject(clrMethodNameTemp),
+                    EnsureObject(lengthTemp),
+                    EnsureObject(functionNameTemp),
+                    EnsureObject(isStaticTemp),
+                    EnsureObject(isPrivateTemp),
+                    EnsureObject(isGeneratorTemp),
+                    EnsureObject(isAsyncTemp),
+                    EnsureObject(scopesTemp)
+                },
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
         return true;
     }
 
