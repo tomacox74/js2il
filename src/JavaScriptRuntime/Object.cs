@@ -556,6 +556,17 @@ namespace JavaScriptRuntime
                 AddKey(keys, seen, key);
             }
 
+            RuntimeServices.EnsureClassConstructorCoreMetadataProperties(obj);
+            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            {
+                AddKey(keys, seen, key);
+            }
+
+            foreach (var key in RuntimeServices.GetLazyClassMethodOwnKeys(obj))
+            {
+                AddKey(keys, seen, key);
+            }
+
             if (obj is JavaScriptRuntime.Array jsArray)
             {
                 foreach (var index in jsArray.GetOwnElementIndices())
@@ -731,7 +742,7 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
-                if (PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, key))
+                if (IsOwnPropertyEnumerableOrDefaultTrue(obj, key))
                 {
                     enumerableKeys.Add(key);
                 }
@@ -739,6 +750,11 @@ namespace JavaScriptRuntime
 
             return enumerableKeys;
         }
+
+        private static bool IsOwnPropertyEnumerableOrDefaultTrue(object obj, string key)
+            => RuntimeServices.TryEnsureLazyClassMethodDataProperty(obj, key, out var lazyClassMethodDescriptor)
+                ? lazyClassMethodDescriptor.Enumerable
+                : PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, key);
 
         internal static List<string> GetOwnPropertyKeysInOrder(object obj)
             => GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: false);
@@ -1165,7 +1181,7 @@ namespace JavaScriptRuntime
         {
             foreach (var k in GetOrderedOwnKeys(obj, includeEncodedSymbolKeys))
             {
-                if (!seen.Add(k) || !PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
+                if (!seen.Add(k) || !IsOwnPropertyEnumerableOrDefaultTrue(obj, k))
                 {
                     continue;
                 }
@@ -2159,10 +2175,10 @@ namespace JavaScriptRuntime
 
             if (constructor is ClassConstructorValue classConstructor)
             {
-                return ConstructTypeValue(classConstructor.Type, callArgs, classConstructor.Scopes);
+                return ConstructTypeValue(classConstructor.Type, callArgs, classConstructor.Scopes, classConstructor);
             }
 
-            object? ConstructTypeValue(Type type, object[] callArgs, object[] scopes)
+            object? ConstructTypeValue(Type type, object[] callArgs, object[] scopes, object? prototypeOwner = null)
             {
                 if (type.IsAbstract && type.IsSealed)
                 {
@@ -2179,7 +2195,7 @@ namespace JavaScriptRuntime
                 {
                     if (instance is not null && instance is not JsNull)
                     {
-                        PrototypeChain.SetPrototype(instance, GetProperty(type, "prototype"));
+                        PrototypeChain.SetPrototype(instance, GetProperty(prototypeOwner ?? type, "prototype"));
                     }
 
                     return instance;
@@ -3426,6 +3442,17 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is ClassConstructorValue classConstructorValue
+                && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out descriptor!))
+            {
+                return true;
+            }
+
+            if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, propName, out descriptor!))
+            {
+                return true;
+            }
+
             // Default descriptors for existing properties (no attribute fidelity yet).
             if (target is System.Dynamic.ExpandoObject exp)
             {
@@ -3624,6 +3651,19 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (target is ClassConstructorValue classConstructorValue
+                && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, propName, out var classMetadataDesc))
+            {
+                value = classMetadataDesc.Value;
+                return true;
+            }
+
+            if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, propName, out var lazyClassMethodDesc))
+            {
+                value = lazyClassMethodDesc.Value;
+                return true;
+            }
+
             // ExpandoObject properties
             if (target is System.Dynamic.ExpandoObject exp)
             {
@@ -3746,9 +3786,16 @@ namespace JavaScriptRuntime
                     return TryGetClrMemberValue(staticType, instance: null, propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, out value);
                 }
 
-                if (target is ClassConstructorValue classConstructorValue)
+                if (target is ClassConstructorValue constructorValue)
                 {
-                    return TryGetOwnPropertyValue(classConstructorValue.Type, propName, receiverForAccessors, out value);
+                    if (string.Equals(propName, "prototype", StringComparison.Ordinal)
+                        && RuntimeServices.TryEnsureClassConstructorMetadataPropertyDescriptor(constructorValue, propName, out var prototypeDesc))
+                    {
+                        value = prototypeDesc.Value;
+                        return true;
+                    }
+
+                    return TryGetOwnPropertyValue(constructorValue.Type, propName, receiverForAccessors, out value);
                 }
 
                 return TryGetClrMemberValue(target.GetType(), target, propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase, out value);

@@ -3,8 +3,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime;
 
@@ -18,6 +20,8 @@ public class RuntimeServices
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
+    private static readonly ConditionalWeakTable<object, DeletedLazyClassMethodSlot> _deletedLazyClassMethodProperties = new();
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -28,6 +32,27 @@ public class RuntimeServices
     {
         public object? Value = TemporalDeadZoneSentinel;
     }
+
+    private sealed class LazyClassMetadataSlot
+    {
+        public readonly List<LazyClassMethodDataProperty> Methods = new();
+    }
+
+    private sealed class DeletedLazyClassMethodSlot
+    {
+        public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
+    }
+
+    private sealed record LazyClassMethodDataProperty(
+        string PropertyKey,
+        string ClrMethodName,
+        double Length,
+        string FunctionName,
+        bool IsStatic,
+        bool IsPrivate,
+        bool IsGenerator,
+        bool IsAsync,
+        object[] Scopes);
 
 #if DEBUG
     public static void AssertEmptyScopesUnmodified()
@@ -120,23 +145,62 @@ public class RuntimeServices
             throw new TypeError("Class constructor value requires a CLR Type");
         }
 
-        var scopes = scopesValue as object[] ?? EmptyScopes;
-        var classConstructorValue = new ClassConstructorValue(type, scopes);
-
         int length = 0;
         if (formalParamCountValue is double d) length = (int)d;
 
-        // Store Function.length (number of formal parameters, per ECMA-262 §20.2.4.1)
-        PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "length", new JsPropertyDescriptor
-        {
-            Kind = JsPropertyDescriptorKind.Data,
-            Value = (double)length,
-            Writable = false,
-            Enumerable = false,
-            Configurable = true
-        });
+        var scopes = scopesValue as object[] ?? EmptyScopes;
+        return new ClassConstructorValue(type, scopes, length);
+    }
 
-        return classConstructorValue;
+    public static object RegisterLazyClassMethodDataProperty(
+        object ownerValue,
+        object keyValue,
+        object clrMethodNameValue,
+        object lengthValue,
+        object functionNameValue,
+        object isStaticValue,
+        object isPrivateValue,
+        object isGeneratorValue,
+        object isAsyncValue,
+        object scopesValue)
+    {
+        var ownerType = ResolveClassOwnerType(ownerValue);
+        var scopes = scopesValue as object[]
+            ?? (ownerValue is ClassConstructorValue classConstructorValue
+                ? classConstructorValue.Scopes
+                : EmptyScopes);
+        var propertyKey = JavaScriptRuntime.Object.ToPropertyKeyString(keyValue);
+        var clrMethodName = clrMethodNameValue as string
+            ?? throw new TypeError("Class method definition requires a CLR method name");
+        var metadata = new LazyClassMethodDataProperty(
+            propertyKey,
+            clrMethodName,
+            lengthValue is double d ? d : 0d,
+            functionNameValue as string ?? propertyKey,
+            TypeUtilities.ToBoolean(isStaticValue),
+            TypeUtilities.ToBoolean(isPrivateValue),
+            TypeUtilities.ToBoolean(isGeneratorValue),
+            TypeUtilities.ToBoolean(isAsyncValue),
+            scopes);
+
+        var slot = _lazyClassMetadata.GetOrCreateValue(ownerType);
+        lock (slot)
+        {
+            var existingIndex = slot.Methods.FindIndex(existing =>
+                existing.IsStatic == metadata.IsStatic
+                && string.Equals(existing.PropertyKey, metadata.PropertyKey, StringComparison.Ordinal));
+
+            if (existingIndex >= 0)
+            {
+                slot.Methods[existingIndex] = metadata;
+            }
+            else
+            {
+                slot.Methods.Add(metadata);
+            }
+        }
+
+        return ownerValue;
     }
 
     public static object DefineClassMethodDataProperty(
@@ -211,6 +275,212 @@ public class RuntimeServices
             ClassConstructorValue classConstructorValue => classConstructorValue.Type,
             _ => throw new TypeError("Class method definition requires a class constructor value")
         };
+
+    internal static bool TryEnsureClassConstructorMetadataPropertyDescriptor(
+        ClassConstructorValue classConstructorValue,
+        string propName,
+        out JsPropertyDescriptor descriptor)
+    {
+        if (PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor!))
+        {
+            return true;
+        }
+
+        if (string.Equals(propName, "length", StringComparison.Ordinal))
+        {
+            descriptor = new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = (double)classConstructorValue.FormalParameterCount,
+                Writable = false,
+                Enumerable = false,
+                Configurable = true
+            };
+            PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, propName, descriptor);
+            return true;
+        }
+
+        if (string.Equals(propName, "prototype", StringComparison.Ordinal))
+        {
+            var protoObj = JavaScriptRuntime.Object.CreateOrdinaryObject();
+            PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = protoObj
+            });
+
+            PropertyDescriptorStore.DefineOrUpdate(protoObj, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = classConstructorValue
+            });
+
+            return PropertyDescriptorStore.TryGetOwn(classConstructorValue, propName, out descriptor!);
+        }
+
+        descriptor = null!;
+        return false;
+    }
+
+    internal static void EnsureClassConstructorCoreMetadataProperties(object target)
+    {
+        if (target is not ClassConstructorValue classConstructorValue)
+        {
+            return;
+        }
+
+        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, "length", out _);
+        _ = TryEnsureClassConstructorMetadataPropertyDescriptor(classConstructorValue, "prototype", out _);
+    }
+
+    internal static bool TryEnsureLazyClassMethodDataProperty(
+        object target,
+        string propName,
+        out JsPropertyDescriptor descriptor)
+    {
+        descriptor = null!;
+        if (IsLazyClassMethodPropertyDeleted(target, propName)
+            || !TryResolveLazyClassMethodTarget(target, out var ownerType, out var ownerValue, out var isStatic)
+            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+        {
+            return false;
+        }
+
+        LazyClassMethodDataProperty? metadata;
+        lock (slot)
+        {
+            metadata = slot.Methods.FirstOrDefault(method =>
+                method.IsStatic == isStatic
+                && string.Equals(method.PropertyKey, propName, StringComparison.Ordinal));
+        }
+
+        if (metadata == null)
+        {
+            return false;
+        }
+
+        DefineClassMethodDataProperty(
+            target,
+            metadata.PropertyKey,
+            ownerValue,
+            metadata.ClrMethodName,
+            metadata.Length,
+            metadata.FunctionName,
+            metadata.IsStatic,
+            metadata.IsPrivate,
+            metadata.IsGenerator,
+            metadata.IsAsync,
+            metadata.Scopes);
+
+        return PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!);
+    }
+
+    internal static IEnumerable<string> GetLazyClassMethodOwnKeys(object target)
+    {
+        if (!TryResolveLazyClassMethodTarget(target, out var ownerType, out _, out var isStatic)
+            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+        {
+            return System.Array.Empty<string>();
+        }
+
+        lock (slot)
+        {
+            return slot.Methods
+                .Where(method => method.IsStatic == isStatic
+                    && !IsLazyClassMethodPropertyDeleted(target, method.PropertyKey)
+                    && !PropertyDescriptorStore.TryGetOwn(target, method.PropertyKey, out _))
+                .Select(method => method.PropertyKey)
+                .ToArray();
+        }
+    }
+
+    internal static void MarkLazyClassMethodPropertyDeleted(object target, string propName)
+    {
+        if (!TryResolveLazyClassMethodTarget(target, out var ownerType, out _, out var isStatic)
+            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+        {
+            return;
+        }
+
+        lock (slot)
+        {
+            if (!slot.Methods.Any(method =>
+                method.IsStatic == isStatic
+                && string.Equals(method.PropertyKey, propName, StringComparison.Ordinal)))
+            {
+                return;
+            }
+        }
+
+        var deletedSlot = _deletedLazyClassMethodProperties.GetOrCreateValue(target);
+        lock (deletedSlot)
+        {
+            deletedSlot.Keys.Add(propName);
+        }
+    }
+
+    private static bool IsLazyClassMethodPropertyDeleted(object target, string propName)
+    {
+        if (!_deletedLazyClassMethodProperties.TryGetValue(target, out var deletedSlot))
+        {
+            return false;
+        }
+
+        lock (deletedSlot)
+        {
+            return deletedSlot.Keys.Contains(propName);
+        }
+    }
+
+    private static bool TryResolveLazyClassMethodTarget(
+        object target,
+        out Type ownerType,
+        out object ownerValue,
+        out bool isStatic)
+    {
+        switch (target)
+        {
+            case Type type:
+                ownerType = type;
+                ownerValue = type;
+                isStatic = true;
+                return true;
+            case ClassConstructorValue classConstructorValue:
+                ownerType = classConstructorValue.Type;
+                ownerValue = classConstructorValue;
+                isStatic = true;
+                return true;
+        }
+
+        if (PropertyDescriptorStore.TryGetOwn(target, "constructor", out var constructorDescriptor)
+            && constructorDescriptor.Kind == JsPropertyDescriptorKind.Data)
+        {
+            switch (constructorDescriptor.Value)
+            {
+                case ClassConstructorValue classConstructorValue:
+                    ownerType = classConstructorValue.Type;
+                    ownerValue = classConstructorValue;
+                    isStatic = false;
+                    return true;
+                case Type type:
+                    ownerType = type;
+                    ownerValue = type;
+                    isStatic = false;
+                    return true;
+            }
+        }
+
+        ownerType = null!;
+        ownerValue = null!;
+        isStatic = false;
+        return false;
+    }
 
     private static object? InvokeClassMethodFunction(
         Type ownerType,

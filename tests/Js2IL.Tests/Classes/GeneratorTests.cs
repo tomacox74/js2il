@@ -124,6 +124,7 @@ namespace Js2IL.Tests.Classes
 
         [Fact] public Task Classes_ClassComputedFieldAndMethod_DeclarationOrder() { var testName = nameof(Classes_ClassComputedFieldAndMethod_DeclarationOrder); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassComputedFieldAndMethod_DynamicKey_Log() { var testName = nameof(Classes_ClassComputedFieldAndMethod_DynamicKey_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassExpression_LazyPrototypeMetadata() { var testName = nameof(Classes_ClassExpression_LazyPrototypeMetadata); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateAccessor_ClassExpression_Log() { var testName = nameof(Classes_ClassPrivateAccessor_ClassExpression_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateAccessor_EdgeCases_Log() { var testName = nameof(Classes_ClassPrivateAccessor_EdgeCases_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName); }

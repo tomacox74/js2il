@@ -95,26 +95,6 @@ public sealed partial class HIRToLIRLowerer
             _classMethodOwnerTempsByRegistryName[ownerClassType.RegistryClassName] = ownerTemp;
         }
 
-        TempVariable? prototypeTemp = null;
-        var needsPrototype = false;
-        foreach (var methodDefinition in expression.MethodDefinitions)
-        {
-            if (!methodDefinition.IsStatic)
-            {
-                needsPrototype = true;
-                break;
-            }
-        }
-
-        if (needsPrototype)
-        {
-            var prototypeKeyTemp = CreateStringConstant("prototype");
-            var resolvedPrototypeTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(ownerTemp), EnsureObject(prototypeKeyTemp), resolvedPrototypeTemp));
-            DefineTempStorage(resolvedPrototypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            prototypeTemp = resolvedPrototypeTemp;
-        }
-
         var scopesTemp = CreateTempVariable();
         if (!TryBuildScopesArrayForClassConstructor(expression.ClassScope, scopesTemp, allowEmptyOnUnmappedGlobal: true))
         {
@@ -124,9 +104,6 @@ public sealed partial class HIRToLIRLowerer
 
         foreach (var methodDefinition in expression.MethodDefinitions)
         {
-            var targetTemp = methodDefinition.IsStatic
-                ? ownerTemp
-                : prototypeTemp!.Value;
             var keyTemp = CreateStringConstant(methodDefinition.PropertyKey);
             var clrMethodNameTemp = CreateStringConstant(methodDefinition.ClrMethodName);
             var lengthTemp = CreateNumberConstant(methodDefinition.Length);
@@ -139,12 +116,11 @@ public sealed partial class HIRToLIRLowerer
             resultTempVar = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
                 IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.DefineClassMethodDataProperty),
+                MethodName: nameof(JavaScriptRuntime.ObjectRuntime.RegisterLazyClassMethodDataProperty),
                 Arguments: new[]
                 {
-                    EnsureObject(targetTemp),
-                    EnsureObject(keyTemp),
                     EnsureObject(ownerTemp),
+                    EnsureObject(keyTemp),
                     EnsureObject(clrMethodNameTemp),
                     EnsureObject(lengthTemp),
                     EnsureObject(functionNameTemp),
