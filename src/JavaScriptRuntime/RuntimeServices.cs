@@ -54,6 +54,16 @@ public class RuntimeServices
         bool IsAsync,
         object[] Scopes);
 
+    private static bool IsObjectPrototypeValue(object? value)
+    {
+        if (value is null || value is JsNull || value is string)
+        {
+            return false;
+        }
+
+        return !value.GetType().IsValueType;
+    }
+
 #if DEBUG
     public static void AssertEmptyScopesUnmodified()
     {
@@ -302,7 +312,26 @@ public class RuntimeServices
 
         if (string.Equals(propName, "prototype", StringComparison.Ordinal))
         {
-            var protoObj = JavaScriptRuntime.Object.CreateOrdinaryObject();
+            object protoObj;
+            if (PropertyDescriptorStore.TryGetOwn(classConstructorValue.Type, "prototype", out var typePrototypeDescriptor)
+                && typePrototypeDescriptor.Kind == JsPropertyDescriptorKind.Data
+                && IsObjectPrototypeValue(typePrototypeDescriptor.Value))
+            {
+                protoObj = typePrototypeDescriptor.Value!;
+            }
+            else
+            {
+                protoObj = JavaScriptRuntime.Object.CreateOrdinaryObject();
+                PropertyDescriptorStore.DefineOrUpdate(classConstructorValue.Type, "prototype", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = false,
+                    Value = protoObj
+                });
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
