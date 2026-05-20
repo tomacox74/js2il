@@ -37,6 +37,29 @@ internal static class PropertyDescriptorStore
 
     private static readonly ConditionalWeakTable<object, Slot> _slots = new();
 
+    private static bool TryGetMirroredRawClassPrototype(object target, out object mirroredTarget)
+    {
+        mirroredTarget = null!;
+
+        if (!_slots.TryGetValue(target, out var slot)
+            || !slot.Descriptors.TryGetValue("constructor", out var constructorDescriptor)
+            || constructorDescriptor.Kind != JsPropertyDescriptorKind.Data
+            || constructorDescriptor.Value is not ClassConstructorValue classConstructorValue)
+        {
+            return false;
+        }
+
+        var rawPrototype = Object.GetProperty(classConstructorValue.Type, "prototype");
+        if (rawPrototype is not object
+            || ReferenceEquals(rawPrototype, target))
+        {
+            return false;
+        }
+
+        mirroredTarget = rawPrototype;
+        return true;
+    }
+
     public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
     {
         if (target == null) throw new ArgumentNullException(nameof(target));
@@ -68,6 +91,26 @@ internal static class PropertyDescriptorStore
             slot.KeyOrder.Add(key);
         }
         slot.Descriptors[key] = descriptor;
+
+        if (TryGetMirroredRawClassPrototype(target, out var mirroredTarget))
+        {
+            var mirroredSlot = _slots.GetOrCreateValue(mirroredTarget);
+            if (!mirroredSlot.Descriptors.ContainsKey(key))
+            {
+                mirroredSlot.KeyOrder.Add(key);
+            }
+
+            mirroredSlot.Descriptors[key] = new JsPropertyDescriptor
+            {
+                Kind = descriptor.Kind,
+                Enumerable = descriptor.Enumerable,
+                Configurable = descriptor.Configurable,
+                Value = descriptor.Value,
+                Writable = descriptor.Writable,
+                Get = descriptor.Get,
+                Set = descriptor.Set
+            };
+        }
     }
 
     public static IEnumerable<string> GetOwnKeys(object target)
@@ -95,6 +138,15 @@ internal static class PropertyDescriptorStore
             {
                 slot.KeyOrder.Remove(key);
             }
+
+            if (removed && TryGetMirroredRawClassPrototype(target, out var mirroredTarget) && _slots.TryGetValue(mirroredTarget, out var mirroredSlot))
+            {
+                if (mirroredSlot.Descriptors.Remove(key))
+                {
+                    mirroredSlot.KeyOrder.Remove(key);
+                }
+            }
+
             return removed;
         }
 

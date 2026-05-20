@@ -804,6 +804,8 @@ public sealed partial class HIRToLIRLowerer
                 return TryLowerDefineClassDataPropertyExpression(defineClassDataProperty, out resultTempVar);
             case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
                 return TryLowerDefineClassAccessorPropertyExpression(defineClassAccessorProperty, out resultTempVar);
+            case HIRDefineClassMethodDataPropertiesExpression defineClassMethodDataProperties:
+                return TryLowerDefineClassMethodDataPropertiesExpression(defineClassMethodDataProperties, out resultTempVar);
             // Handle different expression types here
             default:
                 // Unsupported expression type
@@ -825,9 +827,12 @@ public sealed partial class HIRToLIRLowerer
         }
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        var typeTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
-        DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+        if (!_classMethodOwnerTempsByRegistryName.Remove(registryClassName, out var typeTemp))
+        {
+            typeTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, typeTemp));
+            DefineTempStorage(typeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+        }
 
         // Look up the formal parameter count for Function.length semantics (params before defaults/rest).
         int minParamCount = 0;

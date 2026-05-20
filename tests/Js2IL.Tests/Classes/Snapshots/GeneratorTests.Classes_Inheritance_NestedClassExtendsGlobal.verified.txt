@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21bb
+					// Method begins at RVA 0x22af
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21c4
+					// Method begins at RVA 0x22b8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -63,7 +63,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2154
+				// Method begins at RVA 0x2248
 				// Header size: 1
 				// Code size: 13 (0xd)
 				.maxstack 8
@@ -81,7 +81,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2164
+				// Method begins at RVA 0x2258
 				// Header size: 12
 				// Code size: 28 (0x1c)
 				.maxstack 8
@@ -113,7 +113,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b2
+				// Method begins at RVA 0x22a6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -136,15 +136,16 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c4
+			// Method begins at RVA 0x2134
 			// Header size: 12
-			// Code size: 124 (0x7c)
+			// Code size: 256 (0x100)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/Scope,
 				[1] object,
 				[2] class [System.Runtime]System.Type,
-				[3] object
+				[3] object[],
+				[4] object
 			)
 
 			IL_0000: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/Scope::.ctor()
@@ -154,35 +155,91 @@
 			IL_0010: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
 			IL_0015: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
 			IL_001a: stloc.2
-			IL_001b: ldloc.2
-			IL_001c: stloc.1
-			IL_001d: ldc.i4.0
-			IL_001e: newarr [System.Runtime]System.Object
-			IL_0023: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
-			IL_0028: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
-			IL_002d: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::.ctor()
-			IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
-			IL_0037: stloc.3
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
-			IL_0042: stloc.3
-			IL_0043: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
-			IL_0048: ldloc.3
-			IL_0049: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-			IL_004e: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-			IL_0053: ldstr "prototype"
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-			IL_005d: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
-			IL_0062: ldloc.3
-			IL_0063: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
-			IL_0068: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
-			IL_006d: stloc.3
-			IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0073: ldloc.3
-			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0079: pop
-			IL_007a: ldnull
-			IL_007b: ret
+			IL_001b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+			IL_0020: stloc.3
+			IL_0021: ldc.i4.s 10
+			IL_0023: newarr [System.Runtime]System.Object
+			IL_0028: dup
+			IL_0029: ldc.i4.0
+			IL_002a: ldloc.2
+			IL_002b: stelem.ref
+			IL_002c: dup
+			IL_002d: ldc.i4.1
+			IL_002e: ldstr "n"
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.2
+			IL_0036: ldstr "n"
+			IL_003b: stelem.ref
+			IL_003c: dup
+			IL_003d: ldc.i4.3
+			IL_003e: ldc.r8 0.0
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: stelem.ref
+			IL_004d: dup
+			IL_004e: ldc.i4.4
+			IL_004f: ldstr "n"
+			IL_0054: stelem.ref
+			IL_0055: dup
+			IL_0056: ldc.i4.5
+			IL_0057: ldc.i4.0
+			IL_0058: box [System.Runtime]System.Boolean
+			IL_005d: stelem.ref
+			IL_005e: dup
+			IL_005f: ldc.i4.6
+			IL_0060: ldc.i4.0
+			IL_0061: box [System.Runtime]System.Boolean
+			IL_0066: stelem.ref
+			IL_0067: dup
+			IL_0068: ldc.i4.7
+			IL_0069: ldc.i4.0
+			IL_006a: box [System.Runtime]System.Boolean
+			IL_006f: stelem.ref
+			IL_0070: dup
+			IL_0071: ldc.i4.8
+			IL_0072: ldc.i4.0
+			IL_0073: box [System.Runtime]System.Boolean
+			IL_0078: stelem.ref
+			IL_0079: dup
+			IL_007a: ldc.i4.s 9
+			IL_007c: ldloc.3
+			IL_007d: stelem.ref
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+			IL_0083: pop
+			IL_0084: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_0089: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_008e: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_0093: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_0098: stloc.2
+			IL_0099: ldloc.2
+			IL_009a: stloc.1
+			IL_009b: ldc.i4.0
+			IL_009c: newarr [System.Runtime]System.Object
+			IL_00a1: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+			IL_00a6: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushDerivedConstructorThisBinding()
+			IL_00ab: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::.ctor()
+			IL_00b0: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+			IL_00b5: stloc.s 4
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveLexicalThis(object)
+			IL_00c1: stloc.s 4
+			IL_00c3: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopDerivedConstructorThisBinding()
+			IL_00c8: ldloc.s 4
+			IL_00ca: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_00cf: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+			IL_00d4: ldstr "prototype"
+			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+			IL_00de: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+			IL_00e3: ldloc.s 4
+			IL_00e5: castclass Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived
+			IL_00ea: callvirt instance object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun/NestedDerived::n()
+			IL_00ef: stloc.s 4
+			IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00f6: ldloc.s 4
+			IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00fd: pop
+			IL_00fe: ldnull
+			IL_00ff: ret
 		} // end of method makeAndRun::__js_call__
 
 	} // end of class makeAndRun
@@ -198,7 +255,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a0
+				// Method begins at RVA 0x2294
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -218,7 +275,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a9
+				// Method begins at RVA 0x229d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -239,7 +296,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2240
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -255,7 +312,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x218c
+			// Method begins at RVA 0x2280
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -281,7 +338,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2197
+			// Method begins at RVA 0x228b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -307,15 +364,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 101 (0x65)
+		// Code size: 214 (0xd6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object[],
-			[5] class [System.Runtime]System.Type
+			[4] class [System.Runtime]System.Type,
+			[5] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Classes_Inheritance_NestedClassExtendsGlobal/Scope::.ctor()
@@ -330,30 +387,86 @@
 		IL_001e: stloc.3
 		IL_001f: ldloc.3
 		IL_0020: stloc.1
-		IL_0021: ldc.i4.1
-		IL_0022: newarr [System.Runtime]System.Object
-		IL_0027: dup
-		IL_0028: ldc.i4.0
-		IL_0029: ldloc.0
-		IL_002a: stelem.ref
-		IL_002b: stloc.s 4
-		IL_002d: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
-		IL_0032: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0037: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
-		IL_003c: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0021: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
+		IL_0026: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_002b: ldtoken Modules.Classes_Inheritance_NestedClassExtendsGlobal/GlobalBase
+		IL_0030: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0035: stloc.s 4
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldloc.0
+		IL_0040: stelem.ref
 		IL_0041: stloc.s 5
-		IL_0043: ldloc.s 5
-		IL_0045: ldloc.s 4
-		IL_0047: ldc.r8 0.0
-		IL_0050: box [System.Runtime]System.Double
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_005a: stloc.3
-		IL_005b: ldloc.3
-		IL_005c: stloc.2
-		IL_005d: ldnull
-		IL_005e: call object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun::__js_call__(object)
-		IL_0063: pop
-		IL_0064: ret
+		IL_0043: ldc.i4.s 10
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.s 4
+		IL_004e: stelem.ref
+		IL_004f: dup
+		IL_0050: ldc.i4.1
+		IL_0051: ldstr "m"
+		IL_0056: stelem.ref
+		IL_0057: dup
+		IL_0058: ldc.i4.2
+		IL_0059: ldstr "m"
+		IL_005e: stelem.ref
+		IL_005f: dup
+		IL_0060: ldc.i4.3
+		IL_0061: ldc.r8 0.0
+		IL_006a: box [System.Runtime]System.Double
+		IL_006f: stelem.ref
+		IL_0070: dup
+		IL_0071: ldc.i4.4
+		IL_0072: ldstr "m"
+		IL_0077: stelem.ref
+		IL_0078: dup
+		IL_0079: ldc.i4.5
+		IL_007a: ldc.i4.0
+		IL_007b: box [System.Runtime]System.Boolean
+		IL_0080: stelem.ref
+		IL_0081: dup
+		IL_0082: ldc.i4.6
+		IL_0083: ldc.i4.0
+		IL_0084: box [System.Runtime]System.Boolean
+		IL_0089: stelem.ref
+		IL_008a: dup
+		IL_008b: ldc.i4.7
+		IL_008c: ldc.i4.0
+		IL_008d: box [System.Runtime]System.Boolean
+		IL_0092: stelem.ref
+		IL_0093: dup
+		IL_0094: ldc.i4.8
+		IL_0095: ldc.i4.0
+		IL_0096: box [System.Runtime]System.Boolean
+		IL_009b: stelem.ref
+		IL_009c: dup
+		IL_009d: ldc.i4.s 9
+		IL_009f: ldloc.s 5
+		IL_00a1: stelem.ref
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_00a7: pop
+		IL_00a8: ldc.i4.1
+		IL_00a9: newarr [System.Runtime]System.Object
+		IL_00ae: dup
+		IL_00af: ldc.i4.0
+		IL_00b0: ldloc.0
+		IL_00b1: stelem.ref
+		IL_00b2: stloc.s 5
+		IL_00b4: ldloc.s 4
+		IL_00b6: ldloc.s 5
+		IL_00b8: ldc.r8 0.0
+		IL_00c1: box [System.Runtime]System.Double
+		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_00cb: stloc.3
+		IL_00cc: ldloc.3
+		IL_00cd: stloc.2
+		IL_00ce: ldnull
+		IL_00cf: call object Modules.Classes_Inheritance_NestedClassExtendsGlobal/makeAndRun::__js_call__(object)
+		IL_00d4: pop
+		IL_00d5: ret
 	} // end of method Classes_Inheritance_NestedClassExtendsGlobal::__js_module_init__
 
 } // end of class Modules.Classes_Inheritance_NestedClassExtendsGlobal
@@ -365,7 +478,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21cd
+		// Method begins at RVA 0x22c1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -117,6 +117,47 @@ namespace JavaScriptRuntime
                 enumerable: false);
         }
 
+        public static object DefineClassMethodDataProperty(object[] args)
+        {
+            if (args.Length != 11)
+            {
+                throw new ArgumentException("Class method definition requires 11 arguments.", nameof(args));
+            }
+
+            return RuntimeServices.DefineClassMethodDataProperty(
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                args[6],
+                args[7],
+                args[8],
+                args[9],
+                args[10]);
+        }
+
+        public static object RegisterLazyClassMethodDataProperty(object[] args)
+        {
+            if (args.Length != 10)
+            {
+                throw new ArgumentException("Lazy class method definition requires 10 arguments.", nameof(args));
+            }
+
+            return RuntimeServices.RegisterLazyClassMethodDataProperty(
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                args[6],
+                args[7],
+                args[8],
+                args[9]);
+        }
+
         public static object DefineClassFieldDataProperty(object target, string prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
@@ -296,6 +337,8 @@ namespace JavaScriptRuntime
             {
                 throw new JavaScriptRuntime.TypeError($"Cannot delete property '{key}' of object");
             }
+
+            RuntimeServices.MarkLazyClassMethodPropertyDeleted(receiver, key);
 
             if (receiver is Delegate del)
             {

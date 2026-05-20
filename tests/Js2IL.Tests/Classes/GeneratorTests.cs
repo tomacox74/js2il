@@ -89,6 +89,7 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ReturnsThis_IsSelf_Log() { var testName = nameof(Classes_ClassMethod_ReturnsThis_IsSelf_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassMethod_MethodValueRequiresMetadata() { var testName = nameof(Classes_ClassMethod_MethodValueRequiresMetadata); return GenerateTest(testName); }
         [Fact] public Task Classes_AccessorMethods_InstanceAndStatic() { var testName = nameof(Classes_AccessorMethods_InstanceAndStatic); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
 
@@ -123,6 +124,7 @@ namespace Js2IL.Tests.Classes
 
         [Fact] public Task Classes_ClassComputedFieldAndMethod_DeclarationOrder() { var testName = nameof(Classes_ClassComputedFieldAndMethod_DeclarationOrder); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassComputedFieldAndMethod_DynamicKey_Log() { var testName = nameof(Classes_ClassComputedFieldAndMethod_DynamicKey_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassExpression_LazyPrototypeMetadata() { var testName = nameof(Classes_ClassExpression_LazyPrototypeMetadata); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateAccessor_ClassExpression_Log() { var testName = nameof(Classes_ClassPrivateAccessor_ClassExpression_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateAccessor_EdgeCases_Log() { var testName = nameof(Classes_ClassPrivateAccessor_EdgeCases_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName); }

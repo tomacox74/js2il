@@ -1212,6 +1212,16 @@ namespace JavaScriptRuntime
                 throw new TypeError("Function has non-object prototype in instanceof check");
             }
 
+            object? rawTypePrototype = null;
+            if (ctor is ClassConstructorValue classConstructorValue)
+            {
+                rawTypePrototype = JavaScriptRuntime.ObjectRuntime.GetItem(classConstructorValue.Type, "prototype");
+                if (rawTypePrototype is string || rawTypePrototype?.GetType().IsValueType == true)
+                {
+                    rawTypePrototype = null;
+                }
+            }
+
             if (TryMatchBuiltInErrorInstance(value, proto))
             {
                 return true;
@@ -1230,7 +1240,8 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (ReferenceEquals(next, proto))
+            if (ReferenceEquals(next, proto)
+                || (rawTypePrototype != null && ReferenceEquals(next, rawTypePrototype)))
             {
                 return true;
             }
@@ -1260,7 +1271,8 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (ReferenceEquals(next, proto))
+                if (ReferenceEquals(next, proto)
+                    || (rawTypePrototype != null && ReferenceEquals(next, rawTypePrototype)))
                 {
                     return true;
                 }

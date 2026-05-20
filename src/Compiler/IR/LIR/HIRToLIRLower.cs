@@ -37,6 +37,10 @@ public sealed partial class HIRToLIRLowerer
     // (e.g., per-iteration loop environments).
     private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
 
+    // Class method property initialization needs the class Type as the method owner; class constructor
+    // value creation immediately afterward can reuse that temp instead of re-emitting RunClassConstructor.
+    private readonly Dictionary<string, TempVariable> _classMethodOwnerTempsByRegistryName = new(StringComparer.Ordinal);
+
     // Flow-sensitive numeric type refinement: maps a binding to the last proven unboxed-double
     // temp that holds its value.  Used to avoid redundant TypeUtilities.ToNumber calls when the
     // same variable is used in multiple numeric contexts without any intervening write.
@@ -547,7 +551,7 @@ public sealed partial class HIRToLIRLowerer
     }
 
 
-    private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp)
+    private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp, bool allowEmptyOnUnmappedGlobal = false)
     {
         // If the class constructor ABI requires a scopes array, prefer building the full
         // callee layout so derived classes can pass through the scope chain needed by base classes.
@@ -590,6 +594,12 @@ public sealed partial class HIRToLIRLowerer
         var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
         if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
         {
+            if (allowEmptyOnUnmappedGlobal)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+                return true;
+            }
+
             var caller = _scope != null ? _scope.GetQualifiedName() : "<null>";
             var callerScopesSource = _environmentLayout?.Abi.ScopesSource.ToString() ?? "<null>";
             var callerChain = _environmentLayout != null

@@ -216,9 +216,10 @@
         "testScripts": [
           "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js",
           "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_YieldAssign.js",
-          "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js"
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_WithThis.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/gen-method-length-dflt.js"
         ],
-        "notes": "Generator class instance methods compile to a synchronous generator state machine and return a GeneratorObject; supports yield points and correct this binding across next() calls. yield* delegation support is tracked under Generator Function Definitions."
+        "notes": "Generator class instance methods compile to a synchronous generator state machine and return a GeneratorObject; supports yield points, function-valued prototype method properties, Function.length metadata, and correct this binding across next() calls. yield* delegation support is tracked under Generator Function Definitions."
       },
       {
         "clause": "15.7.1",
@@ -246,8 +247,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js"
-        ]
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/gen-method-length-dflt.js"
+        ],
+        "notes": "Instance methods are available through normal direct dispatch and as non-enumerable configurable writable function-valued properties on the class prototype."
       },
       {
         "clause": "15.7.1",
@@ -296,8 +299,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
-        ]
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
+        ],
+        "notes": "Static methods are available through normal direct dispatch and as non-enumerable configurable writable function-valued properties on the class constructor value. Static private method calls enforce the declaring-class receiver brand, including proxy mismatch rejection."
       },
       {
         "clause": "15.7.1",

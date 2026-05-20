@@ -388,9 +388,10 @@
         "specUrl": "https://tc39.es/ecma262/#sec-privateelementfind",
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
         ],
-        "notes": "Private field access works for supported class forms; private methods/accessors and complete validation coverage are not yet implemented."
+        "notes": "Private field access works for supported class forms. Supported private methods participate in receiver brand checks, including static private methods rejecting proxy receivers; private accessors and complete validation coverage remain limited."
       },
       {
         "clause": "7.3.33",
@@ -402,7 +403,7 @@
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
           "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js"
         ],
-        "notes": "Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks, private methods/accessors, and some inheritance details are incomplete."
+        "notes": "Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks and supported private methods are implemented; private accessors and some inheritance details remain incomplete."
       }
     ]
   }
