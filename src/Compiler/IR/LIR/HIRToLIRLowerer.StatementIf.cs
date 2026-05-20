@@ -23,22 +23,9 @@ public sealed partial class HIRToLIRLowerer
 
         int elseLabel = CreateLabel();
 
-        // If the condition is boxed or is an object reference, we need to
-        // convert it to a boolean using IsTruthy before branching.
-        // This is because brfalse on a boxed boolean checks for null, not false,
-        // and JavaScript has different truthiness rules (0, "", null, undefined, NaN are falsy).
-        var conditionStorage = GetTempStorage(conditionTemp);
-        bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
-            (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object)) ||
-            (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(double));
-
-        if (needsTruthyCheck)
-        {
-            var isTruthyTemp = CreateTempVariable();
-            lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
-            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-            conditionTemp = isTruthyTemp;
-        }
+        // Apply JavaScript truthiness semantics before branching so strings, boxed values,
+        // numbers, null/undefined, and object references all behave like ECMAScript tests.
+        conditionTemp = EnsureConditionIsBoolean(conditionTemp);
 
         // Branch to else if condition is false
         lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, elseLabel));

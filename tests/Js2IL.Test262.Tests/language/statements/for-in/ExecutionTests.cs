@@ -34,15 +34,15 @@ public class ExecutionTests : ExecutionTestsBase
     public Task S12_6_4_A3_1()
         => ExecutionTest("S12.6.4_A3.1");
 
-    [Fact(DisplayName = "S12.6.4_A3", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "S12.6.4_A3", Skip = "eval is not supported by JS2IL.")]
     public Task S12_6_4_A3()
         => ExecutionTest("S12.6.4_A3");
 
-    [Fact(DisplayName = "S12.6.4_A4.1", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "S12.6.4_A4.1", Skip = "eval is not supported by JS2IL.")]
     public Task S12_6_4_A4_1()
         => ExecutionTest("S12.6.4_A4.1");
 
-    [Fact(DisplayName = "S12.6.4_A4", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "S12.6.4_A4", Skip = "eval is not supported by JS2IL.")]
     public Task S12_6_4_A4()
         => ExecutionTest("S12.6.4_A4");
 
@@ -70,15 +70,15 @@ public class ExecutionTests : ExecutionTestsBase
     public Task S12_6_4_A7_T2()
         => ExecutionTest("S12.6.4_A7_T2");
 
-    [Fact(DisplayName = "cptn-decl-abrupt-empty", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "cptn-decl-abrupt-empty", Skip = "eval is not supported by JS2IL.")]
     public Task cptn_decl_abrupt_empty()
         => ExecutionTest("cptn-decl-abrupt-empty");
 
-    [Fact(DisplayName = "cptn-decl-itr", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "cptn-decl-itr", Skip = "eval is not supported by JS2IL.")]
     public Task cptn_decl_itr()
         => ExecutionTest("cptn-decl-itr");
 
-    [Fact(DisplayName = "cptn-decl-skip-itr", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "cptn-decl-skip-itr", Skip = "eval is not supported by JS2IL.")]
     public Task cptn_decl_skip_itr()
         => ExecutionTest("cptn-decl-skip-itr");
 }
