@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2397
+					// Method begins at RVA 0x23f6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x228c
+				// Method begins at RVA 0x22bc
 				// Header size: 12
 				// Code size: 93 (0x5d)
 				.maxstack 8
@@ -98,7 +98,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23a0
+					// Method begins at RVA 0x23ff
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -122,7 +122,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x22f8
+				// Method begins at RVA 0x2328
 				// Header size: 12
 				// Code size: 26 (0x1a)
 				.maxstack 8
@@ -158,7 +158,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x238e
+				// Method begins at RVA 0x23ed
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -185,7 +185,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
-			// Method begins at RVA 0x2108
+			// Method begins at RVA 0x2120
 			// Header size: 12
 			// Code size: 135 (0x87)
 			.maxstack 8
@@ -263,7 +263,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23b2
+					// Method begins at RVA 0x2411
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -286,7 +286,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x231e
+				// Method begins at RVA 0x234e
 				// Header size: 1
 				// Code size: 18 (0x12)
 				.maxstack 8
@@ -312,7 +312,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23bb
+					// Method begins at RVA 0x241a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -336,7 +336,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2334
+				// Method begins at RVA 0x2364
 				// Header size: 12
 				// Code size: 26 (0x1a)
 				.maxstack 8
@@ -369,7 +369,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23c4
+					// Method begins at RVA 0x2423
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -393,10 +393,13 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x235a
-				// Header size: 1
-				// Code size: 42 (0x2a)
+				// Method begins at RVA 0x238c
+				// Header size: 12
+				// Code size: 54 (0x36)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
 				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 				IL_0005: ldstr "client end"
@@ -407,11 +410,15 @@
 				IL_0012: ldelem.ref
 				IL_0013: castclass Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope
 				IL_0018: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
-				IL_001d: ldstr "close"
-				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-				IL_0027: pop
-				IL_0028: ldnull
-				IL_0029: ret
+				IL_001d: ldstr "Cannot access 'server' before initialization"
+				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0027: stloc.0
+				IL_0028: ldloc.0
+				IL_0029: ldstr "close"
+				IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_0033: pop
+				IL_0034: ldnull
+				IL_0035: ret
 			} // end of method FunctionExpression_L28C19::__js_call__
 
 		} // end of class FunctionExpression_L28C19
@@ -423,7 +430,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a9
+				// Method begins at RVA 0x2408
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -449,9 +456,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x21b4
 			// Header size: 12
-			// Code size: 228 (0xe4)
+			// Code size: 250 (0xfa)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/Scope,
@@ -467,83 +474,89 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
-			IL_000c: ldstr "address"
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_000c: ldstr "Cannot access 'server' before initialization"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 			IL_0016: stloc.3
 			IL_0017: ldloc.3
-			IL_0018: stloc.1
-			IL_0019: ldarg.0
-			IL_001a: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::net
-			IL_001f: stloc.3
-			IL_0020: ldloc.1
-			IL_0021: ldstr "port"
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_002b: stloc.s 4
-			IL_002d: ldloc.1
-			IL_002e: ldstr "address"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0038: stloc.s 5
-			IL_003a: ldnull
-			IL_003b: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/FunctionExpression_client::__js_call__(object)
-			IL_0041: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0046: ldc.i4.0
-			IL_0047: conv.r8
-			IL_0048: ldstr ""
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-			IL_0052: stloc.s 6
-			IL_0054: ldloc.3
-			IL_0055: ldstr "connect"
-			IL_005a: ldloc.s 4
-			IL_005c: ldloc.s 5
-			IL_005e: ldloc.s 6
-			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_0065: stloc.s 6
-			IL_0067: ldloc.s 6
-			IL_0069: stloc.2
-			IL_006a: ldloc.2
-			IL_006b: ldstr "setEncoding"
-			IL_0070: ldstr "utf8"
-			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_007a: pop
-			IL_007b: ldnull
-			IL_007c: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/FunctionExpression_L24C20::__js_call__(object, object)
-			IL_0082: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_0087: ldc.i4.1
-			IL_0088: conv.r8
-			IL_0089: ldstr ""
-			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-			IL_0093: stloc.s 6
-			IL_0095: ldloc.2
-			IL_0096: ldstr "on"
-			IL_009b: ldstr "data"
-			IL_00a0: ldloc.s 6
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00a7: pop
-			IL_00a8: ldc.i4.2
-			IL_00a9: newarr [System.Runtime]System.Object
-			IL_00ae: dup
-			IL_00af: ldc.i4.0
-			IL_00b0: ldarg.0
-			IL_00b1: stelem.ref
-			IL_00b2: dup
-			IL_00b3: ldc.i4.1
-			IL_00b4: ldloc.0
-			IL_00b5: stelem.ref
-			IL_00b6: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/FunctionExpression_L28C19::__js_call__(object[], object)
-			IL_00bc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_00c1: ldc.i4.0
-			IL_00c2: conv.r8
-			IL_00c3: ldstr ""
-			IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-			IL_00cd: stloc.s 6
-			IL_00cf: ldloc.2
-			IL_00d0: ldstr "on"
-			IL_00d5: ldstr "end"
-			IL_00da: ldloc.s 6
-			IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00e1: pop
-			IL_00e2: ldnull
-			IL_00e3: ret
+			IL_0018: ldstr "address"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0022: stloc.3
+			IL_0023: ldloc.3
+			IL_0024: stloc.1
+			IL_0025: ldarg.0
+			IL_0026: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::net
+			IL_002b: ldstr "Cannot access 'net' before initialization"
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0035: stloc.3
+			IL_0036: ldloc.1
+			IL_0037: ldstr "port"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0041: stloc.s 4
+			IL_0043: ldloc.1
+			IL_0044: ldstr "address"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_004e: stloc.s 5
+			IL_0050: ldnull
+			IL_0051: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/FunctionExpression_client::__js_call__(object)
+			IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_005c: ldc.i4.0
+			IL_005d: conv.r8
+			IL_005e: ldstr ""
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+			IL_0068: stloc.s 6
+			IL_006a: ldloc.3
+			IL_006b: ldstr "connect"
+			IL_0070: ldloc.s 4
+			IL_0072: ldloc.s 5
+			IL_0074: ldloc.s 6
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_007b: stloc.s 6
+			IL_007d: ldloc.s 6
+			IL_007f: stloc.2
+			IL_0080: ldloc.2
+			IL_0081: ldstr "setEncoding"
+			IL_0086: ldstr "utf8"
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0090: pop
+			IL_0091: ldnull
+			IL_0092: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/FunctionExpression_L24C20::__js_call__(object, object)
+			IL_0098: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_009d: ldc.i4.1
+			IL_009e: conv.r8
+			IL_009f: ldstr ""
+			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+			IL_00a9: stloc.s 6
+			IL_00ab: ldloc.2
+			IL_00ac: ldstr "on"
+			IL_00b1: ldstr "data"
+			IL_00b6: ldloc.s 6
+			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00bd: pop
+			IL_00be: ldc.i4.2
+			IL_00bf: newarr [System.Runtime]System.Object
+			IL_00c4: dup
+			IL_00c5: ldc.i4.0
+			IL_00c6: ldarg.0
+			IL_00c7: stelem.ref
+			IL_00c8: dup
+			IL_00c9: ldc.i4.1
+			IL_00ca: ldloc.0
+			IL_00cb: stelem.ref
+			IL_00cc: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30/FunctionExpression_L28C19::__js_call__(object[], object)
+			IL_00d2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_00d7: ldc.i4.0
+			IL_00d8: conv.r8
+			IL_00d9: ldstr ""
+			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+			IL_00e3: stloc.s 6
+			IL_00e5: ldloc.2
+			IL_00e6: ldstr "on"
+			IL_00eb: ldstr "end"
+			IL_00f0: ldloc.s 6
+			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00f7: pop
+			IL_00f8: ldnull
+			IL_00f9: ret
 		} // end of method FunctionExpression_L17C30::__js_call__
 
 	} // end of class FunctionExpression_L17C30
@@ -564,15 +577,21 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2385
+			// Method begins at RVA 0x23ce
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 30 (0x1e)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::net
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
+			IL_001c: nop
+			IL_001d: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -590,7 +609,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 172 (0xac)
+		// Code size: 194 (0xc2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope,
@@ -607,59 +626,65 @@
 		IL_0012: ldloc.0
 		IL_0013: ldloc.1
 		IL_0014: stfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::net
-		IL_0019: ldc.i4.1
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldloc.0
-		IL_0022: stelem.ref
-		IL_0023: ldc.i4.0
-		IL_0024: ldelem.ref
-		IL_0025: castclass Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope
-		IL_002a: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_server::__js_call__(class Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope, object, object)
-		IL_0030: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0035: ldc.i4.1
-		IL_0036: conv.r8
-		IL_0037: ldstr ""
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_0041: stloc.1
-		IL_0042: ldloc.0
-		IL_0043: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::net
-		IL_0048: ldstr "createServer"
-		IL_004d: ldloc.1
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0053: stloc.1
-		IL_0054: ldloc.0
-		IL_0055: ldloc.1
-		IL_0056: stfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
-		IL_005b: ldloc.0
-		IL_005c: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
-		IL_0061: stloc.1
-		IL_0062: ldc.i4.1
-		IL_0063: newarr [System.Runtime]System.Object
-		IL_0068: dup
-		IL_0069: ldc.i4.0
-		IL_006a: ldloc.0
-		IL_006b: stelem.ref
-		IL_006c: ldc.i4.0
-		IL_006d: ldelem.ref
-		IL_006e: castclass Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope
-		IL_0073: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30::__js_call__(class Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope, object)
-		IL_0079: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_007e: ldc.i4.0
-		IL_007f: conv.r8
-		IL_0080: ldstr ""
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_008a: stloc.2
-		IL_008b: ldloc.1
-		IL_008c: ldstr "listen"
-		IL_0091: ldc.r8 0.0
-		IL_009a: box [System.Runtime]System.Double
-		IL_009f: ldstr "127.0.0.1"
-		IL_00a4: ldloc.2
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_00aa: pop
-		IL_00ab: ret
+		IL_0019: ldloc.0
+		IL_001a: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::net
+		IL_001f: ldstr "Cannot access 'net' before initialization"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0029: stloc.1
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
+		IL_0033: stelem.ref
+		IL_0034: ldc.i4.0
+		IL_0035: ldelem.ref
+		IL_0036: castclass Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope
+		IL_003b: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_server::__js_call__(class Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope, object, object)
+		IL_0041: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0046: ldc.i4.1
+		IL_0047: conv.r8
+		IL_0048: ldstr ""
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_0052: stloc.2
+		IL_0053: ldloc.1
+		IL_0054: ldstr "createServer"
+		IL_0059: ldloc.2
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005f: stloc.2
+		IL_0060: ldloc.0
+		IL_0061: ldloc.2
+		IL_0062: stfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
+		IL_0067: ldloc.0
+		IL_0068: ldfld object Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope::server
+		IL_006d: ldstr "Cannot access 'server' before initialization"
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0077: stloc.2
+		IL_0078: ldc.i4.1
+		IL_0079: newarr [System.Runtime]System.Object
+		IL_007e: dup
+		IL_007f: ldc.i4.0
+		IL_0080: ldloc.0
+		IL_0081: stelem.ref
+		IL_0082: ldc.i4.0
+		IL_0083: ldelem.ref
+		IL_0084: castclass Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope
+		IL_0089: ldftn object Modules.Net_Socket_Timeout_Allows_Graceful_End/FunctionExpression_L17C30::__js_call__(class Modules.Net_Socket_Timeout_Allows_Graceful_End/Scope, object)
+		IL_008f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0094: ldc.i4.0
+		IL_0095: conv.r8
+		IL_0096: ldstr ""
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_00a0: stloc.1
+		IL_00a1: ldloc.2
+		IL_00a2: ldstr "listen"
+		IL_00a7: ldc.r8 0.0
+		IL_00b0: box [System.Runtime]System.Double
+		IL_00b5: ldstr "127.0.0.1"
+		IL_00ba: ldloc.1
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00c0: pop
+		IL_00c1: ret
 	} // end of method Net_Socket_Timeout_Allows_Graceful_End::__js_module_init__
 
 } // end of class Modules.Net_Socket_Timeout_Allows_Graceful_End
@@ -671,7 +696,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23cd
+		// Method begins at RVA 0x242c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

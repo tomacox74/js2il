@@ -49,7 +49,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2541
+				// Method begins at RVA 0x256a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -75,7 +75,7 @@
 			)
 			// Method begins at RVA 0x20ac
 			// Header size: 12
-			// Code size: 1152 (0x480)
+			// Code size: 1182 (0x49e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope,
@@ -157,455 +157,461 @@
 
 			IL_0081: ldloc.0
 			IL_0082: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0087: switch (IL_00ac, IL_0131, IL_01d8, IL_024f, IL_02a8, IL_0305, IL_03bd, IL_0432)
+			IL_0087: switch (IL_00ac, IL_013b, IL_01ec, IL_026d, IL_02c6, IL_0323, IL_03db, IL_0450)
 
 			IL_00ac: ldarg.0
 			IL_00ad: ldc.i4.1
 			IL_00ae: ldelem.ref
 			IL_00af: castclass Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope
 			IL_00b4: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
-			IL_00b9: stloc.s 7
-			IL_00bb: ldloc.s 7
-			IL_00bd: ldstr "setInterval"
-			IL_00c2: ldc.r8 0.0
-			IL_00cb: box [System.Runtime]System.Double
-			IL_00d0: ldstr "tick"
-			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00da: stloc.s 7
-			IL_00dc: ldloc.s 7
-			IL_00de: stloc.1
-			IL_00df: ldloc.1
-			IL_00e0: ldstr "next"
-			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_00ea: stloc.s 7
-			IL_00ec: ldloc.0
-			IL_00ed: ldc.i4.1
-			IL_00ee: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_00f3: ldloc.0
-			IL_00f4: ldloc.s 7
-			IL_00f6: ldarg.0
+			IL_00b9: ldstr "Cannot access 'timersPromises' before initialization"
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00c3: stloc.s 7
+			IL_00c5: ldloc.s 7
+			IL_00c7: ldstr "setInterval"
+			IL_00cc: ldc.r8 0.0
+			IL_00d5: box [System.Runtime]System.Double
+			IL_00da: ldstr "tick"
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00e4: stloc.s 7
+			IL_00e6: ldloc.s 7
+			IL_00e8: stloc.1
+			IL_00e9: ldloc.1
+			IL_00ea: ldstr "next"
+			IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_00f4: stloc.s 7
+			IL_00f6: ldloc.0
 			IL_00f7: ldc.i4.1
-			IL_00f8: ldloc.0
-			IL_00f9: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_00fe: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_0103: ldloc.0
-			IL_0104: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_0109: dup
-			IL_010a: ldc.i4.0
-			IL_010b: ldloc.1
-			IL_010c: stelem.ref
-			IL_010d: dup
-			IL_010e: ldc.i4.1
-			IL_010f: ldloc.2
-			IL_0110: stelem.ref
-			IL_0111: dup
-			IL_0112: ldc.i4.2
-			IL_0113: ldloc.3
-			IL_0114: stelem.ref
-			IL_0115: dup
-			IL_0116: ldc.i4.3
-			IL_0117: ldloc.s 4
-			IL_0119: stelem.ref
-			IL_011a: dup
-			IL_011b: ldc.i4.4
-			IL_011c: ldloc.s 5
+			IL_00f8: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_00fd: ldloc.0
+			IL_00fe: ldloc.s 7
+			IL_0100: ldarg.0
+			IL_0101: ldc.i4.1
+			IL_0102: ldloc.0
+			IL_0103: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0108: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_010d: ldloc.0
+			IL_010e: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_0113: dup
+			IL_0114: ldc.i4.0
+			IL_0115: ldloc.1
+			IL_0116: stelem.ref
+			IL_0117: dup
+			IL_0118: ldc.i4.1
+			IL_0119: ldloc.2
+			IL_011a: stelem.ref
+			IL_011b: dup
+			IL_011c: ldc.i4.2
+			IL_011d: ldloc.3
 			IL_011e: stelem.ref
 			IL_011f: dup
-			IL_0120: ldc.i4.5
-			IL_0121: ldloc.s 6
+			IL_0120: ldc.i4.3
+			IL_0121: ldloc.s 4
 			IL_0123: stelem.ref
-			IL_0124: pop
-			IL_0125: ldloc.0
-			IL_0126: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_012b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0130: ret
+			IL_0124: dup
+			IL_0125: ldc.i4.4
+			IL_0126: ldloc.s 5
+			IL_0128: stelem.ref
+			IL_0129: dup
+			IL_012a: ldc.i4.5
+			IL_012b: ldloc.s 6
+			IL_012d: stelem.ref
+			IL_012e: pop
+			IL_012f: ldloc.0
+			IL_0130: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0135: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_013a: ret
 
-			IL_0131: ldloc.0
-			IL_0132: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited1
-			IL_0137: stloc.s 7
-			IL_0139: ldloc.s 7
-			IL_013b: stloc.2
-			IL_013c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0141: ldloc.2
-			IL_0142: ldstr "value"
-			IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0151: pop
-			IL_0152: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0157: ldloc.2
-			IL_0158: ldstr "done"
-			IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0162: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0167: pop
-			IL_0168: ldarg.0
-			IL_0169: ldc.i4.1
-			IL_016a: ldelem.ref
-			IL_016b: castclass Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope
-			IL_0170: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
-			IL_0175: stloc.s 7
-			IL_0177: ldloc.s 7
-			IL_0179: ldstr "setTimeout"
-			IL_017e: ldc.r8 0.0
-			IL_0187: box [System.Runtime]System.Double
-			IL_018c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0191: stloc.s 7
-			IL_0193: ldloc.0
-			IL_0194: ldc.i4.2
-			IL_0195: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_019a: ldloc.0
-			IL_019b: ldloc.s 7
-			IL_019d: ldarg.0
-			IL_019e: ldc.i4.2
-			IL_019f: ldloc.0
-			IL_01a0: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_01a5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_01aa: ldloc.0
-			IL_01ab: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_01b0: dup
-			IL_01b1: ldc.i4.0
-			IL_01b2: ldloc.1
-			IL_01b3: stelem.ref
-			IL_01b4: dup
-			IL_01b5: ldc.i4.1
-			IL_01b6: ldloc.2
-			IL_01b7: stelem.ref
-			IL_01b8: dup
-			IL_01b9: ldc.i4.2
-			IL_01ba: ldloc.3
-			IL_01bb: stelem.ref
-			IL_01bc: dup
-			IL_01bd: ldc.i4.3
-			IL_01be: ldloc.s 4
-			IL_01c0: stelem.ref
-			IL_01c1: dup
-			IL_01c2: ldc.i4.4
-			IL_01c3: ldloc.s 5
-			IL_01c5: stelem.ref
-			IL_01c6: dup
-			IL_01c7: ldc.i4.5
-			IL_01c8: ldloc.s 6
-			IL_01ca: stelem.ref
-			IL_01cb: pop
-			IL_01cc: ldloc.0
-			IL_01cd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_01d2: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_01d7: ret
+			IL_013b: ldloc.0
+			IL_013c: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited1
+			IL_0141: stloc.s 7
+			IL_0143: ldloc.s 7
+			IL_0145: stloc.2
+			IL_0146: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_014b: ldloc.2
+			IL_014c: ldstr "value"
+			IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0156: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_015b: pop
+			IL_015c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0161: ldloc.2
+			IL_0162: ldstr "done"
+			IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_016c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0171: pop
+			IL_0172: ldarg.0
+			IL_0173: ldc.i4.1
+			IL_0174: ldelem.ref
+			IL_0175: castclass Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope
+			IL_017a: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
+			IL_017f: ldstr "Cannot access 'timersPromises' before initialization"
+			IL_0184: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0189: stloc.s 7
+			IL_018b: ldloc.s 7
+			IL_018d: ldstr "setTimeout"
+			IL_0192: ldc.r8 0.0
+			IL_019b: box [System.Runtime]System.Double
+			IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_01a5: stloc.s 7
+			IL_01a7: ldloc.0
+			IL_01a8: ldc.i4.2
+			IL_01a9: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_01ae: ldloc.0
+			IL_01af: ldloc.s 7
+			IL_01b1: ldarg.0
+			IL_01b2: ldc.i4.2
+			IL_01b3: ldloc.0
+			IL_01b4: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_01b9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_01be: ldloc.0
+			IL_01bf: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_01c4: dup
+			IL_01c5: ldc.i4.0
+			IL_01c6: ldloc.1
+			IL_01c7: stelem.ref
+			IL_01c8: dup
+			IL_01c9: ldc.i4.1
+			IL_01ca: ldloc.2
+			IL_01cb: stelem.ref
+			IL_01cc: dup
+			IL_01cd: ldc.i4.2
+			IL_01ce: ldloc.3
+			IL_01cf: stelem.ref
+			IL_01d0: dup
+			IL_01d1: ldc.i4.3
+			IL_01d2: ldloc.s 4
+			IL_01d4: stelem.ref
+			IL_01d5: dup
+			IL_01d6: ldc.i4.4
+			IL_01d7: ldloc.s 5
+			IL_01d9: stelem.ref
+			IL_01da: dup
+			IL_01db: ldc.i4.5
+			IL_01dc: ldloc.s 6
+			IL_01de: stelem.ref
+			IL_01df: pop
+			IL_01e0: ldloc.0
+			IL_01e1: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_01e6: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_01eb: ret
 
-			IL_01d8: ldloc.0
-			IL_01d9: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited2
-			IL_01de: pop
-			IL_01df: ldarg.0
-			IL_01e0: ldc.i4.1
-			IL_01e1: ldelem.ref
-			IL_01e2: castclass Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope
-			IL_01e7: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
-			IL_01ec: stloc.s 7
-			IL_01ee: ldloc.s 7
-			IL_01f0: ldstr "setTimeout"
-			IL_01f5: ldc.r8 0.0
-			IL_01fe: box [System.Runtime]System.Double
-			IL_0203: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0208: stloc.s 7
-			IL_020a: ldloc.0
-			IL_020b: ldc.i4.3
-			IL_020c: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_0211: ldloc.0
-			IL_0212: ldloc.s 7
-			IL_0214: ldarg.0
-			IL_0215: ldc.i4.3
-			IL_0216: ldloc.0
-			IL_0217: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_021c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_0221: ldloc.0
-			IL_0222: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_0227: dup
-			IL_0228: ldc.i4.0
-			IL_0229: ldloc.1
-			IL_022a: stelem.ref
-			IL_022b: dup
-			IL_022c: ldc.i4.1
-			IL_022d: ldloc.2
-			IL_022e: stelem.ref
-			IL_022f: dup
-			IL_0230: ldc.i4.2
-			IL_0231: ldloc.3
-			IL_0232: stelem.ref
-			IL_0233: dup
-			IL_0234: ldc.i4.3
-			IL_0235: ldloc.s 4
-			IL_0237: stelem.ref
-			IL_0238: dup
-			IL_0239: ldc.i4.4
-			IL_023a: ldloc.s 5
-			IL_023c: stelem.ref
-			IL_023d: dup
-			IL_023e: ldc.i4.5
-			IL_023f: ldloc.s 6
-			IL_0241: stelem.ref
-			IL_0242: pop
-			IL_0243: ldloc.0
-			IL_0244: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0249: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_024e: ret
+			IL_01ec: ldloc.0
+			IL_01ed: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited2
+			IL_01f2: pop
+			IL_01f3: ldarg.0
+			IL_01f4: ldc.i4.1
+			IL_01f5: ldelem.ref
+			IL_01f6: castclass Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope
+			IL_01fb: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
+			IL_0200: ldstr "Cannot access 'timersPromises' before initialization"
+			IL_0205: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_020a: stloc.s 7
+			IL_020c: ldloc.s 7
+			IL_020e: ldstr "setTimeout"
+			IL_0213: ldc.r8 0.0
+			IL_021c: box [System.Runtime]System.Double
+			IL_0221: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0226: stloc.s 7
+			IL_0228: ldloc.0
+			IL_0229: ldc.i4.3
+			IL_022a: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_022f: ldloc.0
+			IL_0230: ldloc.s 7
+			IL_0232: ldarg.0
+			IL_0233: ldc.i4.3
+			IL_0234: ldloc.0
+			IL_0235: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_023a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_023f: ldloc.0
+			IL_0240: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_0245: dup
+			IL_0246: ldc.i4.0
+			IL_0247: ldloc.1
+			IL_0248: stelem.ref
+			IL_0249: dup
+			IL_024a: ldc.i4.1
+			IL_024b: ldloc.2
+			IL_024c: stelem.ref
+			IL_024d: dup
+			IL_024e: ldc.i4.2
+			IL_024f: ldloc.3
+			IL_0250: stelem.ref
+			IL_0251: dup
+			IL_0252: ldc.i4.3
+			IL_0253: ldloc.s 4
+			IL_0255: stelem.ref
+			IL_0256: dup
+			IL_0257: ldc.i4.4
+			IL_0258: ldloc.s 5
+			IL_025a: stelem.ref
+			IL_025b: dup
+			IL_025c: ldc.i4.5
+			IL_025d: ldloc.s 6
+			IL_025f: stelem.ref
+			IL_0260: pop
+			IL_0261: ldloc.0
+			IL_0262: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0267: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_026c: ret
 
-			IL_024f: ldloc.0
-			IL_0250: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited3
-			IL_0255: pop
-			IL_0256: ldloc.1
-			IL_0257: ldstr "next"
-			IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0261: stloc.s 7
-			IL_0263: ldloc.0
-			IL_0264: ldc.i4.4
-			IL_0265: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_026a: ldloc.0
-			IL_026b: ldloc.s 7
-			IL_026d: ldarg.0
-			IL_026e: ldc.i4.4
-			IL_026f: ldloc.0
-			IL_0270: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_0275: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_027a: ldloc.0
-			IL_027b: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_0280: dup
-			IL_0281: ldc.i4.0
-			IL_0282: ldloc.1
-			IL_0283: stelem.ref
-			IL_0284: dup
-			IL_0285: ldc.i4.1
-			IL_0286: ldloc.2
-			IL_0287: stelem.ref
-			IL_0288: dup
-			IL_0289: ldc.i4.2
-			IL_028a: ldloc.3
-			IL_028b: stelem.ref
-			IL_028c: dup
-			IL_028d: ldc.i4.3
-			IL_028e: ldloc.s 4
-			IL_0290: stelem.ref
-			IL_0291: dup
-			IL_0292: ldc.i4.4
-			IL_0293: ldloc.s 5
-			IL_0295: stelem.ref
-			IL_0296: dup
-			IL_0297: ldc.i4.5
-			IL_0298: ldloc.s 6
-			IL_029a: stelem.ref
-			IL_029b: pop
-			IL_029c: ldloc.0
-			IL_029d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_02a2: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_02a7: ret
+			IL_026d: ldloc.0
+			IL_026e: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited3
+			IL_0273: pop
+			IL_0274: ldloc.1
+			IL_0275: ldstr "next"
+			IL_027a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_027f: stloc.s 7
+			IL_0281: ldloc.0
+			IL_0282: ldc.i4.4
+			IL_0283: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0288: ldloc.0
+			IL_0289: ldloc.s 7
+			IL_028b: ldarg.0
+			IL_028c: ldc.i4.4
+			IL_028d: ldloc.0
+			IL_028e: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_0293: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_0298: ldloc.0
+			IL_0299: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_029e: dup
+			IL_029f: ldc.i4.0
+			IL_02a0: ldloc.1
+			IL_02a1: stelem.ref
+			IL_02a2: dup
+			IL_02a3: ldc.i4.1
+			IL_02a4: ldloc.2
+			IL_02a5: stelem.ref
+			IL_02a6: dup
+			IL_02a7: ldc.i4.2
+			IL_02a8: ldloc.3
+			IL_02a9: stelem.ref
+			IL_02aa: dup
+			IL_02ab: ldc.i4.3
+			IL_02ac: ldloc.s 4
+			IL_02ae: stelem.ref
+			IL_02af: dup
+			IL_02b0: ldc.i4.4
+			IL_02b1: ldloc.s 5
+			IL_02b3: stelem.ref
+			IL_02b4: dup
+			IL_02b5: ldc.i4.5
+			IL_02b6: ldloc.s 6
+			IL_02b8: stelem.ref
+			IL_02b9: pop
+			IL_02ba: ldloc.0
+			IL_02bb: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_02c0: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_02c5: ret
 
-			IL_02a8: ldloc.0
-			IL_02a9: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited4
-			IL_02ae: stloc.s 7
-			IL_02b0: ldloc.s 7
-			IL_02b2: stloc.3
-			IL_02b3: ldloc.1
-			IL_02b4: ldstr "next"
-			IL_02b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_02be: stloc.s 7
-			IL_02c0: ldloc.0
-			IL_02c1: ldc.i4.5
-			IL_02c2: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_02c7: ldloc.0
-			IL_02c8: ldloc.s 7
-			IL_02ca: ldarg.0
-			IL_02cb: ldc.i4.5
-			IL_02cc: ldloc.0
-			IL_02cd: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_02d2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_02d7: ldloc.0
-			IL_02d8: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_02dd: dup
-			IL_02de: ldc.i4.0
-			IL_02df: ldloc.1
-			IL_02e0: stelem.ref
-			IL_02e1: dup
-			IL_02e2: ldc.i4.1
-			IL_02e3: ldloc.2
-			IL_02e4: stelem.ref
-			IL_02e5: dup
-			IL_02e6: ldc.i4.2
-			IL_02e7: ldloc.3
-			IL_02e8: stelem.ref
-			IL_02e9: dup
-			IL_02ea: ldc.i4.3
-			IL_02eb: ldloc.s 4
-			IL_02ed: stelem.ref
-			IL_02ee: dup
-			IL_02ef: ldc.i4.4
-			IL_02f0: ldloc.s 5
-			IL_02f2: stelem.ref
-			IL_02f3: dup
-			IL_02f4: ldc.i4.5
-			IL_02f5: ldloc.s 6
-			IL_02f7: stelem.ref
-			IL_02f8: pop
-			IL_02f9: ldloc.0
-			IL_02fa: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_02ff: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0304: ret
+			IL_02c6: ldloc.0
+			IL_02c7: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited4
+			IL_02cc: stloc.s 7
+			IL_02ce: ldloc.s 7
+			IL_02d0: stloc.3
+			IL_02d1: ldloc.1
+			IL_02d2: ldstr "next"
+			IL_02d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_02dc: stloc.s 7
+			IL_02de: ldloc.0
+			IL_02df: ldc.i4.5
+			IL_02e0: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_02e5: ldloc.0
+			IL_02e6: ldloc.s 7
+			IL_02e8: ldarg.0
+			IL_02e9: ldc.i4.5
+			IL_02ea: ldloc.0
+			IL_02eb: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_02f0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_02f5: ldloc.0
+			IL_02f6: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_02fb: dup
+			IL_02fc: ldc.i4.0
+			IL_02fd: ldloc.1
+			IL_02fe: stelem.ref
+			IL_02ff: dup
+			IL_0300: ldc.i4.1
+			IL_0301: ldloc.2
+			IL_0302: stelem.ref
+			IL_0303: dup
+			IL_0304: ldc.i4.2
+			IL_0305: ldloc.3
+			IL_0306: stelem.ref
+			IL_0307: dup
+			IL_0308: ldc.i4.3
+			IL_0309: ldloc.s 4
+			IL_030b: stelem.ref
+			IL_030c: dup
+			IL_030d: ldc.i4.4
+			IL_030e: ldloc.s 5
+			IL_0310: stelem.ref
+			IL_0311: dup
+			IL_0312: ldc.i4.5
+			IL_0313: ldloc.s 6
+			IL_0315: stelem.ref
+			IL_0316: pop
+			IL_0317: ldloc.0
+			IL_0318: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_031d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_0322: ret
 
-			IL_0305: ldloc.0
-			IL_0306: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited5
-			IL_030b: stloc.s 7
-			IL_030d: ldloc.s 7
-			IL_030f: stloc.s 4
-			IL_0311: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0316: ldloc.3
-			IL_0317: ldstr "value"
-			IL_031c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0321: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0326: pop
-			IL_0327: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_032c: ldloc.3
-			IL_032d: ldstr "done"
-			IL_0332: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0337: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_033c: pop
-			IL_033d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0342: ldloc.s 4
-			IL_0344: ldstr "value"
-			IL_0349: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_034e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0353: pop
-			IL_0354: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0359: ldloc.s 4
-			IL_035b: ldstr "done"
-			IL_0360: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0365: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_036a: pop
-			IL_036b: ldloc.1
-			IL_036c: ldstr "return"
-			IL_0371: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0376: stloc.s 7
-			IL_0378: ldloc.0
-			IL_0379: ldc.i4.6
-			IL_037a: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_037f: ldloc.0
-			IL_0380: ldloc.s 7
-			IL_0382: ldarg.0
-			IL_0383: ldc.i4.6
-			IL_0384: ldloc.0
-			IL_0385: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_038a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_038f: ldloc.0
-			IL_0390: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_0395: dup
-			IL_0396: ldc.i4.0
-			IL_0397: ldloc.1
-			IL_0398: stelem.ref
-			IL_0399: dup
-			IL_039a: ldc.i4.1
-			IL_039b: ldloc.2
-			IL_039c: stelem.ref
-			IL_039d: dup
-			IL_039e: ldc.i4.2
-			IL_039f: ldloc.3
-			IL_03a0: stelem.ref
-			IL_03a1: dup
-			IL_03a2: ldc.i4.3
-			IL_03a3: ldloc.s 4
-			IL_03a5: stelem.ref
-			IL_03a6: dup
-			IL_03a7: ldc.i4.4
-			IL_03a8: ldloc.s 5
-			IL_03aa: stelem.ref
-			IL_03ab: dup
-			IL_03ac: ldc.i4.5
-			IL_03ad: ldloc.s 6
-			IL_03af: stelem.ref
-			IL_03b0: pop
-			IL_03b1: ldloc.0
-			IL_03b2: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_03b7: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_03bc: ret
+			IL_0323: ldloc.0
+			IL_0324: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited5
+			IL_0329: stloc.s 7
+			IL_032b: ldloc.s 7
+			IL_032d: stloc.s 4
+			IL_032f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0334: ldloc.3
+			IL_0335: ldstr "value"
+			IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_033f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0344: pop
+			IL_0345: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_034a: ldloc.3
+			IL_034b: ldstr "done"
+			IL_0350: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0355: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_035a: pop
+			IL_035b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0360: ldloc.s 4
+			IL_0362: ldstr "value"
+			IL_0367: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_036c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0371: pop
+			IL_0372: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0377: ldloc.s 4
+			IL_0379: ldstr "done"
+			IL_037e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0383: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0388: pop
+			IL_0389: ldloc.1
+			IL_038a: ldstr "return"
+			IL_038f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0394: stloc.s 7
+			IL_0396: ldloc.0
+			IL_0397: ldc.i4.6
+			IL_0398: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_039d: ldloc.0
+			IL_039e: ldloc.s 7
+			IL_03a0: ldarg.0
+			IL_03a1: ldc.i4.6
+			IL_03a2: ldloc.0
+			IL_03a3: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_03a8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_03ad: ldloc.0
+			IL_03ae: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_03b3: dup
+			IL_03b4: ldc.i4.0
+			IL_03b5: ldloc.1
+			IL_03b6: stelem.ref
+			IL_03b7: dup
+			IL_03b8: ldc.i4.1
+			IL_03b9: ldloc.2
+			IL_03ba: stelem.ref
+			IL_03bb: dup
+			IL_03bc: ldc.i4.2
+			IL_03bd: ldloc.3
+			IL_03be: stelem.ref
+			IL_03bf: dup
+			IL_03c0: ldc.i4.3
+			IL_03c1: ldloc.s 4
+			IL_03c3: stelem.ref
+			IL_03c4: dup
+			IL_03c5: ldc.i4.4
+			IL_03c6: ldloc.s 5
+			IL_03c8: stelem.ref
+			IL_03c9: dup
+			IL_03ca: ldc.i4.5
+			IL_03cb: ldloc.s 6
+			IL_03cd: stelem.ref
+			IL_03ce: pop
+			IL_03cf: ldloc.0
+			IL_03d0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_03d5: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_03da: ret
 
-			IL_03bd: ldloc.0
-			IL_03be: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited6
-			IL_03c3: stloc.s 7
-			IL_03c5: ldloc.s 7
-			IL_03c7: stloc.s 5
-			IL_03c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03ce: ldloc.s 5
-			IL_03d0: ldstr "done"
-			IL_03d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_03df: pop
-			IL_03e0: ldloc.1
-			IL_03e1: ldstr "next"
-			IL_03e6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_03eb: stloc.s 7
-			IL_03ed: ldloc.0
-			IL_03ee: ldc.i4.7
-			IL_03ef: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_03f4: ldloc.0
-			IL_03f5: ldloc.s 7
-			IL_03f7: ldarg.0
-			IL_03f8: ldc.i4.7
-			IL_03f9: ldloc.0
-			IL_03fa: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
-			IL_03ff: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
-			IL_0404: ldloc.0
-			IL_0405: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
-			IL_040a: dup
-			IL_040b: ldc.i4.0
-			IL_040c: ldloc.1
-			IL_040d: stelem.ref
-			IL_040e: dup
-			IL_040f: ldc.i4.1
-			IL_0410: ldloc.2
-			IL_0411: stelem.ref
-			IL_0412: dup
-			IL_0413: ldc.i4.2
-			IL_0414: ldloc.3
-			IL_0415: stelem.ref
-			IL_0416: dup
-			IL_0417: ldc.i4.3
-			IL_0418: ldloc.s 4
-			IL_041a: stelem.ref
-			IL_041b: dup
-			IL_041c: ldc.i4.4
-			IL_041d: ldloc.s 5
-			IL_041f: stelem.ref
-			IL_0420: dup
-			IL_0421: ldc.i4.5
-			IL_0422: ldloc.s 6
-			IL_0424: stelem.ref
-			IL_0425: pop
-			IL_0426: ldloc.0
-			IL_0427: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_042c: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_0431: ret
+			IL_03db: ldloc.0
+			IL_03dc: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited6
+			IL_03e1: stloc.s 7
+			IL_03e3: ldloc.s 7
+			IL_03e5: stloc.s 5
+			IL_03e7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_03ec: ldloc.s 5
+			IL_03ee: ldstr "done"
+			IL_03f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_03fd: pop
+			IL_03fe: ldloc.1
+			IL_03ff: ldstr "next"
+			IL_0404: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0409: stloc.s 7
+			IL_040b: ldloc.0
+			IL_040c: ldc.i4.7
+			IL_040d: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_0412: ldloc.0
+			IL_0413: ldloc.s 7
+			IL_0415: ldarg.0
+			IL_0416: ldc.i4.7
+			IL_0417: ldloc.0
+			IL_0418: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+			IL_041d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+			IL_0422: ldloc.0
+			IL_0423: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+			IL_0428: dup
+			IL_0429: ldc.i4.0
+			IL_042a: ldloc.1
+			IL_042b: stelem.ref
+			IL_042c: dup
+			IL_042d: ldc.i4.1
+			IL_042e: ldloc.2
+			IL_042f: stelem.ref
+			IL_0430: dup
+			IL_0431: ldc.i4.2
+			IL_0432: ldloc.3
+			IL_0433: stelem.ref
+			IL_0434: dup
+			IL_0435: ldc.i4.3
+			IL_0436: ldloc.s 4
+			IL_0438: stelem.ref
+			IL_0439: dup
+			IL_043a: ldc.i4.4
+			IL_043b: ldloc.s 5
+			IL_043d: stelem.ref
+			IL_043e: dup
+			IL_043f: ldc.i4.5
+			IL_0440: ldloc.s 6
+			IL_0442: stelem.ref
+			IL_0443: pop
+			IL_0444: ldloc.0
+			IL_0445: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_044a: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_044f: ret
 
-			IL_0432: ldloc.0
-			IL_0433: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited7
-			IL_0438: stloc.s 7
-			IL_043a: ldloc.s 7
-			IL_043c: stloc.s 6
-			IL_043e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0443: ldloc.s 6
-			IL_0445: ldstr "done"
-			IL_044a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_044f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0454: pop
-			IL_0455: ldloc.0
-			IL_0456: ldc.i4.m1
-			IL_0457: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
-			IL_045c: ldloc.0
-			IL_045d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_0462: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-			IL_0467: ldarg.0
-			IL_0468: ldc.i4.1
-			IL_0469: newarr [System.Runtime]System.Object
-			IL_046e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-			IL_0473: pop
-			IL_0474: ldloc.0
-			IL_0475: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
-			IL_047a: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-			IL_047f: ret
+			IL_0450: ldloc.0
+			IL_0451: ldfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/main/Scope::_awaited7
+			IL_0456: stloc.s 7
+			IL_0458: ldloc.s 7
+			IL_045a: stloc.s 6
+			IL_045c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0461: ldloc.s 6
+			IL_0463: ldstr "done"
+			IL_0468: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_046d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0472: pop
+			IL_0473: ldloc.0
+			IL_0474: ldc.i4.m1
+			IL_0475: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+			IL_047a: ldloc.0
+			IL_047b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0480: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+			IL_0485: ldarg.0
+			IL_0486: ldc.i4.1
+			IL_0487: newarr [System.Runtime]System.Object
+			IL_048c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+			IL_0491: pop
+			IL_0492: ldloc.0
+			IL_0493: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+			IL_0498: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+			IL_049d: ret
 		} // end of method main::__js_call__
 
 	} // end of class main
@@ -627,15 +633,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2538
+			// Method begins at RVA 0x2556
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.TimersPromises_SetInterval_Backpressure_And_Return/Scope::timersPromises
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -706,7 +715,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x254a
+		// Method begins at RVA 0x2573
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
