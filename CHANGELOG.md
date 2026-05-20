@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.21 - 2026-05-20
+
 - compiler/tests/docs/test262: close issue #1051 by fixing statement-condition truthiness for falsy strings, correcting stale stable-type inference that broke `for..of` `array-expand`, supporting assignment-form destructuring loop heads like `[x.attr]`, unskipping the related supported `test262` ports, refreshing the affected generator snapshots, and tracking the remaining unsupported `eval`-blocked skips separately in issue #1079.
 - compiler/runtime/tests/test262: fix issue #1050 by restoring const TDZ behavior for self-references and closed-over bindings, inferring names for const-bound anonymous functions/arrows/generators, respecting static `name` members on anonymous classes, and unskipping the related supported `test262` const cases while leaving the `eval`-blocked `cptn-value` case tracked separately.
 
