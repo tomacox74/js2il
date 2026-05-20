@@ -3485,65 +3485,56 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            // Check if target is a class prototype object (has constructor = class constructor in PropertyDescriptorStore)
+            // Check if target is a class prototype object (has constructor = Type in PropertyDescriptorStore)
             // and the property corresponds to CLR get_/set_ accessor methods on that class.
             if (PropertyDescriptorStore.TryGetOwn(target, "constructor", out var ctorDesc)
-                && ctorDesc.Kind == JsPropertyDescriptorKind.Data)
+                && ctorDesc.Kind == JsPropertyDescriptorKind.Data
+                && ctorDesc.Value is Type instanceClassType)
             {
-                var instanceClassType = ctorDesc.Value switch
-                {
-                    ClassConstructorValue constructorValue => constructorValue.Type,
-                    Type type => type,
-                    _ => null
-                };
+                var instanceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
+                var getter = FindAccessorMethod(instanceClassType, "get", propName, instanceFlags, parameterCount: 0);
+                var setter = FindAccessorMethod(instanceClassType, "set", propName, instanceFlags, parameterCount: 1);
 
-                if (instanceClassType != null)
+                if (getter != null || setter != null)
                 {
-                    var instanceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase;
-                    var getter = FindAccessorMethod(instanceClassType, "get", propName, instanceFlags, parameterCount: 0);
-                    var setter = FindAccessorMethod(instanceClassType, "set", propName, instanceFlags, parameterCount: 1);
+                    Func<object?>? getDelegate = null;
+                    Action<object?>? setDelegate = null;
 
-                    if (getter != null || setter != null)
+                    if (getter != null)
                     {
-                        Func<object?>? getDelegate = null;
-                        Action<object?>? setDelegate = null;
-
-                        if (getter != null)
+                        var capturedGetter = getter;
+                        getDelegate = () =>
                         {
-                            var capturedGetter = getter;
-                            getDelegate = () =>
-                            {
-                                var recv = RuntimeServices.GetCurrentThis();
-                                try { return capturedGetter.Invoke(recv, System.Array.Empty<object>()); }
-                                catch (TargetInvocationException tie) when (tie.InnerException != null)
-                                { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); throw; }
-                            };
-                        }
-
-                        if (setter != null)
-                        {
-                            var capturedSetter = setter;
-                            setDelegate = (value) =>
-                            {
-                                var recv = RuntimeServices.GetCurrentThis();
-                                try { capturedSetter.Invoke(recv, new object?[] { value }); }
-                                catch (TargetInvocationException tie) when (tie.InnerException != null)
-                                { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); }
-                            };
-                        }
-
-                        descriptor = new JsPropertyDescriptor
-                        {
-                            Kind = JsPropertyDescriptorKind.Accessor,
-                            Configurable = true,
-                            Enumerable = false,
-                            Get = getDelegate,
-                            Set = setDelegate
+                            var recv = RuntimeServices.GetCurrentThis();
+                            try { return capturedGetter.Invoke(recv, System.Array.Empty<object>()); }
+                            catch (TargetInvocationException tie) when (tie.InnerException != null)
+                            { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); throw; }
                         };
-                        // Cache so that subsequent lookups (including prototype chain walks) find it.
-                        PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
-                        return true;
                     }
+
+                    if (setter != null)
+                    {
+                        var capturedSetter = setter;
+                        setDelegate = (value) =>
+                        {
+                            var recv = RuntimeServices.GetCurrentThis();
+                            try { capturedSetter.Invoke(recv, new object?[] { value }); }
+                            catch (TargetInvocationException tie) when (tie.InnerException != null)
+                            { ExceptionDispatchInfo.Capture(tie.InnerException).Throw(); }
+                        };
+                    }
+
+                    descriptor = new JsPropertyDescriptor
+                    {
+                        Kind = JsPropertyDescriptorKind.Accessor,
+                        Configurable = true,
+                        Enumerable = false,
+                        Get = getDelegate,
+                        Set = setDelegate
+                    };
+                    // Cache so that subsequent lookups (including prototype chain walks) find it.
+                    PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
+                    return true;
                 }
             }
 
