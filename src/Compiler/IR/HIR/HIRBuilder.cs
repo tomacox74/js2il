@@ -2221,6 +2221,14 @@ class HIRMethodBuilder
                         }
                         targetPattern = new HIRIdentifierPattern(symbol);
                     }
+                    else if (forOfStmt.Left is ObjectPattern or ArrayPattern or AssignmentPattern or RestElement or MemberExpression)
+                    {
+                        if (!TryParsePattern(forOfStmt.Left, out targetPattern))
+                        {
+                            _currentScope = previousForOfScope;
+                            return false;
+                        }
+                    }
                     else
                     {
                         _currentScope = previousForOfScope;
@@ -2346,6 +2354,14 @@ class HIRMethodBuilder
                             return false;
                         }
                         targetPattern = new HIRIdentifierPattern(symbol);
+                    }
+                    else if (forInStmt.Left is ObjectPattern or ArrayPattern or AssignmentPattern or RestElement or MemberExpression)
+                    {
+                        if (!TryParsePattern(forInStmt.Left, out targetPattern))
+                        {
+                            _currentScope = previousForInScope;
+                            return false;
+                        }
                     }
                     else
                     {
@@ -2648,6 +2664,31 @@ class HIRMethodBuilder
         {
             case Acornima.Ast.Identifier id:
                 pattern = new HIRIdentifierPattern(_currentScope.FindSymbol(id.Name));
+                return true;
+
+            case Acornima.Ast.MemberExpression memberExpr:
+                if (!TryParseExpression(memberExpr.Object, out var targetObjectExpr))
+                {
+                    return false;
+                }
+
+                if (memberExpr.Computed)
+                {
+                    if (!TryParseExpression(memberExpr.Property, out var targetIndexExpr))
+                    {
+                        return false;
+                    }
+
+                    pattern = new HIRIndexTargetPattern(targetObjectExpr!, targetIndexExpr!);
+                    return true;
+                }
+
+                if (memberExpr.Property is not Acornima.Ast.Identifier targetPropertyId)
+                {
+                    return false;
+                }
+
+                pattern = new HIRPropertyTargetPattern(targetObjectExpr!, targetPropertyId.Name);
                 return true;
 
             case Acornima.Ast.AssignmentPattern ap:

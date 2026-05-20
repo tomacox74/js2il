@@ -13,6 +13,20 @@ public sealed partial class HIRToLIRLowerer
     private readonly Stack<ControlFlowContext> _controlFlowStack = new();
     private readonly Stack<int> _protectedControlFlowDepthStack = new();
 
+    private TempVariable EnsureConditionIsBoolean(TempVariable conditionTemp)
+    {
+        var conditionStorage = GetTempStorage(conditionTemp);
+        if (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(bool))
+        {
+            return conditionTemp;
+        }
+
+        var isTruthyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
+        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return isTruthyTemp;
+    }
+
     private readonly struct ControlFlowContext
     {
         public ControlFlowContext(int breakLabel, int? continueLabel, string? labelName)

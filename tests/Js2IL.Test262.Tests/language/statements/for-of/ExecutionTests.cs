@@ -66,7 +66,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task array_expand_contract()
         => ExecutionTest("array-expand-contract");
 
-    [Fact(DisplayName = "array-expand", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    [Fact(DisplayName = "array-expand")]
     public Task array_expand()
         => ExecutionTest("array-expand");
 
@@ -78,7 +78,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task array()
         => ExecutionTest("array");
 
-    [Fact(DisplayName = "body-dstr-assign-error", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "body-dstr-assign-error")]
     public Task body_dstr_assign_error()
         => ExecutionTest("body-dstr-assign-error");
 }

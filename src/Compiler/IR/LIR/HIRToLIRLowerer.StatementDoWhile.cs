@@ -54,19 +54,7 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
-        var conditionStorage = GetTempStorage(conditionTemp);
-        bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
-            (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object)) ||
-            (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(double));
-
-        if (needsTruthyCheck)
-        {
-            var isTruthyTemp = CreateTempVariable();
-            lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
-            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-            conditionTemp = isTruthyTemp;
-        }
+        conditionTemp = EnsureConditionIsBoolean(conditionTemp);
 
         // Branch to end if condition is false
         lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, loopEndLabel));

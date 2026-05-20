@@ -958,7 +958,7 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
-                var inferredType = InferExpressionClrType(variableDeclarator.Init, scope, proposedClrTypes);
+                var inferredType = InferExpressionClrType(variableDeclarator.Init, scope, proposedClrTypes, scope);
                 if (inferredType != null)
                 {
                     proposedClrTypes[binding.Name] = inferredType;
@@ -978,8 +978,9 @@ public partial class SymbolTableBuilder
                 && ReferenceEquals(TryResolveBinding(currentScope, name), targetBinding);
         }
 
-        void AnalyzeAssignmentLikeNode(INode node, Scope currentScope)
+        bool AnalyzeAssignmentLikeNode(INode node, Scope currentScope)
         {
+            bool changed = false;
             currentScope = GetScopeForNode(currentScope, node);
 
             switch (node)
@@ -993,21 +994,25 @@ public partial class SymbolTableBuilder
                     if (proposedClrTypes.TryGetValue(identifier.Name, out var inferredType))
                     {
                         // If any assignment conflicts with the inferred type, remove the proposed type.
-                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
                         if (rightType != inferredType)
                         {
-                            proposedClrTypes.Remove(identifier.Name);
+                            changed |= proposedClrTypes.Remove(identifier.Name);
                         }
                     }
                     else if (unitializedClrTypes.Contains(identifier.Name))
                     {
                         // An uninitialized variable can still be a nullable/reference type.
-                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
                         if (rightType?.IsValueType == false)
                         {
-                            proposedClrTypes[identifier.Name] = rightType;
+                            if (!proposedClrTypes.TryGetValue(identifier.Name, out var existingType) || existingType != rightType)
+                            {
+                                proposedClrTypes[identifier.Name] = rightType;
+                                changed = true;
+                            }
                         }
-                        unitializedClrTypes.Remove(identifier.Name);
+                        changed |= unitializedClrTypes.Remove(identifier.Name);
                     }
                     break;
 
@@ -1021,10 +1026,10 @@ public partial class SymbolTableBuilder
                     if (proposedClrTypes.TryGetValue(updateVariableIdentity.Name, out var updateInferredType)
                         && updateInferredType != typeof(double))
                     {
-                        proposedClrTypes.Remove(updateVariableIdentity.Name);
+                        changed |= proposedClrTypes.Remove(updateVariableIdentity.Name);
                     }
 
-                    unitializedClrTypes.Remove(updateVariableIdentity.Name);
+                    changed |= unitializedClrTypes.Remove(updateVariableIdentity.Name);
                     break;
             }
 
@@ -1034,21 +1039,29 @@ public partial class SymbolTableBuilder
                 || node is ClassDeclaration
                 || node is ClassExpression)
             {
-                return;
+                return changed;
             }
 
             foreach (var child in node.ChildNodes)
             {
-                AnalyzeAssignmentLikeNode(child, currentScope);
+                changed |= AnalyzeAssignmentLikeNode(child, currentScope);
             }
+
+            return changed;
         }
 
-        // Walk statements recursively so nested assignments (e.g. inside sequence/call expressions)
-        // still invalidate overly-specific stable type proposals.
-        foreach (var statement in scope.AstNode.ChildNodes)
+        // Walk statements to a fixpoint so assignment analysis remains order-independent:
+        // later invalidation of one binding can force earlier dependent bindings to widen.
+        bool assignmentInferenceChanged;
+        do
         {
-            AnalyzeAssignmentLikeNode(statement, scope);
+            assignmentInferenceChanged = false;
+            foreach (var statement in scope.AstNode.ChildNodes)
+            {
+                assignmentInferenceChanged |= AnalyzeAssignmentLikeNode(statement, scope);
+            }
         }
+        while (assignmentInferenceChanged);
 
         // For uninitialized uncaptured bindings, also consider assignments in nested blocks/scopes.
         // This mirrors the captured-binding write analysis but is limited to reference types.
@@ -1151,7 +1164,7 @@ public partial class SymbolTableBuilder
             return true;
         }
 
-        var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes);
+        var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes, declaringScope);
         if (initializerType == null || initializerType.IsValueType)
         {
             return false;
@@ -1224,7 +1237,7 @@ public partial class SymbolTableBuilder
                         return;
                     }
 
-                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
                     if (rightType == null || rightType.IsValueType)
                     {
                         isCompatible = false;
@@ -1328,7 +1341,7 @@ public partial class SymbolTableBuilder
                         return;
                     }
 
-                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes);
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
                     if (rightType != expectedType)
                     {
                         isCompatible = false;
@@ -2103,7 +2116,7 @@ public partial class SymbolTableBuilder
         }
     }
 
-    Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null)
+    Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null, Scope? inferenceRootScope = null)
     {
         static bool IsSupportedNumberLike(Type? t) =>
             t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
@@ -2230,6 +2243,13 @@ public partial class SymbolTableBuilder
                     {
                         if (currentScope.Bindings.TryGetValue(id.Name, out var binding))
                         {
+                            if (proposedTypes != null
+                                && inferenceRootScope != null
+                                && ReferenceEquals(binding.DeclaringScope, inferenceRootScope))
+                            {
+                                return null;
+                            }
+
                             if (binding.ClrType != null)
                             {
                                 return binding.ClrType;
@@ -2237,7 +2257,7 @@ public partial class SymbolTableBuilder
 
                             if (binding.DeclarationNode is VariableDeclarator { Init: not null } declarator)
                             {
-                                var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes);
+                                var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes, inferenceRootScope);
                                 if (initializerType != null)
                                 {
                                     return initializerType;

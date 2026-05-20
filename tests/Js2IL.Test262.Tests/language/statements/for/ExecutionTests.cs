@@ -42,7 +42,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _12_6_3_2_3_a_ii_17()
         => ExecutionTest("12.6.3_2-3-a-ii-17");
 
-    [Fact(DisplayName = "12.6.3_2-3-a-ii-18", Skip = "Known issue: unstable timeout in this test262 scenario")]
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-18")]
     public Task _12_6_3_2_3_a_ii_18()
         => ExecutionTest("12.6.3_2-3-a-ii-18");
 

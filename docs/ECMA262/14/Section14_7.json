@@ -342,6 +342,16 @@
         "notes": "Implements continue by branching to the update expression (LoopContext)."
       },
       {
+        "clause": "14.7.4.2",
+        "feature": "for loop test expression uses JavaScript truthiness",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation",
+        "test262Paths": [
+          "test/language/statements/for/12.6.3_2-3-a-ii-18.js"
+        ],
+        "notes": "Loop test expressions lower through JavaScript truthiness coercion, so falsy strings such as \"\" terminate the loop instead of behaving like non-null CLR references."
+      },
+      {
         "clause": "14.7.4.4",
         "feature": "for-loop per-iteration lexical environment (let closure capture)",
         "status": "Supported",
@@ -444,9 +454,10 @@
           "test/language/statements/for-in/12.6.4-2.js",
           "test/language/statements/for-in/head-const-fresh-binding-per-iteration.js",
           "test/language/statements/for-in/S12.6.4_A1.js",
-          "test/language/statements/for-in/S12.6.4_A2.js"
+          "test/language/statements/for-in/S12.6.4_A2.js",
+          "test/language/block-scope/syntax/for-in/acquire-properties-from-array.js"
         ],
-        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings for for-in heads. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
+        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings for for-in heads plus block-scoped array property acquisition. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
       },
       {
         "clause": "14.7.5",

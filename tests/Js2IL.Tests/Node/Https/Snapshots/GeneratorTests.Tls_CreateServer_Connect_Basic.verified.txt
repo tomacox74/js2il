@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21d5
+			// Method begins at RVA 0x21d7
 			// Header size: 1
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -808,29 +808,32 @@
 	{
 		// Method begins at RVA 0x2190
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 59 (0x3b)
 		.maxstack 8
-		.locals (
-			[0] class Modules.Tls_TestCertificates/Scope
+		.locals init (
+			[0] class Modules.Tls_TestCertificates/Scope,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Tls_TestCertificates/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldarg.2
-		IL_0007: ldstr "exports"
-		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0011: dup
-		IL_0012: ldstr "certPem"
-		IL_0017: ldstr "-----BEGIN CERTIFICATE-----\nMIIC+TCCAeGgAwIBAgIIaUAevC7krmQwDQYJKoZIhvcNAQELBQAwFjEUMBIGA1UE\nAxMLanMyaWwtbG9jYWwwHhcNMjYwMzE0MjAwODM0WhcNMjcwMzE1MjAwODM0WjAW\nMRQwEgYDVQQDEwtqczJpbC1sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBANP5G6yPJfJHP9xJsjN4DzzfGc3OahHJ9HkJuoicHjTd0m5l9kLBs1dE\nnES1ZZAnHC3StoD5iABtyS4yYtiL5Gv7UvgqR/9YL5XvyyYj8p9h51rVQn4xaU8p\nM7ngRaBciAqwpH8+JbnCA0RA9RC5rpEJtcUGNGPGwwQ7xuBUdQrWEFTnQ/PCrvpg\nP9wlJqQF+5pGorCV3rH5P5dOYR4AVO68ulqXcjwbM3OCAInONzth8xNjWNKFWwou\nR77IBF7/oboZFGJhKPqhWP9I974M69lGA1HrUMX9AmU+tVmgjo63XvzhWIhhmCZy\nWmP9FPfUipGpBQXSCTDILxXY+6jFu1UCAwEAAaNLMEkwGgYDVR0RBBMwEYIJbG9j\nYWxob3N0hwR/AAABMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoG\nCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQC2gZkmvzdlk0JLBjRr8qtbtrMy\nd/CnwDprOe9k+BeHIdlGzzpm7vvr63DacVo7znnH7Lp/O1FYiqJRhBWdm4weZj7c\nlHy9KNC/Eyv7ieGMPb4R0BGOvEmA8kp55ohaWsySGd2MQohNzYVDVntJ8xBvt2+Y\n5eHfYDfoBYG1lJTbTv0E3UWEpR8itnTsDEtA/FBvn/Do1TvYvyB7uUPFcCt4BWom\nTJdsb+Cl9CRe8yStfbsgjkzAdgJh74xYtmk+rSbYx8DLlp++Xfdgfj7eAKZ0Rm83\ng0+a+SMF6xucjCIRjG0R9AEgL7K2vppinB2/MusGrmD0HFUhAta7miSlnymn\n-----END CERTIFICATE-----"
-		IL_001c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0021: dup
-		IL_0022: ldstr "keyPem"
-		IL_0027: ldstr "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDT+RusjyXyRz/c\nSbIzeA883xnNzmoRyfR5CbqInB403dJuZfZCwbNXRJxEtWWQJxwt0raA+YgAbcku\nMmLYi+Rr+1L4Kkf/WC+V78smI/KfYeda1UJ+MWlPKTO54EWgXIgKsKR/PiW5wgNE\nQPUQua6RCbXFBjRjxsMEO8bgVHUK1hBU50Pzwq76YD/cJSakBfuaRqKwld6x+T+X\nTmEeAFTuvLpal3I8GzNzggCJzjc7YfMTY1jShVsKLke+yARe/6G6GRRiYSj6oVj/\nSPe+DOvZRgNR61DF/QJlPrVZoI6Ot1784ViIYZgmclpj/RT31IqRqQUF0gkwyC8V\n2PuoxbtVAgMBAAECggEAYNaJIggzmb+bGRRB6OmMbI6vxynpoz7UBQfAw/AujJBa\nNj02h8DeIZwil/EW+QglA3okDj/xNeDx67zxE2S1ce9bNCx8v9aVxrXJ5R6/FLkx\nbHnI6sXACn4UN3KR3HTpYZjZTZgiu/46Z9AVJRLvASuicuQmwv5m0WRNsuZiohPc\nel2rXFnX7RLY8Few3FrqZhLV+nDGSBWSnd3TGLOi4rxcRL+V+2AITP5Aj88+FWne\ni/MS50lrNtwIsOSx0Af8gNc4KNNgwlSFfVs+BsUj45pmsgzdYC0pVs6mVdH954U0\nELEoWLSeWYS/fyo6tVmdKtz8jhQsCid2N6jJDxpQcQKBgQDs4nc3wjOUjVCi/Oka\nUqn8v2o9gTdUwjb5aIruUU5Mw6PGjP47mxhxSWUpOt8o4c5spkccTVv8wodSIoLz\nbAQjCYKuVq2yzJR3jwhnJVRaYtn/Zv1Iwwok6UwOKt23FX8f31NUB2k9HmoudZGE\n59pMo7D5wlqNK2cCM7t4pG5ptwKBgQDlFAXEoFQAENRS703Snnx2sHly/dsYaeUA\nAWh/bsEMzKxEiz+U3RYETUjPqel/yp0IlRzLHwhO2j9MPEmxyzC+DvyVuPiR3mIu\naRkIbBhGsPSqcSzmJJTdp8tp9SDdV+FyMlbF3U570ARmloqIk2l6h+09wNgWFHeB\ngYD/nWYzUwKBgQCMR4hGEtEs1Yq9GnyIRA+6RziI965mmSSpCgnMG4X825ZvDCu5\n7JzK6aXohp6EvUPa/5T4467nveMY9qsJsBu7C/TBfT8btR7utltJicesRwHFx52S\nqz2koiuR8DygITDJFR1pk4H02cAThzgHtq2F2SICpd+t3dgAa9ZHGUjxfQKBgQCO\nP7i1OLnwsIKoXWF+AFxZd4xzE6ARsPA66KTzPNs0D4SJq853qjIZycQE8AXHDRIm\nWjHfEA4gqPXVaTp55SsHWlcOwiXYrrdZCno4+Ka6fvfvPwgagWzPl3qA+W7HA+NC\n/m9TvvEVgT66VZEA7kj5hZ6UUkPcsijjin+IOz1TcQKBgHGpSDuMjSskmvnVFMtc\nD2IODSKFhbXGhvNrQk8eyTUWSOA6xmtjv1qC8m2QSL+FTIHRn5lWlH3kntL8BO1S\nKdvFqYmZ/n0gIBGimF2WI8DAVUuAxDGQgnjqWotBaiCE6cEvwy7c3JS1156zMWic\nnodqo8mDXzbUbIenGwelECRH\n-----END PRIVATE KEY-----"
-		IL_002c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0031: ldc.i4.1
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0037: pop
-		IL_0038: ret
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000b: dup
+		IL_000c: ldstr "certPem"
+		IL_0011: ldstr "-----BEGIN CERTIFICATE-----\nMIIC+TCCAeGgAwIBAgIIaUAevC7krmQwDQYJKoZIhvcNAQELBQAwFjEUMBIGA1UE\nAxMLanMyaWwtbG9jYWwwHhcNMjYwMzE0MjAwODM0WhcNMjcwMzE1MjAwODM0WjAW\nMRQwEgYDVQQDEwtqczJpbC1sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBANP5G6yPJfJHP9xJsjN4DzzfGc3OahHJ9HkJuoicHjTd0m5l9kLBs1dE\nnES1ZZAnHC3StoD5iABtyS4yYtiL5Gv7UvgqR/9YL5XvyyYj8p9h51rVQn4xaU8p\nM7ngRaBciAqwpH8+JbnCA0RA9RC5rpEJtcUGNGPGwwQ7xuBUdQrWEFTnQ/PCrvpg\nP9wlJqQF+5pGorCV3rH5P5dOYR4AVO68ulqXcjwbM3OCAInONzth8xNjWNKFWwou\nR77IBF7/oboZFGJhKPqhWP9I974M69lGA1HrUMX9AmU+tVmgjo63XvzhWIhhmCZy\nWmP9FPfUipGpBQXSCTDILxXY+6jFu1UCAwEAAaNLMEkwGgYDVR0RBBMwEYIJbG9j\nYWxob3N0hwR/AAABMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoG\nCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQC2gZkmvzdlk0JLBjRr8qtbtrMy\nd/CnwDprOe9k+BeHIdlGzzpm7vvr63DacVo7znnH7Lp/O1FYiqJRhBWdm4weZj7c\nlHy9KNC/Eyv7ieGMPb4R0BGOvEmA8kp55ohaWsySGd2MQohNzYVDVntJ8xBvt2+Y\n5eHfYDfoBYG1lJTbTv0E3UWEpR8itnTsDEtA/FBvn/Do1TvYvyB7uUPFcCt4BWom\nTJdsb+Cl9CRe8yStfbsgjkzAdgJh74xYtmk+rSbYx8DLlp++Xfdgfj7eAKZ0Rm83\ng0+a+SMF6xucjCIRjG0R9AEgL7K2vppinB2/MusGrmD0HFUhAta7miSlnymn\n-----END CERTIFICATE-----"
+		IL_0016: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_001b: dup
+		IL_001c: ldstr "keyPem"
+		IL_0021: ldstr "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDT+RusjyXyRz/c\nSbIzeA883xnNzmoRyfR5CbqInB403dJuZfZCwbNXRJxEtWWQJxwt0raA+YgAbcku\nMmLYi+Rr+1L4Kkf/WC+V78smI/KfYeda1UJ+MWlPKTO54EWgXIgKsKR/PiW5wgNE\nQPUQua6RCbXFBjRjxsMEO8bgVHUK1hBU50Pzwq76YD/cJSakBfuaRqKwld6x+T+X\nTmEeAFTuvLpal3I8GzNzggCJzjc7YfMTY1jShVsKLke+yARe/6G6GRRiYSj6oVj/\nSPe+DOvZRgNR61DF/QJlPrVZoI6Ot1784ViIYZgmclpj/RT31IqRqQUF0gkwyC8V\n2PuoxbtVAgMBAAECggEAYNaJIggzmb+bGRRB6OmMbI6vxynpoz7UBQfAw/AujJBa\nNj02h8DeIZwil/EW+QglA3okDj/xNeDx67zxE2S1ce9bNCx8v9aVxrXJ5R6/FLkx\nbHnI6sXACn4UN3KR3HTpYZjZTZgiu/46Z9AVJRLvASuicuQmwv5m0WRNsuZiohPc\nel2rXFnX7RLY8Few3FrqZhLV+nDGSBWSnd3TGLOi4rxcRL+V+2AITP5Aj88+FWne\ni/MS50lrNtwIsOSx0Af8gNc4KNNgwlSFfVs+BsUj45pmsgzdYC0pVs6mVdH954U0\nELEoWLSeWYS/fyo6tVmdKtz8jhQsCid2N6jJDxpQcQKBgQDs4nc3wjOUjVCi/Oka\nUqn8v2o9gTdUwjb5aIruUU5Mw6PGjP47mxhxSWUpOt8o4c5spkccTVv8wodSIoLz\nbAQjCYKuVq2yzJR3jwhnJVRaYtn/Zv1Iwwok6UwOKt23FX8f31NUB2k9HmoudZGE\n59pMo7D5wlqNK2cCM7t4pG5ptwKBgQDlFAXEoFQAENRS703Snnx2sHly/dsYaeUA\nAWh/bsEMzKxEiz+U3RYETUjPqel/yp0IlRzLHwhO2j9MPEmxyzC+DvyVuPiR3mIu\naRkIbBhGsPSqcSzmJJTdp8tp9SDdV+FyMlbF3U570ARmloqIk2l6h+09wNgWFHeB\ngYD/nWYzUwKBgQCMR4hGEtEs1Yq9GnyIRA+6RziI965mmSSpCgnMG4X825ZvDCu5\n7JzK6aXohp6EvUPa/5T4467nveMY9qsJsBu7C/TBfT8btR7utltJicesRwHFx52S\nqz2koiuR8DygITDJFR1pk4H02cAThzgHtq2F2SICpd+t3dgAa9ZHGUjxfQKBgQCO\nP7i1OLnwsIKoXWF+AFxZd4xzE6ARsPA66KTzPNs0D4SJq853qjIZycQE8AXHDRIm\nWjHfEA4gqPXVaTp55SsHWlcOwiXYrrdZCno4+Ka6fvfvPwgagWzPl3qA+W7HA+NC\n/m9TvvEVgT66VZEA7kj5hZ6UUkPcsijjin+IOz1TcQKBgHGpSDuMjSskmvnVFMtc\nD2IODSKFhbXGhvNrQk8eyTUWSOA6xmtjv1qC8m2QSL+FTIHRn5lWlH3kntL8BO1S\nKdvFqYmZ/n0gIBGimF2WI8DAVUuAxDGQgnjqWotBaiCE6cEvwy7c3JS1156zMWic\nnodqo8mDXzbUbIenGwelECRH\n-----END PRIVATE KEY-----"
+		IL_0026: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_002b: stloc.1
+		IL_002c: ldarg.2
+		IL_002d: ldstr "exports"
+		IL_0032: ldloc.1
+		IL_0033: ldc.i4.1
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method Tls_TestCertificates::__js_module_init__
 
 } // end of class Modules.Tls_TestCertificates
