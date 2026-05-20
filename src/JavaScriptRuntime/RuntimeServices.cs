@@ -54,6 +54,20 @@ public class RuntimeServices
         bool IsAsync,
         object[] Scopes);
 
+    private static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
+    {
+        return new JsPropertyDescriptor
+        {
+            Kind = descriptor.Kind,
+            Enumerable = descriptor.Enumerable,
+            Configurable = descriptor.Configurable,
+            Writable = descriptor.Writable,
+            Value = descriptor.Value,
+            Get = descriptor.Get,
+            Set = descriptor.Set
+        };
+    }
+
 #if DEBUG
     public static void AssertEmptyScopesUnmodified()
     {
@@ -303,6 +317,29 @@ public class RuntimeServices
         if (string.Equals(propName, "prototype", StringComparison.Ordinal))
         {
             var protoObj = JavaScriptRuntime.Object.CreateOrdinaryObject();
+
+            if (PropertyDescriptorStore.TryGetOwn(classConstructorValue.Type, "prototype", out var typePrototypeDescriptor)
+                && typePrototypeDescriptor.Kind == JsPropertyDescriptorKind.Data
+                && typePrototypeDescriptor.Value is object existingPrototype
+                && existingPrototype is not JsNull
+                && existingPrototype is not string
+                && !existingPrototype.GetType().IsValueType)
+            {
+                foreach (var key in PropertyDescriptorStore.GetOwnKeys(existingPrototype))
+                {
+                    if (PropertyDescriptorStore.TryGetOwn(existingPrototype, key, out var existingDescriptor))
+                    {
+                        PropertyDescriptorStore.DefineOrUpdate(protoObj, key, CloneDescriptor(existingDescriptor));
+                    }
+                }
+
+                var existingPrototypeParent = JavaScriptRuntime.PrototypeChain.GetPrototypeOrNull(existingPrototype);
+                if (existingPrototypeParent != null)
+                {
+                    JavaScriptRuntime.PrototypeChain.SetPrototype(protoObj, existingPrototypeParent);
+                }
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
