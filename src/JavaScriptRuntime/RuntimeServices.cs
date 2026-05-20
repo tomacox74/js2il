@@ -621,16 +621,69 @@ public class RuntimeServices
 
         if (constructorValue is ClassConstructorValue classConstructorValue)
         {
+            if (HasOwnOrLazyClassNameProperty(classConstructorValue)
+                || HasOwnOrLazyClassNameProperty(classConstructorValue.Type))
+            {
+                return classConstructorValue;
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(classConstructorValue, "name", descriptor);
             return classConstructorValue;
         }
 
         if (constructorValue is Type staticType)
         {
+            if (HasOwnOrLazyClassNameProperty(staticType))
+            {
+                return staticType;
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(staticType, "name", descriptor);
         }
 
         return constructorValue;
+    }
+
+    private static bool HasOwnOrLazyClassNameProperty(object target)
+    {
+        if (PropertyDescriptorStore.TryGetOwn(target, "name", out _))
+        {
+            return true;
+        }
+
+        if (!TryResolveLazyClassMethodTarget(target, out var ownerType, out _, out var isStatic)
+            || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
+        {
+            return false;
+        }
+
+        lock (slot)
+        {
+            return slot.Methods.Any(method =>
+                method.IsStatic == isStatic
+                && string.Equals(method.PropertyKey, "name", StringComparison.Ordinal));
+        }
+    }
+
+    public static object SetFunctionInferredName(object functionValue, object nameValue)
+    {
+        if (functionValue is not Delegate functionDelegate
+            || nameValue is not string inferredName
+            || string.IsNullOrWhiteSpace(inferredName))
+        {
+            return functionValue;
+        }
+
+        if (PropertyDescriptorStore.TryGetOwn(functionDelegate, "name", out var existingDescriptor)
+            && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
+            && existingDescriptor.Value is string existingName
+            && !string.IsNullOrEmpty(existingName))
+        {
+            return functionDelegate;
+        }
+
+        Function.DefineMetadataProperty(functionDelegate, "name", inferredName);
+        return functionDelegate;
     }
 
     public static object?[]? GetCurrentArguments()

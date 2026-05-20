@@ -11,7 +11,8 @@ public partial class SymbolTableBuilder
             binding.RequiresRuntimeTemporalDeadZoneChecks =
                 binding.RequiresTemporalDeadZoneChecks
                 && binding.IsCaptured
-                && MayCapturedBindingBeObservedBeforeInitialization(scope, binding);
+                && (binding.Kind == BindingKind.Const
+                    || MayCapturedBindingBeObservedBeforeInitialization(scope, binding));
         }
 
         foreach (var child in scope.Children)

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2263
+			// Method begins at RVA 0x227b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -114,7 +114,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2275
+				// Method begins at RVA 0x2298
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -141,23 +141,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x21a8
+			// Method begins at RVA 0x21ac
 			// Header size: 12
-			// Code size: 21 (0x15)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
-				[0] float64
+				[0] object,
+				[1] float64,
+				[2] float64,
+				[3] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
-			IL_0006: stloc.0
-			IL_0007: ldarg.2
-			IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000d: ldloc.0
-			IL_000e: mul
-			IL_000f: box [System.Runtime]System.Double
-			IL_0014: ret
+			IL_0001: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
+			IL_0006: ldstr "Cannot access 'moduleFactor' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldarg.2
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: stloc.1
+			IL_0018: ldloc.0
+			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001e: stloc.2
+			IL_001f: ldloc.1
+			IL_0020: ldloc.2
+			IL_0021: mul
+			IL_0022: stloc.2
+			IL_0023: ldloc.2
+			IL_0024: box [System.Runtime]System.Double
+			IL_0029: stloc.3
+			IL_002a: ldloc.3
+			IL_002b: ret
 		} // end of method multiplyModuleFactor::__js_call__
 
 	} // end of class multiplyModuleFactor
@@ -177,7 +191,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2287
+					// Method begins at RVA 0x22aa
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -202,7 +216,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2234
+				// Method begins at RVA 0x224c
 				// Header size: 12
 				// Code size: 35 (0x23)
 				.maxstack 8
@@ -246,7 +260,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227e
+				// Method begins at RVA 0x22a1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -273,7 +287,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x21cc
+			// Method begins at RVA 0x21e4
 			// Header size: 12
 			// Code size: 90 (0x5a)
 			.maxstack 8
@@ -339,7 +353,7 @@
 			6c 61 74 6f 72 7d 00 00
 		)
 		// Fields
-		.field public float64 moduleFactor
+		.field public object moduleFactor
 		.field public object multiplyModuleFactor
 		.field public object createCalculator
 
@@ -347,15 +361,18 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226c
+			// Method begins at RVA 0x2284
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 19 (0x13)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
+			IL_0011: nop
+			IL_0012: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -373,7 +390,7 @@
 	{
 		// Method begins at RVA 0x2100
 		// Header size: 12
-		// Code size: 154 (0x9a)
+		// Code size: 159 (0x9f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope,
@@ -423,24 +440,25 @@
 		IL_005b: stloc.2
 		IL_005c: ldloc.0
 		IL_005d: ldc.r8 7
-		IL_0066: stfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
-		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0070: dup
-		IL_0071: ldstr "multiplyModuleFactor"
-		IL_0076: ldloc.1
-		IL_0077: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_007c: dup
-		IL_007d: ldstr "createCalculator"
-		IL_0082: ldloc.2
-		IL_0083: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0088: stloc.s 4
-		IL_008a: ldarg.2
-		IL_008b: ldstr "exports"
-		IL_0090: ldloc.s 4
-		IL_0092: ldc.i4.1
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0098: pop
-		IL_0099: ret
+		IL_0066: box [System.Runtime]System.Double
+		IL_006b: stfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
+		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0075: dup
+		IL_0076: ldstr "multiplyModuleFactor"
+		IL_007b: ldloc.1
+		IL_007c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0081: dup
+		IL_0082: ldstr "createCalculator"
+		IL_0087: ldloc.2
+		IL_0088: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_008d: stloc.s 4
+		IL_008f: ldarg.2
+		IL_0090: ldstr "exports"
+		IL_0095: ldloc.s 4
+		IL_0097: ldc.i4.1
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_009d: pop
+		IL_009e: ret
 	} // end of method CommonJS_Export_ObjectWithClosure_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib
@@ -452,7 +470,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2290
+		// Method begins at RVA 0x22b3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

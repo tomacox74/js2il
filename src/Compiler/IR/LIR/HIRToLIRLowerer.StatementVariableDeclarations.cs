@@ -10,6 +10,50 @@ namespace Js2IL.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private bool TryApplyInferredNameToDeclarationValue(HIRVariableDeclaration declaration, TempVariable value, out TempVariable namedValue)
+    {
+        namedValue = value;
+
+        if (string.IsNullOrWhiteSpace(declaration.Name.Name))
+        {
+            return true;
+        }
+
+        string? runtimeMethodName = declaration.Initializer switch
+        {
+            HIRInitializedUserClassTypeExpression initializedClassExpr
+                when initializedClassExpr.ClassScope.AstNode is ClassExpression { Id: null }
+                => nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+
+            HIRFunctionExpression funcExpr
+                when funcExpr.CallableId.AstNode is FunctionExpression { Id: null }
+                    && funcExpr.FunctionScope.SyntheticOriginatingNode == null
+                => nameof(JavaScriptRuntime.RuntimeServices.SetFunctionInferredName),
+
+            HIRArrowFunctionExpression
+                => nameof(JavaScriptRuntime.RuntimeServices.SetFunctionInferredName),
+
+            _ => null
+        };
+
+        if (runtimeMethodName == null)
+        {
+            return true;
+        }
+
+        var inferredNameTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(declaration.Name.Name, inferredNameTemp));
+        DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+        namedValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName: runtimeMethodName,
+            Arguments: new[] { EnsureObject(value), EnsureObject(inferredNameTemp) },
+            Result: namedValue));
+        DefineTempStorage(namedValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private bool TryLowerVariableDeclaration(HIRVariableDeclaration exprStmt)
     {
         // Variable declarations define a new binding in the current scope.
@@ -23,21 +67,9 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
-            if (exprStmt.Initializer is HIRInitializedUserClassTypeExpression initializedClassExpr
-                && initializedClassExpr.ClassScope.AstNode is ClassExpression { Id: null }
-                && !string.IsNullOrWhiteSpace(exprStmt.Name.Name))
+            if (!TryApplyInferredNameToDeclarationValue(exprStmt, value, out value))
             {
-                var inferredNameTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConstString(exprStmt.Name.Name, inferredNameTemp));
-                DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-                var namedClassValueTemp = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
-                    MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
-                    Arguments: new[] { EnsureObject(value), EnsureObject(inferredNameTemp) },
-                    Result: namedClassValueTemp));
-                DefineTempStorage(namedClassValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                value = namedClassValueTemp;
+                return false;
             }
         }
         else

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22c1
+				// Method begins at RVA 0x2361
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,18 +52,26 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2248
-			// Header size: 1
-			// Code size: 15 (0xf)
+			// Method begins at RVA 0x2270
+			// Header size: 12
+			// Code size: 32 (0x20)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
-			IL_0006: ldarg.2
-			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_000c: pop
-			IL_000d: ldnull
-			IL_000e: ret
+			IL_0001: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
+			IL_0006: ldstr "Cannot access 'hits' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: ldstr "push"
+			IL_0017: ldarg.2
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_001d: pop
+			IL_001e: ldnull
+			IL_001f: ret
 		} // end of method ArrowFunction_L4C43::__js_call__
 
 	} // end of class ArrowFunction_L4C43
@@ -79,7 +87,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ca
+				// Method begins at RVA 0x236a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,12 +113,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2258
+			// Method begins at RVA 0x229c
 			// Header size: 12
-			// Code size: 53 (0x35)
+			// Code size: 77 (0x4d)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -121,15 +131,23 @@
 			IL_0015: stloc.0
 			IL_0016: ldarg.0
 			IL_0017: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
-			IL_001c: ldstr "register"
-			IL_0021: ldloc.0
-			IL_0022: ldstr "held"
+			IL_001c: ldstr "Cannot access 'registry' before initialization"
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0026: stloc.1
 			IL_0027: ldarg.0
 			IL_0028: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::token
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_0032: pop
-			IL_0033: ldnull
-			IL_0034: ret
+			IL_002d: ldstr "Cannot access 'token' before initialization"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0037: stloc.2
+			IL_0038: ldloc.1
+			IL_0039: ldstr "register"
+			IL_003e: ldloc.0
+			IL_003f: ldstr "held"
+			IL_0044: ldloc.2
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_004a: pop
+			IL_004b: ldnull
+			IL_004c: ret
 		} // end of method FunctionExpression_L9C1::__js_call__
 
 	} // end of class FunctionExpression_L9C1
@@ -145,7 +163,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e5
+				// Method begins at RVA 0x2385
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -171,21 +189,35 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2299
-			// Header size: 1
-			// Code size: 30 (0x1e)
+			// Method begins at RVA 0x22f8
+			// Header size: 12
+			// Code size: 51 (0x33)
 			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] float64,
+				[2] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldarg.0
-			IL_0006: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
-			IL_000b: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_0010: conv.r8
-			IL_0011: box [System.Runtime]System.Double
-			IL_0016: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_001b: pop
-			IL_001c: ldnull
-			IL_001d: ret
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
+			IL_0006: ldstr "Cannot access 'hits' before initialization"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0017: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_001c: conv.r8
+			IL_001d: stloc.1
+			IL_001e: ldloc.1
+			IL_001f: box [System.Runtime]System.Double
+			IL_0024: stloc.2
+			IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002a: ldloc.2
+			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0030: pop
+			IL_0031: ldnull
+			IL_0032: ret
 		} // end of method ArrowFunction_L26C14::__js_call__
 
 	} // end of class ArrowFunction_L26C14
@@ -207,7 +239,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d3
+				// Method begins at RVA 0x2373
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -227,7 +259,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22dc
+				// Method begins at RVA 0x237c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -242,7 +274,7 @@
 
 
 		// Fields
-		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array hits
+		.field public object hits
 		.field public object registry
 		.field public object token
 
@@ -250,15 +282,24 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22b8
+			// Method begins at RVA 0x2337
 			// Header size: 1
-			// Code size: 8 (0x8)
+			// Code size: 41 (0x29)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
+			IL_0011: ldarg.0
+			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0017: stfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
+			IL_001c: ldarg.0
+			IL_001d: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_0022: stfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::token
+			IL_0027: nop
+			IL_0028: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -276,7 +317,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 475 (0x1db)
+		// Code size: 513 (0x201)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FinalizationRegistry_Unregister_Basic/Scope,
@@ -287,7 +328,8 @@
 			[5] class Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L19C16,
 			[6] object,
 			[7] class [JavaScriptRuntime]JavaScriptRuntime.FinalizationRegistry,
-			[8] object[]
+			[8] object[],
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope::.ctor()
@@ -295,7 +337,7 @@
 		IL_0006: ldloc.0
 		IL_0007: ldc.i4.0
 		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
+		IL_000d: stfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::hits
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
 		IL_0018: dup
@@ -355,117 +397,127 @@
 		IL_00ac: pop
 		IL_00ad: ldloc.0
 		IL_00ae: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
-		IL_00b3: ldstr "unregister"
-		IL_00b8: ldloc.0
-		IL_00b9: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::token
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c3: stloc.s 6
-		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ca: ldloc.s 6
-		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d1: pop
+		IL_00b3: ldstr "Cannot access 'registry' before initialization"
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00bd: stloc.s 6
+		IL_00bf: ldloc.0
+		IL_00c0: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::token
+		IL_00c5: ldstr "Cannot access 'token' before initialization"
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_00cf: stloc.s 9
+		IL_00d1: ldloc.s 6
+		IL_00d3: ldstr "unregister"
+		IL_00d8: ldloc.s 9
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00df: stloc.s 9
+		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e6: ldloc.s 9
+		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ed: pop
 		.try
 		{
-			IL_00d2: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L16C4::.ctor()
-			IL_00d7: stloc.1
-			IL_00d8: ldloc.0
-			IL_00d9: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
-			IL_00de: stloc.s 6
-			IL_00e0: ldloc.s 6
-			IL_00e2: ldstr "unregister"
-			IL_00e7: ldc.r8 123
-			IL_00f0: box [System.Runtime]System.Double
-			IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00fa: pop
-			IL_00fb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0100: ldstr "bad token threw:"
-			IL_0105: ldc.i4.0
-			IL_0106: box [System.Runtime]System.Boolean
-			IL_010b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0110: pop
-			IL_0111: leave IL_0188
+			IL_00ee: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L16C4::.ctor()
+			IL_00f3: stloc.1
+			IL_00f4: ldloc.0
+			IL_00f5: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
+			IL_00fa: ldstr "Cannot access 'registry' before initialization"
+			IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0104: stloc.s 9
+			IL_0106: ldloc.s 9
+			IL_0108: ldstr "unregister"
+			IL_010d: ldc.r8 123
+			IL_0116: box [System.Runtime]System.Double
+			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0120: pop
+			IL_0121: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0126: ldstr "bad token threw:"
+			IL_012b: ldc.i4.0
+			IL_012c: box [System.Runtime]System.Boolean
+			IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0136: pop
+			IL_0137: leave IL_01ae
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0116: stloc.2
-			IL_0117: ldloc.2
-			IL_0118: dup
-			IL_0119: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_011e: dup
-			IL_011f: brtrue IL_0135
+			IL_013c: stloc.2
+			IL_013d: ldloc.2
+			IL_013e: dup
+			IL_013f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0144: dup
+			IL_0145: brtrue IL_015b
 
-			IL_0124: pop
-			IL_0125: dup
-			IL_0126: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_012b: dup
-			IL_012c: brtrue IL_0141
+			IL_014a: pop
+			IL_014b: dup
+			IL_014c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0151: dup
+			IL_0152: brtrue IL_0167
 
-			IL_0131: pop
-			IL_0132: pop
-			IL_0133: rethrow
+			IL_0157: pop
+			IL_0158: pop
+			IL_0159: rethrow
 
-			IL_0135: pop
-			IL_0136: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_013b: stloc.3
-			IL_013c: br IL_0143
+			IL_015b: pop
+			IL_015c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0161: stloc.3
+			IL_0162: br IL_0169
 
-			IL_0141: pop
-			IL_0142: stloc.3
+			IL_0167: pop
+			IL_0168: stloc.3
 
-			IL_0143: ldloc.3
-			IL_0144: stloc.s 6
-			IL_0146: ldloc.s 6
-			IL_0148: stloc.s 4
-			IL_014a: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L19C16::.ctor()
-			IL_014f: stloc.s 5
-			IL_0151: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0156: ldstr "bad token threw:"
-			IL_015b: ldc.i4.1
-			IL_015c: box [System.Runtime]System.Boolean
-			IL_0161: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0166: pop
-			IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_016c: ldstr "bad token name:"
-			IL_0171: ldloc.s 4
-			IL_0173: ldstr "name"
-			IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_017d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0182: pop
-			IL_0183: leave IL_0188
+			IL_0169: ldloc.3
+			IL_016a: stloc.s 9
+			IL_016c: ldloc.s 9
+			IL_016e: stloc.s 4
+			IL_0170: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L19C16::.ctor()
+			IL_0175: stloc.s 5
+			IL_0177: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_017c: ldstr "bad token threw:"
+			IL_0181: ldc.i4.1
+			IL_0182: box [System.Runtime]System.Boolean
+			IL_0187: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_018c: pop
+			IL_018d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0192: ldstr "bad token name:"
+			IL_0197: ldloc.s 4
+			IL_0199: ldstr "name"
+			IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01a8: pop
+			IL_01a9: leave IL_01ae
 		} // end handler
 
-		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::gc()
-		IL_018d: pop
-		IL_018e: ldc.i4.1
-		IL_018f: newarr [System.Runtime]System.Object
-		IL_0194: dup
-		IL_0195: ldc.i4.0
-		IL_0196: ldloc.0
-		IL_0197: stelem.ref
-		IL_0198: ldc.i4.0
-		IL_0199: ldelem.ref
-		IL_019a: castclass Modules.FinalizationRegistry_Unregister_Basic/Scope
-		IL_019f: ldftn object Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14::__js_call__(class Modules.FinalizationRegistry_Unregister_Basic/Scope, object)
-		IL_01a5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_01aa: ldc.i4.1
-		IL_01ab: newarr [System.Runtime]System.Object
-		IL_01b0: dup
-		IL_01b1: ldc.i4.0
-		IL_01b2: ldloc.0
-		IL_01b3: stelem.ref
-		IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::gc()
+		IL_01b3: pop
+		IL_01b4: ldc.i4.1
+		IL_01b5: newarr [System.Runtime]System.Object
+		IL_01ba: dup
+		IL_01bb: ldc.i4.0
+		IL_01bc: ldloc.0
+		IL_01bd: stelem.ref
 		IL_01be: ldc.i4.0
-		IL_01bf: conv.r8
-		IL_01c0: ldstr ""
-		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_01ca: stloc.s 6
-		IL_01cc: ldloc.s 6
-		IL_01ce: ldc.i4.0
-		IL_01cf: newarr [System.Runtime]System.Object
-		IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_01d9: pop
-		IL_01da: ret
+		IL_01bf: ldelem.ref
+		IL_01c0: castclass Modules.FinalizationRegistry_Unregister_Basic/Scope
+		IL_01c5: ldftn object Modules.FinalizationRegistry_Unregister_Basic/ArrowFunction_L26C14::__js_call__(class Modules.FinalizationRegistry_Unregister_Basic/Scope, object)
+		IL_01cb: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01d0: ldc.i4.1
+		IL_01d1: newarr [System.Runtime]System.Object
+		IL_01d6: dup
+		IL_01d7: ldc.i4.0
+		IL_01d8: ldloc.0
+		IL_01d9: stelem.ref
+		IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_01e4: ldc.i4.0
+		IL_01e5: conv.r8
+		IL_01e6: ldstr ""
+		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_01f0: stloc.s 9
+		IL_01f2: ldloc.s 9
+		IL_01f4: ldc.i4.0
+		IL_01f5: newarr [System.Runtime]System.Object
+		IL_01fa: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_01ff: pop
+		IL_0200: ret
 	} // end of method FinalizationRegistry_Unregister_Basic::__js_module_init__
 
 } // end of class Modules.FinalizationRegistry_Unregister_Basic
@@ -477,7 +529,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ee
+		// Method begins at RVA 0x238e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
