@@ -2520,7 +2520,7 @@ public partial class SymbolTableBuilder
                 switch (binExpr.Operator)
                 {
                     case Operator.Addition:
-                        return InferAddOperatorType(binExpr, scope, proposedTypes);
+                        return InferAddOperatorType(binExpr, scope, proposedTypes, inferenceRootScope);
                     case Operator.Subtraction:
                     case Operator.Multiplication:
                     case Operator.Division:
@@ -2550,10 +2550,10 @@ public partial class SymbolTableBuilder
         return null;
     }
 
-    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes)
+    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes, Scope? inferenceRootScope = null)
     {
-        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes);
-        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes);
+        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes, inferenceRootScope);
+        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes, inferenceRootScope);
 
         // If either side is a string, + performs string concatenation
         if (leftType == typeof(string) || rightType == typeof(string))

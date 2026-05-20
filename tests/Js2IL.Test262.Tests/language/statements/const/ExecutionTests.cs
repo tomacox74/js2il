@@ -6,11 +6,11 @@ public class ExecutionTests : ExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.const_") { }
 
-    [Fact(DisplayName = "block-local-closure-get-before-initialization", Skip = "Const temporal dead zone behavior for closed-over bindings is incomplete.")]
+    [Fact(DisplayName = "block-local-closure-get-before-initialization")]
     public Task block_local_closure_get_before_initialization()
         => ExecutionTest("block-local-closure-get-before-initialization");
 
-    [Fact(DisplayName = "block-local-use-before-initialization-in-declaration-statement", Skip = "Const temporal dead zone self-reference handling is incomplete.")]
+    [Fact(DisplayName = "block-local-use-before-initialization-in-declaration-statement")]
     public Task block_local_use_before_initialization_in_declaration_statement()
         => ExecutionTest("block-local-use-before-initialization-in-declaration-statement");
 
@@ -18,27 +18,27 @@ public class ExecutionTests : ExecutionTestsBase
     public Task block_local_use_before_initialization_in_prior_statement()
         => ExecutionTest("block-local-use-before-initialization-in-prior-statement");
 
-    [Fact(DisplayName = "cptn-value", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "cptn-value", Skip = "Uses eval, which JS2IL does not support yet.")]
     public Task cptn_value()
         => ExecutionTest("cptn-value");
 
-    [Fact(DisplayName = "fn-name-arrow", Skip = "Product gap: inferred name for const-bound anonymous functions is incomplete.")]
+    [Fact(DisplayName = "fn-name-arrow")]
     public Task fn_name_arrow()
         => ExecutionTest("fn-name-arrow");
 
-    [Fact(DisplayName = "fn-name-class", Skip = "Product gap: inferred name for const-bound anonymous classes is incomplete.")]
+    [Fact(DisplayName = "fn-name-class")]
     public Task fn_name_class()
         => ExecutionTest("fn-name-class");
 
-    [Fact(DisplayName = "fn-name-cover", Skip = "Product gap: inferred name for const-bound covered functions is incomplete.")]
+    [Fact(DisplayName = "fn-name-cover")]
     public Task fn_name_cover()
         => ExecutionTest("fn-name-cover");
 
-    [Fact(DisplayName = "fn-name-fn", Skip = "Product gap: inferred name for const-bound anonymous functions is incomplete.")]
+    [Fact(DisplayName = "fn-name-fn")]
     public Task fn_name_fn()
         => ExecutionTest("fn-name-fn");
 
-    [Fact(DisplayName = "fn-name-gen", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "fn-name-gen")]
     public Task fn_name_gen()
         => ExecutionTest("fn-name-gen");
 }
