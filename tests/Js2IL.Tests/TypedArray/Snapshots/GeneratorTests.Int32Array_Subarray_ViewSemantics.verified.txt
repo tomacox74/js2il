@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2237
+			// Method begins at RVA 0x223b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 475 (0x1db)
+		// Code size: 479 (0x1df)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Subarray_ViewSemantics/Scope,
@@ -50,7 +50,8 @@
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
 			[5] object,
 			[6] bool,
-			[7] object
+			[7] object,
+			[8] float64
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Subarray_ViewSemantics/Scope::.ctor()
@@ -158,26 +159,28 @@
 		IL_0183: ldloc.s 7
 		IL_0185: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_018a: pop
-		IL_018b: ldloc.3
-		IL_018c: ldc.r8 0.0
-		IL_0195: ldc.r8 7
-		IL_019e: neg
-		IL_019f: ldc.i4.1
-		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, float64, bool)
-		IL_01a5: pop
-		IL_01a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01ab: ldloc.2
-		IL_01ac: ldc.r8 0.0
-		IL_01b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_01ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01bf: pop
-		IL_01c0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01c5: ldloc.3
-		IL_01c6: ldc.r8 0.0
-		IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_01d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_01d9: pop
-		IL_01da: ret
+		IL_018b: ldc.r8 7
+		IL_0194: neg
+		IL_0195: stloc.s 8
+		IL_0197: ldloc.3
+		IL_0198: ldc.r8 0.0
+		IL_01a1: ldloc.s 8
+		IL_01a3: ldc.i4.1
+		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, float64, float64, bool)
+		IL_01a9: pop
+		IL_01aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01af: ldloc.2
+		IL_01b0: ldc.r8 0.0
+		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_01be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01c3: pop
+		IL_01c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01c9: ldloc.3
+		IL_01ca: ldc.r8 0.0
+		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_01d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01dd: pop
+		IL_01de: ret
 	} // end of method Int32Array_Subarray_ViewSemantics::__js_module_init__
 
 } // end of class Modules.Int32Array_Subarray_ViewSemantics
@@ -189,7 +192,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2240
+		// Method begins at RVA 0x2244
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
