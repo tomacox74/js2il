@@ -13,69 +13,113 @@ public sealed partial class HIRToLIRLowerer
     private bool UsesStrictAssignmentSemantics()
         => _scope == null || Js2IL.Utilities.ArgumentsObjectSemantics.IsStrictScope(_scope);
 
-    private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
+    private bool TryLowerPropertyAssignmentTarget(HIRExpression objectExpr, string propertyName, TempVariable valueToStore, out TempVariable resultTempVar)
     {
         resultTempVar = default;
 
-        // If this is an assignment to a known instance field on the current user-defined class,
-        // lower to direct field store (stfld) instead of dynamic property set (Object.SetItem).
         if (_classRegistry != null
-            && assignExpr.Object is HIRThisExpression
+            && objectExpr is HIRThisExpression
             && TryGetEnclosingClassRegistryName(out var currentClass)
             && currentClass != null
-            && _classRegistry.TryGetField(currentClass, assignExpr.PropertyName, out _))
+            && _classRegistry.TryGetField(currentClass, propertyName, out _))
         {
-            TempVariable fieldValueToStore;
-
-            if (assignExpr.Operator == Acornima.Operator.Assignment)
-            {
-                if (!TryLowerExpression(assignExpr.Value, out fieldValueToStore))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                // Compound assignment: this.field += expr
-                var currentValue = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
-                    currentClass,
-                    assignExpr.PropertyName,
-                    IsPrivateField: false,
-                    currentValue));
-                DefineTempStorage(currentValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-                if (!TryLowerExpression(assignExpr.Value, out var rhs))
-                {
-                    return false;
-                }
-
-                if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhs, out fieldValueToStore))
-                {
-                    return false;
-                }
-            }
-
-            fieldValueToStore = EnsureObject(fieldValueToStore);
+            var fieldValueToStore = EnsureObject(valueToStore);
             _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
                 currentClass,
-                assignExpr.PropertyName,
+                propertyName,
                 IsPrivateField: false,
                 fieldValueToStore));
 
-            // Assignment expression result is the value assigned.
             resultTempVar = fieldValueToStore;
             return true;
         }
 
-        if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+        if (!TryLowerExpression(objectExpr, out var objTemp))
         {
             return false;
         }
         objTemp = EnsureObject(objTemp);
 
-        var keyTemp = EmitConstString(assignExpr.PropertyName);
+        var keyTemp = EmitConstString(propertyName);
         var boxedKey = EnsureObject(keyTemp);
+
+        var propertyValueStorage = GetTempStorage(valueToStore);
+        bool canUseStringKeyDoubleValueSetItem =
+            propertyValueStorage.Kind == ValueStorageKind.UnboxedValue &&
+            propertyValueStorage.ClrType == typeof(double);
+
+        if (!canUseStringKeyDoubleValueSetItem)
+        {
+            valueToStore = EnsureObject(valueToStore);
+        }
+
+        var setResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueToStore, setResult, UsesStrictAssignmentSemantics()));
+        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        resultTempVar = setResult;
+        return true;
+    }
+
+    private bool TryLowerIndexAssignmentTarget(HIRExpression objectExpr, HIRExpression indexExpr, TempVariable valueToStore, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (_classRegistry != null
+            && objectExpr is HIRThisExpression
+            && indexExpr is HIRLiteralExpression literalIndex
+            && literalIndex.Kind == JavascriptType.String
+            && literalIndex.Value is string literalFieldName
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+        {
+            var fieldValueToStore = EnsureObject(valueToStore);
+            _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
+                currentClass,
+                literalFieldName,
+                IsPrivateField: false,
+                fieldValueToStore));
+
+            resultTempVar = fieldValueToStore;
+            return true;
+        }
+
+        if (!TryLowerExpression(objectExpr, out var objTemp))
+        {
+            return false;
+        }
+        objTemp = EnsureObject(objTemp);
+
+        if (!TryLowerExpression(indexExpr, out var indexTemp))
+        {
+            return false;
+        }
+
+        var indexStorage = GetTempStorage(indexTemp);
+        var valueStorage = GetTempStorage(valueToStore);
+        bool canUseNumericSetItem =
+            indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
+        bool canUseStringKeyDoubleValueSetItem =
+            indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string) &&
+            valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
+
+        TempVariable indexForSet = canUseNumericSetItem ? indexTemp : EnsureObject(indexTemp);
+
+        if (!canUseNumericSetItem && !canUseStringKeyDoubleValueSetItem)
+        {
+            valueToStore = EnsureObject(valueToStore);
+        }
+
+        var setResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult, UsesStrictAssignmentSemantics()));
+        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        resultTempVar = setResult;
+        return true;
+    }
+
+    private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
 
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
@@ -88,6 +132,15 @@ public sealed partial class HIRToLIRLowerer
         else
         {
             // Compound assignment: obj.prop += expr
+            if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+            {
+                return false;
+            }
+            objTemp = EnsureObject(objTemp);
+
+            var keyTemp = EmitConstString(assignExpr.PropertyName);
+            var boxedKey = EnsureObject(keyTemp);
+
             var current = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedKey, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -103,92 +156,12 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        var propertyValueStorage = GetTempStorage(valueToStore);
-        bool canUseStringKeyDoubleValueSetItem =
-            propertyValueStorage.Kind == ValueStorageKind.UnboxedValue &&
-            propertyValueStorage.ClrType == typeof(double);
-
-        if (!canUseStringKeyDoubleValueSetItem)
-        {
-            valueToStore = EnsureObject(valueToStore);
-        }
-        var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueToStore, setResult, UsesStrictAssignmentSemantics()));
-        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        resultTempVar = setResult;
-        return true;
+        return TryLowerPropertyAssignmentTarget(assignExpr.Object, assignExpr.PropertyName, valueToStore, out resultTempVar);
     }
 
     private bool TryLowerIndexAssignmentExpression(HIRIndexAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
-
-        // User-defined class instance field access via bracket notation (e.g., this["wordArray"] = ...).
-        // If the receiver is `this` and the index is a constant string that matches a known field on the
-        // generated CLR type, lower directly to an instance field store (stfld) instead of dynamic SetItem.
-        if (_classRegistry != null
-            && assignExpr.Object is HIRThisExpression
-            && assignExpr.Index is HIRLiteralExpression literalIndex
-            && literalIndex.Kind == JavascriptType.String
-            && literalIndex.Value is string literalFieldName
-            && TryGetEnclosingClassRegistryName(out var currentClass)
-            && currentClass != null
-            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
-        {
-            TempVariable fieldValueToStore;
-
-            if (assignExpr.Operator == Acornima.Operator.Assignment)
-            {
-                if (!TryLowerExpression(assignExpr.Value, out fieldValueToStore))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                // Compound assignment: this["field"] += expr
-                var currentValue = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
-                    currentClass,
-                    literalFieldName,
-                    IsPrivateField: false,
-                    currentValue));
-                DefineTempStorage(currentValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
-                if (!TryLowerExpression(assignExpr.Value, out var rhs))
-                {
-                    return false;
-                }
-
-                if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhs, out fieldValueToStore))
-                {
-                    return false;
-                }
-            }
-
-            fieldValueToStore = EnsureObject(fieldValueToStore);
-            _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
-                currentClass,
-                literalFieldName,
-                IsPrivateField: false,
-                fieldValueToStore));
-
-            // Assignment expression result is the value assigned.
-            resultTempVar = fieldValueToStore;
-            return true;
-        }
-
-        if (!TryLowerExpression(assignExpr.Object, out var objTemp))
-        {
-            return false;
-        }
-        objTemp = EnsureObject(objTemp);
-
-        if (!TryLowerExpression(assignExpr.Index, out var indexTemp))
-        {
-            return false;
-        }
-        TempVariable? boxedIndex = null;
 
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
@@ -201,6 +174,18 @@ public sealed partial class HIRToLIRLowerer
         else
         {
             // Compound assignment: obj[index] += expr
+            if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+            {
+                return false;
+            }
+            objTemp = EnsureObject(objTemp);
+
+            if (!TryLowerExpression(assignExpr.Index, out var indexTemp))
+            {
+                return false;
+            }
+
+            TempVariable? boxedIndex = null;
             var indexStorageForGet = GetTempStorage(indexTemp);
             TempVariable indexForGet;
             if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
@@ -228,34 +213,7 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        var indexStorage = GetTempStorage(indexTemp);
-        var valueStorage = GetTempStorage(valueToStore);
-        bool canUseNumericSetItem =
-            indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double);
-        bool canUseStringKeyDoubleValueSetItem =
-            indexStorage.Kind == ValueStorageKind.Reference && indexStorage.ClrType == typeof(string) &&
-            valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
-
-        TempVariable indexForSet;
-        if (canUseNumericSetItem)
-        {
-            indexForSet = indexTemp;
-        }
-        else
-        {
-            boxedIndex ??= EnsureObject(indexTemp);
-            indexForSet = boxedIndex.Value;
-        }
-
-        if (!canUseNumericSetItem && !canUseStringKeyDoubleValueSetItem)
-        {
-            valueToStore = EnsureObject(valueToStore);
-        }
-        var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult, UsesStrictAssignmentSemantics()));
-        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        resultTempVar = setResult;
-        return true;
+        return TryLowerIndexAssignmentTarget(assignExpr.Object, assignExpr.Index, valueToStore, out resultTempVar);
     }
 
     private bool TryLowerDestructuringAssignmentExpression(HIRDestructuringAssignmentExpression assignExpr, out TempVariable resultTempVar)

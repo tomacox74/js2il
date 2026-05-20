@@ -15,6 +15,32 @@ public sealed class HIRIdentifierPattern : HIRPattern
     public Symbol Symbol { get; }
 }
 
+public sealed class HIRPropertyTargetPattern : HIRPattern
+{
+    public HIRPropertyTargetPattern(HIRExpression @object, string propertyName)
+    {
+        Object = @object;
+        PropertyName = propertyName;
+    }
+
+    public HIRExpression Object { get; }
+
+    public string PropertyName { get; }
+}
+
+public sealed class HIRIndexTargetPattern : HIRPattern
+{
+    public HIRIndexTargetPattern(HIRExpression @object, HIRExpression index)
+    {
+        Object = @object;
+        Index = index;
+    }
+
+    public HIRExpression Object { get; }
+
+    public HIRExpression Index { get; }
+}
+
 public sealed class HIRDefaultPattern : HIRPattern
 {
     public HIRDefaultPattern(HIRPattern target, HIRExpression @default)

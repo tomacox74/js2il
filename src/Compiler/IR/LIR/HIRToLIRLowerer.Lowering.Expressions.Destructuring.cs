@@ -40,6 +40,22 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                 }
 
+            case HIRPropertyTargetPattern propertyTarget:
+                if (writeMode != DestructuringWriteMode.Assignment)
+                {
+                    return false;
+                }
+
+                return TryLowerPropertyAssignmentTarget(propertyTarget.Object, propertyTarget.PropertyName, sourceValue, out _);
+
+            case HIRIndexTargetPattern indexTarget:
+                if (writeMode != DestructuringWriteMode.Assignment)
+                {
+                    return false;
+                }
+
+                return TryLowerIndexAssignmentTarget(indexTarget.Object, indexTarget.Index, sourceValue, out _);
+
             case HIRDefaultPattern def:
                 {
                     // Apply default only when the incoming value is undefined (null).
