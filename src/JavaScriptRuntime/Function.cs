@@ -22,7 +22,13 @@ public static class Function
         public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
     }
 
+    private sealed class InvocationMetadataSlot
+    {
+        public bool RequiresInvocationContext;
+    }
+
     private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
+    private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
 
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
@@ -295,6 +301,7 @@ public static class Function
             };
 
             ConfigureCallableObject(boundDelegate, hasRestrictedProperties: false);
+            CopyInvocationMetadata(target, boundDelegate);
             Closure.TrackFunctionPrototypeBoundDelegate(boundDelegate, target, boundArgs);
             return boundDelegate;
         }
@@ -313,15 +320,37 @@ public static class Function
 
         public static object InitializeFunctionInstance(object functionValue, double length, string? name)
         {
+            return InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext: true);
+        }
+
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+        {
             InitializeFunctionInstance(functionValue);
 
             if (functionValue is Delegate del)
             {
+                SetRequiresInvocationContext(del, requiresInvocationContext);
                 DefineMetadataProperty(del, "length", length);
                 DefineMetadataProperty(del, "name", name ?? string.Empty);
             }
 
             return functionValue;
+        }
+
+        internal static bool RequiresInvocationContext(Delegate functionValue)
+            => _invocationMetadata.TryGetValue(functionValue, out var slot)
+                ? slot.RequiresInvocationContext
+                : true;
+
+        internal static void CopyInvocationMetadata(Delegate source, Delegate target)
+        {
+            SetRequiresInvocationContext(target, RequiresInvocationContext(source));
+        }
+
+        internal static void SetRequiresInvocationContext(Delegate functionValue, bool requiresInvocationContext)
+        {
+            var slot = _invocationMetadata.GetOrCreateValue(functionValue);
+            slot.RequiresInvocationContext = requiresInvocationContext;
         }
 
         internal static void DefineMetadataProperty(Delegate target, string propName, object? value)

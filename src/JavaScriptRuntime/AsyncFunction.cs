@@ -55,10 +55,16 @@ public static class AsyncFunction
 
     public static object InitializeFunctionInstance(object functionValue, double length, string? name)
     {
+        return InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext: true);
+    }
+
+    public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+    {
         InitializeFunctionInstance(functionValue);
 
         if (functionValue is Delegate del)
         {
+            Function.SetRequiresInvocationContext(del, requiresInvocationContext);
             Function.DefineMetadataProperty(del, "length", length);
             Function.DefineMetadataProperty(del, "name", name ?? string.Empty);
         }

@@ -3,6 +3,7 @@ using Js2IL.IR;
 using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Services.TwoPhaseCompilation;
+using Js2IL.Utilities;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -57,16 +58,43 @@ internal sealed partial class LIRToILCompiler
             _ => callableId.Name ?? string.Empty
         };
 
+    private static bool RequiresInvocationContext(CallableId callableId)
+    {
+        return callableId.NeedsArgumentsObject
+            || callableId.HasRestParameters
+            || ContainsMetaProperty(callableId.AstNode);
+    }
+
+    private static bool ContainsMetaProperty(Node? node)
+    {
+        if (node is null)
+        {
+            return false;
+        }
+
+        var found = false;
+        var walker = new AstWalker();
+        walker.Visit(node, visited =>
+        {
+            if (visited is MetaProperty)
+            {
+                found = true;
+            }
+        });
+        return found;
+    }
+
     private void EmitInitializeFunctionInstance(CallableId callableId, bool isAsync, InstructionEncoder ilEncoder)
     {
         ilEncoder.LoadConstantI4(GetExpectedFunctionLength(callableId));
         ilEncoder.OpCode(ILOpCode.Conv_r8);
         ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
+        ilEncoder.LoadConstantI4(RequiresInvocationContext(callableId) ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
             isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            new[] { typeof(object), typeof(double), typeof(string) }));
+            new[] { typeof(object), typeof(double), typeof(string), typeof(bool) }));
     }
 
     private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)
