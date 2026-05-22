@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e2
+				// Method begins at RVA 0x2196
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,43 +44,28 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2178
+			// Method begins at RVA 0x2160
 			// Header size: 12
-			// Code size: 63 (0x3f)
+			// Code size: 33 (0x21)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object,
-				[2] float64,
-				[3] float64,
-				[4] object
+				[1] float64
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
-			IL_0006: ldstr "Cannot access 'a' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
-			IL_0017: ldstr "Cannot access 'b' before initialization"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0021: stloc.1
-			IL_0022: ldloc.0
-			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0028: stloc.2
-			IL_0029: ldloc.1
-			IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002f: stloc.3
-			IL_0030: ldloc.2
-			IL_0031: ldloc.3
-			IL_0032: mul
-			IL_0033: stloc.3
-			IL_0034: ldloc.3
-			IL_0035: box [System.Runtime]System.Double
-			IL_003a: stloc.s 4
-			IL_003c: ldloc.s 4
-			IL_003e: ret
+			IL_0001: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
+			IL_0006: stloc.0
+			IL_0007: ldarg.0
+			IL_0008: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
+			IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: ldloc.0
+			IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001a: mul
+			IL_001b: box [System.Runtime]System.Double
+			IL_0020: ret
 		} // end of method compute::__js_call__
 
 	} // end of class compute
@@ -102,21 +87,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c3
+			// Method begins at RVA 0x218d
 			// Header size: 1
-			// Code size: 30 (0x1e)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
-			IL_0011: ldarg.0
-			IL_0012: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_0017: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
-			IL_001c: nop
-			IL_001d: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -134,7 +113,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 283 (0x11b)
+		// Code size: 259 (0x103)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ObjectDestructuring_Captured/Scope,
@@ -195,46 +174,38 @@
 		IL_0093: ldstr "b"
 		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_009d: stfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
-		IL_00a2: ldloc.0
-		IL_00a3: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
-		IL_00a8: ldstr "Cannot access 'a' before initialization"
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00b2: stloc.3
-		IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b8: ldstr "a="
-		IL_00bd: ldloc.3
-		IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c3: pop
-		IL_00c4: ldloc.0
-		IL_00c5: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
-		IL_00ca: ldstr "Cannot access 'b' before initialization"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00d4: stloc.3
-		IL_00d5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00da: ldstr "b="
-		IL_00df: ldloc.3
-		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00e5: pop
-		IL_00e6: ldc.i4.1
-		IL_00e7: newarr [System.Runtime]System.Object
-		IL_00ec: dup
-		IL_00ed: ldc.i4.0
-		IL_00ee: ldloc.0
-		IL_00ef: stelem.ref
-		IL_00f0: ldc.i4.0
-		IL_00f1: ldelem.ref
-		IL_00f2: castclass Modules.Variable_ObjectDestructuring_Captured/Scope
-		IL_00f7: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(class Modules.Variable_ObjectDestructuring_Captured/Scope, object)
-		IL_00fd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0102: ldnull
-		IL_0103: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_0108: stloc.3
-		IL_0109: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_010e: ldstr "compute()="
-		IL_0113: ldloc.3
-		IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0119: pop
-		IL_011a: ret
+		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a7: ldstr "a="
+		IL_00ac: ldloc.0
+		IL_00ad: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::a
+		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00b7: pop
+		IL_00b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bd: ldstr "b="
+		IL_00c2: ldloc.0
+		IL_00c3: ldfld object Modules.Variable_ObjectDestructuring_Captured/Scope::b
+		IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00cd: pop
+		IL_00ce: ldc.i4.1
+		IL_00cf: newarr [System.Runtime]System.Object
+		IL_00d4: dup
+		IL_00d5: ldc.i4.0
+		IL_00d6: ldloc.0
+		IL_00d7: stelem.ref
+		IL_00d8: ldc.i4.0
+		IL_00d9: ldelem.ref
+		IL_00da: castclass Modules.Variable_ObjectDestructuring_Captured/Scope
+		IL_00df: ldftn object Modules.Variable_ObjectDestructuring_Captured/compute::__js_call__(class Modules.Variable_ObjectDestructuring_Captured/Scope, object)
+		IL_00e5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00ea: ldnull
+		IL_00eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_00f0: stloc.3
+		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f6: ldstr "compute()="
+		IL_00fb: ldloc.3
+		IL_00fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0101: pop
+		IL_0102: ret
 	} // end of method Variable_ObjectDestructuring_Captured::__js_module_init__
 
 } // end of class Modules.Variable_ObjectDestructuring_Captured
@@ -246,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21eb
+		// Method begins at RVA 0x219f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

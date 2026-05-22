@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226b
+				// Method begins at RVA 0x222f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,26 +44,25 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21c4
+			// Method begins at RVA 0x21b4
 			// Header size: 12
-			// Code size: 36 (0x24)
+			// Code size: 26 (0x1a)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] float64,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0006: ldstr "Cannot access 'order' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+			IL_0006: ldstr "tick"
+			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
 			IL_0010: stloc.0
 			IL_0011: ldloc.0
-			IL_0012: ldstr "push"
-			IL_0017: ldstr "tick"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0021: stloc.0
-			IL_0022: ldloc.0
-			IL_0023: ret
+			IL_0012: box [System.Runtime]System.Double
+			IL_0017: stloc.1
+			IL_0018: ldloc.1
+			IL_0019: ret
 		} // end of method ArrowFunction_L10C18::__js_call__
 
 	} // end of class ArrowFunction_L10C18
@@ -79,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2274
+				// Method begins at RVA 0x2238
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,41 +104,36 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21f4
+			// Method begins at RVA 0x21dc
 			// Header size: 12
-			// Code size: 87 (0x57)
+			// Code size: 62 (0x3e)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] string
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0006: ldstr "Cannot access 'order' before initialization"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: ldstr "push"
-			IL_0017: ldstr "immediate"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0021: pop
-			IL_0022: ldarg.0
-			IL_0023: ldfld object Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0028: ldstr "Cannot access 'order' before initialization"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0032: stloc.0
-			IL_0033: ldloc.0
-			IL_0034: ldstr "join"
-			IL_0039: ldstr ","
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0043: stloc.0
-			IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0049: ldstr "order"
-			IL_004e: ldloc.0
-			IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0054: pop
-			IL_0055: ldnull
-			IL_0056: ret
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+			IL_0006: ldstr "immediate"
+			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_0010: pop
+			IL_0011: ldarg.0
+			IL_0012: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+			IL_0017: ldc.i4.1
+			IL_0018: newarr [System.Runtime]System.Object
+			IL_001d: dup
+			IL_001e: ldc.i4.0
+			IL_001f: ldstr ","
+			IL_0024: stelem.ref
+			IL_0025: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_002a: stloc.0
+			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0030: ldstr "order"
+			IL_0035: ldloc.0
+			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_003b: pop
+			IL_003c: ldnull
+			IL_003d: ret
 		} // end of method ArrowFunction_L12C14::__js_call__
 
 	} // end of class ArrowFunction_L12C14
@@ -152,24 +146,21 @@
 			6f 72 64 65 72 7d 00 00
 		)
 		// Fields
-		.field public object order
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array order
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2257
+			// Method begins at RVA 0x2226
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -187,7 +178,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 359 (0x167)
+		// Code size: 342 (0x156)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Chdir_And_NextTick_Basics/Scope,
@@ -250,7 +241,7 @@
 		IL_00a0: ldloc.0
 		IL_00a1: ldc.i4.0
 		IL_00a2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00a7: stfld object Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+		IL_00a7: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
 		IL_00ac: ldc.i4.1
 		IL_00ad: newarr [System.Runtime]System.Object
 		IL_00b2: dup
@@ -281,45 +272,40 @@
 		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_00f9: pop
 		IL_00fa: ldloc.0
-		IL_00fb: ldfld object Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-		IL_0100: ldstr "Cannot access 'order' before initialization"
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_010a: stloc.2
-		IL_010b: ldloc.2
-		IL_010c: ldstr "push"
-		IL_0111: ldstr "sync"
-		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011b: pop
-		IL_011c: ldc.i4.1
-		IL_011d: newarr [System.Runtime]System.Object
-		IL_0122: dup
-		IL_0123: ldc.i4.0
-		IL_0124: ldloc.0
-		IL_0125: stelem.ref
-		IL_0126: ldc.i4.0
-		IL_0127: ldelem.ref
-		IL_0128: castclass Modules.Process_Chdir_And_NextTick_Basics/Scope
-		IL_012d: ldftn object Modules.Process_Chdir_And_NextTick_Basics/ArrowFunction_L12C14::__js_call__(class Modules.Process_Chdir_And_NextTick_Basics/Scope, object)
-		IL_0133: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0138: ldc.i4.1
-		IL_0139: newarr [System.Runtime]System.Object
-		IL_013e: dup
-		IL_013f: ldc.i4.0
-		IL_0140: ldloc.0
-		IL_0141: stelem.ref
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_014c: ldc.i4.0
-		IL_014d: conv.r8
-		IL_014e: ldstr ""
-		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_0158: stloc.2
-		IL_0159: ldloc.2
-		IL_015a: ldc.i4.0
-		IL_015b: newarr [System.Runtime]System.Object
-		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0165: pop
-		IL_0166: ret
+		IL_00fb: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+		IL_0100: ldstr "sync"
+		IL_0105: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+		IL_010a: pop
+		IL_010b: ldc.i4.1
+		IL_010c: newarr [System.Runtime]System.Object
+		IL_0111: dup
+		IL_0112: ldc.i4.0
+		IL_0113: ldloc.0
+		IL_0114: stelem.ref
+		IL_0115: ldc.i4.0
+		IL_0116: ldelem.ref
+		IL_0117: castclass Modules.Process_Chdir_And_NextTick_Basics/Scope
+		IL_011c: ldftn object Modules.Process_Chdir_And_NextTick_Basics/ArrowFunction_L12C14::__js_call__(class Modules.Process_Chdir_And_NextTick_Basics/Scope, object)
+		IL_0122: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0127: ldc.i4.1
+		IL_0128: newarr [System.Runtime]System.Object
+		IL_012d: dup
+		IL_012e: ldc.i4.0
+		IL_012f: ldloc.0
+		IL_0130: stelem.ref
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_013b: ldc.i4.0
+		IL_013c: conv.r8
+		IL_013d: ldstr ""
+		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_0147: stloc.2
+		IL_0148: ldloc.2
+		IL_0149: ldc.i4.0
+		IL_014a: newarr [System.Runtime]System.Object
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0154: pop
+		IL_0155: ret
 	} // end of method Process_Chdir_And_NextTick_Basics::__js_module_init__
 
 } // end of class Modules.Process_Chdir_And_NextTick_Basics
@@ -331,7 +317,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227d
+		// Method begins at RVA 0x2241
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

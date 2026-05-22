@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2205
+				// Method begins at RVA 0x21b8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2168
+			// Method begins at RVA 0x2138
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -63,7 +63,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x220e
+				// Method begins at RVA 0x21c1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -90,16 +90,15 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x216c
+			// Method begins at RVA 0x213c
 			// Header size: 12
-			// Code size: 121 (0x79)
+			// Code size: 103 (0x67)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[2] bool,
-				[3] object,
-				[4] object
+				[3] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -127,25 +126,19 @@
 			IL_0037: ldloc.3
 			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003d: pop
-			IL_003e: ldarg.0
-			IL_003f: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-			IL_0044: ldstr "Cannot access 'writable' before initialization"
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_004e: stloc.s 4
-			IL_0050: ldloc.s 4
-			IL_0052: ldstr "destroyed"
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005c: stloc.s 4
-			IL_005e: ldstr "destroyed:"
-			IL_0063: ldloc.s 4
-			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_006a: stloc.3
-			IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0070: ldloc.3
-			IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0076: pop
-			IL_0077: ldnull
-			IL_0078: ret
+			IL_003e: ldstr "destroyed:"
+			IL_0043: ldarg.0
+			IL_0044: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+			IL_0049: ldstr "destroyed"
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0058: stloc.3
+			IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005e: ldloc.3
+			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0064: pop
+			IL_0065: ldnull
+			IL_0066: ret
 		} // end of method FunctionExpression_L8C26::__js_call__
 
 	} // end of class FunctionExpression_L8C26
@@ -164,18 +157,15 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21f1
+			// Method begins at RVA 0x21af
 			// Header size: 1
-			// Code size: 19 (0x13)
+			// Code size: 8 (0x8)
 			.maxstack 8
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
-			IL_000c: stfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-			IL_0011: nop
-			IL_0012: ret
+			IL_0006: nop
+			IL_0007: ret
 		} // end of method Scope::.ctor
 
 	} // end of class Scope
@@ -193,7 +183,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 268 (0x10c)
+		// Code size: 220 (0xdc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Finished_Callback_Basic/Scope,
@@ -231,70 +221,54 @@
 		IL_004a: stloc.2
 		IL_004b: ldloc.0
 		IL_004c: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_0051: ldstr "Cannot access 'writable' before initialization"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_005b: stloc.3
-		IL_005c: ldloc.3
-		IL_005d: ldstr "_write"
-		IL_0062: ldloc.2
-		IL_0063: ldc.i4.1
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0069: pop
-		IL_006a: ldloc.0
-		IL_006b: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_0070: ldstr "Cannot access 'writable' before initialization"
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_007a: stloc.2
-		IL_007b: ldc.i4.1
-		IL_007c: newarr [System.Runtime]System.Object
-		IL_0081: dup
-		IL_0082: ldc.i4.0
-		IL_0083: ldloc.0
-		IL_0084: stelem.ref
-		IL_0085: ldc.i4.0
-		IL_0086: ldelem.ref
-		IL_0087: castclass Modules.Stream_Finished_Callback_Basic/Scope
-		IL_008c: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L8C26::__js_call__(class Modules.Stream_Finished_Callback_Basic/Scope, object, object)
-		IL_0092: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0097: ldc.i4.1
-		IL_0098: conv.r8
-		IL_0099: ldstr ""
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_00a3: stloc.3
-		IL_00a4: ldloc.1
-		IL_00a5: ldstr "finished"
-		IL_00aa: ldloc.2
-		IL_00ab: ldloc.3
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0051: ldstr "_write"
+		IL_0056: ldloc.2
+		IL_0057: ldc.i4.1
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_005d: pop
+		IL_005e: ldloc.0
+		IL_005f: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_0064: stloc.2
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldloc.0
+		IL_006e: stelem.ref
+		IL_006f: ldc.i4.0
+		IL_0070: ldelem.ref
+		IL_0071: castclass Modules.Stream_Finished_Callback_Basic/Scope
+		IL_0076: ldftn object Modules.Stream_Finished_Callback_Basic/FunctionExpression_L8C26::__js_call__(class Modules.Stream_Finished_Callback_Basic/Scope, object, object)
+		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0081: ldc.i4.1
+		IL_0082: conv.r8
+		IL_0083: ldstr ""
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
+		IL_008d: stloc.3
+		IL_008e: ldloc.1
+		IL_008f: ldstr "finished"
+		IL_0094: ldloc.2
+		IL_0095: ldloc.3
+		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_009b: pop
+		IL_009c: ldloc.0
+		IL_009d: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_00a2: ldstr "end"
+		IL_00a7: ldstr "done"
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_00b1: pop
-		IL_00b2: ldloc.0
-		IL_00b3: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_00b8: ldstr "Cannot access 'writable' before initialization"
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00c2: stloc.3
-		IL_00c3: ldloc.3
-		IL_00c4: ldstr "end"
-		IL_00c9: ldstr "done"
-		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00d3: pop
-		IL_00d4: ldloc.0
-		IL_00d5: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
-		IL_00da: ldstr "Cannot access 'writable' before initialization"
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00e4: stloc.3
-		IL_00e5: ldloc.3
-		IL_00e6: ldstr "writable"
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f0: stloc.3
-		IL_00f1: ldstr "after-end:"
-		IL_00f6: ldloc.3
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00fc: stloc.s 4
-		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0103: ldloc.s 4
-		IL_0105: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_010a: pop
-		IL_010b: ret
+		IL_00b2: ldstr "after-end:"
+		IL_00b7: ldloc.0
+		IL_00b8: ldfld object Modules.Stream_Finished_Callback_Basic/Scope::writable
+		IL_00bd: ldstr "writable"
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00cc: stloc.s 4
+		IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d3: ldloc.s 4
+		IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00da: pop
+		IL_00db: ret
 	} // end of method Stream_Finished_Callback_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Finished_Callback_Basic
@@ -306,7 +280,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2217
+		// Method begins at RVA 0x21ca
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
