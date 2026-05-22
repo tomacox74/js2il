@@ -49,6 +49,31 @@ assert.throws = function(expectedCtor, fn) {
   }
 };
 
+function isWritable(obj, name, verifyProp, value) {
+  var newValue = arguments.length > 3 ? value : "unlikelyValue";
+  var verifiedName = verifyProp || name;
+  var oldValue = obj[verifiedName];
+  var writeSucceeded = false;
+
+  try {
+    obj[name] = newValue;
+    writeSucceeded = Object.is(obj[verifiedName], newValue);
+  } catch (error) {
+    writeSucceeded = false;
+  }
+
+  try {
+    obj[name] = oldValue;
+  } catch (error) {
+  }
+
+  return writeSucceeded;
+}
+
+function verifyNotWritable(obj, name, verifyProp, value) {
+  console.log(!isWritable(obj, name, verifyProp, value));
+}
+
 function verifyProperty(obj, name, desc) {
   var actual = Object.getOwnPropertyDescriptor(obj, name);
   if (actual === undefined) {

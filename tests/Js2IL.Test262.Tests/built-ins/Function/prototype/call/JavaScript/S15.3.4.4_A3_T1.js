@@ -222,4 +222,4 @@ function $ERROR() {
 
 Function("this.field=\"strawberry\"").call();
 
-assert.sameValue(this["field"], "strawberry", 'The value of this["field"] is expected to be "strawberry"');
+assert.sameValue(globalThis["field"], "strawberry", 'The value of globalThis["field"] is expected to be "strawberry"');

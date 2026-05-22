@@ -2389,6 +2389,19 @@ namespace JavaScriptRuntime
                 {
                     return JavaScriptRuntime.Function.ToSourceString(del);
                 }
+
+                if (string.Equals(methodName, "hasOwnProperty", StringComparison.Ordinal))
+                {
+                    var prop = callArgs.Length > 0 ? callArgs[0] : null;
+                    return hasOwn(del, prop);
+                }
+
+                if (string.Equals(methodName, "propertyIsEnumerable", StringComparison.Ordinal))
+                {
+                    var prop = callArgs.Length > 0 ? callArgs[0] : null;
+                    var key = ToPropertyKeyString(prop);
+                    return PropertyDescriptorStore.TryGetOwn(del, key, out var descriptor) && descriptor.Enumerable;
+                }
             }
 
             // 1) String-like receiver -> direct fast-path helpers for parser-heavy operations.
