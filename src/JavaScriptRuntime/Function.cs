@@ -106,6 +106,13 @@ public static class Function
         PrototypeChain.SetPrototype(functionValue, hasRestrictedProperties ? RestrictedPropertiesPrototype : Prototype);
     }
 
+    private static object? GetEffectiveThisArg(Delegate target, object? thisArg)
+    {
+        return (thisArg is null || thisArg is JsNull) && Closure.UsesEcmaScriptThisBinding(target)
+            ? GlobalThis.globalThis
+            : thisArg;
+    }
+
         private static object? PrototypeApply(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
@@ -230,9 +237,7 @@ public static class Function
                 throw new TypeError("apply arguments must be an array (or null/undefined)");
             }
 
-            var effectiveThis = thisArg is null || thisArg is JsNull
-                ? GlobalThis.globalThis
-                : thisArg;
+            var effectiveThis = GetEffectiveThisArg(target, thisArg);
             var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
             try
             {
@@ -249,9 +254,7 @@ public static class Function
             if (target is null) throw new ArgumentNullException(nameof(target));
             args ??= System.Array.Empty<object?>();
 
-            var effectiveThis = thisArg is null || thisArg is JsNull
-                ? GlobalThis.globalThis
-                : thisArg;
+            var effectiveThis = GetEffectiveThisArg(target, thisArg);
             var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
             try
             {
