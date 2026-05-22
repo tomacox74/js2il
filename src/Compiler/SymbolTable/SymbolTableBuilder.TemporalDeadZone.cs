@@ -11,8 +11,7 @@ public partial class SymbolTableBuilder
             binding.RequiresRuntimeTemporalDeadZoneChecks =
                 binding.RequiresTemporalDeadZoneChecks
                 && binding.IsCaptured
-                && (binding.Kind == BindingKind.Const
-                    || MayCapturedBindingBeObservedBeforeInitialization(scope, binding));
+                && MayCapturedBindingBeObservedBeforeInitialization(scope, binding);
         }
 
         foreach (var child in scope.Children)
@@ -93,14 +92,6 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        // Function declarations are hoisted, but they are inert until pre-init code actually
-        // references the callable binding (for example, an initializer calling the function).
-        if (candidateScope.AstNode is FunctionDeclaration
-            && TryGetFunctionScopeBinding(scopeContext, candidateScope, out var functionBinding))
-        {
-            return IsBindingReferencedBeforeBoundary(scopeContext, functionBinding, initializationBoundary);
-        }
-
         return candidateScope.AstNode.Start < initializationBoundary;
     }
 
@@ -112,82 +103,6 @@ public partial class SymbolTableBuilder
         }
 
         return CollectReferencedParentVariables(candidateScope, scopeContext).Contains(targetBinding.Name);
-    }
-
-    private bool IsBindingReferencedBeforeBoundary(Scope scope, BindingInfo targetBinding, int boundary)
-    {
-        bool referenced = false;
-        WalkScope(scope);
-        return referenced;
-
-        void WalkScope(Scope currentScope)
-        {
-            if (referenced)
-            {
-                return;
-            }
-
-            if (!ReferenceEquals(TryResolveBinding(currentScope, targetBinding.Name), targetBinding))
-            {
-                return;
-            }
-
-            WalkNode(GetExecutedScopeBodyRoot(currentScope), currentScope);
-        }
-
-        void WalkNode(Node? node, Scope currentScope)
-        {
-            if (node == null || referenced || node.Start >= boundary)
-            {
-                return;
-            }
-
-            if (ReferenceEquals(node, targetBinding.DeclarationNode))
-            {
-                return;
-            }
-
-            if (!ReferenceEquals(node, currentScope.AstNode)
-                && TryGetDirectChildScope(currentScope, node, out var childScope))
-            {
-                if (childScope.Kind == ScopeKind.Block
-                    && childScope.AstNode.Start < boundary
-                    && !childScope.Bindings.ContainsKey(targetBinding.Name))
-                {
-                    WalkScope(childScope);
-                }
-
-                return;
-            }
-
-            if (node is Identifier identifier
-                && ReferenceEquals(TryResolveBinding(currentScope, identifier.Name), targetBinding))
-            {
-                referenced = true;
-                return;
-            }
-
-            foreach (var childNode in node.ChildNodes)
-            {
-                WalkNode(childNode, currentScope);
-                if (referenced)
-                {
-                    return;
-                }
-            }
-        }
-    }
-
-    private static Node GetExecutedScopeBodyRoot(Scope scope)
-    {
-        return scope.AstNode switch
-        {
-            FunctionDeclaration fd when fd.Body is BlockStatement body => body,
-            FunctionExpression fe when fe.Body is BlockStatement body => body,
-            ArrowFunctionExpression af when af.Body is BlockStatement body => body,
-            ArrowFunctionExpression af => af.Body,
-            _ => scope.AstNode
-        };
     }
 
     private static bool TryGetBindingInitializationBoundary(BindingInfo binding, out int boundary)
@@ -225,26 +140,5 @@ public partial class SymbolTableBuilder
 
         childScope = null!;
         return false;
-    }
-
-    private static bool TryGetFunctionScopeBinding(Scope scope, Scope functionScope, out BindingInfo binding)
-    {
-        binding = null!;
-
-        if (functionScope.AstNode is not FunctionDeclaration functionDeclaration
-            || functionDeclaration.Id is not Identifier functionId)
-        {
-            return false;
-        }
-
-        if (!scope.Bindings.TryGetValue(functionId.Name, out var resolvedBinding)
-            || resolvedBinding == null
-            || !ReferenceEquals(resolvedBinding.DeclarationNode, functionDeclaration))
-        {
-            return false;
-        }
-
-        binding = resolvedBinding;
-        return true;
     }
 }

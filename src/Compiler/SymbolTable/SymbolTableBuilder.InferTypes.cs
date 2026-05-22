@@ -958,7 +958,7 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
-                var inferredType = InferExpressionClrType(variableDeclarator.Init, scope, proposedClrTypes, scope);
+                var inferredType = InferExpressionClrType(variableDeclarator.Init, scope, proposedClrTypes, binding, scope);
                 if (inferredType != null)
                 {
                     proposedClrTypes[binding.Name] = inferredType;
@@ -994,7 +994,7 @@ public partial class SymbolTableBuilder
                     if (proposedClrTypes.TryGetValue(identifier.Name, out var inferredType))
                     {
                         // If any assignment conflicts with the inferred type, remove the proposed type.
-                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope.Bindings[identifier.Name], scope);
                         if (rightType != inferredType)
                         {
                             changed |= proposedClrTypes.Remove(identifier.Name);
@@ -1003,7 +1003,7 @@ public partial class SymbolTableBuilder
                     else if (unitializedClrTypes.Contains(identifier.Name))
                     {
                         // An uninitialized variable can still be a nullable/reference type.
-                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
+                        var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope.Bindings[identifier.Name], scope);
                         if (rightType?.IsValueType == false)
                         {
                             if (!proposedClrTypes.TryGetValue(identifier.Name, out var existingType) || existingType != rightType)
@@ -1164,7 +1164,7 @@ public partial class SymbolTableBuilder
             return true;
         }
 
-        var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes, declaringScope);
+        var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes, binding);
         if (initializerType == null || initializerType.IsValueType)
         {
             return false;
@@ -1237,7 +1237,7 @@ public partial class SymbolTableBuilder
                         return;
                     }
 
-                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, targetBinding);
                     if (rightType == null || rightType.IsValueType)
                     {
                         isCompatible = false;
@@ -1341,7 +1341,7 @@ public partial class SymbolTableBuilder
                         return;
                     }
 
-                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, scope);
+                    var rightType = InferExpressionClrType(assignExpr.Right, currentScope, proposedClrTypes, targetBinding);
                     if (rightType != expectedType)
                     {
                         isCompatible = false;
@@ -2116,7 +2116,7 @@ public partial class SymbolTableBuilder
         }
     }
 
-    Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null, Scope? inferenceRootScope = null)
+    Type? InferExpressionClrType(Node expr, Scope? scope = null, Dictionary<string, Type>? proposedTypes = null, BindingInfo? excludedBinding = null, Scope? inferenceRootScope = null)
     {
         static bool IsSupportedNumberLike(Type? t) =>
             t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
@@ -2244,8 +2244,8 @@ public partial class SymbolTableBuilder
                         if (currentScope.Bindings.TryGetValue(id.Name, out var binding))
                         {
                             if (proposedTypes != null
-                                && inferenceRootScope != null
-                                && ReferenceEquals(binding.DeclaringScope, inferenceRootScope))
+                                && excludedBinding != null
+                                && ReferenceEquals(binding, excludedBinding))
                             {
                                 return null;
                             }
@@ -2255,9 +2255,16 @@ public partial class SymbolTableBuilder
                                 return binding.ClrType;
                             }
 
+                            if (proposedTypes != null
+                                && inferenceRootScope != null
+                                && ReferenceEquals(currentScope, inferenceRootScope))
+                            {
+                                return null;
+                            }
+
                             if (binding.DeclarationNode is VariableDeclarator { Init: not null } declarator)
                             {
-                                var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes, inferenceRootScope);
+                                var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes, excludedBinding, inferenceRootScope);
                                 if (initializerType != null)
                                 {
                                     return initializerType;
@@ -2326,7 +2333,7 @@ public partial class SymbolTableBuilder
                 // <expr>.length
                 if (!me.Computed && me.Property is Identifier propId && string.Equals(propId.Name, "length", StringComparison.Ordinal))
                 {
-                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
+                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes, inferenceRootScope: inferenceRootScope);
                     if (receiverType == typeof(JavaScriptRuntime.Array)
                         || (receiverType != null && typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(receiverType)))
                     {
@@ -2337,10 +2344,10 @@ public partial class SymbolTableBuilder
                 // <typedArray>[index]
                 if (me.Computed)
                 {
-                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes);
+                    var receiverType = InferExpressionClrType(me.Object, scope, proposedTypes, inferenceRootScope: inferenceRootScope);
                     if (receiverType != null && typeof(JavaScriptRuntime.TypedArrayBase).IsAssignableFrom(receiverType))
                     {
-                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes);
+                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes, inferenceRootScope: inferenceRootScope);
                         // Numeric index required (JS will ToNumber, but we only infer when it's already clearly number-like).
                         if (IsSupportedNumberLike(indexType))
                         {
@@ -2350,7 +2357,7 @@ public partial class SymbolTableBuilder
 
                     if (receiverType == typeof(JavaScriptRuntime.Array))
                     {
-                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes);
+                        var indexType = InferExpressionClrType(me.Property, scope, proposedTypes, inferenceRootScope: inferenceRootScope);
                         if (IsSupportedNumberLike(indexType))
                         {
                             return InferExpressionArrayElementClrType(me.Object, scope, proposedTypes);
@@ -2481,7 +2488,7 @@ public partial class SymbolTableBuilder
                 // Array instance methods - use reflection to get return type
                 if (ce.Callee is MemberExpression instanceMe && instanceMe.Property is Identifier methodId)
                 {
-                    var receiverType = InferExpressionClrType(instanceMe.Object, scope, proposedTypes);
+                    var receiverType = InferExpressionClrType(instanceMe.Object, scope, proposedTypes, inferenceRootScope: inferenceRootScope);
                     if (receiverType == typeof(JavaScriptRuntime.Array))
                     {
                         // Use reflection to determine return type of Array methods
@@ -2520,7 +2527,7 @@ public partial class SymbolTableBuilder
                 switch (binExpr.Operator)
                 {
                     case Operator.Addition:
-                        return InferAddOperatorType(binExpr, scope, proposedTypes, inferenceRootScope);
+                        return InferAddOperatorType(binExpr, scope, proposedTypes, excludedBinding, inferenceRootScope);
                     case Operator.Subtraction:
                     case Operator.Multiplication:
                     case Operator.Division:
@@ -2550,10 +2557,10 @@ public partial class SymbolTableBuilder
         return null;
     }
 
-    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes, Scope? inferenceRootScope = null)
+    Type? InferAddOperatorType(NonLogicalBinaryExpression binaryExpression, Scope? scope, Dictionary<string, Type>? proposedTypes, BindingInfo? excludedBinding = null, Scope? inferenceRootScope = null)
     {
-        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes, inferenceRootScope);
-        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes, inferenceRootScope);
+        var leftType = InferExpressionClrType(binaryExpression.Left, scope, proposedTypes, excludedBinding, inferenceRootScope);
+        var rightType = InferExpressionClrType(binaryExpression.Right, scope, proposedTypes, excludedBinding, inferenceRootScope);
 
         // If either side is a string, + performs string concatenation
         if (leftType == typeof(string) || rightType == typeof(string))

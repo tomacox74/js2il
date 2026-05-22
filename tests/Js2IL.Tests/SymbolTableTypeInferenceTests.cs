@@ -93,6 +93,25 @@ public class SymbolTableTypeInferenceTests
         Assert.Equal(expectedType, binding.ClrType);
     }
 
+    [Fact]
+    public void SymbolTable_InferType_AssignmentAlias_WidensWhenSourceBecomesNull()
+    {
+        var code = @"
+                var first = 0;
+                var second = 1;
+                first = second;
+                second = null;
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var firstBinding = symbolTable.GetBindingInfo("first");
+        var secondBinding = symbolTable.GetBindingInfo("second");
+        Assert.NotNull(firstBinding);
+        Assert.NotNull(secondBinding);
+        Assert.Null(firstBinding.ClrType);
+        Assert.Null(secondBinding.ClrType);
+    }
+
     [Theory]
     [InlineData(typeof(double), "42", "testVar++")]
     [InlineData(typeof(double), "42", "++testVar")]
@@ -837,6 +856,11 @@ public class SymbolTableTypeInferenceTests
             ("range_start", typeof(double)),
             ("step", typeof(double)),
             ("range_stop", typeof(double)));
+
+        var index = FindBindingByName(methodScope!, "index");
+        Assert.NotNull(index);
+        Assert.True(index!.IsStableType);
+        Assert.Equal(typeof(double), index.ClrType);
     }
 
     [Fact]
@@ -883,6 +907,7 @@ public class SymbolTableTypeInferenceTests
         Assert.NotNull(binding);
         Assert.True(binding!.IsStableType);
         Assert.Equal(typeof(double), binding.ClrType);
+
     }
 
     private static Js2IL.SymbolTables.Scope? FindFirstScope(Js2IL.SymbolTables.Scope scope, Func<Js2IL.SymbolTables.Scope, bool> predicate)

@@ -68,7 +68,7 @@ public class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "array-expand")]
     public Task array_expand()
-        => ExecutionTest("array-expand");
+        => ExecutionTest("array-expand", preferOutOfProc: true);
 
     [Fact(DisplayName = "array-key-get-error")]
     public Task array_key_get_error()
