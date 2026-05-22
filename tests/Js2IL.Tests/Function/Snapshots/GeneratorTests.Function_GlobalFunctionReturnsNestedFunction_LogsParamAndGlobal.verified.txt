@@ -144,7 +144,7 @@
 			)
 			// Method begins at RVA 0x20fc
 			// Header size: 12
-			// Code size: 55 (0x37)
+			// Code size: 56 (0x38)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/createFunction/Scope,
@@ -172,12 +172,13 @@
 			IL_0026: ldc.i4.0
 			IL_0027: conv.r8
 			IL_0028: ldstr "nestedFunction"
-			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-			IL_0032: stloc.2
-			IL_0033: ldloc.2
-			IL_0034: stloc.1
-			IL_0035: ldloc.1
-			IL_0036: ret
+			IL_002d: ldc.i4.0
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
+			IL_0033: stloc.2
+			IL_0034: ldloc.2
+			IL_0035: stloc.1
+			IL_0036: ldloc.1
+			IL_0037: ret
 		} // end of method createFunction::__js_call__
 
 	} // end of class createFunction
@@ -225,7 +226,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 158 (0x9e)
+		// Code size: 159 (0x9f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope,
@@ -251,44 +252,45 @@
 		IL_0022: ldc.i4.1
 		IL_0023: conv.r8
 		IL_0024: ldstr "createFunction"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_002e: stloc.s 4
-		IL_0030: ldloc.s 4
-		IL_0032: stloc.1
-		IL_0033: ldloc.0
-		IL_0034: ldc.r8 10
-		IL_003d: box [System.Runtime]System.Double
-		IL_0042: stfld object Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope::outerVar
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldloc.0
-		IL_0050: stelem.ref
-		IL_0051: ldc.i4.0
-		IL_0052: ldelem.ref
-		IL_0053: castclass Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope
-		IL_0058: ldftn object Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/createFunction::__js_call__(class Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope, object, object)
-		IL_005e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0063: ldnull
-		IL_0064: ldc.r8 7
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
-		IL_0077: stloc.s 4
-		IL_0079: ldloc.s 4
-		IL_007b: stloc.2
-		IL_007c: ldloc.2
-		IL_007d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-		IL_0087: stloc.s 4
-		IL_0089: ldloc.s 4
-		IL_008b: stloc.3
-		IL_008c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0091: ldstr "Result:"
-		IL_0096: ldloc.3
-		IL_0097: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_009c: pop
-		IL_009d: ret
+		IL_0029: ldc.i4.0
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.s 4
+		IL_0033: stloc.1
+		IL_0034: ldloc.0
+		IL_0035: ldc.r8 10
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: stfld object Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope::outerVar
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: ldc.i4.0
+		IL_0053: ldelem.ref
+		IL_0054: castclass Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope
+		IL_0059: ldftn object Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/createFunction::__js_call__(class Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope, object, object)
+		IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0064: ldnull
+		IL_0065: ldc.r8 7
+		IL_006e: box [System.Runtime]System.Double
+		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::Invoke(object, object)
+		IL_0078: stloc.s 4
+		IL_007a: ldloc.s 4
+		IL_007c: stloc.2
+		IL_007d: ldloc.2
+		IL_007e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+		IL_0088: stloc.s 4
+		IL_008a: ldloc.s 4
+		IL_008c: stloc.3
+		IL_008d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0092: ldstr "Result:"
+		IL_0097: ldloc.3
+		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_009d: pop
+		IL_009e: ret
 	} // end of method Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal

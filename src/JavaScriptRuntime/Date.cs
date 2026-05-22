@@ -77,6 +77,16 @@ namespace JavaScriptRuntime
             _msSinceEpoch = msSinceEpoch;
         }
 
+        public static object Construct()
+        {
+            return new Date();
+        }
+
+        public static object Construct(object? arg)
+        {
+            return new Date(arg);
+        }
+
         public static object Construct(object[] args)
         {
             return args.Length switch
@@ -159,6 +169,11 @@ namespace JavaScriptRuntime
 
         // Instance methods
         public object getTime()
+        {
+            return (double)_msSinceEpoch;
+        }
+
+        public object valueOf()
         {
             return (double)_msSinceEpoch;
         }

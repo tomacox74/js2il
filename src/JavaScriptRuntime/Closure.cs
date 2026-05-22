@@ -516,6 +516,7 @@ namespace JavaScriptRuntime
 
             var boundDelegate = Expression.Lambda(delegateType, body, lambdaParameters).Compile();
             Function.ConfigureCallableObject(boundDelegate, hasRestrictedProperties);
+            Function.CopyInvocationMetadata(target, boundDelegate);
             _boundDelegates.Add(boundDelegate, new BoundDelegateMetadata(target, kind));
             return boundDelegate;
         }
@@ -619,6 +620,11 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(newTarget);
@@ -692,6 +698,15 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        private static object InvokeDelegate0WithoutInvocationContext(Delegate del, object[] scopes)
+        {
+            if (del is JsFunc0 f0) return f0(scopes, null)!;
+            if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
+            if (del is Action<object[]> a0) { a0(scopes); return null!; }
+
+            return InvokeDelegateWithArgs(del, scopes, System.Array.Empty<object>(), newTarget: null);
+        }
+
         // Arity-specific overloads for common cases (0-5 args).
         // These directly invoke the delegate while also setting RuntimeServices.CurrentArguments.
 
@@ -703,6 +718,11 @@ namespace JavaScriptRuntime
             if (TryInvokeProxyCallFastPath(target, scopes, System.Array.Empty<object>(), out var proxyResult))
             {
                 return proxyResult;
+            }
+
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                return InvokeDelegate0WithoutInvocationContext(fastDelegate, scopes);
             }
 
             var previousArgs = RuntimeServices.SetCurrentArguments(System.Array.Empty<object>());
@@ -717,6 +737,11 @@ namespace JavaScriptRuntime
 
                 if (target is Delegate del)
                 {
+                    if (!Function.RequiresInvocationContext(del))
+                    {
+                        return InvokeDelegate0WithoutInvocationContext(del, scopes);
+                    }
+
                     // Try fast-path typed invocation first
                     if (del is JsFunc0 f0) return f0(scopes, null)!;
                     if (del is JsFuncNoScopes0 f0NoScopes) return f0NoScopes(null)!;
@@ -748,6 +773,14 @@ namespace JavaScriptRuntime
                 return proxyResult;
             }
 
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                if (fastDelegate is JsFunc1 f1Fast) return f1Fast(scopes, null, a0!)!;
+                if (fastDelegate is JsFuncNoScopes1 f1NoScopesFast) return f1NoScopesFast(null, a0)!;
+                if (fastDelegate is Action<object[], object> a1Fast) { a1Fast(scopes, a0!); return null!; }
+                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
@@ -760,6 +793,14 @@ namespace JavaScriptRuntime
 
                 if (target is Delegate del)
                 {
+                    if (!Function.RequiresInvocationContext(del))
+                    {
+                        if (del is JsFunc1 f1Fast) return f1Fast(scopes, null, a0!)!;
+                        if (del is JsFuncNoScopes1 f1NoScopesFast) return f1NoScopesFast(null, a0)!;
+                        if (del is Action<object[], object> a1Fast) { a1Fast(scopes, a0!); return null!; }
+                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
+                    }
+
                     // Try fast-path typed invocation first
                     if (del is JsFunc1 f1) return f1(scopes, null, a0!)!;
                     if (del is JsFuncNoScopes1 f1NoScopes) return f1NoScopes(null, a0)!;
@@ -791,6 +832,14 @@ namespace JavaScriptRuntime
                 return proxyResult;
             }
 
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                if (fastDelegate is JsFunc2 f2Fast) return f2Fast(scopes, null, a0!, a1!)!;
+                if (fastDelegate is JsFuncNoScopes2 f2NoScopesFast) return f2NoScopesFast(null, a0, a1)!;
+                if (fastDelegate is Action<object[], object, object> a2Fast) { a2Fast(scopes, a0!, a1!); return null!; }
+                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
@@ -803,6 +852,14 @@ namespace JavaScriptRuntime
 
                 if (target is Delegate del)
                 {
+                    if (!Function.RequiresInvocationContext(del))
+                    {
+                        if (del is JsFunc2 f2Fast) return f2Fast(scopes, null, a0!, a1!)!;
+                        if (del is JsFuncNoScopes2 f2NoScopesFast) return f2NoScopesFast(null, a0, a1)!;
+                        if (del is Action<object[], object, object> a2Fast) { a2Fast(scopes, a0!, a1!); return null!; }
+                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
+                    }
+
                     // Try fast-path typed invocation first
                     if (del is JsFunc2 f2) return f2(scopes, null, a0!, a1!)!;
                     if (del is JsFuncNoScopes2 f2NoScopes) return f2NoScopes(null, a0, a1)!;
@@ -834,6 +891,14 @@ namespace JavaScriptRuntime
                 return proxyResult;
             }
 
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                if (fastDelegate is JsFunc3 f3Fast) return f3Fast(scopes, null, a0!, a1!, a2!)!;
+                if (fastDelegate is JsFuncNoScopes3 f3NoScopesFast) return f3NoScopesFast(null, a0, a1, a2)!;
+                if (fastDelegate is Action<object[], object, object, object> a3Fast) { a3Fast(scopes, a0!, a1!, a2!); return null!; }
+                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
@@ -846,6 +911,14 @@ namespace JavaScriptRuntime
 
                 if (target is Delegate del)
                 {
+                    if (!Function.RequiresInvocationContext(del))
+                    {
+                        if (del is JsFunc3 f3Fast) return f3Fast(scopes, null, a0!, a1!, a2!)!;
+                        if (del is JsFuncNoScopes3 f3NoScopesFast) return f3NoScopesFast(null, a0, a1, a2)!;
+                        if (del is Action<object[], object, object, object> a3Fast) { a3Fast(scopes, a0!, a1!, a2!); return null!; }
+                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
+                    }
+
                     // Try fast-path typed invocation first
                     if (del is JsFunc3 f3) return f3(scopes, null, a0!, a1!, a2!)!;
                     if (del is JsFuncNoScopes3 f3NoScopes) return f3NoScopes(null, a0, a1, a2)!;
@@ -877,6 +950,14 @@ namespace JavaScriptRuntime
                 return proxyResult;
             }
 
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                if (fastDelegate is JsFunc4 f4Fast) return f4Fast(scopes, null, a0!, a1!, a2!, a3!)!;
+                if (fastDelegate is JsFuncNoScopes4 f4NoScopesFast) return f4NoScopesFast(null, a0, a1, a2, a3)!;
+                if (fastDelegate is Action<object[], object, object, object, object> a4Fast) { a4Fast(scopes, a0!, a1!, a2!, a3!); return null!; }
+                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
@@ -889,6 +970,14 @@ namespace JavaScriptRuntime
 
                 if (target is Delegate del)
                 {
+                    if (!Function.RequiresInvocationContext(del))
+                    {
+                        if (del is JsFunc4 f4Fast) return f4Fast(scopes, null, a0!, a1!, a2!, a3!)!;
+                        if (del is JsFuncNoScopes4 f4NoScopesFast) return f4NoScopesFast(null, a0, a1, a2, a3)!;
+                        if (del is Action<object[], object, object, object, object> a4Fast) { a4Fast(scopes, a0!, a1!, a2!, a3!); return null!; }
+                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
+                    }
+
                     // Try fast-path typed invocation first
                     if (del is JsFunc4 f4) return f4(scopes, null, a0!, a1!, a2!, a3!)!;
                     if (del is JsFuncNoScopes4 f4NoScopes) return f4NoScopes(null, a0, a1, a2, a3)!;
@@ -920,6 +1009,14 @@ namespace JavaScriptRuntime
                 return proxyResult;
             }
 
+            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            {
+                if (fastDelegate is JsFunc5 f5Fast) return f5Fast(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
+                if (fastDelegate is JsFuncNoScopes5 f5NoScopesFast) return f5NoScopesFast(null, a0, a1, a2, a3, a4)!;
+                if (fastDelegate is Action<object[], object, object, object, object, object> a5Fast) { a5Fast(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
+                return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget: null);
+            }
+
             var previousArgs = RuntimeServices.SetCurrentArguments(args);
             var previousCallee = RuntimeServices.SetCurrentCallee(target);
             var previousNewTarget = RuntimeServices.SetCurrentNewTarget(null);
@@ -932,6 +1029,14 @@ namespace JavaScriptRuntime
 
                 if (target is Delegate del)
                 {
+                    if (!Function.RequiresInvocationContext(del))
+                    {
+                        if (del is JsFunc5 f5Fast) return f5Fast(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
+                        if (del is JsFuncNoScopes5 f5NoScopesFast) return f5NoScopesFast(null, a0, a1, a2, a3, a4)!;
+                        if (del is Action<object[], object, object, object, object, object> a5Fast) { a5Fast(scopes, a0!, a1!, a2!, a3!, a4!); return null!; }
+                        return InvokeDelegateWithArgs(del, scopes, args, newTarget: null);
+                    }
+
                     // Try fast-path typed invocation first
                     if (del is JsFunc5 f5) return f5(scopes, null, a0!, a1!, a2!, a3!, a4!)!;
                     if (del is JsFuncNoScopes5 f5NoScopes) return f5NoScopes(null, a0, a1, a2, a3, a4)!;

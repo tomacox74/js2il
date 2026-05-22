@@ -114,7 +114,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 91 (0x5b)
+		// Code size: 92 (0x5c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Call_Basic/Scope,
@@ -131,28 +131,29 @@
 		IL_0012: ldc.i4.2
 		IL_0013: conv.r8
 		IL_0014: ldstr "f"
-		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_001e: stloc.3
-		IL_001f: ldloc.3
-		IL_0020: stloc.1
-		IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0026: dup
-		IL_0027: ldstr "x"
-		IL_002c: ldstr "T"
-		IL_0031: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0036: stloc.2
-		IL_0037: ldloc.1
-		IL_0038: ldstr "call"
-		IL_003d: ldloc.2
-		IL_003e: ldstr "A"
-		IL_0043: ldstr "B"
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_004d: stloc.3
-		IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0053: ldloc.3
-		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0059: pop
-		IL_005a: ret
+		IL_0019: ldc.i4.0
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
+		IL_001f: stloc.3
+		IL_0020: ldloc.3
+		IL_0021: stloc.1
+		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0027: dup
+		IL_0028: ldstr "x"
+		IL_002d: ldstr "T"
+		IL_0032: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0037: stloc.2
+		IL_0038: ldloc.1
+		IL_0039: ldstr "call"
+		IL_003e: ldloc.2
+		IL_003f: ldstr "A"
+		IL_0044: ldstr "B"
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_004e: stloc.3
+		IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0054: ldloc.3
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005a: pop
+		IL_005b: ret
 	} // end of method Function_Call_Basic::__js_module_init__
 
 } // end of class Modules.Function_Call_Basic
