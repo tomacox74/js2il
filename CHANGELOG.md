@@ -8,6 +8,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 _Nothing yet._
 
+## v0.9.22 - 2026-05-22
+
+
+
+
 ## v0.9.21 - 2026-05-20
 
 - compiler/tests/docs/test262: close issue #1051 by fixing statement-condition truthiness for falsy strings, correcting stale stable-type inference that broke `for..of` `array-expand`, supporting assignment-form destructuring loop heads like `[x.attr]`, unskipping the related supported `test262` ports, refreshing the affected generator snapshots, and tracking the remaining unsupported `eval`-blocked skips separately in issue #1079.
