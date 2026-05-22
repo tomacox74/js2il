@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tests/test262: close issue #1048 by keeping the class-family test262 ports unskipped and running the duplicate-basename computed-yield class statement ports out-of-process so the full class slice no longer races on generated assembly identity.
 - compiler/runtime/tests/test262: fix issue #1049 by supporting computed object destructuring keys, iterator-protocol array destructuring close ordering, Proxy-aware object rest copy semantics, and with-environment binding probes needed by the related test262 destructuring ports.
 
 ## v0.9.22 - 2026-05-22
