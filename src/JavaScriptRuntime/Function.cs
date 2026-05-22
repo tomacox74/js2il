@@ -27,23 +27,37 @@ public static class Function
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
 
-        private static ExpandoObject CreatePrototype()
+    private static ExpandoObject CreatePrototype()
     {
         var exp = new ExpandoObject();
-        var dict = (IDictionary<string, object?>)exp;
-            dict["apply"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeApply, 2);
-            dict["call"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeCall, 1);
-            dict["bind"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeBind, 1);
-        dict["toString"] = CreateBuiltinPrototypeFunction((Func<object[], object?[]?, object?>)PrototypeToString, 0);
+        DefinePrototypeMethod(exp, "apply", (Func<object[], object?[]?, object?>)PrototypeApply, 2);
+        DefinePrototypeMethod(exp, "call", (Func<object[], object?[]?, object?>)PrototypeCall, 1);
+        DefinePrototypeMethod(exp, "bind", (Func<object[], object?[]?, object?>)PrototypeBind, 1);
+        DefinePrototypeMethod(exp, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
         DefineRestrictedProperty(exp, "caller");
         DefineRestrictedProperty(exp, "arguments");
         return exp;
     }
 
-        internal static bool TryGetPrototypeValue(string name, out object? value)
+    private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
+    {
+        var value = CreateBuiltinPrototypeFunction(method, length);
+        PrototypeChain.SetPrototype(value, prototype);
+        ((IDictionary<string, object?>)prototype)[name] = value;
+        PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
         {
-            return ((IDictionary<string, object?>)Prototype).TryGetValue(name, out value);
-        }
+            Kind = JsPropertyDescriptorKind.Data,
+            Enumerable = false,
+            Configurable = true,
+            Writable = true,
+            Value = value
+        });
+    }
+
+    internal static bool TryGetPrototypeValue(string name, out object? value)
+    {
+        return ((IDictionary<string, object?>)Prototype).TryGetValue(name, out value);
+    }
 
     private static Func<object[], object?[]?, object?> CreateBuiltinPrototypeFunction(Func<object[], object?[]?, object?> method, double length)
     {
@@ -90,6 +104,13 @@ public static class Function
     internal static void ConfigureCallableObject(object functionValue, bool hasRestrictedProperties)
     {
         PrototypeChain.SetPrototype(functionValue, hasRestrictedProperties ? RestrictedPropertiesPrototype : Prototype);
+    }
+
+    private static object? GetEffectiveThisArg(Delegate target, object? thisArg)
+    {
+        return (thisArg is null || thisArg is JsNull) && Closure.UsesEcmaScriptThisBinding(target)
+            ? GlobalThis.globalThis
+            : thisArg;
     }
 
         private static object? PrototypeApply(object[] scopes, object?[]? args)
@@ -216,7 +237,8 @@ public static class Function
                 throw new TypeError("apply arguments must be an array (or null/undefined)");
             }
 
-            var prevThis = RuntimeServices.SetCurrentThis(thisArg);
+            var effectiveThis = GetEffectiveThisArg(target, thisArg);
+            var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
             try
             {
                 return Closure.InvokeWithArgs(target, System.Array.Empty<object>(), argsList);
@@ -232,7 +254,8 @@ public static class Function
             if (target is null) throw new ArgumentNullException(nameof(target));
             args ??= System.Array.Empty<object?>();
 
-            var prevThis = RuntimeServices.SetCurrentThis(thisArg);
+            var effectiveThis = GetEffectiveThisArg(target, thisArg);
+            var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
             try
             {
                 return Closure.InvokeWithArgs(target, System.Array.Empty<object>(), args);

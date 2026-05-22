@@ -585,6 +585,11 @@ namespace JavaScriptRuntime
                 && metadata.Kind == BoundDelegateKind.FunctionPrototypeBind;
         }
 
+        internal static bool UsesEcmaScriptThisBinding(Delegate target)
+        {
+            return GetDelegateInvokeMetadata(target).IsJsFuncDelegate;
+        }
+
         internal static bool TryGetFunctionPrototypeBoundMetadata(Delegate boundDelegate, out Delegate target, out object?[] boundArgs)
         {
             if (_boundDelegates.TryGetValue(boundDelegate, out var metadata)
