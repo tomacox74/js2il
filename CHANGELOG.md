@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.24 - 2026-05-22
+
 - compiler/runtime/perf: reduce stopwatch benchmark execution overhead by tagging generated functions that do not need ambient invocation context, skipping unnecessary runtime context writes on hot delegate calls, adding zero/one-argument Date constructor overloads, and exposing Date `valueOf()` through the standard object-to-primitive path.
 
 ## v0.9.23 - 2026-05-22
