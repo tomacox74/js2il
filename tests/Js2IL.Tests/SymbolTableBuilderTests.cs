@@ -537,6 +537,49 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public void SymbolTable_CapturedConstInitializedBeforeClassMethod_DoesNotRequireRuntimeTemporalDeadZoneChecks()
+        {
+            var code = @"
+                const WORD_SIZE = 32;
+                class BitArray {
+                    setBitsTrue() {
+                        return WORD_SIZE;
+                    }
+                }
+            ";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            var scopeTree = BuildSymbolTable(ast, "test.js");
+
+            var binding = scopeTree.Root.Bindings["WORD_SIZE"];
+            Assert.True(binding.IsCaptured);
+            Assert.False(binding.RequiresRuntimeTemporalDeadZoneChecks);
+        }
+
+        [Fact]
+        public void SymbolTable_CapturedConstFunctionDeclaredBeforeInitialization_RequiresRuntimeTemporalDeadZoneChecks()
+        {
+            var code = @"
+                {
+                    function f() {
+                        return x + 1;
+                    }
+
+                    f();
+                    const x = 1;
+                }
+            ";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            var scopeTree = BuildSymbolTable(ast, "test.js");
+
+            var blockScope = scopeTree.Root.Children.Single();
+            var binding = blockScope.Bindings["x"];
+            Assert.True(binding.IsCaptured);
+            Assert.True(binding.RequiresRuntimeTemporalDeadZoneChecks);
+        }
+
+        [Fact]
         public void SymbolTable_GlobalVariableCapturedInClassInstanceField_CreatesCorrectBindings()
         {
             // Arrange
@@ -872,4 +915,3 @@ namespace Js2IL.Tests
         }
     }
 }
-

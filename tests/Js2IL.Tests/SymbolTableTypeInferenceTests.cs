@@ -837,6 +837,11 @@ public class SymbolTableTypeInferenceTests
             ("range_start", typeof(double)),
             ("step", typeof(double)),
             ("range_stop", typeof(double)));
+
+        var index = FindBindingByName(methodScope!, "index");
+        Assert.NotNull(index);
+        Assert.True(index!.IsStableType);
+        Assert.Equal(typeof(double), index.ClrType);
     }
 
     [Fact]
@@ -883,6 +888,7 @@ public class SymbolTableTypeInferenceTests
         Assert.NotNull(binding);
         Assert.True(binding!.IsStableType);
         Assert.Equal(typeof(double), binding.ClrType);
+
     }
 
     private static Js2IL.SymbolTables.Scope? FindFirstScope(Js2IL.SymbolTables.Scope scope, Func<Js2IL.SymbolTables.Scope, bool> predicate)
