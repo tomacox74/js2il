@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x238c
+					// Method begins at RVA 0x2436
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2395
+					// Method begins at RVA 0x243f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2383
+				// Method begins at RVA 0x242d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -177,7 +177,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239e
+				// Method begins at RVA 0x2448
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -248,7 +248,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a7
+				// Method begins at RVA 0x2451
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -319,7 +319,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b0
+				// Method begins at RVA 0x245a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -347,34 +347,82 @@
 			)
 			// Method begins at RVA 0x22ec
 			// Header size: 12
-			// Code size: 58 (0x3a)
+			// Code size: 126 (0x7e)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
+				[1] bool,
+				[2] bool,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
-			IL_0006: stloc.1
-			IL_0007: ldloc.1
-			IL_0008: brfalse IL_0018
+			IL_0006: stloc.s 4
+			IL_0008: ldloc.s 4
+			IL_000a: brfalse IL_001b
 
-			IL_000d: ldloc.1
-			IL_000e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0013: brfalse IL_0028
+			IL_000f: ldloc.s 4
+			IL_0011: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0016: brfalse IL_002c
 
-			IL_0018: ldloc.1
-			IL_0019: ldstr "y"
-			IL_001e: ldstr "0"
-			IL_0023: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+			IL_001b: ldloc.s 4
+			IL_001d: ldstr "y"
+			IL_0022: ldstr "0"
+			IL_0027: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0028: ldloc.1
-			IL_0029: ldc.r8 0.0
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0037: stloc.0
-			IL_0038: ldnull
-			IL_0039: ret
+			IL_002c: ldloc.s 4
+			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+			IL_0033: stloc.0
+			IL_0034: ldc.i4.0
+			IL_0035: stloc.1
+			IL_0036: ldc.i4.0
+			IL_0037: stloc.2
+			.try
+			{
+				IL_0038: ldloc.2
+				IL_0039: brtrue IL_0060
+
+				IL_003e: ldloc.0
+				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStep(object)
+				IL_0044: stloc.s 4
+				IL_0046: ldloc.s 4
+				IL_0048: brfalse IL_005e
+
+				IL_004d: ldloc.s 4
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStepValue(object)
+				IL_0054: stloc.s 4
+				IL_0056: ldloc.s 4
+				IL_0058: stloc.3
+				IL_0059: br IL_0062
+
+				IL_005e: ldc.i4.1
+				IL_005f: stloc.2
+
+				IL_0060: ldnull
+				IL_0061: stloc.3
+
+				IL_0062: ldc.i4.1
+				IL_0063: stloc.1
+				IL_0064: leave IL_007c
+			} // end .try
+			finally
+			{
+				IL_0069: ldloc.1
+				IL_006a: brtrue IL_007b
+
+				IL_006f: ldloc.2
+				IL_0070: brtrue IL_007b
+
+				IL_0075: ldloc.0
+				IL_0076: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+
+				IL_007b: endfinally
+			} // end handler
+
+			IL_007c: ldnull
+			IL_007d: ret
 		} // end of method ArrowFunction_L24C10::__js_call__
 
 	} // end of class ArrowFunction_L24C10
@@ -390,7 +438,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b9
+				// Method begins at RVA 0x2463
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -416,36 +464,84 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2334
+			// Method begins at RVA 0x2388
 			// Header size: 12
-			// Code size: 58 (0x3a)
+			// Code size: 126 (0x7e)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] object
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
+				[1] bool,
+				[2] bool,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage/Scope::y
-			IL_0006: stloc.1
-			IL_0007: ldloc.1
-			IL_0008: brfalse IL_0018
+			IL_0006: stloc.s 4
+			IL_0008: ldloc.s 4
+			IL_000a: brfalse IL_001b
 
-			IL_000d: ldloc.1
-			IL_000e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0013: brfalse IL_0028
+			IL_000f: ldloc.s 4
+			IL_0011: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0016: brfalse IL_002c
 
-			IL_0018: ldloc.1
-			IL_0019: ldstr "y"
-			IL_001e: ldstr "0"
-			IL_0023: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+			IL_001b: ldloc.s 4
+			IL_001d: ldstr "y"
+			IL_0022: ldstr "0"
+			IL_0027: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_0028: ldloc.1
-			IL_0029: ldc.r8 0.0
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0037: stloc.0
-			IL_0038: ldnull
-			IL_0039: ret
+			IL_002c: ldloc.s 4
+			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+			IL_0033: stloc.0
+			IL_0034: ldc.i4.0
+			IL_0035: stloc.1
+			IL_0036: ldc.i4.0
+			IL_0037: stloc.2
+			.try
+			{
+				IL_0038: ldloc.2
+				IL_0039: brtrue IL_0060
+
+				IL_003e: ldloc.0
+				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStep(object)
+				IL_0044: stloc.s 4
+				IL_0046: ldloc.s 4
+				IL_0048: brfalse IL_005e
+
+				IL_004d: ldloc.s 4
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStepValue(object)
+				IL_0054: stloc.s 4
+				IL_0056: ldloc.s 4
+				IL_0058: stloc.3
+				IL_0059: br IL_0062
+
+				IL_005e: ldc.i4.1
+				IL_005f: stloc.2
+
+				IL_0060: ldnull
+				IL_0061: stloc.3
+
+				IL_0062: ldc.i4.1
+				IL_0063: stloc.1
+				IL_0064: leave IL_007c
+			} // end .try
+			finally
+			{
+				IL_0069: ldloc.1
+				IL_006a: brtrue IL_007b
+
+				IL_006f: ldloc.2
+				IL_0070: brtrue IL_007b
+
+				IL_0075: ldloc.0
+				IL_0076: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+
+				IL_007b: endfinally
+			} // end handler
+
+			IL_007c: ldnull
+			IL_007d: ret
 		} // end of method ArrowFunction_L30C10::__js_call__
 
 	} // end of class ArrowFunction_L30C10
@@ -467,7 +563,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x237a
+			// Method begins at RVA 0x2424
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -651,7 +747,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23c2
+		// Method begins at RVA 0x246c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
