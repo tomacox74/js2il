@@ -64,7 +64,7 @@ public sealed class HIRRestPattern : HIRPattern
     public HIRPattern Target { get; }
 }
 
-public readonly record struct HIRObjectPatternProperty(string Key, HIRPattern Value);
+public readonly record struct HIRObjectPatternProperty(string? Key, HIRExpression? ComputedKey, HIRPattern Value);
 
 public sealed class HIRObjectPattern : HIRPattern
 {

@@ -37,6 +37,8 @@ public sealed partial class HIRToLIRLowerer
     // (e.g., per-iteration loop environments).
     private readonly Dictionary<string, TempVariable> _activeScopeTempsByScopeName = new(StringComparer.Ordinal);
 
+    private readonly Stack<TempVariable> _activeWithObjects = new();
+
     // Class method property initialization needs the class Type as the method owner; class constructor
     // value creation immediately afterward can reuse that temp instead of re-emitting RunClassConstructor.
     private readonly Dictionary<string, TempVariable> _classMethodOwnerTempsByRegistryName = new(StringComparer.Ordinal);

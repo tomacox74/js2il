@@ -244,6 +244,9 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        private static object ToExternalPropertyKey(string key)
+            => TryDecodeEncodedSymbolKey(key, out var symbol) ? symbol : key;
+
         private static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
         {
             return new JsPropertyDescriptor
@@ -651,7 +654,7 @@ namespace JavaScriptRuntime
             {
                 if (proxy.TryInvokeTrap("ownKeys", "ownKeys", new object?[] { proxy.GetTarget("ownKeys") }, out var trapResult))
                 {
-                    return ReorderOwnKeys(CoerceOwnKeys(trapResult, includeEncodedSymbolKeys), includeEncodedSymbolKeys);
+                    return CoerceOwnKeys(trapResult, includeEncodedSymbolKeys).ToList();
                 }
 
                 obj = proxy.GetTarget("ownKeys");
@@ -3350,6 +3353,16 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (target is JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("has", "has", new object?[] { proxy.GetTarget("has"), ToExternalPropertyKey(name) }, out var trapResult))
+                {
+                    return TypeUtilities.ToBoolean(trapResult);
+                }
+
+                target = proxy.GetTarget("has");
+            }
+
             if (HasOwnPropertyForPropertyLookup(target, name))
             {
                 return true;
@@ -3417,6 +3430,33 @@ namespace JavaScriptRuntime
 
         private static bool TryGetOwnPropertyDescriptor(object target, string propName, out JsPropertyDescriptor descriptor)
         {
+            if (target is JavaScriptRuntime.Proxy proxy)
+            {
+                var proxyTarget = proxy.GetTarget("getOwnPropertyDescriptor");
+                if (proxy.TryInvokeTrap(
+                    "getOwnPropertyDescriptor",
+                    "getOwnPropertyDescriptor",
+                    new object?[] { proxyTarget, ToExternalPropertyKey(propName) },
+                    out var trapResult))
+                {
+                    if (trapResult is null || trapResult is JsNull)
+                    {
+                        descriptor = null!;
+                        return false;
+                    }
+
+                    if (!IsPropertyDescriptorObject(trapResult))
+                    {
+                        throw new TypeError("Proxy getOwnPropertyDescriptor trap must return an object or undefined");
+                    }
+
+                    descriptor = CreateDescriptorForNewProperty(ParseRequestedPropertyDescriptor(trapResult!));
+                    return true;
+                }
+
+                target = proxyTarget;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
             {
                 return true;
@@ -4226,6 +4266,27 @@ namespace JavaScriptRuntime
             return ObjectRuntime.GetItem(iteratorResult, "value");
         }
 
+        private sealed class IteratorStepValueBox
+        {
+            public IteratorStepValueBox(object? value)
+            {
+                Value = value;
+            }
+
+            public object? Value { get; }
+        }
+
+        public static object? IteratorDestructuringStep(object iterator)
+        {
+            var result = IteratorNext(iterator);
+            return IteratorResultDone(result)
+                ? null
+                : new IteratorStepValueBox(IteratorResultValue(result));
+        }
+
+        public static object? IteratorDestructuringStepValue(object step)
+            => ((IteratorStepValueBox)step).Value;
+
         /// <summary>
         /// Closes an iterator on abrupt completion (IteratorClose).
         /// If iterator has a callable 'return' member, it is invoked.
@@ -4293,6 +4354,18 @@ namespace JavaScriptRuntime
             finally
             {
                 RuntimeServices.SetCurrentThis(prev);
+            }
+        }
+
+        public static void IteratorCloseForThrowCompletion(object? iterator)
+        {
+            try
+            {
+                IteratorClose(iterator);
+            }
+            catch
+            {
+                // ECMA-262 preserves the original throw completion when IteratorClose itself throws.
             }
         }
 
@@ -4401,7 +4474,8 @@ namespace JavaScriptRuntime
         {
             private readonly object _iterator;
             private readonly Delegate _next;
-            private readonly object? _return;
+            private bool _returnResolved;
+            private object? _return;
 
             public DynamicIterator(object iterator)
             {
@@ -4414,11 +4488,21 @@ namespace JavaScriptRuntime
                 }
                 _next = nextDel;
 
-                _return = GetProperty(_iterator, "return");
                 JavaScriptRuntime.Iterator.InitializeIteratorSurface(this);
             }
 
-            public bool HasReturn => _return != null;
+            public bool HasReturn => GetReturnMember() != null;
+
+            private object? GetReturnMember()
+            {
+                if (!_returnResolved)
+                {
+                    _return = GetProperty(_iterator, "return");
+                    _returnResolved = true;
+                }
+
+                return _return;
+            }
 
             public IteratorResultObject Next()
             {
@@ -4439,7 +4523,7 @@ namespace JavaScriptRuntime
                     // Normalize foreign iterator results to a strongly-typed shape.
                     var doneObj = ObjectRuntime.GetItem(result, "done");
                     var done = JavaScriptRuntime.TypeUtilities.ToBoolean(doneObj);
-                    var value = ObjectRuntime.GetItem(result, "value");
+                    var value = done ? null : ObjectRuntime.GetItem(result, "value");
                     return new IteratorResultObject(value, done);
                 }
                 finally
@@ -4450,12 +4534,13 @@ namespace JavaScriptRuntime
 
             public void Return()
             {
-                if (_return is null)
+                var returnMember = GetReturnMember();
+                if (returnMember is null)
                 {
                     return;
                 }
 
-                if (_return is not Delegate del)
+                if (returnMember is not Delegate del)
                 {
                     throw new JavaScriptRuntime.TypeError("Iterator.return is not a function");
                 }
@@ -4744,84 +4829,19 @@ namespace JavaScriptRuntime
             }
 
             var result = CreateOrdinaryObject();
-
-            if (obj is JsObject jsObjSrc)
+            foreach (var key in GetOrderedOwnKeys(obj, includeEncodedSymbolKeys: true))
             {
-                // Enumerate own enumerable properties (descriptor store + backing dict).
-                var seen = new HashSet<string>(StringComparer.Ordinal);
-                EnumerateOwnEnumerableProperties(jsObjSrc, seen, (key, value) =>
+                if (excluded.Contains(key))
                 {
-                    if (!excluded.Contains(key))
-                        result.SetValue(key, value);
-                }, includeEncodedSymbolKeys: true);
-                return result;
-            }
-
-            if (obj is System.Dynamic.ExpandoObject exp)
-            {
-                var src = (IDictionary<string, object?>)exp;
-                foreach (var kvp in src)
-                {
-                    if (excluded.Contains(kvp.Key)) continue;
-                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
-                    result.SetValue(kvp.Key, kvp.Value);
-                }
-                return result;
-            }
-
-            // IDictionary<string, object?> fallback
-            if (obj is IDictionary<string, object?> dictGeneric)
-            {
-                foreach (var kvp in dictGeneric)
-                {
-                    if (excluded.Contains(kvp.Key)) continue;
-                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, kvp.Key)) continue;
-                    result.SetValue(kvp.Key, kvp.Value);
-                }
-                return result;
-            }
-
-            // Reflection fallback for host objects: copy public instance properties/fields.
-            try
-            {
-                var type = obj.GetType();
-                foreach (var p in type
-                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0 && !excluded.Contains(p.Name)))
-                {
-                    result.SetValue(p.Name, p.GetValue(obj));
+                    continue;
                 }
 
-                foreach (var f in type
-                    .GetFields(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(f => !excluded.Contains(f.Name)))
+                if (!TryGetOwnPropertyDescriptor(obj, key, out var descriptor) || !descriptor.Enumerable)
                 {
-                    result.SetValue(f.Name, f.GetValue(obj));
+                    continue;
                 }
-            }
-            catch (AmbiguousMatchException)
-            {
-                // Best-effort; return whatever we could copy.
-            }
-            catch (MethodAccessException)
-            {
-                // Best-effort; return whatever we could copy.
-            }
-            catch (NotSupportedException)
-            {
-                // Best-effort; return whatever we could copy.
-            }
-            catch (TargetInvocationException)
-            {
-                // Best-effort; return whatever we could copy.
-            }
-            catch (TargetException)
-            {
-                // Best-effort; return whatever we could copy.
-            }
-            catch (ArgumentException)
-            {
-                // Best-effort; return whatever we could copy.
+
+                result.SetValue(key, GetProperty(obj, key));
             }
 
             return result;
@@ -5033,7 +5053,7 @@ namespace JavaScriptRuntime
             // Proxy get trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("get", "get", new object?[] { proxy.GetTarget("get"), name, obj }, out var trapResult))
+                if (proxy.TryInvokeTrap("get", "get", new object?[] { proxy.GetTarget("get"), ToExternalPropertyKey(name), obj }, out var trapResult))
                 {
                     return trapResult;
                 }
@@ -5175,7 +5195,7 @@ namespace JavaScriptRuntime
             // Proxy set trap
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
-                if (proxy.TryInvokeTrap("set", "set", new object?[] { proxy.GetTarget("set"), name, value, obj }, out _))
+                if (proxy.TryInvokeTrap("set", "set", new object?[] { proxy.GetTarget("set"), ToExternalPropertyKey(name), value, obj }, out _))
                 {
                     return value;
                 }

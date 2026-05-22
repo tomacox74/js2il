@@ -25,6 +25,9 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
             => Object.SetProperty(obj, name, value, throwOnError);
 
+        public static string ToPropertyKeyString(object? key)
+            => Object.ToPropertyKeyString(key);
+
         public static object? GetGlobalBindingValue(string name)
         {
             if (!HasGlobalBinding(name))

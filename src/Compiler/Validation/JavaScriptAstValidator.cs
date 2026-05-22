@@ -1450,13 +1450,6 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is Property prop)
         {
-            // Computed keys are supported in object literals, but not yet supported in object binding patterns.
-            if (prop.Computed && currentContext.InObjectPattern)
-            {
-                result.Errors.Add($"Computed property names are not yet supported in this context (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-
         }
     }
 
