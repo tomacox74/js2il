@@ -905,7 +905,7 @@ public sealed partial class HIRToLIRLowerer
     {
         if (obj.Properties.Count > 0)
         {
-            return obj.Properties[0].Key;
+            return obj.Properties[0].Key ?? "<computed>";
         }
         return "<unknown>";
     }

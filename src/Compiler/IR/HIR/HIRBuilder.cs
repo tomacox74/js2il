@@ -1996,21 +1996,7 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    var withStatements = new List<HIRStatement>
-                    {
-                        new HIRExpressionStatement(withObjectExpr!)
-                    };
-
-                    if (withBody is HIRBlock withBlock)
-                    {
-                        withStatements.AddRange(withBlock.Statements);
-                    }
-                    else
-                    {
-                        withStatements.Add(withBody!);
-                    }
-
-                    hirStatement = new HIRBlock(withStatements);
+                    hirStatement = new HIRWithStatement(withObjectExpr!, withBody!);
                     return true;
                 }
 
@@ -2720,19 +2706,31 @@ class HIRMethodBuilder
                     {
                         if (propNode is Acornima.Ast.Property p)
                         {
-                            string? key = p.Key switch
+                            string? key = null;
+                            HIRExpression? computedKey = null;
+                            if (p.Computed)
                             {
-                                Acornima.Ast.Identifier kid => kid.Name,
-                                Acornima.Ast.StringLiteral sl => sl.Value,
-                                Acornima.Ast.NumericLiteral nl => nl.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                                Acornima.Ast.Literal lit when lit.Value is string s => s,
-                                Acornima.Ast.Literal lit when lit.Value is double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                                _ => null
-                            };
+                                if (!TryParseExpression(p.Key, out computedKey))
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                key = p.Key switch
+                                {
+                                    Acornima.Ast.Identifier kid => kid.Name,
+                                    Acornima.Ast.StringLiteral sl => sl.Value,
+                                    Acornima.Ast.NumericLiteral nl => nl.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                    Acornima.Ast.Literal lit when lit.Value is string s => s,
+                                    Acornima.Ast.Literal lit when lit.Value is double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                    _ => null
+                                };
 
-                            if (string.IsNullOrEmpty(key))
-                            {
-                                return false;
+                                if (string.IsNullOrEmpty(key))
+                                {
+                                    return false;
+                                }
                             }
 
                             if (!TryParsePattern(p.Value, out var valuePattern))
@@ -2740,7 +2738,7 @@ class HIRMethodBuilder
                                 return false;
                             }
 
-                            props.Add(new HIRObjectPatternProperty(key!, valuePattern!));
+                            props.Add(new HIRObjectPatternProperty(key, computedKey, valuePattern!));
                             continue;
                         }
 

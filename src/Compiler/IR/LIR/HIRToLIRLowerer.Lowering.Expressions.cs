@@ -392,6 +392,7 @@ public sealed partial class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
+                EmitWithBindingProbe(binding.Name);
 
                 // Class declarations are compiled separately (as CLR types) and are not SSA-assigned.
                 // Always lower a class identifier to a runtime System.Type so it can cross module boundaries

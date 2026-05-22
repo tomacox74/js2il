@@ -36,7 +36,7 @@
     {
       "clause": "13.15.5",
       "title": "Destructuring Assignment",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-destructuring-assignment"
     },
     {
@@ -48,31 +48,31 @@
     {
       "clause": "13.15.5.2",
       "title": "Runtime Semantics: DestructuringAssignmentEvaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-destructuringassignmentevaluation"
     },
     {
       "clause": "13.15.5.3",
       "title": "Runtime Semantics: PropertyDestructuringAssignmentEvaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-propertydestructuringassignmentevaluation"
     },
     {
       "clause": "13.15.5.4",
       "title": "Runtime Semantics: RestDestructuringAssignmentEvaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-restdestructuringassignmentevaluation"
     },
     {
       "clause": "13.15.5.5",
       "title": "Runtime Semantics: IteratorDestructuringAssignmentEvaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-iteratordestructuringassignmentevaluation"
     },
     {
       "clause": "13.15.5.6",
       "title": "Runtime Semantics: KeyedDestructuringAssignmentEvaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-keyeddestructuringassignmentevaluation"
     }
   ],
@@ -97,6 +97,38 @@
           "tests/Js2IL.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js"
         ],
         "notes": "Supports destructuring assignment expressions with object/array patterns. Applies defaults when extracted values are undefined and supports rest elements/properties. The overall assignment expression evaluates to the RHS value."
+      },
+      {
+        "clause": "13.15.5.2",
+        "feature": "array destructuring assignment preserves abrupt-completion precedence during IteratorClose",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-destructuringassignmentevaluation",
+        "test262Paths": [
+          "test/language/expressions/assignment/destructuring/default-expr-throws-iterator-return-get-throws.js",
+          "test/language/expressions/assignment/destructuring/target-assign-throws-iterator-return-get-throws.js"
+        ],
+        "notes": "Array destructuring assignment now consumes the iterator protocol and preserves the original throw completion when closing an iterator also throws while resolving `return`."
+      },
+      {
+        "clause": "13.15.5.5",
+        "feature": "iterator destructuring assignment evaluates property-reference targets in spec order",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-iteratordestructuringassignmentevaluation",
+        "test262Paths": [
+          "test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js"
+        ],
+        "notes": "Iterator-based array destructuring assignment evaluates member targets before iterator stepping, but delays key coercion and writes until after the iterator result is observed, matching the spec's ordering requirements."
+      },
+      {
+        "clause": "13.15.5.6",
+        "feature": "computed object destructuring assignment keys and keyed target ordering",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-keyeddestructuringassignmentevaluation",
+        "test262Paths": [
+          "test/language/expressions/assignment/destructuring/keyed-destructuring-property-reference-target-evaluation-order.js",
+          "test/language/expressions/assignment/destructuring/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js"
+        ],
+        "notes": "Computed property names in object destructuring assignments are supported, and assignment targets such as `target[targetKey]` keep the required ordering between property-name evaluation, binding resolution, default evaluation, key coercion, and the final write."
       },
       {
         "clause": "13.15.1",

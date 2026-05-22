@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/test262: fix issue #1049 by supporting computed object destructuring keys, iterator-protocol array destructuring close ordering, Proxy-aware object rest copy semantics, and with-environment binding probes needed by the related test262 destructuring ports.
 
 ## v0.9.22 - 2026-05-22
 

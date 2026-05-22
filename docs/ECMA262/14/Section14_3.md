@@ -4,9 +4,9 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T17:35:30Z
+> Last generated (UTC): 2026-05-22T08:48:35Z
 
-JS2IL supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings. Some spec-required early errors are not exhaustively covered.
+JS2IL supports common declaration forms (`let`, `const`, `var`) and destructuring binding patterns, including temporal dead zone checks for lexical bindings, computed object binding keys, and Proxy-observable object rest behavior. Some spec-required early errors are not exhaustively covered.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -61,4 +61,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | object destructuring rest | Supported | [`Variable_ObjectDestructuring_Rest.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Rest.js) |  |  |
+| object rest binding preserves Proxy ownKeys/descriptor/get ordering | Supported |  | `test/language/expressions/object/dstr/object-rest-proxy-ownkeys-returned-keys-order.js`<br>`test/language/expressions/object/dstr/object-rest-proxy-gopd-not-called-on-excluded-keys.js`<br>`test/language/expressions/object/dstr/object-rest-proxy-get-not-called-on-dontenum-keys.js` | Object rest binding now preserves Proxy `ownKeys` order, skips excluded keys before `getOwnPropertyDescriptor`, and only performs `get` on enumerable included keys. |
+
+### 14.3.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-keyedbindinginitialization))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| computed object binding keys preserve with-environment lookup ordering | Supported |  | `test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js` | Computed object binding names are supported in binding patterns, including the observable lookup ordering exercised by sloppy-mode `with` environments and default initializers. |
 

@@ -61,6 +61,23 @@ public sealed partial class HIRToLIRLowerer
                 return TryLowerVariableDeclaration(exprStmt);
             case HIRDestructuringVariableDeclaration destructDecl:
                 return TryLowerDestructuringVariableDeclaration(destructDecl);
+            case HIRWithStatement withStmt:
+                {
+                    if (!TryLowerExpression(withStmt.Object, out var withObject))
+                    {
+                        return false;
+                    }
+
+                    _activeWithObjects.Push(EnsureObject(withObject));
+                    try
+                    {
+                        return TryLowerStatement(withStmt.Body);
+                    }
+                    finally
+                    {
+                        _activeWithObjects.Pop();
+                    }
+                }
             case HIRExpressionStatement exprStmt:
                 {
                     // Lower the expression and discard the result
