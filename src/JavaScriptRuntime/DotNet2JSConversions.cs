@@ -65,6 +65,12 @@ namespace JavaScriptRuntime
                 return ToString(stringDataDescriptor.Value);
             }
 
+            if (!value.GetType().IsValueType
+                && TypeUtilities.TryCoerceObjectToPrimitive(value, "string", out var primitive))
+            {
+                return ToString(primitive);
+            }
+
             if (value is IDictionary<string, object?> dictObject)
             {
                 return FormatObject(dictObject);
@@ -137,7 +143,7 @@ namespace JavaScriptRuntime
                 return nearest.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            return NormalizeExponent(value.ToString("G15", System.Globalization.CultureInfo.InvariantCulture));
+            return NormalizeExponent(value.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
         }
 
         private static string NormalizeExponent(string value)
@@ -169,24 +175,6 @@ namespace JavaScriptRuntime
 
         private static string FormatObject(IDictionary<string, object?> dict)
         {
-            // Check if the object has a custom toString method
-            if (dict.TryGetValue("toString", out var toStringMethod) && toStringMethod is Delegate toStringDelegate)
-            {
-                try
-                {
-                    // Call the toString method
-                    var result = toStringDelegate.DynamicInvoke(new object[] { System.Array.Empty<object>() });
-                    if (result != null)
-                    {
-                        return ToString(result);
-                    }
-                }
-                catch
-                {
-                    // Fall through to default behavior
-                }
-            }
-
             // Default object representation
             string propertyValues = string.Join(", ", dict
                 .Select(kvp =>

@@ -6,7 +6,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.String.prototype.split") { }
 
-    [Fact(DisplayName = "argument-is-new-reg-exp-and-instance-is-string-hello", Skip = "String.prototype.split RegExp separator handling is incomplete.")]
+    [Fact(DisplayName = "argument-is-new-reg-exp-and-instance-is-string-hello")]
     public Task argument_is_new_reg_exp_and_instance_is_string_hello()
         => ExecutionTestFromFile("argument-is-new-reg-exp-and-instance-is-string-hello");
 
@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task argument_is_regexp_a_z_and_instance_is_string_abc()
         => ExecutionTestFromFile("argument-is-regexp-a-z-and-instance-is-string-abc");
 
-    [Fact(DisplayName = "argument-is-regexp-and-instance-is-number", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "argument-is-regexp-and-instance-is-number")]
     public Task argument_is_regexp_and_instance_is_number()
         => ExecutionTestFromFile("argument-is-regexp-and-instance-is-number");
 
@@ -50,7 +50,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task argument_is_undefined_and_instance_is_string()
         => ExecutionTestFromFile("argument-is-undefined-and-instance-is-string");
 
-    [Fact(DisplayName = "argument-is-void-0-and-instance-is-string-object-object-have-overrided-to-string-function", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "argument-is-void-0-and-instance-is-string-object-object-have-overrided-to-string-function")]
     public Task argument_is_void_0_and_instance_is_string_object_object_have_overrided_to_string_function()
         => ExecutionTestFromFile("argument-is-void-0-and-instance-is-string-object-object-have-overrided-to-string-function");
 
@@ -66,7 +66,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task arguments_are_new_reg_exp_and_0_and_instance_is_string_hello()
         => ExecutionTestFromFile("arguments-are-new-reg-exp-and-0-and-instance-is-string-hello");
 
-    [Fact(DisplayName = "arguments-are-new-reg-exp-and-1-and-instance-is-string-hello", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "arguments-are-new-reg-exp-and-1-and-instance-is-string-hello")]
     public Task arguments_are_new_reg_exp_and_1_and_instance_is_string_hello()
         => ExecutionTestFromFile("arguments-are-new-reg-exp-and-1-and-instance-is-string-hello");
 }

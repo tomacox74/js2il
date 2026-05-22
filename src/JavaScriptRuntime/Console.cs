@@ -11,7 +11,7 @@ namespace JavaScriptRuntime
     }
 
     public class Console
-    {        
+    {
         private IConsoleOutput _output = new DefaultConsoleOutput();
 
         private IConsoleOutput _errorOutput = new DefaultErrorConsoleOutput();
@@ -61,7 +61,7 @@ namespace JavaScriptRuntime
             }
             else
             {
-                sb.Append(DotNet2JSConversions.ToString(a0));
+                AppendConsoleValue(sb, a0);
             }
             _output.WriteLine(sb.ToString());
             return null;
@@ -70,7 +70,7 @@ namespace JavaScriptRuntime
         public object? log(object? a0, object? a1)
         {
             var sb = new StringBuilder();
-            
+
             if (a0 is Array arr0)
             {
                 sb.Append('[');
@@ -89,11 +89,11 @@ namespace JavaScriptRuntime
             }
             else
             {
-                sb.Append(DotNet2JSConversions.ToString(a0));
+                AppendConsoleValue(sb, a0);
             }
-            
+
             sb.Append(' ');
-            
+
             if (a1 is Array arr1)
             {
                 sb.Append('[');
@@ -112,9 +112,9 @@ namespace JavaScriptRuntime
             }
             else
             {
-                sb.Append(DotNet2JSConversions.ToString(a1));
+                AppendConsoleValue(sb, a1);
             }
-            
+
             _output.WriteLine(sb.ToString());
             return null;
         }
@@ -122,7 +122,7 @@ namespace JavaScriptRuntime
         public object? log(object? a0, object? a1, object? a2)
         {
             var sb = new StringBuilder();
-            
+
             if (a0 is Array arr0)
             {
                 sb.Append('[');
@@ -141,11 +141,11 @@ namespace JavaScriptRuntime
             }
             else
             {
-                sb.Append(DotNet2JSConversions.ToString(a0));
+                AppendConsoleValue(sb, a0);
             }
-            
+
             sb.Append(' ');
-            
+
             if (a1 is Array arr1)
             {
                 sb.Append('[');
@@ -164,11 +164,11 @@ namespace JavaScriptRuntime
             }
             else
             {
-                sb.Append(DotNet2JSConversions.ToString(a1));
+                AppendConsoleValue(sb, a1);
             }
-            
+
             sb.Append(' ');
-            
+
             if (a2 is Array arr2)
             {
                 sb.Append('[');
@@ -187,9 +187,9 @@ namespace JavaScriptRuntime
             }
             else
             {
-                sb.Append(DotNet2JSConversions.ToString(a2));
+                AppendConsoleValue(sb, a2);
             }
-            
+
             _output.WriteLine(sb.ToString());
             return null;
         }
@@ -309,7 +309,7 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
-                sb.Append(DotNet2JSConversions.ToString(arg));
+                AppendConsoleValue(sb, arg);
             }
 
             _output.WriteLine(sb.ToString());
@@ -371,6 +371,57 @@ namespace JavaScriptRuntime
                 sb.Append('\'');
                 sb.Append(EscapeConsoleString(str));
                 sb.Append('\'');
+                return;
+            }
+
+            AppendConsoleValue(sb, value);
+        }
+
+        private static void AppendConsoleValue(StringBuilder sb, object? value)
+        {
+            if (value is not null
+                && (PropertyDescriptorStore.TryGetOwn(value, JavaScriptRuntime.String.StringDataPropertyName, out _)
+                    || PropertyDescriptorStore.TryGetOwn(value, JavaScriptRuntime.Number.NumberDataPropertyName, out _)))
+            {
+                sb.Append(DotNet2JSConversions.ToString(value));
+                return;
+            }
+
+            if (value is System.Collections.Generic.IDictionary<string, object?> dict)
+            {
+                sb.Append('{');
+                if (dict.Count > 0)
+                {
+                    sb.Append(' ');
+                    var first = true;
+                    foreach (var entry in dict)
+                    {
+                        if (!first)
+                        {
+                            sb.Append(',');
+                            sb.Append(' ');
+                        }
+
+                        first = false;
+                        sb.Append(entry.Key);
+                        sb.Append(':');
+                        sb.Append(' ');
+                        if (entry.Value is string str)
+                        {
+                            sb.Append('\'');
+                            sb.Append(EscapeConsoleString(str));
+                            sb.Append('\'');
+                        }
+                        else
+                        {
+                            AppendConsoleValue(sb, entry.Value);
+                        }
+                    }
+
+                    sb.Append(' ');
+                }
+
+                sb.Append('}');
                 return;
             }
 

@@ -251,8 +251,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (TryInvokeToPrimitiveMethod(value, "number", out var primitive)
-                || TryInvokeOrdinaryToPrimitive(value, out primitive))
+            if (TryCoerceObjectToPrimitive(value, "number", out var primitive))
             {
                 result = ToNumber(primitive);
                 return true;
@@ -262,22 +261,54 @@ namespace JavaScriptRuntime
             return false;
         }
 
+        internal static bool TryCoerceObjectToPrimitive(object value, string hint, out object? result)
+        {
+            if (value.GetType().IsValueType || value is string)
+            {
+                result = value;
+                return true;
+            }
+
+            if (TryInvokeToPrimitiveMethod(value, hint, out result)
+                || TryInvokeOrdinaryToPrimitive(value, hint, out result))
+            {
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
         private static bool TryInvokeToPrimitiveMethod(object receiver, string hint, out object? result)
         {
             var toPrimitive = ObjectRuntime.GetProperty(receiver, Symbol.toPrimitive.DebugId);
-            if (!IsCallable(toPrimitive))
+            if (toPrimitive is null || toPrimitive is JsNull)
             {
                 result = null;
                 return false;
             }
 
+            if (!IsCallable(toPrimitive))
+            {
+                throw new TypeError("@@toPrimitive must be callable.");
+            }
+
             result = InvokeWithThis(receiver, toPrimitive!, hint);
-            return IsPrimitive(result);
+            if (!IsPrimitive(result))
+            {
+                throw new TypeError("@@toPrimitive must return a primitive value.");
+            }
+
+            return true;
         }
 
-        private static bool TryInvokeOrdinaryToPrimitive(object receiver, out object? result)
+        private static bool TryInvokeOrdinaryToPrimitive(object receiver, string hint, out object? result)
         {
-            foreach (var methodName in new[] { "valueOf", "toString" })
+            var methodNames = string.Equals(hint, "string", StringComparison.Ordinal)
+                ? new[] { "toString", "valueOf" }
+                : new[] { "valueOf", "toString" };
+
+            foreach (var methodName in methodNames)
             {
                 var member = ObjectRuntime.GetProperty(receiver, methodName);
                 if (!IsCallable(member))
@@ -310,9 +341,9 @@ namespace JavaScriptRuntime
         }
 
         private static bool IsCallable(object? value)
-            => value is Delegate || value is ExpandoObject || value is Proxy;
+            => value is Delegate || value is Proxy proxy && proxy.IsCallableTarget;
 
-        private static bool IsPrimitive(object? value)
+        internal static bool IsPrimitive(object? value)
         {
             if (value is null || value is JsNull)
             {

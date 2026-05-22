@@ -85,6 +85,20 @@ function verifyProperty(obj, name, desc) {
   console.log(ok);
 }
 
+function verifyNotWritable(obj, name, verifyProp, value) {
+  var oldValue = obj[name];
+  var newValue = value || "unlikelyValue";
+  try {
+    obj[name] = newValue;
+  } catch (error) {}
+  if (!Object.is(obj[name], oldValue)) {
+    throw new Test262Error("Expected " + name + " to be non-writable");
+  }
+  if (verifyProp) {
+    verifyProperty(obj, name, { writable: false });
+  }
+}
+
 function Test262Error(message) {
   this.name = 'Test262Error';
   this.message = message || '';

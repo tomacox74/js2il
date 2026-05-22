@@ -429,6 +429,11 @@ namespace JavaScriptRuntime
 
         private static string NormalizeSource(object? pattern)
         {
+            if (pattern is null)
+            {
+                return string.Empty;
+            }
+
             if (pattern is RegExp existing)
             {
                 return existing.source;
