@@ -2072,13 +2072,28 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Implements the JavaScript Object(value) callable semantics: returns a new empty object
-        /// for null/undefined, otherwise returns the value unchanged (minimal behavior).
+        /// for null/undefined, boxes primitives, and returns object values unchanged.
         /// </summary>
         public static object Construct(object? value)
         {
             if (value is null || value is JsNull)
             {
                 return new JavaScriptRuntime.Object();
+            }
+
+            if (value is string or char[] or System.Text.StringBuilder)
+            {
+                return JavaScriptRuntime.String.Construct(new object?[] { value }, newTarget: null);
+            }
+
+            if (value is bool)
+            {
+                return new JavaScriptRuntime.Boolean(value);
+            }
+
+            if (value is double or float or int or long or short or byte or sbyte or uint or ulong or ushort)
+            {
+                return JavaScriptRuntime.Number.Construct(new object?[] { value }, newTarget: null);
             }
 
             return value;
@@ -2949,7 +2964,7 @@ namespace JavaScriptRuntime
                 case "indexOf":
                     result = argCount switch
                     {
-                        <= 0 => JavaScriptRuntime.String.IndexOf(input, string.Empty),
+                        <= 0 => JavaScriptRuntime.String.IndexOf(input, "undefined"),
                         1 => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0)),
                         _ => JavaScriptRuntime.String.IndexOf(input, DotNet2JSConversions.ToString(a0), a1)
                     };

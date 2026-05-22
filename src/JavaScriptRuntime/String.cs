@@ -30,39 +30,39 @@ namespace JavaScriptRuntime
         {
             var prototype = new ExpandoObject();
 
-            DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt);
-            DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt);
-            DefinePrototypeMethod(prototype, "charCodeAt", (Func<object[], object?[]?, object?>)PrototypeCharCodeAt);
-            DefinePrototypeMethod(prototype, "codePointAt", (Func<object[], object?[]?, object?>)PrototypeCodePointAt);
-            DefinePrototypeMethod(prototype, "endsWith", (Func<object[], object?[]?, object?>)PrototypeEndsWith);
-            DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes);
-            DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf);
-            DefinePrototypeMethod(prototype, "isWellFormed", (Func<object[], object?[]?, object?>)PrototypeIsWellFormed);
-            DefinePrototypeMethod(prototype, "lastIndexOf", (Func<object[], object?[]?, object?>)PrototypeLastIndexOf);
-            DefinePrototypeMethod(prototype, "localeCompare", (Func<object[], object?[]?, object?>)PrototypeLocaleCompare);
-            DefinePrototypeMethod(prototype, "match", (Func<object[], object?[]?, object?>)PrototypeMatch);
-            DefinePrototypeMethod(prototype, "matchAll", (Func<object[], object?[]?, object?>)PrototypeMatchAll);
-            DefinePrototypeMethod(prototype, "padEnd", (Func<object[], object?[]?, object?>)PrototypePadEnd);
-            DefinePrototypeMethod(prototype, "padStart", (Func<object[], object?[]?, object?>)PrototypePadStart);
-            DefinePrototypeMethod(prototype, "repeat", (Func<object[], object?[]?, object?>)PrototypeRepeat);
-            DefinePrototypeMethod(prototype, "replace", (Func<object[], object?[]?, object?>)PrototypeReplace);
-            DefinePrototypeMethod(prototype, "replaceAll", (Func<object[], object?[]?, object?>)PrototypeReplaceAll);
-            DefinePrototypeMethod(prototype, "search", (Func<object[], object?[]?, object?>)PrototypeSearch);
-            DefinePrototypeMethod(prototype, "slice", (Func<object[], object?[]?, object?>)PrototypeSlice);
-            DefinePrototypeMethod(prototype, "split", (Func<object[], object?[]?, object?>)PrototypeSplit);
-            DefinePrototypeMethod(prototype, "startsWith", (Func<object[], object?[]?, object?>)PrototypeStartsWith);
-            DefinePrototypeMethod(prototype, "substring", (Func<object[], object?[]?, object?>)PrototypeSubstring);
-            DefinePrototypeMethod(prototype, "toLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLowerCase);
-            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString);
-            DefinePrototypeMethod(prototype, "toUpperCase", (Func<object[], object?[]?, object?>)PrototypeToUpperCase);
-            DefinePrototypeMethod(prototype, "toWellFormed", (Func<object[], object?[]?, object?>)PrototypeToWellFormed);
-            DefinePrototypeMethod(prototype, "trim", (Func<object[], object?[]?, object?>)PrototypeTrim);
-            DefinePrototypeMethod(prototype, "trimEnd", (Func<object[], object?[]?, object?>)PrototypeTrimEnd);
-            DefinePrototypeMethod(prototype, "trimLeft", (Func<object[], object?[]?, object?>)PrototypeTrimStart);
-            DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)PrototypeTrimEnd);
-            DefinePrototypeMethod(prototype, "trimStart", (Func<object[], object?[]?, object?>)PrototypeTrimStart);
-            DefinePrototypeMethod(prototype, "valueOf", (Func<object[], object?[]?, object?>)PrototypeValueOf);
-            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator);
+            DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
+            DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt, 1);
+            DefinePrototypeMethod(prototype, "charCodeAt", (Func<object[], object?[]?, object?>)PrototypeCharCodeAt, 1);
+            DefinePrototypeMethod(prototype, "codePointAt", (Func<object[], object?[]?, object?>)PrototypeCodePointAt, 1);
+            DefinePrototypeMethod(prototype, "endsWith", (Func<object[], object?[]?, object?>)PrototypeEndsWith, 1);
+            DefinePrototypeMethod(prototype, "includes", (Func<object[], object?[]?, object?>)PrototypeIncludes, 1);
+            DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
+            DefinePrototypeMethod(prototype, "isWellFormed", (Func<object[], object?[]?, object?>)PrototypeIsWellFormed, 0);
+            DefinePrototypeMethod(prototype, "lastIndexOf", (Func<object[], object?[]?, object?>)PrototypeLastIndexOf, 1);
+            DefinePrototypeMethod(prototype, "localeCompare", (Func<object[], object?[]?, object?>)PrototypeLocaleCompare, 1);
+            DefinePrototypeMethod(prototype, "match", (Func<object[], object?[]?, object?>)PrototypeMatch, 1);
+            DefinePrototypeMethod(prototype, "matchAll", (Func<object[], object?[]?, object?>)PrototypeMatchAll, 1);
+            DefinePrototypeMethod(prototype, "padEnd", (Func<object[], object?[]?, object?>)PrototypePadEnd, 1);
+            DefinePrototypeMethod(prototype, "padStart", (Func<object[], object?[]?, object?>)PrototypePadStart, 1);
+            DefinePrototypeMethod(prototype, "repeat", (Func<object[], object?[]?, object?>)PrototypeRepeat, 1);
+            DefinePrototypeMethod(prototype, "replace", (Func<object[], object?[]?, object?>)PrototypeReplace, 2);
+            DefinePrototypeMethod(prototype, "replaceAll", (Func<object[], object?[]?, object?>)PrototypeReplaceAll, 2);
+            DefinePrototypeMethod(prototype, "search", (Func<object[], object?[]?, object?>)PrototypeSearch, 1);
+            DefinePrototypeMethod(prototype, "slice", (Func<object[], object?[]?, object?>)PrototypeSlice, 2);
+            DefinePrototypeMethod(prototype, "split", (Func<object[], object?[]?, object?>)PrototypeSplit, 2);
+            DefinePrototypeMethod(prototype, "startsWith", (Func<object[], object?[]?, object?>)PrototypeStartsWith, 1);
+            DefinePrototypeMethod(prototype, "substring", (Func<object[], object?[]?, object?>)PrototypeSubstring, 2);
+            DefinePrototypeMethod(prototype, "toLowerCase", (Func<object[], object?[]?, object?>)PrototypeToLowerCase, 0);
+            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "toUpperCase", (Func<object[], object?[]?, object?>)PrototypeToUpperCase, 0);
+            DefinePrototypeMethod(prototype, "toWellFormed", (Func<object[], object?[]?, object?>)PrototypeToWellFormed, 0);
+            DefinePrototypeMethod(prototype, "trim", (Func<object[], object?[]?, object?>)PrototypeTrim, 0);
+            DefinePrototypeMethod(prototype, "trimEnd", (Func<object[], object?[]?, object?>)PrototypeTrimEnd, 0);
+            DefinePrototypeMethod(prototype, "trimLeft", (Func<object[], object?[]?, object?>)PrototypeTrimStart, 0);
+            DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)PrototypeTrimEnd, 0);
+            DefinePrototypeMethod(prototype, "trimStart", (Func<object[], object?[]?, object?>)PrototypeTrimStart, 0);
+            DefinePrototypeMethod(prototype, "valueOf", (Func<object[], object?[]?, object?>)PrototypeValueOf, 0);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator, 0);
 
             return prototype;
         }
@@ -70,8 +70,8 @@ namespace JavaScriptRuntime
         private static ExpandoObject CreateStringIteratorPrototype()
         {
             var prototype = new ExpandoObject();
-            DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext);
-            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator);
+            DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext, 0);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0);
             PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -83,8 +83,13 @@ namespace JavaScriptRuntime
             return prototype;
         }
 
-        private static void DefinePrototypeMethod(object target, string key, object? value)
+        private static void DefinePrototypeMethod(object target, string key, object? value, double length)
         {
+            if (value is Delegate)
+            {
+                JavaScriptRuntime.Function.InitializeFunctionInstance(value, length, key);
+            }
+
             PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -97,6 +102,8 @@ namespace JavaScriptRuntime
 
         public static void ConfigureIntrinsicSurface(object stringConstructorValue)
         {
+            PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
+            PrototypeChain.SetPrototype(StringIteratorPrototype, GlobalThis.ObjectPrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(stringConstructorValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -105,10 +112,17 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = Prototype
             });
-            DefinePrototypeMethod(stringConstructorValue, "fromCharCode", (Func<object[], object?[]?, object?>)ConstructorFromCharCode);
-            DefinePrototypeMethod(stringConstructorValue, "fromCodePoint", (Func<object[], object?[]?, object?>)ConstructorFromCodePoint);
-            DefinePrototypeMethod(stringConstructorValue, "raw", (Func<object[], object?[]?, object?>)ConstructorRaw);
-            DefinePrototypeMethod(Prototype, "constructor", stringConstructorValue);
+            DefinePrototypeMethod(stringConstructorValue, "fromCharCode", (Func<object[], object?[]?, object?>)ConstructorFromCharCode, 1);
+            DefinePrototypeMethod(stringConstructorValue, "fromCodePoint", (Func<object[], object?[]?, object?>)ConstructorFromCodePoint, 1);
+            DefinePrototypeMethod(stringConstructorValue, "raw", (Func<object[], object?[]?, object?>)ConstructorRaw, 1);
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = stringConstructorValue
+            });
         }
 
         internal static bool TryGetPrototypeProperty(object receiver, string propertyKey, out object? value)
@@ -313,15 +327,7 @@ namespace JavaScriptRuntime
                 return defaultValue;
             }
 
-            double number;
-            try
-            {
-                number = TypeUtilities.ToNumber(value);
-            }
-            catch
-            {
-                return defaultValue;
-            }
+            double number = TypeUtilities.ToNumber(value);
 
             if (double.IsNaN(number))
             {
@@ -723,9 +729,7 @@ namespace JavaScriptRuntime
             {
                 if (value is null) return defaultValue;
 
-                double d;
-                try { d = TypeUtilities.ToNumber(value); }
-                catch { d = double.NaN; }
+                double d = TypeUtilities.ToNumber(value);
                 if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
                 if (double.IsPositiveInfinity(d)) d = length;
                 d = global::System.Math.Truncate(d);
@@ -754,14 +758,12 @@ namespace JavaScriptRuntime
         public static double IndexOf(string input, string searchString, object? position)
         {
             input ??= string.Empty;
-            searchString ??= string.Empty;
+            searchString = DotNet2JSConversions.ToString(searchString);
 
             int startIndex = 0;
             if (position is not null)
             {
-                double d;
-                try { d = TypeUtilities.ToNumber(position); }
-                catch { d = double.NaN; }
+                double d = TypeUtilities.ToNumber(position);
                 if (double.IsNaN(d) || double.IsNegativeInfinity(d)) d = 0;
                 if (double.IsPositiveInfinity(d)) d = input.Length;
                 d = global::System.Math.Truncate(d);
@@ -2309,31 +2311,10 @@ namespace JavaScriptRuntime
         private static int ToSplitLimit(object? limit)
         {
             if (limit == null) return int.MaxValue; // Omitted => effectively unlimited
-            try
-            {
-                double d;
-                switch (limit)
-                {
-                    case double dd: d = dd; break;
-                    case float ff: d = ff; break;
-                    case int ii: d = ii; break;
-                    case long ll: d = ll; break;
-                    case short ss: d = ss; break;
-                    case byte bb: d = bb; break;
-                    case string s when double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var pd):
-                        d = pd; break;
-                    case IConvertible conv:
-                        d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture); break;
-                    default:
-                        return int.MaxValue;
-                }
-                if (double.IsNaN(d) || d <= 0) return 0;
-                if (d > int.MaxValue) return int.MaxValue;
-                // Truncate toward zero
-                d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
-                return (int)d;
-            }
-            catch { return int.MaxValue; }
+
+            var uintLimit = TypeUtilities.ToUint32(limit);
+            if (uintLimit == 0) return 0;
+            return uintLimit > int.MaxValue ? int.MaxValue : (int)uintLimit;
         }
     }
 }
