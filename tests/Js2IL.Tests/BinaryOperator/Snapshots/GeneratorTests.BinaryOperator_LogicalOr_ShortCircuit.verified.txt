@@ -108,7 +108,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 162 (0xa2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope,
@@ -136,51 +136,52 @@
 		IL_0022: ldc.i4.0
 		IL_0023: conv.r8
 		IL_0024: ldstr "inc"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string)
-		IL_002e: stloc.3
-		IL_002f: ldloc.3
-		IL_0030: stloc.1
-		IL_0031: ldloc.0
-		IL_0032: ldc.r8 0.0
-		IL_003b: box [System.Runtime]System.Double
-		IL_0040: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-		IL_0045: ldc.i4.1
-		IL_0046: box [System.Runtime]System.Boolean
-		IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0050: stloc.s 4
-		IL_0052: ldloc.s 4
-		IL_0054: brtrue IL_0084
+		IL_0029: ldc.i4.0
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
+		IL_002f: stloc.3
+		IL_0030: ldloc.3
+		IL_0031: stloc.1
+		IL_0032: ldloc.0
+		IL_0033: ldc.r8 0.0
+		IL_003c: box [System.Runtime]System.Double
+		IL_0041: stfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+		IL_0046: ldc.i4.1
+		IL_0047: box [System.Runtime]System.Boolean
+		IL_004c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0051: stloc.s 4
+		IL_0053: ldloc.s 4
+		IL_0055: brtrue IL_0085
 
-		IL_0059: ldc.i4.1
-		IL_005a: newarr [System.Runtime]System.Object
-		IL_005f: dup
-		IL_0060: ldc.i4.0
-		IL_0061: ldloc.0
-		IL_0062: stelem.ref
-		IL_0063: ldc.i4.0
-		IL_0064: ldelem.ref
-		IL_0065: castclass Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope
-		IL_006a: ldftn object Modules.BinaryOperator_LogicalOr_ShortCircuit/inc::__js_call__(class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope, object)
-		IL_0070: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0075: ldnull
-		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
-		IL_007b: stloc.3
-		IL_007c: ldloc.3
-		IL_007d: stloc.s 6
-		IL_007f: br IL_008c
+		IL_005a: ldc.i4.1
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldloc.0
+		IL_0063: stelem.ref
+		IL_0064: ldc.i4.0
+		IL_0065: ldelem.ref
+		IL_0066: castclass Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope
+		IL_006b: ldftn object Modules.BinaryOperator_LogicalOr_ShortCircuit/inc::__js_call__(class Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope, object)
+		IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0076: ldnull
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::Invoke(object)
+		IL_007c: stloc.3
+		IL_007d: ldloc.3
+		IL_007e: stloc.s 6
+		IL_0080: br IL_008d
 
-		IL_0084: ldc.i4.1
-		IL_0085: box [System.Runtime]System.Boolean
-		IL_008a: stloc.s 6
+		IL_0085: ldc.i4.1
+		IL_0086: box [System.Runtime]System.Boolean
+		IL_008b: stloc.s 6
 
-		IL_008c: ldloc.s 6
-		IL_008e: stloc.2
-		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0094: ldloc.0
-		IL_0095: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
-		IL_009a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009f: pop
-		IL_00a0: ret
+		IL_008d: ldloc.s 6
+		IL_008f: stloc.2
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: ldloc.0
+		IL_0096: ldfld object Modules.BinaryOperator_LogicalOr_ShortCircuit/Scope::x
+		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a0: pop
+		IL_00a1: ret
 	} // end of method BinaryOperator_LogicalOr_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalOr_ShortCircuit
