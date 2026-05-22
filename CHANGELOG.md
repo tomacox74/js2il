@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.23 - 2026-05-22
+
 - runtime/tests/docs/test262: close issue #1046 by unskipping the remaining `String.prototype.indexOf`, `slice`, and `split` test262 ports, fixing boxed primitive/string coercion, callable metadata/prototype wiring for String built-ins, object-to-primitive ordering, split limit coercion, and empty `RegExp` split behavior.
 - tests/test262: close issue #1048 by keeping the class-family test262 ports unskipped and running the duplicate-basename computed-yield class statement ports out-of-process so the full class slice no longer races on generated assembly identity.
 - compiler/runtime/tests/test262: fix issue #1049 by supporting computed object destructuring keys, iterator-protocol array destructuring close ordering, Proxy-aware object rest copy semantics, and with-environment binding probes needed by the related test262 destructuring ports.
