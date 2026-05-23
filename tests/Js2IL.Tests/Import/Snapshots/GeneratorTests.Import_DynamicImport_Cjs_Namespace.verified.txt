@@ -625,8 +625,8 @@
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[2] object
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope::.ctor()
@@ -635,28 +635,28 @@
 		IL_0007: ldc.r8 1
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope::'value'
-		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_001f: stloc.1
-		IL_0020: ldc.i4.1
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: dup
-		IL_0027: ldc.i4.0
-		IL_0028: ldloc.0
-		IL_0029: stelem.ref
-		IL_002a: ldc.i4.0
-		IL_002b: ldelem.ref
-		IL_002c: castclass Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope
-		IL_0031: ldftn object Modules.Import_DynamicImport_Cjs_Namespace_Lib/FunctionExpression_L6C7::__js_call__(class Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope, object)
-		IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_003c: ldc.i4.0
-		IL_003d: conv.r8
-		IL_003e: ldstr ""
-		IL_0043: ldc.i4.0
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
+		IL_001a: ldc.i4.1
+		IL_001b: newarr [System.Runtime]System.Object
+		IL_0020: dup
+		IL_0021: ldc.i4.0
+		IL_0022: ldloc.0
+		IL_0023: stelem.ref
+		IL_0024: ldc.i4.0
+		IL_0025: ldelem.ref
+		IL_0026: castclass Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope
+		IL_002b: ldftn object Modules.Import_DynamicImport_Cjs_Namespace_Lib/FunctionExpression_L6C7::__js_call__(class Modules.Import_DynamicImport_Cjs_Namespace_Lib/Scope, object)
+		IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0036: ldc.i4.0
+		IL_0037: conv.r8
+		IL_0038: ldstr ""
+		IL_003d: ldc.i4.0
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
+		IL_0043: stloc.1
+		IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
 		IL_0049: stloc.2
-		IL_004a: ldloc.1
+		IL_004a: ldloc.2
 		IL_004b: ldstr "inc"
-		IL_0050: ldloc.2
+		IL_0050: ldloc.1
 		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, string, object)
 		IL_0056: pop
 		IL_0057: ldc.i4.1
@@ -675,16 +675,16 @@
 		IL_0075: ldstr ""
 		IL_007a: ldc.i4.0
 		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-		IL_0080: stloc.2
-		IL_0081: ldloc.1
+		IL_0080: stloc.1
+		IL_0081: ldloc.2
 		IL_0082: ldstr "value"
-		IL_0087: ldloc.2
+		IL_0087: ldloc.1
 		IL_0088: ldnull
 		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralAccessorProperty(object, object, object, object)
 		IL_008e: pop
 		IL_008f: ldarg.2
 		IL_0090: ldstr "exports"
-		IL_0095: ldloc.1
+		IL_0095: ldloc.2
 		IL_0096: ldc.i4.1
 		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_009c: pop

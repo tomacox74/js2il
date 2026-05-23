@@ -1,4 +1,4 @@
-// IL code: Function_Prototype_ObjectCreate_ObjectPrototype
+﻿// IL code: Function_Prototype_ObjectCreate_ObjectPrototype
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216a
+				// Method begins at RVA 0x217d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,7 +89,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2173
+				// Method begins at RVA 0x2186
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -113,18 +113,26 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Method begins at RVA 0x2144
-			// Header size: 1
-			// Code size: 28 (0x1c)
+			// Header size: 12
+			// Code size: 36 (0x24)
 			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_000a: ldstr "type"
-			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0019: pop
-			IL_001a: ldnull
-			IL_001b: ret
+			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
+			IL_0005: stloc.1
+			IL_0006: ldloc.1
+			IL_0007: stloc.0
+			IL_0008: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0012: ldstr "type"
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0021: pop
+			IL_0022: ldnull
+			IL_0023: ret
 		} // end of method dumpToConsole::__js_call__
 
 	} // end of class dumpToConsole
@@ -143,7 +151,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2161
+			// Method begins at RVA 0x2174
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -203,7 +211,7 @@
 		IL_003e: ldc.i4.0
 		IL_003f: conv.r8
 		IL_0040: ldstr "dumpToConsole"
-		IL_0045: ldc.i4.0
+		IL_0045: ldc.i4.1
 		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
 		IL_004b: stloc.s 4
 		IL_004d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -255,7 +263,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217c
+		// Method begins at RVA 0x218f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
