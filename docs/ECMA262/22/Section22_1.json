@@ -495,9 +495,11 @@
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.indexof",
         "testScripts": [
           "tests/Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/String/prototype/indexOf/JavaScript/position-tointeger.js",
+          "tests/Js2IL.Test262.Tests/built-ins/String/prototype/indexOf/JavaScript/S15.5.4.7_A3_T1.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.String.IndexOf and routed via JavaScriptRuntime.Object string member-call fast paths. Current bounded test262 coverage exercises boxed receivers, zero-argument ToString(undefined) behavior, function-object metadata, and representative position-coercion cases.",
+        "notes": "Implemented in JavaScriptRuntime.String.IndexOf and routed via JavaScriptRuntime.Object string member-call fast paths. Current bounded test262 coverage exercises boxed receivers, zero-argument ToString(undefined) behavior, function-object metadata, and representative position-coercion cases including array object-to-primitive coercion.",
         "test262Paths": [
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A1_T1.js",
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A1_T4.js",
@@ -509,7 +511,9 @@
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T1.js",
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T2.js",
           "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T3.js",
-          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T4.js"
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A2_T4.js",
+          "test/built-ins/String/prototype/indexOf/position-tointeger.js",
+          "test/built-ins/String/prototype/indexOf/S15.5.4.7_A3_T1.js"
         ]
       },
       {
@@ -664,9 +668,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype.slice",
         "testScripts": [
-          "tests/Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js"
+          "tests/Js2IL.Tests/String/JavaScript/String_MemberCall_FastPath_CommonMethods.js",
+          "tests/Js2IL.Test262.Tests/built-ins/String/prototype/slice/JavaScript/S15.5.4.13_A2_T1.js",
+          "tests/Js2IL.Test262.Tests/built-ins/String/prototype/slice/JavaScript/S15.5.4.13_A2_T2.js",
+          "tests/Js2IL.Test262.Tests/built-ins/String/prototype/slice/JavaScript/S15.5.4.13_A2_T3.js"
         ],
-        "notes": "Implemented in JavaScriptRuntime.String.Slice with ToIntegerOrInfinity-style coercion, negative index handling, and abrupt-completion propagation from object start/end coercions. Current bounded test262 coverage exercises boxed receivers, function-object receivers, metadata attributes, and representative negative/omitted bound cases.",
+        "notes": "Implemented in JavaScriptRuntime.String.Slice with ToIntegerOrInfinity-style coercion, negative index handling, and abrupt-completion propagation from object start/end coercions. Current bounded test262 coverage exercises boxed receivers, function-object receivers, metadata attributes, empty-string cases, and representative negative/omitted bound cases.",
         "test262Paths": [
           "test/built-ins/String/prototype/slice/S15.5.4.13_A1_T1.js",
           "test/built-ins/String/prototype/slice/S15.5.4.13_A1_T2.js",
@@ -678,7 +685,10 @@
           "test/built-ins/String/prototype/slice/S15.5.4.13_A1_T10.js",
           "test/built-ins/String/prototype/slice/S15.5.4.13_A1_T15.js",
           "test/built-ins/String/prototype/slice/S15.5.4.13_A10.js",
-          "test/built-ins/String/prototype/slice/S15.5.4.13_A11.js"
+          "test/built-ins/String/prototype/slice/S15.5.4.13_A11.js",
+          "test/built-ins/String/prototype/slice/S15.5.4.13_A2_T1.js",
+          "test/built-ins/String/prototype/slice/S15.5.4.13_A2_T2.js",
+          "test/built-ins/String/prototype/slice/S15.5.4.13_A2_T3.js"
         ]
       },
       {

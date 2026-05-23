@@ -143,11 +143,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_4_4_21_10_2()
         => ExecutionTestFromFile("15.4.4.21-10-2");
 
-    [Fact(DisplayName = "15.4.4.21-10-3", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "15.4.4.21-10-3")]
     public Task _15_4_4_21_10_3()
         => ExecutionTestFromFile("15.4.4.21-10-3");
 
-    [Fact(DisplayName = "15.4.4.21-10-4", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "15.4.4.21-10-4")]
     public Task _15_4_4_21_10_4()
         => ExecutionTestFromFile("15.4.4.21-10-4");
 

@@ -22,6 +22,8 @@ namespace JavaScriptRuntime
             var exp = new ExpandoObject();
             var dict = (IDictionary<string, object?>)exp;
             var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
+            DefinePrototypeMethod(exp, "join", (Func<object[], object?[]?, object?>)PrototypeJoin, 1);
+            DefinePrototypeMethod(exp, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
             DefinePrototypeMethod(exp, "push", (Func<object[], object?[]?, object?>)PrototypePush, 1);
             DefinePrototypeMethod(exp, "reduce", (Func<object[], object?[]?, object?>)PrototypeReduce, 1);
             DefinePrototypeMethod(exp, "reduceRight", (Func<object[], object?[]?, object?>)PrototypeReduceRight, 1);
@@ -115,6 +117,28 @@ namespace JavaScriptRuntime
             {
                 _items.Add(Hole);
             }
+        }
+
+        private static object PrototypeJoin(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is not JavaScriptRuntime.Array jsArray)
+            {
+                throw new TypeError("Array.prototype.join called on non-array");
+            }
+
+            return jsArray.join(ToNonNullableObjectArray(args));
+        }
+
+        private static object PrototypeToString(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is not JavaScriptRuntime.Array jsArray)
+            {
+                throw new TypeError("Array.prototype.toString called on non-array");
+            }
+
+            return jsArray.toString(ToNonNullableObjectArray(args));
         }
 
         private static object PrototypePush(object[] scopes, object?[]? args)
@@ -571,6 +595,22 @@ namespace JavaScriptRuntime
             }
 
             return receiver;
+        }
+
+        private static object[]? ToNonNullableObjectArray(object?[]? args)
+        {
+            if (args is null)
+            {
+                return null;
+            }
+
+            var converted = new object[args.Length];
+            for (int i = 0; i < args.Length; i++)
+            {
+                converted[i] = args[i]!;
+            }
+
+            return converted;
         }
 
         private static bool TryGetStringObjectValue(object receiver, out string value)
@@ -1164,7 +1204,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool isArray(object? value)
         {
-            return value is Array;
+            return value is Array || ReferenceEquals(value, Prototype);
         }
 
         /// <summary>

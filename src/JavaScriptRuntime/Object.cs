@@ -3761,6 +3761,13 @@ namespace JavaScriptRuntime
                     return true;
                 }
 
+                if (ObjectRuntime.TryParseCanonicalIndexString(propName, out var index)
+                    && array.HasOwnIndex(index))
+                {
+                    value = array[index];
+                    return true;
+                }
+
                 value = null;
                 return false;
             }
