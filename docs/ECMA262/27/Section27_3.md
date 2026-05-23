@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-23T12:48:22Z
 
 _Lists clause numbers/titles/links only (no spec text) in the index above. See appendix for extracted spec text._
 
@@ -31,11 +31,17 @@ _Lists clause numbers/titles/links only (no spec text) in the index above. See a
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 27.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Generator function declarations/expressions (`function*`) compile and return generator objects | Supported | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js) | JS2IL supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics. |
-| GeneratorFunction instance `length` metadata is exposed through `Object.getPrototypeOf(function*() {}).constructor.length` | Supported with Limitations | [`GeneratorFunction_Instance_Length_Metadata.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/GeneratorFunction_Instance_Length_Metadata.js) | Generator function values surface a stable constructor object with the expected `length` descriptor, but the broader `GeneratorFunction` intrinsic constructor/prototype surface remains incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generator function declarations/expressions (`function*`) compile and return generator objects | Supported | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js) |  | JS2IL supports generator syntax (`function*`, `yield`, `yield*`) but does not currently expose a spec-shaped `GeneratorFunction` constructor/prototype as global intrinsics. |
+
+### 27.3.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-generatorfunction-instances-length))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| GeneratorFunction instance `length` metadata is exposed through `Object.getPrototypeOf(function*() {}).constructor.length` | Supported with Limitations | [`GeneratorFunction_length.js`](../../../tests/Js2IL.Test262.Tests/built-ins/GeneratorFunction/JavaScript/GeneratorFunction_length.js) |  | Generator function values surface a stable constructor object with the expected `length` descriptor, but the broader `GeneratorFunction` intrinsic constructor/prototype surface remains incomplete. |
+
