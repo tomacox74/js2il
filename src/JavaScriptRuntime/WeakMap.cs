@@ -59,7 +59,7 @@ namespace JavaScriptRuntime
         {
             if (entry is null || entry is JsNull)
             {
-                throw new TypeError("Iterator value must be an object");
+                throw new TypeError("Iterator value must be an object or function");
             }
 
             var entryType = TypeUtilities.Typeof(entry);
