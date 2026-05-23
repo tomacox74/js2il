@@ -62,6 +62,7 @@ internal sealed partial class LIRToILCompiler
     {
         return callableId.NeedsArgumentsObject
             || callableId.HasRestParameters
+            || callableId.AstNode is FunctionExpression { Id: not null }
             || ContainsMetaProperty(callableId.AstNode);
     }
 

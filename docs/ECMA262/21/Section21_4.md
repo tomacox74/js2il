@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-23T08:21:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -112,36 +112,36 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 21.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-overview-of-date-objects-and-definitions-of-abstract-operations))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| new Date() (current time) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
-| new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| new Date() (current time) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
+| new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Array/prototype/every/15.4.4.16-1-11.js`<br>`test/built-ins/Array/prototype/map/15.4.4.19-1-11.js`<br>`test/built-ins/Array/prototype/filter/15.4.4.20-1-11.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-11.js` | Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date. |
 
 ### 21.4.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-date))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Date.now() | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` | Returns current time in milliseconds since Unix epoch as a number (boxed double). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.now() | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` |  | Returns current time in milliseconds since Unix epoch as a number (boxed double). |
 
 ### 21.4.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-date.parse))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Date.parse(string) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs`<br>[`Date_Parse_IsoString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Parse_IsoString.js) | Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.parse(string) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs`<br>[`Date_Parse_IsoString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Parse_IsoString.js) |  | Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double). |
 
 ### 21.4.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettime))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Date.prototype.getTime | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | Returns milliseconds since Unix epoch as a number (boxed double). |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.prototype.getTime | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns milliseconds since Unix epoch as a number (boxed double). |
 
 ### 21.4.3.27 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.toisostring))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Date.prototype.toISOString | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date.prototype.toISOString | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
 

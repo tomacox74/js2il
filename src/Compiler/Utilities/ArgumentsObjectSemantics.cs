@@ -130,6 +130,16 @@ internal static class ArgumentsObjectSemantics
 
         foreach (var statement in statements)
         {
+            if (statement is Directive directiveStatement)
+            {
+                if (string.Equals(directiveStatement.Value, "use strict", StringComparison.Ordinal))
+                {
+                    return true;
+                }
+
+                continue;
+            }
+
             if (statement is not ExpressionStatement expressionStatement
                 || expressionStatement.Expression is not Literal literal
                 || literal.Value is not string directive)

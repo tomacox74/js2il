@@ -35,6 +35,8 @@ public class GeneratorScope
     public object? _genPendingReturnValue;
     public bool _hasGenPendingReturn;
 
+    public object? _thisValue;
+
     public int GenState
     {
         get => _genState;
@@ -81,5 +83,11 @@ public class GeneratorScope
     {
         get => _hasReturn;
         set => _hasReturn = value;
+    }
+
+    public object? ThisValue
+    {
+        get => _thisValue;
+        set => _thisValue = value;
     }
 }

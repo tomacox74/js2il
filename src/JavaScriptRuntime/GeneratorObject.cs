@@ -32,6 +32,7 @@ public sealed class GeneratorObject
         _step = step ?? throw new ArgumentNullException(nameof(step));
         _scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
         _args = args ?? throw new ArgumentNullException(nameof(args));
+        GetLeafScope().ThisValue = RuntimeServices.GetCurrentThis();
         InitializeGeneratorSurface(this);
     }
 
@@ -89,13 +90,17 @@ public sealed class GeneratorObject
             return functionValue;
         }
 
-        if (PrototypeChain.GetPrototypeOrNull(del) == null)
+        if (!ReferenceEquals(PrototypeChain.GetPrototypeOrNull(del), GeneratorFunctionPrototype))
         {
             PrototypeChain.SetPrototype(del, GeneratorFunctionPrototype);
         }
 
         return del;
     }
+
+    internal static bool IsGeneratorFunctionValue(object? functionValue)
+        => functionValue is Delegate del
+           && ReferenceEquals(PrototypeChain.GetPrototypeOrNull(del), GeneratorFunctionPrototype);
 
     private static void DefineDataProperty(object target, string key, object? value)
     {
@@ -174,7 +179,7 @@ public sealed class GeneratorObject
 
         try
         {
-            return Closure.InvokeWithArgs(_step, _scopes, _args);
+            return InvokeStepWithCapturedThis(scope);
         }
         catch
         {
@@ -205,7 +210,7 @@ public sealed class GeneratorObject
 
         try
         {
-            return Closure.InvokeWithArgs(_step, _scopes, _args);
+            return InvokeStepWithCapturedThis(scope);
         }
         catch
         {
@@ -235,12 +240,25 @@ public sealed class GeneratorObject
 
         try
         {
-            return Closure.InvokeWithArgs(_step, _scopes, _args);
+            return InvokeStepWithCapturedThis(scope);
         }
         catch
         {
             scope.Done = true;
             throw;
+        }
+    }
+
+    private object InvokeStepWithCapturedThis(GeneratorScope scope)
+    {
+        var previousThis = RuntimeServices.SetCurrentThis(RuntimeServices.ResolveLexicalThis(scope.ThisValue));
+        try
+        {
+            return Closure.InvokeWithArgs(_step, _scopes, _args);
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentThis(previousThis);
         }
     }
 }

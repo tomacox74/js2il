@@ -749,6 +749,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Array), Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Array), dict[nameof(GlobalThis.Array)]);
 
+            dict.TryAdd(nameof(GlobalThis.Date), Date);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Date), dict[nameof(GlobalThis.Date)]);
+
             dict.TryAdd(nameof(GlobalThis.Promise), Promise);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
 
@@ -953,6 +956,8 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        public static Type Date => typeof(JavaScriptRuntime.Date);
 
         public static Delegate Promise => _promiseConstructorValue;
 

@@ -50,7 +50,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _11_13_1_4_27_s()
         => ExecutionTest("11.13.1-4-27-s");
 
-    [Fact(DisplayName = "11.13.1-4-28gs", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "11.13.1-4-28gs")]
     public Task _11_13_1_4_28gs()
         => ExecutionTest("11.13.1-4-28gs");
 }

@@ -988,19 +988,6 @@ namespace Js2IL.SymbolTables
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
                         BuildFunctionParameterScopes(globalScope, funcDecl.Params, funcScope);
 
-                        if (funcScope.IsGenerator)
-                        {
-                            // Generator frames suspend/resume; parameter bindings must live on the leaf scope.
-                            // Mark parameters as captured so they are backed by scope fields.
-                            foreach (var p in funcScope.Parameters.Where(funcScope.Bindings.ContainsKey))
-                            {
-                                funcScope.Bindings[p].IsCaptured = true;
-                            }
-                            foreach (var p in funcScope.DestructuredParameters.Where(funcScope.Bindings.ContainsKey))
-                            {
-                                funcScope.Bindings[p].IsCaptured = true;
-                            }
-                        }
                         if (funcDecl.Body is BlockStatement fblock)
                         {
                             foreach (var statement in fblock.Body)
@@ -1012,6 +999,10 @@ namespace Js2IL.SymbolTables
                         }
 
                         AddImplicitArgumentsBinding(funcScope);
+                        if (funcScope.IsGenerator)
+                        {
+                            MarkGeneratorFrameBindingsAsCaptured(funcScope);
+                        }
                         break;
                 case FunctionExpression funcExpr:
                     // Global de-duplication: if we've already processed this exact FunctionExpression node,
@@ -1055,17 +1046,6 @@ namespace Js2IL.SymbolTables
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
                     BuildFunctionParameterScopes(globalScope, funcExpr.Params, funcExprScope);
 
-                    if (funcExprScope.IsGenerator)
-                    {
-                        foreach (var p in funcExprScope.Parameters.Where(funcExprScope.Bindings.ContainsKey))
-                        {
-                            funcExprScope.Bindings[p].IsCaptured = true;
-                        }
-                        foreach (var p in funcExprScope.DestructuredParameters.Where(funcExprScope.Bindings.ContainsKey))
-                        {
-                            funcExprScope.Bindings[p].IsCaptured = true;
-                        }
-                    }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
@@ -1079,6 +1059,10 @@ namespace Js2IL.SymbolTables
                     }
 
                     AddImplicitArgumentsBinding(funcExprScope);
+                    if (funcExprScope.IsGenerator)
+                    {
+                        MarkGeneratorFrameBindingsAsCaptured(funcExprScope);
+                    }
                     break;
                 case VariableDeclaration varDecl:
                     foreach (var decl in varDecl.Declarations)
@@ -2308,6 +2292,16 @@ namespace Js2IL.SymbolTables
             foreach (var parameter in parameters)
             {
                 BuildScopeRecursive(globalScope, parameter, functionScope);
+            }
+        }
+
+        private static void MarkGeneratorFrameBindingsAsCaptured(Scope functionScope)
+        {
+            // Generator frames can suspend before ordinary local variables are consumed again.
+            // Store every function-scope binding on the scope object so it survives resume.
+            foreach (var binding in functionScope.Bindings.Values)
+            {
+                binding.IsCaptured = true;
             }
         }
 

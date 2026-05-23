@@ -1227,6 +1227,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (ctor is Type ctorType && ctorType.IsInstanceOfType(value))
+            {
+                return true;
+            }
+
             if (!JavaScriptRuntime.PrototypeChain.Enabled)
             {
                 // If prototype chains are not enabled/assigned, we cannot observe any inheritance.

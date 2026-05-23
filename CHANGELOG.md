@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/docs/test262: unskip supported non-eval test262 ports covering Date constructor visibility, strict assignment to read-only intrinsic data properties, named function-expression self bindings, and generator method construction/call semantics while keeping eval-dependent cases explicitly skipped.
 
 ## v0.9.24 - 2026-05-22
 

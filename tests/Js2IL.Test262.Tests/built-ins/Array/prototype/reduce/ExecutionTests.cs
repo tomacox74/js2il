@@ -14,7 +14,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_4_4_21_1_10()
         => ExecutionTestFromFile("15.4.4.21-1-10");
 
-    [Fact(DisplayName = "15.4.4.21-1-11", Skip = "Blocked: Date global constructor is not supported yet.")]
+    [Fact(DisplayName = "15.4.4.21-1-11")]
     public Task _15_4_4_21_1_11()
         => ExecutionTestFromFile("15.4.4.21-1-11");
 

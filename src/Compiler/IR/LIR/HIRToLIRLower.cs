@@ -158,6 +158,11 @@ public sealed partial class HIRToLIRLowerer
         // with awaits need a scope instance even if there are no captured variables.
         lowerer.EmitScopeInstanceCreationIfNeeded();
 
+        if (!lowerer.EmitNamedFunctionExpressionBindingInitialization())
+        {
+            return false;
+        }
+
         // For generators, emit one-time parameter initialization guarded by GeneratorScope._started,
         // then emit a state switch based on GeneratorScope._genState.
         if (isGenerator)
@@ -444,6 +449,30 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.NeedsLeafScopeLocal = true;
         _methodBodyIR.LeafScopeId = scopeId;
         return true;
+    }
+
+    private bool EmitNamedFunctionExpressionBindingInitialization()
+    {
+        if (_scope?.AstNode is not FunctionExpression { Id: Identifier identifier })
+        {
+            return true;
+        }
+
+        if (!_scope.Bindings.TryGetValue(identifier.Name, out var binding)
+            || binding.Kind != BindingKind.Function
+            || !ReferenceEquals(binding.DeclarationNode, _scope.AstNode))
+        {
+            return true;
+        }
+
+        var calleeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            MethodName: nameof(JavaScriptRuntime.RuntimeServices.GetCurrentCallee),
+            Arguments: Array.Empty<TempVariable>(),
+            Result: calleeTemp));
+        DefineTempStorage(calleeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        return TryStoreToBinding(binding, calleeTemp, out _);
     }
 
     /// <summary>

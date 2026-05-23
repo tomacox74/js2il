@@ -406,7 +406,13 @@
         "testScripts": [
           "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
         ],
-        "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis."
+        "test262Paths": [
+          "test/language/expressions/object/method-definition/fn-name-gen.js",
+          "test/language/expressions/object/method-definition/generator-invoke-ctor.js",
+          "test/language/expressions/object/method-definition/generator-invoke-fn-no-strict.js",
+          "test/language/expressions/object/method-definition/generator-invoke-fn-strict.js"
+        ],
+        "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis. Generator method values initialize the generator-function surface, reject construction with TypeError, and remain callable as generator functions."
       },
       {
         "clause": "13.2.5.1",

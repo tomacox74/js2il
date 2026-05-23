@@ -606,7 +606,7 @@ public sealed partial class HIRToLIRLowerer
                                     resultTempVar = CreateTempVariable();
                                     var parentIndex = storage.ParentScopeIndex;
                                     if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                        || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                        || _methodBodyIR.IsGenerator)
                                     {
                                         // Resumables prepend leaf scope at scopes[0], shifting parents right by one.
                                         parentIndex += 1;
