@@ -150,6 +150,19 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(convertToNumber.Result, ilEncoder, allocation);
                 break;
 
+            case LIRConvertToNumberDiscard convertToNumberDiscard:
+                EmitLoadTempAsObject(convertToNumberDiscard.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toNumberMref);
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                }
+                break;
+
             case LIRConvertToBoolean convertToBoolean:
                 if (!IsMaterialized(convertToBoolean.Result, allocation))
                 {

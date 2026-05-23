@@ -359,6 +359,11 @@ public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVaria
 public record LIRConvertToNumber(TempVariable Source, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Performs ToNumber for its observable coercion effects when the converted value is discarded.
+/// </summary>
+public record LIRConvertToNumberDiscard(TempVariable Source) : LIRInstruction;
+
+/// <summary>
 /// Converts a value (typically an object) to a JavaScript boolean (truthiness) using runtime coercion.
 /// </summary>
 public record LIRConvertToBoolean(TempVariable Source, TempVariable Result) : LIRInstruction;

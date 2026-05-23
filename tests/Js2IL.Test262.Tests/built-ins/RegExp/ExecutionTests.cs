@@ -30,7 +30,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _15_10_4_1_3()
         => ExecutionTest("15.10.4.1-3");
 
-    [Fact(DisplayName = "15.10.4.1-4", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "15.10.4.1-4")]
     public Task _15_10_4_1_4()
         => ExecutionTest("15.10.4.1-4");
 

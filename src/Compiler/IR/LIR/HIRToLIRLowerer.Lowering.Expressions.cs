@@ -33,6 +33,24 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (expression is HIRCallExpression
+            {
+                Callee: HIRVariableExpression { Name.Kind: BindingKind.Global, Name.Name: "Number" }
+            } numberCall)
+        {
+            if (!TryEvaluateCallArguments(numberCall.Arguments, 1, out var args))
+            {
+                return false;
+            }
+
+            if (args.Count > 0)
+            {
+                _methodBodyIR.Instructions.Add(new LIRConvertToNumberDiscard(args[0]));
+            }
+
+            return true;
+        }
+
         return TryLowerExpression(expression, out _);
     }
 
