@@ -9,4 +9,21 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "calling-from-valid-1-noStrict")]
     public Task calling_from_valid_1_noStrict()
         => ExecutionTest("calling-from-valid-1-noStrict");
+
+    [Fact(DisplayName = "array-like-has-length-but-no-indexes-with-values")]
+    public Task array_like_has_length_but_no_indexes_with_values()
+        => ExecutionTest("array-like-has-length-but-no-indexes-with-values");
+
+    [Fact(DisplayName = "Array.from-descriptor")]
+    public Task Array_from_descriptor()
+        => ExecutionTest("Array.from-descriptor");
+
+    [Fact(DisplayName = "Array.from-name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task Array_from_name()
+        => ExecutionTest("Array.from-name");
+
+    [Fact(DisplayName = "Array.from_arity", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task Array_from_arity()
+        => ExecutionTest("Array.from_arity");
+
 }

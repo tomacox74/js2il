@@ -21,4 +21,17 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "S15.8.2.1_A3")]
     public Task S15_8_2_1_A3()
         => ExecutionTest("S15.8.2.1_A3");
+
+    [Fact(DisplayName = "length", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task length()
+        => ExecutionTest("length");
+
+    [Fact(DisplayName = "name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task name()
+        => ExecutionTest("name");
+
+    [Fact(DisplayName = "prop-desc", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task prop_desc()
+        => ExecutionTest("prop-desc");
+
 }

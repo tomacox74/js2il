@@ -25,4 +25,16 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "empty-statement")]
     public Task empty_statement()
         => ExecutionTest("empty-statement");
+    [Fact(DisplayName = "S12.5_A1_T1")]
+    public Task S12_5_A1_T1()
+        => ExecutionTest("S12.5_A1_T1");
+
+    [Fact(DisplayName = "S12.5_A1.1_T1")]
+    public Task S12_5_A1_1_T1()
+        => ExecutionTest("S12.5_A1.1_T1");
+
+    [Fact(DisplayName = "S12.5_A1.2_T1")]
+    public Task S12_5_A1_2_T1()
+        => ExecutionTest("S12.5_A1.2_T1");
+
 }

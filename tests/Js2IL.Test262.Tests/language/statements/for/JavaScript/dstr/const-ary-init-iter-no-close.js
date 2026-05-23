@@ -1,0 +1,115 @@
+// This file was procedurally generated from the following sources:
+// - src/dstr-binding/ary-init-iter-no-close.case
+// - src/dstr-binding/default/for-const.template
+/*---
+description: Iterator is not closed when exhausted by pattern evaluation (for statement)
+esid: sec-for-statement-runtime-semantics-labelledevaluation
+features: [Symbol.iterator, destructuring-binding]
+flags: [generated]
+info: |
+    IterationStatement :
+        for ( LexicalDeclaration Expressionopt ; Expressionopt ) Statement
+
+    [...]
+    7. Let forDcl be the result of evaluating LexicalDeclaration.
+    [...]
+
+    LexicalDeclaration : LetOrConst BindingList ;
+
+    1. Let next be the result of evaluating BindingList.
+    2. ReturnIfAbrupt(next).
+    3. Return NormalCompletion(empty).
+
+    BindingList : BindingList , LexicalBinding
+
+    1. Let next be the result of evaluating BindingList.
+    2. ReturnIfAbrupt(next).
+    3. Return the result of evaluating LexicalBinding.
+
+    LexicalBinding : BindingPattern Initializer
+
+    1. Let rhs be the result of evaluating Initializer.
+    2. Let value be GetValue(rhs).
+    3. ReturnIfAbrupt(value).
+    4. Let env be the running execution context’s LexicalEnvironment.
+    5. Return the result of performing BindingInitialization for BindingPattern
+       using value and env as the arguments.
+
+    13.3.3.5 Runtime Semantics: BindingInitialization
+
+    BindingPattern : ArrayBindingPattern
+
+    [...]
+    4. If iteratorRecord.[[done]] is false, return ? IteratorClose(iterator,
+       result).
+    [...]
+
+---*/
+function assert(value) {
+  console.log(!!value);
+}
+
+assert.sameValue = function(actual, expected) {
+  console.log(Object.is(actual, expected));
+};
+
+assert.notSameValue = function(actual, unexpected) {
+  console.log(!Object.is(actual, unexpected));
+};
+
+assert.compareArray = function(actual, expected) {
+  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
+    console.log(false);
+    return;
+  }
+
+  for (let i = 0; i < actual.length; i++) {
+    if (!Object.is(actual[i], expected[i])) {
+      console.log(false);
+      return;
+    }
+  }
+
+  console.log(true);
+};
+
+assert.throws = function(expectedCtor, fn) {
+  try {
+    fn();
+    console.log(false);
+  } catch (error) {
+    console.log(error instanceof expectedCtor);
+  }
+};
+
+function Test262Error(message) {
+  this.name = 'Test262Error';
+  this.message = message || '';
+}
+
+Test262Error.prototype = Object.create(Error.prototype);
+Test262Error.prototype.constructor = Test262Error;
+
+var doneCallCount = 0;
+var iter = {};
+iter[Symbol.iterator] = function() {
+  return {
+    next: function() {
+      return { value: null, done: true };
+    },
+    return: function() {
+      doneCallCount += 1;
+      return {};
+    }
+  };
+};
+
+var iterCount = 0;
+
+for (const [x] = iter; iterCount < 1; ) {
+  assert.sameValue(doneCallCount, 0);
+
+  iterCount += 1;
+}
+
+assert.sameValue(iterCount, 1, 'Iteration occurred as expected');

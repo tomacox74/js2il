@@ -81,4 +81,36 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "cptn-decl-skip-itr", Skip = "eval is not supported by JS2IL.")]
     public Task cptn_decl_skip_itr()
         => ExecutionTest("cptn-decl-skip-itr");
+    [Fact(DisplayName = "head-const-bound-names-fordecl-tdz", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task head_const_bound_names_fordecl_tdz()
+        => ExecutionTest("head-const-bound-names-fordecl-tdz");
+
+    [Fact(DisplayName = "head-decl-expr")]
+    public Task head_decl_expr()
+        => ExecutionTest("head-decl-expr");
+
+    [Fact(DisplayName = "head-expr-expr")]
+    public Task head_expr_expr()
+        => ExecutionTest("head-expr-expr");
+
+    [Fact(DisplayName = "head-let-bound-names-fordecl-tdz", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task head_let_bound_names_fordecl_tdz()
+        => ExecutionTest("head-let-bound-names-fordecl-tdz");
+
+    [Fact(DisplayName = "head-let-destructuring")]
+    public Task head_let_destructuring()
+        => ExecutionTest("head-let-destructuring");
+
+    [Fact(DisplayName = "head-let-fresh-binding-per-iteration")]
+    public Task head_let_fresh_binding_per_iteration()
+        => ExecutionTest("head-let-fresh-binding-per-iteration");
+
+    [Fact(DisplayName = "head-lhs-cover")]
+    public Task head_lhs_cover()
+        => ExecutionTest("head-lhs-cover");
+
+    [Fact(DisplayName = "head-lhs-let", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task head_lhs_let()
+        => ExecutionTest("head-lhs-let");
+
 }

@@ -52,5 +52,21 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("getter-removing-future-key");
 
+    [Fact(DisplayName = "exception-during-enumeration")]
+    public Task exception_during_enumeration()
+        => ExecutionTestFromFile("exception-during-enumeration");
+
+    [Fact(DisplayName = "exception-not-object-coercible")]
+    public Task exception_not_object_coercible()
+        => ExecutionTestFromFile("exception-not-object-coercible");
+
+    [Fact(DisplayName = "function-length")]
+    public Task function_length()
+        => ExecutionTestFromFile("function-length");
+
+    [Fact(DisplayName = "function-name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task function_name()
+        => ExecutionTestFromFile("function-name");
+
 }
 
