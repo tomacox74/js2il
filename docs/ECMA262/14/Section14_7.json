@@ -419,6 +419,21 @@
           "test/language/statements/for-of/array-expand.js",
           "test/language/statements/for-of/array-key-get-error.js",
           "test/language/statements/for-of/body-dstr-assign-error.js",
+          "test/language/statements/for-of/body-dstr-assign.js",
+          "test/language/statements/for-of/dstr/array-elem-init-assignment.js",
+          "test/language/statements/for-of/dstr/array-elem-init-in.js",
+          "test/language/statements/for-of/dstr/array-elem-init-let.js",
+          "test/language/statements/for-of/dstr/array-elem-init-order.js",
+          "test/language/statements/for-of/dstr/array-elem-iter-nrml-close-null.js",
+          "test/language/statements/for-of/dstr/array-elem-iter-nrml-close-skip.js",
+          "test/language/statements/for-of/dstr/array-elem-iter-nrml-close.js",
+          "test/language/statements/for-of/dstr/array-elem-iter-rtrn-close-null.js",
+          "test/language/statements/for-of/float32array-mutate.js",
+          "test/language/statements/for-of/float32array.js",
+          "test/language/statements/for-of/int16array-mutate.js",
+          "test/language/statements/for-of/int16array.js",
+          "test/language/statements/for-of/int8array.js",
+          "test/language/statements/for-of/generator.js",
           "test/language/statements/for-of/arguments-mapped.js",
           "test/language/statements/for-of/arguments-mapped-aliasing.js",
           "test/language/statements/for-of/arguments-mapped-mutation.js",
@@ -426,7 +441,7 @@
           "test/language/statements/for-of/arguments-unmapped-mutation.js",
           "test/language/statements/for-of/array.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on abrupt completion (break/throw/return and iterator throws). Supports built-ins (Array/string/Int32Array), user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator]() and arguments-object for-of cases in the bounded test262 coverage compile successfully."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/throw/return and iterator throws), including generator-safe synthetic close paths. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
       },
       {
         "clause": "14.7.5.7",
@@ -453,11 +468,25 @@
           "test/language/statements/for-in/12.6.4-1.js",
           "test/language/statements/for-in/12.6.4-2.js",
           "test/language/statements/for-in/head-const-fresh-binding-per-iteration.js",
+          "test/language/statements/for-in/head-const-bound-names-fordecl-tdz.js",
+          "test/language/statements/for-in/head-decl-expr.js",
+          "test/language/statements/for-in/head-expr-expr.js",
+          "test/language/statements/for-in/head-let-bound-names-fordecl-tdz.js",
+          "test/language/statements/for-in/head-let-destructuring.js",
+          "test/language/statements/for-in/head-let-fresh-binding-per-iteration.js",
+          "test/language/statements/for-in/head-lhs-cover.js",
+          "test/language/statements/for-in/head-lhs-let.js",
           "test/language/statements/for-in/S12.6.4_A1.js",
           "test/language/statements/for-in/S12.6.4_A2.js",
+          "test/language/statements/for-in/S12.6.4_A5.js",
+          "test/language/statements/for-in/S12.6.4_A5.1.js",
+          "test/language/statements/for-in/S12.6.4_A6.js",
+          "test/language/statements/for-in/S12.6.4_A6.1.js",
+          "test/language/statements/for-in/S12.6.4_A7_T1.js",
+          "test/language/statements/for-in/S12.6.4_A7_T2.js",
           "test/language/block-scope/syntax/for-in/acquire-properties-from-array.js"
         ],
-        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings for for-in heads plus block-scoped array property acquisition. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
+        "notes": "Lowered via a native For-In Iterator (EnumerateObjectProperties/CreateForInIterator) and consumed through JavaScriptRuntime.Object.IteratorNext + IteratorResultDone/Value. Each next() step re-checks key presence so deletions during enumeration are respected, loop-head RHS evaluation observes let/const TDZ bindings in the loop lexical scope, and current bounded test262 coverage also exercises fresh per-iteration lexical bindings, destructuring heads, inherited array-index setters, and block-scoped array property acquisition. Prototype chain semantics are approximated for CLR objects by walking the CLR type hierarchy (declared public instance members per type); ExpandoObject/IDictionary do not currently expose a JS-observable [[Prototype]] chain."
       },
       {
         "clause": "14.7.5",

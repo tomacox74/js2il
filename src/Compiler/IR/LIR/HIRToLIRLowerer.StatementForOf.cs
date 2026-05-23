@@ -421,6 +421,140 @@ public sealed partial class HIRToLIRLowerer
             //   if (!completed && !closedExplicitly) Object.IteratorClose(iterator)
             // }
 
+            if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil)
+            {
+                var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+                if (!TryLowerExpression(forOfStmt.Iterable, out var rhsTemp))
+                {
+                    return false;
+                }
+
+                var rhsBoxed = EnsureObject(rhsTemp);
+
+                var iterTemp = CreateTempVariable();
+                lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { rhsBoxed }, iterTemp));
+                DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
+                SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator))));
+
+                var completedTemp = CreateTempVariable();
+                DefineTempStorage(completedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                SetTempVariableSlot(completedTemp, CreateAnonymousVariableSlot("$forOf_completed", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+                var closedTemp = CreateTempVariable();
+                DefineTempStorage(closedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                SetTempVariableSlot(closedTemp, CreateAnonymousVariableSlot("$forOf_closed", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+                var falseTemp = CreateTempVariable();
+                lirInstructions.Add(new LIRConstBoolean(false, falseTemp));
+                DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                lirInstructions.Add(new LIRCopyTemp(falseTemp, completedTemp));
+                lirInstructions.Add(new LIRCopyTemp(falseTemp, closedTemp));
+
+                var trueTemp = CreateTempVariable();
+                lirInstructions.Add(new LIRConstBoolean(true, trueTemp));
+                DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+                int loopStartLabel = CreateLabel();
+                int loopUpdateLabel = CreateLabel();
+                int breakCleanupLabel = CreateLabel();
+                int normalCompleteLabel = CreateLabel();
+                int finallyEntryLabel = CreateLabel();
+                int finallyExitLabel = CreateLabel();
+                int afterTryLabel = CreateLabel();
+                var ctx = CreateGeneratorFinallyContext(finallyEntryLabel, finallyExitLabel);
+
+                EmitResetGeneratorPendingCompletions(scopeName);
+                _controlFlowStack.Push(new ControlFlowContext(breakCleanupLabel, loopUpdateLabel, forOfStmt.Label));
+                _generatorTryCatchFinallyStack.Push(ctx);
+                try
+                {
+                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                    var iterResult = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNext), new[] { EnsureObject(iterTemp) }, iterResult));
+                    DefineTempStorage(iterResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    var doneBool = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
+                    DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    lirInstructions.Add(new LIRBranchIfTrue(doneBool, normalCompleteLabel));
+
+                    var itemTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, itemTemp));
+                    DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    var writeMode = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+                        ? DestructuringWriteMode.ForDeclarationBindingInitialization
+                        : DestructuringWriteMode.Assignment;
+
+                    if (!TryLowerDestructuringPattern(forOfStmt.Target, itemTemp, writeMode, sourceNameForError: null))
+                    {
+                        return false;
+                    }
+
+                    if (!TryLowerStatement(forOfStmt.Body))
+                    {
+                        return false;
+                    }
+
+                    lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+                    lirInstructions.Add(new LIRBranch(loopStartLabel));
+
+                    lirInstructions.Add(new LIRLabel(breakCleanupLabel));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
+                        nameof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.IteratorClose),
+                        new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRCopyTemp(trueTemp, closedTemp));
+                    lirInstructions.Add(new LIRBranch(afterTryLabel));
+
+                    lirInstructions.Add(new LIRLabel(normalCompleteLabel));
+                    lirInstructions.Add(new LIRCopyTemp(trueTemp, completedTemp));
+                    lirInstructions.Add(new LIRBranch(afterTryLabel));
+
+                    lirInstructions.Add(new LIRLabel(finallyEntryLabel));
+                    _generatorTryCatchFinallyStack.Pop();
+                    _generatorTryCatchFinallyStack.Push(ctx with { IsInFinally = true });
+
+                    int finallySkipClose = CreateLabel();
+                    lirInstructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
+                    lirInstructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
+
+                    var hasPendingException = CreateTempVariable();
+                    lirInstructions.Add(new LIRLoadScopeFieldByName(scopeName, GeneratorHasPendingExceptionField, hasPendingException));
+                    DefineTempStorage(hasPendingException, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    int normalCloseLabel = CreateLabel();
+                    lirInstructions.Add(new LIRBranchIfFalse(hasPendingException, normalCloseLabel));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
+                        nameof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.IteratorCloseForThrowCompletion),
+                        new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRBranch(finallySkipClose));
+
+                    lirInstructions.Add(new LIRLabel(normalCloseLabel));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid(
+                        nameof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.IteratorClose),
+                        new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRLabel(finallySkipClose));
+                    lirInstructions.Add(new LIRBranch(finallyExitLabel));
+
+                    lirInstructions.Add(new LIRLabel(finallyExitLabel));
+                    EmitDispatchGeneratorPendingCompletions(scopeName, afterTryLabel);
+                    lirInstructions.Add(new LIRLabel(afterTryLabel));
+                    return true;
+                }
+                finally
+                {
+                    if (_generatorTryCatchFinallyStack.Count > 0)
+                    {
+                        _generatorTryCatchFinallyStack.Pop();
+                    }
+                    _controlFlowStack.Pop();
+                }
+            }
+
             // Spec: CreatePerIterationEnvironment for for..of with lexical declarations.
             var perIterationBindings = (forOfStmt.IsDeclaration && (forOfStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
                 ? forOfStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).Where(b => b.IsCaptured).ToList()
@@ -573,7 +707,7 @@ public sealed partial class HIRToLIRLowerer
                     int finallySkipClose = CreateLabel();
                     lirInstructions.Add(new LIRBranchIfTrue(completedTemp, finallySkipClose));
                     lirInstructions.Add(new LIRBranchIfTrue(closedTemp, finallySkipClose));
-                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("Object", "IteratorClose", new[] { EnsureObject(iterTemp) }));
+                    lirInstructions.Add(new LIRCallIntrinsicStaticVoid("Object", "IteratorCloseForThrowCompletion", new[] { EnsureObject(iterTemp) }));
                     lirInstructions.Add(new LIRLabel(finallySkipClose));
                     lirInstructions.Add(new LIREndFinally());
                     lirInstructions.Add(new LIRLabel(finallyEnd));

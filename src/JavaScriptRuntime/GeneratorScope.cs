@@ -35,6 +35,11 @@ public class GeneratorScope
     public object? _genPendingReturnValue;
     public bool _hasGenPendingReturn;
 
+    // Iterator state that must survive a yield inside array destructuring.
+    public object? _destructuringIterator;
+    public bool _destructuringCompleted;
+    public bool _destructuringIteratorDone;
+
     public object? _thisValue;
 
     public int GenState

@@ -265,15 +265,6 @@ internal static class LIRIntrinsicNormalization
                     continue;
                 }
 
-                // Array element set (numeric index).
-                if (receiverType == typeof(JavaScriptRuntime.Array)
-                    && IsUnboxedDouble(methodBody, setItem.Index))
-                {
-                    // Rewrite: SetItem(array, indexDouble, valueObj, result) -> SetJsArrayElement(array, indexDouble, valueObj, result)
-                    methodBody.Instructions[i] = new LIRSetJsArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);
-                    continue;
-                }
-
                 // Int32Array element set (numeric index + numeric value).
                 if (receiverType == typeof(JavaScriptRuntime.Int32Array)
                     && IsNumericDouble(methodBody, setItem.Index)

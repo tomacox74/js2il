@@ -30,6 +30,11 @@ public class AsyncGeneratorScope : AsyncScope
     public object? _returnValue;
     public bool _hasReturn;
 
+    // Iterator state that must survive a yield inside array destructuring.
+    public object? _destructuringIterator;
+    public bool _destructuringCompleted;
+    public bool _destructuringIteratorDone;
+
     public int GenState
     {
         get => _genState;
