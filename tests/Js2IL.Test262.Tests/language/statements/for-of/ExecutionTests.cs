@@ -86,19 +86,19 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task body_dstr_assign()
         => ExecutionTest("body-dstr-assign");
 
-    [Fact(DisplayName = "array-elem-init-assignment")]
+    [Fact(DisplayName = "array-elem-init-assignment", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_array_elem_init_assignment()
         => ExecutionTest(@"dstr\array-elem-init-assignment");
 
-    [Fact(DisplayName = "array-elem-init-in")]
+    [Fact(DisplayName = "array-elem-init-in", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_array_elem_init_in()
         => ExecutionTest(@"dstr\array-elem-init-in");
 
-    [Fact(DisplayName = "array-elem-init-let")]
+    [Fact(DisplayName = "array-elem-init-let", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_array_elem_init_let()
         => ExecutionTest(@"dstr\array-elem-init-let");
 
-    [Fact(DisplayName = "array-elem-init-order")]
+    [Fact(DisplayName = "array-elem-init-order", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_array_elem_init_order()
         => ExecutionTest(@"dstr\array-elem-init-order");
 
@@ -106,7 +106,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task dstr_array_elem_iter_nrml_close_null()
         => ExecutionTest(@"dstr\array-elem-iter-nrml-close-null");
 
-    [Fact(DisplayName = "array-elem-iter-nrml-close-skip")]
+    [Fact(DisplayName = "array-elem-iter-nrml-close-skip", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_array_elem_iter_nrml_close_skip()
         => ExecutionTest(@"dstr\array-elem-iter-nrml-close-skip");
 

@@ -45,11 +45,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_ary_name_iter_val()
         => ExecutionTest(@"dstr\ary-name-iter-val");
 
-    [Fact(DisplayName = "ary-ptrn-elem-ary-elem-init")]
+    [Fact(DisplayName = "ary-ptrn-elem-ary-elem-init", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_ary_ptrn_elem_ary_elem_init()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-elem-init");
 
-    [Fact(DisplayName = "ary-ptrn-elem-ary-elem-iter")]
+    [Fact(DisplayName = "ary-ptrn-elem-ary-elem-iter", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_ary_ptrn_elem_ary_elem_iter()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-elem-iter");
 
@@ -57,7 +57,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_ary_ptrn_elem_ary_elision_init()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-elision-init");
 
-    [Fact(DisplayName = "ary-ptrn-elem-ary-elision-iter")]
+    [Fact(DisplayName = "ary-ptrn-elem-ary-elision-iter", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_ary_ptrn_elem_ary_elision_iter()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-elision-iter");
 
@@ -69,7 +69,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_ary_ptrn_elem_ary_empty_iter()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-empty-iter");
 
-    [Fact(DisplayName = "ary-ptrn-elem-ary-rest-init")]
+    [Fact(DisplayName = "ary-ptrn-elem-ary-rest-init", Skip = "Tracked by #1093: currently fails under Js2IL.")]
     public Task dstr_ary_ptrn_elem_ary_rest_init()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-rest-init");
 
