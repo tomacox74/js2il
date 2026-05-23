@@ -117,6 +117,16 @@ jobs:
 
             throw new Error(`Timed out waiting for ${workflowId} to publish packages for ${targetRef}.`);
 
+      - name: Wait for NuGet package availability
+        if: env.USE_PUBLISHED_JS2IL_PACKAGES == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/waitForNuGetPackageVersions.js \
+            --version "${JS2IL_PACKAGE_VERSION}" \
+            --package Js2IL.Core \
+            --package Js2IL.Runtime
+
       - name: Restore benchmark project
         shell: bash
         run: |
