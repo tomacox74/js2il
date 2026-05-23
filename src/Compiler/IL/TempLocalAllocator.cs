@@ -297,6 +297,9 @@ internal static class TempLocalAllocator
             case LIRConvertToNumber convNum:
                 yield return convNum.Source;
                 break;
+            case LIRConvertToNumberDiscard convNumDiscard:
+                yield return convNumDiscard.Source;
+                break;
             case LIRConvertToBoolean convBool:
                 yield return convBool.Source;
                 break;
@@ -887,6 +890,7 @@ internal static class TempLocalAllocator
             case LIRAsyncReject:
             case LIRAsyncStateSwitch:
             case LIRAsyncStoreAwaitedResult:
+            case LIRConvertToNumberDiscard:
                 defined = default;
                 return false;
             case LIRConvertToObject conv:

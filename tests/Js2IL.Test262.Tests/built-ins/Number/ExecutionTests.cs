@@ -18,7 +18,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _15_7_4_1()
         => ExecutionTest("15.7.4-1");
 
-    [Fact(DisplayName = "EPSILON", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "EPSILON")]
     public Task EPSILON()
         => ExecutionTest("EPSILON");
 
@@ -26,15 +26,15 @@ public class ExecutionTests : ExecutionTestsBase
     public Task NaN()
         => ExecutionTest("NaN");
 
-    [Fact(DisplayName = "parseFloat", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "parseFloat")]
     public Task parseFloat()
         => ExecutionTest("parseFloat");
 
-    [Fact(DisplayName = "parseInt", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "parseInt")]
     public Task parseInt()
         => ExecutionTest("parseInt");
 
-    [Fact(DisplayName = "return-abrupt-tonumber-value", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "return-abrupt-tonumber-value")]
     public Task return_abrupt_tonumber_value()
         => ExecutionTest("return-abrupt-tonumber-value");
 

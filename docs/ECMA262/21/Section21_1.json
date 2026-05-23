@@ -18,7 +18,7 @@
     {
       "clause": "21.1.1.1",
       "title": "Number ( value )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number-constructor-number-value"
     },
     {
@@ -30,7 +30,7 @@
     {
       "clause": "21.1.2.1",
       "title": "Number.EPSILON",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.epsilon"
     },
     {
@@ -96,13 +96,13 @@
     {
       "clause": "21.1.2.12",
       "title": "Number.parseFloat ( string )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.parsefloat"
     },
     {
       "clause": "21.1.2.13",
       "title": "Number.parseInt ( string , radix )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.parseint"
     },
     {
@@ -177,5 +177,45 @@
       "status": "Untracked",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-number-instances"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "21.1.1.1",
+        "feature": "Number ( value )",
+        "status": "Supported with Limitations",
+        "test262Paths": [
+          "built-ins/Number/return-abrupt-tonumber-value.js"
+        ],
+        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+      },
+      {
+        "clause": "21.1.2.1",
+        "feature": "Number.EPSILON",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/EPSILON.js"
+        ],
+        "notes": "Exposed on the Number constructor with non-writable, non-enumerable, non-configurable data-property attributes."
+      },
+      {
+        "clause": "21.1.2.12",
+        "feature": "Number.parseFloat",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/parseFloat.js"
+        ],
+        "notes": "Exposed as the same function value as the global parseFloat property with writable, non-enumerable, configurable data-property attributes."
+      },
+      {
+        "clause": "21.1.2.13",
+        "feature": "Number.parseInt",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/parseInt.js"
+        ],
+        "notes": "Exposed as the same function value as the global parseInt property with writable, non-enumerable, configurable data-property attributes."
+      }
+    ]
+  }
 }

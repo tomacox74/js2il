@@ -38,6 +38,7 @@ namespace JavaScriptRuntime
                 case byte b: return b;
                 case bool bo: return bo ? 1 : 0;
                 case JsNull: return 0; // Number(null) === +0
+                case Date date: return date._msSinceEpoch;
                 case string str:
                     // Try parse as number first, then as date string
                     if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out var nd))

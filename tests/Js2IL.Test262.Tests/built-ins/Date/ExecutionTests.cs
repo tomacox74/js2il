@@ -18,15 +18,15 @@ public class ExecutionTests : ExecutionTestsBase
     public Task coercion_errors()
         => ExecutionTest("coercion-errors");
 
-    [Fact(DisplayName = "construct_with_date", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "construct_with_date")]
     public Task construct_with_date()
         => ExecutionTest("construct_with_date");
 
-    [Fact(DisplayName = "length", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTest("length");
 
-    [Fact(DisplayName = "name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTest("name");
 

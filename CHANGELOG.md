@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/tests/docs/test262: fix issue #1107 by unskipping Date, Number, and RegExp built-in test262 ports; Date constructor metadata now matches `name`/`length`, `new Date(date)` copies the Date value without user coercion, Number exposes `EPSILON`, `parseFloat`, and `parseInt`, and discarded `Number(value)` calls still perform abrupt `ToNumber` coercion.
 - compiler/runtime/tests/docs/test262: unskip supported non-eval test262 ports covering Date constructor visibility, strict assignment to read-only intrinsic data properties, named function-expression self bindings, and generator method construction/call semantics while keeping eval-dependent cases explicitly skipped.
 
 ## v0.9.24 - 2026-05-22

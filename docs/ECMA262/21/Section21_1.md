@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-23T13:44:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -15,9 +15,9 @@
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
 | 21.1.1 | The Number Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number-constructor) |
-| 21.1.1.1 | Number ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number-constructor-number-value) |
+| 21.1.1.1 | Number ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-number-constructor-number-value) |
 | 21.1.2 | Properties of the Number Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-number-constructor) |
-| 21.1.2.1 | Number.EPSILON | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.epsilon) |
+| 21.1.2.1 | Number.EPSILON | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.epsilon) |
 | 21.1.2.2 | Number.isFinite ( number ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.isfinite) |
 | 21.1.2.3 | Number.isInteger ( number ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.isinteger) |
 | 21.1.2.4 | Number.isNaN ( number ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.isnan) |
@@ -28,8 +28,8 @@
 | 21.1.2.9 | Number.MIN_VALUE | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.min_value) |
 | 21.1.2.10 | Number.NaN | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.nan) |
 | 21.1.2.11 | Number.NEGATIVE_INFINITY | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.negative_infinity) |
-| 21.1.2.12 | Number.parseFloat ( string ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.parsefloat) |
-| 21.1.2.13 | Number.parseInt ( string , radix ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.parseint) |
+| 21.1.2.12 | Number.parseFloat ( string ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.parsefloat) |
+| 21.1.2.13 | Number.parseInt ( string , radix ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.parseint) |
 | 21.1.2.14 | Number.POSITIVE_INFINITY | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.positive_infinity) |
 | 21.1.2.15 | Number.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.prototype) |
 | 21.1.3 | Properties of the Number Prototype Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-number-prototype-object) |
@@ -42,4 +42,32 @@
 | 21.1.3.7 | Number.prototype.valueOf ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.prototype.valueof) |
 | 21.1.3.7.1 | ThisNumberValue ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-thisnumbervalue) |
 | 21.1.4 | Properties of Number Instances | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-number-instances) |
+
+## Support
+
+Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 21.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-number-constructor-number-value))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Number ( value ) | Supported with Limitations |  | `built-ins/Number/return-abrupt-tonumber-value.js` | Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete. |
+
+### 21.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-number.epsilon))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Number.EPSILON | Supported |  | `built-ins/Number/EPSILON.js` | Exposed on the Number constructor with non-writable, non-enumerable, non-configurable data-property attributes. |
+
+### 21.1.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-number.parsefloat))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Number.parseFloat | Supported |  | `built-ins/Number/parseFloat.js` | Exposed as the same function value as the global parseFloat property with writable, non-enumerable, configurable data-property attributes. |
+
+### 21.1.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-number.parseint))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Number.parseInt | Supported |  | `built-ins/Number/parseInt.js` | Exposed as the same function value as the global parseInt property with writable, non-enumerable, configurable data-property attributes. |
 

@@ -85,6 +85,7 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.Array.from(source, mapFn, thisArg);
         };
         private static readonly Func<object?, object?, double> _parseIntValue = parseInt;
+        private static readonly Func<object?, double> _parseFloatValue = parseFloat;
         private static readonly Func<object?, bool> _isFiniteValue = isFinite;
         private static readonly Func<object?, bool> _isNaNValue = isNaN;
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
@@ -361,12 +362,18 @@ namespace JavaScriptRuntime
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "NaN", double.NaN);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "NEGATIVE_INFINITY", double.NegativeInfinity);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "POSITIVE_INFINITY", double.PositiveInfinity);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "EPSILON", 2.220446049250313e-16);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "parseFloat", _parseFloatValue);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "parseInt", _parseIntValue);
+            DefineDateConstructorMetadata();
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_parseIntValue);
+            ConfigureBuiltinFunctionObject(_parseFloatValue);
             ConfigureBuiltinFunctionObject(_isFiniteValue);
             ConfigureBuiltinFunctionObject(_isNaNValue);
             DefineUndefinedPrototypeProperty(_parseIntValue);
+            DefineUndefinedPrototypeProperty(_parseFloatValue);
             DefineUndefinedPrototypeProperty(_isFiniteValue);
             DefineUndefinedPrototypeProperty(_isNaNValue);
 
@@ -668,6 +675,26 @@ namespace JavaScriptRuntime
             });
         }
 
+        private static void DefineDateConstructorMetadata()
+        {
+            PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Date"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 7d
+            });
+        }
+
         private static void DefineIntrinsicDataProperty(object target, string key, object? value)
         {
             PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
@@ -885,7 +912,7 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.parseInt), _parseIntValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.parseInt), dict[nameof(GlobalThis.parseInt)]);
 
-            dict.TryAdd(nameof(GlobalThis.parseFloat), (Func<object?, double>)parseFloat);
+            dict.TryAdd(nameof(GlobalThis.parseFloat), _parseFloatValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.parseFloat), dict[nameof(GlobalThis.parseFloat)]);
 
             dict.TryAdd(nameof(GlobalThis.isFinite), _isFiniteValue);
