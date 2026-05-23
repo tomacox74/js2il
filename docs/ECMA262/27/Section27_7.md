@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-04-20T17:15:06Z
+> Last generated (UTC): 2026-05-23T12:48:22Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,7 +37,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| async function instances expose a dedicated AsyncFunction constructor/prototype surface | Supported with Limitations | [`Async_FunctionConstructorIntrinsic.js`](../../../tests/Js2IL.Tests/Async/JavaScript/Async_FunctionConstructorIntrinsic.js) |  | Async function values now inherit from a dedicated `AsyncFunction.prototype`, and expose `instance.constructor`, `AsyncFunction.prototype.constructor`, and `%Symbol.toStringTag%`. Calling the `AsyncFunction` constructor itself is still not supported. |
+| async function instances expose a dedicated AsyncFunction constructor/prototype surface | Supported with Limitations | [`AsyncFunction_intrinsic.js`](../../../tests/Js2IL.Test262.Tests/built-ins/AsyncFunction/JavaScript/AsyncFunction_intrinsic.js) |  | Async function values now inherit from a dedicated `AsyncFunction.prototype`, and expose `instance.constructor`, `AsyncFunction.prototype.constructor`, and `%Symbol.toStringTag%`. Calling the `AsyncFunction` constructor itself is still not supported. |
 
 ### 27.7.5.3 ([tc39.es](https://tc39.es/ecma262/#await))
 

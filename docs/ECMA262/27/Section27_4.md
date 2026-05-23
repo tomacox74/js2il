@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-04-20T17:15:04Z
+> Last generated (UTC): 2026-05-23T12:48:22Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -37,5 +37,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`AsyncGenerator_FunctionConstructor_Length.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_FunctionConstructor_Length.js) |  | Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. Async generator function objects now expose a minimal `%AsyncGeneratorFunction.prototype%` constructor surface with correct `length` metadata, but the full spec-level AsyncGeneratorFunction constructor/prototype intrinsic set is still not exposed globally. |
+| async generator functions via syntax (`async function*`) compile to async iterators (next/return/throw) and integrate with `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`AsyncGeneratorFunction_length.js`](../../../tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/AsyncGeneratorFunction_length.js) |  | Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. Async generator function objects now expose a minimal `%AsyncGeneratorFunction.prototype%` constructor surface with correct `length` metadata, but the full spec-level AsyncGeneratorFunction constructor/prototype intrinsic set is still not exposed globally. |
 
