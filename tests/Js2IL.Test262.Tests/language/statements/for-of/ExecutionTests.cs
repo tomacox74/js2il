@@ -88,35 +88,35 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "array-elem-init-assignment")]
     public Task dstr_array_elem_init_assignment()
-        => ExecutionTest(@"dstr\array-elem-init-assignment");
+        => ExecutionTest("dstr/array-elem-init-assignment");
 
     [Fact(DisplayName = "array-elem-init-in")]
     public Task dstr_array_elem_init_in()
-        => ExecutionTest(@"dstr\array-elem-init-in");
+        => ExecutionTest("dstr/array-elem-init-in");
 
     [Fact(DisplayName = "array-elem-init-let")]
     public Task dstr_array_elem_init_let()
-        => ExecutionTest(@"dstr\array-elem-init-let");
+        => ExecutionTest("dstr/array-elem-init-let");
 
     [Fact(DisplayName = "array-elem-init-order")]
     public Task dstr_array_elem_init_order()
-        => ExecutionTest(@"dstr\array-elem-init-order");
+        => ExecutionTest("dstr/array-elem-init-order");
 
     [Fact(DisplayName = "array-elem-iter-nrml-close-null")]
     public Task dstr_array_elem_iter_nrml_close_null()
-        => ExecutionTest(@"dstr\array-elem-iter-nrml-close-null");
+        => ExecutionTest("dstr/array-elem-iter-nrml-close-null");
 
     [Fact(DisplayName = "array-elem-iter-nrml-close-skip")]
     public Task dstr_array_elem_iter_nrml_close_skip()
-        => ExecutionTest(@"dstr\array-elem-iter-nrml-close-skip");
+        => ExecutionTest("dstr/array-elem-iter-nrml-close-skip");
 
     [Fact(DisplayName = "array-elem-iter-nrml-close")]
     public Task dstr_array_elem_iter_nrml_close()
-        => ExecutionTest(@"dstr\array-elem-iter-nrml-close");
+        => ExecutionTest("dstr/array-elem-iter-nrml-close");
 
     [Fact(DisplayName = "array-elem-iter-rtrn-close-null")]
     public Task dstr_array_elem_iter_rtrn_close_null()
-        => ExecutionTest(@"dstr\array-elem-iter-rtrn-close-null");
+        => ExecutionTest("dstr/array-elem-iter-rtrn-close-null");
 
     [Fact(DisplayName = "float32array-mutate")]
     public Task float32array_mutate()
