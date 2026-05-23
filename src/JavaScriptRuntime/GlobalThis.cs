@@ -190,13 +190,13 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _float64ArrayConstructorValue = 
             static (_, args) => new Float64Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _float32ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Float32Array constructor is not yet supported in js2il.");
+            static (_, args) => new Float32Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue = 
             static (_, args) => new Int32Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Int16Array constructor is not yet supported in js2il.");
+            static (_, args) => new Int16Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Int8Array constructor is not yet supported in js2il.");
+            static (_, args) => new Int8Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue = 
             static (_, __) => throw new NotSupportedException("The Uint32Array constructor is not yet supported in js2il.");
         private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue = 

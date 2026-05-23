@@ -266,6 +266,9 @@ internal sealed partial class LIRToILCompiler
             nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingException) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._destructuringIterator) => typeof(object),
+            nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._destructuringIteratorDone) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode) => typeof(double),
             nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex) => typeof(double),
@@ -285,6 +288,9 @@ internal sealed partial class LIRToILCompiler
             or nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingException)
             or nameof(JavaScriptRuntime.GeneratorScope._genPendingReturnValue)
             or nameof(JavaScriptRuntime.GeneratorScope._hasGenPendingReturn)
+            or nameof(JavaScriptRuntime.GeneratorScope._destructuringIterator)
+            or nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted)
+            or nameof(JavaScriptRuntime.GeneratorScope._destructuringIteratorDone)
             or nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode)
             or nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget)
             or nameof(JavaScriptRuntime.GeneratorScope._yieldStarIndex)

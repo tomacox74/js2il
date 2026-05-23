@@ -796,6 +796,12 @@ namespace JavaScriptRuntime
                     return SetProperty(array, propName, value, throwOnError);
                 }
 
+                if (!array.HasOwnIndex(intIndex)
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, propName, value, throwOnError))
+                {
+                    return value;
+                }
+
                 array[intIndex] = value!;
                 return value;
             }
@@ -874,6 +880,12 @@ namespace JavaScriptRuntime
                 if (!isIndex)
                 {
                     return SetProperty(array, key, value, throwOnError);
+                }
+
+                if (!array.HasOwnIndex(intIndex)
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, key, value, throwOnError))
+                {
+                    return value;
                 }
 
                 array[intIndex] = value!;
@@ -962,6 +974,12 @@ namespace JavaScriptRuntime
                     return SetProperty(array, key, value, throwOnError);
                 }
 
+                if (!array.HasOwnIndex(intIndex)
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, key, value, throwOnError))
+                {
+                    return value;
+                }
+
                 array[intIndex] = value;
                 return value;
             }
@@ -1033,6 +1051,12 @@ namespace JavaScriptRuntime
                 if (!isCanonicalArrayIndex)
                 {
                     return SetProperty(array, indexKey, value, throwOnError) ?? value;
+                }
+
+                if (!array.HasOwnIndex(intIndex)
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, indexKey, value, throwOnError))
+                {
+                    return value;
                 }
 
                 array[intIndex] = value;

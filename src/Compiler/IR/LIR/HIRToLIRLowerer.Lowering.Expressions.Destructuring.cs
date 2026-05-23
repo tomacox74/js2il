@@ -327,6 +327,11 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
         DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
+        if (_isGenerator && !_methodBodyIR.LeafScopeId.IsNil)
+        {
+            return TryLowerArrayDestructuringPatternInGenerator(arr, iterator, completed, iteratorDone, trueTemp, writeMode);
+        }
+
         var tryStart = CreateLabel();
         var tryEnd = CreateLabel();
         var finallyStart = CreateLabel();
@@ -381,6 +386,18 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
+        if (arr.Rest == null)
+        {
+            var skipNormalClose = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(iteratorDone, skipNormalClose));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, completed));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                nameof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.IteratorClose),
+                new[] { EnsureObject(iterator) }));
+            _methodBodyIR.Instructions.Add(new LIRLabel(skipNormalClose));
+        }
+
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, completed));
         _methodBodyIR.Instructions.Add(new LIRLeave(end));
         _methodBodyIR.Instructions.Add(new LIRLabel(tryEnd));
@@ -406,6 +423,145 @@ public sealed partial class HIRToLIRLowerer
             HandlerEndLabelId: finallyEnd));
 
         return true;
+    }
+
+    private bool TryLowerArrayDestructuringPatternInGenerator(
+        HIRArrayPattern arr,
+        TempVariable iterator,
+        TempVariable completed,
+        TempVariable iteratorDone,
+        TempVariable trueTemp,
+        DestructuringWriteMode writeMode)
+    {
+        var scopeName = _methodBodyIR.LeafScopeId.Name;
+        var finallyEntry = CreateLabel();
+        var finallyExit = CreateLabel();
+        var end = CreateLabel();
+        var ctx = CreateGeneratorFinallyContext(finallyEntry, finallyExit);
+
+        EmitResetGeneratorPendingCompletions(scopeName);
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringIterator), EnsureObject(iterator)));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted), completed));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringIteratorDone), iteratorDone));
+        _generatorTryCatchFinallyStack.Push(ctx);
+        try
+        {
+            for (int i = 0; i < arr.Elements.Count; i++)
+            {
+                var elementPattern = arr.Elements[i];
+                if (elementPattern == null)
+                {
+                    if (!TryEmitIteratorDestructuringStep(iterator, iteratorDone, trueTemp, out _, needValue: false))
+                    {
+                        return false;
+                    }
+                    _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringIteratorDone), iteratorDone));
+                    continue;
+                }
+
+                if (!TryPrepareDestructuringAssignmentTarget(elementPattern, writeMode, out var preparedTarget))
+                {
+                    return false;
+                }
+
+                if (!TryEmitIteratorDestructuringStep(iterator, iteratorDone, trueTemp, out var elementValue, needValue: true))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringIteratorDone), iteratorDone));
+
+                if (!TryLowerDestructuringPattern(elementPattern, elementValue, writeMode, i.ToString(), preparedTarget))
+                {
+                    return false;
+                }
+            }
+
+            if (arr.Rest != null)
+            {
+                if (!TryPrepareDestructuringAssignmentTarget(arr.Rest.Target, writeMode, out var preparedRestTarget))
+                {
+                    return false;
+                }
+
+                if (!TryBuildArrayRestFromIterator(iterator, iteratorDone, trueTemp, out var restArray))
+                {
+                    return false;
+                }
+
+                if (!TryLowerDestructuringPattern(arr.Rest.Target, restArray, writeMode, "rest", preparedRestTarget))
+                {
+                    return false;
+                }
+            }
+
+            if (arr.Rest == null)
+            {
+                var skipNormalClose = CreateLabel();
+                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(iteratorDone, skipNormalClose));
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, completed));
+                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted), completed));
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                    nameof(JavaScriptRuntime.Object),
+                    nameof(JavaScriptRuntime.Object.IteratorClose),
+                    new[] { EnsureObject(iterator) }));
+                _methodBodyIR.Instructions.Add(new LIRLabel(skipNormalClose));
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(trueTemp, completed));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted), completed));
+            _methodBodyIR.Instructions.Add(new LIRBranch(end));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntry));
+            _generatorTryCatchFinallyStack.Pop();
+            _generatorTryCatchFinallyStack.Push(ctx with { IsInFinally = true });
+
+            var persistedIterator = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringIterator), persistedIterator));
+            DefineTempStorage(persistedIterator, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            var persistedCompleted = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringCompleted), persistedCompleted));
+            DefineTempStorage(persistedCompleted, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            var persistedDone = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._destructuringIteratorDone), persistedDone));
+            DefineTempStorage(persistedDone, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            var skipClose = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(persistedCompleted, skipClose));
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(persistedDone, skipClose));
+
+            var hasPendingException = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, GeneratorHasPendingExceptionField, hasPendingException));
+            DefineTempStorage(hasPendingException, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            var normalClose = CreateLabel();
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasPendingException, normalClose));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                nameof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.IteratorCloseForThrowCompletion),
+                new[] { EnsureObject(persistedIterator) }));
+            _methodBodyIR.Instructions.Add(new LIRBranch(skipClose));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(normalClose));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                nameof(JavaScriptRuntime.Object),
+                nameof(JavaScriptRuntime.Object.IteratorClose),
+                new[] { EnsureObject(persistedIterator) }));
+            _methodBodyIR.Instructions.Add(new LIRLabel(skipClose));
+            _methodBodyIR.Instructions.Add(new LIRBranch(finallyExit));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(finallyExit));
+            EmitDispatchGeneratorPendingCompletions(scopeName, end);
+            _methodBodyIR.Instructions.Add(new LIRLabel(end));
+            return true;
+        }
+        finally
+        {
+            if (_generatorTryCatchFinallyStack.Count > 0)
+            {
+                _generatorTryCatchFinallyStack.Pop();
+            }
+        }
     }
 
     private bool TryEmitIteratorDestructuringStep(

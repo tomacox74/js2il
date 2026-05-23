@@ -2167,8 +2167,9 @@ class HIRMethodBuilder
                         }
                     }
 
-                    // Parse RHS iterable expression in the outer scope (matches current runtime semantics).
-                    _currentScope = previousForOfScope;
+                    // For lexical for-of declarations, the loop-head bindings are in TDZ while the
+                    // RHS is evaluated, so parse it in the loop scope when one exists.
+                    _currentScope = forScope ?? previousForOfScope;
                     if (!TryParseExpression(forOfStmt.Right, out var iterableExpr))
                     {
                         _currentScope = previousForOfScope;
@@ -2301,8 +2302,9 @@ class HIRMethodBuilder
                         }
                     }
 
-                    // Parse RHS enumerable expression in the outer scope (matches current runtime semantics).
-                    _currentScope = previousForInScope;
+                    // For lexical for-in declarations, the loop-head bindings are in TDZ while the
+                    // RHS is evaluated, so parse it in the loop scope when one exists.
+                    _currentScope = forScope ?? previousForInScope;
                     if (!TryParseExpression(forInStmt.Right, out var enumerableExpr))
                     {
                         _currentScope = previousForInScope;

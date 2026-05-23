@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2180
+			// Method begins at RVA 0x2190
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 274 (0x112)
+		// Code size: 289 (0x121)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ArrayDestructuring_Basic/Scope,
@@ -135,35 +135,43 @@
 			IL_00cf: ldnull
 			IL_00d0: stloc.s 6
 
-			IL_00d2: ldc.i4.1
-			IL_00d3: stloc.3
-			IL_00d4: leave IL_00ed
+			IL_00d2: ldloc.s 4
+			IL_00d4: brtrue IL_00e1
+
+			IL_00d9: ldc.i4.1
+			IL_00da: stloc.3
+			IL_00db: ldloc.2
+			IL_00dc: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+
+			IL_00e1: ldc.i4.1
+			IL_00e2: stloc.3
+			IL_00e3: leave IL_00fc
 		} // end .try
 		finally
 		{
-			IL_00d9: ldloc.3
-			IL_00da: brtrue IL_00ec
+			IL_00e8: ldloc.3
+			IL_00e9: brtrue IL_00fb
 
-			IL_00df: ldloc.s 4
-			IL_00e1: brtrue IL_00ec
+			IL_00ee: ldloc.s 4
+			IL_00f0: brtrue IL_00fb
 
-			IL_00e6: ldloc.2
-			IL_00e7: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+			IL_00f5: ldloc.2
+			IL_00f6: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-			IL_00ec: endfinally
+			IL_00fb: endfinally
 		} // end handler
 
-		IL_00ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f2: ldstr "a="
-		IL_00f7: ldloc.s 5
-		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00fe: pop
-		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0104: ldstr "b="
-		IL_0109: ldloc.s 6
-		IL_010b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0110: pop
-		IL_0111: ret
+		IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0101: ldstr "a="
+		IL_0106: ldloc.s 5
+		IL_0108: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_010d: pop
+		IL_010e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0113: ldstr "b="
+		IL_0118: ldloc.s 6
+		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_011f: pop
+		IL_0120: ret
 	} // end of method Variable_ArrayDestructuring_Basic::__js_module_init__
 
 } // end of class Modules.Variable_ArrayDestructuring_Basic
@@ -175,7 +183,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2189
+		// Method begins at RVA 0x2199
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

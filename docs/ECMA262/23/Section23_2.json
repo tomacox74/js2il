@@ -447,9 +447,12 @@
           "tests/Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_TypedArrays.js",
           "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
           "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
+          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/float32array.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int16array.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int8array.js"
         ],
-        "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int32Array, Uint8Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete."
+        "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete."
       },
       {
         "clause": "23.2.2.3",
@@ -582,7 +585,7 @@
           "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Values_Iterator.js",
           "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Iterator_Metadata.js"
         ],
-        "notes": "values(), keys(), and entries() return callable iterator objects, supported TypedArrays expose [Symbol.iterator]() and [Symbol.toStringTag] reads, and they participate in for-of via the runtime iterator path. This is implemented via shared instance surface wiring rather than full prototype-object fidelity."
+        "notes": "values(), keys(), and entries() return callable iterator objects, supported TypedArrays expose [Symbol.iterator]() and [Symbol.toStringTag] reads, and they participate in for-of via the runtime iterator path, including Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array coverage. This is implemented via shared instance surface wiring rather than full prototype-object fidelity."
       },
       {
         "clause": "23.2.2.1",
@@ -592,7 +595,7 @@
         "testScripts": [
           "tests/Js2IL.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js"
         ],
-        "notes": "Int32Array, Uint8Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete."
+        "notes": "Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete."
       }
     ]
   }

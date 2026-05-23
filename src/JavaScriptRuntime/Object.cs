@@ -3960,7 +3960,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static bool TrySetPropertyViaPrototypeOrThrow(object receiver, string propName, object? value, bool throwOnError)
+        internal static bool TrySetPropertyViaPrototypeOrThrow(object receiver, string propName, object? value, bool throwOnError)
         {
             if (!PrototypeChain.Enabled)
             {
@@ -4361,7 +4361,8 @@ namespace JavaScriptRuntime
                 var previousThis = RuntimeServices.SetCurrentThis(iterator);
                 try
                 {
-                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    ValidateIteratorCloseResult(result);
                     return;
                 }
                 finally
@@ -4384,11 +4385,20 @@ namespace JavaScriptRuntime
             var prev = RuntimeServices.SetCurrentThis(iterator);
             try
             {
-                Closure.InvokeWithArgs(memberDel, System.Array.Empty<object>(), System.Array.Empty<object>());
+                var result = Closure.InvokeWithArgs(memberDel, System.Array.Empty<object>(), System.Array.Empty<object>());
+                ValidateIteratorCloseResult(result);
             }
             finally
             {
                 RuntimeServices.SetCurrentThis(prev);
+            }
+        }
+
+        private static void ValidateIteratorCloseResult(object? result)
+        {
+            if (result is null || result is JsNull || !IsObjectLikeForPrototype(result))
+            {
+                throw new JavaScriptRuntime.TypeError("Iterator.return result must be an object");
             }
         }
 
@@ -4583,7 +4593,8 @@ namespace JavaScriptRuntime
                 var previousThis = RuntimeServices.SetCurrentThis(_iterator);
                 try
                 {
-                    Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    var result = Closure.InvokeWithArgs(del, System.Array.Empty<object>(), System.Array.Empty<object>());
+                    ValidateIteratorCloseResult(result);
                 }
                 finally
                 {

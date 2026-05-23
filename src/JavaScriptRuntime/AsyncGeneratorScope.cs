@@ -30,6 +30,19 @@ public class AsyncGeneratorScope : AsyncScope
     public object? _returnValue;
     public bool _hasReturn;
 
+    // Pending completion for try/finally lowering in generators.
+    // Used when suspension occurs within try/finally so we cannot rely on CLR EH regions.
+    public object? _genPendingException;
+    public bool _hasGenPendingException;
+
+    public object? _genPendingReturnValue;
+    public bool _hasGenPendingReturn;
+
+    // Iterator state that must survive a yield inside array destructuring.
+    public object? _destructuringIterator;
+    public bool _destructuringCompleted;
+    public bool _destructuringIteratorDone;
+
     public int GenState
     {
         get => _genState;
