@@ -42,7 +42,7 @@
     {
       "clause": "19.2.3",
       "title": "isNaN ( number )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-isnan-number"
     },
     {
@@ -115,9 +115,36 @@
         "specUrl": "https://tc39.es/ecma262/#sec-isfinite-number",
         "testScripts": [
           "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js",
-          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_GlobalFunctions_AsValues_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/isFinite/JavaScript/return-false-on-nan-or-infinities.js",
+          "tests/Js2IL.Test262.Tests/built-ins/isFinite/JavaScript/return-true-for-valid-finite-numbers.js",
+          "tests/Js2IL.Test262.Tests/built-ins/isFinite/JavaScript/tonumber-operations.js"
         ],
-        "notes": "Implemented by JavaScriptRuntime.GlobalThis.isFinite using JS-like ToNumber coercion (JavaScriptRuntime.TypeUtilities.ToNumber) and IEEE-754 finiteness checks. Also supported as a first-class function value (e.g., passed around or assigned). This is sufficient for common libraries, but is not intended as a full spec conformance test suite."
+        "test262Paths": [
+          "test/built-ins/isFinite/return-false-on-nan-or-infinities.js",
+          "test/built-ins/isFinite/return-true-for-valid-finite-numbers.js",
+          "test/built-ins/isFinite/tonumber-operations.js"
+        ],
+        "notes": "Implemented by JavaScriptRuntime.GlobalThis.isFinite using JS-like ToNumber coercion (JavaScriptRuntime.TypeUtilities.ToNumber) and IEEE-754 finiteness checks. Current coverage includes single-element array/object-to-primitive coercion and function-value usage, but this is not intended as a full spec conformance test suite."
+      },
+      {
+        "clause": "19.2.3",
+        "feature": "isNaN(number)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-isnan-number",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/isNaN/JavaScript/return-false-not-nan-numbers.js",
+          "tests/Js2IL.Test262.Tests/built-ins/isNaN/JavaScript/return-abrupt-from-tonumber-number-symbol.js",
+          "tests/Js2IL.Test262.Tests/built-ins/isNaN/JavaScript/tonumber-operations.js",
+          "tests/Js2IL.Test262.Tests/built-ins/isNaN/JavaScript/toprimitive-valid-result.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/isNaN/return-false-not-nan-numbers.js",
+          "test/built-ins/isNaN/return-abrupt-from-tonumber-number-symbol.js",
+          "test/built-ins/isNaN/tonumber-operations.js",
+          "test/built-ins/isNaN/toprimitive-valid-result.js"
+        ],
+        "notes": "Implemented by JavaScriptRuntime.GlobalThis.isNaN using JS-like ToNumber coercion and NaN classification. Current coverage includes abrupt ToNumber propagation, single-element array/object-to-primitive coercion, and representative non-NaN inputs."
       },
       {
         "clause": "19.2.4",
