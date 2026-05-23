@@ -265,6 +265,22 @@ namespace JavaScriptRuntime
                 Value = _arrayIsArrayValue
             });
             ConfigureBuiltinFunctionObject(_arrayFromValue);
+            PropertyDescriptorStore.DefineOrUpdate(_arrayFromValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "from"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_arrayFromValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
             PropertyDescriptorStore.DefineOrUpdate(_arrayConstructorValue, "from", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

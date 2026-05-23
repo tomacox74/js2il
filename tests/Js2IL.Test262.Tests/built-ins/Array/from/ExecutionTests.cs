@@ -18,11 +18,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task Array_from_descriptor()
         => ExecutionTest("Array.from-descriptor");
 
-    [Fact(DisplayName = "Array.from-name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "Array.from-name")]
     public Task Array_from_name()
         => ExecutionTest("Array.from-name");
 
-    [Fact(DisplayName = "Array.from_arity", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "Array.from_arity")]
     public Task Array_from_arity()
         => ExecutionTest("Array.from_arity");
 

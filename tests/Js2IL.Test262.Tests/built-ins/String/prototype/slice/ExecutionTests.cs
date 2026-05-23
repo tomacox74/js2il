@@ -131,15 +131,15 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task name()
         => ExecutionTestFromFile("name");
 
-    [Fact(DisplayName = "S15.5.4.13_A2_T1", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "S15.5.4.13_A2_T1")]
     public Task S15_5_4_13_A2_T1()
         => ExecutionTestFromFile("S15.5.4.13_A2_T1");
 
-    [Fact(DisplayName = "S15.5.4.13_A2_T2", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "S15.5.4.13_A2_T2")]
     public Task S15_5_4_13_A2_T2()
         => ExecutionTestFromFile("S15.5.4.13_A2_T2");
 
-    [Fact(DisplayName = "S15.5.4.13_A2_T3", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "S15.5.4.13_A2_T3")]
     public Task S15_5_4_13_A2_T3()
         => ExecutionTestFromFile("S15.5.4.13_A2_T3");
 

@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T17:35:30Z
+> Last generated (UTC): 2026-05-23T13:57:48Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -93,7 +93,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.from (items) | Supported with Limitations | [`Array_Static_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`Array_Iterator_Methods.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js)<br>[`calling-from-valid-1-noStrict.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/calling-from-valid-1-noStrict.js) | `test/built-ins/Array/from/calling-from-valid-1-noStrict.js` | Supports array, enumerable, and iterator-producing sources (including Array iterator methods); mapper and thisArg semantics are not fully modeled. |
+| Array.from (items) | Supported with Limitations | [`Array_Static_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`Array_Iterator_Methods.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js)<br>[`calling-from-valid-1-noStrict.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/calling-from-valid-1-noStrict.js)<br>[`Array.from-name.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/Array.from-name.js)<br>[`Array.from_arity.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/Array.from_arity.js) | `test/built-ins/Array/from/calling-from-valid-1-noStrict.js`<br>`test/built-ins/Array/from/Array.from-name.js`<br>`test/built-ins/Array/from/Array.from_arity.js` | Supports array, enumerable, and iterator-producing sources (including Array iterator methods) and exposes the standard Array.from name/length metadata; mapper and thisArg semantics are not fully modeled. |
 
 ### 23.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-array.fromasync))
 
@@ -105,7 +105,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.isArray | Supported | [`Array_IsArray_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js)<br>[`15.4.3.2-0-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-1.js)<br>[`15.4.3.2-1-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-1.js) | `test/built-ins/Array/isArray/15.4.3.2-0-1.js`<br>`test/built-ins/Array/isArray/15.4.3.2-1-1.js` | Returns true for JavaScriptRuntime.Array instances and false otherwise. |
+| Array.isArray | Supported | [`Array_IsArray_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js)<br>[`15.4.3.2-0-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-1.js)<br>[`15.4.3.2-1-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-1.js)<br>[`15.4.3.2-0-5.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js) | `test/built-ins/Array/isArray/15.4.3.2-0-1.js`<br>`test/built-ins/Array/isArray/15.4.3.2-1-1.js`<br>`test/built-ins/Array/isArray/15.4.3.2-0-5.js` | Returns true for JavaScriptRuntime.Array instances and the intrinsic Array.prototype object, and false otherwise. |
 
 ### 23.1.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-array.of))
 
@@ -171,7 +171,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Array.prototype.reduce / reduceRight | Supported with Limitations | [`Array_CallbackOps_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_CallbackOps_Basic.js)<br>[`Array_PrototypeMethods_ArrayLike_Call.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js)<br>[`Array_PrototypeMethods_ArrayLike_EdgeCases.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js)<br>[`15.4.4.21-1-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/prototype/reduce/JavaScript/15.4.4.21-1-1.js)<br>[`15.4.4.21-10-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/prototype/reduce/JavaScript/15.4.4.21-10-1.js) | `test/built-ins/Array/prototype/reduce/15.4.4.21-1-1.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-10-1.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-3.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-6.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-10.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-12.js` | Supports core reduce flows and array-like .call(...) usage. Current bounded test262 coverage also exercises sparse arrays, array-like receivers, and representative accumulator-initialization edge cases; broader exotic behavior remains limited. |
+| Array.prototype.reduce / reduceRight | Supported with Limitations | [`Array_CallbackOps_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_CallbackOps_Basic.js)<br>[`Array_PrototypeMethods_ArrayLike_Call.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js)<br>[`Array_PrototypeMethods_ArrayLike_EdgeCases.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js)<br>[`15.4.4.21-1-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/prototype/reduce/JavaScript/15.4.4.21-1-1.js)<br>[`15.4.4.21-10-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/prototype/reduce/JavaScript/15.4.4.21-10-1.js)<br>[`15.4.4.21-10-3.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/prototype/reduce/JavaScript/15.4.4.21-10-3.js)<br>[`15.4.4.21-10-4.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/prototype/reduce/JavaScript/15.4.4.21-10-4.js) | `test/built-ins/Array/prototype/reduce/15.4.4.21-1-1.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-10-1.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-10-3.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-10-4.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-3.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-6.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-10.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-12.js` | Supports core reduce flows and array-like .call(...) usage. Current bounded test262 coverage also exercises sparse arrays, array-like receivers, inherited array indexed elements, and representative accumulator-initialization edge cases; broader exotic behavior remains limited. |
 
 ### 23.1.3.30 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.sort))
 

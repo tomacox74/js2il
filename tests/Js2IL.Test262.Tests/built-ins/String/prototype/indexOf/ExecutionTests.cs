@@ -134,15 +134,15 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task name()
         => ExecutionTestFromFile("name");
 
-    [Fact(DisplayName = "position-tointeger", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "position-tointeger")]
     public Task position_tointeger()
         => ExecutionTestFromFile("position-tointeger");
 
-    [Fact(DisplayName = "S15.5.4.7_A3_T1", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "S15.5.4.7_A3_T1")]
     public Task S15_5_4_7_A3_T1()
         => ExecutionTestFromFile("S15.5.4.7_A3_T1");
 
-    [Fact(DisplayName = "S15.5.4.7_A3_T2", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "S15.5.4.7_A3_T2", Skip = "Blocked: eval is not supported yet.")]
     public Task S15_5_4_7_A3_T2()
         => ExecutionTestFromFile("S15.5.4.7_A3_T2");
 
