@@ -25,4 +25,20 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "S12.6.1_A4_T1")]
     public Task S12_6_1_A4_T1()
         => ExecutionTest("S12.6.1_A4_T1");
+    [Fact(DisplayName = "S12.6.1_A1")]
+    public Task S12_6_1_A1()
+        => ExecutionTest("S12.6.1_A1");
+
+    [Fact(DisplayName = "S12.6.1_A4_T2")]
+    public Task S12_6_1_A4_T2()
+        => ExecutionTest("S12.6.1_A4_T2");
+
+    [Fact(DisplayName = "S12.6.1_A4_T3")]
+    public Task S12_6_1_A4_T3()
+        => ExecutionTest("S12.6.1_A4_T3");
+
+    [Fact(DisplayName = "S12.6.1_A4_T4")]
+    public Task S12_6_1_A4_T4()
+        => ExecutionTest("S12.6.1_A4_T4");
+
 }

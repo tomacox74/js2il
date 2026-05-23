@@ -69,4 +69,44 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "13.1-27-s", Skip = "Blocked: eval is not supported yet.")]
     public Task _13_1_27_s()
         => ExecutionTest("13.1-27-s");
+    [Fact(DisplayName = "13.2-1-s")]
+    public Task _13_2_1_s()
+        => ExecutionTest("13.2-1-s");
+
+    [Fact(DisplayName = "13.2-19-b-3gs", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task _13_2_19_b_3gs()
+        => ExecutionTest("13.2-19-b-3gs");
+
+    [Fact(DisplayName = "13.2-2-s", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task _13_2_2_s()
+        => ExecutionTest("13.2-2-s");
+
+    [Fact(DisplayName = "13.2-21-s")]
+    public Task _13_2_21_s()
+        => ExecutionTest("13.2-21-s");
+
+    [Fact(DisplayName = "13.2-22-s")]
+    public Task _13_2_22_s()
+        => ExecutionTest("13.2-22-s");
+
+    [Fact(DisplayName = "13.2-23-s")]
+    public Task _13_2_23_s()
+        => ExecutionTest("13.2-23-s");
+
+    [Fact(DisplayName = "13.2-24-s")]
+    public Task _13_2_24_s()
+        => ExecutionTest("13.2-24-s");
+
+    [Fact(DisplayName = "13.2-25-s")]
+    public Task _13_2_25_s()
+        => ExecutionTest("13.2-25-s");
+
+    [Fact(DisplayName = "13.2-26-s")]
+    public Task _13_2_26_s()
+        => ExecutionTest("13.2-26-s");
+
+    [Fact(DisplayName = "13.2-27-s")]
+    public Task _13_2_27_s()
+        => ExecutionTest("13.2-27-s");
+
 }

@@ -33,4 +33,12 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "scope-lex-open-dflt")]
     public Task scope_lex_open_dflt()
         => ExecutionTest("scope-lex-open-dflt");
+    [Fact(DisplayName = "scope-lex-close-dflt")]
+    public Task scope_lex_close_dflt()
+        => ExecutionTest("scope-lex-close-dflt");
+
+    [Fact(DisplayName = "scope-lex-open-case")]
+    public Task scope_lex_open_case()
+        => ExecutionTest("scope-lex-open-case");
+
 }

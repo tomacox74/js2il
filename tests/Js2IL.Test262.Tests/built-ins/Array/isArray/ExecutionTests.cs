@@ -52,5 +52,21 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("15.4.3.2-1-1");
 
+    [Fact(DisplayName = "15.4.3.2-0-5", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    public Task _15_4_3_2_0_5()
+        => ExecutionTestFromFile("15.4.3.2-0-5");
+
+    [Fact(DisplayName = "15.4.3.2-0-6")]
+    public Task _15_4_3_2_0_6()
+        => ExecutionTestFromFile("15.4.3.2-0-6");
+
+    [Fact(DisplayName = "15.4.3.2-0-7")]
+    public Task _15_4_3_2_0_7()
+        => ExecutionTestFromFile("15.4.3.2-0-7");
+
+    [Fact(DisplayName = "15.4.3.2-1-10")]
+    public Task _15_4_3_2_1_10()
+        => ExecutionTestFromFile("15.4.3.2-1-10");
+
 }
 

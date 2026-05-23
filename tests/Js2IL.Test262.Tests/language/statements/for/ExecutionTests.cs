@@ -81,4 +81,48 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "12.6.3_2-3-a-ii-7")]
     public Task _12_6_3_2_3_a_ii_7()
         => ExecutionTest("12.6.3_2-3-a-ii-7");
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-8")]
+    public Task _12_6_3_2_3_a_ii_8()
+        => ExecutionTest("12.6.3_2-3-a-ii-8");
+
+    [Fact(DisplayName = "12.6.3_2-3-a-ii-9")]
+    public Task _12_6_3_2_3_a_ii_9()
+        => ExecutionTest("12.6.3_2-3-a-ii-9");
+
+    [Fact(DisplayName = "const-ary-init-iter-close", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task dstr_const_ary_init_iter_close()
+        => ExecutionTest(@"dstr\const-ary-init-iter-close");
+
+    [Fact(DisplayName = "const-ary-init-iter-get-err-array-prototype", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task dstr_const_ary_init_iter_get_err_array_prototype()
+        => ExecutionTest(@"dstr\const-ary-init-iter-get-err-array-prototype");
+
+    [Fact(DisplayName = "const-ary-init-iter-no-close")]
+    public Task dstr_const_ary_init_iter_no_close()
+        => ExecutionTest(@"dstr\const-ary-init-iter-no-close");
+
+    [Fact(DisplayName = "const-ary-name-iter-val")]
+    public Task dstr_const_ary_name_iter_val()
+        => ExecutionTest(@"dstr\const-ary-name-iter-val");
+
+    [Fact(DisplayName = "const-ary-ptrn-elem-ary-elem-init")]
+    public Task dstr_const_ary_ptrn_elem_ary_elem_init()
+        => ExecutionTest(@"dstr\const-ary-ptrn-elem-ary-elem-init");
+
+    [Fact(DisplayName = "const-ary-ptrn-elem-ary-elem-iter")]
+    public Task dstr_const_ary_ptrn_elem_ary_elem_iter()
+        => ExecutionTest(@"dstr\const-ary-ptrn-elem-ary-elem-iter");
+
+    [Fact(DisplayName = "const-ary-ptrn-elem-ary-elision-init", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task dstr_const_ary_ptrn_elem_ary_elision_init()
+        => ExecutionTest(@"dstr\const-ary-ptrn-elem-ary-elision-init");
+
+    [Fact(DisplayName = "const-ary-ptrn-elem-ary-elision-iter")]
+    public Task dstr_const_ary_ptrn_elem_ary_elision_iter()
+        => ExecutionTest(@"dstr\const-ary-ptrn-elem-ary-elision-iter");
+
+    [Fact(DisplayName = "const-ary-ptrn-elem-ary-empty-init", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    public Task dstr_const_ary_ptrn_elem_ary_empty_init()
+        => ExecutionTest(@"dstr\const-ary-ptrn-elem-ary-empty-init");
+
 }

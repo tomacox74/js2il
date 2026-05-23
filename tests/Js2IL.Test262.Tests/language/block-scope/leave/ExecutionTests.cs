@@ -61,4 +61,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "verify-context-in-labelled-block")]
     public Task verify_context_in_labelled_block()
         => ExecutionTest("verify-context-in-labelled-block");
+    [Fact(DisplayName = "verify-context-in-try-block")]
+    public Task verify_context_in_try_block()
+        => ExecutionTest("verify-context-in-try-block");
+
 }

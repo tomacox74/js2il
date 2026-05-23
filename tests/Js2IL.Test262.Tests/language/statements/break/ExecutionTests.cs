@@ -21,4 +21,8 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "line-terminators")]
     public Task line_terminators()
         => ExecutionTest("line-terminators");
+    [Fact(DisplayName = "S12.8_A3")]
+    public Task S12_8_A3()
+        => ExecutionTest("S12.8_A3");
+
 }

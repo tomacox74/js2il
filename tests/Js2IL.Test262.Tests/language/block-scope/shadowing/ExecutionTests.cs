@@ -45,4 +45,24 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "const-declaration-shadowing-catch-parameter")]
     public Task const_declaration_shadowing_catch_parameter()
         => ExecutionTest("const-declaration-shadowing-catch-parameter");
+    [Fact(DisplayName = "const-declarations-shadowing-parameter-name-let-const-and-var-variables")]
+    public Task const_declarations_shadowing_parameter_name_let_const_and_var_variables()
+        => ExecutionTest("const-declarations-shadowing-parameter-name-let-const-and-var-variables");
+
+    [Fact(DisplayName = "hoisting-var-declarations-out-of-blocks")]
+    public Task hoisting_var_declarations_out_of_blocks()
+        => ExecutionTest("hoisting-var-declarations-out-of-blocks");
+
+    [Fact(DisplayName = "let-declaration-shadowing-catch-parameter")]
+    public Task let_declaration_shadowing_catch_parameter()
+        => ExecutionTest("let-declaration-shadowing-catch-parameter");
+
+    [Fact(DisplayName = "parameter-name-shadowing-catch-parameter")]
+    public Task parameter_name_shadowing_catch_parameter()
+        => ExecutionTest("parameter-name-shadowing-catch-parameter");
+
+    [Fact(DisplayName = "parameter-name-shadowing-parameter-name-let-const-and-var")]
+    public Task parameter_name_shadowing_parameter_name_let_const_and_var()
+        => ExecutionTest("parameter-name-shadowing-parameter-name-let-const-and-var");
+
 }

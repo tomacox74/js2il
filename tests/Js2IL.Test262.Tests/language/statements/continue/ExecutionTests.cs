@@ -21,4 +21,20 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "simple-and-labeled")]
     public Task simple_and_labeled()
         => ExecutionTest("simple-and-labeled");
+    [Fact(DisplayName = "nested-let-bound-for-loops-inner-continue")]
+    public Task nested_let_bound_for_loops_inner_continue()
+        => ExecutionTest("nested-let-bound-for-loops-inner-continue");
+
+    [Fact(DisplayName = "nested-let-bound-for-loops-labeled-continue")]
+    public Task nested_let_bound_for_loops_labeled_continue()
+        => ExecutionTest("nested-let-bound-for-loops-labeled-continue");
+
+    [Fact(DisplayName = "nested-let-bound-for-loops-outer-continue")]
+    public Task nested_let_bound_for_loops_outer_continue()
+        => ExecutionTest("nested-let-bound-for-loops-outer-continue");
+
+    [Fact(DisplayName = "shadowing-loop-variable-in-same-scope-as-continue")]
+    public Task shadowing_loop_variable_in_same_scope_as_continue()
+        => ExecutionTest("shadowing-loop-variable-in-same-scope-as-continue");
+
 }

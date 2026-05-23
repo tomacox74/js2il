@@ -52,5 +52,17 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("non-integers");
 
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "prop-desc")]
+    public Task prop_desc()
+        => ExecutionTestFromFile("prop-desc");
+
 }
 
