@@ -3182,6 +3182,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (TryGetStaticClassMethodOverloads(target, name, out _, out _))
+            {
+                return true;
+            }
+
             if (target is IDictionary<string, object?> dictGeneric)
             {
                 return dictGeneric.ContainsKey(name);
@@ -3521,6 +3526,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (TryEnsureStaticClassMethodDataProperty(target, propName, out descriptor!))
+            {
+                return true;
+            }
+
             // Default descriptors for existing properties (no attribute fidelity yet).
             if (target is System.Dynamic.ExpandoObject exp)
             {
@@ -3700,6 +3710,119 @@ namespace JavaScriptRuntime
             return result;
         }
 
+        private static bool TryEnsureStaticClassMethodDataProperty(object target, string propName, out JsPropertyDescriptor descriptor)
+        {
+            if (!TryGetStaticClassMethodOverloads(target, propName, out var staticClassType, out var methods))
+            {
+                descriptor = null!;
+                return false;
+            }
+
+            Func<object[], object?[]?, object?> functionValue = (_, args) =>
+                CallMember(target, propName, (object[]?)args);
+
+            GlobalThis.ConfigureBuiltinFunctionObject(functionValue);
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = propName
+            });
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = GetStaticClassMethodLength(staticClassType, propName, methods)
+            });
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+
+            descriptor = new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = functionValue
+            };
+
+            PropertyDescriptorStore.DefineOrUpdate(target, propName, descriptor);
+            return true;
+        }
+
+        private static bool TryGetStaticClassMethodOverloads(
+            object target,
+            string propName,
+            [NotNullWhen(true)] out Type? staticClassType,
+            [NotNullWhen(true)] out List<MethodInfo>? methods)
+        {
+            staticClassType = target switch
+            {
+                ClassConstructorValue classConstructorValue => classConstructorValue.Type,
+                Type type => type,
+                _ => null
+            };
+
+            if (staticClassType == null)
+            {
+                methods = null;
+                return false;
+            }
+
+            methods = staticClassType
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Where(m => string.Equals(m.Name, propName, StringComparison.Ordinal))
+                .ToList();
+
+            if (methods.Count > 0)
+            {
+                return true;
+            }
+
+            methods = null;
+            return false;
+        }
+
+        private static double GetStaticClassMethodLength(Type staticClassType, string propName, IReadOnlyList<MethodInfo> methods)
+        {
+            if (staticClassType == typeof(JavaScriptRuntime.Math)
+                && (string.Equals(propName, nameof(JavaScriptRuntime.Math.max), StringComparison.Ordinal)
+                    || string.Equals(propName, nameof(JavaScriptRuntime.Math.min), StringComparison.Ordinal)))
+            {
+                return 2d;
+            }
+
+            return methods.Min(GetCallableLength);
+
+            static int GetCallableLength(MethodInfo method)
+            {
+                var parameters = method.GetParameters();
+                var abi = Js2IL.Runtime.JsCallableScopeAbiResolver.Resolve(method);
+                bool hasScopes = abi.HasExplicitScopePayload;
+                bool hasNewTarget = Js2IL.Runtime.JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
+                int jsParamStart = hasScopes
+                    ? (hasNewTarget ? 2 : 1)
+                    : (hasNewTarget ? 1 : 0);
+                int expectedJsParamCount = parameters.Length - jsParamStart;
+                bool hasParamsArray = expectedJsParamCount > 0
+                    && (Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
+                        || (parameters[^1].ParameterType.IsArray
+                            && parameters[^1].ParameterType.GetElementType() == typeof(object)));
+
+                return System.Math.Max(0, hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount);
+            }
+        }
+
         private static bool TryGetOwnPropertyValue(object target, string propName, out object? value)
         {
             return TryGetOwnPropertyValue(target, propName, target, out value);
@@ -3738,6 +3861,12 @@ namespace JavaScriptRuntime
             if (RuntimeServices.TryEnsureLazyClassMethodDataProperty(target, propName, out var lazyClassMethodDesc))
             {
                 value = lazyClassMethodDesc.Value;
+                return true;
+            }
+
+            if (TryEnsureStaticClassMethodDataProperty(target, propName, out var staticMethodDesc))
+            {
+                value = staticMethodDesc.Value;
                 return true;
             }
 
