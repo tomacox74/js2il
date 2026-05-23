@@ -146,7 +146,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             var parentIndex = updateStorage.ParentScopeIndex;
                             if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                || _methodBodyIR.IsGenerator)
                             {
                                 parentIndex += 1;
                             }
@@ -670,7 +670,7 @@ public sealed partial class HIRToLIRLowerer
                             {
                                 var parentIndex = storage.ParentScopeIndex;
                                 if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                    || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                    || _methodBodyIR.IsGenerator)
                                 {
                                     parentIndex += 1;
                                 }
@@ -918,6 +918,18 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (IsImmutableFunctionExpressionNameBinding(binding))
+        {
+            if (UsesStrictAssignmentSemantics())
+            {
+                lirInstructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
+                resultTempVar = CreateTempVariable();
+                return true;
+            }
+
+            return TryLowerExpression(assignExpr.Value, out resultTempVar);
+        }
+
         // For compound assignment (+=, -=, etc.), we need to load the current value first
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
@@ -999,7 +1011,7 @@ public sealed partial class HIRToLIRLowerer
                             {
                                 var parentIndex = storage.ParentScopeIndex;
                                 if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                    || (_methodBodyIR.IsGenerator && (_methodBodyIR.GeneratorInfo?.YieldPointCount ?? 0) > 0))
+                                    || _methodBodyIR.IsGenerator)
                                 {
                                     parentIndex += 1;
                                 }
@@ -1092,6 +1104,12 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
         return true;
     }
+
+    private static bool IsImmutableFunctionExpressionNameBinding(BindingInfo binding)
+        => binding.Kind == BindingKind.Function
+           && binding.DeclarationNode is FunctionExpression functionExpression
+           && functionExpression.Id is Identifier identifier
+           && string.Equals(identifier.Name, binding.Name, StringComparison.Ordinal);
 
     private bool DoesClassNeedParentScopes(ClassDeclaration classDecl, Scope classScope)
     {

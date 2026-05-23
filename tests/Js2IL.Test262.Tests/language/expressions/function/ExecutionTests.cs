@@ -38,7 +38,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task name_eval_non_strict()
         => ExecutionTest("name-eval-non-strict");
 
-    [Fact(DisplayName = "name-eval-stricteval", Skip = "Known JS2IL compiler/runtime limitation")]
+    [Fact(DisplayName = "name-eval-stricteval", Skip = "Blocked: eval is not supported yet.")]
     public Task name_eval_stricteval()
         => ExecutionTest("name-eval-stricteval");
 
@@ -58,7 +58,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task param_eval_non_strict()
         => ExecutionTest("param-eval-non-strict");
 
-    [Fact(DisplayName = "param-eval-stricteval", Skip = "Product gap: currently fails in JS2IL runtime.")]
+    [Fact(DisplayName = "param-eval-stricteval", Skip = "Blocked: eval is not supported yet.")]
     public Task param_eval_stricteval()
         => ExecutionTest("param-eval-stricteval");
 
@@ -70,19 +70,19 @@ public class ExecutionTests : ExecutionTestsBase
     public Task params_dflt_ref_arguments()
         => ExecutionTest("params-dflt-ref-arguments");
 
-    [Fact(DisplayName = "scope-body-lex-distinct", Skip = "Known issue: compiler cannot yet compile this test262 scenario")]
+    [Fact(DisplayName = "scope-body-lex-distinct", Skip = "Blocked: eval is not supported yet.")]
     public Task scope_body_lex_distinct()
         => ExecutionTest("scope-body-lex-distinct");
 
-    [Fact(DisplayName = "scope-name-var-close", Skip = "Known issue: runtime behavior diverges from test262 expectation")]
+    [Fact(DisplayName = "scope-name-var-close")]
     public Task scope_name_var_close()
         => ExecutionTest("scope-name-var-close");
 
-    [Fact(DisplayName = "scope-name-var-open-non-strict", Skip = "Known issue: runtime failure in this test262 scenario")]
+    [Fact(DisplayName = "scope-name-var-open-non-strict")]
     public Task scope_name_var_open_non_strict()
         => ExecutionTest("scope-name-var-open-non-strict");
 
-    [Fact(DisplayName = "scope-name-var-open-strict", Skip = "Known issue: runtime failure in this test262 scenario")]
+    [Fact(DisplayName = "scope-name-var-open-strict")]
     public Task scope_name_var_open_strict()
         => ExecutionTest("scope-name-var-open-strict");
 }

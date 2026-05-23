@@ -395,6 +395,11 @@ public static class Function
                 return Construct(boundTarget, finalArgs, effectiveNewTarget);
             }
 
+            if (GeneratorObject.IsGeneratorFunctionValue(constructor))
+            {
+                throw new TypeError("Generator functions are not constructors");
+            }
+
             if (JavaScriptRuntime.Number.IsNumberConstructor(constructor))
             {
                 return JavaScriptRuntime.Number.Construct(callArgs, newTarget);

@@ -5420,6 +5420,16 @@ namespace JavaScriptRuntime
                     {
                         return value;
                     }
+
+                    if (HasReadOnlyClrDataMember(staticType, name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase))
+                    {
+                        if (!throwOnError)
+                        {
+                            return value;
+                        }
+
+                        throw new TypeError($"Cannot assign to read only property '{name}' of object");
+                    }
                 }
                 else if (TrySetClrMemberValue(obj.GetType(), obj, name, value, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase))
                 {
@@ -5429,6 +5439,10 @@ namespace JavaScriptRuntime
             catch (TargetInvocationException tie) when (tie.InnerException != null)
             {
                 ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
+                throw;
+            }
+            catch (TypeError)
+            {
                 throw;
             }
             catch
@@ -5457,6 +5471,18 @@ namespace JavaScriptRuntime
             }
 
             return value;
+        }
+
+        private static bool HasReadOnlyClrDataMember(Type type, string name, BindingFlags bindingFlags)
+        {
+            var prop = FindClrProperty(type, name, bindingFlags);
+            if (prop != null)
+            {
+                return prop.CanRead && !prop.CanWrite;
+            }
+
+            var field = FindClrField(type, name, bindingFlags);
+            return field != null && (field.IsInitOnly || field.IsLiteral);
         }
 
         internal static void InvalidateRegExpWellKnownSymbolFastPath(object target, string propertyKey)

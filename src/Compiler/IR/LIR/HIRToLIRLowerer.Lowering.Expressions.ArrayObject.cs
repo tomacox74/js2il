@@ -91,6 +91,7 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerObjectExpression(HIRObjectExpression objectExpr, out TempVariable resultTempVar)
     {
         resultTempVar = CreateTempVariable();
+        var objectTemp = resultTempVar;
 
         // Fast path: simple object literal with only non-computed properties.
         // Preserve the existing LIRNewJsObject initialization pattern for minimal IL/snapshot churn.
@@ -114,10 +115,20 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        // Create an empty object first, then apply members in source evaluation order.
-        // This preserves side-effect order for computed keys and spread members.
-        _methodBodyIR.Instructions.Add(new LIRNewJsObject(new List<ObjectProperty>(), resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.JsObject)));
+        // Create the object lazily. Object creation itself is not observable, and delaying it avoids
+        // losing the target temp when a generator suspends while evaluating the first computed key.
+        var targetCreated = false;
+        void EnsureObjectTargetCreated()
+        {
+            if (targetCreated)
+            {
+                return;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRNewJsObject(new List<ObjectProperty>(), objectTemp));
+            DefineTempStorage(objectTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.JsObject)));
+            targetCreated = true;
+        }
 
         foreach (var member in objectExpr.Members)
         {
@@ -125,10 +136,17 @@ public sealed partial class HIRToLIRLowerer
             {
                 case HIRObjectProperty prop:
                 {
-                    if (!TryLowerObjectLiteralDataProperty(resultTempVar, prop.Key, prop.Value))
+                    var keyTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(prop.Key, keyTemp));
+                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                    if (!TryLowerExpression(prop.Value, out var valueTemp))
                     {
                         return false;
                     }
+
+                    EnsureObjectTargetCreated();
+                    EmitDefineObjectLiteralDataProperty(objectTemp, keyTemp, valueTemp);
                     break;
                 }
 
@@ -140,16 +158,20 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerObjectLiteralDataProperty(resultTempVar, keyExprTemp, computed.Value))
+                    if (!TryLowerExpression(computed.Value, out var valueTemp))
                     {
                         return false;
                     }
+
+                    EnsureObjectTargetCreated();
+                    EmitDefineObjectLiteralDataProperty(objectTemp, keyExprTemp, valueTemp);
                     break;
                 }
 
                 case HIRObjectAccessorProperty accessor:
                 {
-                    if (!TryLowerObjectLiteralAccessorProperty(resultTempVar, accessor.Key, accessor.Getter, accessor.Setter))
+                    EnsureObjectTargetCreated();
+                    if (!TryLowerObjectLiteralAccessorProperty(objectTemp, accessor.Key, accessor.Getter, accessor.Setter))
                     {
                         return false;
                     }
@@ -163,7 +185,8 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    if (!TryLowerObjectLiteralAccessorProperty(resultTempVar, accessorKeyTemp, computedAccessor.Getter, computedAccessor.Setter))
+                    EnsureObjectTargetCreated();
+                    if (!TryLowerObjectLiteralAccessorProperty(objectTemp, accessorKeyTemp, computedAccessor.Getter, computedAccessor.Setter))
                     {
                         return false;
                     }
@@ -177,7 +200,8 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
-                    var boxedTarget = EnsureObject(resultTempVar);
+                    EnsureObjectTargetCreated();
+                    var boxedTarget = EnsureObject(objectTemp);
                     var boxedSource = EnsureObject(spreadTemp);
                     var spreadResult = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
@@ -193,6 +217,8 @@ public sealed partial class HIRToLIRLowerer
                     throw new NotSupportedException($"Unhandled object literal member type during lowering: {member.GetType().FullName}");
             }
         }
+
+        EnsureObjectTargetCreated();
         return true;
     }
 
@@ -211,6 +237,12 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        EmitDefineObjectLiteralDataProperty(targetTemp, keyTemp, valueTemp);
+        return true;
+    }
+
+    private void EmitDefineObjectLiteralDataProperty(TempVariable targetTemp, TempVariable keyTemp, TempVariable valueTemp)
+    {
         var boxedTarget = EnsureObject(targetTemp);
         var keyStorage = GetTempStorage(keyTemp);
         var valueStorage = GetTempStorage(valueTemp);
@@ -230,7 +262,6 @@ public sealed partial class HIRToLIRLowerer
             Arguments: new List<TempVariable> { boxedTarget, keyArg, valueArg },
             Result: defineResult));
         DefineTempStorage(defineResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        return true;
     }
 
     private bool TryLowerObjectLiteralAccessorProperty(TempVariable targetTemp, string key, HIRExpression? getterExpression, HIRExpression? setterExpression)
