@@ -28,6 +28,11 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
       - name: Determine js2il tool version
         run: |
           set -euo pipefail
@@ -85,6 +90,16 @@ jobs:
 
             throw new Error(`Timed out waiting for ${workflowId} to publish packages for ${targetRef}.`);
 
+      - name: Wait for NuGet package availability
+        if: github.event_name == 'release'
+        run: |
+          set -euo pipefail
+          node scripts/waitForNuGetPackageVersions.js \
+            --version "$TOOL_VERSION" \
+            --package js2il \
+            --package Js2IL.Runtime \
+            --package Js2IL.SDK
+
       - name: Install js2il tool from NuGet (specific version with retry)
         run: |
           set -euo pipefail
@@ -121,11 +136,6 @@ jobs:
             echo "Smoke test failed: expected output containing 'x is'"
             exit 1
           fi
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
 
       - name: Build Jint and Okojo comparison projects
         run: |
