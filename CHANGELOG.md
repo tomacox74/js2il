@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/docs/test262: port 40 additional object/property/prototype `test262` execution cases under `built-ins/Object/{create,defineProperty,freeze,getOwnPropertyNames,getPrototypeOf,setPrototypeOf}`, covering ordinary prototype wiring, descriptor defaults/invariants, freeze semantics, and own-name reflection while refreshing the linked ECMA-262 support evidence.
 
 ## v0.9.25 - 2026-05-24
 

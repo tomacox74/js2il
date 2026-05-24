@@ -1,0 +1,101 @@
+// Copyright (c) 2012 Ecma International.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: |
+    Step 4 of defineProperty calls the [[DefineOwnProperty]] internal method
+    of O to define the property. Step 6 of [[DefineOwnProperty]] returns if
+    every field of desc also occurs in current and every field in desc has
+    the same value as current.
+es5id: 15.2.3.6-4-6
+description: >
+    Object.defineProperty is no-op if current and desc are the same
+    accessor desc
+---*/
+
+// test262 execution-port helpers
+var __test262_Object_is = Object.is;
+var __test262_Object_getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var __test262_Object_defineProperty = Object.defineProperty;
+var __test262_Object_keys = Object.keys;
+var __test262_Object_hasOwnProperty = Object.prototype.hasOwnProperty;
+var __test262_Array_isArray = Array.isArray;
+
+function __test262_compareArray(actual, expected) {
+  if (!__test262_Array_isArray(actual) || !__test262_Array_isArray(expected) || actual.length !== expected.length) {
+    return false;
+  }
+  for (var i = 0; i < actual.length; i++) {
+    if (!__test262_Object_is(actual[i], expected[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function verifyProperty(obj, name, desc) {
+  var actual = __test262_Object_getOwnPropertyDescriptor(obj, name);
+  var ok = !!actual;
+  if ('value' in desc) ok = ok && __test262_Object_is(actual.value, desc.value);
+  if ('writable' in desc) ok = ok && actual.writable === desc.writable;
+  if ('enumerable' in desc) ok = ok && actual.enumerable === desc.enumerable;
+  if ('configurable' in desc) ok = ok && actual.configurable === desc.configurable;
+  if ('get' in desc) ok = ok && actual.get === desc.get;
+  if ('set' in desc) ok = ok && actual.set === desc.set;
+  console.log(ok);
+  return ok;
+}
+
+var assert = function assert(condition) {
+  console.log(Boolean(condition));
+};
+
+assert.sameValue = function(actual, expected) {
+  console.log(__test262_Object_is(actual, expected));
+};
+
+assert.notSameValue = function(actual, unexpected) {
+  console.log(!__test262_Object_is(actual, unexpected));
+};
+
+assert.compareArray = function(actual, expected) {
+  console.log(__test262_compareArray(actual, expected));
+};
+
+assert.throws = function(ExpectedError, fn) {
+  try {
+    fn();
+    console.log(false);
+  } catch (error) {
+    console.log(error instanceof ExpectedError || error.constructor === ExpectedError || error.name === ExpectedError.name);
+  }
+};
+function sameAccessorDescriptorValues(d1, d2) {
+  return (d1.get == d2.get &&
+    d1.enumerable == d2.enumerable &&
+    d1.configurable == d2.configurable);
+}
+
+var o = {};
+
+// create an accessor property with the following attributes:
+// enumerable: true, configurable: true
+var desc = {
+  get: function() {},
+  enumerable: true,
+  configurable: true
+};
+
+Object.defineProperty(o, "foo", desc);
+
+// query for, and save, the desc. A subsequent call to defineProperty
+// with the same desc should not disturb the property definition.
+var d1 = Object.getOwnPropertyDescriptor(o, "foo");
+
+// now, redefine the property with the same descriptor
+// the property defintion should not get disturbed.
+Object.defineProperty(o, "foo", desc);
+
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
+
+assert.sameValue(sameAccessorDescriptorValues(d1, d2), true, 'sameAccessorDescriptorValues(d1, d2)');

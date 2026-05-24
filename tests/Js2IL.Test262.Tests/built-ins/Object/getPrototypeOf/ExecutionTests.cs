@@ -1,0 +1,30 @@
+using Js2IL.Test262.Tests.built_ins;
+
+namespace Js2IL.Test262.Tests.built_ins.Object.getPrototypeOf;
+
+public class ExecutionTests : DiskExecutionTestsBase
+{
+    public ExecutionTests() : base("built_ins.Object.getPrototypeOf") { }
+
+    [Fact(DisplayName = "15.2.3.2-0-1")]
+    public Task _15_2_3_2_0_1()
+        => ExecutionTestFromFile("15.2.3.2-0-1");
+    [Fact(DisplayName = "15.2.3.2-1-2")]
+    public Task _15_2_3_2_1_2()
+        => ExecutionTestFromFile("15.2.3.2-1-2");
+    [Fact(DisplayName = "15.2.3.2-2-1")]
+    public Task _15_2_3_2_2_1()
+        => ExecutionTestFromFile("15.2.3.2-2-1");
+    [Fact(DisplayName = "15.2.3.2-2-2")]
+    public Task _15_2_3_2_2_2()
+        => ExecutionTestFromFile("15.2.3.2-2-2");
+    [Fact(DisplayName = "15.2.3.2-2-3")]
+    public Task _15_2_3_2_2_3()
+        => ExecutionTestFromFile("15.2.3.2-2-3");
+    [Fact(DisplayName = "15.2.3.2-2-4")]
+    public Task _15_2_3_2_2_4()
+        => ExecutionTestFromFile("15.2.3.2-2-4");
+    [Fact(DisplayName = "15.2.3.2-2-5")]
+    public Task _15_2_3_2_2_5()
+        => ExecutionTestFromFile("15.2.3.2-2-5");
+}

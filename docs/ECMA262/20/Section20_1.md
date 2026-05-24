@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:54:21Z
+> Last generated (UTC): 2026-05-24T13:17:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -81,7 +81,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.create | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js) |  | Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors. |
+| Object.create | Supported with Limitations | [`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`Function_Prototype_ObjectCreate_ObjectPrototype.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/create/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.create using the opt-in PrototypeChain side-table to set [[Prototype]] (including null-prototype objects via JS null). When a properties bag is provided, it is applied via defineProperties. Current bounded test262 coverage exercises the function surface, null/undefined guards, null-prototype creation, explicit prototype wiring, and property-bag initialization. This does not implement full OrdinaryObjectCreate invariants or exotic object behaviors. |
 
 ### 20.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-object.defineproperties))
 
@@ -99,7 +99,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.defineProperty | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`Object_DefineProperty_AccessorTransitions_And_Invariants.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js)<br>[`Object_DefineProperty_NonExtensible_ReconfigureExisting.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) |  | Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, and non-extensible/sealed/frozen interactions for ordinary objects. Exotic arrays, typed arrays, host objects, and full proxy invariants remain partial. |
+| Object.defineProperty | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js)<br>[`Object_DefineProperty_AccessorTransitions_And_Invariants.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js)<br>[`Object_DefineProperty_NonExtensible_ReconfigureExisting.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.defineProperty using a ConditionalWeakTable-backed descriptor store plus implicit descriptors for dictionary-backed ordinary properties. Ordinary-object redefinition checks cover data/accessor transitions, non-configurable and non-writable invariants, inherited descriptor fields, and non-extensible/sealed/frozen interactions for ordinary objects. Current bounded test262 coverage exercises descriptor conflict rejection, default attribute filling for data/accessor/generic descriptors, no-op same-descriptor redefinitions, and non-configurable enumerable/configurable transition failures. Exotic arrays, typed arrays, host objects, and full proxy invariants remain partial. |
 
 ### 20.1.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-object.entries))
 
@@ -111,7 +111,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.freeze | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js) |  | For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, sets own properties non-configurable, and makes own data properties non-writable. Subsequent strict-mode writes, deletes, and incompatible Object.defineProperty redefinitions fail through the ordinary property paths with TypeError. Array and other exotic-object invariants remain partial. |
+| Object.freeze | Supported with Limitations | [`Object_Integrity_FreezeSeal_PreventExtensions.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js)<br>[`Object_Integrity_DefineProperty_And_StrictWrites.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/freeze/ExecutionTests.cs` |  | For ordinary objects, synthesizes descriptors for existing own properties, marks the object non-extensible, sets own properties non-configurable, and makes own data properties non-writable. Current bounded test262 coverage exercises the function surface plus freezing ordinary own data properties and preserving pre-existing non-writable attributes while forcing configurability off. Subsequent strict-mode writes, deletes, and incompatible Object.defineProperty redefinitions fail through the ordinary property paths with TypeError. Array and other exotic-object invariants remain partial. |
 
 ### 20.1.2.7 ([tc39.es](https://tc39.es/ecma262/#sec-object.fromentries))
 
@@ -135,7 +135,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.getOwnPropertyNames | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js)<br>[`Object_OwnPropertyKeyOrdering.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js) |  | Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using ordered own-key helpers plus descriptor/dynamic stores. Returns only string keys, preserving ordinary-object numeric-then-string ordering while excluding symbol keys. |
+| Object.getOwnPropertyNames | Supported with Limitations | [`Object_GetOwnPropertyNames_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js)<br>[`Object_OwnPropertyKeyOrdering.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/getOwnPropertyNames/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.getOwnPropertyNames using ordered own-key helpers plus descriptor/dynamic stores. Returns only string keys, preserving ordinary-object numeric-then-string ordering while excluding symbol keys. Current bounded test262 coverage exercises the function surface, returned-array identity/length, and ordinary object own-name lookup. |
 
 ### 20.1.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertysymbols))
 
@@ -153,7 +153,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.getPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js) |  | Implemented in JavaScriptRuntime.Object.getPrototypeOf using an opt-in side-table prototype store (JavaScriptRuntime.PrototypeChain). This does not currently model default Object.prototype; if no prototype has been explicitly assigned, this returns undefined (null). |
+| Object.getPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/getPrototypeOf/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.getPrototypeOf using an opt-in side-table prototype store (JavaScriptRuntime.PrototypeChain). Current bounded test262 coverage exercises the function surface, null/undefined guard behavior, constructor prototype relationships, and explicit custom prototype chains. This does not currently model default Object.prototype; if no prototype has been explicitly assigned, this returns undefined (null). |
 
 ### 20.1.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-object.groupby))
 
@@ -219,7 +219,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.setPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js) |  | Implemented in JavaScriptRuntime.Object.setPrototypeOf using an opt-in side-table prototype store. Rejects null/undefined targets; accepts object-like targets. Does not yet implement full invariant checks, extensibility, or exotic object behaviors. |
+| Object.setPrototypeOf | Supported with Limitations | [`PrototypeChain_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/setPrototypeOf/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.setPrototypeOf using an opt-in side-table prototype store. Current bounded test262 coverage exercises successful prototype mutation plus the null/undefined-target and invalid-prototype TypeError paths. Rejects null/undefined targets; accepts object-like targets. Does not yet implement full invariant checks, extensibility, or exotic object behaviors. |
 
 ### 20.1.2.24 ([tc39.es](https://tc39.es/ecma262/#sec-object.values))
 
