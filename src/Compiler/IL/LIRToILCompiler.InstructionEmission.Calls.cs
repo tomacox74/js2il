@@ -91,11 +91,12 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.OpCode(ILOpCode.Conv_r8);
         ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
         ilEncoder.LoadConstantI4(RequiresInvocationContext(callableId) ? 1 : 0);
+        ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
             isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            new[] { typeof(object), typeof(double), typeof(string), typeof(bool) }));
+            new[] { typeof(object), typeof(double), typeof(string), typeof(bool), typeof(bool) }));
     }
 
     private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)

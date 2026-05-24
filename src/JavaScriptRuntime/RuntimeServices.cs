@@ -264,6 +264,7 @@ public class RuntimeServices
         {
             Function.InitializeFunctionInstance(functionValue, length, functionName);
         }
+        Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
 
         if (isGenerator)
         {
@@ -331,17 +332,27 @@ public class RuntimeServices
         {
             Function.InitializeFunctionInstance(functionValue, length, functionName);
         }
+        Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
 
         if (isGenerator)
         {
             GeneratorObject.InitializeGeneratorFunctionSurface(functionValue);
         }
 
+        object? existingGet = isSetter ? null : functionValue;
+        object? existingSet = isSetter ? functionValue : null;
+        if (PropertyDescriptorStore.TryGetOwn(targetValue, key, out var existing)
+            && existing.Kind == JsPropertyDescriptorKind.Accessor)
+        {
+            existingGet ??= existing.Get;
+            existingSet ??= existing.Set;
+        }
+
         PropertyDescriptorStore.DefineOrUpdate(targetValue, key, new JsPropertyDescriptor
         {
             Kind = JsPropertyDescriptorKind.Accessor,
-            Get = isSetter ? null : functionValue,
-            Set = isSetter ? functionValue : null,
+            Get = existingGet,
+            Set = existingSet,
             Enumerable = false,
             Configurable = true
         });

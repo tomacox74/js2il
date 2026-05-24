@@ -216,7 +216,7 @@ public static class HIRBuilder
 
                     var superClassNode = UnwrapExpression(GetClassSuperClass(enclosingClassNode));
                     var isDerivedConstructor = superClassNode != null;
-                    var emitImplicitSuperCall = superClassNode is Identifier;
+                    var emitImplicitSuperCall = isDerivedConstructor;
 
                     static int GetMaxSuperCtorArgCount(Scope classScope, Node classNode)
                     {
@@ -924,6 +924,8 @@ class HIRMethodBuilder
     private HIRFunctionExpression CreateFunctionExpressionValue(Scope functionScope, FunctionExpression funcExpr)
     {
         var functionName = (funcExpr.Id as Identifier)?.Name;
+        var isStrictFunction = ArgumentsObjectSemantics.IsStrictScope(functionScope)
+            || IsCurrentClassHeritageFunctionExpression(funcExpr);
         var callableId = new CallableId
         {
             Kind = CallableKind.FunctionExpression,
@@ -933,10 +935,51 @@ class HIRMethodBuilder
             JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
             NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
             HasRestParameters = functionScope.HasRestParameters,
+            UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+            ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+            IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !isStrictFunction,
+            HasRestrictedFunctionProperties = isStrictFunction,
             AstNode = funcExpr
         };
 
         return new HIRFunctionExpression(callableId, functionScope);
+    }
+
+    private bool IsCurrentClassHeritageFunctionExpression(FunctionExpression funcExpr)
+    {
+        if (_currentScope.Kind != ScopeKind.Class)
+        {
+            return false;
+        }
+
+        var superClass = _currentScope.AstNode switch
+        {
+            ClassDeclaration classDeclaration => classDeclaration.SuperClass,
+            ClassExpression classExpression => classExpression.SuperClass,
+            _ => null
+        };
+
+        return ReferenceEquals(UnwrapClassHeritageExpression(superClass), funcExpr);
+    }
+
+    private static Expression? UnwrapClassHeritageExpression(Expression? expression)
+    {
+        while (true)
+        {
+            var unwrapped = expression switch
+            {
+                ParenthesizedExpression p => p.Expression,
+                ChainExpression c => c.Expression,
+                _ => null
+            };
+
+            if (unwrapped == null)
+            {
+                return expression;
+            }
+
+            expression = unwrapped;
+        }
     }
 
     private Scope? FindDynamicFunctionScopeForSite(Node siteNode)
@@ -1213,6 +1256,10 @@ class HIRMethodBuilder
                     JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
                     HasRestParameters = functionScope.HasRestParameters,
+                    UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+                    ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+                    IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                    HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
                     AstNode = fd
                 };
 
@@ -3639,6 +3686,8 @@ class HIRMethodBuilder
                     JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
                     HasRestParameters = arrowScope.HasRestParameters,
+                    IncludeCalleeInArgumentsObject = false,
+                    HasRestrictedFunctionProperties = true,
                     AstNode = arrowExpr
                 };
 

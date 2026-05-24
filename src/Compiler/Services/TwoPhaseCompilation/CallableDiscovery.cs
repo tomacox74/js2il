@@ -85,6 +85,7 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
                 ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                 IncludeCalleeInArgumentsObject = HasImplicitArgumentsBinding(functionScope) && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
                 AstNode = funcDecl
             };
             
@@ -113,6 +114,7 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
                 ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
                 IncludeCalleeInArgumentsObject = HasImplicitArgumentsBinding(functionScope) && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
                 AstNode = funcExpr
             };
             
@@ -144,6 +146,7 @@ public sealed class CallableDiscovery
                 HasRestParameters = functionScope.HasRestParameters,
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
+                HasRestrictedFunctionProperties = true,
                 AstNode = arrowExpr
             };
             
@@ -205,6 +208,7 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(superFuncScope),
                 ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(superFuncScope),
                 IncludeCalleeInArgumentsObject = false,
+                HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(superFuncScope),
                 AstNode = superFunc
             });
         }
@@ -233,6 +237,7 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = ctorScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(ctorScope),
                 ArgumentsParameterNames = ctorScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(ctorScope) : Array.Empty<string>(),
                 IncludeCalleeInArgumentsObject = ctorNeedsArgumentsObject && ctorScope != null && !ArgumentsObjectSemantics.IsStrictScope(ctorScope),
+                HasRestrictedFunctionProperties = true,
                 AstNode = ctor
             };
             
@@ -251,6 +256,7 @@ public sealed class CallableDiscovery
                 HasRestParameters = false,
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
+                HasRestrictedFunctionProperties = true,
                 // For synthetic callables we still want a stable AST node for indexing,
                 // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
                 // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
@@ -277,6 +283,7 @@ public sealed class CallableDiscovery
                 HasRestParameters = false,
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
+                HasRestrictedFunctionProperties = false,
                 AstNode = classNodeForCctor!
             };
             _discovered.Add(cctorId);
@@ -315,6 +322,7 @@ public sealed class CallableDiscovery
                         UsesMappedArgumentsObject = dynamicMethodScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(dynamicMethodScope),
                         ArgumentsParameterNames = dynamicMethodScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(dynamicMethodScope) : Array.Empty<string>(),
                         IncludeCalleeInArgumentsObject = dynamicMethodNeedsArgumentsObject && dynamicMethodScope != null && !ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
+                        HasRestrictedFunctionProperties = dynamicMethodScope != null && ArgumentsObjectSemantics.IsStrictScope(dynamicMethodScope),
                         AstNode = computedFunc
                     });
                 }
@@ -385,6 +393,7 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = methodScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(methodScope),
                 ArgumentsParameterNames = methodScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(methodScope) : Array.Empty<string>(),
                 IncludeCalleeInArgumentsObject = methodNeedsArgumentsObject && methodScope != null && !ArgumentsObjectSemantics.IsStrictScope(methodScope),
+                HasRestrictedFunctionProperties = true,
                 AstNode = member
             };
             

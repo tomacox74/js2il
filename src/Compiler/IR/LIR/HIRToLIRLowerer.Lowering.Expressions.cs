@@ -1215,6 +1215,7 @@ public sealed partial class HIRToLIRLowerer
         var bodyScope = FindCallableBodyScope(declaringScope, declNode);
         var needsArgumentsObject = bodyScope?.NeedsArgumentsObject ?? false;
         var hasRestParameters = bodyScope?.HasRestParameters ?? false;
+        var isStrictScope = bodyScope != null && Js2IL.Utilities.ArgumentsObjectSemantics.IsStrictScope(bodyScope);
 
         switch (declNode)
         {
@@ -1227,6 +1228,10 @@ public sealed partial class HIRToLIRLowerer
                     JsParamCount = CountNonRestParameters(funcDecl.Params),
                     NeedsArgumentsObject = needsArgumentsObject,
                     HasRestParameters = hasRestParameters,
+                    UsesMappedArgumentsObject = bodyScope != null && Js2IL.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
+                    ArgumentsParameterNames = bodyScope != null ? Js2IL.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
+                    IncludeCalleeInArgumentsObject = needsArgumentsObject && !isStrictScope,
+                    HasRestrictedFunctionProperties = isStrictScope,
                     AstNode = funcDecl
                 };
 
@@ -1240,6 +1245,10 @@ public sealed partial class HIRToLIRLowerer
                     JsParamCount = CountNonRestParameters(funcExpr.Params),
                     NeedsArgumentsObject = needsArgumentsObject,
                     HasRestParameters = hasRestParameters,
+                    UsesMappedArgumentsObject = bodyScope != null && Js2IL.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
+                    ArgumentsParameterNames = bodyScope != null ? Js2IL.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
+                    IncludeCalleeInArgumentsObject = needsArgumentsObject && !isStrictScope,
+                    HasRestrictedFunctionProperties = isStrictScope,
                     AstNode = funcExpr
                 };
 

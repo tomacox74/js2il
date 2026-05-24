@@ -324,8 +324,15 @@ public static class Function
         }
 
         public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+            => InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties: false);
+
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
         {
             InitializeFunctionInstance(functionValue);
+            if (hasRestrictedProperties)
+            {
+                ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
+            }
 
             if (functionValue is Delegate del)
             {
