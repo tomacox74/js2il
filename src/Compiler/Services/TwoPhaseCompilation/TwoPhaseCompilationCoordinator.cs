@@ -1807,6 +1807,18 @@ public sealed class TwoPhaseCompilationCoordinator
         CallableId callable,
         SymbolTable symbolTable)
     {
+        if (callable.Kind is CallableKind.ClassStaticMethod && callable.AstNode != null)
+        {
+            var staticScope = symbolTable.FindScopeByAstNode(callable.AstNode);
+            if (staticScope != null
+                && (staticScope.ReferencesParentScopeVariables
+                    || staticScope.HasDescendantCallableReferencingParentScopeVariables
+                    || staticScope.Children.Any(child => child.Kind is ScopeKind.Function or ScopeKind.Class)))
+            {
+                return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+            }
+        }
+
         if (callable.Kind is CallableKind.ClassMethod
             or CallableKind.ClassGetter
             or CallableKind.ClassSetter
