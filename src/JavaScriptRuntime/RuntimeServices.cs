@@ -282,6 +282,73 @@ public class RuntimeServices
         return targetValue;
     }
 
+    public static object DefineClassMethodAccessorProperty(
+        object targetValue,
+        object keyValue,
+        object ownerValue,
+        object clrMethodNameValue,
+        object lengthValue,
+        object functionNameValue,
+        object isStaticValue,
+        object isPrivateValue,
+        object isSetterValue,
+        object isGeneratorValue,
+        object isAsyncValue,
+        object scopesValue)
+    {
+        ArgumentNullException.ThrowIfNull(targetValue);
+
+        var ownerType = ResolveClassOwnerType(ownerValue);
+        var scopes = scopesValue as object[]
+            ?? (ownerValue is ClassConstructorValue classConstructorValue
+                ? classConstructorValue.Scopes
+                : EmptyScopes);
+        var clrMethodName = clrMethodNameValue as string
+            ?? throw new TypeError("Class accessor definition requires a CLR method name");
+        var key = JavaScriptRuntime.Object.ToPropertyKeyString(keyValue);
+        var functionName = functionNameValue as string ?? key;
+        var length = lengthValue is double d ? d : 0d;
+        var isStatic = TypeUtilities.ToBoolean(isStaticValue);
+        var isPrivate = TypeUtilities.ToBoolean(isPrivateValue);
+        var isSetter = TypeUtilities.ToBoolean(isSetterValue);
+        var isGenerator = TypeUtilities.ToBoolean(isGeneratorValue);
+        var isAsync = TypeUtilities.ToBoolean(isAsyncValue);
+
+        var flags = (isStatic ? BindingFlags.Static : BindingFlags.Instance)
+            | BindingFlags.Public
+            | BindingFlags.NonPublic;
+        var method = ownerType.GetMethod(clrMethodName, flags)
+            ?? throw new TypeError($"Class accessor '{clrMethodName}' was not found on {ownerType.FullName}");
+
+        Func<object[], object?[]?, object?> functionValue = (_, args) =>
+            InvokeClassMethodFunction(ownerType, method, scopes, isStatic, isPrivate, args);
+
+        if (isAsync)
+        {
+            AsyncFunction.InitializeFunctionInstance(functionValue, length, functionName);
+        }
+        else
+        {
+            Function.InitializeFunctionInstance(functionValue, length, functionName);
+        }
+
+        if (isGenerator)
+        {
+            GeneratorObject.InitializeGeneratorFunctionSurface(functionValue);
+        }
+
+        PropertyDescriptorStore.DefineOrUpdate(targetValue, key, new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Accessor,
+            Get = isSetter ? null : functionValue,
+            Set = isSetter ? functionValue : null,
+            Enumerable = false,
+            Configurable = true
+        });
+
+        return targetValue;
+    }
+
     private static Type ResolveClassOwnerType(object ownerValue)
         => ownerValue switch
         {
@@ -538,10 +605,19 @@ public class RuntimeServices
         {
             if (receiver is null || receiver is JsNull || !ownerType.IsInstanceOfType(receiver))
             {
-                throw new TypeError("Class method receiver is incompatible with its declaring class");
-            }
+                if (!IsPrototypeObjectForClass(receiver, ownerType))
+                {
+                    throw new TypeError("Class method receiver is incompatible with its declaring class");
+                }
 
-            instance = receiver;
+                instance = RuntimeHelpers.GetUninitializedObject(ownerType);
+                ownerType.GetField("_scopes", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                    ?.SetValue(instance, scopes);
+            }
+            else
+            {
+                instance = receiver;
+            }
         }
 
         var invokeArgs = BuildClassMethodInvokeArguments(method, scopes, args);
@@ -554,6 +630,19 @@ public class RuntimeServices
             ExceptionDispatchInfo.Capture(tie.InnerException).Throw();
             throw;
         }
+    }
+
+    private static bool IsPrototypeObjectForClass(object? receiver, Type ownerType)
+    {
+        if (receiver is null || receiver is JsNull)
+        {
+            return false;
+        }
+
+        return PropertyDescriptorStore.TryGetOwn(receiver, "constructor", out var constructorDescriptor)
+            && constructorDescriptor.Kind == JsPropertyDescriptorKind.Data
+            && constructorDescriptor.Value is ClassConstructorValue classConstructorValue
+            && classConstructorValue.Type == ownerType;
     }
 
     private static bool HasClassPrivateMethodBrand(object? receiver, Type ownerType, bool isStatic)
@@ -593,6 +682,12 @@ public class RuntimeServices
             if (i == 0 && parameters[i].ParameterType == typeof(object[]))
             {
                 invokeArgs[i] = scopes;
+                continue;
+            }
+
+            if (string.Equals(parameters[i].Name, "newTarget", StringComparison.Ordinal))
+            {
+                invokeArgs[i] = null;
                 continue;
             }
 

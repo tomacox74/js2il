@@ -96,9 +96,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     Js2IL.Services.ScopesAbi.CallableKind.Constructor => hasScopesParameter,
                     Js2IL.Services.ScopesAbi.CallableKind.Function => hasScopesParameter,
-                    // Static class methods (getters/setters/regular static) cannot access parent scopes
-                    // via this._scopes (no 'this') or a scopes argument (CLR property accessor signature).
-                    Js2IL.Services.ScopesAbi.CallableKind.ClassStaticMethod => (bool?)false,
+                    Js2IL.Services.ScopesAbi.CallableKind.ClassStaticMethod => hasScopesParameter,
                     _ => (bool?)null
                 };
                 environmentLayout = environmentLayoutBuilder.Build(scope, callableKind, needsParentScopesOverride: needsParentScopesOverride);

@@ -43,6 +43,50 @@ public sealed record HIRClassMethodDataPropertyDefinition(
     bool IsGenerator,
     bool IsAsync);
 
+public sealed class HIRDefineClassAccessorMethodPropertyExpression : HIRExpression
+{
+    public HIRDefineClassAccessorMethodPropertyExpression(
+        HIRExpression target,
+        HIRExpression owner,
+        HIRExpression key,
+        Scope classScope,
+        string clrMethodName,
+        double length,
+        string functionName,
+        bool isStatic,
+        bool isPrivate,
+        bool isSetter,
+        bool isGenerator,
+        bool isAsync)
+    {
+        Target = target;
+        Owner = owner;
+        Key = key;
+        ClassScope = classScope;
+        ClrMethodName = clrMethodName;
+        Length = length;
+        FunctionName = functionName;
+        IsStatic = isStatic;
+        IsPrivate = isPrivate;
+        IsSetter = isSetter;
+        IsGenerator = isGenerator;
+        IsAsync = isAsync;
+    }
+
+    public HIRExpression Target { get; }
+    public HIRExpression Owner { get; }
+    public HIRExpression Key { get; }
+    public Scope ClassScope { get; }
+    public string ClrMethodName { get; }
+    public double Length { get; }
+    public string FunctionName { get; }
+    public bool IsStatic { get; }
+    public bool IsPrivate { get; }
+    public bool IsSetter { get; }
+    public bool IsGenerator { get; }
+    public bool IsAsync { get; }
+}
+
 public sealed class HIRDefineClassMethodDataPropertiesExpression : HIRExpression
 {
     public HIRDefineClassMethodDataPropertiesExpression(

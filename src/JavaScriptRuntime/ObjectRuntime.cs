@@ -161,6 +161,28 @@ namespace JavaScriptRuntime
                 args[9]);
         }
 
+        public static object DefineClassMethodAccessorProperty(object[] args)
+        {
+            if (args.Length != 12)
+            {
+                throw new ArgumentException("Class accessor definition requires 12 arguments.", nameof(args));
+            }
+
+            return RuntimeServices.DefineClassMethodAccessorProperty(
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                args[6],
+                args[7],
+                args[8],
+                args[9],
+                args[10],
+                args[11]);
+        }
+
         public static object DefineClassFieldDataProperty(object target, string prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);

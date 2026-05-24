@@ -394,10 +394,22 @@ public sealed class CallableDiscovery
         // Recurse into class scope for any nested callables in method bodies
         // (e.g., arrows defined inside methods)
         var classScopeName = $"{parentScopeName}/{className}";
+        var methodFunctionNodes = classBody.Body
+            .OfType<MethodDefinition>()
+            .Select(member => member.Value)
+            .OfType<FunctionExpression>()
+            .ToHashSet(ReferenceEqualityComparer.Instance);
+
         foreach (var child in classScope.Children)
         {
             if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)
             {
+                if (!methodFunctionNodes.Contains((FunctionExpression)child.AstNode))
+                {
+                    DiscoverFunction(child, classScopeName);
+                    continue;
+                }
+
                 // This is a method body scope - check for nested callables
                 // IMPORTANT: include the method scope name so nested callables end up with a
                 // DeclaringScopeName that matches Scope.GetQualifiedName() (e.g. "C/m" or "C/constructor").

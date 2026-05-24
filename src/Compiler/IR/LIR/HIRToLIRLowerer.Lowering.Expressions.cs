@@ -823,6 +823,8 @@ public sealed partial class HIRToLIRLowerer
                 return TryLowerDefineClassDataPropertyExpression(defineClassDataProperty, out resultTempVar);
             case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:
                 return TryLowerDefineClassAccessorPropertyExpression(defineClassAccessorProperty, out resultTempVar);
+            case HIRDefineClassAccessorMethodPropertyExpression defineClassAccessorMethodProperty:
+                return TryLowerDefineClassAccessorMethodPropertyExpression(defineClassAccessorMethodProperty, out resultTempVar);
             case HIRDefineClassMethodDataPropertiesExpression defineClassMethodDataProperties:
                 return TryLowerDefineClassMethodDataPropertiesExpression(defineClassMethodDataProperties, out resultTempVar);
             // Handle different expression types here
