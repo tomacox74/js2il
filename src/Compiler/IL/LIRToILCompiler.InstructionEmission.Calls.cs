@@ -351,7 +351,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs),
                         new[] { typeof(object), typeof(object[]), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -375,7 +375,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs0),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs0),
                         new[] { typeof(object), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -400,7 +400,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs1),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs1),
                         new[] { typeof(object), typeof(object[]), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -426,7 +426,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs2),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs2),
                         new[] { typeof(object), typeof(object[]), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -453,7 +453,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs3),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs3),
                         new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);

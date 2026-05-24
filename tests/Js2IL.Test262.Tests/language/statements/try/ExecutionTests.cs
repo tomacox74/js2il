@@ -37,23 +37,23 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "12.14-9")]
     public Task _12_14_9()
         => ExecutionTest("12.14-9");
-    [Fact(DisplayName = "12.14-13", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-13")]
     public Task _12_14_13()
         => ExecutionTest("12.14-13");
 
-    [Fact(DisplayName = "12.14-14", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-14")]
     public Task _12_14_14()
         => ExecutionTest("12.14-14");
 
-    [Fact(DisplayName = "12.14-15", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-15")]
     public Task _12_14_15()
         => ExecutionTest("12.14-15");
 
-    [Fact(DisplayName = "12.14-16", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-16")]
     public Task _12_14_16()
         => ExecutionTest("12.14-16");
 
-    [Fact(DisplayName = "completion-values-fn-finally-return", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "completion-values-fn-finally-return")]
     public Task completion_values_fn_finally_return()
         => ExecutionTest("completion-values-fn-finally-return");
 

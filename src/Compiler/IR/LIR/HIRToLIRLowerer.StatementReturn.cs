@@ -186,6 +186,11 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (TryEmitReturnThroughSyncFinally(returnTempVar))
+        {
+            return true;
+        }
+
         // If we are inside a protected region with a finally handler, we must use leave
         // so finally runs before returning.
         if (_protectedControlFlowDepthStack.Count > 0 && _methodBodyIR.ReturnEpilogueLabelId.HasValue)

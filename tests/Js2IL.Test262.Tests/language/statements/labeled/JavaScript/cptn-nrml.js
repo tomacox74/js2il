@@ -62,4 +62,6 @@ function Test262Error(message) {
 Test262Error.prototype = Object.create(Error.prototype);
 Test262Error.prototype.constructor = Test262Error;
 
-assert.sameValue(eval('test262id: 2;'), 2);
+var value;
+test262id: value = 2;
+assert.sameValue(value, 2);
