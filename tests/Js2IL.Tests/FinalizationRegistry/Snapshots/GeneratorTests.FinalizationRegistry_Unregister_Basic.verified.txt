@@ -276,7 +276,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 481 (0x1e1)
+		// Code size: 484 (0x1e4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FinalizationRegistry_Unregister_Basic/Scope,
@@ -286,8 +286,9 @@
 			[4] object,
 			[5] class Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L19C16,
 			[6] object,
-			[7] class [JavaScriptRuntime]JavaScriptRuntime.FinalizationRegistry,
-			[8] object[]
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.FinalizationRegistry,
+			[9] object[]
 		)
 
 		IL_0000: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope::.ctor()
@@ -321,12 +322,12 @@
 		IL_0049: ldc.i4.0
 		IL_004a: ldc.i4.1
 		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0050: stloc.s 6
-		IL_0052: ldloc.s 6
+		IL_0050: stloc.s 7
+		IL_0052: ldloc.s 7
 		IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.FinalizationRegistry::.ctor(object)
-		IL_0059: stloc.s 7
+		IL_0059: stloc.s 8
 		IL_005b: ldloc.0
-		IL_005c: ldloc.s 7
+		IL_005c: ldloc.s 8
 		IL_005e: stfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
 		IL_0063: ldloc.0
 		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -348,14 +349,14 @@
 		IL_0091: ldc.i4.0
 		IL_0092: ldc.i4.1
 		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0098: stloc.s 6
+		IL_0098: stloc.s 7
 		IL_009a: ldc.i4.0
 		IL_009b: newarr [System.Runtime]System.Object
-		IL_00a0: stloc.s 8
-		IL_00a2: ldloc.s 6
+		IL_00a0: stloc.s 9
+		IL_00a2: ldloc.s 7
 		IL_00a4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00a9: ldloc.s 8
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00a9: ldloc.s 9
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
 		IL_00b0: pop
 		IL_00b1: ldloc.0
 		IL_00b2: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
@@ -363,9 +364,9 @@
 		IL_00bc: ldloc.0
 		IL_00bd: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::token
 		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c7: stloc.s 6
+		IL_00c7: stloc.s 7
 		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ce: ldloc.s 6
+		IL_00ce: ldloc.s 7
 		IL_00d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00d5: pop
 		.try
@@ -374,8 +375,8 @@
 			IL_00db: stloc.1
 			IL_00dc: ldloc.0
 			IL_00dd: ldfld object Modules.FinalizationRegistry_Unregister_Basic/Scope::registry
-			IL_00e2: stloc.s 6
-			IL_00e4: ldloc.s 6
+			IL_00e2: stloc.s 7
+			IL_00e4: ldloc.s 7
 			IL_00e6: ldstr "unregister"
 			IL_00eb: ldc.r8 123
 			IL_00f4: box [System.Runtime]System.Double
@@ -417,8 +418,8 @@
 			IL_0146: stloc.3
 
 			IL_0147: ldloc.3
-			IL_0148: stloc.s 6
-			IL_014a: ldloc.s 6
+			IL_0148: stloc.s 7
+			IL_014a: ldloc.s 7
 			IL_014c: stloc.s 4
 			IL_014e: newobj instance void Modules.FinalizationRegistry_Unregister_Basic/Scope/Block_L19C16::.ctor()
 			IL_0153: stloc.s 5
@@ -465,13 +466,15 @@
 		IL_01c9: ldc.i4.0
 		IL_01ca: ldc.i4.1
 		IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01d0: stloc.s 6
-		IL_01d2: ldloc.s 6
+		IL_01d0: stloc.s 7
+		IL_01d2: ldloc.s 7
 		IL_01d4: ldc.i4.0
 		IL_01d5: newarr [System.Runtime]System.Object
 		IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
 		IL_01df: pop
-		IL_01e0: ret
+		IL_01e0: ldnull
+		IL_01e1: stloc.s 6
+		IL_01e3: ret
 	} // end of method FinalizationRegistry_Unregister_Basic::__js_module_init__
 
 } // end of class Modules.FinalizationRegistry_Unregister_Basic

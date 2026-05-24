@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2882
+					// Method begins at RVA 0x288e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2620
+				// Method begins at RVA 0x2628
 				// Header size: 12
 				// Code size: 226 (0xe2)
 				.maxstack 8
@@ -144,7 +144,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x288b
+					// Method begins at RVA 0x2897
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -168,7 +168,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2710
+				// Method begins at RVA 0x2718
 				// Header size: 12
 				// Code size: 80 (0x50)
 				.maxstack 8
@@ -214,7 +214,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2879
+				// Method begins at RVA 0x2885
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -240,7 +240,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x24f0
+			// Method begins at RVA 0x24f8
 			// Header size: 12
 			// Code size: 138 (0x8a)
 			.maxstack 8
@@ -326,7 +326,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28e5
+					// Method begins at RVA 0x28f1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -350,13 +350,14 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x276c
+				// Method begins at RVA 0x2774
 				// Header size: 12
-				// Code size: 159 (0x9f)
+				// Code size: 163 (0xa3)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] bool
+					[1] object,
+					[2] bool
 				)
 
 				IL_0000: ldarg.0
@@ -378,13 +379,13 @@
 				IL_0030: ldelem.ref
 				IL_0031: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterableThrow/Scope
 				IL_0036: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterableThrow/Scope::i
-				IL_003b: stloc.0
-				IL_003c: ldloc.0
+				IL_003b: stloc.1
+				IL_003c: ldloc.1
 				IL_003d: ldc.r8 1
 				IL_0046: box [System.Runtime]System.Double
 				IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0050: stloc.1
-				IL_0051: ldloc.1
+				IL_0050: stloc.2
+				IL_0051: ldloc.2
 				IL_0052: brfalse IL_0079
 
 				IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -401,20 +402,24 @@
 				IL_0079: ldstr "nextboom"
 				IL_007e: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 				IL_0083: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-				IL_0088: dup
-				IL_0089: isinst [System.Runtime]System.Exception
-				IL_008e: dup
-				IL_008f: brtrue IL_009b
+				IL_0088: stloc.1
+				IL_0089: ldloc.1
+				IL_008a: stloc.0
+				IL_008b: ldloc.0
+				IL_008c: dup
+				IL_008d: isinst [System.Runtime]System.Exception
+				IL_0092: dup
+				IL_0093: brtrue IL_009f
 
-				IL_0094: pop
-				IL_0095: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-				IL_009a: throw
+				IL_0098: pop
+				IL_0099: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+				IL_009e: throw
 
-				IL_009b: pop
-				IL_009c: throw
+				IL_009f: pop
+				IL_00a0: throw
 
-				IL_009d: ldnull
-				IL_009e: ret
+				IL_00a1: ldnull
+				IL_00a2: ret
 			} // end of method FunctionExpression_iterableThrow::__js_call__
 
 		} // end of class FunctionExpression_iterableThrow
@@ -430,7 +435,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28ee
+					// Method begins at RVA 0x28fa
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -454,7 +459,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2818
+				// Method begins at RVA 0x2824
 				// Header size: 12
 				// Code size: 76 (0x4c)
 				.maxstack 8
@@ -500,7 +505,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28dc
+				// Method begins at RVA 0x28e8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -526,7 +531,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2588
+			// Method begins at RVA 0x2590
 			// Header size: 12
 			// Code size: 138 (0x8a)
 			.maxstack 8
@@ -613,7 +618,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28b8
+				// Method begins at RVA 0x28c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -637,7 +642,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x28ca
+					// Method begins at RVA 0x28d6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -655,7 +660,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28c1
+				// Method begins at RVA 0x28cd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -675,7 +680,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28d3
+				// Method begins at RVA 0x28df
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -695,7 +700,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28f7
+				// Method begins at RVA 0x2903
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -719,7 +724,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2909
+					// Method begins at RVA 0x2915
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -737,7 +742,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2900
+				// Method begins at RVA 0x290c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -757,7 +762,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2912
+				// Method begins at RVA 0x291e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -779,7 +784,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2870
+			// Method begins at RVA 0x287c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -803,7 +808,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x289d
+				// Method begins at RVA 0x28a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -821,7 +826,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2894
+			// Method begins at RVA 0x28a0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -845,7 +850,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28af
+				// Method begins at RVA 0x28bb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -863,7 +868,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28a6
+			// Method begins at RVA 0x28b2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -889,7 +894,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1093 (0x445)
+		// Code size: 1104 (0x450)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope,
@@ -910,25 +915,27 @@
 			[15] bool,
 			[16] object,
 			[17] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Scope_ForOf_L37C7/Block_L37C28,
-			[18] class [System.Runtime]System.Exception,
-			[19] object,
+			[18] object,
+			[19] class [System.Runtime]System.Exception,
 			[20] object,
-			[21] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L41C12,
-			[22] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[23] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L64C4,
-			[24] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
-			[25] bool,
+			[21] object,
+			[22] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L41C12,
+			[23] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[24] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L64C4,
+			[25] class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator,
 			[26] bool,
-			[27] object,
-			[28] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Scope_ForOf_L65C7/Block_L65C33,
-			[29] class [System.Runtime]System.Exception,
-			[30] object,
+			[27] bool,
+			[28] object,
+			[29] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Scope_ForOf_L65C7/Block_L65C33,
+			[30] class [System.Runtime]System.Exception,
 			[31] object,
-			[32] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L68C12,
-			[33] object,
+			[32] object,
+			[33] class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L68C12,
 			[34] object,
-			[35] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[36] bool
+			[35] object,
+			[36] object,
+			[37] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[38] bool
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::.ctor()
@@ -939,7 +946,7 @@
 		IL_0015: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed
 		IL_001a: ldstr "iterator"
 		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_0024: stloc.s 33
+		IL_0024: stloc.s 35
 		IL_0026: ldc.i4.1
 		IL_0027: newarr [System.Runtime]System.Object
 		IL_002c: dup
@@ -957,15 +964,15 @@
 		IL_0049: ldc.i4.0
 		IL_004a: ldc.i4.1
 		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0050: stloc.s 34
+		IL_0050: stloc.s 36
 		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0057: stloc.s 35
-		IL_0059: ldloc.s 35
-		IL_005b: ldloc.s 33
-		IL_005d: ldloc.s 34
+		IL_0057: stloc.s 37
+		IL_0059: ldloc.s 37
+		IL_005b: ldloc.s 35
+		IL_005d: ldloc.s 36
 		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
 		IL_0064: pop
-		IL_0065: ldloc.s 35
+		IL_0065: ldloc.s 37
 		IL_0067: stloc.1
 		IL_0068: ldloc.1
 		IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
@@ -979,17 +986,17 @@
 			// loop start (head: IL_0074)
 				IL_0074: ldloc.2
 				IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-				IL_007a: stloc.s 34
-				IL_007c: ldloc.s 34
+				IL_007a: stloc.s 36
+				IL_007c: ldloc.s 36
 				IL_007e: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-				IL_0083: stloc.s 36
-				IL_0085: ldloc.s 36
+				IL_0083: stloc.s 38
+				IL_0085: ldloc.s 38
 				IL_0087: brtrue IL_00ca
 
-				IL_008c: ldloc.s 34
+				IL_008c: ldloc.s 36
 				IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-				IL_0093: stloc.s 34
-				IL_0095: ldloc.s 34
+				IL_0093: stloc.s 36
+				IL_0095: ldloc.s 36
 				IL_0097: stloc.s 5
 				IL_0099: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope_ForOf_L23C5/Block_L23C26::.ctor()
 				IL_009e: stloc.s 6
@@ -1049,17 +1056,17 @@
 			// loop start (head: IL_011d)
 				IL_011d: ldloc.s 7
 				IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-				IL_0124: stloc.s 34
-				IL_0126: ldloc.s 34
+				IL_0124: stloc.s 36
+				IL_0126: ldloc.s 36
 				IL_0128: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-				IL_012d: stloc.s 36
-				IL_012f: ldloc.s 36
+				IL_012d: stloc.s 38
+				IL_012f: ldloc.s 38
 				IL_0131: brtrue IL_0170
 
-				IL_0136: ldloc.s 34
+				IL_0136: ldloc.s 36
 				IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-				IL_013d: stloc.s 34
-				IL_013f: ldloc.s 34
+				IL_013d: stloc.s 36
+				IL_013f: ldloc.s 36
 				IL_0141: stloc.s 10
 				IL_0143: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope_ForOf_L30C5/Block_L30C26::.ctor()
 				IL_0148: stloc.s 11
@@ -1120,17 +1127,17 @@
 				// loop start (head: IL_01cd)
 					IL_01cd: ldloc.s 13
 					IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-					IL_01d4: stloc.s 34
-					IL_01d6: ldloc.s 34
+					IL_01d4: stloc.s 36
+					IL_01d6: ldloc.s 36
 					IL_01d8: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-					IL_01dd: stloc.s 36
-					IL_01df: ldloc.s 36
-					IL_01e1: brtrue IL_0244
+					IL_01dd: stloc.s 38
+					IL_01df: ldloc.s 38
+					IL_01e1: brtrue IL_024c
 
-					IL_01e6: ldloc.s 34
+					IL_01e6: ldloc.s 36
 					IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-					IL_01ed: stloc.s 34
-					IL_01ef: ldloc.s 34
+					IL_01ed: stloc.s 36
+					IL_01ef: ldloc.s 36
 					IL_01f1: stloc.s 16
 					IL_01f3: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Scope_ForOf_L37C7/Block_L37C28::.ctor()
 					IL_01f8: stloc.s 17
@@ -1142,242 +1149,248 @@
 					IL_020c: ldstr "boom"
 					IL_0211: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 					IL_0216: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-					IL_021b: dup
-					IL_021c: isinst [System.Runtime]System.Exception
-					IL_0221: dup
-					IL_0222: brtrue IL_022e
+					IL_021b: stloc.s 36
+					IL_021d: ldloc.s 36
+					IL_021f: stloc.s 18
+					IL_0221: ldloc.s 18
+					IL_0223: dup
+					IL_0224: isinst [System.Runtime]System.Exception
+					IL_0229: dup
+					IL_022a: brtrue IL_0236
 
-					IL_0227: pop
-					IL_0228: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-					IL_022d: throw
+					IL_022f: pop
+					IL_0230: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+					IL_0235: throw
 
-					IL_022e: pop
-					IL_022f: throw
+					IL_0236: pop
+					IL_0237: throw
 
-					IL_0230: br IL_01cd
+					IL_0238: br IL_01cd
 				// end loop
-				IL_0235: ldloc.s 13
-				IL_0237: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-				IL_023c: ldc.i4.1
-				IL_023d: stloc.s 15
-				IL_023f: leave IL_0262
-
+				IL_023d: ldloc.s 13
+				IL_023f: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
 				IL_0244: ldc.i4.1
-				IL_0245: stloc.s 14
-				IL_0247: leave IL_0262
+				IL_0245: stloc.s 15
+				IL_0247: leave IL_026a
+
+				IL_024c: ldc.i4.1
+				IL_024d: stloc.s 14
+				IL_024f: leave IL_026a
 			} // end .try
 			finally
 			{
-				IL_024c: ldloc.s 14
-				IL_024e: brtrue IL_0261
+				IL_0254: ldloc.s 14
+				IL_0256: brtrue IL_0269
 
-				IL_0253: ldloc.s 15
-				IL_0255: brtrue IL_0261
+				IL_025b: ldloc.s 15
+				IL_025d: brtrue IL_0269
 
-				IL_025a: ldloc.s 13
-				IL_025c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+				IL_0262: ldloc.s 13
+				IL_0264: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-				IL_0261: endfinally
+				IL_0269: endfinally
 			} // end handler
 
-			IL_0262: leave IL_02c8
+			IL_026a: leave IL_02d0
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0267: stloc.s 18
-			IL_0269: ldloc.s 18
-			IL_026b: dup
-			IL_026c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0271: dup
-			IL_0272: brtrue IL_0288
+			IL_026f: stloc.s 19
+			IL_0271: ldloc.s 19
+			IL_0273: dup
+			IL_0274: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0279: dup
+			IL_027a: brtrue IL_0290
 
-			IL_0277: pop
-			IL_0278: dup
-			IL_0279: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_027e: dup
-			IL_027f: brtrue IL_0295
+			IL_027f: pop
+			IL_0280: dup
+			IL_0281: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0286: dup
+			IL_0287: brtrue IL_029d
 
-			IL_0284: pop
-			IL_0285: pop
-			IL_0286: rethrow
+			IL_028c: pop
+			IL_028d: pop
+			IL_028e: rethrow
 
-			IL_0288: pop
-			IL_0289: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_028e: stloc.s 19
-			IL_0290: br IL_0298
+			IL_0290: pop
+			IL_0291: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0296: stloc.s 20
+			IL_0298: br IL_02a0
 
-			IL_0295: pop
-			IL_0296: stloc.s 19
-
-			IL_0298: ldloc.s 19
-			IL_029a: stloc.s 34
-			IL_029c: ldloc.s 34
+			IL_029d: pop
 			IL_029e: stloc.s 20
-			IL_02a0: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L41C12::.ctor()
-			IL_02a5: stloc.s 21
-			IL_02a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02ac: ldstr "caught"
-			IL_02b1: ldloc.s 20
-			IL_02b3: ldstr "name"
-			IL_02b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_02c2: pop
-			IL_02c3: leave IL_02c8
+
+			IL_02a0: ldloc.s 20
+			IL_02a2: stloc.s 36
+			IL_02a4: ldloc.s 36
+			IL_02a6: stloc.s 21
+			IL_02a8: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L41C12::.ctor()
+			IL_02ad: stloc.s 22
+			IL_02af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02b4: ldstr "caught"
+			IL_02b9: ldloc.s 21
+			IL_02bb: ldstr "name"
+			IL_02c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_02ca: pop
+			IL_02cb: leave IL_02d0
 		} // end handler
 
-		IL_02c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02cd: ldstr "closed"
-		IL_02d2: ldloc.0
-		IL_02d3: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed
-		IL_02d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_02dd: pop
-		IL_02de: ldloc.0
-		IL_02df: ldc.r8 0.0
-		IL_02e8: box [System.Runtime]System.Double
-		IL_02ed: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed2
-		IL_02f2: ldstr "iterator"
-		IL_02f7: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
-		IL_02fc: stloc.s 34
-		IL_02fe: ldc.i4.1
-		IL_02ff: newarr [System.Runtime]System.Object
-		IL_0304: dup
-		IL_0305: ldc.i4.0
-		IL_0306: ldloc.0
-		IL_0307: stelem.ref
-		IL_0308: ldc.i4.0
-		IL_0309: ldelem.ref
-		IL_030a: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope
-		IL_030f: ldftn object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterableThrow::__js_call__(class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope, object)
-		IL_0315: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_031a: ldc.i4.0
-		IL_031b: conv.r8
-		IL_031c: ldstr ""
-		IL_0321: ldc.i4.0
-		IL_0322: ldc.i4.1
-		IL_0323: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0328: stloc.s 33
-		IL_032a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_032f: stloc.s 35
-		IL_0331: ldloc.s 35
-		IL_0333: ldloc.s 34
-		IL_0335: ldloc.s 33
-		IL_0337: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
-		IL_033c: pop
+		IL_02d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02d5: ldstr "closed"
+		IL_02da: ldloc.0
+		IL_02db: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed
+		IL_02e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_02e5: pop
+		IL_02e6: ldloc.0
+		IL_02e7: ldc.r8 0.0
+		IL_02f0: box [System.Runtime]System.Double
+		IL_02f5: stfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed2
+		IL_02fa: ldstr "iterator"
+		IL_02ff: call object [JavaScriptRuntime]JavaScriptRuntime.Symbol::GetWellKnown(string)
+		IL_0304: stloc.s 36
+		IL_0306: ldc.i4.1
+		IL_0307: newarr [System.Runtime]System.Object
+		IL_030c: dup
+		IL_030d: ldc.i4.0
+		IL_030e: ldloc.0
+		IL_030f: stelem.ref
+		IL_0310: ldc.i4.0
+		IL_0311: ldelem.ref
+		IL_0312: castclass Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope
+		IL_0317: ldftn object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/FunctionExpression_iterableThrow::__js_call__(class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope, object)
+		IL_031d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0322: ldc.i4.0
+		IL_0323: conv.r8
+		IL_0324: ldstr ""
+		IL_0329: ldc.i4.0
+		IL_032a: ldc.i4.1
+		IL_032b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0330: stloc.s 35
+		IL_0332: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0337: stloc.s 37
+		IL_0339: ldloc.s 37
+		IL_033b: ldloc.s 36
 		IL_033d: ldloc.s 35
-		IL_033f: stloc.s 22
+		IL_033f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineObjectLiteralDataProperty(object, object, object)
+		IL_0344: pop
+		IL_0345: ldloc.s 37
+		IL_0347: stloc.s 23
 		.try
 		{
-			IL_0341: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L64C4::.ctor()
-			IL_0346: stloc.s 23
-			IL_0348: ldloc.s 22
-			IL_034a: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
-			IL_034f: stloc.s 24
-			IL_0351: ldc.i4.0
-			IL_0352: stloc.s 25
-			IL_0354: ldc.i4.0
-			IL_0355: stloc.s 26
+			IL_0349: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L64C4::.ctor()
+			IL_034e: stloc.s 24
+			IL_0350: ldloc.s 23
+			IL_0352: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+			IL_0357: stloc.s 25
+			IL_0359: ldc.i4.0
+			IL_035a: stloc.s 26
+			IL_035c: ldc.i4.0
+			IL_035d: stloc.s 27
 			.try
 			{
-				// loop start (head: IL_0357)
-					IL_0357: ldloc.s 24
-					IL_0359: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-					IL_035e: stloc.s 33
-					IL_0360: ldloc.s 33
-					IL_0362: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-					IL_0367: stloc.s 36
-					IL_0369: ldloc.s 36
-					IL_036b: brtrue IL_03aa
+				// loop start (head: IL_035f)
+					IL_035f: ldloc.s 25
+					IL_0361: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+					IL_0366: stloc.s 35
+					IL_0368: ldloc.s 35
+					IL_036a: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+					IL_036f: stloc.s 38
+					IL_0371: ldloc.s 38
+					IL_0373: brtrue IL_03b2
 
-					IL_0370: ldloc.s 33
-					IL_0372: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-					IL_0377: stloc.s 33
-					IL_0379: ldloc.s 33
-					IL_037b: stloc.s 27
-					IL_037d: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Scope_ForOf_L65C7/Block_L65C33::.ctor()
-					IL_0382: stloc.s 28
-					IL_0384: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_0389: ldstr "iter"
-					IL_038e: ldloc.s 27
-					IL_0390: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-					IL_0395: pop
-					IL_0396: br IL_0357
+					IL_0378: ldloc.s 35
+					IL_037a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+					IL_037f: stloc.s 35
+					IL_0381: ldloc.s 35
+					IL_0383: stloc.s 28
+					IL_0385: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Scope_ForOf_L65C7/Block_L65C33::.ctor()
+					IL_038a: stloc.s 29
+					IL_038c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0391: ldstr "iter"
+					IL_0396: ldloc.s 28
+					IL_0398: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_039d: pop
+					IL_039e: br IL_035f
 				// end loop
-				IL_039b: ldloc.s 24
-				IL_039d: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-				IL_03a2: ldc.i4.1
-				IL_03a3: stloc.s 26
-				IL_03a5: leave IL_03c8
-
+				IL_03a3: ldloc.s 25
+				IL_03a5: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
 				IL_03aa: ldc.i4.1
-				IL_03ab: stloc.s 25
-				IL_03ad: leave IL_03c8
+				IL_03ab: stloc.s 27
+				IL_03ad: leave IL_03d0
+
+				IL_03b2: ldc.i4.1
+				IL_03b3: stloc.s 26
+				IL_03b5: leave IL_03d0
 			} // end .try
 			finally
 			{
-				IL_03b2: ldloc.s 25
-				IL_03b4: brtrue IL_03c7
+				IL_03ba: ldloc.s 26
+				IL_03bc: brtrue IL_03cf
 
-				IL_03b9: ldloc.s 26
-				IL_03bb: brtrue IL_03c7
+				IL_03c1: ldloc.s 27
+				IL_03c3: brtrue IL_03cf
 
-				IL_03c0: ldloc.s 24
-				IL_03c2: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+				IL_03c8: ldloc.s 25
+				IL_03ca: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-				IL_03c7: endfinally
+				IL_03cf: endfinally
 			} // end handler
 
-			IL_03c8: leave IL_042e
+			IL_03d0: leave IL_0436
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_03cd: stloc.s 29
-			IL_03cf: ldloc.s 29
-			IL_03d1: dup
-			IL_03d2: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_03d7: dup
-			IL_03d8: brtrue IL_03ee
+			IL_03d5: stloc.s 30
+			IL_03d7: ldloc.s 30
+			IL_03d9: dup
+			IL_03da: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_03df: dup
+			IL_03e0: brtrue IL_03f6
 
-			IL_03dd: pop
-			IL_03de: dup
-			IL_03df: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_03e4: dup
-			IL_03e5: brtrue IL_03fb
+			IL_03e5: pop
+			IL_03e6: dup
+			IL_03e7: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_03ec: dup
+			IL_03ed: brtrue IL_0403
 
-			IL_03ea: pop
-			IL_03eb: pop
-			IL_03ec: rethrow
+			IL_03f2: pop
+			IL_03f3: pop
+			IL_03f4: rethrow
 
-			IL_03ee: pop
-			IL_03ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_03f4: stloc.s 30
-			IL_03f6: br IL_03fe
+			IL_03f6: pop
+			IL_03f7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_03fc: stloc.s 31
+			IL_03fe: br IL_0406
 
-			IL_03fb: pop
-			IL_03fc: stloc.s 30
-
-			IL_03fe: ldloc.s 30
-			IL_0400: stloc.s 33
-			IL_0402: ldloc.s 33
+			IL_0403: pop
 			IL_0404: stloc.s 31
-			IL_0406: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L68C12::.ctor()
-			IL_040b: stloc.s 32
-			IL_040d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0412: ldstr "caught"
-			IL_0417: ldloc.s 31
-			IL_0419: ldstr "name"
-			IL_041e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0423: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0428: pop
-			IL_0429: leave IL_042e
+
+			IL_0406: ldloc.s 31
+			IL_0408: stloc.s 35
+			IL_040a: ldloc.s 35
+			IL_040c: stloc.s 32
+			IL_040e: newobj instance void Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope/Block_L68C12::.ctor()
+			IL_0413: stloc.s 33
+			IL_0415: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_041a: ldstr "caught"
+			IL_041f: ldloc.s 32
+			IL_0421: ldstr "name"
+			IL_0426: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_042b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0430: pop
+			IL_0431: leave IL_0436
 		} // end handler
 
-		IL_042e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0433: ldstr "closed2"
-		IL_0438: ldloc.0
-		IL_0439: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed2
-		IL_043e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0443: pop
-		IL_0444: ret
+		IL_0436: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_043b: ldstr "closed2"
+		IL_0440: ldloc.0
+		IL_0441: ldfld object Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol/Scope::closed2
+		IL_0446: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_044b: pop
+		IL_044c: ldnull
+		IL_044d: stloc.s 34
+		IL_044f: ret
 	} // end of method ControlFlow_ForOf_CustomIterable_IteratorProtocol::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_CustomIterable_IteratorProtocol
@@ -1389,7 +1402,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x291b
+		// Method begins at RVA 0x2927
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

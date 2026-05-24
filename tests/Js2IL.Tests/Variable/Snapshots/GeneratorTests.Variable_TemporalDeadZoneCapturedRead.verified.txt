@@ -154,7 +154,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 241 (0xf1)
+		// Code size: 244 (0xf4)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_TemporalDeadZoneCapturedRead/Scope,
@@ -164,7 +164,8 @@
 			[4] object,
 			[5] object,
 			[6] class Modules.Variable_TemporalDeadZoneCapturedRead/Scope/Block_L10C12,
-			[7] object
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_TemporalDeadZoneCapturedRead/Scope::.ctor()
@@ -186,8 +187,8 @@
 		IL_0029: ldc.i4.0
 		IL_002a: ldc.i4.1
 		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0030: stloc.s 7
-		IL_0032: ldloc.s 7
+		IL_0030: stloc.s 8
+		IL_0032: ldloc.s 8
 		IL_0034: stloc.1
 		.try
 		{
@@ -241,8 +242,8 @@
 			IL_00a0: stloc.s 4
 
 			IL_00a2: ldloc.s 4
-			IL_00a4: stloc.s 7
-			IL_00a6: ldloc.s 7
+			IL_00a4: stloc.s 8
+			IL_00a6: ldloc.s 8
 			IL_00a8: stloc.s 5
 			IL_00aa: newobj instance void Modules.Variable_TemporalDeadZoneCapturedRead/Scope/Block_L10C12::.ctor()
 			IL_00af: stloc.s 6
@@ -260,12 +261,14 @@
 		IL_00d2: ldfld object Modules.Variable_TemporalDeadZoneCapturedRead/Scope::'value'
 		IL_00d7: ldstr "Cannot access 'value' before initialization"
 		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-		IL_00e1: stloc.s 7
+		IL_00e1: stloc.s 8
 		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e8: ldloc.s 7
+		IL_00e8: ldloc.s 8
 		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00ef: pop
-		IL_00f0: ret
+		IL_00f0: ldnull
+		IL_00f1: stloc.s 7
+		IL_00f3: ret
 	} // end of method Variable_TemporalDeadZoneCapturedRead::__js_module_init__
 
 } // end of class Modules.Variable_TemporalDeadZoneCapturedRead
