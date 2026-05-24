@@ -231,6 +231,12 @@ public sealed class GeneratorObject
             return IteratorResult.Create(value, done: true);
         }
 
+        if (!scope.Started)
+        {
+            scope.Done = true;
+            return IteratorResult.Create(value, done: true);
+        }
+
         scope.HasResumeException = false;
         scope.ResumeException = null;
         scope.ResumeValue = null;

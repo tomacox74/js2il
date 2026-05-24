@@ -4065,15 +4065,7 @@ namespace JavaScriptRuntime
             }
 
             // User-defined iterables: call obj[Symbol.iterator]().
-            object? iteratorMethod;
-            try
-            {
-                iteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.iterator);
-            }
-            catch
-            {
-                iteratorMethod = null;
-            }
+            object? iteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.iterator);
 
             if (iteratorMethod is Delegate del)
             {
@@ -4102,15 +4094,14 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Symbol.iterator is not a function");
             }
 
-            // Built-ins without an exposed Symbol.iterator surface fall back here.
-            if (iterable is string s)
-            {
-                return JavaScriptRuntime.String.CreateIterator(s);
-            }
-
             if (iterable is JavaScriptRuntime.Array arr)
             {
                 return arr.values();
+            }
+
+            if (iterable is string s)
+            {
+                return JavaScriptRuntime.String.CreateIterator(s);
             }
 
             if (iterable is ArgumentsObject argumentsObject)
