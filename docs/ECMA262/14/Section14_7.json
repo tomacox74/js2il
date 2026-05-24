@@ -499,6 +499,28 @@
           "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
         ],
         "notes": "Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return)."
+      },
+      {
+        "clause": "14.7.2.2",
+        "feature": "do-while legacy control-flow ports",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-do-while-statement",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A4_T5.js"
+        ],
+        "notes": "The checked-in slice also includes `S12.6.1_A2` and `S12.6.1_A9`, kept as explicit skips while ReferenceError propagation from do-while bodies is brought in line with the upstream cases."
+      },
+      {
+        "clause": "14.7.3.2",
+        "feature": "while legacy control-flow ports",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-while-statement",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A2.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T3.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T5.js"
+        ],
+        "notes": "Additional ports for `S12.6.2_A4_T2`, `S12.6.2_A4_T4`, and `S12.6.2_A9` are checked in as explicit skips while nested break handling and ReferenceError propagation are aligned with upstream behavior."
       }
     ]
   }

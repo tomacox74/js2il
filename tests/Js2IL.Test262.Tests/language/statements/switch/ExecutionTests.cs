@@ -41,4 +41,17 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task scope_lex_open_case()
         => ExecutionTest("scope-lex-open-case");
 
+
+
+    [Fact(DisplayName = "S12.11_A2_T1")]
+    public Task S12_11_A2_T1()
+        => CompilationFailureTest("S12.11_A2_T1", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.11_A3_T1")]
+    public Task S12_11_A3_T1()
+        => CompilationFailureTest("S12.11_A3_T1", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.11_A3_T2")]
+    public Task S12_11_A3_T2()
+        => CompilationFailureTest("S12.11_A3_T2", "Failed to parse JavaScript");
 }

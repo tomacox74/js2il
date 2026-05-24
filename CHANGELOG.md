@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `throw`, and `try` flows, and keep the currently unsupported while/do-while reference-error and nested try/finally cases explicit as checked-in skips while refreshing the linked ECMA-262 statement coverage docs.
 
 ## v0.9.25 - 2026-05-24
 

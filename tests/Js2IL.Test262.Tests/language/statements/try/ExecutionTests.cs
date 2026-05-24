@@ -73,4 +73,41 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_ary_name_iter_val()
         => ExecutionTest(@"dstr\ary-name-iter-val");
 
+
+
+    [Fact(DisplayName = "S12.14_A1")]
+    public Task S12_14_A1()
+        => ExecutionTest("S12.14_A1");
+
+    [Fact(DisplayName = "S12.14_A2")]
+    public Task S12_14_A2()
+        => ExecutionTest("S12.14_A2");
+
+    [Fact(DisplayName = "S12.14_A3")]
+    public Task S12_14_A3()
+        => ExecutionTest("S12.14_A3");
+
+    [Fact(DisplayName = "S12.14_A4")]
+    public Task S12_14_A4()
+        => ExecutionTest("S12.14_A4");
+
+    [Fact(DisplayName = "S12.14_A5")]
+    public Task S12_14_A5()
+        => ExecutionTest("S12.14_A5");
+
+    [Fact(DisplayName = "S12.14_A6")]
+    public Task S12_14_A6()
+        => ExecutionTest("S12.14_A6");
+
+    [Fact(DisplayName = "S12.14_A7_T1", Skip = "Currently triggers invalid IL for this nested try/finally control-flow shape.")]
+    public Task S12_14_A7_T1()
+        => ExecutionTest("S12.14_A7_T1");
+
+    [Fact(DisplayName = "S12.14_A7_T2", Skip = "Currently triggers invalid IL for this nested try/finally control-flow shape.")]
+    public Task S12_14_A7_T2()
+        => ExecutionTest("S12.14_A7_T2");
+
+    [Fact(DisplayName = "S12.14_A8")]
+    public Task S12_14_A8()
+        => ExecutionTest("S12.14_A8");
 }
