@@ -2300,7 +2300,7 @@ namespace JavaScriptRuntime
                         // JS semantics allow missing arguments; treat them as null/undefined.
                         // Reflection activation does not pad arguments, so fall back to selecting a
                         // public instance ctor and padding missing args with null.
-                        var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                        var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
 
                         foreach (var ctor in ctors.OrderBy(c => c.GetParameters().Length))
                         {

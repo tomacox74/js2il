@@ -108,6 +108,8 @@ namespace JavaScriptRuntime
 
         public static object SetObjectLiteralPrototype(object target, object? value)
         {
+            // Object literal __proto__ only mutates [[Prototype]] for object-or-null values;
+            // non-object primitives, including Symbol values, are ignored and do not create a property.
             if (value is JsNull || (value is not Symbol && TypeUtilities.IsConstructorReturnOverride(value)))
             {
                 PrototypeChain.SetPrototype(target, value);
