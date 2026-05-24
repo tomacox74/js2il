@@ -1,0 +1,24 @@
+using Js2IL.Test262.Tests.built_ins;
+
+namespace Js2IL.Test262.Tests.built_ins.String.prototype.search;
+
+public class ExecutionTests : DiskExecutionTestsBase
+{
+    public ExecutionTests() : base("built_ins.String.prototype.search") { }
+
+    [Fact(DisplayName = "S15.5.4.12_A1_T1")]
+    public Task S15_5_4_12_A1_T1()
+        => ExecutionTestFromFile("S15.5.4.12_A1_T1");
+
+    [Fact(DisplayName = "S15.5.4.12_A2_T1")]
+    public Task S15_5_4_12_A2_T1()
+        => ExecutionTestFromFile("S15.5.4.12_A2_T1");
+
+    [Fact(DisplayName = "S15.5.4.12_A2_T3")]
+    public Task S15_5_4_12_A2_T3()
+        => ExecutionTestFromFile("S15.5.4.12_A2_T3");
+
+    [Fact(DisplayName = "S15.5.4.12_A3_T2")]
+    public Task S15_5_4_12_A3_T2()
+        => ExecutionTestFromFile("S15.5.4.12_A3_T2");
+}
