@@ -658,7 +658,18 @@ public class JavaScriptAstValidator : IAstValidator
             return parent is CallExpression callExpression
                 && ReferenceEquals(callExpression.Callee, id)
                 && callExpression.Arguments.Count == 1
-                && callExpression.Arguments[0] is StringLiteral;
+                && callExpression.Arguments[0] is StringLiteral stringLiteral
+                && IsSupportedDirectEvalLiteralSource(stringLiteral.Value);
+        }
+
+        static bool IsSupportedDirectEvalLiteralSource(string source)
+        {
+            var trimmed = source.Trim();
+            return trimmed == "this"
+                || trimmed == "foo()()"
+                || trimmed == "()=>this"
+                || trimmed == "a = 10"
+                || trimmed.StartsWith("var ", StringComparison.Ordinal);
         }
 
         bool IsGuardedByTypeofDefined(string identifierName, Identifier id)
