@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2146
+			// Method begins at RVA 0x214d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 234 (0xea)
+		// Code size: 241 (0xf1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_Keys_Basic/Scope,
@@ -103,19 +103,22 @@
 		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00bd: pop
 		IL_00be: ldloc.2
-		IL_00bf: ldstr "join"
-		IL_00c4: ldstr ","
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ce: stloc.3
-		IL_00cf: ldstr "keys="
-		IL_00d4: ldloc.3
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00da: stloc.s 4
-		IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e1: ldloc.s 4
-		IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e8: pop
-		IL_00e9: ret
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c4: stloc.3
+		IL_00c5: ldloc.3
+		IL_00c6: ldstr "join"
+		IL_00cb: ldstr ","
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d5: stloc.3
+		IL_00d6: ldstr "keys="
+		IL_00db: ldloc.3
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e1: stloc.s 4
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e8: ldloc.s 4
+		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ef: pop
+		IL_00f0: ret
 	} // end of method Object_Keys_Basic::__js_module_init__
 
 } // end of class Modules.Object_Keys_Basic
@@ -127,7 +130,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214f
+		// Method begins at RVA 0x2156
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

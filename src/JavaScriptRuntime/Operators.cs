@@ -13,8 +13,114 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsBigInt(object? value) => value is BigInteger;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsEcmaNumber(object? value)
+            => value is double or float or int or long or short or byte or sbyte or uint or ulong or ushort;
+
         private static bool IsFiniteInteger(double value)
             => !double.IsNaN(value) && !double.IsInfinity(value) && global::System.Math.Truncate(value) == value;
+
+        private static object? ToPrimitiveForEquality(object? value)
+        {
+            if (value is null || value is JsNull || IsPrimitive(value))
+            {
+                return value;
+            }
+
+            return TypeUtilities.TryCoerceObjectToPrimitive(value, "default", out var primitive)
+                ? primitive
+                : value;
+        }
+
+        private static object? ToPrimitiveForRelationalComparison(object? value)
+        {
+            if (value is null || value is JsNull || IsPrimitive(value))
+            {
+                return value;
+            }
+
+            return TypeUtilities.TryCoerceObjectToPrimitive(value, "number", out var primitive)
+                ? primitive
+                : value;
+        }
+
+        private static int? CompareBigIntAndNumber(BigInteger left, double right)
+        {
+            if (double.IsNaN(right))
+            {
+                return null;
+            }
+
+            if (double.IsPositiveInfinity(right))
+            {
+                return -1;
+            }
+
+            if (double.IsNegativeInfinity(right))
+            {
+                return 1;
+            }
+
+            if (IsFiniteInteger(right))
+            {
+                return left.CompareTo(new BigInteger(right));
+            }
+
+            var floor = new BigInteger(global::System.Math.Floor(right));
+            if (left <= floor)
+            {
+                return -1;
+            }
+
+            var ceiling = new BigInteger(global::System.Math.Ceiling(right));
+            if (left >= ceiling)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        private static int? CompareRelational(object? a, object? b)
+        {
+            a = ToPrimitiveForRelationalComparison(a);
+            b = ToPrimitiveForRelationalComparison(b);
+
+            if (a is BigInteger leftBigInt)
+            {
+                if (b is BigInteger rightBigInt)
+                {
+                    return leftBigInt.CompareTo(rightBigInt);
+                }
+
+                if (IsEcmaNumber(b))
+                {
+                    return CompareBigIntAndNumber(leftBigInt, ToNumber(b));
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            if (b is BigInteger rightBigIntOnly)
+            {
+                if (IsEcmaNumber(a))
+                {
+                    var comparison = CompareBigIntAndNumber(rightBigIntOnly, ToNumber(a));
+                    return comparison.HasValue ? -comparison.Value : null;
+                }
+
+                ThrowMixedBigIntTypeError();
+            }
+
+            var leftNumber = ToNumber(a);
+            var rightNumber = ToNumber(b);
+            if (double.IsNaN(leftNumber) || double.IsNaN(rightNumber))
+            {
+                return null;
+            }
+
+            return leftNumber.CompareTo(rightNumber);
+        }
 
         private static int ToShiftCount(BigInteger shiftCount)
         {
@@ -728,105 +834,29 @@ namespace JavaScriptRuntime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool LessThan(object? a, object? b)
         {
-            if (a is double leftDouble && b is double rightDouble)
-            {
-                return leftDouble < rightDouble;
-            }
-
-            if (a is BigInteger leftBigInt)
-            {
-                if (b is BigInteger rightBigInt)
-                {
-                    return leftBigInt < rightBigInt;
-                }
-
-                ThrowMixedBigIntTypeError();
-            }
-
-            if (b is BigInteger)
-            {
-                ThrowMixedBigIntTypeError();
-            }
-
-            return ToNumber(a) < ToNumber(b);
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value < 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GreaterThan(object? a, object? b)
         {
-            if (a is double leftDouble && b is double rightDouble)
-            {
-                return leftDouble > rightDouble;
-            }
-
-            if (a is BigInteger leftBigInt)
-            {
-                if (b is BigInteger rightBigInt)
-                {
-                    return leftBigInt > rightBigInt;
-                }
-
-                ThrowMixedBigIntTypeError();
-            }
-
-            if (b is BigInteger)
-            {
-                ThrowMixedBigIntTypeError();
-            }
-
-            return ToNumber(a) > ToNumber(b);
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value > 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool LessThanOrEqual(object? a, object? b)
         {
-            if (a is double leftDouble && b is double rightDouble)
-            {
-                return leftDouble <= rightDouble;
-            }
-
-            if (a is BigInteger leftBigInt)
-            {
-                if (b is BigInteger rightBigInt)
-                {
-                    return leftBigInt <= rightBigInt;
-                }
-
-                ThrowMixedBigIntTypeError();
-            }
-
-            if (b is BigInteger)
-            {
-                ThrowMixedBigIntTypeError();
-            }
-
-            return ToNumber(a) <= ToNumber(b);
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value <= 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GreaterThanOrEqual(object? a, object? b)
         {
-            if (a is double leftDouble && b is double rightDouble)
-            {
-                return leftDouble >= rightDouble;
-            }
-
-            if (a is BigInteger leftBigInt)
-            {
-                if (b is BigInteger rightBigInt)
-                {
-                    return leftBigInt >= rightBigInt;
-                }
-
-                ThrowMixedBigIntTypeError();
-            }
-
-            if (b is BigInteger)
-            {
-                ThrowMixedBigIntTypeError();
-            }
-
-            return ToNumber(a) >= ToNumber(b);
+            var comparison = CompareRelational(a, b);
+            return comparison.HasValue && comparison.Value >= 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -942,11 +972,29 @@ namespace JavaScriptRuntime
             if (a is BigInteger leftBigInt && b is BigInteger rightBigInt)
                 return leftBigInt == rightBigInt;
 
+            if (!IsPrimitive(a) && (b is string or Symbol or BigInteger || IsEcmaNumber(b)))
+            {
+                var primitiveA = ToPrimitiveForEquality(a);
+                return !ReferenceEquals(primitiveA, a) && Equal(primitiveA, b);
+            }
+
+            if (!IsPrimitive(b) && (a is string or Symbol or BigInteger || IsEcmaNumber(a)))
+            {
+                var primitiveB = ToPrimitiveForEquality(b);
+                return !ReferenceEquals(primitiveB, b) && Equal(a, primitiveB);
+            }
+
             if (a is BigInteger leftBigIntLoose)
                 return BigIntLooseEquals(leftBigIntLoose, b);
 
             if (b is BigInteger rightBigIntLoose)
                 return BigIntLooseEquals(rightBigIntLoose, a);
+
+            if (a is bool leftBoolean)
+                return Equal(ToNumber(leftBoolean), b);
+
+            if (b is bool rightBoolean)
+                return Equal(a, ToNumber(rightBoolean));
 
             if (a is int ia && b is int ib)
                 return ia == ib;

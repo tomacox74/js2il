@@ -22,7 +22,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task _11_8_2_4()
         => ExecutionTest("11.8.2-4");
 
-    [Fact(DisplayName = "bigint-and-number", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "bigint-and-number")]
     public Task bigint_and_number()
         => ExecutionTest("bigint-and-number");
 }

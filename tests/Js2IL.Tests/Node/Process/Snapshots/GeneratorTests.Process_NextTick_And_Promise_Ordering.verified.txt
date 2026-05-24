@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23e4
+				// Method begins at RVA 0x2400
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21f4
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -82,7 +82,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23f6
+					// Method begins at RVA 0x2412
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -106,7 +106,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x230c
+				// Method begins at RVA 0x2328
 				// Header size: 12
 				// Code size: 33 (0x21)
 				.maxstack 8
@@ -139,7 +139,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ed
+				// Method begins at RVA 0x2409
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -165,13 +165,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2204
+			// Method begins at RVA 0x221c
 			// Header size: 12
-			// Code size: 93 (0x5d)
+			// Code size: 100 (0x64)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L9C25/Scope,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: newobj instance void Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L9C25/Scope::.ctor()
@@ -181,35 +182,38 @@
 			IL_000c: ldstr "promise1"
 			IL_0011: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
 			IL_0016: pop
-			IL_0017: ldnull
-			IL_0018: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L9C25/ArrowFunction_L11C20::__js_call__(object[], object)
-			IL_001e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_0023: ldc.i4.2
-			IL_0024: newarr [System.Runtime]System.Object
-			IL_0029: dup
-			IL_002a: ldc.i4.0
-			IL_002b: ldarg.0
-			IL_002c: stelem.ref
-			IL_002d: dup
-			IL_002e: ldc.i4.1
-			IL_002f: ldloc.0
-			IL_0030: stelem.ref
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_003b: ldc.i4.0
-			IL_003c: conv.r8
-			IL_003d: ldstr ""
-			IL_0042: ldc.i4.0
-			IL_0043: ldc.i4.1
-			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0049: stloc.1
-			IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_004f: ldstr "nextTick"
-			IL_0054: ldloc.1
-			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_005a: pop
-			IL_005b: ldnull
-			IL_005c: ret
+			IL_0017: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0021: stloc.1
+			IL_0022: ldnull
+			IL_0023: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L9C25/ArrowFunction_L11C20::__js_call__(object[], object)
+			IL_0029: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_002e: ldc.i4.2
+			IL_002f: newarr [System.Runtime]System.Object
+			IL_0034: dup
+			IL_0035: ldc.i4.0
+			IL_0036: ldarg.0
+			IL_0037: stelem.ref
+			IL_0038: dup
+			IL_0039: ldc.i4.1
+			IL_003a: ldloc.0
+			IL_003b: stelem.ref
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0046: ldc.i4.0
+			IL_0047: conv.r8
+			IL_0048: ldstr ""
+			IL_004d: ldc.i4.0
+			IL_004e: ldc.i4.1
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0054: stloc.2
+			IL_0055: ldloc.1
+			IL_0056: ldstr "nextTick"
+			IL_005b: ldloc.2
+			IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0061: pop
+			IL_0062: ldnull
+			IL_0063: ret
 		} // end of method ArrowFunction_L9C25::__js_call__
 
 	} // end of class ArrowFunction_L9C25
@@ -225,7 +229,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ff
+				// Method begins at RVA 0x241b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -251,7 +255,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2270
+			// Method begins at RVA 0x228c
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -289,7 +293,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2411
+					// Method begins at RVA 0x242d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -313,7 +317,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x233c
+				// Method begins at RVA 0x2358
 				// Header size: 12
 				// Code size: 147 (0x93)
 				.maxstack 8
@@ -390,7 +394,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2408
+				// Method begins at RVA 0x2424
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -416,7 +420,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2298
+			// Method begins at RVA 0x22b4
 			// Header size: 12
 			// Code size: 103 (0x67)
 			.maxstack 8
@@ -481,7 +485,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23db
+			// Method begins at RVA 0x23f7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -507,7 +511,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 384 (0x180)
+		// Code size: 405 (0x195)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_NextTick_And_Promise_Ordering/Scope,
@@ -526,139 +530,148 @@
 		IL_0018: ldstr "sync"
 		IL_001d: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
 		IL_0022: pop
-		IL_0023: ldc.i4.1
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
-		IL_002a: ldc.i4.0
-		IL_002b: ldloc.0
-		IL_002c: stelem.ref
-		IL_002d: ldc.i4.0
-		IL_002e: ldelem.ref
-		IL_002f: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
-		IL_0034: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L7C18::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
-		IL_003a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldloc.0
-		IL_0048: stelem.ref
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0053: ldc.i4.0
-		IL_0054: conv.r8
-		IL_0055: ldstr ""
-		IL_005a: ldc.i4.0
-		IL_005b: ldc.i4.1
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0061: stloc.1
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0067: ldstr "nextTick"
-		IL_006c: ldloc.1
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0072: pop
-		IL_0073: ldc.r8 0.0
-		IL_007c: box [System.Runtime]System.Double
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0086: stloc.1
-		IL_0087: ldc.i4.1
-		IL_0088: newarr [System.Runtime]System.Object
-		IL_008d: dup
-		IL_008e: ldc.i4.0
-		IL_008f: ldloc.0
-		IL_0090: stelem.ref
-		IL_0091: ldc.i4.0
-		IL_0092: ldelem.ref
-		IL_0093: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
-		IL_0098: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L9C25::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
-		IL_009e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00a3: ldc.i4.1
-		IL_00a4: newarr [System.Runtime]System.Object
-		IL_00a9: dup
-		IL_00aa: ldc.i4.0
-		IL_00ab: ldloc.0
-		IL_00ac: stelem.ref
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00b7: ldc.i4.0
-		IL_00b8: conv.r8
-		IL_00b9: ldstr ""
-		IL_00be: ldc.i4.0
-		IL_00bf: ldc.i4.1
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00c5: stloc.2
-		IL_00c6: ldloc.1
-		IL_00c7: ldstr "then"
-		IL_00cc: ldloc.2
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00d2: pop
-		IL_00d3: ldc.r8 0.0
-		IL_00dc: box [System.Runtime]System.Double
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_00e6: stloc.2
-		IL_00e7: ldc.i4.1
-		IL_00e8: newarr [System.Runtime]System.Object
-		IL_00ed: dup
-		IL_00ee: ldc.i4.0
-		IL_00ef: ldloc.0
-		IL_00f0: stelem.ref
-		IL_00f1: ldc.i4.0
-		IL_00f2: ldelem.ref
-		IL_00f3: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
-		IL_00f8: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L14C25::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
-		IL_00fe: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0103: ldc.i4.1
-		IL_0104: newarr [System.Runtime]System.Object
-		IL_0109: dup
-		IL_010a: ldc.i4.0
-		IL_010b: ldloc.0
-		IL_010c: stelem.ref
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0117: ldc.i4.0
-		IL_0118: conv.r8
-		IL_0119: ldstr ""
-		IL_011e: ldc.i4.0
-		IL_011f: ldc.i4.1
-		IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0125: stloc.1
-		IL_0126: ldloc.2
-		IL_0127: ldstr "then"
-		IL_012c: ldloc.1
-		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0132: pop
-		IL_0133: ldc.i4.1
-		IL_0134: newarr [System.Runtime]System.Object
-		IL_0139: dup
-		IL_013a: ldc.i4.0
-		IL_013b: ldloc.0
-		IL_013c: stelem.ref
-		IL_013d: ldc.i4.0
-		IL_013e: ldelem.ref
-		IL_013f: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
-		IL_0144: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L16C14::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
-		IL_014a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_014f: ldc.i4.1
-		IL_0150: newarr [System.Runtime]System.Object
-		IL_0155: dup
-		IL_0156: ldc.i4.0
-		IL_0157: ldloc.0
-		IL_0158: stelem.ref
-		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0163: ldc.i4.0
-		IL_0164: conv.r8
-		IL_0165: ldstr ""
-		IL_016a: ldc.i4.0
-		IL_016b: ldc.i4.1
-		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0171: stloc.1
-		IL_0172: ldloc.1
-		IL_0173: ldc.i4.0
-		IL_0174: newarr [System.Runtime]System.Object
-		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_017e: pop
-		IL_017f: ret
+		IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_002d: stloc.1
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: ldc.i4.0
+		IL_0039: ldelem.ref
+		IL_003a: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
+		IL_003f: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L7C18::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
+		IL_0045: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_005e: ldc.i4.0
+		IL_005f: conv.r8
+		IL_0060: ldstr ""
+		IL_0065: ldc.i4.0
+		IL_0066: ldc.i4.1
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_006c: stloc.2
+		IL_006d: ldloc.1
+		IL_006e: ldstr "nextTick"
+		IL_0073: ldloc.2
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0079: pop
+		IL_007a: ldc.r8 0.0
+		IL_0083: box [System.Runtime]System.Double
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_008d: stloc.2
+		IL_008e: ldloc.2
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0094: stloc.2
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: stelem.ref
+		IL_009f: ldc.i4.0
+		IL_00a0: ldelem.ref
+		IL_00a1: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
+		IL_00a6: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L9C25::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
+		IL_00ac: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00b1: ldc.i4.1
+		IL_00b2: newarr [System.Runtime]System.Object
+		IL_00b7: dup
+		IL_00b8: ldc.i4.0
+		IL_00b9: ldloc.0
+		IL_00ba: stelem.ref
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00c5: ldc.i4.0
+		IL_00c6: conv.r8
+		IL_00c7: ldstr ""
+		IL_00cc: ldc.i4.0
+		IL_00cd: ldc.i4.1
+		IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00d3: stloc.1
+		IL_00d4: ldloc.2
+		IL_00d5: ldstr "then"
+		IL_00da: ldloc.1
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e0: pop
+		IL_00e1: ldc.r8 0.0
+		IL_00ea: box [System.Runtime]System.Double
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_00f4: stloc.1
+		IL_00f5: ldloc.1
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fb: stloc.1
+		IL_00fc: ldc.i4.1
+		IL_00fd: newarr [System.Runtime]System.Object
+		IL_0102: dup
+		IL_0103: ldc.i4.0
+		IL_0104: ldloc.0
+		IL_0105: stelem.ref
+		IL_0106: ldc.i4.0
+		IL_0107: ldelem.ref
+		IL_0108: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
+		IL_010d: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L14C25::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
+		IL_0113: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0118: ldc.i4.1
+		IL_0119: newarr [System.Runtime]System.Object
+		IL_011e: dup
+		IL_011f: ldc.i4.0
+		IL_0120: ldloc.0
+		IL_0121: stelem.ref
+		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_012c: ldc.i4.0
+		IL_012d: conv.r8
+		IL_012e: ldstr ""
+		IL_0133: ldc.i4.0
+		IL_0134: ldc.i4.1
+		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_013a: stloc.2
+		IL_013b: ldloc.1
+		IL_013c: ldstr "then"
+		IL_0141: ldloc.2
+		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0147: pop
+		IL_0148: ldc.i4.1
+		IL_0149: newarr [System.Runtime]System.Object
+		IL_014e: dup
+		IL_014f: ldc.i4.0
+		IL_0150: ldloc.0
+		IL_0151: stelem.ref
+		IL_0152: ldc.i4.0
+		IL_0153: ldelem.ref
+		IL_0154: castclass Modules.Process_NextTick_And_Promise_Ordering/Scope
+		IL_0159: ldftn object Modules.Process_NextTick_And_Promise_Ordering/ArrowFunction_L16C14::__js_call__(class Modules.Process_NextTick_And_Promise_Ordering/Scope, object)
+		IL_015f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0164: ldc.i4.1
+		IL_0165: newarr [System.Runtime]System.Object
+		IL_016a: dup
+		IL_016b: ldc.i4.0
+		IL_016c: ldloc.0
+		IL_016d: stelem.ref
+		IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0178: ldc.i4.0
+		IL_0179: conv.r8
+		IL_017a: ldstr ""
+		IL_017f: ldc.i4.0
+		IL_0180: ldc.i4.1
+		IL_0181: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0186: stloc.2
+		IL_0187: ldloc.2
+		IL_0188: ldc.i4.0
+		IL_0189: newarr [System.Runtime]System.Object
+		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0193: pop
+		IL_0194: ret
 	} // end of method Process_NextTick_And_Promise_Ordering::__js_module_init__
 
 } // end of class Modules.Process_NextTick_And_Promise_Ordering
@@ -670,7 +683,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x241a
+		// Method begins at RVA 0x2436
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

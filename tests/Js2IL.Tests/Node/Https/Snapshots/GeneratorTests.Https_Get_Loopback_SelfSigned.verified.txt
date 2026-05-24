@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24fa
+				// Method begins at RVA 0x253d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,12 +51,13 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21e4
 			// Header size: 12
-			// Code size: 127 (0x7f)
+			// Code size: 141 (0x8d)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldstr "req:"
@@ -86,18 +87,24 @@
 			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
 			IL_0055: pop
 			IL_0056: ldarg.2
-			IL_0057: ldstr "setHeader"
-			IL_005c: ldstr "content-type"
-			IL_0061: ldstr "text/plain"
-			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_006b: pop
-			IL_006c: ldarg.2
-			IL_006d: ldstr "end"
-			IL_0072: ldstr "secure hello"
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_007c: pop
-			IL_007d: ldnull
-			IL_007e: ret
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_005c: stloc.1
+			IL_005d: ldloc.1
+			IL_005e: ldstr "setHeader"
+			IL_0063: ldstr "content-type"
+			IL_0068: ldstr "text/plain"
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0072: pop
+			IL_0073: ldarg.2
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0079: stloc.1
+			IL_007a: ldloc.1
+			IL_007b: ldstr "end"
+			IL_0080: ldstr "secure hello"
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_008a: pop
+			IL_008b: ldnull
+			IL_008c: ret
 		} // end of method ArrowFunction_L6C67::__js_call__
 
 	} // end of class ArrowFunction_L6C67
@@ -128,7 +135,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2515
+						// Method begins at RVA 0x2558
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -153,7 +160,7 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x242c
+					// Method begins at RVA 0x2468
 					// Header size: 12
 					// Code size: 36 (0x24)
 					.maxstack 8
@@ -196,7 +203,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x2527
+							// Method begins at RVA 0x256a
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -219,7 +226,7 @@
 						.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 							01 00 00 00 00 00 00 00
 						)
-						// Method begins at RVA 0x24de
+						// Method begins at RVA 0x2521
 						// Header size: 1
 						// Code size: 18 (0x12)
 						.maxstack 8
@@ -241,7 +248,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x251e
+						// Method begins at RVA 0x2561
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -265,14 +272,15 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x245c
+					// Method begins at RVA 0x2498
 					// Header size: 12
-					// Code size: 118 (0x76)
+					// Code size: 125 (0x7d)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L28C21/Scope,
 						[1] object,
-						[2] object
+						[2] object,
+						[3] object
 					)
 
 					IL_0000: newobj instance void Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L28C21/Scope::.ctor()
@@ -289,37 +297,40 @@
 					IL_0023: ldloc.1
 					IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 					IL_0029: pop
-					IL_002a: ldnull
-					IL_002b: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L28C21/ArrowFunction_L30C22::__js_call__(object)
-					IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-					IL_0036: ldc.i4.1
-					IL_0037: newarr [System.Runtime]System.Object
-					IL_003c: dup
-					IL_003d: ldc.i4.0
-					IL_003e: ldarg.0
-					IL_003f: ldc.i4.0
-					IL_0040: ldelem.ref
-					IL_0041: stelem.ref
-					IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-					IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-					IL_004c: ldc.i4.0
-					IL_004d: conv.r8
-					IL_004e: ldstr ""
-					IL_0053: ldc.i4.0
-					IL_0054: ldc.i4.1
-					IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-					IL_005a: stloc.2
-					IL_005b: ldarg.0
-					IL_005c: ldc.i4.0
-					IL_005d: ldelem.ref
-					IL_005e: castclass Modules.Https_Get_Loopback_SelfSigned/Scope
-					IL_0063: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
-					IL_0068: ldstr "close"
-					IL_006d: ldloc.2
-					IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-					IL_0073: pop
-					IL_0074: ldnull
-					IL_0075: ret
+					IL_002a: ldarg.0
+					IL_002b: ldc.i4.0
+					IL_002c: ldelem.ref
+					IL_002d: castclass Modules.Https_Get_Loopback_SelfSigned/Scope
+					IL_0032: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
+					IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_003c: stloc.2
+					IL_003d: ldnull
+					IL_003e: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L28C21/ArrowFunction_L30C22::__js_call__(object)
+					IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+					IL_0049: ldc.i4.1
+					IL_004a: newarr [System.Runtime]System.Object
+					IL_004f: dup
+					IL_0050: ldc.i4.0
+					IL_0051: ldarg.0
+					IL_0052: ldc.i4.0
+					IL_0053: ldelem.ref
+					IL_0054: stelem.ref
+					IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+					IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+					IL_005f: ldc.i4.0
+					IL_0060: conv.r8
+					IL_0061: ldstr ""
+					IL_0066: ldc.i4.0
+					IL_0067: ldc.i4.1
+					IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+					IL_006d: stloc.3
+					IL_006e: ldloc.2
+					IL_006f: ldstr "close"
+					IL_0074: ldloc.3
+					IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_007a: pop
+					IL_007b: ldnull
+					IL_007c: ret
 				} // end of method ArrowFunction_L28C21::__js_call__
 
 			} // end of class ArrowFunction_L28C21
@@ -339,7 +350,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x250c
+					// Method begins at RVA 0x254f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -364,110 +375,120 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2340
+				// Method begins at RVA 0x2364
 				// Header size: 12
-				// Code size: 224 (0xe0)
+				// Code size: 245 (0xf5)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/Scope,
 					[1] object,
-					[2] object
+					[2] object,
+					[3] object
 				)
 
 				IL_0000: newobj instance void Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/Scope::.ctor()
 				IL_0005: stloc.0
 				IL_0006: ldarg.2
-				IL_0007: ldstr "setEncoding"
-				IL_000c: ldstr "utf8"
-				IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0016: pop
-				IL_0017: ldstr "status:"
-				IL_001c: ldarg.2
-				IL_001d: ldstr "statusCode"
-				IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_002c: stloc.1
-				IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0032: ldloc.1
-				IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0038: pop
-				IL_0039: ldloc.0
-				IL_003a: ldstr ""
-				IL_003f: stfld object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/Scope::body
-				IL_0044: ldnull
-				IL_0045: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L25C22::__js_call__(object[], object, object)
-				IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-				IL_0050: ldc.i4.3
-				IL_0051: newarr [System.Runtime]System.Object
-				IL_0056: dup
-				IL_0057: ldc.i4.0
-				IL_0058: ldarg.0
-				IL_0059: ldc.i4.0
-				IL_005a: ldelem.ref
-				IL_005b: stelem.ref
-				IL_005c: dup
-				IL_005d: ldc.i4.1
-				IL_005e: ldarg.0
-				IL_005f: ldc.i4.1
-				IL_0060: ldelem.ref
-				IL_0061: stelem.ref
-				IL_0062: dup
-				IL_0063: ldc.i4.2
-				IL_0064: ldloc.0
-				IL_0065: stelem.ref
-				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-				IL_0070: ldc.i4.1
-				IL_0071: conv.r8
-				IL_0072: ldstr ""
-				IL_0077: ldc.i4.0
-				IL_0078: ldc.i4.1
-				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_007e: stloc.2
-				IL_007f: ldarg.2
-				IL_0080: ldstr "on"
-				IL_0085: ldstr "data"
-				IL_008a: ldloc.2
-				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_0090: pop
-				IL_0091: ldnull
-				IL_0092: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L28C21::__js_call__(object[], object)
-				IL_0098: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-				IL_009d: ldc.i4.3
-				IL_009e: newarr [System.Runtime]System.Object
-				IL_00a3: dup
-				IL_00a4: ldc.i4.0
-				IL_00a5: ldarg.0
-				IL_00a6: ldc.i4.0
-				IL_00a7: ldelem.ref
-				IL_00a8: stelem.ref
-				IL_00a9: dup
-				IL_00aa: ldc.i4.1
-				IL_00ab: ldarg.0
-				IL_00ac: ldc.i4.1
-				IL_00ad: ldelem.ref
-				IL_00ae: stelem.ref
-				IL_00af: dup
-				IL_00b0: ldc.i4.2
-				IL_00b1: ldloc.0
-				IL_00b2: stelem.ref
-				IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-				IL_00bd: ldc.i4.0
-				IL_00be: conv.r8
-				IL_00bf: ldstr ""
-				IL_00c4: ldc.i4.0
-				IL_00c5: ldc.i4.1
-				IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_00cb: stloc.2
-				IL_00cc: ldarg.2
-				IL_00cd: ldstr "on"
-				IL_00d2: ldstr "end"
-				IL_00d7: ldloc.2
-				IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_00dd: pop
-				IL_00de: ldnull
-				IL_00df: ret
+				IL_0007: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_000c: stloc.1
+				IL_000d: ldloc.1
+				IL_000e: ldstr "setEncoding"
+				IL_0013: ldstr "utf8"
+				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_001d: pop
+				IL_001e: ldstr "status:"
+				IL_0023: ldarg.2
+				IL_0024: ldstr "statusCode"
+				IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0033: stloc.2
+				IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0039: ldloc.2
+				IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_003f: pop
+				IL_0040: ldloc.0
+				IL_0041: ldstr ""
+				IL_0046: stfld object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/Scope::body
+				IL_004b: ldarg.2
+				IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0051: stloc.1
+				IL_0052: ldnull
+				IL_0053: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L25C22::__js_call__(object[], object, object)
+				IL_0059: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+				IL_005e: ldc.i4.3
+				IL_005f: newarr [System.Runtime]System.Object
+				IL_0064: dup
+				IL_0065: ldc.i4.0
+				IL_0066: ldarg.0
+				IL_0067: ldc.i4.0
+				IL_0068: ldelem.ref
+				IL_0069: stelem.ref
+				IL_006a: dup
+				IL_006b: ldc.i4.1
+				IL_006c: ldarg.0
+				IL_006d: ldc.i4.1
+				IL_006e: ldelem.ref
+				IL_006f: stelem.ref
+				IL_0070: dup
+				IL_0071: ldc.i4.2
+				IL_0072: ldloc.0
+				IL_0073: stelem.ref
+				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+				IL_007e: ldc.i4.1
+				IL_007f: conv.r8
+				IL_0080: ldstr ""
+				IL_0085: ldc.i4.0
+				IL_0086: ldc.i4.1
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_008c: stloc.3
+				IL_008d: ldloc.1
+				IL_008e: ldstr "on"
+				IL_0093: ldstr "data"
+				IL_0098: ldloc.3
+				IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_009e: pop
+				IL_009f: ldarg.2
+				IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00a5: stloc.3
+				IL_00a6: ldnull
+				IL_00a7: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5/ArrowFunction_L28C21::__js_call__(object[], object)
+				IL_00ad: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+				IL_00b2: ldc.i4.3
+				IL_00b3: newarr [System.Runtime]System.Object
+				IL_00b8: dup
+				IL_00b9: ldc.i4.0
+				IL_00ba: ldarg.0
+				IL_00bb: ldc.i4.0
+				IL_00bc: ldelem.ref
+				IL_00bd: stelem.ref
+				IL_00be: dup
+				IL_00bf: ldc.i4.1
+				IL_00c0: ldarg.0
+				IL_00c1: ldc.i4.1
+				IL_00c2: ldelem.ref
+				IL_00c3: stelem.ref
+				IL_00c4: dup
+				IL_00c5: ldc.i4.2
+				IL_00c6: ldloc.0
+				IL_00c7: stelem.ref
+				IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+				IL_00d2: ldc.i4.0
+				IL_00d3: conv.r8
+				IL_00d4: ldstr ""
+				IL_00d9: ldc.i4.0
+				IL_00da: ldc.i4.1
+				IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_00e0: stloc.1
+				IL_00e1: ldloc.3
+				IL_00e2: ldstr "on"
+				IL_00e7: ldstr "end"
+				IL_00ec: ldloc.1
+				IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_00f2: pop
+				IL_00f3: ldnull
+				IL_00f4: ret
 			} // end of method ArrowFunction_L20C5::__js_call__
 
 		} // end of class ArrowFunction_L20C5
@@ -479,7 +500,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2503
+				// Method begins at RVA 0x2546
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -505,9 +526,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
-			// Method begins at RVA 0x2268
+			// Method begins at RVA 0x2280
 			// Header size: 12
-			// Code size: 202 (0xca)
+			// Code size: 214 (0xd6)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/Scope,
@@ -522,75 +543,79 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
-			IL_000c: ldstr "address"
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0016: stloc.2
-			IL_0017: ldloc.2
-			IL_0018: stloc.1
-			IL_0019: ldstr "listening:"
-			IL_001e: ldloc.1
-			IL_001f: ldstr "address"
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002e: stloc.3
-			IL_002f: ldloc.3
-			IL_0030: ldstr ":ready"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003a: stloc.3
-			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0040: ldloc.3
-			IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0046: pop
-			IL_0047: ldarg.0
-			IL_0048: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::https
-			IL_004d: stloc.2
-			IL_004e: ldstr "https://127.0.0.1:"
-			IL_0053: ldloc.1
-			IL_0054: ldstr "port"
-			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0063: stloc.3
-			IL_0064: ldloc.3
-			IL_0065: ldstr "/hello?x=1"
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.2
+			IL_0012: ldloc.2
+			IL_0013: ldstr "address"
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_001d: stloc.2
+			IL_001e: ldloc.2
+			IL_001f: stloc.1
+			IL_0020: ldstr "listening:"
+			IL_0025: ldloc.1
+			IL_0026: ldstr "address"
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0035: stloc.3
+			IL_0036: ldloc.3
+			IL_0037: ldstr ":ready"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0041: stloc.3
+			IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0047: ldloc.3
+			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004d: pop
+			IL_004e: ldarg.0
+			IL_004f: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::https
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0059: stloc.2
+			IL_005a: ldstr "https://127.0.0.1:"
+			IL_005f: ldloc.1
+			IL_0060: ldstr "port"
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 			IL_006f: stloc.3
-			IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0075: dup
-			IL_0076: ldstr "rejectUnauthorized"
-			IL_007b: ldc.i4.0
-			IL_007c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0081: stloc.s 4
-			IL_0083: ldnull
-			IL_0084: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5::__js_call__(object[], object, object)
-			IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
-			IL_008f: ldc.i4.2
-			IL_0090: newarr [System.Runtime]System.Object
-			IL_0095: dup
-			IL_0096: ldc.i4.0
-			IL_0097: ldarg.0
-			IL_0098: stelem.ref
-			IL_0099: dup
-			IL_009a: ldc.i4.1
-			IL_009b: ldloc.0
-			IL_009c: stelem.ref
-			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_00a7: ldc.i4.1
-			IL_00a8: conv.r8
-			IL_00a9: ldstr ""
-			IL_00ae: ldc.i4.0
-			IL_00af: ldc.i4.1
-			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_00b5: stloc.s 5
-			IL_00b7: ldloc.2
-			IL_00b8: ldstr "get"
-			IL_00bd: ldloc.3
-			IL_00be: ldloc.s 4
-			IL_00c0: ldloc.s 5
-			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_00c7: pop
-			IL_00c8: ldnull
-			IL_00c9: ret
+			IL_0070: ldloc.3
+			IL_0071: ldstr "/hello?x=1"
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_007b: stloc.3
+			IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0081: dup
+			IL_0082: ldstr "rejectUnauthorized"
+			IL_0087: ldc.i4.0
+			IL_0088: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_008d: stloc.s 4
+			IL_008f: ldnull
+			IL_0090: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31/ArrowFunction_L20C5::__js_call__(object[], object, object)
+			IL_0096: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+			IL_009b: ldc.i4.2
+			IL_009c: newarr [System.Runtime]System.Object
+			IL_00a1: dup
+			IL_00a2: ldc.i4.0
+			IL_00a3: ldarg.0
+			IL_00a4: stelem.ref
+			IL_00a5: dup
+			IL_00a6: ldc.i4.1
+			IL_00a7: ldloc.0
+			IL_00a8: stelem.ref
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_00b3: ldc.i4.1
+			IL_00b4: conv.r8
+			IL_00b5: ldstr ""
+			IL_00ba: ldc.i4.0
+			IL_00bb: ldc.i4.1
+			IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_00c1: stloc.s 5
+			IL_00c3: ldloc.2
+			IL_00c4: ldstr "get"
+			IL_00c9: ldloc.3
+			IL_00ca: ldloc.s 4
+			IL_00cc: ldloc.s 5
+			IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_00d3: pop
+			IL_00d4: ldnull
+			IL_00d5: ret
 		} // end of method ArrowFunction_L13C31::__js_call__
 
 	} // end of class ArrowFunction_L13C31
@@ -611,7 +636,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x24f1
+			// Method begins at RVA 0x2534
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -637,7 +662,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 310 (0x136)
+		// Code size: 320 (0x140)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Https_Get_Loopback_SelfSigned/Scope,
@@ -683,82 +708,84 @@
 		IL_005d: stloc.2
 		IL_005e: ldloc.0
 		IL_005f: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::https
-		IL_0064: stloc.3
-		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_006a: dup
-		IL_006b: ldstr "key"
-		IL_0070: ldloc.2
-		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0076: dup
-		IL_0077: ldstr "cert"
-		IL_007c: ldloc.1
-		IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0082: stloc.s 4
-		IL_0084: ldnull
-		IL_0085: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L6C67::__js_call__(object, object, object)
-		IL_008b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
-		IL_0090: ldc.i4.1
-		IL_0091: newarr [System.Runtime]System.Object
-		IL_0096: dup
-		IL_0097: ldc.i4.0
-		IL_0098: ldloc.0
-		IL_0099: stelem.ref
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00a4: ldc.i4.2
-		IL_00a5: conv.r8
-		IL_00a6: ldstr ""
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldc.i4.1
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00b2: stloc.s 5
-		IL_00b4: ldloc.3
-		IL_00b5: ldstr "createServer"
-		IL_00ba: ldloc.s 4
-		IL_00bc: ldloc.s 5
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00c3: stloc.s 5
-		IL_00c5: ldloc.0
-		IL_00c6: ldloc.s 5
-		IL_00c8: stfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
-		IL_00cd: ldloc.0
-		IL_00ce: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
-		IL_00d3: stloc.s 5
-		IL_00d5: ldc.i4.1
-		IL_00d6: newarr [System.Runtime]System.Object
-		IL_00db: dup
-		IL_00dc: ldc.i4.0
-		IL_00dd: ldloc.0
-		IL_00de: stelem.ref
-		IL_00df: ldc.i4.0
-		IL_00e0: ldelem.ref
-		IL_00e1: castclass Modules.Https_Get_Loopback_SelfSigned/Scope
-		IL_00e6: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31::__js_call__(class Modules.Https_Get_Loopback_SelfSigned/Scope, object)
-		IL_00ec: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00f1: ldc.i4.1
-		IL_00f2: newarr [System.Runtime]System.Object
-		IL_00f7: dup
-		IL_00f8: ldc.i4.0
-		IL_00f9: ldloc.0
-		IL_00fa: stelem.ref
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0105: ldc.i4.0
-		IL_0106: conv.r8
-		IL_0107: ldstr ""
-		IL_010c: ldc.i4.0
-		IL_010d: ldc.i4.1
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0113: stloc.3
-		IL_0114: ldloc.s 5
-		IL_0116: ldstr "listen"
-		IL_011b: ldc.r8 0.0
-		IL_0124: box [System.Runtime]System.Double
-		IL_0129: ldstr "127.0.0.1"
-		IL_012e: ldloc.3
-		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_0134: pop
-		IL_0135: ret
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0069: stloc.3
+		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006f: dup
+		IL_0070: ldstr "key"
+		IL_0075: ldloc.2
+		IL_0076: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_007b: dup
+		IL_007c: ldstr "cert"
+		IL_0081: ldloc.1
+		IL_0082: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0087: stloc.s 4
+		IL_0089: ldnull
+		IL_008a: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L6C67::__js_call__(object, object, object)
+		IL_0090: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: stelem.ref
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00a9: ldc.i4.2
+		IL_00aa: conv.r8
+		IL_00ab: ldstr ""
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldc.i4.1
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00b7: stloc.s 5
+		IL_00b9: ldloc.3
+		IL_00ba: ldstr "createServer"
+		IL_00bf: ldloc.s 4
+		IL_00c1: ldloc.s 5
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00c8: stloc.s 5
+		IL_00ca: ldloc.0
+		IL_00cb: ldloc.s 5
+		IL_00cd: stfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
+		IL_00d2: ldloc.0
+		IL_00d3: ldfld object Modules.Https_Get_Loopback_SelfSigned/Scope::server
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00dd: stloc.s 5
+		IL_00df: ldc.i4.1
+		IL_00e0: newarr [System.Runtime]System.Object
+		IL_00e5: dup
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldloc.0
+		IL_00e8: stelem.ref
+		IL_00e9: ldc.i4.0
+		IL_00ea: ldelem.ref
+		IL_00eb: castclass Modules.Https_Get_Loopback_SelfSigned/Scope
+		IL_00f0: ldftn object Modules.Https_Get_Loopback_SelfSigned/ArrowFunction_L13C31::__js_call__(class Modules.Https_Get_Loopback_SelfSigned/Scope, object)
+		IL_00f6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00fb: ldc.i4.1
+		IL_00fc: newarr [System.Runtime]System.Object
+		IL_0101: dup
+		IL_0102: ldc.i4.0
+		IL_0103: ldloc.0
+		IL_0104: stelem.ref
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_010f: ldc.i4.0
+		IL_0110: conv.r8
+		IL_0111: ldstr ""
+		IL_0116: ldc.i4.0
+		IL_0117: ldc.i4.1
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_011d: stloc.3
+		IL_011e: ldloc.s 5
+		IL_0120: ldstr "listen"
+		IL_0125: ldc.r8 0.0
+		IL_012e: box [System.Runtime]System.Double
+		IL_0133: ldstr "127.0.0.1"
+		IL_0138: ldloc.3
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_013e: pop
+		IL_013f: ret
 	} // end of method Https_Get_Loopback_SelfSigned::__js_module_init__
 
 } // end of class Modules.Https_Get_Loopback_SelfSigned
@@ -774,7 +801,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2530
+			// Method begins at RVA 0x2573
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -798,7 +825,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x219c
 		// Header size: 12
 		// Code size: 59 (0x3b)
 		.maxstack 8
@@ -837,7 +864,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2539
+		// Method begins at RVA 0x257c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

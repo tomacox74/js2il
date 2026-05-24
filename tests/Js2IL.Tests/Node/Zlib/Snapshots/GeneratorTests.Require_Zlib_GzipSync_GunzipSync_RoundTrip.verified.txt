@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212d
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 209 (0xd1)
+		// Code size: 236 (0xec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_GzipSync_GunzipSync_RoundTrip/Scope,
@@ -64,57 +64,66 @@
 		IL_0016: ldstr "Hello gzip baseline \ud83d\ude80\nline two"
 		IL_001b: stloc.2
 		IL_001c: ldloc.1
-		IL_001d: ldstr "gzipSync"
-		IL_0022: ldloc.2
-		IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0028: dup
-		IL_0029: ldstr "level"
-		IL_002e: ldc.r8 9
-		IL_0037: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0041: stloc.s 5
-		IL_0043: ldloc.s 5
-		IL_0045: stloc.3
-		IL_0046: ldloc.1
-		IL_0047: ldstr "gunzipSync"
-		IL_004c: ldloc.3
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0052: stloc.s 5
-		IL_0054: ldloc.s 5
-		IL_0056: ldstr "toString"
-		IL_005b: ldstr "utf8"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0065: stloc.s 5
-		IL_0067: ldloc.s 5
-		IL_0069: stloc.s 4
-		IL_006b: ldloc.3
-		IL_006c: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
-		IL_0071: stloc.s 6
-		IL_0073: ldloc.s 6
-		IL_0075: box [System.Runtime]System.Boolean
-		IL_007a: stloc.s 7
-		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0081: ldstr "compressed buffer:"
-		IL_0086: ldloc.s 7
-		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_008d: pop
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0093: ldstr "compressed length > 0:"
-		IL_0098: ldloc.3
-		IL_0099: ldstr "length"
-		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00a8: ldc.r8 0.0
-		IL_00b1: cgt
-		IL_00b3: box [System.Runtime]System.Boolean
-		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00bd: pop
-		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c3: ldstr "roundtrip:"
-		IL_00c8: ldloc.s 4
-		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00cf: pop
-		IL_00d0: ret
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0022: stloc.s 5
+		IL_0024: ldloc.s 5
+		IL_0026: ldstr "gzipSync"
+		IL_002b: ldloc.2
+		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0031: dup
+		IL_0032: ldstr "level"
+		IL_0037: ldc.r8 9
+		IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_004a: stloc.s 5
+		IL_004c: ldloc.s 5
+		IL_004e: stloc.3
+		IL_004f: ldloc.1
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0055: stloc.s 5
+		IL_0057: ldloc.s 5
+		IL_0059: ldstr "gunzipSync"
+		IL_005e: ldloc.3
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0064: stloc.s 5
+		IL_0066: ldloc.s 5
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006d: stloc.s 5
+		IL_006f: ldloc.s 5
+		IL_0071: ldstr "toString"
+		IL_0076: ldstr "utf8"
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0080: stloc.s 5
+		IL_0082: ldloc.s 5
+		IL_0084: stloc.s 4
+		IL_0086: ldloc.3
+		IL_0087: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+		IL_008c: stloc.s 6
+		IL_008e: ldloc.s 6
+		IL_0090: box [System.Runtime]System.Boolean
+		IL_0095: stloc.s 7
+		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009c: ldstr "compressed buffer:"
+		IL_00a1: ldloc.s 7
+		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00a8: pop
+		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ae: ldstr "compressed length > 0:"
+		IL_00b3: ldloc.3
+		IL_00b4: ldstr "length"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00be: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00c3: ldc.r8 0.0
+		IL_00cc: cgt
+		IL_00ce: box [System.Runtime]System.Boolean
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00d8: pop
+		IL_00d9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00de: ldstr "roundtrip:"
+		IL_00e3: ldloc.s 4
+		IL_00e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ea: pop
+		IL_00eb: ret
 	} // end of method Require_Zlib_GzipSync_GunzipSync_RoundTrip::__js_module_init__
 
 } // end of class Modules.Require_Zlib_GzipSync_GunzipSync_RoundTrip
@@ -126,7 +135,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2136
+		// Method begins at RVA 0x2151
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

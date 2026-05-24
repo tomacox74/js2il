@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e9
+			// Method begins at RVA 0x210d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 177 (0xb1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakSet_Object_Values/Scope,
@@ -70,34 +70,46 @@
 		IL_0036: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 		IL_003b: stloc.3
 		IL_003c: ldloc.1
-		IL_003d: ldstr "add"
-		IL_0042: ldloc.2
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0048: pop
-		IL_0049: ldloc.1
-		IL_004a: ldstr "add"
-		IL_004f: ldloc.3
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0055: pop
-		IL_0056: ldloc.1
-		IL_0057: ldstr "has"
-		IL_005c: ldloc.2
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0062: stloc.s 5
-		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0069: ldloc.s 5
-		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0070: pop
-		IL_0071: ldloc.1
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0042: stloc.s 5
+		IL_0044: ldloc.s 5
+		IL_0046: ldstr "add"
+		IL_004b: ldloc.2
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0051: pop
+		IL_0052: ldloc.1
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0058: stloc.s 5
+		IL_005a: ldloc.s 5
+		IL_005c: ldstr "add"
+		IL_0061: ldloc.3
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0067: pop
+		IL_0068: ldloc.1
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006e: stloc.s 5
+		IL_0070: ldloc.s 5
 		IL_0072: ldstr "has"
-		IL_0077: ldloc.3
+		IL_0077: ldloc.2
 		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_007d: stloc.s 5
 		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0084: ldloc.s 5
 		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_008b: pop
-		IL_008c: ret
+		IL_008c: ldloc.1
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0092: stloc.s 5
+		IL_0094: ldloc.s 5
+		IL_0096: ldstr "has"
+		IL_009b: ldloc.3
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a1: stloc.s 5
+		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a8: ldloc.s 5
+		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00af: pop
+		IL_00b0: ret
 	} // end of method WeakSet_Object_Values::__js_module_init__
 
 } // end of class Modules.WeakSet_Object_Values
@@ -109,7 +121,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f2
+		// Method begins at RVA 0x2116
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c9
+				// Method begins at RVA 0x21d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d2
+				// Method begins at RVA 0x21da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21db
+				// Method begins at RVA 0x21e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e4
+				// Method begins at RVA 0x21ec
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21c8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -122,7 +122,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 327 (0x147)
+		// Code size: 336 (0x150)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.DataView_BoundsChecks_RangeError/Scope,
@@ -166,110 +166,113 @@
 			IL_0045: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L6C4::.ctor()
 			IL_004a: stloc.3
 			IL_004b: ldloc.2
-			IL_004c: ldstr "getUint32"
-			IL_0051: ldc.r8 0.0
-			IL_005a: box [System.Runtime]System.Double
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0064: pop
-			IL_0065: leave IL_00c6
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0051: stloc.s 16
+			IL_0053: ldloc.s 16
+			IL_0055: ldstr "getUint32"
+			IL_005a: ldc.r8 0.0
+			IL_0063: box [System.Runtime]System.Double
+			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_006d: pop
+			IL_006e: leave IL_00cf
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_006a: stloc.s 4
-			IL_006c: ldloc.s 4
-			IL_006e: dup
-			IL_006f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0074: dup
-			IL_0075: brtrue IL_008b
+			IL_0073: stloc.s 4
+			IL_0075: ldloc.s 4
+			IL_0077: dup
+			IL_0078: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_007d: dup
+			IL_007e: brtrue IL_0094
 
-			IL_007a: pop
-			IL_007b: dup
-			IL_007c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0081: dup
-			IL_0082: brtrue IL_0098
+			IL_0083: pop
+			IL_0084: dup
+			IL_0085: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_008a: dup
+			IL_008b: brtrue IL_00a1
 
-			IL_0087: pop
-			IL_0088: pop
-			IL_0089: rethrow
+			IL_0090: pop
+			IL_0091: pop
+			IL_0092: rethrow
 
-			IL_008b: pop
-			IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0091: stloc.s 5
-			IL_0093: br IL_009b
+			IL_0094: pop
+			IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_009a: stloc.s 5
+			IL_009c: br IL_00a4
 
-			IL_0098: pop
-			IL_0099: stloc.s 5
+			IL_00a1: pop
+			IL_00a2: stloc.s 5
 
-			IL_009b: ldloc.s 5
-			IL_009d: stloc.s 16
-			IL_009f: ldloc.s 16
-			IL_00a1: stloc.s 6
-			IL_00a3: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L8C12::.ctor()
-			IL_00a8: stloc.s 7
-			IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00af: ldloc.s 6
-			IL_00b1: ldstr "name"
-			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00c0: pop
-			IL_00c1: leave IL_00c6
+			IL_00a4: ldloc.s 5
+			IL_00a6: stloc.s 16
+			IL_00a8: ldloc.s 16
+			IL_00aa: stloc.s 6
+			IL_00ac: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L8C12::.ctor()
+			IL_00b1: stloc.s 7
+			IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b8: ldloc.s 6
+			IL_00ba: ldstr "name"
+			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00c9: pop
+			IL_00ca: leave IL_00cf
 		} // end handler
 		.try
 		{
-			IL_00c6: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L12C4::.ctor()
-			IL_00cb: stloc.s 8
-			IL_00cd: ldloc.1
-			IL_00ce: ldc.r8 5
-			IL_00d7: box [System.Runtime]System.Double
-			IL_00dc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object, object)
-			IL_00e1: pop
-			IL_00e2: leave IL_0143
+			IL_00cf: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L12C4::.ctor()
+			IL_00d4: stloc.s 8
+			IL_00d6: ldloc.1
+			IL_00d7: ldc.r8 5
+			IL_00e0: box [System.Runtime]System.Double
+			IL_00e5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object, object)
+			IL_00ea: pop
+			IL_00eb: leave IL_014c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00e7: stloc.s 9
-			IL_00e9: ldloc.s 9
-			IL_00eb: dup
-			IL_00ec: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00f1: dup
-			IL_00f2: brtrue IL_0108
+			IL_00f0: stloc.s 9
+			IL_00f2: ldloc.s 9
+			IL_00f4: dup
+			IL_00f5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00fa: dup
+			IL_00fb: brtrue IL_0111
 
-			IL_00f7: pop
-			IL_00f8: dup
-			IL_00f9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00fe: dup
-			IL_00ff: brtrue IL_0115
+			IL_0100: pop
+			IL_0101: dup
+			IL_0102: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0107: dup
+			IL_0108: brtrue IL_011e
 
-			IL_0104: pop
-			IL_0105: pop
-			IL_0106: rethrow
+			IL_010d: pop
+			IL_010e: pop
+			IL_010f: rethrow
 
-			IL_0108: pop
-			IL_0109: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_010e: stloc.s 10
-			IL_0110: br IL_0118
+			IL_0111: pop
+			IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0117: stloc.s 10
+			IL_0119: br IL_0121
 
-			IL_0115: pop
-			IL_0116: stloc.s 10
+			IL_011e: pop
+			IL_011f: stloc.s 10
 
-			IL_0118: ldloc.s 10
-			IL_011a: stloc.s 16
-			IL_011c: ldloc.s 16
-			IL_011e: stloc.s 11
-			IL_0120: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L14C12::.ctor()
-			IL_0125: stloc.s 12
-			IL_0127: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_012c: ldloc.s 11
-			IL_012e: ldstr "name"
-			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_013d: pop
-			IL_013e: leave IL_0143
+			IL_0121: ldloc.s 10
+			IL_0123: stloc.s 16
+			IL_0125: ldloc.s 16
+			IL_0127: stloc.s 11
+			IL_0129: newobj instance void Modules.DataView_BoundsChecks_RangeError/Scope/Block_L14C12::.ctor()
+			IL_012e: stloc.s 12
+			IL_0130: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0135: ldloc.s 11
+			IL_0137: ldstr "name"
+			IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0141: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0146: pop
+			IL_0147: leave IL_014c
 		} // end handler
 
-		IL_0143: ldnull
-		IL_0144: stloc.s 13
-		IL_0146: ret
+		IL_014c: ldnull
+		IL_014d: stloc.s 13
+		IL_014f: ret
 	} // end of method DataView_BoundsChecks_RangeError::__js_module_init__
 
 } // end of class Modules.DataView_BoundsChecks_RangeError
@@ -281,7 +284,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ed
+		// Method begins at RVA 0x21f5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215f
+			// Method begins at RVA 0x2177
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,83 +40,91 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 259 (0x103)
+		// Code size: 283 (0x11b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Split_Regex_Basic/Scope,
 			[1] object,
 			[2] object,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-			[4] object
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.RegExp
 		)
 
 		IL_0000: newobj instance void Modules.String_Split_Regex_Basic/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldstr ","
-		IL_000b: ldstr ""
-		IL_0010: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_0015: stloc.3
-		IL_0016: ldstr "a,b,c"
-		IL_001b: ldloc.3
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.String::Split(string, object)
-		IL_0021: stloc.s 4
-		IL_0023: ldloc.s 4
-		IL_0025: stloc.1
-		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002b: ldloc.1
-		IL_002c: ldstr "length"
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003b: pop
-		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0041: ldloc.1
-		IL_0042: ldc.r8 0.0
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0055: pop
-		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005b: ldloc.1
-		IL_005c: ldc.r8 1
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006f: pop
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0075: ldloc.1
-		IL_0076: ldc.r8 2
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0089: pop
-		IL_008a: ldstr ","
-		IL_008f: ldstr ""
-		IL_0094: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-		IL_0099: stloc.3
-		IL_009a: ldstr "a,b,c"
-		IL_009f: ldloc.3
-		IL_00a0: ldc.r8 2
-		IL_00a9: box [System.Runtime]System.Double
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.String::Split(string, object, object)
-		IL_00b3: stloc.s 4
-		IL_00b5: ldloc.s 4
-		IL_00b7: stloc.2
-		IL_00b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00bd: ldloc.2
-		IL_00be: ldstr "length"
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cd: pop
-		IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d3: ldloc.2
-		IL_00d4: ldc.r8 0.0
-		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00e7: pop
-		IL_00e8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ed: ldloc.2
-		IL_00ee: ldc.r8 1
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00fc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0101: pop
-		IL_0102: ret
+		IL_0006: ldstr "a,b,c"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0010: stloc.3
+		IL_0011: ldstr ","
+		IL_0016: ldstr ""
+		IL_001b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_0020: stloc.s 4
+		IL_0022: ldloc.3
+		IL_0023: ldstr "split"
+		IL_0028: ldloc.s 4
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_002f: stloc.3
+		IL_0030: ldloc.3
+		IL_0031: stloc.1
+		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0037: ldloc.1
+		IL_0038: ldstr "length"
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0047: pop
+		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004d: ldloc.1
+		IL_004e: ldc.r8 0.0
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0061: pop
+		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0067: ldloc.1
+		IL_0068: ldc.r8 1
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_007b: pop
+		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0081: ldloc.1
+		IL_0082: ldc.r8 2
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0095: pop
+		IL_0096: ldstr "a,b,c"
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a0: stloc.3
+		IL_00a1: ldstr ","
+		IL_00a6: ldstr ""
+		IL_00ab: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+		IL_00b0: stloc.s 4
+		IL_00b2: ldloc.3
+		IL_00b3: ldstr "split"
+		IL_00b8: ldloc.s 4
+		IL_00ba: ldc.r8 2
+		IL_00c3: box [System.Runtime]System.Double
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00cd: stloc.3
+		IL_00ce: ldloc.3
+		IL_00cf: stloc.2
+		IL_00d0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d5: ldloc.2
+		IL_00d6: ldstr "length"
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e5: pop
+		IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00eb: ldloc.2
+		IL_00ec: ldc.r8 0.0
+		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ff: pop
+		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0105: ldloc.2
+		IL_0106: ldc.r8 1
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_0114: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0119: pop
+		IL_011a: ret
 	} // end of method String_Split_Regex_Basic::__js_module_init__
 
 } // end of class Modules.String_Split_Regex_Basic
@@ -128,7 +136,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2168
+		// Method begins at RVA 0x2180
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

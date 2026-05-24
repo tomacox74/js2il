@@ -529,10 +529,16 @@ public sealed class Promise
 
         try 
         {
-            // Invoke as a JavaScript call with (resolve, reject).
-            // Closure.InvokeWithArgs handles callable ABI details (including hidden newTarget)
-            // and JavaScript argument semantics (missing => undefined, extra ignored).
-            Closure.InvokeWithArgs(jsFunction, unusedContext, Resolve, Reject);
+            // Invoke as a JavaScript call with undefined this; non-strict functions substitute globalThis.
+            var previousThis = RuntimeServices.SetCurrentThis(Function.GetEffectiveThisArg(jsFunction, null));
+            try
+            {
+                Closure.InvokeWithArgs(jsFunction, unusedContext, Resolve, Reject);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
         catch (Exception ex)
         {

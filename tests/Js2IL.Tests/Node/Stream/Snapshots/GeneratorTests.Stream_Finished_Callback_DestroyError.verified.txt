@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2170
+				// Method begins at RVA 0x2180
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x2104
 			// Header size: 12
 			// Code size: 103 (0x67)
 			.maxstack 8
@@ -112,7 +112,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2167
+			// Method begins at RVA 0x2177
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -138,13 +138,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 149 (0x95)
+		// Code size: 167 (0xa7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Finished_Callback_DestroyError/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Stream_Finished_Callback_DestroyError/Scope::.ctor()
@@ -165,44 +166,50 @@
 		IL_002b: ldloc.0
 		IL_002c: ldloc.2
 		IL_002d: stfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-		IL_0032: ldloc.0
-		IL_0033: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+		IL_0032: ldloc.1
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0038: stloc.2
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldloc.0
-		IL_0042: stelem.ref
-		IL_0043: ldc.i4.0
-		IL_0044: ldelem.ref
-		IL_0045: castclass Modules.Stream_Finished_Callback_DestroyError/Scope
-		IL_004a: ldftn object Modules.Stream_Finished_Callback_DestroyError/FunctionExpression_L7C26::__js_call__(class Modules.Stream_Finished_Callback_DestroyError/Scope, object, object)
-		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0055: ldc.i4.1
-		IL_0056: conv.r8
-		IL_0057: ldstr ""
-		IL_005c: ldc.i4.0
-		IL_005d: ldc.i4.1
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0063: stloc.3
-		IL_0064: ldloc.1
-		IL_0065: ldstr "finished"
-		IL_006a: ldloc.2
-		IL_006b: ldloc.3
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0071: pop
-		IL_0072: ldstr "read boom"
-		IL_0077: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_007c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_0081: stloc.3
-		IL_0082: ldloc.0
-		IL_0083: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-		IL_0088: ldstr "destroy"
-		IL_008d: ldloc.3
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0093: pop
-		IL_0094: ret
+		IL_0039: ldloc.0
+		IL_003a: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+		IL_003f: stloc.3
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: stelem.ref
+		IL_004a: ldc.i4.0
+		IL_004b: ldelem.ref
+		IL_004c: castclass Modules.Stream_Finished_Callback_DestroyError/Scope
+		IL_0051: ldftn object Modules.Stream_Finished_Callback_DestroyError/FunctionExpression_L7C26::__js_call__(class Modules.Stream_Finished_Callback_DestroyError/Scope, object, object)
+		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_005c: ldc.i4.1
+		IL_005d: conv.r8
+		IL_005e: ldstr ""
+		IL_0063: ldc.i4.0
+		IL_0064: ldc.i4.1
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_006a: stloc.s 4
+		IL_006c: ldloc.2
+		IL_006d: ldstr "finished"
+		IL_0072: ldloc.3
+		IL_0073: ldloc.s 4
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_007a: pop
+		IL_007b: ldloc.0
+		IL_007c: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0086: stloc.s 4
+		IL_0088: ldstr "read boom"
+		IL_008d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0092: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+		IL_0097: stloc.3
+		IL_0098: ldloc.s 4
+		IL_009a: ldstr "destroy"
+		IL_009f: ldloc.3
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a5: pop
+		IL_00a6: ret
 	} // end of method Stream_Finished_Callback_DestroyError::__js_module_init__
 
 } // end of class Modules.Stream_Finished_Callback_DestroyError
@@ -214,7 +221,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2179
+		// Method begins at RVA 0x2189
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

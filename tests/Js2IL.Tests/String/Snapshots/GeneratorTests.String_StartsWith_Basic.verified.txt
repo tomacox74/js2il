@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2084
+			// Method begins at RVA 0x208b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 40 (0x28)
+		// Code size: 47 (0x2f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_StartsWith_Basic/Scope,
@@ -50,15 +50,18 @@
 		IL_0000: newobj instance void Modules.String_StartsWith_Basic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "abc"
-		IL_000b: ldstr "startsWith"
-		IL_0010: ldstr "ab"
-		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_001a: stloc.1
-		IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0020: ldloc.1
-		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0026: pop
-		IL_0027: ret
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: ldstr "startsWith"
+		IL_0017: ldstr "ab"
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0021: stloc.1
+		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0027: ldloc.1
+		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_002d: pop
+		IL_002e: ret
 	} // end of method String_StartsWith_Basic::__js_module_init__
 
 } // end of class Modules.String_StartsWith_Basic
@@ -70,7 +73,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208d
+		// Method begins at RVA 0x2094
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

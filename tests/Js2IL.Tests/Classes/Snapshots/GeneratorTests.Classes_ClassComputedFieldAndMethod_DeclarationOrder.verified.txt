@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21dc
+				// Method begins at RVA 0x2200
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e5
+				// Method begins at RVA 0x2209
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -65,7 +65,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2180
+			// Method begins at RVA 0x21a4
 			// Header size: 12
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -93,7 +93,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21b0
+			// Method begins at RVA 0x21d4
 			// Header size: 12
 			// Code size: 23 (0x17)
 			.maxstack 8
@@ -119,7 +119,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d3
+			// Method begins at RVA 0x21f7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -145,7 +145,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 290 (0x122)
+		// Code size: 325 (0x145)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Scope,
@@ -262,14 +262,28 @@
 		IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0106: pop
 		IL_0107: ldloc.2
-		IL_0108: castclass Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
-		IL_010d: callvirt instance object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'method'()
-		IL_0112: stloc.s 5
-		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0119: ldloc.s 5
-		IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0120: pop
-		IL_0121: ret
+		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010d: stloc.s 5
+		IL_010f: ldloc.s 5
+		IL_0111: isinst Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example
+		IL_0116: dup
+		IL_0117: brfalse IL_0128
+
+		IL_011c: callvirt instance object Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder/Example::'method'()
+		IL_0121: stloc.s 5
+		IL_0123: br IL_0137
+
+		IL_0128: pop
+		IL_0129: ldloc.s 5
+		IL_012b: ldstr "method"
+		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0135: stloc.s 5
+
+		IL_0137: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013c: ldloc.s 5
+		IL_013e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0143: pop
+		IL_0144: ret
 	} // end of method Classes_ClassComputedFieldAndMethod_DeclarationOrder::__js_module_init__
 
 } // end of class Modules.Classes_ClassComputedFieldAndMethod_DeclarationOrder
@@ -281,7 +295,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ee
+		// Method begins at RVA 0x2212
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

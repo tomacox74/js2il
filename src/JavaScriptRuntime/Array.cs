@@ -1164,7 +1164,10 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            var previousThis = RuntimeServices.SetCurrentThis(thisArg);
+            var effectiveThisArg = mapFn is Delegate mapDelegate
+                ? JavaScriptRuntime.Function.GetEffectiveThisArg(mapDelegate, thisArg)
+                : thisArg;
+            var previousThis = RuntimeServices.SetCurrentThis(effectiveThisArg);
             try
             {
                 return Closure.InvokeWithArgs(mapFn, System.Array.Empty<object>(), value, (double)index);

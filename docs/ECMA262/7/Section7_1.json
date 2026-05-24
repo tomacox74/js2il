@@ -188,6 +188,17 @@
   "support": {
     "entries": [
       {
+        "clause": "7.1.1",
+        "feature": "comparison/equality coercion paths that rely on ToPrimitive",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-toprimitive",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/equals/PortExpressionsBatchExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/language/expressions/greater-than/PortExpressionsBatchExecutionTests.cs"
+        ],
+        "notes": "The covered comparison and equality cases now follow the expected ToPrimitive-driven coercion paths for the current test262 matrix, including the patched object/BigInt and hint-sensitive conversion scenarios."
+      },
+      {
         "clause": "7.1.2",
         "feature": "ToBoolean coercion (truthiness)",
         "status": "Supported with Limitations",

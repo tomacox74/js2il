@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2091
+			// Method begins at RVA 0x20a9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,30 +40,38 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 53 (0x35)
+		// Code size: 77 (0x4d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_ToLowerCase_ToUpperCase_Basic/Scope,
-			[1] string
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.String_ToLowerCase_ToUpperCase_Basic/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "AbC"
-		IL_000b: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToLowerCase(string)
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0010: stloc.1
-		IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0016: ldloc.1
-		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_001c: pop
-		IL_001d: ldstr "AbC"
-		IL_0022: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
-		IL_0027: stloc.1
-		IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002d: ldloc.1
-		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0033: pop
-		IL_0034: ret
+		IL_0011: ldloc.1
+		IL_0012: ldstr "toLowerCase"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_001c: stloc.1
+		IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0022: ldloc.1
+		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0028: pop
+		IL_0029: ldstr "AbC"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0033: stloc.1
+		IL_0034: ldloc.1
+		IL_0035: ldstr "toUpperCase"
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_003f: stloc.1
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldloc.1
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004b: pop
+		IL_004c: ret
 	} // end of method String_ToLowerCase_ToUpperCase_Basic::__js_module_init__
 
 } // end of class Modules.String_ToLowerCase_ToUpperCase_Basic
@@ -75,7 +83,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209a
+		// Method begins at RVA 0x20b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
