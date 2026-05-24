@@ -73,11 +73,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task _13_2_1_s()
         => ExecutionTest("13.2-1-s");
 
-    [Fact(DisplayName = "13.2-19-b-3gs", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "13.2-19-b-3gs")]
     public Task _13_2_19_b_3gs()
         => ExecutionTest("13.2-19-b-3gs");
 
-    [Fact(DisplayName = "13.2-2-s", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "13.2-2-s")]
     public Task _13_2_2_s()
         => ExecutionTest("13.2-2-s");
 
