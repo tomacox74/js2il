@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e9
+				// Method begins at RVA 0x20f1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f2
+				// Method begins at RVA 0x20fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e0
+			// Method begins at RVA 0x20e8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,13 +82,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 114 (0x72)
+		// Code size: 124 (0x7c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NoBinding/Scope,
 			[1] class Modules.TryCatch_NoBinding/Scope/Block_L3C4,
-			[2] class [System.Runtime]System.Exception,
-			[3] class Modules.TryCatch_NoBinding/Scope/Block_L6C8
+			[2] object,
+			[3] class [System.Runtime]System.Exception,
+			[4] class Modules.TryCatch_NoBinding/Scope/Block_L6C8,
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.TryCatch_NoBinding/Scope::.ctor()
@@ -104,37 +107,43 @@
 			IL_001c: ldstr "test error message"
 			IL_0021: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_002b: dup
-			IL_002c: isinst [System.Runtime]System.Exception
+			IL_002b: stloc.s 6
+			IL_002d: ldloc.s 6
+			IL_002f: stloc.2
+			IL_0030: ldloc.2
 			IL_0031: dup
-			IL_0032: brtrue IL_003e
+			IL_0032: isinst [System.Runtime]System.Exception
+			IL_0037: dup
+			IL_0038: brtrue IL_0044
 
-			IL_0037: pop
-			IL_0038: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_003d: throw
+			IL_003d: pop
+			IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0043: throw
 
-			IL_003e: pop
-			IL_003f: throw
+			IL_0044: pop
+			IL_0045: throw
 
-			IL_0040: leave IL_0061
+			IL_0046: leave IL_0068
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0045: stloc.2
-			IL_0046: newobj instance void Modules.TryCatch_NoBinding/Scope/Block_L6C8::.ctor()
 			IL_004b: stloc.3
-			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0051: ldstr "in catch"
-			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_005b: pop
-			IL_005c: leave IL_0061
+			IL_004c: newobj instance void Modules.TryCatch_NoBinding/Scope/Block_L6C8::.ctor()
+			IL_0051: stloc.s 4
+			IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0058: ldstr "in catch"
+			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0062: pop
+			IL_0063: leave IL_0068
 		} // end handler
 
-		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0066: ldstr "after catch"
-		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0070: pop
-		IL_0071: ret
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006d: ldstr "after catch"
+		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0077: pop
+		IL_0078: ldnull
+		IL_0079: stloc.s 5
+		IL_007b: ret
 	} // end of method TryCatch_NoBinding::__js_module_init__
 
 } // end of class Modules.TryCatch_NoBinding
@@ -146,7 +155,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fb
+		// Method begins at RVA 0x2103
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

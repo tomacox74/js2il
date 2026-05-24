@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3707
+				// Method begins at RVA 0x3743
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
-			// Method begins at RVA 0x2470
+			// Method begins at RVA 0x2474
 			// Header size: 12
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -77,7 +77,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3710
+				// Method begins at RVA 0x374c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,7 +105,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
-			// Method begins at RVA 0x2495
+			// Method begins at RVA 0x2499
 			// Header size: 1
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -135,7 +135,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3719
+				// Method begins at RVA 0x3755
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -159,59 +159,64 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x24b0
+			// Method begins at RVA 0x24b4
 			// Header size: 12
-			// Code size: 111 (0x6f)
+			// Code size: 117 (0x75)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[2] object,
-				[3] bool
+				[1] object,
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[3] object,
+				[4] bool
 			)
 
 			IL_0000: ldstr "<Version>([^<]+)<\\/Version>"
 			IL_0005: ldstr ""
 			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_000f: stloc.1
+			IL_000f: stloc.2
 			IL_0010: ldarg.1
 			IL_0011: ldstr "match"
-			IL_0016: ldloc.1
+			IL_0016: ldloc.2
 			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_001c: stloc.2
-			IL_001d: ldloc.2
+			IL_001c: stloc.3
+			IL_001d: ldloc.3
 			IL_001e: stloc.0
 			IL_001f: ldloc.0
 			IL_0020: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
 			IL_0025: ldc.i4.0
 			IL_0026: ceq
-			IL_0028: stloc.3
-			IL_0029: ldloc.3
-			IL_002a: brfalse IL_0053
+			IL_0028: stloc.s 4
+			IL_002a: ldloc.s 4
+			IL_002c: brfalse IL_0059
 
-			IL_002f: ldstr "Could not find <Version> in Js2IL.csproj"
-			IL_0034: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0039: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_003e: dup
-			IL_003f: isinst [System.Runtime]System.Exception
+			IL_0031: ldstr "Could not find <Version> in Js2IL.csproj"
+			IL_0036: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0040: stloc.3
+			IL_0041: ldloc.3
+			IL_0042: stloc.1
+			IL_0043: ldloc.1
 			IL_0044: dup
-			IL_0045: brtrue IL_0051
+			IL_0045: isinst [System.Runtime]System.Exception
+			IL_004a: dup
+			IL_004b: brtrue IL_0057
 
-			IL_004a: pop
-			IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0050: throw
+			IL_0050: pop
+			IL_0051: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0056: throw
 
-			IL_0051: pop
-			IL_0052: throw
+			IL_0057: pop
+			IL_0058: throw
 
-			IL_0053: ldloc.0
-			IL_0054: ldc.r8 1
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0062: ldstr "trim"
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_006c: stloc.2
-			IL_006d: ldloc.2
-			IL_006e: ret
+			IL_0059: ldloc.0
+			IL_005a: ldc.r8 1
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0068: ldstr "trim"
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0072: stloc.3
+			IL_0073: ldloc.3
+			IL_0074: ret
 		} // end of method parseCurrentVersion::__js_call__
 
 	} // end of class parseCurrentVersion
@@ -237,7 +242,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x372b
+					// Method begins at RVA 0x3767
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -261,7 +266,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x35fc
+				// Method begins at RVA 0x3638
 				// Header size: 12
 				// Code size: 30 (0x1e)
 				.maxstack 8
@@ -301,7 +306,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3734
+					// Method begins at RVA 0x3770
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -325,7 +330,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3628
+				// Method begins at RVA 0x3664
 				// Header size: 12
 				// Code size: 16 (0x10)
 				.maxstack 8
@@ -357,7 +362,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x373d
+					// Method begins at RVA 0x3779
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -375,7 +380,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3722
+				// Method begins at RVA 0x375e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -400,9 +405,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x252c
+			// Method begins at RVA 0x2538
 			// Header size: 12
-			// Code size: 897 (0x381)
+			// Code size: 913 (0x391)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Compile_Scripts_BumpVersion/incVersion/Scope,
@@ -416,16 +421,18 @@
 				[8] object,
 				[9] object,
 				[10] object,
-				[11] class Modules.Compile_Scripts_BumpVersion/incVersion/Scope/Switch_L54C2,
-				[12] object,
+				[11] object,
+				[12] class Modules.Compile_Scripts_BumpVersion/incVersion/Scope/Switch_L54C2,
 				[13] object,
-				[14] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[15] bool,
-				[16] object,
-				[17] float64,
+				[14] object,
+				[15] object,
+				[16] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[17] bool,
 				[18] object,
-				[19] string,
-				[20] string
+				[19] float64,
+				[20] object,
+				[21] string,
+				[22] string
 			)
 
 			IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion/incVersion/Scope::.ctor()
@@ -434,18 +441,18 @@
 			IL_0007: ldstr "split"
 			IL_000c: ldstr "-"
 			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0016: stloc.s 12
-			IL_0018: ldloc.s 12
+			IL_0016: stloc.s 14
+			IL_0018: ldloc.s 14
 			IL_001a: ldc.r8 0.0
 			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0028: stloc.s 12
-			IL_002a: ldloc.s 12
+			IL_0028: stloc.s 14
+			IL_002a: ldloc.s 14
 			IL_002c: stloc.1
 			IL_002d: ldloc.1
 			IL_002e: ldstr "split"
 			IL_0033: ldstr "."
 			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003d: stloc.s 12
+			IL_003d: stloc.s 14
 			IL_003f: ldnull
 			IL_0040: ldftn object Modules.Compile_Scripts_BumpVersion/incVersion/ArrowFunction_L51C46::__js_call__(object, object)
 			IL_0046: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
@@ -458,25 +465,25 @@
 			IL_0061: ldc.i4.0
 			IL_0062: ldc.i4.1
 			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0068: stloc.s 13
-			IL_006a: ldloc.s 12
+			IL_0068: stloc.s 15
+			IL_006a: ldloc.s 14
 			IL_006c: ldstr "map"
-			IL_0071: ldloc.s 13
+			IL_0071: ldloc.s 15
 			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0078: stloc.s 13
-			IL_007a: ldloc.s 13
+			IL_0078: stloc.s 15
+			IL_007a: ldloc.s 15
 			IL_007c: brfalse IL_008d
 
-			IL_0081: ldloc.s 13
+			IL_0081: ldloc.s 15
 			IL_0083: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 			IL_0088: brfalse IL_009e
 
-			IL_008d: ldloc.s 13
+			IL_008d: ldloc.s 15
 			IL_008f: ldstr ""
 			IL_0094: ldstr "0"
 			IL_0099: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-			IL_009e: ldloc.s 13
+			IL_009e: ldloc.s 15
 			IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
 			IL_00a5: stloc.2
 			IL_00a6: ldc.i4.0
@@ -490,14 +497,14 @@
 
 				IL_00b2: ldloc.2
 				IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStep(object)
-				IL_00b8: stloc.s 13
-				IL_00ba: ldloc.s 13
+				IL_00b8: stloc.s 15
+				IL_00ba: ldloc.s 15
 				IL_00bc: brfalse IL_00d3
 
-				IL_00c1: ldloc.s 13
+				IL_00c1: ldloc.s 15
 				IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStepValue(object)
-				IL_00c8: stloc.s 13
-				IL_00ca: ldloc.s 13
+				IL_00c8: stloc.s 15
+				IL_00ca: ldloc.s 15
 				IL_00cc: stloc.s 5
 				IL_00ce: br IL_00d9
 
@@ -512,14 +519,14 @@
 
 				IL_00e0: ldloc.2
 				IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStep(object)
-				IL_00e6: stloc.s 13
-				IL_00e8: ldloc.s 13
+				IL_00e6: stloc.s 15
+				IL_00e8: ldloc.s 15
 				IL_00ea: brfalse IL_0101
 
-				IL_00ef: ldloc.s 13
+				IL_00ef: ldloc.s 15
 				IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStepValue(object)
-				IL_00f6: stloc.s 13
-				IL_00f8: ldloc.s 13
+				IL_00f6: stloc.s 15
+				IL_00f8: ldloc.s 15
 				IL_00fa: stloc.s 6
 				IL_00fc: br IL_0107
 
@@ -534,14 +541,14 @@
 
 				IL_010e: ldloc.2
 				IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStep(object)
-				IL_0114: stloc.s 13
-				IL_0116: ldloc.s 13
+				IL_0114: stloc.s 15
+				IL_0116: ldloc.s 15
 				IL_0118: brfalse IL_012f
 
-				IL_011d: ldloc.s 13
+				IL_011d: ldloc.s 15
 				IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorDestructuringStepValue(object)
-				IL_0124: stloc.s 13
-				IL_0126: ldloc.s 13
+				IL_0124: stloc.s 15
+				IL_0126: ldloc.s 15
 				IL_0128: stloc.s 7
 				IL_012a: br IL_0135
 
@@ -588,7 +595,7 @@
 			IL_0175: dup
 			IL_0176: ldloc.s 7
 			IL_0178: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_017d: stloc.s 14
+			IL_017d: stloc.s 16
 			IL_017f: ldnull
 			IL_0180: ldftn object Modules.Compile_Scripts_BumpVersion/incVersion/ArrowFunction_L52C27::__js_call__(object, object)
 			IL_0186: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
@@ -601,171 +608,179 @@
 			IL_01a1: ldc.i4.0
 			IL_01a2: ldc.i4.1
 			IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_01a8: stloc.s 13
-			IL_01aa: ldloc.s 14
-			IL_01ac: ldloc.s 13
+			IL_01a8: stloc.s 15
+			IL_01aa: ldloc.s 16
+			IL_01ac: ldloc.s 15
 			IL_01ae: callvirt instance bool [JavaScriptRuntime]JavaScriptRuntime.Array::some(object)
-			IL_01b3: stloc.s 15
-			IL_01b5: ldloc.s 15
-			IL_01b7: brfalse IL_01ea
+			IL_01b3: stloc.s 17
+			IL_01b5: ldloc.s 17
+			IL_01b7: brfalse IL_01f2
 
 			IL_01bc: ldstr "Invalid current version: "
 			IL_01c1: ldarg.1
 			IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_01c7: stloc.s 16
-			IL_01c9: ldloc.s 16
+			IL_01c7: stloc.s 18
+			IL_01c9: ldloc.s 18
 			IL_01cb: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 			IL_01d0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_01d5: dup
-			IL_01d6: isinst [System.Runtime]System.Exception
-			IL_01db: dup
-			IL_01dc: brtrue IL_01e8
+			IL_01d5: stloc.s 15
+			IL_01d7: ldloc.s 15
+			IL_01d9: stloc.s 8
+			IL_01db: ldloc.s 8
+			IL_01dd: dup
+			IL_01de: isinst [System.Runtime]System.Exception
+			IL_01e3: dup
+			IL_01e4: brtrue IL_01f0
 
-			IL_01e1: pop
-			IL_01e2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_01e7: throw
+			IL_01e9: pop
+			IL_01ea: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_01ef: throw
 
-			IL_01e8: pop
-			IL_01e9: throw
+			IL_01f0: pop
+			IL_01f1: throw
 
-			IL_01ea: ldloc.s 5
-			IL_01ec: stloc.s 8
-			IL_01ee: ldloc.s 6
-			IL_01f0: stloc.s 9
-			IL_01f2: ldloc.s 7
-			IL_01f4: stloc.s 10
-			IL_01f6: newobj instance void Modules.Compile_Scripts_BumpVersion/incVersion/Scope/Switch_L54C2::.ctor()
-			IL_01fb: stloc.s 11
-			IL_01fd: ldarg.2
-			IL_01fe: ldstr "major"
-			IL_0203: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0208: stloc.s 15
-			IL_020a: ldloc.s 15
-			IL_020c: brtrue IL_023e
+			IL_01f2: ldloc.s 5
+			IL_01f4: stloc.s 9
+			IL_01f6: ldloc.s 6
+			IL_01f8: stloc.s 10
+			IL_01fa: ldloc.s 7
+			IL_01fc: stloc.s 11
+			IL_01fe: newobj instance void Modules.Compile_Scripts_BumpVersion/incVersion/Scope/Switch_L54C2::.ctor()
+			IL_0203: stloc.s 12
+			IL_0205: ldarg.2
+			IL_0206: ldstr "major"
+			IL_020b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0210: stloc.s 17
+			IL_0212: ldloc.s 17
+			IL_0214: brtrue IL_0246
 
-			IL_0211: ldarg.2
-			IL_0212: ldstr "minor"
-			IL_0217: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_021c: stloc.s 15
-			IL_021e: ldloc.s 15
-			IL_0220: brtrue IL_028f
+			IL_0219: ldarg.2
+			IL_021a: ldstr "minor"
+			IL_021f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0224: stloc.s 17
+			IL_0226: ldloc.s 17
+			IL_0228: brtrue IL_0297
 
-			IL_0225: ldarg.2
-			IL_0226: ldstr "patch"
-			IL_022b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0230: stloc.s 15
-			IL_0232: ldloc.s 15
-			IL_0234: brtrue IL_02cc
+			IL_022d: ldarg.2
+			IL_022e: ldstr "patch"
+			IL_0233: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0238: stloc.s 17
+			IL_023a: ldloc.s 17
+			IL_023c: brtrue IL_02d4
 
-			IL_0239: br IL_02f5
+			IL_0241: br IL_02fd
 
-			IL_023e: ldloc.s 8
-			IL_0240: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0245: stloc.s 17
-			IL_0247: ldloc.s 17
-			IL_0249: ldc.r8 1
-			IL_0252: add
-			IL_0253: stloc.s 17
-			IL_0255: ldloc.s 17
-			IL_0257: box [System.Runtime]System.Double
-			IL_025c: stloc.s 18
-			IL_025e: ldloc.s 18
-			IL_0260: stloc.s 8
-			IL_0262: ldc.r8 0.0
-			IL_026b: box [System.Runtime]System.Double
-			IL_0270: stloc.s 18
-			IL_0272: ldloc.s 18
-			IL_0274: stloc.s 9
-			IL_0276: ldc.r8 0.0
-			IL_027f: box [System.Runtime]System.Double
-			IL_0284: stloc.s 18
-			IL_0286: ldloc.s 18
-			IL_0288: stloc.s 10
-			IL_028a: br IL_0323
+			IL_0246: ldloc.s 9
+			IL_0248: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_024d: stloc.s 19
+			IL_024f: ldloc.s 19
+			IL_0251: ldc.r8 1
+			IL_025a: add
+			IL_025b: stloc.s 19
+			IL_025d: ldloc.s 19
+			IL_025f: box [System.Runtime]System.Double
+			IL_0264: stloc.s 20
+			IL_0266: ldloc.s 20
+			IL_0268: stloc.s 9
+			IL_026a: ldc.r8 0.0
+			IL_0273: box [System.Runtime]System.Double
+			IL_0278: stloc.s 20
+			IL_027a: ldloc.s 20
+			IL_027c: stloc.s 10
+			IL_027e: ldc.r8 0.0
+			IL_0287: box [System.Runtime]System.Double
+			IL_028c: stloc.s 20
+			IL_028e: ldloc.s 20
+			IL_0290: stloc.s 11
+			IL_0292: br IL_0333
 
-			IL_028f: ldloc.s 9
-			IL_0291: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0296: stloc.s 17
-			IL_0298: ldloc.s 17
-			IL_029a: ldc.r8 1
-			IL_02a3: add
-			IL_02a4: stloc.s 17
-			IL_02a6: ldloc.s 17
-			IL_02a8: box [System.Runtime]System.Double
-			IL_02ad: stloc.s 18
-			IL_02af: ldloc.s 18
-			IL_02b1: stloc.s 9
-			IL_02b3: ldc.r8 0.0
-			IL_02bc: box [System.Runtime]System.Double
-			IL_02c1: stloc.s 18
-			IL_02c3: ldloc.s 18
-			IL_02c5: stloc.s 10
-			IL_02c7: br IL_0323
+			IL_0297: ldloc.s 10
+			IL_0299: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_029e: stloc.s 19
+			IL_02a0: ldloc.s 19
+			IL_02a2: ldc.r8 1
+			IL_02ab: add
+			IL_02ac: stloc.s 19
+			IL_02ae: ldloc.s 19
+			IL_02b0: box [System.Runtime]System.Double
+			IL_02b5: stloc.s 20
+			IL_02b7: ldloc.s 20
+			IL_02b9: stloc.s 10
+			IL_02bb: ldc.r8 0.0
+			IL_02c4: box [System.Runtime]System.Double
+			IL_02c9: stloc.s 20
+			IL_02cb: ldloc.s 20
+			IL_02cd: stloc.s 11
+			IL_02cf: br IL_0333
 
-			IL_02cc: ldloc.s 10
-			IL_02ce: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_02d3: stloc.s 17
-			IL_02d5: ldloc.s 17
-			IL_02d7: ldc.r8 1
-			IL_02e0: add
-			IL_02e1: stloc.s 17
-			IL_02e3: ldloc.s 17
-			IL_02e5: box [System.Runtime]System.Double
-			IL_02ea: stloc.s 18
-			IL_02ec: ldloc.s 18
-			IL_02ee: stloc.s 10
-			IL_02f0: br IL_0323
+			IL_02d4: ldloc.s 11
+			IL_02d6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_02db: stloc.s 19
+			IL_02dd: ldloc.s 19
+			IL_02df: ldc.r8 1
+			IL_02e8: add
+			IL_02e9: stloc.s 19
+			IL_02eb: ldloc.s 19
+			IL_02ed: box [System.Runtime]System.Double
+			IL_02f2: stloc.s 20
+			IL_02f4: ldloc.s 20
+			IL_02f6: stloc.s 11
+			IL_02f8: br IL_0333
 
-			IL_02f5: ldstr "Unknown bump kind: "
-			IL_02fa: ldarg.2
-			IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0300: stloc.s 16
-			IL_0302: ldloc.s 16
-			IL_0304: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0309: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_030e: dup
-			IL_030f: isinst [System.Runtime]System.Exception
-			IL_0314: dup
-			IL_0315: brtrue IL_0321
+			IL_02fd: ldstr "Unknown bump kind: "
+			IL_0302: ldarg.2
+			IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0308: stloc.s 18
+			IL_030a: ldloc.s 18
+			IL_030c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0311: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0316: stloc.s 15
+			IL_0318: ldloc.s 15
+			IL_031a: stloc.s 13
+			IL_031c: ldloc.s 13
+			IL_031e: dup
+			IL_031f: isinst [System.Runtime]System.Exception
+			IL_0324: dup
+			IL_0325: brtrue IL_0331
 
-			IL_031a: pop
-			IL_031b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0320: throw
+			IL_032a: pop
+			IL_032b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0330: throw
 
-			IL_0321: pop
-			IL_0322: throw
+			IL_0331: pop
+			IL_0332: throw
 
-			IL_0323: ldloc.s 8
-			IL_0325: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_032a: stloc.s 19
-			IL_032c: ldstr ""
-			IL_0331: ldloc.s 19
-			IL_0333: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0338: stloc.s 19
-			IL_033a: ldloc.s 19
-			IL_033c: ldstr "."
-			IL_0341: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0346: stloc.s 19
-			IL_0348: ldloc.s 9
-			IL_034a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_034f: stloc.s 20
-			IL_0351: ldloc.s 19
-			IL_0353: ldloc.s 20
-			IL_0355: call string [System.Runtime]System.String::Concat(string, string)
-			IL_035a: stloc.s 20
-			IL_035c: ldloc.s 20
-			IL_035e: ldstr "."
-			IL_0363: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0368: stloc.s 20
-			IL_036a: ldloc.s 10
-			IL_036c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0371: stloc.s 19
-			IL_0373: ldloc.s 20
-			IL_0375: ldloc.s 19
-			IL_0377: call string [System.Runtime]System.String::Concat(string, string)
-			IL_037c: stloc.s 19
-			IL_037e: ldloc.s 19
-			IL_0380: ret
+			IL_0333: ldloc.s 9
+			IL_0335: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_033a: stloc.s 21
+			IL_033c: ldstr ""
+			IL_0341: ldloc.s 21
+			IL_0343: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0348: stloc.s 21
+			IL_034a: ldloc.s 21
+			IL_034c: ldstr "."
+			IL_0351: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0356: stloc.s 21
+			IL_0358: ldloc.s 10
+			IL_035a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_035f: stloc.s 22
+			IL_0361: ldloc.s 21
+			IL_0363: ldloc.s 22
+			IL_0365: call string [System.Runtime]System.String::Concat(string, string)
+			IL_036a: stloc.s 22
+			IL_036c: ldloc.s 22
+			IL_036e: ldstr "."
+			IL_0373: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0378: stloc.s 22
+			IL_037a: ldloc.s 11
+			IL_037c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0381: stloc.s 21
+			IL_0383: ldloc.s 22
+			IL_0385: ldloc.s 21
+			IL_0387: call string [System.Runtime]System.String::Concat(string, string)
+			IL_038c: stloc.s 21
+			IL_038e: ldloc.s 21
+			IL_0390: ret
 		} // end of method incVersion::__js_call__
 
 	} // end of class incVersion
@@ -781,7 +796,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3746
+				// Method begins at RVA 0x3782
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -809,101 +824,111 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
-			// Method begins at RVA 0x28cc
+			// Method begins at RVA 0x28e8
 			// Header size: 12
-			// Code size: 189 (0xbd)
+			// Code size: 202 (0xca)
 			.maxstack 8
 			.locals init (
-				[0] bool,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[2] object,
-				[3] object[]
+				[0] object,
+				[1] object,
+				[2] bool,
+				[3] object,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[5] object[]
 			)
 
 			IL_0000: ldarg.2
 			IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
 			IL_0006: ldc.i4.0
 			IL_0007: ceq
-			IL_0009: stloc.0
-			IL_000a: ldloc.0
-			IL_000b: brfalse IL_0034
+			IL_0009: stloc.2
+			IL_000a: ldloc.2
+			IL_000b: brfalse IL_0038
 
 			IL_0010: ldstr "Provide a bump type (major|minor|patch) or explicit version"
 			IL_0015: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 			IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_001f: dup
-			IL_0020: isinst [System.Runtime]System.Exception
-			IL_0025: dup
-			IL_0026: brtrue IL_0032
+			IL_001f: stloc.3
+			IL_0020: ldloc.3
+			IL_0021: stloc.0
+			IL_0022: ldloc.0
+			IL_0023: dup
+			IL_0024: isinst [System.Runtime]System.Exception
+			IL_0029: dup
+			IL_002a: brtrue IL_0036
 
-			IL_002b: pop
-			IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0031: throw
+			IL_002f: pop
+			IL_0030: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0035: throw
 
-			IL_0032: pop
-			IL_0033: throw
+			IL_0036: pop
+			IL_0037: throw
 
-			IL_0034: ldstr "^major|minor|patch$"
-			IL_0039: ldstr ""
-			IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_0043: stloc.1
-			IL_0044: ldloc.1
-			IL_0045: ldarg.2
-			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_004b: stloc.2
-			IL_004c: ldloc.2
-			IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0052: stloc.0
-			IL_0053: ldloc.0
-			IL_0054: brfalse IL_006f
+			IL_0038: ldstr "^major|minor|patch$"
+			IL_003d: ldstr ""
+			IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_0047: stloc.s 4
+			IL_0049: ldloc.s 4
+			IL_004b: ldarg.2
+			IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_0051: stloc.3
+			IL_0052: ldloc.3
+			IL_0053: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0058: stloc.2
+			IL_0059: ldloc.2
+			IL_005a: brfalse IL_0076
 
-			IL_0059: ldc.i4.1
-			IL_005a: newarr [System.Runtime]System.Object
-			IL_005f: dup
-			IL_0060: ldc.i4.0
-			IL_0061: ldarg.0
-			IL_0062: stelem.ref
-			IL_0063: stloc.3
-			IL_0064: ldnull
-			IL_0065: ldarg.3
-			IL_0066: ldarg.2
-			IL_0067: tail.
-			IL_0069: call object Modules.Compile_Scripts_BumpVersion/incVersion::__js_call__(object, object, object)
-			IL_006e: ret
+			IL_005f: ldc.i4.1
+			IL_0060: newarr [System.Runtime]System.Object
+			IL_0065: dup
+			IL_0066: ldc.i4.0
+			IL_0067: ldarg.0
+			IL_0068: stelem.ref
+			IL_0069: stloc.s 5
+			IL_006b: ldnull
+			IL_006c: ldarg.3
+			IL_006d: ldarg.2
+			IL_006e: tail.
+			IL_0070: call object Modules.Compile_Scripts_BumpVersion/incVersion::__js_call__(object, object, object)
+			IL_0075: ret
 
-			IL_006f: ldstr "^\\d+\\.\\d+\\.\\d+$"
-			IL_0074: ldstr ""
-			IL_0079: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_007e: stloc.1
-			IL_007f: ldloc.1
-			IL_0080: ldarg.2
-			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_0086: stloc.2
-			IL_0087: ldloc.2
-			IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_008d: ldc.i4.0
-			IL_008e: ceq
-			IL_0090: stloc.0
-			IL_0091: ldloc.0
-			IL_0092: brfalse IL_00bb
+			IL_0076: ldstr "^\\d+\\.\\d+\\.\\d+$"
+			IL_007b: ldstr ""
+			IL_0080: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_0085: stloc.s 4
+			IL_0087: ldloc.s 4
+			IL_0089: ldarg.2
+			IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
+			IL_008f: stloc.3
+			IL_0090: ldloc.3
+			IL_0091: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0096: ldc.i4.0
+			IL_0097: ceq
+			IL_0099: stloc.2
+			IL_009a: ldloc.2
+			IL_009b: brfalse IL_00c8
 
-			IL_0097: ldstr "Explicit version must be major.minor.patch"
-			IL_009c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_00a1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_00a6: dup
-			IL_00a7: isinst [System.Runtime]System.Exception
-			IL_00ac: dup
-			IL_00ad: brtrue IL_00b9
+			IL_00a0: ldstr "Explicit version must be major.minor.patch"
+			IL_00a5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_00aa: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_00af: stloc.3
+			IL_00b0: ldloc.3
+			IL_00b1: stloc.1
+			IL_00b2: ldloc.1
+			IL_00b3: dup
+			IL_00b4: isinst [System.Runtime]System.Exception
+			IL_00b9: dup
+			IL_00ba: brtrue IL_00c6
 
-			IL_00b2: pop
-			IL_00b3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_00b8: throw
+			IL_00bf: pop
+			IL_00c0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_00c5: throw
 
-			IL_00b9: pop
-			IL_00ba: throw
+			IL_00c6: pop
+			IL_00c7: throw
 
-			IL_00bb: ldarg.2
-			IL_00bc: ret
+			IL_00c8: ldarg.2
+			IL_00c9: ret
 		} // end of method resolveTargetVersion::__js_call__
 
 	} // end of class resolveTargetVersion
@@ -923,7 +948,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3758
+					// Method begins at RVA 0x3794
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -941,7 +966,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x374f
+				// Method begins at RVA 0x378b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -966,7 +991,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2998
+			// Method begins at RVA 0x29c0
 			// Header size: 12
 			// Code size: 174 (0xae)
 			.maxstack 8
@@ -1057,7 +1082,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x376a
+					// Method begins at RVA 0x37a6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1075,7 +1100,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3761
+				// Method begins at RVA 0x379d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1100,73 +1125,78 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2a54
+			// Method begins at RVA 0x2a7c
 			// Header size: 12
-			// Code size: 139 (0x8b)
+			// Code size: 149 (0x95)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 				[1] class Modules.Compile_Scripts_BumpVersion/updateSamplesPropsVersion/Scope/Block_L85C26,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[3] object,
-				[4] bool,
-				[5] string
+				[2] object,
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[4] object,
+				[5] bool,
+				[6] string
 			)
 
 			IL_0000: ldstr "<Js2ILPackageVersion\\b([^>]*)>[^<]+<\\/Js2ILPackageVersion>"
 			IL_0005: ldstr ""
 			IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_000f: stloc.2
-			IL_0010: ldloc.2
+			IL_000f: stloc.3
+			IL_0010: ldloc.3
 			IL_0011: stloc.0
 			IL_0012: ldloc.0
 			IL_0013: ldarg.1
 			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_0019: stloc.3
-			IL_001a: ldloc.3
-			IL_001b: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0020: ldc.i4.0
-			IL_0021: ceq
-			IL_0023: stloc.s 4
-			IL_0025: ldloc.s 4
-			IL_0027: brfalse IL_0056
+			IL_0019: stloc.s 4
+			IL_001b: ldloc.s 4
+			IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0022: ldc.i4.0
+			IL_0023: ceq
+			IL_0025: stloc.s 5
+			IL_0027: ldloc.s 5
+			IL_0029: brfalse IL_005e
 
-			IL_002c: newobj instance void Modules.Compile_Scripts_BumpVersion/updateSamplesPropsVersion/Scope/Block_L85C26::.ctor()
-			IL_0031: stloc.1
-			IL_0032: ldstr "Could not find <Js2ILPackageVersion> in samples/Directory.Build.props"
-			IL_0037: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_003c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0041: dup
-			IL_0042: isinst [System.Runtime]System.Exception
-			IL_0047: dup
-			IL_0048: brtrue IL_0054
+			IL_002e: newobj instance void Modules.Compile_Scripts_BumpVersion/updateSamplesPropsVersion/Scope/Block_L85C26::.ctor()
+			IL_0033: stloc.1
+			IL_0034: ldstr "Could not find <Js2ILPackageVersion> in samples/Directory.Build.props"
+			IL_0039: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0043: stloc.s 4
+			IL_0045: ldloc.s 4
+			IL_0047: stloc.2
+			IL_0048: ldloc.2
+			IL_0049: dup
+			IL_004a: isinst [System.Runtime]System.Exception
+			IL_004f: dup
+			IL_0050: brtrue IL_005c
 
-			IL_004d: pop
-			IL_004e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0053: throw
+			IL_0055: pop
+			IL_0056: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_005b: throw
 
-			IL_0054: pop
-			IL_0055: throw
+			IL_005c: pop
+			IL_005d: throw
 
-			IL_0056: ldarg.2
-			IL_0057: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_005c: stloc.s 5
-			IL_005e: ldstr "<Js2ILPackageVersion$1>"
-			IL_0063: ldloc.s 5
-			IL_0065: call string [System.Runtime]System.String::Concat(string, string)
-			IL_006a: stloc.s 5
-			IL_006c: ldloc.s 5
-			IL_006e: ldstr "</Js2ILPackageVersion>"
-			IL_0073: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0078: stloc.s 5
-			IL_007a: ldarg.1
-			IL_007b: ldstr "replace"
-			IL_0080: ldloc.0
-			IL_0081: ldloc.s 5
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0088: stloc.3
-			IL_0089: ldloc.3
-			IL_008a: ret
+			IL_005e: ldarg.2
+			IL_005f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0064: stloc.s 6
+			IL_0066: ldstr "<Js2ILPackageVersion$1>"
+			IL_006b: ldloc.s 6
+			IL_006d: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0072: stloc.s 6
+			IL_0074: ldloc.s 6
+			IL_0076: ldstr "</Js2ILPackageVersion>"
+			IL_007b: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0080: stloc.s 6
+			IL_0082: ldarg.1
+			IL_0083: ldstr "replace"
+			IL_0088: ldloc.0
+			IL_0089: ldloc.s 6
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0090: stloc.s 4
+			IL_0092: ldloc.s 4
+			IL_0094: ret
 		} // end of method updateSamplesPropsVersion::__js_call__
 
 	} // end of class updateSamplesPropsVersion
@@ -1186,7 +1216,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x377c
+					// Method begins at RVA 0x37b8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1204,7 +1234,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3773
+				// Method begins at RVA 0x37af
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1231,182 +1261,187 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
-			// Method begins at RVA 0x2aec
+			// Method begins at RVA 0x2b20
 			// Header size: 12
-			// Code size: 478 (0x1de)
+			// Code size: 488 (0x1e8)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] object,
 				[3] object,
-				[4] class Modules.Compile_Scripts_BumpVersion/extractUnreleased/Scope/Block_L99C23,
-				[5] object,
+				[4] object,
+				[5] class Modules.Compile_Scripts_BumpVersion/extractUnreleased/Scope/Block_L99C23,
 				[6] object,
 				[7] object,
 				[8] object,
-				[9] bool,
-				[10] object,
-				[11] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[12] float64,
-				[13] object,
-				[14] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[9] object,
+				[10] bool,
+				[11] object,
+				[12] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
+				[13] float64,
+				[14] object,
+				[15] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: ldarg.2
 			IL_0001: ldstr "indexOf"
 			IL_0006: ldstr "## Unreleased"
 			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0010: stloc.s 8
-			IL_0012: ldloc.s 8
+			IL_0010: stloc.s 9
+			IL_0012: ldloc.s 9
 			IL_0014: stloc.0
 			IL_0015: ldloc.0
 			IL_0016: ldc.r8 1
 			IL_001f: neg
 			IL_0020: box [System.Runtime]System.Double
 			IL_0025: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_002a: stloc.s 9
-			IL_002c: ldloc.s 9
-			IL_002e: brfalse IL_0057
+			IL_002a: stloc.s 10
+			IL_002c: ldloc.s 10
+			IL_002e: brfalse IL_005d
 
 			IL_0033: ldstr "CHANGELOG.md missing \"## Unreleased\" section"
 			IL_0038: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0042: dup
-			IL_0043: isinst [System.Runtime]System.Exception
+			IL_0042: stloc.s 9
+			IL_0044: ldloc.s 9
+			IL_0046: stloc.1
+			IL_0047: ldloc.1
 			IL_0048: dup
-			IL_0049: brtrue IL_0055
+			IL_0049: isinst [System.Runtime]System.Exception
+			IL_004e: dup
+			IL_004f: brtrue IL_005b
 
-			IL_004e: pop
-			IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0054: throw
+			IL_0054: pop
+			IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_005a: throw
 
-			IL_0055: pop
-			IL_0056: throw
+			IL_005b: pop
+			IL_005c: throw
 
-			IL_0057: ldarg.2
-			IL_0058: ldstr "indexOf"
-			IL_005d: ldstr "\n"
-			IL_0062: ldloc.0
-			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0068: stloc.s 8
-			IL_006a: ldloc.s 8
-			IL_006c: stloc.1
-			IL_006d: ldloc.1
-			IL_006e: ldc.r8 1
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_007c: stloc.s 10
-			IL_007e: ldarg.2
-			IL_007f: ldstr "slice"
-			IL_0084: ldloc.s 10
-			IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_008b: stloc.s 8
-			IL_008d: ldstr "\\n## v?\\d+\\.\\d+\\.\\d+ "
-			IL_0092: ldstr ""
-			IL_0097: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_009c: stloc.s 11
-			IL_009e: ldloc.s 8
-			IL_00a0: ldstr "match"
-			IL_00a5: ldloc.s 11
-			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00ac: stloc.s 8
-			IL_00ae: ldloc.s 8
-			IL_00b0: stloc.2
-			IL_00b1: ldc.r8 1
-			IL_00ba: neg
-			IL_00bb: box [System.Runtime]System.Double
-			IL_00c0: stloc.3
-			IL_00c1: ldloc.2
-			IL_00c2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00c7: stloc.s 9
-			IL_00c9: ldloc.s 9
-			IL_00cb: brfalse IL_0111
+			IL_005d: ldarg.2
+			IL_005e: ldstr "indexOf"
+			IL_0063: ldstr "\n"
+			IL_0068: ldloc.0
+			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_006e: stloc.s 9
+			IL_0070: ldloc.s 9
+			IL_0072: stloc.2
+			IL_0073: ldloc.2
+			IL_0074: ldc.r8 1
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0082: stloc.s 11
+			IL_0084: ldarg.2
+			IL_0085: ldstr "slice"
+			IL_008a: ldloc.s 11
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0091: stloc.s 9
+			IL_0093: ldstr "\\n## v?\\d+\\.\\d+\\.\\d+ "
+			IL_0098: ldstr ""
+			IL_009d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_00a2: stloc.s 12
+			IL_00a4: ldloc.s 9
+			IL_00a6: ldstr "match"
+			IL_00ab: ldloc.s 12
+			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00b2: stloc.s 9
+			IL_00b4: ldloc.s 9
+			IL_00b6: stloc.3
+			IL_00b7: ldc.r8 1
+			IL_00c0: neg
+			IL_00c1: box [System.Runtime]System.Double
+			IL_00c6: stloc.s 4
+			IL_00c8: ldloc.3
+			IL_00c9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00ce: stloc.s 10
+			IL_00d0: ldloc.s 10
+			IL_00d2: brfalse IL_0119
 
-			IL_00d0: newobj instance void Modules.Compile_Scripts_BumpVersion/extractUnreleased/Scope/Block_L99C23::.ctor()
-			IL_00d5: stloc.s 4
-			IL_00d7: ldloc.1
-			IL_00d8: ldc.r8 1
-			IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_00e6: stloc.s 10
-			IL_00e8: ldloc.s 10
-			IL_00ea: ldloc.2
-			IL_00eb: ldstr "index"
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00fa: stloc.s 10
-			IL_00fc: ldloc.s 10
-			IL_00fe: ldc.r8 1
-			IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_010c: stloc.s 10
-			IL_010e: ldloc.s 10
-			IL_0110: stloc.3
+			IL_00d7: newobj instance void Modules.Compile_Scripts_BumpVersion/extractUnreleased/Scope/Block_L99C23::.ctor()
+			IL_00dc: stloc.s 5
+			IL_00de: ldloc.2
+			IL_00df: ldc.r8 1
+			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_00ed: stloc.s 11
+			IL_00ef: ldloc.s 11
+			IL_00f1: ldloc.3
+			IL_00f2: ldstr "index"
+			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0101: stloc.s 11
+			IL_0103: ldloc.s 11
+			IL_0105: ldc.r8 1
+			IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0113: stloc.s 11
+			IL_0115: ldloc.s 11
+			IL_0117: stloc.s 4
 
-			IL_0111: ldloc.3
-			IL_0112: ldc.r8 1
-			IL_011b: neg
-			IL_011c: box [System.Runtime]System.Double
-			IL_0121: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0126: stloc.s 9
-			IL_0128: ldloc.s 9
-			IL_012a: brfalse IL_0141
+			IL_0119: ldloc.s 4
+			IL_011b: ldc.r8 1
+			IL_0124: neg
+			IL_0125: box [System.Runtime]System.Double
+			IL_012a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_012f: stloc.s 10
+			IL_0131: ldloc.s 10
+			IL_0133: brfalse IL_014a
 
-			IL_012f: ldarg.2
-			IL_0130: ldstr "length"
-			IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_013a: stloc.s 5
-			IL_013c: br IL_0164
+			IL_0138: ldarg.2
+			IL_0139: ldstr "length"
+			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0143: stloc.s 6
+			IL_0145: br IL_016e
 
-			IL_0141: ldloc.3
-			IL_0142: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0147: stloc.s 12
-			IL_0149: ldloc.s 12
-			IL_014b: ldc.r8 1
-			IL_0154: sub
-			IL_0155: stloc.s 12
-			IL_0157: ldloc.s 12
-			IL_0159: box [System.Runtime]System.Double
-			IL_015e: stloc.s 13
-			IL_0160: ldloc.s 13
-			IL_0162: stloc.s 5
+			IL_014a: ldloc.s 4
+			IL_014c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0151: stloc.s 13
+			IL_0153: ldloc.s 13
+			IL_0155: ldc.r8 1
+			IL_015e: sub
+			IL_015f: stloc.s 13
+			IL_0161: ldloc.s 13
+			IL_0163: box [System.Runtime]System.Double
+			IL_0168: stloc.s 14
+			IL_016a: ldloc.s 14
+			IL_016c: stloc.s 6
 
-			IL_0164: ldloc.s 5
-			IL_0166: stloc.s 6
-			IL_0168: ldloc.1
-			IL_0169: ldc.r8 1
-			IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0177: stloc.s 10
-			IL_0179: ldarg.2
-			IL_017a: ldstr "slice"
-			IL_017f: ldloc.s 10
-			IL_0181: ldloc.s 6
-			IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0188: stloc.s 8
-			IL_018a: ldloc.s 8
-			IL_018c: ldstr "trim"
-			IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0196: stloc.s 8
-			IL_0198: ldloc.s 8
-			IL_019a: stloc.s 7
-			IL_019c: ldloc.1
-			IL_019d: ldc.r8 1
-			IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_01ab: stloc.s 10
-			IL_01ad: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_01b2: dup
-			IL_01b3: ldstr "body"
-			IL_01b8: ldloc.s 7
-			IL_01ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_01bf: dup
-			IL_01c0: ldstr "start"
-			IL_01c5: ldloc.s 10
-			IL_01c7: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_01cc: dup
-			IL_01cd: ldstr "end"
-			IL_01d2: ldloc.s 6
-			IL_01d4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_01d9: stloc.s 14
-			IL_01db: ldloc.s 14
-			IL_01dd: ret
+			IL_016e: ldloc.s 6
+			IL_0170: stloc.s 7
+			IL_0172: ldloc.2
+			IL_0173: ldc.r8 1
+			IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0181: stloc.s 11
+			IL_0183: ldarg.2
+			IL_0184: ldstr "slice"
+			IL_0189: ldloc.s 11
+			IL_018b: ldloc.s 7
+			IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0192: stloc.s 9
+			IL_0194: ldloc.s 9
+			IL_0196: ldstr "trim"
+			IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_01a0: stloc.s 9
+			IL_01a2: ldloc.s 9
+			IL_01a4: stloc.s 8
+			IL_01a6: ldloc.2
+			IL_01a7: ldc.r8 1
+			IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_01b5: stloc.s 11
+			IL_01b7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01bc: dup
+			IL_01bd: ldstr "body"
+			IL_01c2: ldloc.s 8
+			IL_01c4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_01c9: dup
+			IL_01ca: ldstr "start"
+			IL_01cf: ldloc.s 11
+			IL_01d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_01d6: dup
+			IL_01d7: ldstr "end"
+			IL_01dc: ldloc.s 7
+			IL_01de: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_01e3: stloc.s 15
+			IL_01e5: ldloc.s 15
+			IL_01e7: ret
 		} // end of method extractUnreleased::__js_call__
 
 	} // end of class extractUnreleased
@@ -1422,7 +1457,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3785
+				// Method begins at RVA 0x37c1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1446,7 +1481,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2cd8
+			// Method begins at RVA 0x2d14
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 8
@@ -1494,7 +1529,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3797
+					// Method begins at RVA 0x37d3
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1519,7 +1554,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3644
+				// Method begins at RVA 0x3680
 				// Header size: 12
 				// Code size: 95 (0x5f)
 				.maxstack 8
@@ -1583,7 +1618,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x378e
+				// Method begins at RVA 0x37ca
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1611,7 +1646,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
-			// Method begins at RVA 0x2d0c
+			// Method begins at RVA 0x2d48
 			// Header size: 12
 			// Code size: 325 (0x145)
 			.maxstack 8
@@ -1762,7 +1797,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x37b2
+					// Method begins at RVA 0x37ee
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1787,7 +1822,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x36b0
+				// Method begins at RVA 0x36ec
 				// Header size: 12
 				// Code size: 66 (0x42)
 				.maxstack 8
@@ -1844,7 +1879,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x37a9
+					// Method begins at RVA 0x37e5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1864,7 +1899,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x37bb
+					// Method begins at RVA 0x37f7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1882,7 +1917,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x37a0
+				// Method begins at RVA 0x37dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1908,7 +1943,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 12 00 00 02
 			)
-			// Method begins at RVA 0x2e60
+			// Method begins at RVA 0x2e9c
 			// Header size: 12
 			// Code size: 1933 (0x78d)
 			.maxstack 8
@@ -2708,7 +2743,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x37c4
+				// Method begins at RVA 0x3800
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2728,7 +2763,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x37cd
+				// Method begins at RVA 0x3809
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2766,7 +2801,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x36fe
+			// Method begins at RVA 0x373a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -2792,7 +2827,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1027 (0x403)
+		// Code size: 1030 (0x406)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Compile_Scripts_BumpVersion/Scope,
@@ -2805,8 +2840,9 @@
 			[7] object,
 			[8] class Modules.Compile_Scripts_BumpVersion/Scope/Block_L180C29,
 			[9] object,
-			[10] object[],
-			[11] class [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+			[10] object,
+			[11] object[],
+			[12] class [JavaScriptRuntime]JavaScriptRuntime.Node.Process
 		)
 
 		IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion/Scope::.ctor()
@@ -2828,9 +2864,9 @@
 		IL_0029: ldc.i4.0
 		IL_002a: ldc.i4.1
 		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0030: stloc.s 9
+		IL_0030: stloc.s 10
 		IL_0032: ldloc.0
-		IL_0033: ldloc.s 9
+		IL_0033: ldloc.s 10
 		IL_0035: stfld object Modules.Compile_Scripts_BumpVersion/Scope::readFile
 		IL_003a: ldc.i4.1
 		IL_003b: newarr [System.Runtime]System.Object
@@ -2849,9 +2885,9 @@
 		IL_005d: ldc.i4.0
 		IL_005e: ldc.i4.1
 		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0064: stloc.s 9
+		IL_0064: stloc.s 10
 		IL_0066: ldloc.0
-		IL_0067: ldloc.s 9
+		IL_0067: ldloc.s 10
 		IL_0069: stfld object Modules.Compile_Scripts_BumpVersion/Scope::writeFile
 		IL_006e: ldnull
 		IL_006f: ldftn object Modules.Compile_Scripts_BumpVersion/parseCurrentVersion::__js_call__(object, object)
@@ -2862,9 +2898,9 @@
 		IL_0081: ldc.i4.0
 		IL_0082: ldc.i4.1
 		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0088: stloc.s 9
+		IL_0088: stloc.s 10
 		IL_008a: ldloc.0
-		IL_008b: ldloc.s 9
+		IL_008b: ldloc.s 10
 		IL_008d: stfld object Modules.Compile_Scripts_BumpVersion/Scope::parseCurrentVersion
 		IL_0092: ldnull
 		IL_0093: ldftn object Modules.Compile_Scripts_BumpVersion/incVersion::__js_call__(object, object, object)
@@ -2875,9 +2911,9 @@
 		IL_00a5: ldc.i4.0
 		IL_00a6: ldc.i4.1
 		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00ac: stloc.s 9
+		IL_00ac: stloc.s 10
 		IL_00ae: ldloc.0
-		IL_00af: ldloc.s 9
+		IL_00af: ldloc.s 10
 		IL_00b1: stfld object Modules.Compile_Scripts_BumpVersion/Scope::incVersion
 		IL_00b6: ldc.i4.1
 		IL_00b7: newarr [System.Runtime]System.Object
@@ -2896,9 +2932,9 @@
 		IL_00d9: ldc.i4.0
 		IL_00da: ldc.i4.1
 		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00e0: stloc.s 9
+		IL_00e0: stloc.s 10
 		IL_00e2: ldloc.0
-		IL_00e3: ldloc.s 9
+		IL_00e3: ldloc.s 10
 		IL_00e5: stfld object Modules.Compile_Scripts_BumpVersion/Scope::resolveTargetVersion
 		IL_00ea: ldnull
 		IL_00eb: ldftn object Modules.Compile_Scripts_BumpVersion/updateCsprojVersion::__js_call__(object, object, object)
@@ -2909,9 +2945,9 @@
 		IL_00fd: ldc.i4.0
 		IL_00fe: ldc.i4.1
 		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0104: stloc.s 9
+		IL_0104: stloc.s 10
 		IL_0106: ldloc.0
-		IL_0107: ldloc.s 9
+		IL_0107: ldloc.s 10
 		IL_0109: stfld object Modules.Compile_Scripts_BumpVersion/Scope::updateCsprojVersion
 		IL_010e: ldnull
 		IL_010f: ldftn object Modules.Compile_Scripts_BumpVersion/updateSamplesPropsVersion::__js_call__(object, object, object)
@@ -2922,9 +2958,9 @@
 		IL_0121: ldc.i4.0
 		IL_0122: ldc.i4.1
 		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0128: stloc.s 9
+		IL_0128: stloc.s 10
 		IL_012a: ldloc.0
-		IL_012b: ldloc.s 9
+		IL_012b: ldloc.s 10
 		IL_012d: stfld object Modules.Compile_Scripts_BumpVersion/Scope::updateSamplesPropsVersion
 		IL_0132: ldc.i4.1
 		IL_0133: newarr [System.Runtime]System.Object
@@ -2943,9 +2979,9 @@
 		IL_0155: ldc.i4.0
 		IL_0156: ldc.i4.1
 		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_015c: stloc.s 9
+		IL_015c: stloc.s 10
 		IL_015e: ldloc.0
-		IL_015f: ldloc.s 9
+		IL_015f: ldloc.s 10
 		IL_0161: stfld object Modules.Compile_Scripts_BumpVersion/Scope::extractUnreleased
 		IL_0166: ldnull
 		IL_0167: ldftn object Modules.Compile_Scripts_BumpVersion/isPlaceholder::__js_call__(object, object)
@@ -2956,9 +2992,9 @@
 		IL_0179: ldc.i4.0
 		IL_017a: ldc.i4.1
 		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0180: stloc.s 9
+		IL_0180: stloc.s 10
 		IL_0182: ldloc.0
-		IL_0183: ldloc.s 9
+		IL_0183: ldloc.s 10
 		IL_0185: stfld object Modules.Compile_Scripts_BumpVersion/Scope::isPlaceholder
 		IL_018a: ldc.i4.1
 		IL_018b: newarr [System.Runtime]System.Object
@@ -2977,9 +3013,9 @@
 		IL_01ad: ldc.i4.0
 		IL_01ae: ldc.i4.1
 		IL_01af: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01b4: stloc.s 9
+		IL_01b4: stloc.s 10
 		IL_01b6: ldloc.0
-		IL_01b7: ldloc.s 9
+		IL_01b7: ldloc.s 10
 		IL_01b9: stfld object Modules.Compile_Scripts_BumpVersion/Scope::generateReleaseSection
 		IL_01be: ldc.i4.1
 		IL_01bf: newarr [System.Runtime]System.Object
@@ -2998,29 +3034,29 @@
 		IL_01e1: ldc.i4.0
 		IL_01e2: ldc.i4.1
 		IL_01e3: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01e8: stloc.s 9
-		IL_01ea: ldloc.s 9
+		IL_01e8: stloc.s 10
+		IL_01ea: ldloc.s 10
 		IL_01ec: stloc.1
 		IL_01ed: ldarg.1
 		IL_01ee: ldstr "fs"
 		IL_01f3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_01f8: stloc.s 9
+		IL_01f8: stloc.s 10
 		IL_01fa: ldloc.0
-		IL_01fb: ldloc.s 9
+		IL_01fb: ldloc.s 10
 		IL_01fd: stfld object Modules.Compile_Scripts_BumpVersion/Scope::fs
 		IL_0202: ldarg.1
 		IL_0203: ldstr "path"
 		IL_0208: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_020d: stloc.s 9
-		IL_020f: ldloc.s 9
+		IL_020d: stloc.s 10
+		IL_020f: ldloc.s 10
 		IL_0211: stloc.2
 		IL_0212: ldloc.2
 		IL_0213: ldstr "resolve"
 		IL_0218: ldarg.s __dirname
 		IL_021a: ldstr ".."
 		IL_021f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0224: stloc.s 9
-		IL_0226: ldloc.s 9
+		IL_0224: stloc.s 10
+		IL_0226: ldloc.s 10
 		IL_0228: stloc.3
 		IL_0229: ldc.i4.4
 		IL_022a: newarr [System.Runtime]System.Object
@@ -3040,14 +3076,14 @@
 		IL_0244: ldc.i4.3
 		IL_0245: ldstr "Js2IL.csproj"
 		IL_024a: stelem.ref
-		IL_024b: stloc.s 10
+		IL_024b: stloc.s 11
 		IL_024d: ldloc.2
 		IL_024e: ldstr "join"
-		IL_0253: ldloc.s 10
+		IL_0253: ldloc.s 11
 		IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_025a: stloc.s 9
+		IL_025a: stloc.s 10
 		IL_025c: ldloc.0
-		IL_025d: ldloc.s 9
+		IL_025d: ldloc.s 10
 		IL_025f: stfld object Modules.Compile_Scripts_BumpVersion/Scope::CSPROJ_PATH
 		IL_0264: ldc.i4.4
 		IL_0265: newarr [System.Runtime]System.Object
@@ -3067,14 +3103,14 @@
 		IL_027f: ldc.i4.3
 		IL_0280: ldstr "Js2IL.Core.csproj"
 		IL_0285: stelem.ref
-		IL_0286: stloc.s 10
+		IL_0286: stloc.s 11
 		IL_0288: ldloc.2
 		IL_0289: ldstr "join"
-		IL_028e: ldloc.s 10
+		IL_028e: ldloc.s 11
 		IL_0290: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0295: stloc.s 9
+		IL_0295: stloc.s 10
 		IL_0297: ldloc.0
-		IL_0298: ldloc.s 9
+		IL_0298: ldloc.s 10
 		IL_029a: stfld object Modules.Compile_Scripts_BumpVersion/Scope::CORE_CSPROJ_PATH
 		IL_029f: ldc.i4.4
 		IL_02a0: newarr [System.Runtime]System.Object
@@ -3094,14 +3130,14 @@
 		IL_02ba: ldc.i4.3
 		IL_02bb: ldstr "Js2IL.SDK.csproj"
 		IL_02c0: stelem.ref
-		IL_02c1: stloc.s 10
+		IL_02c1: stloc.s 11
 		IL_02c3: ldloc.2
 		IL_02c4: ldstr "join"
-		IL_02c9: ldloc.s 10
+		IL_02c9: ldloc.s 11
 		IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_02d0: stloc.s 9
+		IL_02d0: stloc.s 10
 		IL_02d2: ldloc.0
-		IL_02d3: ldloc.s 9
+		IL_02d3: ldloc.s 10
 		IL_02d5: stfld object Modules.Compile_Scripts_BumpVersion/Scope::SDK_CSPROJ_PATH
 		IL_02da: ldc.i4.4
 		IL_02db: newarr [System.Runtime]System.Object
@@ -3121,14 +3157,14 @@
 		IL_02f5: ldc.i4.3
 		IL_02f6: ldstr "JavaScriptRuntime.csproj"
 		IL_02fb: stelem.ref
-		IL_02fc: stloc.s 10
+		IL_02fc: stloc.s 11
 		IL_02fe: ldloc.2
 		IL_02ff: ldstr "join"
-		IL_0304: ldloc.s 10
+		IL_0304: ldloc.s 11
 		IL_0306: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_030b: stloc.s 9
+		IL_030b: stloc.s 10
 		IL_030d: ldloc.0
-		IL_030e: ldloc.s 9
+		IL_030e: ldloc.s 10
 		IL_0310: stfld object Modules.Compile_Scripts_BumpVersion/Scope::RUNTIME_CSPROJ_PATH
 		IL_0315: ldloc.2
 		IL_0316: ldstr "join"
@@ -3136,18 +3172,18 @@
 		IL_031c: ldstr "samples"
 		IL_0321: ldstr "Directory.Build.props"
 		IL_0326: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_032b: stloc.s 9
+		IL_032b: stloc.s 10
 		IL_032d: ldloc.0
-		IL_032e: ldloc.s 9
+		IL_032e: ldloc.s 10
 		IL_0330: stfld object Modules.Compile_Scripts_BumpVersion/Scope::SAMPLES_PROPS_PATH
 		IL_0335: ldloc.2
 		IL_0336: ldstr "join"
 		IL_033b: ldloc.3
 		IL_033c: ldstr "CHANGELOG.md"
 		IL_0341: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0346: stloc.s 9
+		IL_0346: stloc.s 10
 		IL_0348: ldloc.0
-		IL_0349: ldloc.s 9
+		IL_0349: ldloc.s 10
 		IL_034b: stfld object Modules.Compile_Scripts_BumpVersion/Scope::CHANGELOG_PATH
 		.try
 		{
@@ -3197,8 +3233,8 @@
 			IL_03ae: stloc.s 6
 
 			IL_03b0: ldloc.s 6
-			IL_03b2: stloc.s 9
-			IL_03b4: ldloc.s 9
+			IL_03b2: stloc.s 10
+			IL_03b4: ldloc.s 10
 			IL_03b6: stloc.s 7
 			IL_03b8: newobj instance void Modules.Compile_Scripts_BumpVersion/Scope/Block_L180C29::.ctor()
 			IL_03bd: stloc.s 8
@@ -3210,8 +3246,8 @@
 			IL_03d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::'error'(object, object)
 			IL_03da: pop
 			IL_03db: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_03e0: stloc.s 11
-			IL_03e2: ldloc.s 11
+			IL_03e0: stloc.s 12
+			IL_03e2: ldloc.s 12
 			IL_03e4: ldstr "exit"
 			IL_03e9: ldc.r8 1
 			IL_03f2: box [System.Runtime]System.Double
@@ -3220,7 +3256,9 @@
 			IL_03fd: leave IL_0402
 		} // end handler
 
-		IL_0402: ret
+		IL_0402: ldnull
+		IL_0403: stloc.s 9
+		IL_0405: ret
 	} // end of method Compile_Scripts_BumpVersion::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_BumpVersion
@@ -3232,7 +3270,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x37d6
+		// Method begins at RVA 0x3812
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

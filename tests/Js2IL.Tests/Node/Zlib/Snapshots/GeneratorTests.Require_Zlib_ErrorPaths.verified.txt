@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x26b1
+					// Method begins at RVA 0x26b9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x26ba
+					// Method begins at RVA 0x26c2
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26a8
+				// Method begins at RVA 0x26b0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -85,9 +85,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x244c
+			// Method begins at RVA 0x2450
 			// Header size: 12
-			// Code size: 226 (0xe2)
+			// Code size: 230 (0xe6)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Require_Zlib_ErrorPaths/logError/Scope/Block_L6C6,
@@ -96,7 +96,8 @@
 				[3] object,
 				[4] class Modules.Require_Zlib_ErrorPaths/logError/Scope/Block_L9C18,
 				[5] object,
-				[6] object
+				[6] object,
+				[7] object
 			)
 
 			.try
@@ -105,14 +106,14 @@
 				IL_0005: stloc.0
 				IL_0006: ldarg.2
 				IL_0007: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
+				IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 				IL_0011: pop
 				IL_0012: ldarg.1
 				IL_0013: ldstr " threw:"
 				IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_001d: stloc.s 5
+				IL_001d: stloc.s 6
 				IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0024: ldloc.s 5
+				IL_0024: ldloc.s 6
 				IL_0026: ldc.i4.0
 				IL_0027: box [System.Runtime]System.Boolean
 				IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
@@ -147,17 +148,17 @@
 				IL_0063: stloc.2
 
 				IL_0064: ldloc.2
-				IL_0065: stloc.s 6
-				IL_0067: ldloc.s 6
+				IL_0065: stloc.s 7
+				IL_0067: ldloc.s 7
 				IL_0069: stloc.3
 				IL_006a: newobj instance void Modules.Require_Zlib_ErrorPaths/logError/Scope/Block_L9C18::.ctor()
 				IL_006f: stloc.s 4
 				IL_0071: ldarg.1
 				IL_0072: ldstr " threw:"
 				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_007c: stloc.s 5
+				IL_007c: stloc.s 6
 				IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0083: ldloc.s 5
+				IL_0083: ldloc.s 6
 				IL_0085: ldc.i4.1
 				IL_0086: box [System.Runtime]System.Boolean
 				IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
@@ -165,9 +166,9 @@
 				IL_0091: ldarg.1
 				IL_0092: ldstr " name:"
 				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_009c: stloc.s 5
+				IL_009c: stloc.s 6
 				IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00a3: ldloc.s 5
+				IL_00a3: ldloc.s 6
 				IL_00a5: ldloc.3
 				IL_00a6: ldstr "name"
 				IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
@@ -176,9 +177,9 @@
 				IL_00b6: ldarg.1
 				IL_00b7: ldstr " message:"
 				IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00c1: stloc.s 5
+				IL_00c1: stloc.s 6
 				IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00c8: ldloc.s 5
+				IL_00c8: ldloc.s 6
 				IL_00ca: ldloc.3
 				IL_00cb: ldstr "message"
 				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
@@ -188,7 +189,9 @@
 			} // end handler
 
 			IL_00e0: ldnull
-			IL_00e1: ret
+			IL_00e1: stloc.s 5
+			IL_00e3: ldloc.s 5
+			IL_00e5: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
@@ -204,7 +207,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26c3
+				// Method begins at RVA 0x26cb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -230,7 +233,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x254c
+			// Method begins at RVA 0x2554
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -268,7 +271,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26cc
+				// Method begins at RVA 0x26d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -294,7 +297,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x258c
+			// Method begins at RVA 0x2594
 			// Header size: 12
 			// Code size: 69 (0x45)
 			.maxstack 8
@@ -339,7 +342,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26d5
+				// Method begins at RVA 0x26dd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -365,7 +368,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x25e0
+			// Method begins at RVA 0x25e8
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -403,7 +406,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26de
+				// Method begins at RVA 0x26e6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -429,7 +432,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2620
+			// Method begins at RVA 0x2628
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -467,7 +470,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26e7
+				// Method begins at RVA 0x26ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -493,7 +496,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2660
+			// Method begins at RVA 0x2668
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -536,7 +539,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26f0
+				// Method begins at RVA 0x26f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -556,7 +559,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26f9
+				// Method begins at RVA 0x2701
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -578,7 +581,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x269f
+			// Method begins at RVA 0x26a7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -604,7 +607,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 991 (0x3df)
+		// Code size: 994 (0x3e2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_ErrorPaths/Scope,
@@ -616,12 +619,13 @@
 			[6] class Modules.Require_Zlib_ErrorPaths/Scope/Block_L34C16,
 			[7] object,
 			[8] object,
-			[9] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-			[10] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[11] bool,
-			[12] object,
+			[9] object,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+			[11] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[12] bool,
 			[13] object,
-			[14] object
+			[14] object,
+			[15] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Zlib_ErrorPaths/Scope::.ctor()
@@ -635,23 +639,23 @@
 		IL_0019: ldc.i4.0
 		IL_001a: ldc.i4.1
 		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0020: stloc.s 7
-		IL_0022: ldloc.s 7
+		IL_0020: stloc.s 8
+		IL_0022: ldloc.s 8
 		IL_0024: stloc.1
 		IL_0025: ldarg.1
 		IL_0026: ldstr "node:zlib"
 		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0030: stloc.s 7
+		IL_0030: stloc.s 8
 		IL_0032: ldloc.0
-		IL_0033: ldloc.s 7
+		IL_0033: ldloc.s 8
 		IL_0035: stfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
 		IL_003a: ldloc.0
 		IL_003b: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_0040: stloc.s 7
+		IL_0040: stloc.s 8
 		IL_0042: ldloc.0
 		IL_0043: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_0048: stloc.s 8
-		IL_004a: ldloc.s 8
+		IL_0048: stloc.s 9
+		IL_004a: ldloc.s 9
 		IL_004c: ldstr "gzipSync"
 		IL_0051: ldstr "abc"
 		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -661,29 +665,29 @@
 		IL_006a: neg
 		IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0075: stloc.s 8
-		IL_0077: ldloc.s 7
+		IL_0075: stloc.s 9
+		IL_0077: ldloc.s 8
 		IL_0079: ldstr "gunzipSync"
-		IL_007e: ldloc.s 8
+		IL_007e: ldloc.s 9
 		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0085: stloc.s 8
-		IL_0087: ldloc.s 8
+		IL_0085: stloc.s 9
+		IL_0087: ldloc.s 9
 		IL_0089: ldstr "toString"
 		IL_008e: ldstr "utf8"
 		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0098: stloc.s 8
+		IL_0098: stloc.s 9
 		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_009f: ldstr "gzip level -1 roundtrip:"
-		IL_00a4: ldloc.s 8
+		IL_00a4: ldloc.s 9
 		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 		IL_00ab: pop
 		IL_00ac: ldloc.0
 		IL_00ad: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_00b2: stloc.s 8
+		IL_00b2: stloc.s 9
 		IL_00b4: ldloc.0
 		IL_00b5: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-		IL_00ba: stloc.s 7
-		IL_00bc: ldloc.s 7
+		IL_00ba: stloc.s 8
+		IL_00bc: ldloc.s 8
 		IL_00be: ldstr "gzipSync"
 		IL_00c3: ldstr "abc"
 		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -692,20 +696,20 @@
 		IL_00d3: ldc.r8 1.5
 		IL_00dc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00e6: stloc.s 7
-		IL_00e8: ldloc.s 8
+		IL_00e6: stloc.s 8
+		IL_00e8: ldloc.s 9
 		IL_00ea: ldstr "gunzipSync"
-		IL_00ef: ldloc.s 7
+		IL_00ef: ldloc.s 8
 		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00f6: stloc.s 7
-		IL_00f8: ldloc.s 7
+		IL_00f6: stloc.s 8
+		IL_00f8: ldloc.s 8
 		IL_00fa: ldstr "toString"
 		IL_00ff: ldstr "utf8"
 		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0109: stloc.s 7
+		IL_0109: stloc.s 8
 		IL_010b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0110: ldstr "gzip level 1.5 roundtrip:"
-		IL_0115: ldloc.s 7
+		IL_0115: ldloc.s 8
 		IL_0117: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 		IL_011c: pop
 		IL_011d: ldc.i4.1
@@ -733,10 +737,10 @@
 		IL_0154: ldc.i4.0
 		IL_0155: ldc.i4.1
 		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_015b: stloc.s 7
+		IL_015b: stloc.s 8
 		IL_015d: ldnull
 		IL_015e: ldstr "gzip unsupported option"
-		IL_0163: ldloc.s 7
+		IL_0163: ldloc.s 8
 		IL_0165: call object Modules.Require_Zlib_ErrorPaths/logError::__js_call__(object, object, object)
 		IL_016a: pop
 		IL_016b: ldc.i4.1
@@ -764,10 +768,10 @@
 		IL_01a2: ldc.i4.0
 		IL_01a3: ldc.i4.1
 		IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01a9: stloc.s 7
+		IL_01a9: stloc.s 8
 		IL_01ab: ldnull
 		IL_01ac: ldstr "gunzip unsupported option"
-		IL_01b1: ldloc.s 7
+		IL_01b1: ldloc.s 8
 		IL_01b3: call object Modules.Require_Zlib_ErrorPaths/logError::__js_call__(object, object, object)
 		IL_01b8: pop
 		IL_01b9: ldc.i4.1
@@ -795,10 +799,10 @@
 		IL_01f0: ldc.i4.0
 		IL_01f1: ldc.i4.1
 		IL_01f2: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01f7: stloc.s 7
+		IL_01f7: stloc.s 8
 		IL_01f9: ldnull
 		IL_01fa: ldstr "gzip bad level"
-		IL_01ff: ldloc.s 7
+		IL_01ff: ldloc.s 8
 		IL_0201: call object Modules.Require_Zlib_ErrorPaths/logError::__js_call__(object, object, object)
 		IL_0206: pop
 		IL_0207: ldc.i4.1
@@ -826,10 +830,10 @@
 		IL_023e: ldc.i4.0
 		IL_023f: ldc.i4.1
 		IL_0240: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0245: stloc.s 7
+		IL_0245: stloc.s 8
 		IL_0247: ldnull
 		IL_0248: ldstr "gzip NaN level"
-		IL_024d: ldloc.s 7
+		IL_024d: ldloc.s 8
 		IL_024f: call object Modules.Require_Zlib_ErrorPaths/logError::__js_call__(object, object, object)
 		IL_0254: pop
 		IL_0255: ldc.i4.1
@@ -857,10 +861,10 @@
 		IL_028c: ldc.i4.0
 		IL_028d: ldc.i4.1
 		IL_028e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0293: stloc.s 7
+		IL_0293: stloc.s 8
 		IL_0295: ldnull
 		IL_0296: ldstr "gzip Infinity level"
-		IL_029b: ldloc.s 7
+		IL_029b: ldloc.s 8
 		IL_029d: call object Modules.Require_Zlib_ErrorPaths/logError::__js_call__(object, object, object)
 		IL_02a2: pop
 		.try
@@ -869,13 +873,13 @@
 			IL_02a8: stloc.2
 			IL_02a9: ldloc.0
 			IL_02aa: ldfld object Modules.Require_Zlib_ErrorPaths/Scope::zlib
-			IL_02af: stloc.s 7
+			IL_02af: stloc.s 8
 			IL_02b1: ldstr "not gzip"
 			IL_02b6: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-			IL_02bb: stloc.s 9
-			IL_02bd: ldloc.s 7
+			IL_02bb: stloc.s 10
+			IL_02bd: ldloc.s 8
 			IL_02bf: ldstr "gunzipSync"
-			IL_02c4: ldloc.s 9
+			IL_02c4: ldloc.s 10
 			IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 			IL_02cb: pop
 			IL_02cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -914,8 +918,8 @@
 			IL_0314: stloc.s 4
 
 			IL_0316: ldloc.s 4
-			IL_0318: stloc.s 7
-			IL_031a: ldloc.s 7
+			IL_0318: stloc.s 8
+			IL_031a: ldloc.s 8
 			IL_031c: stloc.s 5
 			IL_031e: newobj instance void Modules.Require_Zlib_ErrorPaths/Scope/Block_L34C16::.ctor()
 			IL_0323: stloc.s 6
@@ -933,21 +937,21 @@
 			IL_0351: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0356: pop
 			IL_0357: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_035c: stloc.s 10
+			IL_035c: stloc.s 11
 			IL_035e: ldloc.s 5
 			IL_0360: ldstr "message"
 			IL_0365: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_036a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
 			IL_036f: ldstr "string"
 			IL_0374: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0379: stloc.s 11
-			IL_037b: ldloc.s 11
+			IL_0379: stloc.s 12
+			IL_037b: ldloc.s 12
 			IL_037d: box [System.Runtime]System.Boolean
-			IL_0382: stloc.s 12
-			IL_0384: ldloc.s 12
+			IL_0382: stloc.s 13
+			IL_0384: ldloc.s 13
 			IL_0386: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_038b: stloc.s 11
-			IL_038d: ldloc.s 11
+			IL_038b: stloc.s 12
+			IL_038d: ldloc.s 12
 			IL_038f: brfalse IL_03c6
 
 			IL_0394: ldloc.s 5
@@ -959,21 +963,23 @@
 			IL_03af: ldc.r8 0.0
 			IL_03b8: cgt
 			IL_03ba: box [System.Runtime]System.Boolean
-			IL_03bf: stloc.s 14
+			IL_03bf: stloc.s 15
 			IL_03c1: br IL_03ca
 
-			IL_03c6: ldloc.s 12
-			IL_03c8: stloc.s 14
+			IL_03c6: ldloc.s 13
+			IL_03c8: stloc.s 15
 
-			IL_03ca: ldloc.s 10
+			IL_03ca: ldloc.s 11
 			IL_03cc: ldstr "gunzip invalid data message length > 0:"
-			IL_03d1: ldloc.s 14
+			IL_03d1: ldloc.s 15
 			IL_03d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_03d8: pop
 			IL_03d9: leave IL_03de
 		} // end handler
 
-		IL_03de: ret
+		IL_03de: ldnull
+		IL_03df: stloc.s 7
+		IL_03e1: ret
 	} // end of method Require_Zlib_ErrorPaths::__js_module_init__
 
 } // end of class Modules.Require_Zlib_ErrorPaths
@@ -985,7 +991,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2702
+		// Method begins at RVA 0x270a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

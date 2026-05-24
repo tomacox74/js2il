@@ -20,6 +20,9 @@ public sealed partial class HIRToLIRLowerer
         }
 
         argTemp = EnsureObject(argTemp);
+        argTemp = EnsureTempMappedToSlot(
+            CreateAnonymousVariableSlot("$throw_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))),
+            argTemp);
 
         // In async MoveNext with awaits, do not emit CLR throws (they won't be caught by the runtime).
         // Instead reject the deferred promise unless we are inside an async try/catch/finally routing context.
