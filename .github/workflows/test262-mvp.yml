@@ -4,6 +4,8 @@ run-name: ${{ github.workflow }} - ${{ github.event_name }} - ${{ github.event.i
 on:
   pull_request:
     branches: [ "master" ]
+    paths-ignore:
+      - "CHANGELOG.md"
   push:
     branches: [ "master" ]
   schedule:
