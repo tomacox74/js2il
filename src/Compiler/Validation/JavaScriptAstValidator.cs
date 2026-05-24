@@ -19,7 +19,10 @@ public class JavaScriptAstValidator : IAstValidator
         "foo()()",
         "()=>this",
         "a = 10",
-        "var x = \"inside\";"
+        "var x = \"inside\";",
+        "o = {get foo(){return 1;}};",
+        "o = {set foo(arg){return 1;}};",
+        "o = {set foo(arg){}};"
     };
 
     private static readonly Lazy<HashSet<string>> SupportedRequireModules = new(() =>
@@ -1482,7 +1485,10 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is MethodDefinition method)
         {
-            if (!method.Computed && method.Key is not Identifier && method.Key is not PrivateIdentifier)
+            if (!method.Computed
+                && method.Key is not Identifier
+                && method.Key is not PrivateIdentifier
+                && !IsBigIntPropertyName(method.Key))
             {
                 result.Errors.Add($"Computed/non-identifier method names in classes are not yet supported (line {node.Location.Start.Line})");
                 result.IsValid = false;
@@ -1491,6 +1497,10 @@ public class JavaScriptAstValidator : IAstValidator
 
         }
     }
+
+    private static bool IsBigIntPropertyName(Node? key)
+        => key is Literal literal
+            && literal.Raw?.Trim().EndsWith("n", StringComparison.Ordinal) == true;
 
     private void ValidatePropertyDefinition(Node node, ValidationResult result)
     {

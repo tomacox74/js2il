@@ -50,7 +50,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task object_literal_return_requires_body_parens()
         => ExecutionTest("object-literal-return-requires-body-parens");
 
-    [Fact(DisplayName = "prototype-rules", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "prototype-rules")]
     public Task prototype_rules()
         => ExecutionTest("prototype-rules");
 }

@@ -166,6 +166,27 @@ public class RuntimeServices
         return new ClassConstructorValue(type, scopes, length);
     }
 
+    public static object? ValidateClassHeritage(object? heritage)
+    {
+        if (heritage is null || heritage is JsNull)
+        {
+            return heritage;
+        }
+
+        if (!JavaScriptRuntime.Object.IsConstructibleValue(heritage))
+        {
+            throw new TypeError("Class extends value is not a constructor or null");
+        }
+
+        var prototype = JavaScriptRuntime.Object.GetProperty(heritage, "prototype");
+        if (prototype is not null && prototype is not JsNull && !TypeUtilities.IsConstructorReturnOverride(prototype))
+        {
+            throw new TypeError("Class extends value does not have valid prototype property");
+        }
+
+        return heritage;
+    }
+
     public static object RegisterLazyClassMethodDataProperty(
         object ownerValue,
         object keyValue,

@@ -2906,6 +2906,7 @@ class HIRMethodBuilder
                                     Acornima.Ast.Identifier kid => kid.Name,
                                     Acornima.Ast.StringLiteral sl => sl.Value,
                                     Acornima.Ast.NumericLiteral nl => nl.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                    Acornima.Ast.Literal lit when TryGetBigIntPropertyName(lit, out var bigIntName) => bigIntName,
                                     Acornima.Ast.Literal lit when lit.Value is string s => s,
                                     Acornima.Ast.Literal lit when lit.Value is double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
                                     _ => null
@@ -3644,14 +3645,21 @@ class HIRMethodBuilder
                     if (UnwrapExpression(classExpr.SuperClass) is Expression heritageExpression
                         && heritageExpression is not Identifier)
                     {
-                        var heritageBuilder = new HIRMethodBuilder(classExprScope);
-                        if (!heritageBuilder.TryParseExpressionForPrologue(heritageExpression, out var hirHeritageExpression)
-                            || hirHeritageExpression == null)
+                        if (heritageExpression is ArrowFunctionExpression)
                         {
-                            return false;
+                            staticInitStatements.Insert(0, new HIRExpressionStatement(new HIRThrowTypeErrorExpression("Class extends value is not a constructor or null")));
                         }
+                        else
+                        {
+                            var heritageBuilder = new HIRMethodBuilder(classExprScope);
+                            if (!heritageBuilder.TryParseExpressionForPrologue(heritageExpression, out var hirHeritageExpression)
+                                || hirHeritageExpression == null)
+                            {
+                                return false;
+                            }
 
-                        staticInitStatements.Insert(0, new HIRExpressionStatement(hirHeritageExpression));
+                            staticInitStatements.Insert(0, new HIRExpressionStatement(new HIRClassHeritageValidationExpression(hirHeritageExpression)));
+                        }
                     }
 
                     hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, staticInitStatements);
@@ -3973,7 +3981,10 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    objectMembers.Add(new HIRObjectProperty(propName!, valueExpr!));
+                    objectMembers.Add(new HIRObjectProperty(
+                        propName!,
+                        valueExpr!,
+                        isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal)));
                 }
                 hirExpr = new HIRObjectExpression(objectMembers);
                 return true;
@@ -4007,6 +4018,19 @@ class HIRMethodBuilder
         return true;
     }
 
+    private static bool TryGetBigIntPropertyName(Literal literal, out string? propertyName)
+    {
+        var raw = literal.Raw?.Trim();
+        if (string.IsNullOrWhiteSpace(raw) || !raw.EndsWith("n", StringComparison.Ordinal))
+        {
+            propertyName = null;
+            return false;
+        }
+
+        propertyName = raw[..^1].Replace("_", string.Empty, StringComparison.Ordinal);
+        return propertyName.Length > 0;
+    }
+
     private static bool TryGetNonComputedPropertyName(Node? keyNode, out string? propertyName)
     {
         switch (keyNode)
@@ -4021,6 +4045,9 @@ class HIRMethodBuilder
 
             case NumericLiteral numLit:
                 propertyName = numLit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return true;
+
+            case Literal bigIntLiteral when TryGetBigIntPropertyName(bigIntLiteral, out propertyName):
                 return true;
 
             default:

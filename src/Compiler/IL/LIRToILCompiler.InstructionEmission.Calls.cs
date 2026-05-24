@@ -97,6 +97,15 @@ internal sealed partial class LIRToILCompiler
             isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
             new[] { typeof(object), typeof(double), typeof(string), typeof(bool), typeof(bool) }));
+
+        if (callableId.Kind == CallableKind.Arrow)
+        {
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Function),
+                nameof(JavaScriptRuntime.Function.MarkUndefinedPrototype),
+                new[] { typeof(object) }));
+        }
     }
 
     private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)

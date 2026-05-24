@@ -2207,6 +2207,11 @@ namespace JavaScriptRuntime
 
             if (constructor is Delegate)
             {
+                if (constructor is Delegate del && GlobalThis.HasUndefinedPrototype(del))
+                {
+                    return false;
+                }
+
                 if (PropertyDescriptorStore.TryGetOwn(constructor, "prototype", out var prototypeDescriptor)
                     && prototypeDescriptor.Kind == JsPropertyDescriptorKind.Data
                     && prototypeDescriptor.Value is null)
@@ -2343,6 +2348,11 @@ namespace JavaScriptRuntime
                             {
                                 throw tie.InnerException;
                             }
+                        }
+
+                        if (type.BaseType == typeof(JavaScriptRuntime.Array))
+                        {
+                            return AttachClassPrototype(JavaScriptRuntime.Array.Construct(callArgs));
                         }
 
                         throw;

@@ -54,7 +54,7 @@
     {
       "clause": "10.2.4",
       "title": "AddRestrictedFunctionProperties ( F , realm )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties"
     },
     {
@@ -135,6 +135,25 @@
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
         ],
         "notes": "JS2IL constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete."
+      },
+      {
+        "clause": "10.2.4",
+        "feature": "Restricted function caller/arguments properties",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/arrow-function/JavaScript/prototype-rules.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/restricted-properties.js"
+        ],
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/arrow-function/prototype-rules.js",
+          "test/language/expressions/class/restricted-properties.js"
+        ],
+        "notes": "JS2IL installs throwing restricted caller/arguments accessors for the covered non-ordinary callable surfaces, including arrow functions and class constructors. Full %ThrowTypeError% identity/intrinsics coverage remains limited."
       },
       {
         "clause": "10.2.5",

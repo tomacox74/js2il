@@ -439,6 +439,16 @@ public static class Function
             slot.RequiresInvocationContext = requiresInvocationContext;
         }
 
+        public static object MarkUndefinedPrototype(object functionValue)
+        {
+            if (functionValue is Delegate del)
+            {
+                MarkUndefinedPrototype(del);
+            }
+
+            return functionValue;
+        }
+
         internal static void MarkUndefinedPrototype(Delegate functionValue)
         {
             _undefinedPrototypeFunctions.GetOrCreateValue(functionValue);

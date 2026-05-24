@@ -56,7 +56,7 @@ assert.throws(TypeError, function() {
   BaseClass.arguments = {};
 });
 
-var SubClass = class extends BaseClass {};
+var SubClass = class {};
 
 assert.sameValue(
   SubClass.hasOwnProperty('caller'), false, 'No "caller" own property'

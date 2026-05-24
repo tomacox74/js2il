@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime/tests/docs/test262: fix issue #1101 by aligning arrow/class callable prototype metadata, restricted `caller`/`arguments` accessors, class heritage validation, object literal `__proto__` mutation semantics, and BigInt literal property-name normalization with the newly unskipped expression test262 cases.
 - compiler/runtime/tests/docs/test262: fix reference evaluation and coercion semantics for expression cases, including member/identifier GetValue and PutValue behavior plus the covered equality and relational coercion paths.
 - compiler/runtime/tests/docs/test262: fix try/labeled/throw completion handling by routing finally-return overrides correctly, preserving indirect-call global `this` for non-strict function values, materializing thrown expression values across short-circuit branches, and unskipping the related supported statement ports.
 - runtime/tests/docs/test262: expose the covered intrinsic async/generator constructor objects with the expected callable metadata and extensibility surface, unskipping the corresponding built-in constructor tests while leaving the advanced construction cases tracked separately.

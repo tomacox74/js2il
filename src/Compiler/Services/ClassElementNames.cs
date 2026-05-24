@@ -34,6 +34,8 @@ internal static class ClassElementNames
             case NumericLiteral numericLiteral:
                 name = numericLiteral.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 return true;
+            case Literal literal when TryGetBigIntPropertyName(literal, out name):
+                return true;
             case TemplateLiteral templateLiteral when templateLiteral.Expressions.Count == 0 && templateLiteral.Quasis.Count == 1:
                 var quasi = templateLiteral.Quasis[0].Value;
                 name = quasi.Cooked ?? quasi.Raw;
@@ -42,6 +44,19 @@ internal static class ClassElementNames
                 name = null;
                 return false;
         }
+    }
+
+    private static bool TryGetBigIntPropertyName(Literal literal, out string? name)
+    {
+        var raw = literal.Raw?.Trim();
+        if (string.IsNullOrWhiteSpace(raw) || !raw.EndsWith("n", StringComparison.Ordinal))
+        {
+            name = null;
+            return false;
+        }
+
+        name = raw[..^1].Replace("_", string.Empty, StringComparison.Ordinal);
+        return name.Length > 0;
     }
 
     public static string ManglePrivateFieldName(string name)

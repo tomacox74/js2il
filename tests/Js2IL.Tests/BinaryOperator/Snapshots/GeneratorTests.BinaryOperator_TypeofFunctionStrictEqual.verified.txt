@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2166
+				// Method begins at RVA 0x216b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x214d
+			// Method begins at RVA 0x2152
 			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
@@ -64,7 +64,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216f
+				// Method begins at RVA 0x2174
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -84,7 +84,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2178
+				// Method begins at RVA 0x217d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,7 +104,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2181
+				// Method begins at RVA 0x2186
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -124,7 +124,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x218a
+				// Method begins at RVA 0x218f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -144,7 +144,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2193
+				// Method begins at RVA 0x2198
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -162,7 +162,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215d
+			// Method begins at RVA 0x2162
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -188,7 +188,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 241 (0xf1)
+		// Code size: 246 (0xf6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope,
@@ -220,64 +220,65 @@
 		IL_002d: ldc.i4.0
 		IL_002e: ldc.i4.1
 		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0034: stloc.s 7
-		IL_0036: ldloc.s 7
-		IL_0038: ldstr "someObject"
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0042: stloc.s 7
-		IL_0044: ldloc.s 7
-		IL_0046: stloc.1
-		IL_0047: ldloc.1
-		IL_0048: isinst [System.Runtime]System.Delegate
-		IL_004d: brfalse IL_0068
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0039: stloc.s 7
+		IL_003b: ldloc.s 7
+		IL_003d: ldstr "someObject"
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0047: stloc.s 7
+		IL_0049: ldloc.s 7
+		IL_004b: stloc.1
+		IL_004c: ldloc.1
+		IL_004d: isinst [System.Runtime]System.Delegate
+		IL_0052: brfalse IL_006d
 
-		IL_0052: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L5C38::.ctor()
-		IL_0057: stloc.2
-		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005d: ldstr "function"
-		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0067: pop
+		IL_0057: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L5C38::.ctor()
+		IL_005c: stloc.2
+		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0062: ldstr "function"
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006c: pop
 
-		IL_0068: ldc.r8 123
-		IL_0071: box [System.Runtime]System.Double
-		IL_0076: isinst [System.Runtime]System.Delegate
-		IL_007b: brfalse IL_009b
+		IL_006d: ldc.r8 123
+		IL_0076: box [System.Runtime]System.Double
+		IL_007b: isinst [System.Runtime]System.Delegate
+		IL_0080: brfalse IL_00a0
 
-		IL_0080: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L9C31::.ctor()
-		IL_0085: stloc.3
-		IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008b: ldstr "unexpected number function"
-		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0095: pop
-		IL_0096: br IL_00b2
+		IL_0085: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L9C31::.ctor()
+		IL_008a: stloc.3
+		IL_008b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0090: ldstr "unexpected number function"
+		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009a: pop
+		IL_009b: br IL_00b7
 
-		IL_009b: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L11C7::.ctor()
-		IL_00a0: stloc.s 4
-		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a7: ldstr "not function"
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b1: pop
+		IL_00a0: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L11C7::.ctor()
+		IL_00a5: stloc.s 4
+		IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ac: ldstr "not function"
+		IL_00b1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b6: pop
 
-		IL_00b2: ldloc.1
-		IL_00b3: isinst [System.Runtime]System.Delegate
-		IL_00b8: brtrue IL_00d9
+		IL_00b7: ldloc.1
+		IL_00b8: isinst [System.Runtime]System.Delegate
+		IL_00bd: brtrue IL_00de
 
-		IL_00bd: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L15C38::.ctor()
-		IL_00c2: stloc.s 5
-		IL_00c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c9: ldstr "unexpected"
-		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d3: pop
-		IL_00d4: br IL_00f0
+		IL_00c2: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L15C38::.ctor()
+		IL_00c7: stloc.s 5
+		IL_00c9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ce: ldstr "unexpected"
+		IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d8: pop
+		IL_00d9: br IL_00f5
 
-		IL_00d9: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L17C7::.ctor()
-		IL_00de: stloc.s 6
-		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e5: ldstr "still function"
-		IL_00ea: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ef: pop
+		IL_00de: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual/Scope/Block_L17C7::.ctor()
+		IL_00e3: stloc.s 6
+		IL_00e5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ea: ldstr "still function"
+		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f4: pop
 
-		IL_00f0: ret
+		IL_00f5: ret
 	} // end of method BinaryOperator_TypeofFunctionStrictEqual::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypeofFunctionStrictEqual
@@ -289,7 +290,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219c
+		// Method begins at RVA 0x21a1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
