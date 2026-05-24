@@ -109,7 +109,17 @@ public static class Function
 
     internal static void ConfigureCallableObject(object functionValue, bool hasRestrictedProperties)
     {
-        PrototypeChain.SetPrototype(functionValue, hasRestrictedProperties ? RestrictedPropertiesPrototype : Prototype);
+        PrototypeChain.SetPrototype(functionValue, Prototype);
+        if (hasRestrictedProperties)
+        {
+            DefineRestrictedFunctionProperties(functionValue);
+        }
+    }
+
+    internal static void DefineRestrictedFunctionProperties(object functionValue)
+    {
+        DefineRestrictedProperty(functionValue, "caller");
+        DefineRestrictedProperty(functionValue, "arguments");
     }
 
     private static object? GetEffectiveThisArg(Delegate target, object? thisArg)
@@ -331,7 +341,7 @@ public static class Function
             InitializeFunctionInstance(functionValue);
             if (hasRestrictedProperties)
             {
-                ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
+                DefineRestrictedFunctionProperties(functionValue);
             }
 
             if (functionValue is Delegate del)

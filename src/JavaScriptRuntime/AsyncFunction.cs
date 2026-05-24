@@ -66,7 +66,7 @@ public static class AsyncFunction
         InitializeFunctionInstance(functionValue);
         if (hasRestrictedProperties)
         {
-            Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
+            Function.DefineRestrictedFunctionProperties(functionValue);
         }
 
         if (functionValue is Delegate del)

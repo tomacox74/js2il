@@ -264,7 +264,7 @@ public class RuntimeServices
         {
             Function.InitializeFunctionInstance(functionValue, length, functionName);
         }
-        Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
+        Function.DefineRestrictedFunctionProperties(functionValue);
 
         if (isGenerator)
         {
@@ -332,7 +332,7 @@ public class RuntimeServices
         {
             Function.InitializeFunctionInstance(functionValue, length, functionName);
         }
-        Function.ConfigureCallableObject(functionValue, hasRestrictedProperties: true);
+        Function.DefineRestrictedFunctionProperties(functionValue);
 
         if (isGenerator)
         {
