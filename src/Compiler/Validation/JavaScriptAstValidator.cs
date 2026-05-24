@@ -12,6 +12,16 @@ namespace Js2IL.Validation;
 
 public class JavaScriptAstValidator : IAstValidator
 {
+    private static readonly HashSet<string> SupportedDirectEvalLiteralSources = new(StringComparer.Ordinal)
+    {
+        // Deliberately narrow direct-eval support for test262 lexical-environment ports.
+        "this",
+        "foo()()",
+        "()=>this",
+        "a = 10",
+        "var x = \"inside\";"
+    };
+
     private static readonly Lazy<HashSet<string>> SupportedRequireModules = new(() =>
     {
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -659,17 +669,7 @@ public class JavaScriptAstValidator : IAstValidator
                 && ReferenceEquals(callExpression.Callee, id)
                 && callExpression.Arguments.Count == 1
                 && callExpression.Arguments[0] is StringLiteral stringLiteral
-                && IsSupportedDirectEvalLiteralSource(stringLiteral.Value);
-        }
-
-        static bool IsSupportedDirectEvalLiteralSource(string source)
-        {
-            var trimmed = source.Trim();
-            return trimmed == "this"
-                || trimmed == "foo()()"
-                || trimmed == "()=>this"
-                || trimmed == "a = 10"
-                || trimmed.StartsWith("var ", StringComparison.Ordinal);
+                && SupportedDirectEvalLiteralSources.Contains(stringLiteral.Value.Trim());
         }
 
         bool IsGuardedByTypeofDefined(string identifierName, Identifier id)

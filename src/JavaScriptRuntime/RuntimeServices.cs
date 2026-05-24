@@ -634,6 +634,9 @@ public class RuntimeServices
 
     private static bool IsPrototypeObjectForClass(object? receiver, Type ownerType)
     {
+        // JS permits calling prototype methods with the prototype object as the receiver
+        // (for example, C.prototype.m()). Generated CLR methods still need a declaring
+        // class instance target, so detect the runtime prototype object shape here.
         if (receiver is null || receiver is JsNull)
         {
             return false;

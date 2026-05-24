@@ -380,6 +380,8 @@ namespace Js2IL.Services
             // Scope types are always nested types in metadata. The specific enclosing TypeDef is resolved
             // later (once module + callable-owner + class TypeDefs exist) and emitted via NestedClass rows.
             //
+            // Closure bodies may need to access sibling/ancestor scope types directly when lexical
+            // environments are materialized across generated CLR nested-type boundaries.
             var typeVisibility = TypeAttributes.NestedPublic;
             var typeAttributes = typeVisibility | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
             var actualNamespace = string.Empty;

@@ -1041,7 +1041,7 @@ class HIRMethodBuilder
         return true;
     }
 
-    private static Expression? UnwrapClassExpression(Expression? expression)
+    private static Expression? UnwrapExpression(Expression? expression)
     {
         while (true)
         {
@@ -3383,7 +3383,7 @@ class HIRMethodBuilder
                     var targetSymbol = _currentScope.FindSymbol(assignTargetId.Name);
                     if (TryCreateClassExpressionNameValue(targetSymbol, out _))
                     {
-                        hirExpr = new HIRThrowTypeErrorExpression("Assignment to constant variable");
+                        hirExpr = new HIRThrowTypeErrorExpression("Cannot assign to class name in class expression");
                         return true;
                     }
 
@@ -3580,7 +3580,7 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    if (UnwrapClassExpression(classExpr.SuperClass) is Expression heritageExpression
+                    if (UnwrapExpression(classExpr.SuperClass) is Expression heritageExpression
                         && heritageExpression is not Identifier)
                     {
                         var heritageBuilder = new HIRMethodBuilder(classExprScope);
