@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-24T04:53:45Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -62,4 +62,14 @@
 | 21.3.2.35 | Math.tan ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.tan) |
 | 21.3.2.36 | Math.tanh ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.tanh) |
 | 21.3.2.37 | Math.trunc ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.trunc) |
+
+## Support
+
+Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 21.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math built-in function metadata (`name`, `length`, and descriptor surface) | Supported | `tests/Js2IL.Test262.Tests/built-ins/Math/abs/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/acos/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/floor/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/max/ExecutionTests.cs` |  | Math intrinsic methods now expose the expected callable metadata for the covered test262 cases, including function `name`, `length`, and property-descriptor characteristics on the static Math surface. |
 

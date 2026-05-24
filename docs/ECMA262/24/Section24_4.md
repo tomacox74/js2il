@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:29:49Z
+> Last generated (UTC): 2026-05-24T04:53:11Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -28,30 +28,30 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 24.4.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakset-iterable))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| new WeakSet() | Supported | [`WeakSet_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js) | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
-| new WeakSet(iterable) | Not Yet Supported |  | JavaScriptRuntime.WeakSet exposes only a parameterless constructor, so iterable initialization is not available. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| new WeakSet() | Supported | [`WeakSet_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js) |  | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
+| new WeakSet(iterable) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs` |  | WeakSet(iterable) now consumes iterable values through the constructor's adder path, covering the current test262 iterable-initialization cases. Weak-value validation and broader exotic iterator edge cases remain partial. |
 
 ### 24.4.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakSet constructor value and WeakSet.prototype surface | Supported with Limitations | [`WeakSet_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js) | JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction and the remaining WeakSet prototype gaps are still incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakSet constructor value and WeakSet.prototype surface | Supported with Limitations | [`WeakSet_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction is supported; the remaining WeakSet prototype gaps are still incomplete. |
 
 ### 24.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakset-prototype-object))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakSet.prototype.add / has / delete | Supported with Limitations | [`WeakSet_Add_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js)<br>[`WeakSet_Object_Values.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Object_Values.js) | Core WeakSet flows work for the object values used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-value restrictions for every non-null primitive or boxed value. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakSet.prototype.add / has / delete | Supported with Limitations | [`WeakSet_Add_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js)<br>[`WeakSet_Object_Values.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Object_Values.js) |  | Core WeakSet flows work for the object values used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-value restrictions for every non-null primitive or boxed value. |
 
 ### 24.4.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype-%symbol.tostringtag%))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakSet.prototype[@@toStringTag] | Not Yet Supported |  | WeakSet instances do not currently expose a symbol-keyed toStringTag property. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakSet.prototype[@@toStringTag] | Not Yet Supported |  |  | WeakSet instances do not currently expose a symbol-keyed toStringTag property. |
 
