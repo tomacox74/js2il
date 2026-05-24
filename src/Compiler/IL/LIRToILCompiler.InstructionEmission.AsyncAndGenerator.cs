@@ -175,9 +175,12 @@ internal sealed partial class LIRToILCompiler
 
                         // Create iterator result and store it into the args array
                         EmitLoadTempAsObject(yieldInstr.YieldedValue, ilEncoder, allocation, methodDescriptor);
-                        ilEncoder.LoadConstantI4(0);
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(iterCreateAsync);
+                        if (!yieldInstr.ReturnRawIteratorResult)
+                        {
+                            ilEncoder.LoadConstantI4(0);
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(iterCreateAsync);
+                        }
                         ilEncoder.OpCode(ILOpCode.Stelem_ref);
 
                         ilEncoder.OpCode(ILOpCode.Call);
@@ -287,15 +290,19 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.LoadConstantI4(yieldInstr.ResumeStateId);
                     EmitStoreFieldByName(ilEncoder, scopeName, "_genState");
 
-                    // Return { value: yielded, done: false }
+                    // Return { value: yielded, done: false } unless yield* is forwarding
+                    // the delegate iterator's result object directly.
                     EmitLoadTempAsObject(yieldInstr.YieldedValue, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.LoadConstantI4(0);
                     var iterCreate = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.IteratorResult),
                         nameof(JavaScriptRuntime.IteratorResult.Create),
                         parameterTypes: new[] { typeof(object), typeof(bool) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(iterCreate);
+                    if (!yieldInstr.ReturnRawIteratorResult)
+                    {
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(iterCreate);
+                    }
                     ilEncoder.OpCode(ILOpCode.Ret);
 
                     // Resume label

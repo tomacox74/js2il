@@ -58,9 +58,10 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-generator-function-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js"
         ],
-        "notes": "Supports yielding values and resumption via next()."
+        "notes": "Supports yielding values, parent-scope captures in yielded operands, and resumption via next()."
       },
       {
         "clause": "15.5.1",
@@ -71,9 +72,11 @@
           "tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js",
           "tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js",
           "tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js",
-          "tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js"
+          "tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-array.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js"
         ],
-        "notes": "Supports delegation to normalized indexables (arrays/strings/typed arrays) via NormalizeForOfIterable, and to nested js2il GeneratorObject instances with next/throw/return forwarding. Limitations: delegation to arbitrary user-defined iterators (custom next/return/throw objects) is not implemented; the normalized indexable path does not currently perform full iterator-protocol closing (IteratorClose/iterator.return) when the delegating generator is stopped via return()/throw(); throw/return propagation through try/finally remains incomplete."
+        "notes": "Supports delegation through the iterator protocol for arrays, strings, typed arrays, nested js2il GeneratorObject instances, and user-defined [Symbol.iterator] iterables. Limitations: full custom throw/return forwarding and IteratorClose behavior for abrupt delegating-generator completion remain incomplete; throw/return propagation through try/finally remains incomplete."
       }
     ]
   }

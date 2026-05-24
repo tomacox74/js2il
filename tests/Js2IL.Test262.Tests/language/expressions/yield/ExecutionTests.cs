@@ -6,7 +6,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.yield") { }
 
-    [Fact(DisplayName = "captured-free-vars", Skip = "Blocked by existing generator scope capture issue.")]
+    [Fact(DisplayName = "captured-free-vars")]
     public Task captured_free_vars()
         => ExecutionTest("captured-free-vars");
 
@@ -30,7 +30,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task star_array()
         => ExecutionTest("star-array");
 
-    [Fact(DisplayName = "star-iterable", Skip = "Blocked by current generator iterable local-storage compilation issue.")]
+    [Fact(DisplayName = "star-iterable")]
     public Task star_iterable()
         => ExecutionTest("star-iterable");
 

@@ -98,6 +98,22 @@ internal sealed partial class LIRToILCompiler
 
             case LIRThrow throwInstr:
                 {
+                    if (MethodBody.IsAsync
+                        && MethodBody.AsyncInfo is not { HasAwaits: true }
+                        && !MethodBody.IsGenerator
+                        && !methodDescriptor.ReturnsVoid)
+                    {
+                        EmitLoadTempAsObject(throwInstr.Value, ilEncoder, allocation, methodDescriptor);
+                        var rejectRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            nameof(JavaScriptRuntime.Promise.reject),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(rejectRef);
+                        ilEncoder.OpCode(ILOpCode.Ret);
+                        return true;
+                    }
+
                     // Throw JS value: if already a CLR Exception, throw it; otherwise wrap.
                     var throwException = ilEncoder.DefineLabel();
                     var exceptionType = _typeReferenceRegistry.GetOrAdd(typeof(System.Exception));

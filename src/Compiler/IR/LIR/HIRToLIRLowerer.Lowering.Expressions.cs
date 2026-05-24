@@ -546,7 +546,9 @@ public sealed partial class HIRToLIRLowerer
                 if (_environmentLayout != null)
                 {
                     var storage = _environmentLayout.GetStorage(binding);
-                    if (storage == null && _scope != null && binding.IsCaptured)
+                    if (storage == null
+                        && _scope != null
+                        && binding.IsCaptured)
                     {
                         // Fallback: if the environment layout didn't include this binding (e.g., due to
                         // a BindingInfo identity mismatch or overly-conservative storage map), try to

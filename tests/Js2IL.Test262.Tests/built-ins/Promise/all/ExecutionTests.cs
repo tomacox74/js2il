@@ -6,15 +6,15 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Promise.all") { }
 
-    [Fact(DisplayName = "length", Skip = "Blocked by current Promise.all metadata/descriptor surface.")]
+    [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTestFromFile("length");
 
-    [Fact(DisplayName = "name", Skip = "Blocked by current Promise.all metadata/descriptor surface.")]
+    [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
 
-    [Fact(DisplayName = "prop-desc", Skip = "Blocked by current Promise.all metadata/descriptor surface.")]
+    [Fact(DisplayName = "prop-desc")]
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
 

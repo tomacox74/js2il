@@ -6,11 +6,11 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("language.statements.async_function") { }
 
-    [Fact(DisplayName = "declaration-returns-promise", Skip = "Blocked by current async function Promise identity semantics.")]
+    [Fact(DisplayName = "declaration-returns-promise")]
     public Task declaration_returns_promise()
         => ExecutionTest("declaration-returns-promise");
 
-    [Fact(DisplayName = "dflt-params-ref-prior", Skip = "Blocked by current async function default-parameter binding semantics.")]
+    [Fact(DisplayName = "dflt-params-ref-prior")]
     public Task dflt_params_ref_prior()
         => ExecutionTest("dflt-params-ref-prior");
 

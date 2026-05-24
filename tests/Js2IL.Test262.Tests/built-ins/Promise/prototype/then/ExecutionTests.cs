@@ -6,11 +6,11 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Promise.prototype.then") { }
 
-    [Fact(DisplayName = "length", Skip = "Blocked by current Promise.prototype.then length/name metadata surface.")]
+    [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTestFromFile("length");
 
-    [Fact(DisplayName = "name", Skip = "Blocked by current Promise.prototype.then length/name metadata surface.")]
+    [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
 

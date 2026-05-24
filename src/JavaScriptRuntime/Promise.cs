@@ -9,6 +9,9 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("Promise")]
 public sealed class Promise
 {
+    private static readonly Func<object[], object?[]?, object?> PrototypeThenValue = PrototypeThen;
+    private static readonly Func<object[], object?[]?, object?> PrototypeCatchValue = PrototypeCatch;
+    private static readonly Func<object[], object?[]?, object?> PrototypeFinallyValue = PrototypeFinally;
     internal static readonly object Prototype = CreatePrototype();
 
     // Nested types
@@ -50,9 +53,16 @@ public sealed class Promise
     private static object CreatePrototype()
     {
         var prototype = new JsObject();
-        DefineDataProperty(prototype, "then", (Func<object[], object?[]?, object?>)PrototypeThen);
-        DefineDataProperty(prototype, "catch", (Func<object[], object?[]?, object?>)PrototypeCatch);
-        DefineDataProperty(prototype, "finally", (Func<object[], object?[]?, object?>)PrototypeFinally);
+        Function.InitializeFunctionInstance(PrototypeThenValue, 2d, "then");
+        Function.MarkUndefinedPrototype(PrototypeThenValue);
+        Function.InitializeFunctionInstance(PrototypeCatchValue, 1d, "catch");
+        Function.MarkUndefinedPrototype(PrototypeCatchValue);
+        Function.InitializeFunctionInstance(PrototypeFinallyValue, 1d, "finally");
+        Function.MarkUndefinedPrototype(PrototypeFinallyValue);
+
+        DefineDataProperty(prototype, "then", PrototypeThenValue);
+        DefineDataProperty(prototype, "catch", PrototypeCatchValue);
+        DefineDataProperty(prototype, "finally", PrototypeFinallyValue);
         PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
         {
             Kind = JsPropertyDescriptorKind.Data,

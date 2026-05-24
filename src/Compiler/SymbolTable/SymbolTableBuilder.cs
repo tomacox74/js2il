@@ -1853,6 +1853,14 @@ namespace Js2IL.SymbolTables
                     CollectFreeVariables(rs.Argument, localVariables, targetVariables, result);
                     break;
 
+                case YieldExpression ye:
+                    CollectFreeVariables(ye.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case AwaitExpression ae:
+                    CollectFreeVariables(ae.Argument, localVariables, targetVariables, result);
+                    break;
+
                 case ThrowStatement ts:
                     CollectFreeVariables(ts.Argument, localVariables, targetVariables, result);
                     break;

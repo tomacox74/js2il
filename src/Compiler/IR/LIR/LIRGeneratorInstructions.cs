@@ -14,7 +14,8 @@ public record LIRYield(
     int ResumeStateId,
     int ResumeLabelId,
     TempVariable Result,
-    bool HandleThrowReturn = true) : LIRInstruction;
+    bool HandleThrowReturn = true,
+    bool ReturnRawIteratorResult = false) : LIRInstruction;
 
 /// <summary>
 /// Multi-way branch based on generator state.

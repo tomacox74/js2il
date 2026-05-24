@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-24T19:52:59Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -35,22 +35,23 @@ _Lists clause numbers/titles/links only (no spec text)._
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 27.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-generator-prototype))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Generator objects support next/return/throw, yield*/iterator delegation, and unwinding through try/catch/finally (including while suspended at yield) on return/throw | Supported | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_TryFinally_ReturnWhileSuspended.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_ReturnWhileSuspended.js)<br>[`Generator_TryFinally_ThrowWhileSuspended.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_ThrowWhileSuspended.js)<br>[`Generator_TryFinally_Nested_ReturnWhileSuspended.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_Nested_ReturnWhileSuspended.js)<br>[`Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields.js)<br>[`Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow.js)<br>[`Generator_TryCatchFinally_ThrowWhileSuspended_Nested.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_Nested.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_PassNextValue.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js)<br>[`formal-parameters.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/formal-parameters.js)<br>[`from-catch.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/from-catch.js)<br>[`from-try.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/from-try.js)<br>[`rhs-yield.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/rhs-yield.js)<br>[`star-array.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-array.js) | Checked-in test262 generator ports now cover plain yield sequencing, yield inside try/catch, and yield* array delegation in addition to the existing project-level generator regressions. The related captured-free-variable and custom iterable yield* ports are also checked in as explicit skips pending the current generator scope-capture and iterable local-storage compilation gaps. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generator objects support next/return/throw, yield*/iterator delegation, and unwinding through try/catch/finally (including while suspended at yield) on return/throw | Supported | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`Generator_TryFinally_ReturnWhileSuspended.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_ReturnWhileSuspended.js)<br>[`Generator_TryFinally_ThrowWhileSuspended.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_ThrowWhileSuspended.js)<br>[`Generator_TryFinally_Nested_ReturnWhileSuspended.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryFinally_Nested_ReturnWhileSuspended.js)<br>[`Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_CatchYields.js)<br>[`Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_Rethrow.js)<br>[`Generator_TryCatchFinally_ThrowWhileSuspended_Nested.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_TryCatchFinally_ThrowWhileSuspended_Nested.js)<br>[`Generator_YieldStar_ArrayBasic.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_PassNextValue.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js)<br>[`formal-parameters.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/formal-parameters.js)<br>[`from-catch.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/from-catch.js)<br>[`from-try.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/from-try.js)<br>[`rhs-yield.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/rhs-yield.js)<br>[`captured-free-vars.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js)<br>[`star-array.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-array.js)<br>[`star-iterable.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js) |  | Checked-in test262 generator ports now cover plain yield sequencing, yielded parent-scope captures, yield inside try/catch, yield* array delegation, and yield* delegation to custom [Symbol.iterator] iterables in addition to the existing project-level generator regressions. |
 
 ### 27.5.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-generator.prototype.constructor))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| %GeneratorPrototype%.constructor — stable function object, same for all generator instances | Supported | [`Generator_Prototype_Constructor.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_Prototype_Constructor.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %GeneratorPrototype%.constructor — stable function object, same for all generator instances | Supported | [`Generator_Prototype_Constructor.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_Prototype_Constructor.js) |  |  |
 
 ### 27.5.1.5 ([tc39.es](https://tc39.es/ecma262/#sec-generator.prototype-%symbol.tostringtag%))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| %GeneratorPrototype%[@@toStringTag] — Object.prototype.toString.call(gen) returns "[object Generator]" | Supported | [`Generator_Prototype_ToStringTag.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| %GeneratorPrototype%[@@toStringTag] — Object.prototype.toString.call(gen) returns "[object Generator]" | Supported | [`Generator_Prototype_ToStringTag.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_Prototype_ToStringTag.js) |  |  |
+

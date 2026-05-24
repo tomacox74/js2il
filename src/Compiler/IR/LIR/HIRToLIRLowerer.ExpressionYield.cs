@@ -57,16 +57,16 @@ public sealed partial class HIRToLIRLowerer
             resultTempVar = CreateTempVariable();
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-            // Type check: if argument is a js2il GeneratorObject, delegate via next/throw/return forwarding.
-            var isGenObjTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.GeneratorObject), yieldedStarArg, isGenObjTemp));
-            DefineTempStorage(isGenObjTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            // Delegate via the ECMAScript iterator protocol.
+            var iteratorTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetIterator), new[] { yieldedStarArg }, iteratorTemp));
+            DefineTempStorage(iteratorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.IJavaScriptIterator)));
 
             int iteratorSetupLabel = CreateLabel();
             int indexSetupLabel = CreateLabel();
 
-            // If isGenObjTemp != null -> iterator path
-            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isGenObjTemp, iteratorSetupLabel));
+            // Iterator protocol objects are truthy, so use the iterator path.
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(iteratorTemp, iteratorSetupLabel));
             _methodBodyIR.Instructions.Add(new LIRLabel(indexSetupLabel));
 
             // ---------------------------
@@ -178,7 +178,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRConstNumber(2.0, twoTemp));
             DefineTempStorage(twoTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
             _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarMode), twoTemp));
-            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), isGenObjTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._yieldStarTarget), iteratorTemp));
 
             // Local flag: whether the current delegated step was triggered by generator.return(...)
             var wasReturnTemp = CreateTempVariable();
@@ -286,48 +286,31 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRBuildArray(new[] { EnsureObject(nextArg) }, argsArr));
                 DefineTempStorage(argsArr, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                _methodBodyIR.Instructions.Add(new LIRCallMember(iterObj, "next", argsArr, iterResult));
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorNextForYieldStar), new[] { EnsureObject(iterObj) }, iterResult));
                 _methodBodyIR.Instructions.Add(new LIRBranch(iterAfterCall));
             }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(iterAfterCall));
 
-            // done = ToBoolean(result.done)
-            var doneKey = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString("done", doneKey));
-            DefineTempStorage(doneKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-            var valueKey = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConstString("value", valueKey));
-            DefineTempStorage(valueKey, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
-            var doneObj = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(doneKey), doneObj));
-            DefineTempStorage(doneObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
             var doneBool = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(doneObj, doneBool));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultDone), new[] { EnsureObject(iterResult) }, doneBool));
             DefineTempStorage(doneBool, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(doneBool, iterDone));
 
-            // yield result.value
-            var yieldedVal = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(valueKey), yieldedVal));
-            DefineTempStorage(yieldedVal, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
             _methodBodyIR.Instructions.Add(new LIRYield(
-                yieldedVal,
+                iterResult,
                 iterResumeStateId,
                 iterResumeLabel,
                 iterYieldResultTemp,
-                HandleThrowReturn: false));
+                HandleThrowReturn: false,
+                ReturnRawIteratorResult: true));
 
             _methodBodyIR.Instructions.Add(new LIRBranch(iterLoopStart));
 
             _methodBodyIR.Instructions.Add(new LIRLabel(iterDone));
 
             var finalVal = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(EnsureObject(iterResult), EnsureObject(valueKey), finalVal));
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.IteratorResultValue), new[] { EnsureObject(iterResult) }, finalVal));
             DefineTempStorage(finalVal, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             // Clear delegation state.

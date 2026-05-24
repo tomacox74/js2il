@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- tests/docs/test262: port 40 additional Promise/async/generator `test262` cases into `tests/Js2IL.Test262.Tests`, keep the currently unsupported Promise metadata, async parameter-binding, and generator storage cases checked in as explicit skipped coverage, and refresh the linked ECMA-262 evidence docs for the strengthened async/generator areas.
+- compiler/runtime/tests/docs/test262: port and unskip 40 additional Promise/async/generator `test262` cases, including Promise static/prototype function metadata, async no-await Promise completion/rejection semantics, and generator `yield`/`yield*` parent-scope and iterator delegation coverage.
 
 ## v0.9.25 - 2026-05-24
 
