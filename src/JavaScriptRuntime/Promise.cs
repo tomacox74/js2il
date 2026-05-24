@@ -156,7 +156,7 @@ public sealed class Promise
 
         object? capabilityResolve = null;
         object? capabilityReject = null;
-        Func<object[], object?, object?, object?> executor = (_, resolveArg, rejectArg) =>
+        Func<object[], object?, object?, object?> executor = (scopes, resolveArg, rejectArg) =>
         {
             if (capabilityResolve is not null || capabilityReject is not null)
             {
