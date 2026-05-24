@@ -6,7 +6,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Math") { }
 
-    [Fact(DisplayName = "not-a-constructor")]
+    [Fact(DisplayName = "ceil/not-a-constructor")]
     public Task ceil_not_a_constructor()
         => ExecutionTestFromFile("ceil/not-a-constructor");
 
@@ -22,7 +22,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task min_15_8_2_12_1()
         => ExecutionTestFromFile("min/15.8.2.12-1");
 
-    [Fact(DisplayName = "not-a-constructor")]
+    [Fact(DisplayName = "round/not-a-constructor")]
     public Task round_not_a_constructor()
         => ExecutionTestFromFile("round/not-a-constructor");
 
@@ -34,7 +34,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task sign_sign_specialVals()
         => ExecutionTestFromFile("sign/sign-specialVals");
 
-    [Fact(DisplayName = "not-a-constructor")]
+    [Fact(DisplayName = "sign/not-a-constructor")]
     public Task sign_not_a_constructor()
         => ExecutionTestFromFile("sign/not-a-constructor");
 }

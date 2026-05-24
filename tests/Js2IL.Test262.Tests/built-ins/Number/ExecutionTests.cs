@@ -38,11 +38,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task return_abrupt_tonumber_value()
         => ExecutionTestFromFile("return-abrupt-tonumber-value");
 
-    [Fact(DisplayName = "value")]
+    [Fact(DisplayName = "POSITIVE_INFINITY/value")]
     public Task POSITIVE_INFINITY_value()
         => ExecutionTestFromFile("POSITIVE_INFINITY/value");
 
-    [Fact(DisplayName = "value")]
+    [Fact(DisplayName = "NEGATIVE_INFINITY/value")]
     public Task NEGATIVE_INFINITY_value()
         => ExecutionTestFromFile("NEGATIVE_INFINITY/value");
 
