@@ -320,6 +320,7 @@ public sealed partial class HIRToLIRLowerer
                 {
                     return false;
                 }
+                _needsReturnEpilogueBlock = true;
                 lirInstructions.Add(new LIRLeave(_methodBodyIR.ReturnEpilogueLabelId.Value));
                 lirInstructions.Add(new LIRLabel(endLabel));
 
