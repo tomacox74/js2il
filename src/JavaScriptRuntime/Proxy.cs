@@ -33,7 +33,7 @@ namespace JavaScriptRuntime
             return value is Delegate;
         }
 
-        public Proxy(object target, object handler)
+        public Proxy(object? target, object? handler)
         {
             if (!IsObjectLikeValue(target))
             {
@@ -105,7 +105,7 @@ namespace JavaScriptRuntime
             _handler = null;
         }
 
-        public static object revocable(object target, object handler)
+        public static object revocable(object? target, object? handler)
         {
             var proxy = new Proxy(target, handler);
             var result = new ExpandoObject();

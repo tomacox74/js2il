@@ -215,7 +215,7 @@ public static class Function
             return ToSourceString(del);
         }
 
-        private static object?[] ToApplyArguments(object? argArray)
+        private static object?[] NormalizeApplyArguments(object? argArray)
         {
             if (argArray is null || argArray is JsNull)
             {
@@ -249,7 +249,7 @@ public static class Function
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
 
-            var argsList = ToApplyArguments(argArray);
+            var argsList = NormalizeApplyArguments(argArray);
             var effectiveThis = GetEffectiveThisArg(target, thisArg);
             var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
             try
@@ -271,7 +271,7 @@ public static class Function
 
             if (target is Proxy proxy && proxy.IsCallableTarget)
             {
-                var argsList = ToApplyArguments(argArray);
+                var argsList = NormalizeApplyArguments(argArray);
                 var prevThis = RuntimeServices.SetCurrentThis(thisArg);
                 try
                 {

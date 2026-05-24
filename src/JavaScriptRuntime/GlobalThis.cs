@@ -119,15 +119,15 @@ namespace JavaScriptRuntime
                 throw new global::JavaScriptRuntime.TypeError("Constructor Proxy requires 'new'");
             }
 
-            return new global::JavaScriptRuntime.Proxy(target!, handler!);
+            return new global::JavaScriptRuntime.Proxy(target, handler);
         };
 
         private static readonly Func<object[], object?[]?, object?> _proxyRevocableValue = static (_, args) =>
         {
             args ??= global::System.Array.Empty<object?>();
             return global::JavaScriptRuntime.Proxy.revocable(
-                args.Length > 0 ? args[0]! : null!,
-                args.Length > 1 ? args[1]! : null!);
+                args.Length > 0 ? args[0] : null,
+                args.Length > 1 ? args[1] : null);
         };
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
