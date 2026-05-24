@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-22T11:35:45Z
+> Last generated (UTC): 2026-05-24T04:58:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -78,6 +78,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | Closures capture and mutate outer variables | Supported with Limitations | [`Function_Closure_MultiLevel_ReadWriteAcrossScopes.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js) |  | Closures are implemented via the scope-as-class model (scope instances hold variables as fields). |
 | Function instances are callable (basic invocation) | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js) |  | JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). Function.prototype.apply and Function.prototype.bind are supported for delegate-backed function values; most other Function.prototype APIs are not implemented. |
+| intrinsic async/generator constructor objects as callable/extensible function values | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/AsyncFunction/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/GeneratorFunction/ExecutionTests.cs` |  | The intrinsic constructor objects associated with async functions, generator functions, and async generator functions are exposed as first-class function values with the covered test262 length/extensibility/prototype surface. Full dynamic construction, subclassing, and the remaining advanced constructor scenarios are still tracked separately. |
 | Method calls set dynamic this; arrow functions capture lexical this | Supported with Limitations | [`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`ArrowFunction_LexicalThis_CreatedInMethod.js`](../../../tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js) |  | Normal functions support receiver-based this for member calls; arrow functions implement lexical this binding via runtime helpers. |
 
 ### 20.2.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-function-instances-length))
