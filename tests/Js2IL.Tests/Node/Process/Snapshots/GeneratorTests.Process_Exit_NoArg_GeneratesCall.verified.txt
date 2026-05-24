@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2073
+			// Method begins at RVA 0x207a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,19 +40,23 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 23 (0x17)
+		// Code size: 30 (0x1e)
 		.maxstack 8
-		.locals (
-			[0] class Modules.Process_Exit_NoArg_GeneratesCall/Scope
+		.locals init (
+			[0] class Modules.Process_Exit_NoArg_GeneratesCall/Scope,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.Process_Exit_NoArg_GeneratesCall/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_000b: ldstr "exit"
-		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0015: pop
-		IL_0016: ret
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: ldstr "exit"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_001c: pop
+		IL_001d: ret
 	} // end of method Process_Exit_NoArg_GeneratesCall::__js_module_init__
 
 } // end of class Modules.Process_Exit_NoArg_GeneratesCall
@@ -64,7 +68,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x207c
+		// Method begins at RVA 0x2083
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

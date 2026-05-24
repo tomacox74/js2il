@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2556
+				// Method begins at RVA 0x25a9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,23 +49,32 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21db
-			// Header size: 1
-			// Code size: 36 (0x24)
+			// Method begins at RVA 0x21e4
+			// Header size: 12
+			// Code size: 50 (0x32)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.1
-			IL_0001: ldstr "setEncoding"
-			IL_0006: ldstr "utf8"
-			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0010: pop
-			IL_0011: ldarg.1
-			IL_0012: ldstr "end"
-			IL_0017: ldstr "pong"
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0021: pop
-			IL_0022: ldnull
-			IL_0023: ret
+			IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldstr "setEncoding"
+			IL_000d: ldstr "utf8"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0017: pop
+			IL_0018: ldarg.1
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_001e: stloc.0
+			IL_001f: ldloc.0
+			IL_0020: ldstr "end"
+			IL_0025: ldstr "pong"
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002f: pop
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method ArrowFunction_L6C65::__js_call__
 
 	} // end of class ArrowFunction_L6C65
@@ -85,7 +94,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2573
+					// Method begins at RVA 0x25c6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -109,9 +118,9 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2390
+				// Method begins at RVA 0x23d0
 				// Header size: 12
-				// Code size: 278 (0x116)
+				// Code size: 292 (0x124)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -129,97 +138,103 @@
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 				IL_0017: stloc.0
 				IL_0018: ldloc.0
-				IL_0019: ldstr "setEncoding"
-				IL_001e: ldstr "utf8"
-				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0028: pop
-				IL_0029: ldarg.0
-				IL_002a: ldc.i4.1
-				IL_002b: ldelem.ref
-				IL_002c: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
-				IL_0031: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-				IL_0036: ldstr "Cannot access 'client' before initialization"
-				IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_0040: stloc.0
-				IL_0041: ldloc.0
-				IL_0042: ldstr "encrypted"
-				IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_004c: stloc.0
-				IL_004d: ldstr "client secure:"
-				IL_0052: ldloc.0
-				IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0058: stloc.1
-				IL_0059: ldloc.1
-				IL_005a: ldstr ":"
-				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0064: stloc.1
-				IL_0065: ldarg.0
-				IL_0066: ldc.i4.1
-				IL_0067: ldelem.ref
-				IL_0068: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
-				IL_006d: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-				IL_0072: ldstr "Cannot access 'client' before initialization"
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_007c: stloc.0
-				IL_007d: ldloc.0
-				IL_007e: ldstr "authorized"
-				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0088: stloc.0
-				IL_0089: ldloc.1
-				IL_008a: ldloc.0
-				IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0090: stloc.1
-				IL_0091: ldloc.1
-				IL_0092: ldstr ":"
-				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_009c: stloc.1
-				IL_009d: ldarg.0
-				IL_009e: ldc.i4.1
-				IL_009f: ldelem.ref
-				IL_00a0: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
-				IL_00a5: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-				IL_00aa: ldstr "Cannot access 'client' before initialization"
-				IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_00b4: stloc.0
-				IL_00b5: ldloc.0
-				IL_00b6: ldstr "authorizationError"
-				IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00c0: stloc.0
-				IL_00c1: ldloc.0
-				IL_00c2: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-				IL_00c7: ldc.i4.0
-				IL_00c8: ceq
-				IL_00ca: stloc.2
-				IL_00cb: ldloc.2
-				IL_00cc: ldc.i4.0
-				IL_00cd: ceq
-				IL_00cf: stloc.2
-				IL_00d0: ldloc.2
-				IL_00d1: box [System.Runtime]System.Boolean
-				IL_00d6: stloc.3
-				IL_00d7: ldloc.1
-				IL_00d8: ldloc.3
-				IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00de: stloc.1
-				IL_00df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00e4: ldloc.1
-				IL_00e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00ea: pop
-				IL_00eb: ldarg.0
-				IL_00ec: ldc.i4.1
-				IL_00ed: ldelem.ref
-				IL_00ee: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
-				IL_00f3: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-				IL_00f8: ldstr "Cannot access 'client' before initialization"
-				IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_0102: stloc.0
-				IL_0103: ldloc.0
-				IL_0104: ldstr "write"
-				IL_0109: ldstr "ping"
-				IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0113: pop
-				IL_0114: ldnull
-				IL_0115: ret
+				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_001e: stloc.0
+				IL_001f: ldloc.0
+				IL_0020: ldstr "setEncoding"
+				IL_0025: ldstr "utf8"
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_002f: pop
+				IL_0030: ldarg.0
+				IL_0031: ldc.i4.1
+				IL_0032: ldelem.ref
+				IL_0033: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
+				IL_0038: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+				IL_003d: ldstr "Cannot access 'client' before initialization"
+				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0047: stloc.0
+				IL_0048: ldloc.0
+				IL_0049: ldstr "encrypted"
+				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0053: stloc.0
+				IL_0054: ldstr "client secure:"
+				IL_0059: ldloc.0
+				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_005f: stloc.1
+				IL_0060: ldloc.1
+				IL_0061: ldstr ":"
+				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_006b: stloc.1
+				IL_006c: ldarg.0
+				IL_006d: ldc.i4.1
+				IL_006e: ldelem.ref
+				IL_006f: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
+				IL_0074: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+				IL_0079: ldstr "Cannot access 'client' before initialization"
+				IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0083: stloc.0
+				IL_0084: ldloc.0
+				IL_0085: ldstr "authorized"
+				IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_008f: stloc.0
+				IL_0090: ldloc.1
+				IL_0091: ldloc.0
+				IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0097: stloc.1
+				IL_0098: ldloc.1
+				IL_0099: ldstr ":"
+				IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00a3: stloc.1
+				IL_00a4: ldarg.0
+				IL_00a5: ldc.i4.1
+				IL_00a6: ldelem.ref
+				IL_00a7: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
+				IL_00ac: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+				IL_00b1: ldstr "Cannot access 'client' before initialization"
+				IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_00bb: stloc.0
+				IL_00bc: ldloc.0
+				IL_00bd: ldstr "authorizationError"
+				IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00c7: stloc.0
+				IL_00c8: ldloc.0
+				IL_00c9: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+				IL_00ce: ldc.i4.0
+				IL_00cf: ceq
+				IL_00d1: stloc.2
+				IL_00d2: ldloc.2
+				IL_00d3: ldc.i4.0
+				IL_00d4: ceq
+				IL_00d6: stloc.2
+				IL_00d7: ldloc.2
+				IL_00d8: box [System.Runtime]System.Boolean
+				IL_00dd: stloc.3
+				IL_00de: ldloc.1
+				IL_00df: ldloc.3
+				IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00e5: stloc.1
+				IL_00e6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00eb: ldloc.1
+				IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_00f1: pop
+				IL_00f2: ldarg.0
+				IL_00f3: ldc.i4.1
+				IL_00f4: ldelem.ref
+				IL_00f5: castclass Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope
+				IL_00fa: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+				IL_00ff: ldstr "Cannot access 'client' before initialization"
+				IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0109: stloc.0
+				IL_010a: ldloc.0
+				IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0110: stloc.0
+				IL_0111: ldloc.0
+				IL_0112: ldstr "write"
+				IL_0117: ldstr "ping"
+				IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0121: pop
+				IL_0122: ldnull
+				IL_0123: ret
 			} // end of method ArrowFunction_L17C5::__js_call__
 
 		} // end of class ArrowFunction_L17C5
@@ -242,7 +257,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x257c
+					// Method begins at RVA 0x25cf
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -266,7 +281,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x24b4
+				// Method begins at RVA 0x2500
 				// Header size: 12
 				// Code size: 26 (0x1a)
 				.maxstack 8
@@ -303,7 +318,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x258e
+						// Method begins at RVA 0x25e1
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -326,7 +341,7 @@
 					.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 						01 00 00 00 00 00 00 00
 					)
-					// Method begins at RVA 0x253a
+					// Method begins at RVA 0x258d
 					// Header size: 1
 					// Code size: 18 (0x12)
 					.maxstack 8
@@ -348,7 +363,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2585
+					// Method begins at RVA 0x25d8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -372,48 +387,52 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x24dc
+				// Method begins at RVA 0x2528
 				// Header size: 12
-				// Code size: 82 (0x52)
+				// Code size: 89 (0x59)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L28C22/Scope,
-					[1] object
+					[1] object,
+					[2] object
 				)
 
 				IL_0000: newobj instance void Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L28C22/Scope::.ctor()
 				IL_0005: stloc.0
-				IL_0006: ldnull
-				IL_0007: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L28C22/ArrowFunction_L29C18::__js_call__(object)
-				IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-				IL_0012: ldc.i4.1
-				IL_0013: newarr [System.Runtime]System.Object
-				IL_0018: dup
-				IL_0019: ldc.i4.0
-				IL_001a: ldarg.0
-				IL_001b: ldc.i4.0
-				IL_001c: ldelem.ref
-				IL_001d: stelem.ref
-				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-				IL_0028: ldc.i4.0
-				IL_0029: conv.r8
-				IL_002a: ldstr ""
-				IL_002f: ldc.i4.0
-				IL_0030: ldc.i4.1
-				IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_0036: stloc.1
-				IL_0037: ldarg.0
-				IL_0038: ldc.i4.0
-				IL_0039: ldelem.ref
-				IL_003a: castclass Modules.Tls_CreateServer_Connect_Basic/Scope
-				IL_003f: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
-				IL_0044: ldstr "close"
-				IL_0049: ldloc.1
-				IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_004f: pop
-				IL_0050: ldnull
-				IL_0051: ret
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Tls_CreateServer_Connect_Basic/Scope
+				IL_000e: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
+				IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0018: stloc.1
+				IL_0019: ldnull
+				IL_001a: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L28C22/ArrowFunction_L29C18::__js_call__(object)
+				IL_0020: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+				IL_0025: ldc.i4.1
+				IL_0026: newarr [System.Runtime]System.Object
+				IL_002b: dup
+				IL_002c: ldc.i4.0
+				IL_002d: ldarg.0
+				IL_002e: ldc.i4.0
+				IL_002f: ldelem.ref
+				IL_0030: stelem.ref
+				IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+				IL_003b: ldc.i4.0
+				IL_003c: conv.r8
+				IL_003d: ldstr ""
+				IL_0042: ldc.i4.0
+				IL_0043: ldc.i4.1
+				IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_0049: stloc.2
+				IL_004a: ldloc.1
+				IL_004b: ldstr "close"
+				IL_0050: ldloc.2
+				IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0056: pop
+				IL_0057: ldnull
+				IL_0058: ret
 			} // end of method ArrowFunction_L28C22::__js_call__
 
 		} // end of class ArrowFunction_L28C22
@@ -432,7 +451,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x255f
+				// Method begins at RVA 0x25b2
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -461,9 +480,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0a 00 00 02
 			)
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x2224
 			// Header size: 12
-			// Code size: 386 (0x182)
+			// Code size: 414 (0x19e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope,
@@ -478,139 +497,149 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
-			IL_000c: ldstr "address"
-			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0016: stloc.2
-			IL_0017: ldloc.2
-			IL_0018: stloc.1
-			IL_0019: ldstr "listening:"
-			IL_001e: ldloc.1
-			IL_001f: ldstr "address"
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002e: stloc.3
-			IL_002f: ldloc.3
-			IL_0030: ldstr ":ready"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003a: stloc.3
-			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0040: ldloc.3
-			IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0046: pop
-			IL_0047: ldarg.0
-			IL_0048: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::'tls'
-			IL_004d: stloc.2
-			IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0053: dup
-			IL_0054: ldstr "port"
-			IL_0059: ldloc.1
-			IL_005a: ldstr "port"
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0064: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0069: dup
-			IL_006a: ldstr "host"
-			IL_006f: ldstr "127.0.0.1"
-			IL_0074: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0079: dup
-			IL_007a: ldstr "rejectUnauthorized"
-			IL_007f: ldc.i4.0
-			IL_0080: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0085: stloc.s 4
-			IL_0087: ldnull
-			IL_0088: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L17C5::__js_call__(object[], object)
-			IL_008e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_0093: ldc.i4.2
-			IL_0094: newarr [System.Runtime]System.Object
-			IL_0099: dup
-			IL_009a: ldc.i4.0
-			IL_009b: ldarg.0
-			IL_009c: stelem.ref
-			IL_009d: dup
-			IL_009e: ldc.i4.1
-			IL_009f: ldloc.0
-			IL_00a0: stelem.ref
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_00ab: ldc.i4.0
-			IL_00ac: conv.r8
-			IL_00ad: ldstr ""
-			IL_00b2: ldc.i4.0
-			IL_00b3: ldc.i4.1
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_00b9: stloc.s 5
-			IL_00bb: ldloc.2
-			IL_00bc: ldstr "connect"
-			IL_00c1: ldloc.s 4
-			IL_00c3: ldloc.s 5
-			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00ca: stloc.s 5
-			IL_00cc: ldloc.0
-			IL_00cd: ldloc.s 5
-			IL_00cf: stfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-			IL_00d4: ldloc.0
-			IL_00d5: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-			IL_00da: ldstr "Cannot access 'client' before initialization"
-			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_00e4: stloc.s 5
-			IL_00e6: ldnull
-			IL_00e7: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L24C21::__js_call__(object, object)
-			IL_00ed: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_00f2: ldc.i4.1
-			IL_00f3: newarr [System.Runtime]System.Object
-			IL_00f8: dup
-			IL_00f9: ldc.i4.0
-			IL_00fa: ldarg.0
-			IL_00fb: stelem.ref
-			IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0106: ldc.i4.1
-			IL_0107: conv.r8
-			IL_0108: ldstr ""
-			IL_010d: ldc.i4.0
-			IL_010e: ldc.i4.1
-			IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0114: stloc.2
-			IL_0115: ldloc.s 5
-			IL_0117: ldstr "on"
-			IL_011c: ldstr "data"
-			IL_0121: ldloc.2
-			IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0127: pop
-			IL_0128: ldloc.0
-			IL_0129: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
-			IL_012e: ldstr "Cannot access 'client' before initialization"
-			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0138: stloc.2
-			IL_0139: ldnull
-			IL_013a: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L28C22::__js_call__(object[], object)
-			IL_0140: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
-			IL_0145: ldc.i4.2
-			IL_0146: newarr [System.Runtime]System.Object
-			IL_014b: dup
-			IL_014c: ldc.i4.0
-			IL_014d: ldarg.0
-			IL_014e: stelem.ref
-			IL_014f: dup
-			IL_0150: ldc.i4.1
-			IL_0151: ldloc.0
-			IL_0152: stelem.ref
-			IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_015d: ldc.i4.0
-			IL_015e: conv.r8
-			IL_015f: ldstr ""
-			IL_0164: ldc.i4.0
-			IL_0165: ldc.i4.1
-			IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_016b: stloc.s 5
-			IL_016d: ldloc.2
-			IL_016e: ldstr "on"
-			IL_0173: ldstr "close"
-			IL_0178: ldloc.s 5
-			IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_017f: pop
-			IL_0180: ldnull
-			IL_0181: ret
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.2
+			IL_0012: ldloc.2
+			IL_0013: ldstr "address"
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_001d: stloc.2
+			IL_001e: ldloc.2
+			IL_001f: stloc.1
+			IL_0020: ldstr "listening:"
+			IL_0025: ldloc.1
+			IL_0026: ldstr "address"
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0035: stloc.3
+			IL_0036: ldloc.3
+			IL_0037: ldstr ":ready"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0041: stloc.3
+			IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0047: ldloc.3
+			IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_004d: pop
+			IL_004e: ldarg.0
+			IL_004f: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::'tls'
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0059: stloc.2
+			IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_005f: dup
+			IL_0060: ldstr "port"
+			IL_0065: ldloc.1
+			IL_0066: ldstr "port"
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0075: dup
+			IL_0076: ldstr "host"
+			IL_007b: ldstr "127.0.0.1"
+			IL_0080: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0085: dup
+			IL_0086: ldstr "rejectUnauthorized"
+			IL_008b: ldc.i4.0
+			IL_008c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0091: stloc.s 4
+			IL_0093: ldnull
+			IL_0094: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L17C5::__js_call__(object[], object)
+			IL_009a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_009f: ldc.i4.2
+			IL_00a0: newarr [System.Runtime]System.Object
+			IL_00a5: dup
+			IL_00a6: ldc.i4.0
+			IL_00a7: ldarg.0
+			IL_00a8: stelem.ref
+			IL_00a9: dup
+			IL_00aa: ldc.i4.1
+			IL_00ab: ldloc.0
+			IL_00ac: stelem.ref
+			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_00b7: ldc.i4.0
+			IL_00b8: conv.r8
+			IL_00b9: ldstr ""
+			IL_00be: ldc.i4.0
+			IL_00bf: ldc.i4.1
+			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_00c5: stloc.s 5
+			IL_00c7: ldloc.2
+			IL_00c8: ldstr "connect"
+			IL_00cd: ldloc.s 4
+			IL_00cf: ldloc.s 5
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00d6: stloc.s 5
+			IL_00d8: ldloc.0
+			IL_00d9: ldloc.s 5
+			IL_00db: stfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+			IL_00e0: ldloc.0
+			IL_00e1: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+			IL_00e6: ldstr "Cannot access 'client' before initialization"
+			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00f0: stloc.s 5
+			IL_00f2: ldloc.s 5
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00f9: stloc.s 5
+			IL_00fb: ldnull
+			IL_00fc: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L24C21::__js_call__(object, object)
+			IL_0102: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_0107: ldc.i4.1
+			IL_0108: newarr [System.Runtime]System.Object
+			IL_010d: dup
+			IL_010e: ldc.i4.0
+			IL_010f: ldarg.0
+			IL_0110: stelem.ref
+			IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_011b: ldc.i4.1
+			IL_011c: conv.r8
+			IL_011d: ldstr ""
+			IL_0122: ldc.i4.0
+			IL_0123: ldc.i4.1
+			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0129: stloc.2
+			IL_012a: ldloc.s 5
+			IL_012c: ldstr "on"
+			IL_0131: ldstr "data"
+			IL_0136: ldloc.2
+			IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_013c: pop
+			IL_013d: ldloc.0
+			IL_013e: ldfld object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/Scope::client
+			IL_0143: ldstr "Cannot access 'client' before initialization"
+			IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_014d: stloc.2
+			IL_014e: ldloc.2
+			IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0154: stloc.2
+			IL_0155: ldnull
+			IL_0156: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31/ArrowFunction_L28C22::__js_call__(object[], object)
+			IL_015c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc0::.ctor(object, native int)
+			IL_0161: ldc.i4.2
+			IL_0162: newarr [System.Runtime]System.Object
+			IL_0167: dup
+			IL_0168: ldc.i4.0
+			IL_0169: ldarg.0
+			IL_016a: stelem.ref
+			IL_016b: dup
+			IL_016c: ldc.i4.1
+			IL_016d: ldloc.0
+			IL_016e: stelem.ref
+			IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0179: ldc.i4.0
+			IL_017a: conv.r8
+			IL_017b: ldstr ""
+			IL_0180: ldc.i4.0
+			IL_0181: ldc.i4.1
+			IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0187: stloc.s 5
+			IL_0189: ldloc.2
+			IL_018a: ldstr "on"
+			IL_018f: ldstr "close"
+			IL_0194: ldloc.s 5
+			IL_0196: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_019b: pop
+			IL_019c: ldnull
+			IL_019d: ret
 		} // end of method ArrowFunction_L11C31::__js_call__
 
 	} // end of class ArrowFunction_L11C31
@@ -631,7 +660,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x254d
+			// Method begins at RVA 0x25a0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -657,7 +686,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 310 (0x136)
+		// Code size: 320 (0x140)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_CreateServer_Connect_Basic/Scope,
@@ -703,82 +732,84 @@
 		IL_005d: stloc.2
 		IL_005e: ldloc.0
 		IL_005f: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::'tls'
-		IL_0064: stloc.3
-		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_006a: dup
-		IL_006b: ldstr "key"
-		IL_0070: ldloc.2
-		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0076: dup
-		IL_0077: ldstr "cert"
-		IL_007c: ldloc.1
-		IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0082: stloc.s 4
-		IL_0084: ldnull
-		IL_0085: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L6C65::__js_call__(object, object)
-		IL_008b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0090: ldc.i4.1
-		IL_0091: newarr [System.Runtime]System.Object
-		IL_0096: dup
-		IL_0097: ldc.i4.0
-		IL_0098: ldloc.0
-		IL_0099: stelem.ref
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00a4: ldc.i4.1
-		IL_00a5: conv.r8
-		IL_00a6: ldstr ""
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldc.i4.1
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00b2: stloc.s 5
-		IL_00b4: ldloc.3
-		IL_00b5: ldstr "createServer"
-		IL_00ba: ldloc.s 4
-		IL_00bc: ldloc.s 5
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00c3: stloc.s 5
-		IL_00c5: ldloc.0
-		IL_00c6: ldloc.s 5
-		IL_00c8: stfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
-		IL_00cd: ldloc.0
-		IL_00ce: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
-		IL_00d3: stloc.s 5
-		IL_00d5: ldc.i4.1
-		IL_00d6: newarr [System.Runtime]System.Object
-		IL_00db: dup
-		IL_00dc: ldc.i4.0
-		IL_00dd: ldloc.0
-		IL_00de: stelem.ref
-		IL_00df: ldc.i4.0
-		IL_00e0: ldelem.ref
-		IL_00e1: castclass Modules.Tls_CreateServer_Connect_Basic/Scope
-		IL_00e6: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31::__js_call__(class Modules.Tls_CreateServer_Connect_Basic/Scope, object)
-		IL_00ec: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00f1: ldc.i4.1
-		IL_00f2: newarr [System.Runtime]System.Object
-		IL_00f7: dup
-		IL_00f8: ldc.i4.0
-		IL_00f9: ldloc.0
-		IL_00fa: stelem.ref
-		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0105: ldc.i4.0
-		IL_0106: conv.r8
-		IL_0107: ldstr ""
-		IL_010c: ldc.i4.0
-		IL_010d: ldc.i4.1
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0113: stloc.3
-		IL_0114: ldloc.s 5
-		IL_0116: ldstr "listen"
-		IL_011b: ldc.r8 0.0
-		IL_0124: box [System.Runtime]System.Double
-		IL_0129: ldstr "127.0.0.1"
-		IL_012e: ldloc.3
-		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_0134: pop
-		IL_0135: ret
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0069: stloc.3
+		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_006f: dup
+		IL_0070: ldstr "key"
+		IL_0075: ldloc.2
+		IL_0076: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_007b: dup
+		IL_007c: ldstr "cert"
+		IL_0081: ldloc.1
+		IL_0082: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0087: stloc.s 4
+		IL_0089: ldnull
+		IL_008a: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L6C65::__js_call__(object, object)
+		IL_0090: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: stelem.ref
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00a9: ldc.i4.1
+		IL_00aa: conv.r8
+		IL_00ab: ldstr ""
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldc.i4.1
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00b7: stloc.s 5
+		IL_00b9: ldloc.3
+		IL_00ba: ldstr "createServer"
+		IL_00bf: ldloc.s 4
+		IL_00c1: ldloc.s 5
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00c8: stloc.s 5
+		IL_00ca: ldloc.0
+		IL_00cb: ldloc.s 5
+		IL_00cd: stfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
+		IL_00d2: ldloc.0
+		IL_00d3: ldfld object Modules.Tls_CreateServer_Connect_Basic/Scope::server
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00dd: stloc.s 5
+		IL_00df: ldc.i4.1
+		IL_00e0: newarr [System.Runtime]System.Object
+		IL_00e5: dup
+		IL_00e6: ldc.i4.0
+		IL_00e7: ldloc.0
+		IL_00e8: stelem.ref
+		IL_00e9: ldc.i4.0
+		IL_00ea: ldelem.ref
+		IL_00eb: castclass Modules.Tls_CreateServer_Connect_Basic/Scope
+		IL_00f0: ldftn object Modules.Tls_CreateServer_Connect_Basic/ArrowFunction_L11C31::__js_call__(class Modules.Tls_CreateServer_Connect_Basic/Scope, object)
+		IL_00f6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00fb: ldc.i4.1
+		IL_00fc: newarr [System.Runtime]System.Object
+		IL_0101: dup
+		IL_0102: ldc.i4.0
+		IL_0103: ldloc.0
+		IL_0104: stelem.ref
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_010f: ldc.i4.0
+		IL_0110: conv.r8
+		IL_0111: ldstr ""
+		IL_0116: ldc.i4.0
+		IL_0117: ldc.i4.1
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_011d: stloc.3
+		IL_011e: ldloc.s 5
+		IL_0120: ldstr "listen"
+		IL_0125: ldc.r8 0.0
+		IL_012e: box [System.Runtime]System.Double
+		IL_0133: ldstr "127.0.0.1"
+		IL_0138: ldloc.3
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_013e: pop
+		IL_013f: ret
 	} // end of method Tls_CreateServer_Connect_Basic::__js_module_init__
 
 } // end of class Modules.Tls_CreateServer_Connect_Basic
@@ -794,7 +825,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2597
+			// Method begins at RVA 0x25ea
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -818,7 +849,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x219c
 		// Header size: 12
 		// Code size: 59 (0x3b)
 		.maxstack 8
@@ -857,7 +888,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25a0
+		// Method begins at RVA 0x25f3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

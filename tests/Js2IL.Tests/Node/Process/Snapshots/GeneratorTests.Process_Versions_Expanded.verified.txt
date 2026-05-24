@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23b2
+			// Method begins at RVA 0x23c0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 854 (0x356)
+		// Code size: 868 (0x364)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Versions_Expanded/Scope,
@@ -285,15 +285,19 @@
 		IL_0331: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
 		IL_0336: stloc.s 15
 		IL_0338: ldloc.s 15
-		IL_033a: ldloc.s 6
-		IL_033c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-		IL_0341: stloc.s 16
-		IL_0343: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0348: ldstr "node version format valid"
-		IL_034d: ldloc.s 16
-		IL_034f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0354: pop
-		IL_0355: ret
+		IL_033a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_033f: stloc.s 16
+		IL_0341: ldloc.s 16
+		IL_0343: ldstr "test"
+		IL_0348: ldloc.s 6
+		IL_034a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_034f: stloc.s 16
+		IL_0351: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0356: ldstr "node version format valid"
+		IL_035b: ldloc.s 16
+		IL_035d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0362: pop
+		IL_0363: ret
 	} // end of method Process_Versions_Expanded::__js_module_init__
 
 } // end of class Modules.Process_Versions_Expanded
@@ -305,7 +309,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23bb
+		// Method begins at RVA 0x23c9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

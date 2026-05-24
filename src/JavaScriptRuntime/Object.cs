@@ -2594,17 +2594,13 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (memberValue is null or JsNull)
-            {
-                throw new TypeError($"{methodName} is not a function");
-            }
-
             if (TryCallStaticClassMethod(receiver, methodName, callArgs, out var staticClassResult))
             {
                 return staticClassResult;
             }
 
-            // 4) Fallback to reflection on receiver type
+            // 4) Fallback to reflection on receiver type. Intrinsic CLR-backed objects
+            // expose methods this way even when there is no JavaScript data property.
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
 

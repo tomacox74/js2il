@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21bf
+					// Method begins at RVA 0x21c7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2168
+				// Method begins at RVA 0x2170
 				// Header size: 12
 				// Code size: 57 (0x39)
 				.maxstack 8
@@ -104,7 +104,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b6
+				// Method begins at RVA 0x21be
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -132,7 +132,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20f4
 			// Header size: 12
 			// Code size: 84 (0x54)
 			.maxstack 8
@@ -199,7 +199,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c8
+				// Method begins at RVA 0x21d0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -223,7 +223,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2154
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -255,7 +255,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ad
+			// Method begins at RVA 0x21b5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -281,7 +281,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 143 (0x8f)
+		// Code size: 150 (0x96)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_Resolve_Delayed/Scope,
@@ -325,30 +325,33 @@
 		IL_0049: ldloc.2
 		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_004f: stloc.3
-		IL_0050: ldnull
-		IL_0051: ldftn object Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32::__js_call__(object, object)
-		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldloc.0
-		IL_0065: stelem.ref
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0070: ldc.i4.1
-		IL_0071: conv.r8
-		IL_0072: ldstr ""
-		IL_0077: ldc.i4.0
-		IL_0078: ldc.i4.1
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_007e: stloc.s 5
-		IL_0080: ldloc.3
-		IL_0081: ldstr "then"
-		IL_0086: ldloc.s 5
-		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_008d: pop
-		IL_008e: ret
+		IL_0050: ldloc.3
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0056: stloc.3
+		IL_0057: ldnull
+		IL_0058: ldftn object Modules.Promise_Thenable_Resolve_Delayed/ArrowFunction_L12C32::__js_call__(object, object)
+		IL_005e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.0
+		IL_006c: stelem.ref
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0077: ldc.i4.1
+		IL_0078: conv.r8
+		IL_0079: ldstr ""
+		IL_007e: ldc.i4.0
+		IL_007f: ldc.i4.1
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0085: stloc.s 5
+		IL_0087: ldloc.3
+		IL_0088: ldstr "then"
+		IL_008d: ldloc.s 5
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0094: pop
+		IL_0095: ret
 	} // end of method Promise_Thenable_Resolve_Delayed::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Resolve_Delayed
@@ -360,7 +363,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d1
+		// Method begins at RVA 0x21d9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

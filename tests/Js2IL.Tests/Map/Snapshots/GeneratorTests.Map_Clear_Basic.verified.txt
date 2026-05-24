@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20cf
+			// Method begins at RVA 0x20e4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 115 (0x73)
+		// Code size: 136 (0x88)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Clear_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Map,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Map
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Map,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Map_Clear_Basic/Scope::.ctor()
@@ -55,34 +56,43 @@
 		IL_000c: ldloc.2
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
-		IL_000f: ldstr "set"
-		IL_0014: ldstr "key1"
-		IL_0019: ldstr "value1"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0023: pop
-		IL_0024: ldloc.1
-		IL_0025: ldstr "set"
-		IL_002a: ldstr "key2"
-		IL_002f: ldstr "value2"
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0039: pop
-		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003f: ldloc.1
-		IL_0040: ldstr "size"
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_004f: pop
-		IL_0050: ldloc.1
-		IL_0051: ldstr "clear"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_005b: pop
-		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0061: ldloc.1
-		IL_0062: ldstr "size"
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0071: pop
-		IL_0072: ret
+		IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0014: stloc.3
+		IL_0015: ldloc.3
+		IL_0016: ldstr "set"
+		IL_001b: ldstr "key1"
+		IL_0020: ldstr "value1"
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_002a: pop
+		IL_002b: ldloc.1
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0031: stloc.3
+		IL_0032: ldloc.3
+		IL_0033: ldstr "set"
+		IL_0038: ldstr "key2"
+		IL_003d: ldstr "value2"
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0047: pop
+		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004d: ldloc.1
+		IL_004e: ldstr "size"
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005d: pop
+		IL_005e: ldloc.1
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0064: stloc.3
+		IL_0065: ldloc.3
+		IL_0066: ldstr "clear"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0070: pop
+		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0076: ldloc.1
+		IL_0077: ldstr "size"
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0086: pop
+		IL_0087: ret
 	} // end of method Map_Clear_Basic::__js_module_init__
 
 } // end of class Modules.Map_Clear_Basic
@@ -94,7 +104,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d8
+		// Method begins at RVA 0x20ed
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

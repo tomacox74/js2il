@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d1
+			// Method begins at RVA 0x21ff
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 373 (0x175)
+		// Code size: 419 (0x1a3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_ImportMeta_Basic/Scope,
@@ -49,7 +49,8 @@
 			[3] object,
 			[4] bool,
 			[5] object,
-			[6] object[]
+			[6] object,
+			[7] object[]
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_ImportMeta_Basic/Scope::.ctor()
@@ -105,88 +106,106 @@
 		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_008f: stloc.3
 		IL_0090: ldloc.3
-		IL_0091: ldstr "startsWith"
-		IL_0096: ldstr "file://"
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a0: stloc.3
-		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a6: ldloc.3
-		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ac: pop
-		IL_00ad: ldarg.3
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
-		IL_00b3: stloc.3
-		IL_00b4: ldloc.3
-		IL_00b5: ldstr "url"
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00bf: stloc.3
-		IL_00c0: ldloc.1
-		IL_00c1: ldstr "fileURLToPath"
-		IL_00c6: ldloc.3
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00cc: stloc.3
-		IL_00cd: ldloc.3
-		IL_00ce: ldarg.3
-		IL_00cf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00d4: stloc.s 4
-		IL_00d6: ldloc.s 4
-		IL_00d8: box [System.Runtime]System.Boolean
-		IL_00dd: stloc.s 5
-		IL_00df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e4: ldloc.s 5
-		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00eb: pop
-		IL_00ec: ldloc.1
-		IL_00ed: ldstr "URL"
-		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f7: stloc.3
-		IL_00f8: ldarg.3
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
-		IL_00fe: stloc.2
-		IL_00ff: ldloc.2
-		IL_0100: ldstr "url"
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_010a: stloc.2
-		IL_010b: ldc.i4.2
-		IL_010c: newarr [System.Runtime]System.Object
-		IL_0111: dup
-		IL_0112: ldc.i4.0
-		IL_0113: ldstr "./fixtures/demo.txt"
-		IL_0118: stelem.ref
-		IL_0119: dup
-		IL_011a: ldc.i4.1
-		IL_011b: ldloc.2
-		IL_011c: stelem.ref
-		IL_011d: stloc.s 6
-		IL_011f: ldloc.3
-		IL_0120: ldloc.s 6
-		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_0127: stloc.3
-		IL_0128: ldloc.1
-		IL_0129: ldstr "fileURLToPath"
-		IL_012e: ldloc.3
-		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0134: stloc.3
-		IL_0135: ldloc.3
-		IL_0136: ldstr "split"
-		IL_013b: ldstr "\\"
-		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0145: stloc.3
-		IL_0146: ldloc.3
-		IL_0147: ldstr "join"
-		IL_014c: ldstr "/"
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0156: stloc.3
-		IL_0157: ldloc.3
-		IL_0158: ldstr "endsWith"
-		IL_015d: ldstr "/fixtures/demo.txt"
-		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0167: stloc.3
-		IL_0168: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0096: stloc.3
+		IL_0097: ldloc.3
+		IL_0098: ldstr "startsWith"
+		IL_009d: ldstr "file://"
+		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a7: stloc.3
+		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ad: ldloc.3
+		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b3: pop
+		IL_00b4: ldloc.1
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ba: stloc.3
+		IL_00bb: ldarg.3
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
+		IL_00c1: stloc.2
+		IL_00c2: ldloc.2
+		IL_00c3: ldstr "url"
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00cd: stloc.2
+		IL_00ce: ldloc.3
+		IL_00cf: ldstr "fileURLToPath"
+		IL_00d4: ldloc.2
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00da: stloc.2
+		IL_00db: ldloc.2
+		IL_00dc: ldarg.3
+		IL_00dd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00e2: stloc.s 4
+		IL_00e4: ldloc.s 4
+		IL_00e6: box [System.Runtime]System.Boolean
+		IL_00eb: stloc.s 5
+		IL_00ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f2: ldloc.s 5
+		IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f9: pop
+		IL_00fa: ldloc.1
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0100: stloc.2
+		IL_0101: ldloc.1
+		IL_0102: ldstr "URL"
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010c: stloc.3
+		IL_010d: ldarg.3
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetImportMeta(object)
+		IL_0113: stloc.s 6
+		IL_0115: ldloc.s 6
+		IL_0117: ldstr "url"
+		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0121: stloc.s 6
+		IL_0123: ldc.i4.2
+		IL_0124: newarr [System.Runtime]System.Object
+		IL_0129: dup
+		IL_012a: ldc.i4.0
+		IL_012b: ldstr "./fixtures/demo.txt"
+		IL_0130: stelem.ref
+		IL_0131: dup
+		IL_0132: ldc.i4.1
+		IL_0133: ldloc.s 6
+		IL_0135: stelem.ref
+		IL_0136: stloc.s 7
+		IL_0138: ldloc.3
+		IL_0139: ldloc.s 7
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_0140: stloc.3
+		IL_0141: ldloc.2
+		IL_0142: ldstr "fileURLToPath"
+		IL_0147: ldloc.3
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_014d: stloc.3
+		IL_014e: ldloc.3
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0154: stloc.3
+		IL_0155: ldloc.3
+		IL_0156: ldstr "split"
+		IL_015b: ldstr "\\"
+		IL_0160: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0165: stloc.3
+		IL_0166: ldloc.3
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_016c: stloc.3
 		IL_016d: ldloc.3
-		IL_016e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0173: pop
-		IL_0174: ret
+		IL_016e: ldstr "join"
+		IL_0173: ldstr "/"
+		IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_017d: stloc.3
+		IL_017e: ldloc.3
+		IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0184: stloc.3
+		IL_0185: ldloc.3
+		IL_0186: ldstr "endsWith"
+		IL_018b: ldstr "/fixtures/demo.txt"
+		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0195: stloc.3
+		IL_0196: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_019b: ldloc.3
+		IL_019c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_01a1: pop
+		IL_01a2: ret
 	} // end of method CommonJS_ImportMeta_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_ImportMeta_Basic
@@ -198,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21da
+		// Method begins at RVA 0x2208
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

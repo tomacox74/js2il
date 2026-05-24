@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c5
+				// Method begins at RVA 0x20e4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ce
+				// Method begins at RVA 0x20ed
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20a1
+			// Method begins at RVA 0x20c0
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -75,7 +75,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20a9
+			// Method begins at RVA 0x20c8
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -97,7 +97,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20bc
+			// Method begins at RVA 0x20db
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -123,12 +123,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 69 (0x45)
+		// Code size: 100 (0x64)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassWithMethod_HelloWorld/Scope,
 			[1] object,
-			[2] class Modules.Classes_ClassWithMethod_HelloWorld/Greeter
+			[2] class Modules.Classes_ClassWithMethod_HelloWorld/Greeter,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithMethod_HelloWorld/Scope::.ctor()
@@ -148,10 +149,24 @@
 		IL_0036: ldloc.2
 		IL_0037: stloc.1
 		IL_0038: ldloc.1
-		IL_0039: castclass Modules.Classes_ClassWithMethod_HelloWorld/Greeter
-		IL_003e: callvirt instance object Modules.Classes_ClassWithMethod_HelloWorld/Greeter::helloWorld()
-		IL_0043: pop
-		IL_0044: ret
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003e: stloc.3
+		IL_003f: ldloc.3
+		IL_0040: isinst Modules.Classes_ClassWithMethod_HelloWorld/Greeter
+		IL_0045: dup
+		IL_0046: brfalse IL_0056
+
+		IL_004b: callvirt instance object Modules.Classes_ClassWithMethod_HelloWorld/Greeter::helloWorld()
+		IL_0050: pop
+		IL_0051: br IL_0063
+
+		IL_0056: pop
+		IL_0057: ldloc.3
+		IL_0058: ldstr "helloWorld"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0062: pop
+
+		IL_0063: ret
 	} // end of method Classes_ClassWithMethod_HelloWorld::__js_module_init__
 
 } // end of class Modules.Classes_ClassWithMethod_HelloWorld
@@ -163,7 +178,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d7
+		// Method begins at RVA 0x20f6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

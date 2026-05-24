@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c7
+			// Method begins at RVA 0x20d5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 107 (0x6b)
+		// Code size: 121 (0x79)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_Symbol_Prototype_Basic/Scope,
@@ -64,29 +64,35 @@
 		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_0028: pop
 		IL_0029: ldloc.1
-		IL_002a: ldstr "toString"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0034: stloc.2
-		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003a: ldloc.2
-		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0040: pop
-		IL_0041: ldloc.1
-		IL_0042: ldstr "valueOf"
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_004c: stloc.2
-		IL_004d: ldloc.2
-		IL_004e: ldloc.1
-		IL_004f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0054: stloc.3
-		IL_0055: ldloc.3
-		IL_0056: box [System.Runtime]System.Boolean
-		IL_005b: stloc.s 4
-		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0062: ldloc.s 4
-		IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0069: pop
-		IL_006a: ret
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_002f: stloc.2
+		IL_0030: ldloc.2
+		IL_0031: ldstr "toString"
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_003b: stloc.2
+		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0041: ldloc.2
+		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0047: pop
+		IL_0048: ldloc.1
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004e: stloc.2
+		IL_004f: ldloc.2
+		IL_0050: ldstr "valueOf"
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_005a: stloc.2
+		IL_005b: ldloc.2
+		IL_005c: ldloc.1
+		IL_005d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0062: stloc.3
+		IL_0063: ldloc.3
+		IL_0064: box [System.Runtime]System.Boolean
+		IL_0069: stloc.s 4
+		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0070: ldloc.s 4
+		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0077: pop
+		IL_0078: ret
 	} // end of method IntrinsicCallables_Symbol_Prototype_Basic::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_Symbol_Prototype_Basic
@@ -98,7 +104,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d0
+		// Method begins at RVA 0x20de
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
