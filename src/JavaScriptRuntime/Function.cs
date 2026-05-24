@@ -411,6 +411,11 @@ public static class Function
                 return JavaScriptRuntime.String.Construct(callArgs, newTarget);
             }
 
+            if (!JavaScriptRuntime.Object.IsConstructibleValue(constructor))
+            {
+                throw new TypeError("Value is not a constructor");
+            }
+
             var instance = new System.Dynamic.ExpandoObject();
 
             // Default proto: ctor.prototype when it is an object or null; otherwise undefined.

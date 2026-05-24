@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:29:49Z
+> Last generated (UTC): 2026-05-24T04:53:11Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -31,36 +31,36 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 24.3.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap-iterable))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| new WeakMap() | Supported | [`WeakMap_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js) | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
-| new WeakMap(iterable) | Not Yet Supported |  | JavaScriptRuntime.WeakMap exposes only a parameterless constructor, so iterable initialization is not available. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| new WeakMap() | Supported | [`WeakMap_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js) |  | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
+| new WeakMap(iterable) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs` |  | WeakMap(iterable) now consumes iterable entry pairs through the constructor's adder path, covering the current test262 iterable-initialization cases. Weak-key validation and broader exotic iterator edge cases remain partial. |
 
 ### 24.3.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakMap constructor value and WeakMap.prototype surface | Supported with Limitations | [`WeakMap_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js) | JS2IL now exposes globalThis.WeakMap as a constructor value, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction and the remaining WeakMap prototype gaps are still incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakMap constructor value and WeakMap.prototype surface | Supported with Limitations | [`WeakMap_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.WeakMap as a constructor value, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction is supported; the remaining WeakMap prototype gaps are still incomplete. |
 
 ### 24.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakMap.prototype.set / get / has / delete | Supported with Limitations | [`WeakMap_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js)<br>[`WeakMap_Object_Keys.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js) | Core WeakMap flows work for the object keys used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakMap.prototype.set / get / has / delete | Supported with Limitations | [`WeakMap_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js)<br>[`WeakMap_Object_Keys.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js) |  | Core WeakMap flows work for the object keys used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value. |
 
 ### 24.3.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakMap.prototype.getOrInsert / getOrInsertComputed | Not Yet Supported |  | The newer WeakMap insertion helpers are not implemented. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakMap.prototype.getOrInsert / getOrInsertComputed | Not Yet Supported |  |  | The newer WeakMap insertion helpers are not implemented. |
 
 ### 24.3.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype-%symbol.tostringtag%))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| WeakMap.prototype[@@toStringTag] | Not Yet Supported |  | WeakMap instances do not currently expose a symbol-keyed toStringTag property. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| WeakMap.prototype[@@toStringTag] | Not Yet Supported |  |  | WeakMap instances do not currently expose a symbol-keyed toStringTag property. |
 
