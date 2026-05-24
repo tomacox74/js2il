@@ -14,7 +14,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task extensibility()
         => ExecutionTestFromFile("extensibility");
 
-    [Fact(DisplayName = "has-instance", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "has-instance")]
     public Task has_instance()
         => ExecutionTestFromFile("has-instance");
 }

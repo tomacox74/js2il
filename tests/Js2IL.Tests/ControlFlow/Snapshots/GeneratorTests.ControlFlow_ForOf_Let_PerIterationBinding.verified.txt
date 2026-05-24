@@ -11,7 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -57,7 +57,7 @@
 
 	} // end of class FunctionExpression_L6C13
 
-	.class nested private auto ansi beforefieldinit Scope
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Methods
@@ -181,7 +181,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 421 (0x1a5)
+		// Code size: 422 (0x1a6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope,
@@ -238,7 +238,7 @@
 				IL_006b: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
 				IL_0070: stloc.s 13
 				IL_0072: ldloc.s 13
-				IL_0074: brtrue IL_00ff
+				IL_0074: brtrue IL_0100
 
 				IL_0079: ldloc.s 12
 				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
@@ -265,111 +265,112 @@
 				IL_00b0: conv.r8
 				IL_00b1: ldstr ""
 				IL_00b6: ldc.i4.0
-				IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-				IL_00bc: stloc.s 12
-				IL_00be: ldloc.1
-				IL_00bf: ldloc.s 12
-				IL_00c1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_00c6: pop
-				IL_00c7: ldloc.2
-				IL_00c8: castclass Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5
-				IL_00cd: ldfld object Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5::x
-				IL_00d2: stloc.s 12
-				IL_00d4: newobj instance void Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5::.ctor()
-				IL_00d9: stloc.s 14
-				IL_00db: ldloc.s 14
-				IL_00dd: castclass Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5
-				IL_00e2: ldloc.s 12
-				IL_00e4: stfld object Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5::x
-				IL_00e9: ldloc.s 14
-				IL_00eb: stloc.2
-				IL_00ec: br IL_0061
+				IL_00b7: ldc.i4.1
+				IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_00bd: stloc.s 12
+				IL_00bf: ldloc.1
+				IL_00c0: ldloc.s 12
+				IL_00c2: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+				IL_00c7: pop
+				IL_00c8: ldloc.2
+				IL_00c9: castclass Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5
+				IL_00ce: ldfld object Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5::x
+				IL_00d3: stloc.s 12
+				IL_00d5: newobj instance void Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5::.ctor()
+				IL_00da: stloc.s 14
+				IL_00dc: ldloc.s 14
+				IL_00de: castclass Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5
+				IL_00e3: ldloc.s 12
+				IL_00e5: stfld object Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L5C5::x
+				IL_00ea: ldloc.s 14
+				IL_00ec: stloc.2
+				IL_00ed: br IL_0061
 			// end loop
-			IL_00f1: ldloc.3
-			IL_00f2: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-			IL_00f7: ldc.i4.1
-			IL_00f8: stloc.s 5
-			IL_00fa: leave IL_011c
+			IL_00f2: ldloc.3
+			IL_00f3: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_00f8: ldc.i4.1
+			IL_00f9: stloc.s 5
+			IL_00fb: leave IL_011d
 
-			IL_00ff: ldc.i4.1
-			IL_0100: stloc.s 4
-			IL_0102: leave IL_011c
+			IL_0100: ldc.i4.1
+			IL_0101: stloc.s 4
+			IL_0103: leave IL_011d
 		} // end .try
 		finally
 		{
-			IL_0107: ldloc.s 4
-			IL_0109: brtrue IL_011b
+			IL_0108: ldloc.s 4
+			IL_010a: brtrue IL_011c
 
-			IL_010e: ldloc.s 5
-			IL_0110: brtrue IL_011b
+			IL_010f: ldloc.s 5
+			IL_0111: brtrue IL_011c
 
-			IL_0115: ldloc.3
-			IL_0116: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+			IL_0116: ldloc.3
+			IL_0117: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-			IL_011b: endfinally
+			IL_011c: endfinally
 		} // end handler
 
-		IL_011c: ldloc.1
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
-		IL_0122: stloc.s 7
-		IL_0124: ldc.i4.0
-		IL_0125: stloc.s 8
-		IL_0127: ldc.i4.0
-		IL_0128: stloc.s 9
+		IL_011d: ldloc.1
+		IL_011e: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::GetIterator(object)
+		IL_0123: stloc.s 7
+		IL_0125: ldc.i4.0
+		IL_0126: stloc.s 8
+		IL_0128: ldc.i4.0
+		IL_0129: stloc.s 9
 		.try
 		{
-			// loop start (head: IL_012a)
-				IL_012a: ldloc.s 7
-				IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-				IL_0131: stloc.s 12
-				IL_0133: ldloc.s 12
-				IL_0135: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-				IL_013a: stloc.s 13
-				IL_013c: ldloc.s 13
-				IL_013e: brtrue IL_0186
+			// loop start (head: IL_012b)
+				IL_012b: ldloc.s 7
+				IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+				IL_0132: stloc.s 12
+				IL_0134: ldloc.s 12
+				IL_0136: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+				IL_013b: stloc.s 13
+				IL_013d: ldloc.s 13
+				IL_013f: brtrue IL_0187
 
-				IL_0143: ldloc.s 12
-				IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-				IL_014a: stloc.s 12
-				IL_014c: ldloc.s 12
-				IL_014e: stloc.s 10
-				IL_0150: newobj instance void Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L9C5/Block_L9C21::.ctor()
-				IL_0155: stloc.s 11
-				IL_0157: ldloc.s 10
-				IL_0159: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs0(object, object[])
-				IL_0163: stloc.s 12
-				IL_0165: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_016a: ldloc.s 12
-				IL_016c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0171: pop
-				IL_0172: br IL_012a
+				IL_0144: ldloc.s 12
+				IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+				IL_014b: stloc.s 12
+				IL_014d: ldloc.s 12
+				IL_014f: stloc.s 10
+				IL_0151: newobj instance void Modules.ControlFlow_ForOf_Let_PerIterationBinding/Scope_ForOf_L9C5/Block_L9C21::.ctor()
+				IL_0156: stloc.s 11
+				IL_0158: ldloc.s 10
+				IL_015a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+				IL_0164: stloc.s 12
+				IL_0166: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_016b: ldloc.s 12
+				IL_016d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0172: pop
+				IL_0173: br IL_012b
 			// end loop
-			IL_0177: ldloc.s 7
-			IL_0179: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-			IL_017e: ldc.i4.1
-			IL_017f: stloc.s 9
-			IL_0181: leave IL_01a4
+			IL_0178: ldloc.s 7
+			IL_017a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_017f: ldc.i4.1
+			IL_0180: stloc.s 9
+			IL_0182: leave IL_01a5
 
-			IL_0186: ldc.i4.1
-			IL_0187: stloc.s 8
-			IL_0189: leave IL_01a4
+			IL_0187: ldc.i4.1
+			IL_0188: stloc.s 8
+			IL_018a: leave IL_01a5
 		} // end .try
 		finally
 		{
-			IL_018e: ldloc.s 8
-			IL_0190: brtrue IL_01a3
+			IL_018f: ldloc.s 8
+			IL_0191: brtrue IL_01a4
 
-			IL_0195: ldloc.s 9
-			IL_0197: brtrue IL_01a3
+			IL_0196: ldloc.s 9
+			IL_0198: brtrue IL_01a4
 
-			IL_019c: ldloc.s 7
-			IL_019e: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+			IL_019d: ldloc.s 7
+			IL_019f: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-			IL_01a3: endfinally
+			IL_01a4: endfinally
 		} // end handler
 
-		IL_01a4: ret
+		IL_01a5: ret
 	} // end of method ControlFlow_ForOf_Let_PerIterationBinding::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_Let_PerIterationBinding

@@ -5,12 +5,13 @@ namespace JavaScriptRuntime;
 public static class AsyncFunction
 {
     internal static readonly object Prototype = CreatePrototype();
-    private static readonly Func<object[], object?[], object?> ConstructorValue = static (_, __) =>
-        throw new NotSupportedException("The AsyncFunction constructor is not supported as a callable value yet.");
+    private static readonly Func<object[], object?[], object?> ConstructorValue = static (_, args) =>
+        CreateDynamicAsyncFunction(args);
 
     static AsyncFunction()
     {
         Function.InitializeFunctionInstance(ConstructorValue);
+        PrototypeChain.SetPrototype(ConstructorValue, GlobalThis.Function);
         PrototypeChain.SetPrototype(Prototype, Function.Prototype);
 
         DefineDataProperty(
@@ -59,14 +60,22 @@ public static class AsyncFunction
     }
 
     public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+        => InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties: false);
+
+    public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
     {
         InitializeFunctionInstance(functionValue);
+        if (hasRestrictedProperties)
+        {
+            Function.DefineRestrictedFunctionProperties(functionValue);
+        }
 
         if (functionValue is Delegate del)
         {
             Function.SetRequiresInvocationContext(del, requiresInvocationContext);
             Function.DefineMetadataProperty(del, "length", length);
             Function.DefineMetadataProperty(del, "name", name ?? string.Empty);
+            Function.MarkUndefinedPrototype(del);
         }
 
         return functionValue;
@@ -75,6 +84,16 @@ public static class AsyncFunction
     private static object CreatePrototype()
     {
         return new JsObject();
+    }
+
+    private static object CreateDynamicAsyncFunction(object?[]? args)
+    {
+        var callArgs = args ?? System.Array.Empty<object?>();
+        var length = Function.ParseDynamicFunctionParameterNames(callArgs).Length;
+
+        Func<object[], object?[]?, object?> functionValue = static (_, __) => Promise.resolve(null);
+        InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
+        return functionValue;
     }
 
     private static void DefineDataProperty(object target, string key, object? value, bool writable = true, bool configurable = true)

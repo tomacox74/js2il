@@ -6,11 +6,11 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Symbol") { }
 
-    [Fact(DisplayName = "auto-boxing-non-strict", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "auto-boxing-non-strict")]
     public Task auto_boxing_non_strict()
         => ExecutionTestFromFile("auto-boxing-non-strict");
 
-    [Fact(DisplayName = "constructor", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "constructor")]
     public Task constructor()
         => ExecutionTestFromFile("constructor");
 }

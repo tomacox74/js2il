@@ -686,6 +686,48 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
+        private static object InvokeAsFunctionCall(object target, Func<object> invoke)
+        {
+            object? thisValue = target is Delegate del && UsesEcmaScriptThisBinding(del)
+                ? GlobalThis.globalThis
+                : null;
+
+            var previousThis = RuntimeServices.SetCurrentThis(thisValue);
+            try
+            {
+                return invoke();
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        public static object InvokeFunctionCallWithArgs(object target, object[] scopes, params object?[] args)
+        {
+            return InvokeAsFunctionCall(target, () => InvokeWithArgsCore(target, scopes, newTarget: null, args));
+        }
+
+        public static object InvokeFunctionCallWithArgs0(object target, object[] scopes)
+        {
+            return InvokeAsFunctionCall(target, () => InvokeWithArgs0(target, scopes));
+        }
+
+        public static object InvokeFunctionCallWithArgs1(object target, object[] scopes, object? a0)
+        {
+            return InvokeAsFunctionCall(target, () => InvokeWithArgs1(target, scopes, a0));
+        }
+
+        public static object InvokeFunctionCallWithArgs2(object target, object[] scopes, object? a0, object? a1)
+        {
+            return InvokeAsFunctionCall(target, () => InvokeWithArgs2(target, scopes, a0, a1));
+        }
+
+        public static object InvokeFunctionCallWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
+        {
+            return InvokeAsFunctionCall(target, () => InvokeWithArgs3(target, scopes, a0, a1, a2));
+        }
+
         private static bool TryInvokeProxyCallFastPath(object target, object[] scopes, object?[] args, out object result)
         {
             if (target is global::JavaScriptRuntime.Proxy)

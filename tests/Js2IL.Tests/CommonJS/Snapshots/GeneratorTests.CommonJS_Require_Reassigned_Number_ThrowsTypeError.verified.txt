@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested private auto ansi beforefieldinit Scope
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 165 (0xa5)
+		// Code size: 168 (0xa8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope,
@@ -91,8 +91,9 @@
 			[3] object,
 			[4] object,
 			[5] class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L6C12,
-			[6] object[],
-			[7] object
+			[6] object,
+			[7] object[],
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope::.ctor()
@@ -105,11 +106,11 @@
 			IL_0016: newobj instance void Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L4C4::.ctor()
 			IL_001b: stloc.1
 			IL_001c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-			IL_0021: stloc.s 6
+			IL_0021: stloc.s 7
 			IL_0023: ldarg.1
-			IL_0024: ldloc.s 6
+			IL_0024: ldloc.s 7
 			IL_0026: ldstr "fs"
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
 			IL_0030: pop
 			IL_0031: leave IL_00a4
 		} // end .try
@@ -141,8 +142,8 @@
 			IL_0062: stloc.3
 
 			IL_0063: ldloc.3
-			IL_0064: stloc.s 7
-			IL_0066: ldloc.s 7
+			IL_0064: stloc.s 8
+			IL_0066: ldloc.s 8
 			IL_0068: stloc.s 4
 			IL_006a: newobj instance void Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError/Scope/Block_L6C12::.ctor()
 			IL_006f: stloc.s 5
@@ -161,7 +162,9 @@
 			IL_009f: leave IL_00a4
 		} // end handler
 
-		IL_00a4: ret
+		IL_00a4: ldnull
+		IL_00a5: stloc.s 6
+		IL_00a7: ret
 	} // end of method CommonJS_Require_Reassigned_Number_ThrowsTypeError::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Number_ThrowsTypeError

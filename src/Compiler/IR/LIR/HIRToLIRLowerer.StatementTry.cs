@@ -50,6 +50,11 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerStatement(tryStmt.TryBlock);
         }
 
+        if (hasFinally && tryStmt.FinallyBody != null && ContainsAbruptStatement(tryStmt.FinallyBody))
+        {
+            return TryLowerTryStatementWithExplicitFinally(tryStmt);
+        }
+
         // Track current control-flow depth so we can decide when break/continue exits the try.
         _protectedControlFlowDepthStack.Push(_controlFlowStack.Count);
 
@@ -58,6 +63,7 @@ public sealed partial class HIRToLIRLowerer
         {
             _methodBodyIR.ReturnEpilogueLabelId = CreateLabel();
         }
+        _needsReturnEpilogueBlock = true;
 
         try
         {
@@ -124,6 +130,18 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
                 }
+                else if (tryStmt.CatchParamPattern != null)
+                {
+                    var jsCatchValue = CreateTempVariable();
+                    lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
+                    DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+                    if (!TryLowerDestructuringPattern(tryStmt.CatchParamPattern, EnsureObject(jsCatchValue), DestructuringWriteMode.Declaration, null))
+                    {
+                        return false;
+                    }
+                }
 
                 if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
                 {
@@ -178,6 +196,164 @@ public sealed partial class HIRToLIRLowerer
             _protectedControlFlowDepthStack.Pop();
         }
     }
+
+        private bool TryLowerTryStatementWithExplicitFinally(HIRTryStatement tryStmt)
+        {
+            var lirInstructions = _methodBodyIR.Instructions;
+            var hasCatch = tryStmt.CatchBody != null;
+
+            if (!_methodBodyIR.ReturnEpilogueLabelId.HasValue)
+            {
+                _methodBodyIR.ReturnEpilogueLabelId = CreateLabel();
+            }
+
+            var hasPendingReturn = CreateBooleanSlotTemp("$tryFinally_hasReturn", false);
+            var hasPendingException = CreateBooleanSlotTemp("$tryFinally_hasException", false);
+            var pendingException = CreateObjectSlotTemp("$tryFinally_exception");
+
+            var outerTryStart = CreateLabel();
+            var outerTryEnd = CreateLabel();
+            var outerCatchStart = CreateLabel();
+            var outerCatchEnd = CreateLabel();
+            var finallyStart = CreateLabel();
+            var afterFinally = CreateLabel();
+            var noPendingException = CreateLabel();
+            var pendingReturnLabel = CreateLabel();
+            var endLabel = CreateLabel();
+            int innerTryStart = outerTryStart;
+            int innerTryEnd = outerTryEnd;
+            int catchStart = 0;
+            int catchEnd = 0;
+
+            if (hasCatch)
+            {
+                innerTryStart = CreateLabel();
+                innerTryEnd = CreateLabel();
+                catchStart = CreateLabel();
+                catchEnd = CreateLabel();
+            }
+
+            var ctx = new SyncTryFinallyContext(
+                finallyStart,
+                hasPendingReturn,
+                hasPendingException,
+                pendingException,
+                IsInFinally: false);
+
+            _syncTryFinallyStack.Push(ctx);
+            try
+            {
+                lirInstructions.Add(new LIRLabel(outerTryStart));
+
+                if (hasCatch)
+                {
+                    lirInstructions.Add(new LIRLabel(innerTryStart));
+                }
+
+                if (!TryLowerStatement(tryStmt.TryBlock))
+                {
+                    return false;
+                }
+
+                lirInstructions.Add(new LIRLeave(finallyStart));
+
+                if (hasCatch)
+                {
+                    lirInstructions.Add(new LIRLabel(innerTryEnd));
+                    lirInstructions.Add(new LIRLabel(catchStart));
+
+                    var exTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRStoreException(exTemp));
+                    DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception)));
+                    SetTempVariableSlot(exTemp, CreateAnonymousVariableSlot("$catch_ex", new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception))));
+
+                    if (tryStmt.CatchParamBinding != null)
+                    {
+                        var jsCatchValue = CreateTempVariable();
+                        lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
+                        DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+                        if (!TryStoreToBinding(tryStmt.CatchParamBinding, jsCatchValue, out _))
+                        {
+                            return false;
+                        }
+                    }
+
+                    if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                    {
+                        return false;
+                    }
+
+                    lirInstructions.Add(new LIRLeave(finallyStart));
+                    lirInstructions.Add(new LIRLabel(catchEnd));
+                }
+
+                lirInstructions.Add(new LIRLabel(outerTryEnd));
+                lirInstructions.Add(new LIRLabel(outerCatchStart));
+
+                StoreExceptionToExistingSlot(pendingException);
+                StoreBooleanToExistingSlot(hasPendingException, true);
+                StoreBooleanToExistingSlot(hasPendingReturn, false);
+                lirInstructions.Add(new LIRLeave(finallyStart));
+                lirInstructions.Add(new LIRLabel(outerCatchEnd));
+
+                _syncTryFinallyStack.Pop();
+                _syncTryFinallyStack.Push(ctx with { IsInFinally = true });
+
+                lirInstructions.Add(new LIRLabel(finallyStart));
+                if (tryStmt.FinallyBody != null && !TryLowerStatement(tryStmt.FinallyBody))
+                {
+                    return false;
+                }
+
+                lirInstructions.Add(new LIRBranch(afterFinally));
+
+                lirInstructions.Add(new LIRLabel(afterFinally));
+                lirInstructions.Add(new LIRBranchIfFalse(hasPendingException, noPendingException));
+                lirInstructions.Add(new LIRThrow(pendingException));
+                lirInstructions.Add(new LIRLabel(noPendingException));
+                lirInstructions.Add(new LIRBranchIfTrue(hasPendingReturn, pendingReturnLabel));
+                lirInstructions.Add(new LIRBranch(endLabel));
+                lirInstructions.Add(new LIRLabel(pendingReturnLabel));
+                EnsureReturnEpilogueStorage();
+                if (!_returnEpilogueLoadTemp.HasValue)
+                {
+                    return false;
+                }
+                lirInstructions.Add(new LIRReturn(_returnEpilogueLoadTemp.Value));
+                lirInstructions.Add(new LIRLabel(endLabel));
+
+                if (hasCatch)
+                {
+                    _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+                        ExceptionRegionKind.Catch,
+                        TryStartLabelId: innerTryStart,
+                        TryEndLabelId: innerTryEnd,
+                        HandlerStartLabelId: catchStart,
+                        HandlerEndLabelId: catchEnd,
+                        CatchType: typeof(System.Exception)));
+                }
+
+                _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+                    ExceptionRegionKind.Catch,
+                    TryStartLabelId: outerTryStart,
+                    TryEndLabelId: outerTryEnd,
+                    HandlerStartLabelId: outerCatchStart,
+                    HandlerEndLabelId: outerCatchEnd,
+                    CatchType: typeof(System.Exception)));
+
+                return true;
+            }
+            finally
+            {
+                if (_syncTryFinallyStack.Count > 0)
+                {
+                    _syncTryFinallyStack.Pop();
+                }
+            }
+        }
+
 
     private bool TryLowerGeneratorTryWithYield(HIRTryStatement tryStmt)
     {

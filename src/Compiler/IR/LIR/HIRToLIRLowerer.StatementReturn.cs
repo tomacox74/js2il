@@ -44,6 +44,12 @@ public sealed partial class HIRToLIRLowerer
         }
         else if (returnStmt.Expression != null)
         {
+            if (CanEmitTailPositionReturn()
+                && TryLowerTailPositionReturnExpression(returnStmt.Expression))
+            {
+                return true;
+            }
+
             // Lower the return expression
             // Special-case: if we inferred `return this` for a class method, keep it typed as the
             // user-defined class (metadata TypeDef handle) so the return matches the class-typed ABI.
@@ -186,6 +192,11 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (TryEmitReturnThroughSyncFinally(returnTempVar))
+        {
+            return true;
+        }
+
         // If we are inside a protected region with a finally handler, we must use leave
         // so finally runs before returning.
         if (_protectedControlFlowDepthStack.Count > 0 && _methodBodyIR.ReturnEpilogueLabelId.HasValue)
@@ -199,5 +210,216 @@ public sealed partial class HIRToLIRLowerer
 
         lirInstructions.Add(new LIRReturn(returnTempVar));
         return true;
+    }
+
+    private bool CanEmitTailPositionReturn()
+        => _callableKind != CallableKind.Constructor
+            && !_isAsync
+            && !_isGenerator
+            && _protectedControlFlowDepthStack.Count == 0
+            && !_methodBodyIR.ReturnEpilogueLabelId.HasValue;
+
+    private bool TryLowerTailPositionReturnExpression(HIRExpression expression)
+    {
+        switch (expression)
+        {
+            case HIRConditionalExpression conditionalExpr:
+                return TryLowerTailPositionConditionalReturn(conditionalExpr);
+
+            case HIRBinaryExpression { Operator: Acornima.Operator.LogicalAnd } logicalAnd:
+                return TryLowerTailPositionLogicalAndReturn(logicalAnd);
+
+            case HIRBinaryExpression { Operator: Acornima.Operator.LogicalOr } logicalOr:
+                return TryLowerTailPositionLogicalOrReturn(logicalOr);
+
+            case HIRCallExpression callExpr:
+                return TryLowerTailCallFunctionReturn(callExpr);
+
+            default:
+                return false;
+        }
+    }
+
+    private bool TryLowerTailPositionConditionalReturn(HIRConditionalExpression conditionalExpr)
+    {
+        if (!TryLowerExpression(conditionalExpr.Test, out var conditionTemp))
+        {
+            return false;
+        }
+
+        var boolConditionTemp = EnsureBooleanCondition(conditionTemp);
+        int elseLabel = CreateLabel();
+
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(boolConditionTemp, elseLabel));
+
+        if (!TryLowerReturnExpressionOrTailReturn(conditionalExpr.Consequent))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(elseLabel));
+        ClearNumericRefinementsAtLabel();
+
+        return TryLowerReturnExpressionOrTailReturn(conditionalExpr.Alternate);
+    }
+
+    private bool TryLowerTailPositionLogicalAndReturn(HIRBinaryExpression logicalAnd)
+    {
+        if (!TryLowerExpression(logicalAnd.Left, out var leftTemp))
+        {
+            return false;
+        }
+
+        var leftBoxed = EnsureObject(leftTemp);
+        var isTruthyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
+        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        int falsyLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, falsyLabel));
+
+        if (!TryLowerReturnExpressionOrTailReturn(logicalAnd.Right))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(falsyLabel));
+        ClearNumericRefinementsAtLabel();
+
+        return EmitReturnTemp(leftBoxed);
+    }
+
+    private bool TryLowerTailPositionLogicalOrReturn(HIRBinaryExpression logicalOr)
+    {
+        if (!TryLowerExpression(logicalOr.Left, out var leftTemp))
+        {
+            return false;
+        }
+
+        var leftBoxed = EnsureObject(leftTemp);
+        var isTruthyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
+        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        int truthyLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isTruthyTemp, truthyLabel));
+
+        if (!TryLowerReturnExpressionOrTailReturn(logicalOr.Right))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(truthyLabel));
+        ClearNumericRefinementsAtLabel();
+
+        return EmitReturnTemp(leftBoxed);
+    }
+
+    private bool TryLowerReturnExpressionOrTailReturn(HIRExpression expression)
+    {
+        if (TryLowerTailPositionReturnExpression(expression))
+        {
+            return true;
+        }
+
+        if (!TryLowerExpression(expression, out var valueTemp))
+        {
+            return false;
+        }
+
+        return EmitReturnTemp(valueTemp);
+    }
+
+    private bool TryLowerTailCallFunctionReturn(HIRCallExpression callExpr)
+    {
+        if (callExpr.Callee is not HIRVariableExpression { Name: var symbol }
+            || symbol.Kind != BindingKind.Function
+            || HasSpreadArguments(callExpr.Arguments)
+            || !FunctionHasSimpleParams(symbol))
+        {
+            return false;
+        }
+
+        var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
+        if (callableId == null || callableId.NeedsArgumentsObject || callableId.HasRestParameters)
+        {
+            return false;
+        }
+
+        var arguments = new List<TempVariable>(callExpr.Arguments.Length);
+        foreach (var arg in callExpr.Arguments)
+        {
+            if (!TryLowerExpression(arg, out var argTemp))
+            {
+                return false;
+            }
+
+            arguments.Add(EnsureObject(argTemp));
+        }
+
+        var scopesTempVar = CreateTempVariable();
+        if (!TryBuildScopesArrayForCallee(symbol, scopesTempVar))
+        {
+            return false;
+        }
+
+        DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        _methodBodyIR.Instructions.Add(new LIRTailCallFunctionReturn(symbol, scopesTempVar, arguments, callableId));
+        return true;
+    }
+
+    private TempVariable EnsureBooleanCondition(TempVariable conditionTemp)
+    {
+        var conditionStorage = GetTempStorage(conditionTemp);
+        if (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(bool))
+        {
+            return conditionTemp;
+        }
+
+        var conditionBoxed = EnsureObject(conditionTemp);
+        var isTruthyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(conditionBoxed, isTruthyTemp));
+        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return isTruthyTemp;
+    }
+
+    private bool EmitReturnTemp(TempVariable returnTempVar)
+    {
+        returnTempVar = ApplyReturnTypeCoercion(returnTempVar);
+        _methodBodyIR.Instructions.Add(new LIRReturn(returnTempVar));
+        return true;
+    }
+
+    private TempVariable ApplyReturnTypeCoercion(TempVariable returnTempVar)
+    {
+        Type? stableReturnClrType = null;
+        if (_scope is { Kind: ScopeKind.Function } functionScope)
+        {
+            if (_callableKind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
+            {
+                stableReturnClrType = functionScope.StableReturnClrType;
+            }
+            else if (functionScope.StableReturnClrType == typeof(string))
+            {
+                stableReturnClrType = functionScope.StableReturnClrType;
+            }
+        }
+
+        if (stableReturnClrType == typeof(double))
+        {
+            return EnsureNumber(returnTempVar);
+        }
+
+        if (stableReturnClrType == typeof(bool))
+        {
+            return EnsureBoolean(returnTempVar);
+        }
+
+        if (stableReturnClrType != typeof(string) && _scope?.StableReturnIsThis != true)
+        {
+            return EnsureObject(returnTempVar);
+        }
+
+        return returnTempVar;
     }
 }

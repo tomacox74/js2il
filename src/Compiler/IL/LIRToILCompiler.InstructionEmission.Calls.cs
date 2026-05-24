@@ -91,11 +91,12 @@ internal sealed partial class LIRToILCompiler
         ilEncoder.OpCode(ILOpCode.Conv_r8);
         ilEncoder.Ldstr(_metadataBuilder, GetFunctionName(callableId));
         ilEncoder.LoadConstantI4(RequiresInvocationContext(callableId) ? 1 : 0);
+        ilEncoder.LoadConstantI4(callableId.HasRestrictedFunctionProperties ? 1 : 0);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(_memberRefRegistry.GetOrAddMethod(
             isAsync ? typeof(JavaScriptRuntime.AsyncFunction) : typeof(JavaScriptRuntime.Function),
             nameof(JavaScriptRuntime.Function.InitializeFunctionInstance),
-            new[] { typeof(object), typeof(double), typeof(string), typeof(bool) }));
+            new[] { typeof(object), typeof(double), typeof(string), typeof(bool), typeof(bool) }));
     }
 
     private void EmitInitializeGeneratorFunctionSurfaceIfNeeded(CallableId callableId, InstructionEncoder ilEncoder)
@@ -267,6 +268,71 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRTailCallFunctionReturn tailCall:
+                {
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false;
+                    }
+
+                    if (!reader.TryGetDeclaredToken(tailCall.CallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false;
+                    }
+
+                    if (tailCall.CallableId.NeedsArgumentsObject || tailCall.CallableId.HasRestParameters)
+                    {
+                        return false;
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+                    var callableSignature = reader.GetSignature(tailCall.CallableId);
+                    bool requiresScopes = callableSignature?.RequiresScopesParameter ?? true;
+                    bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
+                    int jsParamCount = tailCall.CallableId.JsParamCount;
+                    int argsToPass = Math.Min(tailCall.Arguments.Count, jsParamCount);
+
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            tailCall.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {tailCall.CallableId.DisplayName}."));
+                    }
+                    else
+                    {
+                        if (requiresScopes)
+                        {
+                            EmitLoadTemp(tailCall.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        }
+                    }
+
+                    // new.target is undefined for ordinary function tail calls.
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        var parameterClrType = callableSignature?.ParameterClrTypes != null && i < callableSignature.ParameterClrTypes.Count
+                            ? callableSignature.ParameterClrTypes[i]
+                            : null;
+                        EmitLoadTempAsParameterType(tailCall.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Tail);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(methodHandle);
+                    ilEncoder.OpCode(ILOpCode.Ret);
+                    break;
+                }
+
             case LIRCallFunctionWithArgsArray callFuncArray:
                 {
                     if (callFuncArray.CallableId is not { } callableId)
@@ -351,7 +417,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs),
                         new[] { typeof(object), typeof(object[]), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -375,7 +441,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs0),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs0),
                         new[] { typeof(object), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -400,7 +466,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs1),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs1),
                         new[] { typeof(object), typeof(object[]), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -426,7 +492,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs2),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs2),
                         new[] { typeof(object), typeof(object[]), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -453,7 +519,7 @@ internal sealed partial class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs3),
+                        nameof(JavaScriptRuntime.Closure.InvokeFunctionCallWithArgs3),
                         new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);

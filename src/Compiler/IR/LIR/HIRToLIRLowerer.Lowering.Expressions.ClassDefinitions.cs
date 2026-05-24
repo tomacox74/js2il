@@ -76,6 +76,57 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryLowerDefineClassAccessorMethodPropertyExpression(HIRDefineClassAccessorMethodPropertyExpression expression, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!TryLowerExpression(expression.Target, out var targetTemp)
+            || !TryLowerExpression(expression.Owner, out var ownerTemp)
+            || !TryLowerExpression(expression.Key, out var keyTemp))
+        {
+            return false;
+        }
+
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildScopesArrayForClassConstructor(expression.ClassScope, scopesTemp, allowEmptyOnUnmappedGlobal: true))
+        {
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        var clrMethodNameTemp = CreateStringConstant(expression.ClrMethodName);
+        var lengthTemp = CreateNumberConstant(expression.Length);
+        var functionNameTemp = CreateStringConstant(expression.FunctionName);
+        var isStaticTemp = CreateBooleanConstant(expression.IsStatic);
+        var isPrivateTemp = CreateBooleanConstant(expression.IsPrivate);
+        var isSetterTemp = CreateBooleanConstant(expression.IsSetter);
+        var isGeneratorTemp = CreateBooleanConstant(expression.IsGenerator);
+        var isAsyncTemp = CreateBooleanConstant(expression.IsAsync);
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.DefineClassMethodAccessorProperty),
+            Arguments: new[]
+            {
+                EnsureObject(targetTemp),
+                EnsureObject(keyTemp),
+                EnsureObject(ownerTemp),
+                EnsureObject(clrMethodNameTemp),
+                EnsureObject(lengthTemp),
+                EnsureObject(functionNameTemp),
+                EnsureObject(isStaticTemp),
+                EnsureObject(isPrivateTemp),
+                EnsureObject(isSetterTemp),
+                EnsureObject(isGeneratorTemp),
+                EnsureObject(isAsyncTemp),
+                EnsureObject(scopesTemp)
+            },
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private bool TryLowerDefineClassMethodDataPropertiesExpression(HIRDefineClassMethodDataPropertiesExpression expression, out TempVariable resultTempVar)
     {
         resultTempVar = default;

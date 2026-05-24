@@ -37,39 +37,39 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "12.14-9")]
     public Task _12_14_9()
         => ExecutionTest("12.14-9");
-    [Fact(DisplayName = "12.14-13", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-13")]
     public Task _12_14_13()
         => ExecutionTest("12.14-13");
 
-    [Fact(DisplayName = "12.14-14", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-14")]
     public Task _12_14_14()
         => ExecutionTest("12.14-14");
 
-    [Fact(DisplayName = "12.14-15", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-15")]
     public Task _12_14_15()
         => ExecutionTest("12.14-15");
 
-    [Fact(DisplayName = "12.14-16", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "12.14-16")]
     public Task _12_14_16()
         => ExecutionTest("12.14-16");
 
-    [Fact(DisplayName = "completion-values-fn-finally-return", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "completion-values-fn-finally-return")]
     public Task completion_values_fn_finally_return()
         => ExecutionTest("completion-values-fn-finally-return");
 
-    [Fact(DisplayName = "ary-init-iter-close", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-init-iter-close")]
     public Task dstr_ary_init_iter_close()
         => ExecutionTest(@"dstr\ary-init-iter-close");
 
-    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Blocked by shared Array.prototype iterator fallback semantics.")]
     public Task dstr_ary_init_iter_get_err_array_prototype()
         => ExecutionTest(@"dstr\ary-init-iter-get-err-array-prototype");
 
-    [Fact(DisplayName = "ary-init-iter-no-close", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-init-iter-no-close")]
     public Task dstr_ary_init_iter_no_close()
         => ExecutionTest(@"dstr\ary-init-iter-no-close");
 
-    [Fact(DisplayName = "ary-name-iter-val", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-name-iter-val")]
     public Task dstr_ary_name_iter_val()
         => ExecutionTest(@"dstr\ary-name-iter-val");
 

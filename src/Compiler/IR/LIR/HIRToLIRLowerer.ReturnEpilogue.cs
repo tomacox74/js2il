@@ -40,6 +40,16 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
+        StoreReturnEpilogueValue(returnValue);
+
+        // Leave to epilogue (outside of try/finally so finally executes).
+        _methodBodyIR.Instructions.Add(new LIRLeave(_methodBodyIR.ReturnEpilogueLabelId.Value));
+        _needsReturnEpilogueBlock = true;
+        return true;
+    }
+
+    private void StoreReturnEpilogueValue(TempVariable returnValue)
+    {
         EnsureReturnEpilogueStorage();
 
         // Store return value into the dedicated slot.
@@ -47,10 +57,5 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(returnValue, storeTemp));
         DefineTempStorage(storeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         SetTempVariableSlot(storeTemp, _returnEpilogueReturnSlot!.Value);
-
-        // Leave to epilogue (outside of try/finally so finally executes).
-        _methodBodyIR.Instructions.Add(new LIRLeave(_methodBodyIR.ReturnEpilogueLabelId.Value));
-        _needsReturnEpilogueBlock = true;
-        return true;
     }
 }

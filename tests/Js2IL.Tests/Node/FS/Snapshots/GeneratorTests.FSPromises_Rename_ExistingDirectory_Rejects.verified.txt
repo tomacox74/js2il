@@ -11,7 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
+		.class nested public auto ansi beforefieldinit Scope
 			extends [JavaScriptRuntime]JavaScriptRuntime.AsyncScope
 		{
 			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
@@ -757,7 +757,7 @@
 
 	} // end of class ArrowFunction_L7C2
 
-	.class nested private auto ansi beforefieldinit Scope
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
@@ -800,7 +800,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 130 (0x82)
+		// Code size: 131 (0x83)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_Rename_ExistingDirectory_Rejects/Scope,
@@ -846,17 +846,18 @@
 		IL_0060: conv.r8
 		IL_0061: ldstr ""
 		IL_0066: ldc.i4.0
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string, bool)
-		IL_006c: stloc.1
-		IL_006d: ldc.i4.0
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: stloc.2
-		IL_0074: ldloc.1
-		IL_0075: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_007a: ldloc.2
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0080: pop
-		IL_0081: ret
+		IL_0067: ldc.i4.1
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_006d: stloc.1
+		IL_006e: ldc.i4.0
+		IL_006f: newarr [System.Runtime]System.Object
+		IL_0074: stloc.2
+		IL_0075: ldloc.1
+		IL_0076: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007b: ldloc.2
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method FSPromises_Rename_ExistingDirectory_Rejects::__js_module_init__
 
 } // end of class Modules.FSPromises_Rename_ExistingDirectory_Rejects

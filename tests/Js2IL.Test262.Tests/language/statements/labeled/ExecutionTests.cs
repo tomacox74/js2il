@@ -21,11 +21,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "value-yield-non-strict")]
     public Task value_yield_non_strict()
         => ExecutionTest("value-yield-non-strict");
-    [Fact(DisplayName = "cptn-break", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "cptn-break")]
     public Task cptn_break()
         => ExecutionTest("cptn-break");
 
-    [Fact(DisplayName = "cptn-nrml", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "cptn-nrml")]
     public Task cptn_nrml()
         => ExecutionTest("cptn-nrml");
 

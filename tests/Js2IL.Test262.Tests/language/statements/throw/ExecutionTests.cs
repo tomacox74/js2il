@@ -33,7 +33,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_13_A2_T7()
         => ExecutionTest("S12.13_A2_T7");
 
-    [Fact(DisplayName = "S12.13_A3_T1", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "S12.13_A3_T1")]
     public Task S12_13_A3_T1()
         => ExecutionTest("S12.13_A3_T1");
 

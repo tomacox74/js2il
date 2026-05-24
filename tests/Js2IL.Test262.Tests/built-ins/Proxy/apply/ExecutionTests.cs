@@ -6,7 +6,7 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Proxy.apply") { }
 
-    [Fact(DisplayName = "trap-is-undefined", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "trap-is-undefined")]
     public Task trap_is_undefined()
         => ExecutionTestFromFile("trap-is-undefined");
 }
