@@ -3984,7 +3984,7 @@ class HIRMethodBuilder
                     objectMembers.Add(new HIRObjectProperty(
                         propName!,
                         valueExpr!,
-                        isPrototypeMutation: string.Equals(propName, "__proto__", StringComparison.Ordinal)));
+                        isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal)));
                 }
                 hirExpr = new HIRObjectExpression(objectMembers);
                 return true;
