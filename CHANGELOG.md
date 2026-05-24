@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/test262: align Proxy constructor and callable proxy apply semantics with the newly unskipped test262 coverage, including the covered validation and trap-dispatch cases.
 - compiler/tests/docs/test262: fix lexical scope handling for expression forms so arrow functions, class elements, and function expressions capture the correct bindings in the newly unskipped test262 cases.
 - runtime/tests/docs/test262: unskip supported Object and JSON built-in coverage for `Object.assign`, `Object.keys`, `Object.values`, and `JSON.stringify`, including the newly fixed primitive-target and ordinary-object serialization cases.
 - compiler/tests/docs/test262: support tail-position conditional and logical expression lowering in return paths, unskipping the related expression test262 coverage.
