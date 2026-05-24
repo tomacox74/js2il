@@ -34,6 +34,10 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task short_circuit_number_0()
         => ExecutionTest("short-circuit-number-0");
 
+    [Fact(DisplayName = "short-circuit-number-42")]
+    public Task short_circuit_number_42()
+        => ExecutionTest("short-circuit-number-42");
+
     [Fact(DisplayName = "short-circuit-number-empty-string")]
     public Task short_circuit_number_empty_string()
         => ExecutionTest("short-circuit-number-empty-string");
@@ -50,7 +54,15 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task short_circuit_number_string()
         => ExecutionTest("short-circuit-number-string");
 
+    [Fact(DisplayName = "short-circuit-number-symbol")]
+    public Task short_circuit_number_symbol()
+        => ExecutionTest("short-circuit-number-symbol");
+
     [Fact(DisplayName = "short-circuit-number-true")]
     public Task short_circuit_number_true()
         => ExecutionTest("short-circuit-number-true");
+
+    [Fact(DisplayName = "short-circuit-prevents-evaluation")]
+    public Task short_circuit_prevents_evaluation()
+        => ExecutionTest("short-circuit-prevents-evaluation");
 }

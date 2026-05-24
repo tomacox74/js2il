@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-03T15:15:03Z
+> Last generated (UTC): 2026-05-24T13:09:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 13.10.1 ([tc39.es](https://tc39.es/ecma262/#sec-relational-operators-runtime-semantics-evaluation))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Relational comparison evaluation order and coercion | Supported with Limitations | `tests/Js2IL.Test262.Tests/language/expressions/greater-than/PortExpressionsBatchExecutionTests.cs` |  | The current relational operator slice exercises `>` evaluation order, abrupt-completion propagation, primitive/object coercion, and representative comparison cases from test262. The broader relational family remains marked limited because only the currently imported operator matrix is tracked here. |
 
 ### 13.10.2 ([tc39.es](https://tc39.es/ecma262/#sec-instanceofoperator))
 
