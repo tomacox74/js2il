@@ -18,7 +18,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task bigint_and_number_extremes()
         => ExecutionTest("bigint-and-number-extremes");
 
-    [Fact(DisplayName = "bigint-and-object", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "bigint-and-object")]
     public Task bigint_and_object()
         => ExecutionTest("bigint-and-object");
 

@@ -22,7 +22,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task _8_14_4_8_b_2()
         => ExecutionTest("8.14.4-8-b_2");
 
-    [Fact(DisplayName = "assignment-operator-calls-putvalue-lref--rval--1", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "assignment-operator-calls-putvalue-lref--rval--1")]
     public Task assignment_operator_calls_putvalue_lref_rval_1()
         => ExecutionTest("assignment-operator-calls-putvalue-lref--rval--1");
 

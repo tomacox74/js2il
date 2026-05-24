@@ -167,7 +167,10 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRNegateNumberDynamic(
                 EnsureObject(unaryArgTempVar),
                 resultTempVar));
-            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            var resultClrType = unaryArgStorage.ClrType == typeof(System.Numerics.BigInteger)
+                ? typeof(System.Numerics.BigInteger)
+                : typeof(object);
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, resultClrType));
             return true;
         }
 

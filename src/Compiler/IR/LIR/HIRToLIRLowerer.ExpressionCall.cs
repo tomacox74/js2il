@@ -654,6 +654,8 @@ public sealed partial class HIRToLIRLowerer
                 return false;
             }
 
+            computedReceiverTemp = RequireObjectCoercible(computedReceiverTemp);
+
             if (!TryLowerExpression(calleeIndexAccess.Index, out var propertyKeyTemp))
             {
                 return false;
@@ -1229,7 +1231,7 @@ public sealed partial class HIRToLIRLowerer
         // Case 2c: Generic member call via runtime dispatcher.
         // This is a catch-all for calls like `output.join(',')` where `output` may be boxed as object,
         // so typed receiver lowering can't prove the receiver type.
-        receiverTempVar = EnsureObject(receiverTempVar);
+        receiverTempVar = RequireObjectCoercible(receiverTempVar);
 
         // Check if we can use arity-specific instruction (no spread, 0-3 args)
         if (!HasSpreadArguments(callExpr.Arguments) && callExpr.Arguments.Length <= 3)

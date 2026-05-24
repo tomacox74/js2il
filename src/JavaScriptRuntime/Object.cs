@@ -1255,11 +1255,6 @@ namespace JavaScriptRuntime
             var wrapper = CreateOrdinaryObject();
             PrototypeChain.SetPrototype(wrapper, prototype);
 
-            if (!includeOwnStringMethods)
-            {
-                return wrapper;
-            }
-
             PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1269,14 +1264,17 @@ namespace JavaScriptRuntime
                 Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
             });
 
-            PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
+            if (includeOwnStringMethods || primitiveValue is System.Numerics.BigInteger or JavaScriptRuntime.Symbol)
             {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
-            });
+                PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
+                });
+            }
 
             return wrapper;
         }
@@ -2091,6 +2089,16 @@ namespace JavaScriptRuntime
                 return new JavaScriptRuntime.Boolean(value);
             }
 
+            if (value is System.Numerics.BigInteger)
+            {
+                return CreatePrimitiveWrapper(value, GlobalThis.ObjectPrototypeValue, includeOwnStringMethods: false);
+            }
+
+            if (value is JavaScriptRuntime.Symbol)
+            {
+                return CreatePrimitiveWrapper(value, GlobalThis.SymbolPrototypeValue, includeOwnStringMethods: false);
+            }
+
             if (value is double or float or int or long or short or byte or sbyte or uint or ulong or ushort)
             {
                 return JavaScriptRuntime.Number.Construct(new object?[] { value }, newTarget: null);
@@ -2354,6 +2362,11 @@ namespace JavaScriptRuntime
         public static object? CallMember(object receiver, string methodName, object[]? args)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError("Cannot read properties of null or undefined");
+            }
+
             var callArgs = args ?? System.Array.Empty<object>();
 
             // Function.prototype.apply / Function.prototype.bind support.
@@ -2516,6 +2529,11 @@ namespace JavaScriptRuntime
                 }
             }
 
+            if (memberValue is null or JsNull)
+            {
+                throw new TypeError($"{methodName} is not a function");
+            }
+
             if (TryCallStaticClassMethod(receiver, methodName, callArgs, out var staticClassResult))
             {
                 return staticClassResult;
@@ -2527,6 +2545,11 @@ namespace JavaScriptRuntime
 
         public static object? CallComputedMember(object receiver, object? propertyKey, object[]? args)
         {
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError("Cannot read properties of null or undefined");
+            }
+
             var callArgs = args ?? System.Array.Empty<object>();
             var memberValue = ObjectRuntime.GetItem(receiver, propertyKey!);
 
