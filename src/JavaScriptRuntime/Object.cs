@@ -940,9 +940,9 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefineBuiltinFunctionLength(object functionValue, double length)
+        private static void DefineBuiltinFunctionLength(object function, double length)
         {
-            PropertyDescriptorStore.DefineOrUpdate(functionValue, "length", new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(function, "length", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,

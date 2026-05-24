@@ -144,7 +144,7 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static object? ApplyToJson(object? value, string key)
+        private static object? InvokeToJsonIfPresent(object? value, string key)
         {
             if (value is null
                 || value is JsNull
@@ -173,6 +173,14 @@ namespace JavaScriptRuntime
             }
         }
 
+        private static void PushToStackOrThrowIfCircular(HashSet<object> stack, object value)
+        {
+            if (!stack.Add(value))
+            {
+                throw new TypeError("Converting circular structure to JSON");
+            }
+        }
+
         private static object? ApplyReplacer(Delegate? replacerFunction, object holder, string key, object? value)
         {
             if (replacerFunction is null)
@@ -194,7 +202,7 @@ namespace JavaScriptRuntime
         private static string? SerializeProperty(object holder, string key, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
         {
             var value = ObjectRuntime.GetItem(holder, key);
-            value = ApplyToJson(value, key);
+            value = InvokeToJsonIfPresent(value, key);
             value = ApplyReplacer(replacerFunction, holder, key, value);
             return SerializeValue(value, propertyList, replacerFunction, stack);
         }
@@ -277,10 +285,7 @@ namespace JavaScriptRuntime
 
         private static string SerializeArray(Array array, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
         {
-            if (!stack.Add(array))
-            {
-                throw new TypeError("Converting circular structure to JSON");
-            }
+            PushToStackOrThrowIfCircular(stack, array);
 
             var length = (int)array.length;
             var items = new List<string>(length);
@@ -301,10 +306,7 @@ namespace JavaScriptRuntime
 
         private static string SerializeObject(object value, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
         {
-            if (!stack.Add(value))
-            {
-                throw new TypeError("Converting circular structure to JSON");
-            }
+            PushToStackOrThrowIfCircular(stack, value);
 
             var keys = propertyList ?? Object.GetOwnEnumerableKeysInOrder(value);
             var parts = new List<string>();
