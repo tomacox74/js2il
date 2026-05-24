@@ -16,6 +16,18 @@ public sealed partial class HIRToLIRLowerer
     private static bool HasSpreadArguments(IReadOnlyList<HIRExpression> arguments)
         => arguments.Any(a => a is HIRSpreadElement);
 
+    private TempVariable RequireObjectCoercible(TempVariable receiverTemp)
+    {
+        var checkedReceiver = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible),
+            new[] { EnsureObject(receiverTemp) },
+            checkedReceiver));
+        DefineTempStorage(checkedReceiver, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return checkedReceiver;
+    }
+
     private bool TryLowerCallArgumentsToArgsArray(IReadOnlyList<HIRExpression> arguments, out TempVariable argsArrayTemp)
     {
         argsArrayTemp = default;

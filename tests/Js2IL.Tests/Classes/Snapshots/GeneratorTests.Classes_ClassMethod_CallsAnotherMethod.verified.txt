@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2116
+				// Method begins at RVA 0x2132
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211f
+				// Method begins at RVA 0x213b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2128
+				// Method begins at RVA 0x2144
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2131
+				// Method begins at RVA 0x214d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213a
+				// Method begins at RVA 0x2156
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -124,7 +124,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20ae
+			// Method begins at RVA 0x20cd
 			// Header size: 1
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -143,7 +143,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e4
+			// Method begins at RVA 0x2100
 			// Header size: 12
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -170,7 +170,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2106
+			// Method begins at RVA 0x2122
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -185,7 +185,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x20dc
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -213,7 +213,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210d
+			// Method begins at RVA 0x2129
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -239,12 +239,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 113 (0x71)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_CallsAnotherMethod/Scope,
 			[1] object,
-			[2] class Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter
+			[2] class Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_CallsAnotherMethod/Scope::.ctor()
@@ -269,10 +270,24 @@
 		IL_0043: ldloc.2
 		IL_0044: stloc.1
 		IL_0045: ldloc.1
-		IL_0046: castclass Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter
-		IL_004b: callvirt instance object Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter::logHello()
-		IL_0050: pop
-		IL_0051: ret
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: isinst Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter
+		IL_0052: dup
+		IL_0053: brfalse IL_0063
+
+		IL_0058: callvirt instance object Modules.Classes_ClassMethod_CallsAnotherMethod/Greeter::logHello()
+		IL_005d: pop
+		IL_005e: br IL_0070
+
+		IL_0063: pop
+		IL_0064: ldloc.3
+		IL_0065: ldstr "logHello"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_006f: pop
+
+		IL_0070: ret
 	} // end of method Classes_ClassMethod_CallsAnotherMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_CallsAnotherMethod
@@ -284,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2143
+		// Method begins at RVA 0x215f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2206
+			// Method begins at RVA 0x222a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 426 (0x1aa)
+		// Code size: 462 (0x1ce)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Crypto_WebCrypto_GetRandomValues/Scope,
@@ -78,116 +78,128 @@
 		IL_002e: ldloc.1
 		IL_002f: ldstr "webcrypto"
 		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0039: ldstr "getRandomValues"
-		IL_003e: ldloc.2
-		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0044: stloc.s 8
-		IL_0046: ldloc.s 8
-		IL_0048: stloc.3
-		IL_0049: ldloc.3
-		IL_004a: ldloc.2
-		IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0050: stloc.s 10
-		IL_0052: ldloc.s 10
-		IL_0054: box [System.Runtime]System.Boolean
-		IL_0059: stloc.s 11
-		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0060: ldstr "same uint8:"
-		IL_0065: ldloc.s 11
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_006c: pop
-		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0072: ldstr "uint8 length:"
-		IL_0077: ldloc.2
-		IL_0078: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0087: pop
-		IL_0088: ldc.r8 2
-		IL_0091: box [System.Runtime]System.Double
-		IL_0096: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-		IL_009b: stloc.s 12
-		IL_009d: ldloc.s 12
-		IL_009f: stloc.s 4
-		IL_00a1: ldloc.1
-		IL_00a2: ldstr "getRandomValues"
-		IL_00a7: ldloc.s 4
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ae: stloc.s 8
-		IL_00b0: ldloc.s 8
-		IL_00b2: stloc.s 5
-		IL_00b4: ldloc.s 5
-		IL_00b6: ldloc.s 4
-		IL_00b8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00bd: stloc.s 10
-		IL_00bf: ldloc.s 10
-		IL_00c1: box [System.Runtime]System.Boolean
-		IL_00c6: stloc.s 11
-		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cd: ldstr "same int32:"
-		IL_00d2: ldloc.s 11
-		IL_00d4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00d9: pop
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003e: stloc.s 8
+		IL_0040: ldloc.s 8
+		IL_0042: ldstr "getRandomValues"
+		IL_0047: ldloc.2
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_004d: stloc.s 8
+		IL_004f: ldloc.s 8
+		IL_0051: stloc.3
+		IL_0052: ldloc.3
+		IL_0053: ldloc.2
+		IL_0054: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0059: stloc.s 10
+		IL_005b: ldloc.s 10
+		IL_005d: box [System.Runtime]System.Boolean
+		IL_0062: stloc.s 11
+		IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0069: ldstr "same uint8:"
+		IL_006e: ldloc.s 11
+		IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0075: pop
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007b: ldstr "uint8 length:"
+		IL_0080: ldloc.2
+		IL_0081: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0086: box [System.Runtime]System.Double
+		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0090: pop
+		IL_0091: ldc.r8 2
+		IL_009a: box [System.Runtime]System.Double
+		IL_009f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_00a4: stloc.s 12
+		IL_00a6: ldloc.s 12
+		IL_00a8: stloc.s 4
+		IL_00aa: ldloc.1
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b0: stloc.s 8
+		IL_00b2: ldloc.s 8
+		IL_00b4: ldstr "getRandomValues"
+		IL_00b9: ldloc.s 4
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c0: stloc.s 8
+		IL_00c2: ldloc.s 8
+		IL_00c4: stloc.s 5
+		IL_00c6: ldloc.s 5
+		IL_00c8: ldloc.s 4
+		IL_00ca: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00cf: stloc.s 10
+		IL_00d1: ldloc.s 10
+		IL_00d3: box [System.Runtime]System.Boolean
+		IL_00d8: stloc.s 11
 		IL_00da: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00df: ldstr "int32 byteLength:"
-		IL_00e4: ldloc.s 4
-		IL_00e6: ldstr "byteLength"
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00f5: pop
-		IL_00f6: ldc.r8 6
-		IL_00ff: box [System.Runtime]System.Double
-		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::alloc(object)
-		IL_0109: stloc.s 13
-		IL_010b: ldloc.s 13
-		IL_010d: stloc.s 6
-		IL_010f: ldloc.1
-		IL_0110: ldstr "webcrypto"
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_011a: ldstr "getRandomValues"
-		IL_011f: ldloc.s 6
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0126: stloc.s 8
-		IL_0128: ldloc.s 8
-		IL_012a: stloc.s 7
-		IL_012c: ldloc.s 7
-		IL_012e: ldloc.s 6
-		IL_0130: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0135: stloc.s 10
-		IL_0137: ldloc.s 10
-		IL_0139: box [System.Runtime]System.Boolean
-		IL_013e: stloc.s 11
-		IL_0140: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0145: ldstr "same buffer:"
-		IL_014a: ldloc.s 11
-		IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0151: pop
-		IL_0152: ldloc.s 6
-		IL_0154: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
-		IL_0159: stloc.s 14
-		IL_015b: ldloc.s 14
-		IL_015d: box [System.Runtime]System.Double
-		IL_0162: stloc.s 15
-		IL_0164: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0169: ldstr "buffer length:"
-		IL_016e: ldloc.s 15
-		IL_0170: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0175: pop
-		IL_0176: ldloc.s 6
-		IL_0178: ldstr "toString"
-		IL_017d: ldstr "hex"
-		IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0187: stloc.s 8
-		IL_0189: ldloc.s 8
-		IL_018b: ldstr "length"
-		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0195: stloc.s 8
-		IL_0197: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_019c: ldstr "buffer hex length:"
-		IL_01a1: ldloc.s 8
-		IL_01a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01a8: pop
-		IL_01a9: ret
+		IL_00df: ldstr "same int32:"
+		IL_00e4: ldloc.s 11
+		IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00eb: pop
+		IL_00ec: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f1: ldstr "int32 byteLength:"
+		IL_00f6: ldloc.s 4
+		IL_00f8: ldstr "byteLength"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0107: pop
+		IL_0108: ldc.r8 6
+		IL_0111: box [System.Runtime]System.Double
+		IL_0116: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::alloc(object)
+		IL_011b: stloc.s 13
+		IL_011d: ldloc.s 13
+		IL_011f: stloc.s 6
+		IL_0121: ldloc.1
+		IL_0122: ldstr "webcrypto"
+		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0131: stloc.s 8
+		IL_0133: ldloc.s 8
+		IL_0135: ldstr "getRandomValues"
+		IL_013a: ldloc.s 6
+		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0141: stloc.s 8
+		IL_0143: ldloc.s 8
+		IL_0145: stloc.s 7
+		IL_0147: ldloc.s 7
+		IL_0149: ldloc.s 6
+		IL_014b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0150: stloc.s 10
+		IL_0152: ldloc.s 10
+		IL_0154: box [System.Runtime]System.Boolean
+		IL_0159: stloc.s 11
+		IL_015b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0160: ldstr "same buffer:"
+		IL_0165: ldloc.s 11
+		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_016c: pop
+		IL_016d: ldloc.s 6
+		IL_016f: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
+		IL_0174: stloc.s 14
+		IL_0176: ldloc.s 14
+		IL_0178: box [System.Runtime]System.Double
+		IL_017d: stloc.s 15
+		IL_017f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0184: ldstr "buffer length:"
+		IL_0189: ldloc.s 15
+		IL_018b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0190: pop
+		IL_0191: ldloc.s 6
+		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0198: stloc.s 8
+		IL_019a: ldloc.s 8
+		IL_019c: ldstr "toString"
+		IL_01a1: ldstr "hex"
+		IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01ab: stloc.s 8
+		IL_01ad: ldloc.s 8
+		IL_01af: ldstr "length"
+		IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01b9: stloc.s 8
+		IL_01bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01c0: ldstr "buffer hex length:"
+		IL_01c5: ldloc.s 8
+		IL_01c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_01cc: pop
+		IL_01cd: ret
 	} // end of method Require_Crypto_WebCrypto_GetRandomValues::__js_module_init__
 
 } // end of class Modules.Require_Crypto_WebCrypto_GetRandomValues
@@ -199,7 +211,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x220f
+		// Method begins at RVA 0x2233
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

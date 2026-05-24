@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fd
+				// Method begins at RVA 0x211d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2106
+				// Method begins at RVA 0x2126
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20b8
+			// Method begins at RVA 0x20d8
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -88,7 +88,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20f4
 			// Header size: 1
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -123,7 +123,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -149,12 +149,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 121 (0x79)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope,
 			[1] object,
-			[2] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+			[2] class Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::.ctor()
@@ -183,10 +184,24 @@
 		IL_004b: ldloc.2
 		IL_004c: stloc.1
 		IL_004d: ldloc.1
-		IL_004e: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
-		IL_0053: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
-		IL_0058: pop
-		IL_0059: ret
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0053: stloc.3
+		IL_0054: ldloc.3
+		IL_0055: isinst Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass
+		IL_005a: dup
+		IL_005b: brfalse IL_006b
+
+		IL_0060: callvirt instance object Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::logGlobal()
+		IL_0065: pop
+		IL_0066: br IL_0078
+
+		IL_006b: pop
+		IL_006c: ldloc.3
+		IL_006d: ldstr "logGlobal"
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0077: pop
+
+		IL_0078: ret
 	} // end of method Classes_ClassMethod_AccessGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessGlobalVariable_Log
@@ -198,7 +213,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210f
+		// Method begins at RVA 0x212f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

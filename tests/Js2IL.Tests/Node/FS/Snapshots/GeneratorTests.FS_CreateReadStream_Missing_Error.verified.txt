@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x229c
+				// Method begins at RVA 0x22da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,15 +49,15 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x221c
+			// Method begins at RVA 0x2250
 			// Header size: 12
-			// Code size: 82 (0x52)
+			// Code size: 92 (0x5c)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
-				[2] bool,
-				[3] object,
+				[2] object,
+				[3] bool,
 				[4] object,
 				[5] object
 			)
@@ -68,32 +68,36 @@
 			IL_000b: ldstr ""
 			IL_0010: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
 			IL_0015: stloc.1
-			IL_0016: ldarg.1
-			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0016: ldloc.1
+			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_001c: stloc.2
-			IL_001d: ldloc.2
-			IL_001e: brfalse IL_0035
+			IL_001d: ldarg.1
+			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0023: stloc.3
+			IL_0024: ldloc.3
+			IL_0025: brfalse IL_003c
 
-			IL_0023: ldarg.1
-			IL_0024: ldstr "message"
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_002e: stloc.s 4
-			IL_0030: br IL_0038
+			IL_002a: ldarg.1
+			IL_002b: ldstr "message"
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0035: stloc.s 5
+			IL_0037: br IL_003f
 
-			IL_0035: ldarg.1
-			IL_0036: stloc.s 4
+			IL_003c: ldarg.1
+			IL_003d: stloc.s 5
 
-			IL_0038: ldloc.1
-			IL_0039: ldloc.s 4
-			IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
-			IL_0040: stloc.s 5
-			IL_0042: ldloc.0
-			IL_0043: ldstr "ErrorStartsWithENOENT:"
-			IL_0048: ldloc.s 5
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004f: pop
-			IL_0050: ldnull
-			IL_0051: ret
+			IL_003f: ldloc.2
+			IL_0040: ldstr "test"
+			IL_0045: ldloc.s 5
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_004c: stloc.2
+			IL_004d: ldloc.0
+			IL_004e: ldstr "ErrorStartsWithENOENT:"
+			IL_0053: ldloc.2
+			IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0059: pop
+			IL_005a: ldnull
+			IL_005b: ret
 		} // end of method ArrowFunction_L13C20::__js_call__
 
 	} // end of class ArrowFunction_L13C20
@@ -109,7 +113,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a5
+				// Method begins at RVA 0x22e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -132,7 +136,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x227a
+			// Method begins at RVA 0x22b8
 			// Header size: 1
 			// Code size: 24 (0x18)
 			.maxstack 8
@@ -156,7 +160,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2293
+			// Method begins at RVA 0x22d1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -182,7 +186,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 445 (0x1bd)
+		// Code size: 499 (0x1f3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_CreateReadStream_Missing_Error/Scope,
@@ -196,7 +200,8 @@
 			[8] string,
 			[9] float64,
 			[10] object,
-			[11] string
+			[11] string,
+			[12] object
 		)
 
 		IL_0000: newobj instance void Modules.FS_CreateReadStream_Missing_Error/Scope::.ctor()
@@ -254,100 +259,118 @@
 		IL_00a0: stloc.s 11
 		IL_00a2: ldloc.s 11
 		IL_00a4: stloc.s 4
-		IL_00a6: ldloc.3
-		IL_00a7: ldstr "tmpdir"
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00b1: stloc.s 7
-		IL_00b3: ldloc.s 4
-		IL_00b5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00ba: stloc.s 11
-		IL_00bc: ldstr "js2il-fs-read-stream-missing-"
-		IL_00c1: ldloc.s 11
-		IL_00c3: call string [System.Runtime]System.String::Concat(string, string)
-		IL_00c8: stloc.s 11
-		IL_00ca: ldloc.s 11
-		IL_00cc: ldstr ".txt"
-		IL_00d1: call string [System.Runtime]System.String::Concat(string, string)
-		IL_00d6: stloc.s 11
-		IL_00d8: ldloc.2
-		IL_00d9: ldstr "join"
-		IL_00de: ldloc.s 7
-		IL_00e0: ldloc.s 11
-		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00e7: stloc.s 7
+		IL_00a6: ldloc.2
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ac: stloc.s 7
+		IL_00ae: ldloc.3
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b4: stloc.s 12
+		IL_00b6: ldloc.s 12
+		IL_00b8: ldstr "tmpdir"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00c2: stloc.s 12
+		IL_00c4: ldloc.s 4
+		IL_00c6: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00cb: stloc.s 11
+		IL_00cd: ldstr "js2il-fs-read-stream-missing-"
+		IL_00d2: ldloc.s 11
+		IL_00d4: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00d9: stloc.s 11
+		IL_00db: ldloc.s 11
+		IL_00dd: ldstr ".txt"
+		IL_00e2: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00e7: stloc.s 11
 		IL_00e9: ldloc.s 7
-		IL_00eb: stloc.s 5
-		IL_00ed: ldloc.1
-		IL_00ee: ldstr "rmSync"
-		IL_00f3: ldloc.s 5
-		IL_00f5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_00fa: dup
-		IL_00fb: ldstr "force"
-		IL_0100: ldc.i4.1
-		IL_0101: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_010b: pop
-		IL_010c: ldloc.1
-		IL_010d: ldstr "createReadStream"
-		IL_0112: ldloc.s 5
-		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0119: dup
-		IL_011a: ldstr "encoding"
-		IL_011f: ldstr "utf8"
-		IL_0124: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_012e: stloc.s 7
-		IL_0130: ldloc.s 7
-		IL_0132: stloc.s 6
-		IL_0134: ldnull
-		IL_0135: ldftn object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20::__js_call__(object, object)
-		IL_013b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0140: ldc.i4.1
-		IL_0141: newarr [System.Runtime]System.Object
-		IL_0146: dup
-		IL_0147: ldc.i4.0
-		IL_0148: ldloc.0
-		IL_0149: stelem.ref
-		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0154: ldc.i4.1
-		IL_0155: conv.r8
-		IL_0156: ldstr ""
-		IL_015b: ldc.i4.0
-		IL_015c: ldc.i4.1
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0162: stloc.s 7
-		IL_0164: ldloc.s 6
-		IL_0166: ldstr "on"
-		IL_016b: ldstr "error"
-		IL_0170: ldloc.s 7
-		IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0177: pop
-		IL_0178: ldnull
-		IL_0179: ldftn object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20::__js_call__(object)
-		IL_017f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0184: ldc.i4.1
-		IL_0185: newarr [System.Runtime]System.Object
-		IL_018a: dup
-		IL_018b: ldc.i4.0
-		IL_018c: ldloc.0
-		IL_018d: stelem.ref
-		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0198: ldc.i4.0
-		IL_0199: conv.r8
-		IL_019a: ldstr ""
-		IL_019f: ldc.i4.0
-		IL_01a0: ldc.i4.1
-		IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01a6: stloc.s 7
-		IL_01a8: ldloc.s 6
-		IL_01aa: ldstr "on"
-		IL_01af: ldstr "close"
-		IL_01b4: ldloc.s 7
-		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_01bb: pop
-		IL_01bc: ret
+		IL_00eb: ldstr "join"
+		IL_00f0: ldloc.s 12
+		IL_00f2: ldloc.s 11
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00f9: stloc.s 12
+		IL_00fb: ldloc.s 12
+		IL_00fd: stloc.s 5
+		IL_00ff: ldloc.1
+		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0105: stloc.s 12
+		IL_0107: ldloc.s 12
+		IL_0109: ldstr "rmSync"
+		IL_010e: ldloc.s 5
+		IL_0110: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0115: dup
+		IL_0116: ldstr "force"
+		IL_011b: ldc.i4.1
+		IL_011c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0126: pop
+		IL_0127: ldloc.1
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_012d: stloc.s 12
+		IL_012f: ldloc.s 12
+		IL_0131: ldstr "createReadStream"
+		IL_0136: ldloc.s 5
+		IL_0138: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_013d: dup
+		IL_013e: ldstr "encoding"
+		IL_0143: ldstr "utf8"
+		IL_0148: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0152: stloc.s 12
+		IL_0154: ldloc.s 12
+		IL_0156: stloc.s 6
+		IL_0158: ldloc.s 6
+		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_015f: stloc.s 12
+		IL_0161: ldnull
+		IL_0162: ldftn object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L13C20::__js_call__(object, object)
+		IL_0168: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_016d: ldc.i4.1
+		IL_016e: newarr [System.Runtime]System.Object
+		IL_0173: dup
+		IL_0174: ldc.i4.0
+		IL_0175: ldloc.0
+		IL_0176: stelem.ref
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0181: ldc.i4.1
+		IL_0182: conv.r8
+		IL_0183: ldstr ""
+		IL_0188: ldc.i4.0
+		IL_0189: ldc.i4.1
+		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_018f: stloc.s 7
+		IL_0191: ldloc.s 12
+		IL_0193: ldstr "on"
+		IL_0198: ldstr "error"
+		IL_019d: ldloc.s 7
+		IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01a4: pop
+		IL_01a5: ldloc.s 6
+		IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01ac: stloc.s 7
+		IL_01ae: ldnull
+		IL_01af: ldftn object Modules.FS_CreateReadStream_Missing_Error/ArrowFunction_L17C20::__js_call__(object)
+		IL_01b5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01ba: ldc.i4.1
+		IL_01bb: newarr [System.Runtime]System.Object
+		IL_01c0: dup
+		IL_01c1: ldc.i4.0
+		IL_01c2: ldloc.0
+		IL_01c3: stelem.ref
+		IL_01c4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_01ce: ldc.i4.0
+		IL_01cf: conv.r8
+		IL_01d0: ldstr ""
+		IL_01d5: ldc.i4.0
+		IL_01d6: ldc.i4.1
+		IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_01dc: stloc.s 12
+		IL_01de: ldloc.s 7
+		IL_01e0: ldstr "on"
+		IL_01e5: ldstr "close"
+		IL_01ea: ldloc.s 12
+		IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01f1: pop
+		IL_01f2: ret
 	} // end of method FS_CreateReadStream_Missing_Error::__js_module_init__
 
 } // end of class Modules.FS_CreateReadStream_Missing_Error
@@ -359,7 +382,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ae
+		// Method begins at RVA 0x22ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

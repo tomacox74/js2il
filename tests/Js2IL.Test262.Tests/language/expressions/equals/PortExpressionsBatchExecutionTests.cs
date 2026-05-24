@@ -14,7 +14,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task bigint_and_number()
         => ExecutionTest("bigint-and-number");
 
-    [Fact(DisplayName = "bigint-and-object", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "bigint-and-object")]
     public Task bigint_and_object()
         => ExecutionTest("bigint-and-object");
 
@@ -22,7 +22,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task bigint_and_string()
         => ExecutionTest("bigint-and-string");
 
-    [Fact(DisplayName = "coerce-symbol-to-prim-return-prim", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "coerce-symbol-to-prim-return-prim")]
     public Task coerce_symbol_to_prim_return_prim()
         => ExecutionTest("coerce-symbol-to-prim-return-prim");
 
@@ -30,7 +30,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task symbol_abstract_equality_comparison()
         => ExecutionTest("symbol-abstract-equality-comparison");
 
-    [Fact(DisplayName = "to-prim-hint", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "to-prim-hint")]
     public Task to_prim_hint()
         => ExecutionTest("to-prim-hint");
 }

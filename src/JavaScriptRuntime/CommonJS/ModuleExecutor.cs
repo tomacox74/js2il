@@ -108,7 +108,15 @@ internal sealed class ModuleExecutor
         // Invoke script with module parameters
         // exports is initially the same object as module.exports
         // Parameters: exports, require, module, __filename, __dirname
-        scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname);
+        var previousThis = RuntimeServices.SetCurrentThis(GlobalThis.globalThis);
+        try
+        {
+            scriptEntryPoint(mainModule.exports, mainRequire, mainModule, moduleContext.__filename, moduleContext.__dirname);
+        }
+        finally
+        {
+            RuntimeServices.SetCurrentThis(previousThis);
+        }
 
         // Mark main module as loaded
         mainModule.MarkLoaded();

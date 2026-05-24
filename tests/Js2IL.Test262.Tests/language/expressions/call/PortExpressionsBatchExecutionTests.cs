@@ -14,7 +14,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task _11_2_3_3_2()
         => ExecutionTest("11.2.3-3_2");
 
-    [Fact(DisplayName = "11.2.3-3_3", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "11.2.3-3_3")]
     public Task _11_2_3_3_3()
         => ExecutionTest("11.2.3-3_3");
 
@@ -22,7 +22,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task _11_2_3_3_4()
         => ExecutionTest("11.2.3-3_4");
 
-    [Fact(DisplayName = "11.2.3-3_5", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "11.2.3-3_5", Skip = "Tracked by eval support: JS2IL still rejects eval at validation time.")]
     public Task _11_2_3_3_5()
         => ExecutionTest("11.2.3-3_5");
 

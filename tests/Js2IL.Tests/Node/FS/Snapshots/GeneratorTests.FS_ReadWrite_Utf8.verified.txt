@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d5
+			// Method begins at RVA 0x20f0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 121 (0x79)
+		// Code size: 148 (0x94)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FS_ReadWrite_Utf8/Scope,
@@ -66,33 +66,42 @@
 		IL_0023: ldloc.s 5
 		IL_0025: stloc.2
 		IL_0026: ldloc.2
-		IL_0027: ldstr "join"
-		IL_002c: ldarg.s __dirname
-		IL_002e: ldstr "tmp.txt"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0038: stloc.s 5
-		IL_003a: ldloc.s 5
-		IL_003c: stloc.3
-		IL_003d: ldloc.1
-		IL_003e: ldstr "writeFileSync"
-		IL_0043: ldloc.3
-		IL_0044: ldstr "hello"
-		IL_0049: ldstr "utf8"
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_0053: pop
-		IL_0054: ldloc.1
-		IL_0055: ldstr "readFileSync"
-		IL_005a: ldloc.3
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_002c: stloc.s 5
+		IL_002e: ldloc.s 5
+		IL_0030: ldstr "join"
+		IL_0035: ldarg.s __dirname
+		IL_0037: ldstr "tmp.txt"
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0041: stloc.s 5
+		IL_0043: ldloc.s 5
+		IL_0045: stloc.3
+		IL_0046: ldloc.1
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004c: stloc.s 5
+		IL_004e: ldloc.s 5
+		IL_0050: ldstr "writeFileSync"
+		IL_0055: ldloc.3
+		IL_0056: ldstr "hello"
 		IL_005b: ldstr "utf8"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0065: stloc.s 5
-		IL_0067: ldloc.s 5
-		IL_0069: stloc.s 4
-		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0070: ldloc.s 4
-		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0077: pop
-		IL_0078: ret
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_0065: pop
+		IL_0066: ldloc.1
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006c: stloc.s 5
+		IL_006e: ldloc.s 5
+		IL_0070: ldstr "readFileSync"
+		IL_0075: ldloc.3
+		IL_0076: ldstr "utf8"
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0080: stloc.s 5
+		IL_0082: ldloc.s 5
+		IL_0084: stloc.s 4
+		IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008b: ldloc.s 4
+		IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0092: pop
+		IL_0093: ret
 	} // end of method FS_ReadWrite_Utf8::__js_module_init__
 
 } // end of class Modules.FS_ReadWrite_Utf8
@@ -104,7 +113,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20de
+		// Method begins at RVA 0x20f9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

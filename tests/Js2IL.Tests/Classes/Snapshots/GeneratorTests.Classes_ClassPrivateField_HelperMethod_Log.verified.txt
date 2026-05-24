@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a0
+				// Method begins at RVA 0x21c0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a9
+				// Method begins at RVA 0x21c9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -65,7 +65,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x215c
+			// Method begins at RVA 0x217c
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -92,7 +92,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2183
+			// Method begins at RVA 0x21a3
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -115,7 +115,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2197
+			// Method begins at RVA 0x21b7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -141,7 +141,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 254 (0xfe)
+		// Code size: 288 (0x120)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateField_HelperMethod_Log/Scope,
@@ -252,10 +252,24 @@
 		IL_00ee: ldloc.s 6
 		IL_00f0: stloc.2
 		IL_00f1: ldloc.2
-		IL_00f2: castclass Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
-		IL_00f7: callvirt instance object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::logSecret()
-		IL_00fc: pop
-		IL_00fd: ret
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f7: stloc.s 5
+		IL_00f9: ldloc.s 5
+		IL_00fb: isinst Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter
+		IL_0100: dup
+		IL_0101: brfalse IL_0111
+
+		IL_0106: callvirt instance object Modules.Classes_ClassPrivateField_HelperMethod_Log/Greeter::logSecret()
+		IL_010b: pop
+		IL_010c: br IL_011f
+
+		IL_0111: pop
+		IL_0112: ldloc.s 5
+		IL_0114: ldstr "logSecret"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_011e: pop
+
+		IL_011f: ret
 	} // end of method Classes_ClassPrivateField_HelperMethod_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateField_HelperMethod_Log
@@ -267,7 +281,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b2
+		// Method begins at RVA 0x21d2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

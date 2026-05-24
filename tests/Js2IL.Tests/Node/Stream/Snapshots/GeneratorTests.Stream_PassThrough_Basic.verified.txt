@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2231
+				// Method begins at RVA 0x2265
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x219e
+			// Method begins at RVA 0x21d4
 			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
@@ -72,7 +72,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223a
+				// Method begins at RVA 0x226e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21b0
+			// Method begins at RVA 0x21e4
 			// Header size: 12
 			// Code size: 108 (0x6c)
 			.maxstack 8
@@ -149,7 +149,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2228
+			// Method begins at RVA 0x225c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -175,7 +175,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 322 (0x142)
+		// Code size: 376 (0x178)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_PassThrough_Basic/Scope,
@@ -183,7 +183,8 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Stream_PassThrough_Basic/Scope::.ctor()
@@ -249,57 +250,75 @@
 		IL_00a9: ldc.i4.1
 		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_00af: pop
-		IL_00b0: ldc.i4.1
-		IL_00b1: newarr [System.Runtime]System.Object
-		IL_00b6: dup
-		IL_00b7: ldc.i4.0
-		IL_00b8: ldloc.0
-		IL_00b9: stelem.ref
-		IL_00ba: ldc.i4.0
-		IL_00bb: ldelem.ref
-		IL_00bc: castclass Modules.Stream_PassThrough_Basic/Scope
-		IL_00c1: ldftn object Modules.Stream_PassThrough_Basic/FunctionExpression_L14C22::__js_call__(class Modules.Stream_PassThrough_Basic/Scope, object)
-		IL_00c7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00cc: ldc.i4.0
-		IL_00cd: conv.r8
-		IL_00ce: ldstr ""
-		IL_00d3: ldc.i4.0
-		IL_00d4: ldc.i4.1
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00da: stloc.s 5
-		IL_00dc: ldloc.s 4
-		IL_00de: ldstr "on"
-		IL_00e3: ldstr "finish"
-		IL_00e8: ldloc.s 5
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00ef: pop
-		IL_00f0: ldloc.2
-		IL_00f1: ldstr "pipe"
-		IL_00f6: ldloc.3
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00fc: stloc.s 5
-		IL_00fe: ldloc.s 5
-		IL_0100: ldstr "pipe"
-		IL_0105: ldloc.s 4
-		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_010c: pop
-		IL_010d: ldloc.2
-		IL_010e: ldstr "push"
-		IL_0113: ldstr "a"
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011d: pop
-		IL_011e: ldloc.2
-		IL_011f: ldstr "push"
-		IL_0124: ldstr "b"
-		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_012e: pop
-		IL_012f: ldloc.2
-		IL_0130: ldstr "push"
-		IL_0135: ldc.i4.0
-		IL_0136: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0140: pop
-		IL_0141: ret
+		IL_00b0: ldloc.s 4
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b7: stloc.s 5
+		IL_00b9: ldc.i4.1
+		IL_00ba: newarr [System.Runtime]System.Object
+		IL_00bf: dup
+		IL_00c0: ldc.i4.0
+		IL_00c1: ldloc.0
+		IL_00c2: stelem.ref
+		IL_00c3: ldc.i4.0
+		IL_00c4: ldelem.ref
+		IL_00c5: castclass Modules.Stream_PassThrough_Basic/Scope
+		IL_00ca: ldftn object Modules.Stream_PassThrough_Basic/FunctionExpression_L14C22::__js_call__(class Modules.Stream_PassThrough_Basic/Scope, object)
+		IL_00d0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_00d5: ldc.i4.0
+		IL_00d6: conv.r8
+		IL_00d7: ldstr ""
+		IL_00dc: ldc.i4.0
+		IL_00dd: ldc.i4.1
+		IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00e3: stloc.s 6
+		IL_00e5: ldloc.s 5
+		IL_00e7: ldstr "on"
+		IL_00ec: ldstr "finish"
+		IL_00f1: ldloc.s 6
+		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00f8: pop
+		IL_00f9: ldloc.2
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ff: stloc.s 6
+		IL_0101: ldloc.s 6
+		IL_0103: ldstr "pipe"
+		IL_0108: ldloc.3
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_010e: stloc.s 6
+		IL_0110: ldloc.s 6
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0117: stloc.s 6
+		IL_0119: ldloc.s 6
+		IL_011b: ldstr "pipe"
+		IL_0120: ldloc.s 4
+		IL_0122: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0127: pop
+		IL_0128: ldloc.2
+		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_012e: stloc.s 6
+		IL_0130: ldloc.s 6
+		IL_0132: ldstr "push"
+		IL_0137: ldstr "a"
+		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0141: pop
+		IL_0142: ldloc.2
+		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0148: stloc.s 6
+		IL_014a: ldloc.s 6
+		IL_014c: ldstr "push"
+		IL_0151: ldstr "b"
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_015b: pop
+		IL_015c: ldloc.2
+		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0162: stloc.s 6
+		IL_0164: ldloc.s 6
+		IL_0166: ldstr "push"
+		IL_016b: ldc.i4.0
+		IL_016c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0176: pop
+		IL_0177: ret
 	} // end of method Stream_PassThrough_Basic::__js_module_init__
 
 } // end of class Modules.Stream_PassThrough_Basic
@@ -311,7 +330,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2243
+		// Method begins at RVA 0x2277
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

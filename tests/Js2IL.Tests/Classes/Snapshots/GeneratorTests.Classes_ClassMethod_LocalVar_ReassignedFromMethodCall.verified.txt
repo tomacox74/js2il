@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2254
+				// Method begins at RVA 0x22a8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x225d
+				// Method begins at RVA 0x22b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2266
+				// Method begins at RVA 0x22ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -82,7 +82,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x219f
+			// Method begins at RVA 0x21c3
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -101,7 +101,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2220
+			// Method begins at RVA 0x2274
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -135,7 +135,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226f
+				// Method begins at RVA 0x22c3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -155,7 +155,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2278
+				// Method begins at RVA 0x22cc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -175,7 +175,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2281
+				// Method begins at RVA 0x22d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -202,7 +202,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2178
+			// Method begins at RVA 0x219c
 			// Header size: 12
 			// Code size: 27 (0x1b)
 			.maxstack 8
@@ -230,48 +230,67 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21b8
+			// Method begins at RVA 0x21dc
 			// Header size: 12
-			// Code size: 91 (0x5b)
+			// Code size: 138 (0x8a)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] float64,
-				[3] object
+				[2] object,
+				[3] float64,
+				[4] object
 			)
 
 			IL_0000: ldc.r8 1
 			IL_0009: stloc.0
 			IL_000a: ldarg.0
 			IL_000b: ldfld class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::counter
-			IL_0010: castclass Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter
-			IL_0015: callvirt instance float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::getNext()
-			IL_001a: stloc.2
-			IL_001b: ldloc.2
-			IL_001c: stloc.0
-			IL_001d: ldloc.0
-			IL_001e: box [System.Runtime]System.Double
-			IL_0023: stloc.3
-			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0029: ldstr "factor after getNext:"
-			IL_002e: ldloc.3
-			IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0034: pop
-			IL_0035: ldloc.0
-			IL_0036: ldc.r8 2
-			IL_003f: mul
-			IL_0040: stloc.1
-			IL_0041: ldloc.1
-			IL_0042: box [System.Runtime]System.Double
-			IL_0047: stloc.3
-			IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004d: ldstr "result:"
-			IL_0052: ldloc.3
-			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0058: pop
-			IL_0059: ldloc.1
-			IL_005a: ret
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0015: stloc.2
+			IL_0016: ldloc.2
+			IL_0017: isinst Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter
+			IL_001c: dup
+			IL_001d: brfalse IL_0032
+
+			IL_0022: callvirt instance float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Counter::getNext()
+			IL_0027: box [System.Runtime]System.Double
+			IL_002c: stloc.2
+			IL_002d: br IL_003f
+
+			IL_0032: pop
+			IL_0033: ldloc.2
+			IL_0034: ldstr "getNext"
+			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_003e: stloc.2
+
+			IL_003f: ldloc.2
+			IL_0040: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0045: stloc.3
+			IL_0046: ldloc.3
+			IL_0047: stloc.0
+			IL_0048: ldloc.0
+			IL_0049: box [System.Runtime]System.Double
+			IL_004e: stloc.s 4
+			IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0055: ldstr "factor after getNext:"
+			IL_005a: ldloc.s 4
+			IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0061: pop
+			IL_0062: ldloc.0
+			IL_0063: ldc.r8 2
+			IL_006c: mul
+			IL_006d: stloc.1
+			IL_006e: ldloc.1
+			IL_006f: box [System.Runtime]System.Double
+			IL_0074: stloc.s 4
+			IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007b: ldstr "result:"
+			IL_0080: ldloc.s 4
+			IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0087: pop
+			IL_0088: ldloc.1
+			IL_0089: ret
 		} // end of method Calculator::compute
 
 	} // end of class Calculator
@@ -290,7 +309,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x224b
+			// Method begins at RVA 0x229f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -316,7 +335,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 281 (0x119)
+		// Code size: 320 (0x140)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Scope,
@@ -428,16 +447,32 @@
 		IL_00f3: ldloc.s 6
 		IL_00f5: stloc.1
 		IL_00f6: ldloc.1
-		IL_00f7: castclass Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
-		IL_00fc: callvirt instance float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::compute()
-		IL_0101: box [System.Runtime]System.Double
-		IL_0106: stloc.2
-		IL_0107: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_010c: ldstr "final output:"
-		IL_0111: ldloc.2
-		IL_0112: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0117: pop
-		IL_0118: ret
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fc: stloc.s 5
+		IL_00fe: ldloc.s 5
+		IL_0100: isinst Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator
+		IL_0105: dup
+		IL_0106: brfalse IL_011c
+
+		IL_010b: callvirt instance float64 Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall/Calculator::compute()
+		IL_0110: box [System.Runtime]System.Double
+		IL_0115: stloc.s 5
+		IL_0117: br IL_012b
+
+		IL_011c: pop
+		IL_011d: ldloc.s 5
+		IL_011f: ldstr "compute"
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0129: stloc.s 5
+
+		IL_012b: ldloc.s 5
+		IL_012d: stloc.2
+		IL_012e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0133: ldstr "final output:"
+		IL_0138: ldloc.2
+		IL_0139: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_013e: pop
+		IL_013f: ret
 	} // end of method Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
@@ -449,7 +484,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x228a
+		// Method begins at RVA 0x22de
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

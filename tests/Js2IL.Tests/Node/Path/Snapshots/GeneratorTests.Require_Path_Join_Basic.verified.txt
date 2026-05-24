@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ab
+			// Method begins at RVA 0x20b9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 93 (0x5d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Join_Basic/Scope,
@@ -58,24 +58,30 @@
 		IL_0012: ldloc.3
 		IL_0013: stloc.1
 		IL_0014: ldloc.1
-		IL_0015: ldstr "join"
-		IL_001a: ldstr "a"
-		IL_001f: ldstr "b"
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0029: stloc.3
-		IL_002a: ldloc.3
-		IL_002b: ldstr "replace"
-		IL_0030: ldstr "\\"
-		IL_0035: ldstr "/"
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_003f: stloc.3
-		IL_0040: ldloc.3
-		IL_0041: stloc.2
-		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0047: ldloc.2
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_004d: pop
-		IL_004e: ret
+		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_001a: stloc.3
+		IL_001b: ldloc.3
+		IL_001c: ldstr "join"
+		IL_0021: ldstr "a"
+		IL_0026: ldstr "b"
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0030: stloc.3
+		IL_0031: ldloc.3
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0037: stloc.3
+		IL_0038: ldloc.3
+		IL_0039: ldstr "replace"
+		IL_003e: ldstr "\\"
+		IL_0043: ldstr "/"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_004d: stloc.3
+		IL_004e: ldloc.3
+		IL_004f: stloc.2
+		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0055: ldloc.2
+		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005b: pop
+		IL_005c: ret
 	} // end of method Require_Path_Join_Basic::__js_module_init__
 
 } // end of class Modules.Require_Path_Join_Basic
@@ -87,7 +93,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x20c2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x221b
+				// Method begins at RVA 0x225a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,9 +52,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21a8
+			// Method begins at RVA 0x21e0
 			// Header size: 12
-			// Code size: 64 (0x40)
+			// Code size: 71 (0x47)
 			.maxstack 8
 			.locals init (
 				[0] object
@@ -73,13 +73,16 @@
 			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 			IL_002b: stloc.0
 			IL_002c: ldloc.0
-			IL_002d: ldstr "rmSync"
-			IL_0032: ldarg.0
-			IL_0033: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003d: pop
-			IL_003e: ldnull
-			IL_003f: ret
+			IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0032: stloc.0
+			IL_0033: ldloc.0
+			IL_0034: ldstr "rmSync"
+			IL_0039: ldarg.0
+			IL_003a: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0044: pop
+			IL_0045: ldnull
+			IL_0046: ret
 		} // end of method ArrowFunction_L9C24::__js_call__
 
 	} // end of class ArrowFunction_L9C24
@@ -102,7 +105,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2224
+				// Method begins at RVA 0x2263
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -126,7 +129,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21f4
+			// Method begins at RVA 0x2233
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -160,7 +163,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2212
+			// Method begins at RVA 0x2251
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -186,7 +189,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 331 (0x14b)
+		// Code size: 385 (0x181)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_Stat_FileSize/Scope,
@@ -216,102 +219,120 @@
 		IL_0032: stloc.s 4
 		IL_0034: ldloc.s 4
 		IL_0036: stloc.2
-		IL_0037: ldloc.0
-		IL_0038: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-		IL_003d: ldstr "os"
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0047: stloc.s 4
-		IL_0049: ldloc.s 4
-		IL_004b: ldstr "tmpdir"
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0055: stloc.s 4
-		IL_0057: ldloc.2
-		IL_0058: ldstr "join"
-		IL_005d: ldloc.s 4
-		IL_005f: ldstr "test-stat.txt"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0069: stloc.s 4
-		IL_006b: ldloc.0
-		IL_006c: ldloc.s 4
-		IL_006e: stfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-		IL_0073: ldstr "Test content for stat"
-		IL_0078: stloc.3
-		IL_0079: ldloc.0
-		IL_007a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-		IL_007f: ldstr "fs"
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0089: stloc.s 4
+		IL_0037: ldloc.2
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003d: stloc.s 4
+		IL_003f: ldloc.0
+		IL_0040: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+		IL_0045: ldstr "os"
+		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_004f: stloc.s 5
+		IL_0051: ldloc.s 5
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0058: stloc.s 5
+		IL_005a: ldloc.s 5
+		IL_005c: ldstr "tmpdir"
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0066: stloc.s 5
+		IL_0068: ldloc.s 4
+		IL_006a: ldstr "join"
+		IL_006f: ldloc.s 5
+		IL_0071: ldstr "test-stat.txt"
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_007b: stloc.s 5
+		IL_007d: ldloc.0
+		IL_007e: ldloc.s 5
+		IL_0080: stfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+		IL_0085: ldstr "Test content for stat"
+		IL_008a: stloc.3
 		IL_008b: ldloc.0
-		IL_008c: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-		IL_0091: stloc.s 5
-		IL_0093: ldloc.s 4
-		IL_0095: ldstr "writeFileSync"
-		IL_009a: ldloc.s 5
-		IL_009c: ldloc.3
-		IL_009d: ldstr "utf8"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_00a7: pop
-		IL_00a8: ldloc.1
-		IL_00a9: ldstr "stat"
-		IL_00ae: ldloc.0
-		IL_00af: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00b9: stloc.s 5
-		IL_00bb: ldc.i4.1
-		IL_00bc: newarr [System.Runtime]System.Object
-		IL_00c1: dup
-		IL_00c2: ldc.i4.0
-		IL_00c3: ldloc.0
-		IL_00c4: stelem.ref
-		IL_00c5: ldc.i4.0
-		IL_00c6: ldelem.ref
-		IL_00c7: castclass Modules.FSPromises_Stat_FileSize/Scope
-		IL_00cc: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L9C24::__js_call__(class Modules.FSPromises_Stat_FileSize/Scope, object, object)
-		IL_00d2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00d7: ldc.i4.1
-		IL_00d8: newarr [System.Runtime]System.Object
-		IL_00dd: dup
-		IL_00de: ldc.i4.0
-		IL_00df: ldloc.0
-		IL_00e0: stelem.ref
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00eb: ldc.i4.1
-		IL_00ec: conv.r8
-		IL_00ed: ldstr ""
+		IL_008c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
+		IL_0091: ldstr "fs"
+		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_009b: stloc.s 5
+		IL_009d: ldloc.s 5
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a4: stloc.s 5
+		IL_00a6: ldloc.0
+		IL_00a7: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+		IL_00ac: stloc.s 4
+		IL_00ae: ldloc.s 5
+		IL_00b0: ldstr "writeFileSync"
+		IL_00b5: ldloc.s 4
+		IL_00b7: ldloc.3
+		IL_00b8: ldstr "utf8"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00c2: pop
+		IL_00c3: ldloc.1
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c9: stloc.s 4
+		IL_00cb: ldloc.s 4
+		IL_00cd: ldstr "stat"
+		IL_00d2: ldloc.0
+		IL_00d3: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00dd: stloc.s 4
+		IL_00df: ldloc.s 4
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e6: stloc.s 4
+		IL_00e8: ldc.i4.1
+		IL_00e9: newarr [System.Runtime]System.Object
+		IL_00ee: dup
+		IL_00ef: ldc.i4.0
+		IL_00f0: ldloc.0
+		IL_00f1: stelem.ref
 		IL_00f2: ldc.i4.0
-		IL_00f3: ldc.i4.1
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00f9: stloc.s 4
-		IL_00fb: ldloc.s 5
-		IL_00fd: ldstr "then"
-		IL_0102: ldloc.s 4
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0109: stloc.s 4
-		IL_010b: ldnull
-		IL_010c: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L12C10::__js_call__(object, object)
-		IL_0112: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0117: ldc.i4.1
-		IL_0118: newarr [System.Runtime]System.Object
-		IL_011d: dup
-		IL_011e: ldc.i4.0
-		IL_011f: ldloc.0
-		IL_0120: stelem.ref
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_012b: ldc.i4.1
-		IL_012c: conv.r8
-		IL_012d: ldstr ""
-		IL_0132: ldc.i4.0
-		IL_0133: ldc.i4.1
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0139: stloc.s 5
-		IL_013b: ldloc.s 4
-		IL_013d: ldstr "catch"
-		IL_0142: ldloc.s 5
-		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0149: pop
-		IL_014a: ret
+		IL_00f3: ldelem.ref
+		IL_00f4: castclass Modules.FSPromises_Stat_FileSize/Scope
+		IL_00f9: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L9C24::__js_call__(class Modules.FSPromises_Stat_FileSize/Scope, object, object)
+		IL_00ff: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0104: ldc.i4.1
+		IL_0105: newarr [System.Runtime]System.Object
+		IL_010a: dup
+		IL_010b: ldc.i4.0
+		IL_010c: ldloc.0
+		IL_010d: stelem.ref
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0118: ldc.i4.1
+		IL_0119: conv.r8
+		IL_011a: ldstr ""
+		IL_011f: ldc.i4.0
+		IL_0120: ldc.i4.1
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0126: stloc.s 5
+		IL_0128: ldloc.s 4
+		IL_012a: ldstr "then"
+		IL_012f: ldloc.s 5
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0136: stloc.s 5
+		IL_0138: ldloc.s 5
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_013f: stloc.s 5
+		IL_0141: ldnull
+		IL_0142: ldftn object Modules.FSPromises_Stat_FileSize/ArrowFunction_L12C10::__js_call__(object, object)
+		IL_0148: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_014d: ldc.i4.1
+		IL_014e: newarr [System.Runtime]System.Object
+		IL_0153: dup
+		IL_0154: ldc.i4.0
+		IL_0155: ldloc.0
+		IL_0156: stelem.ref
+		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0161: ldc.i4.1
+		IL_0162: conv.r8
+		IL_0163: ldstr ""
+		IL_0168: ldc.i4.0
+		IL_0169: ldc.i4.1
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_016f: stloc.s 4
+		IL_0171: ldloc.s 5
+		IL_0173: ldstr "catch"
+		IL_0178: ldloc.s 4
+		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_017f: pop
+		IL_0180: ret
 	} // end of method FSPromises_Stat_FileSize::__js_module_init__
 
 } // end of class Modules.FSPromises_Stat_FileSize
@@ -323,7 +344,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x222d
+		// Method begins at RVA 0x226c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b6
+				// Method begins at RVA 0x21ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2180
+			// Method begins at RVA 0x2198
 			// Header size: 12
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -83,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bf
+				// Method begins at RVA 0x21d7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,7 +106,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21aa
+			// Method begins at RVA 0x21c2
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -124,7 +124,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ad
+			// Method begins at RVA 0x21c5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -150,7 +150,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 290 (0x122)
+		// Code size: 313 (0x139)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Types_IsPromise/Scope,
@@ -226,42 +226,49 @@
 		IL_00a4: ldloc.1
 		IL_00a5: ldstr "types"
 		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00af: ldstr "isPromise"
-		IL_00b4: ldloc.2
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ba: stloc.s 5
-		IL_00bc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c1: ldloc.s 5
-		IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c8: pop
-		IL_00c9: ldloc.1
-		IL_00ca: ldstr "types"
-		IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d4: ldstr "isPromise"
-		IL_00d9: ldloc.3
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00df: stloc.s 5
-		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e6: ldloc.s 5
-		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ed: pop
-		IL_00ee: ldloc.1
-		IL_00ef: ldstr "types"
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f9: stloc.s 5
-		IL_00fb: ldloc.s 4
-		IL_00fd: box [System.Runtime]System.Double
-		IL_0102: stloc.s 8
-		IL_0104: ldloc.s 5
-		IL_0106: ldstr "isPromise"
-		IL_010b: ldloc.s 8
-		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0112: stloc.s 5
-		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0119: ldloc.s 5
-		IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0120: pop
-		IL_0121: ret
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b4: stloc.s 5
+		IL_00b6: ldloc.s 5
+		IL_00b8: ldstr "isPromise"
+		IL_00bd: ldloc.2
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c3: stloc.s 5
+		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ca: ldloc.s 5
+		IL_00cc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d1: pop
+		IL_00d2: ldloc.1
+		IL_00d3: ldstr "types"
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e2: stloc.s 5
+		IL_00e4: ldloc.s 5
+		IL_00e6: ldstr "isPromise"
+		IL_00eb: ldloc.3
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f1: stloc.s 5
+		IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f8: ldloc.s 5
+		IL_00fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ff: pop
+		IL_0100: ldloc.1
+		IL_0101: ldstr "types"
+		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0110: stloc.s 5
+		IL_0112: ldloc.s 4
+		IL_0114: box [System.Runtime]System.Double
+		IL_0119: stloc.s 8
+		IL_011b: ldloc.s 5
+		IL_011d: ldstr "isPromise"
+		IL_0122: ldloc.s 8
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0129: stloc.s 5
+		IL_012b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0130: ldloc.s 5
+		IL_0132: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0137: pop
+		IL_0138: ret
 	} // end of method Require_Util_Types_IsPromise::__js_module_init__
 
 } // end of class Modules.Require_Util_Types_IsPromise
@@ -273,7 +280,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c8
+		// Method begins at RVA 0x21e0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

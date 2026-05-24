@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222a
+				// Method begins at RVA 0x2265
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,9 +52,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2198
+			// Method begins at RVA 0x21cc
 			// Header size: 12
-			// Code size: 95 (0x5f)
+			// Code size: 102 (0x66)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -86,13 +86,16 @@
 			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
 			IL_004a: stloc.2
 			IL_004b: ldloc.2
-			IL_004c: ldstr "rmSync"
-			IL_0051: ldarg.0
-			IL_0052: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_005c: pop
-			IL_005d: ldnull
-			IL_005e: ret
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0051: stloc.2
+			IL_0052: ldloc.2
+			IL_0053: ldstr "rmSync"
+			IL_0058: ldarg.0
+			IL_0059: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0063: pop
+			IL_0064: ldnull
+			IL_0065: ret
 		} // end of method ArrowFunction_L8C28::__js_call__
 
 	} // end of class ArrowFunction_L8C28
@@ -115,7 +118,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2233
+				// Method begins at RVA 0x226e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -139,7 +142,7 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2203
+			// Method begins at RVA 0x223e
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -173,7 +176,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2221
+			// Method begins at RVA 0x225c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -199,7 +202,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 313 (0x139)
+		// Code size: 367 (0x16f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.FSPromises_ReadFile_Buffer/Scope,
@@ -228,100 +231,118 @@
 		IL_0030: stloc.3
 		IL_0031: ldloc.3
 		IL_0032: stloc.2
-		IL_0033: ldloc.0
-		IL_0034: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_ReadFile_Buffer/Scope::require
-		IL_0039: ldstr "os"
-		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0043: stloc.3
-		IL_0044: ldloc.3
-		IL_0045: ldstr "tmpdir"
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_004f: stloc.3
-		IL_0050: ldloc.2
-		IL_0051: ldstr "join"
-		IL_0056: ldloc.3
-		IL_0057: ldstr "test-readfile-buffer.txt"
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0061: stloc.3
-		IL_0062: ldloc.0
+		IL_0033: ldloc.2
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0039: stloc.3
+		IL_003a: ldloc.0
+		IL_003b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_ReadFile_Buffer/Scope::require
+		IL_0040: ldstr "os"
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_004a: stloc.s 4
+		IL_004c: ldloc.s 4
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0053: stloc.s 4
+		IL_0055: ldloc.s 4
+		IL_0057: ldstr "tmpdir"
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0061: stloc.s 4
 		IL_0063: ldloc.3
-		IL_0064: stfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-		IL_0069: ldloc.0
-		IL_006a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_ReadFile_Buffer/Scope::require
-		IL_006f: ldstr "fs"
-		IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0079: stloc.3
-		IL_007a: ldloc.0
-		IL_007b: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-		IL_0080: stloc.s 4
-		IL_0082: ldloc.3
-		IL_0083: ldstr "writeFileSync"
-		IL_0088: ldloc.s 4
-		IL_008a: ldstr "Buffer test"
-		IL_008f: ldstr "utf8"
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_0099: pop
-		IL_009a: ldloc.1
-		IL_009b: ldstr "readFile"
-		IL_00a0: ldloc.0
-		IL_00a1: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ab: stloc.s 4
-		IL_00ad: ldc.i4.1
-		IL_00ae: newarr [System.Runtime]System.Object
-		IL_00b3: dup
-		IL_00b4: ldc.i4.0
-		IL_00b5: ldloc.0
-		IL_00b6: stelem.ref
-		IL_00b7: ldc.i4.0
-		IL_00b8: ldelem.ref
-		IL_00b9: castclass Modules.FSPromises_ReadFile_Buffer/Scope
-		IL_00be: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L8C28::__js_call__(class Modules.FSPromises_ReadFile_Buffer/Scope, object, object)
-		IL_00c4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00c9: ldc.i4.1
-		IL_00ca: newarr [System.Runtime]System.Object
-		IL_00cf: dup
-		IL_00d0: ldc.i4.0
-		IL_00d1: ldloc.0
-		IL_00d2: stelem.ref
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00dd: ldc.i4.1
-		IL_00de: conv.r8
-		IL_00df: ldstr ""
-		IL_00e4: ldc.i4.0
-		IL_00e5: ldc.i4.1
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00eb: stloc.3
-		IL_00ec: ldloc.s 4
-		IL_00ee: ldstr "then"
-		IL_00f3: ldloc.3
-		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00f9: stloc.3
-		IL_00fa: ldnull
-		IL_00fb: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L12C10::__js_call__(object, object)
-		IL_0101: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0106: ldc.i4.1
-		IL_0107: newarr [System.Runtime]System.Object
-		IL_010c: dup
-		IL_010d: ldc.i4.0
-		IL_010e: ldloc.0
-		IL_010f: stelem.ref
-		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_011a: ldc.i4.1
-		IL_011b: conv.r8
-		IL_011c: ldstr ""
-		IL_0121: ldc.i4.0
-		IL_0122: ldc.i4.1
-		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0128: stloc.s 4
-		IL_012a: ldloc.3
-		IL_012b: ldstr "catch"
-		IL_0130: ldloc.s 4
-		IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0137: pop
-		IL_0138: ret
+		IL_0064: ldstr "join"
+		IL_0069: ldloc.s 4
+		IL_006b: ldstr "test-readfile-buffer.txt"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0075: stloc.s 4
+		IL_0077: ldloc.0
+		IL_0078: ldloc.s 4
+		IL_007a: stfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
+		IL_007f: ldloc.0
+		IL_0080: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_ReadFile_Buffer/Scope::require
+		IL_0085: ldstr "fs"
+		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_008f: stloc.s 4
+		IL_0091: ldloc.s 4
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0098: stloc.s 4
+		IL_009a: ldloc.0
+		IL_009b: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
+		IL_00a0: stloc.3
+		IL_00a1: ldloc.s 4
+		IL_00a3: ldstr "writeFileSync"
+		IL_00a8: ldloc.3
+		IL_00a9: ldstr "Buffer test"
+		IL_00ae: ldstr "utf8"
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_00b8: pop
+		IL_00b9: ldloc.1
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00bf: stloc.3
+		IL_00c0: ldloc.3
+		IL_00c1: ldstr "readFile"
+		IL_00c6: ldloc.0
+		IL_00c7: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d1: stloc.3
+		IL_00d2: ldloc.3
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d8: stloc.3
+		IL_00d9: ldc.i4.1
+		IL_00da: newarr [System.Runtime]System.Object
+		IL_00df: dup
+		IL_00e0: ldc.i4.0
+		IL_00e1: ldloc.0
+		IL_00e2: stelem.ref
+		IL_00e3: ldc.i4.0
+		IL_00e4: ldelem.ref
+		IL_00e5: castclass Modules.FSPromises_ReadFile_Buffer/Scope
+		IL_00ea: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L8C28::__js_call__(class Modules.FSPromises_ReadFile_Buffer/Scope, object, object)
+		IL_00f0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00f5: ldc.i4.1
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: dup
+		IL_00fc: ldc.i4.0
+		IL_00fd: ldloc.0
+		IL_00fe: stelem.ref
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0109: ldc.i4.1
+		IL_010a: conv.r8
+		IL_010b: ldstr ""
+		IL_0110: ldc.i4.0
+		IL_0111: ldc.i4.1
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0117: stloc.s 4
+		IL_0119: ldloc.3
+		IL_011a: ldstr "then"
+		IL_011f: ldloc.s 4
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0126: stloc.s 4
+		IL_0128: ldloc.s 4
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_012f: stloc.s 4
+		IL_0131: ldnull
+		IL_0132: ldftn object Modules.FSPromises_ReadFile_Buffer/ArrowFunction_L12C10::__js_call__(object, object)
+		IL_0138: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_013d: ldc.i4.1
+		IL_013e: newarr [System.Runtime]System.Object
+		IL_0143: dup
+		IL_0144: ldc.i4.0
+		IL_0145: ldloc.0
+		IL_0146: stelem.ref
+		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0151: ldc.i4.1
+		IL_0152: conv.r8
+		IL_0153: ldstr ""
+		IL_0158: ldc.i4.0
+		IL_0159: ldc.i4.1
+		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_015f: stloc.3
+		IL_0160: ldloc.s 4
+		IL_0162: ldstr "catch"
+		IL_0167: ldloc.3
+		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_016d: pop
+		IL_016e: ret
 	} // end of method FSPromises_ReadFile_Buffer::__js_module_init__
 
 } // end of class Modules.FSPromises_ReadFile_Buffer
@@ -333,7 +354,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x223c
+		// Method begins at RVA 0x2277
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -762,6 +762,18 @@ namespace JavaScriptRuntime
             });
         }
 
+        private void DefineNonEnumerableConstantDataProperty(string key, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = value
+            });
+        }
+
         private static void DefineDateConstructorMetadata()
         {
             PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "name", new JsPropertyDescriptor
@@ -843,10 +855,13 @@ namespace JavaScriptRuntime
             DefineNonEnumerableDataProperty(nameof(GlobalThis.process), dict[nameof(GlobalThis.process)]);
 
             dict.TryAdd(nameof(GlobalThis.Infinity), Infinity);
-            DefineNonEnumerableDataProperty(nameof(GlobalThis.Infinity), dict[nameof(GlobalThis.Infinity)]);
+            DefineNonEnumerableConstantDataProperty(nameof(GlobalThis.Infinity), dict[nameof(GlobalThis.Infinity)]);
 
             dict.TryAdd(nameof(GlobalThis.NaN), NaN);
-            DefineNonEnumerableDataProperty(nameof(GlobalThis.NaN), dict[nameof(GlobalThis.NaN)]);
+            DefineNonEnumerableConstantDataProperty(nameof(GlobalThis.NaN), dict[nameof(GlobalThis.NaN)]);
+
+            dict.TryAdd("undefined", null);
+            DefineNonEnumerableConstantDataProperty("undefined", null);
 
             dict.TryAdd(nameof(GlobalThis.Boolean), Boolean);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Boolean), dict[nameof(GlobalThis.Boolean)]);

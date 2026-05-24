@@ -127,9 +127,18 @@ public static class Function
         DefineRestrictedProperty(functionValue, "arguments");
     }
 
-    private static object? GetEffectiveThisArg(Delegate target, object? thisArg)
+    internal static bool HasRestrictedFunctionProperties(object? functionValue)
+        => functionValue is not null
+            && PropertyDescriptorStore.TryGetOwn(functionValue, "caller", out var caller)
+            && caller.Kind == JsPropertyDescriptorKind.Accessor
+            && PropertyDescriptorStore.TryGetOwn(functionValue, "arguments", out var arguments)
+            && arguments.Kind == JsPropertyDescriptorKind.Accessor;
+
+    internal static object? GetEffectiveThisArg(Delegate target, object? thisArg)
     {
-        return (thisArg is null || thisArg is JsNull) && Closure.UsesEcmaScriptThisBinding(target)
+        return (thisArg is null || thisArg is JsNull)
+            && Closure.UsesEcmaScriptThisBinding(target)
+            && !HasRestrictedFunctionProperties(target)
             ? GlobalThis.globalThis
             : thisArg;
     }

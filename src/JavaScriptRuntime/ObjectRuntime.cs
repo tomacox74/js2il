@@ -348,6 +348,16 @@ namespace JavaScriptRuntime
         public static bool HasPropertyIn(object? key, object? obj)
             => Object.HasPropertyIn(key, obj);
 
+        public static object RequireObjectCoercible(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                throw new TypeError("Cannot read properties of null or undefined");
+            }
+
+            return value;
+        }
+
         /// <summary>
         /// Implements the JavaScript <c>delete obj.prop</c> runtime semantics for this
         /// strict-mode-only runtime. Returns true if the deletion succeeds or the property
@@ -509,6 +519,11 @@ namespace JavaScriptRuntime
 
         public static object GetItem(object obj, object index)
         {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot read properties of null or undefined");
+            }
+
             var propName = Object.ToPropertyKeyString(index);
 
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
@@ -596,6 +611,11 @@ namespace JavaScriptRuntime
 
         public static object GetItem(object obj, double index)
         {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot read properties of null or undefined");
+            }
+
             // Proxy get trap: numeric index coerces to property key
             if (obj is JavaScriptRuntime.Proxy)
             {
@@ -673,6 +693,11 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object GetItem(object obj, string key)
         {
+            if (obj is null || obj is JsNull)
+            {
+                throw new TypeError("Cannot read properties of null or undefined");
+            }
+
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
                 && (string.Equals(key, "caller", StringComparison.Ordinal) || string.Equals(key, "arguments", StringComparison.Ordinal)))
             {

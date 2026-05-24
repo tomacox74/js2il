@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214f
+			// Method begins at RVA 0x2158
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 243 (0xf3)
+		// Code size: 252 (0xfc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Slice_FromCharCode_Apply/Scope,
@@ -94,23 +94,26 @@
 		IL_00ad: call class [System.Runtime]System.Func`3<object[], object, string> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_String()
 		IL_00b2: ldstr "fromCharCode"
 		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00bc: ldstr "apply"
-		IL_00c1: call class [System.Runtime]System.Func`3<object[], object, string> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_String()
-		IL_00c6: ldloc.2
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00cc: stloc.s 4
-		IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d3: ldloc.s 4
-		IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00da: pop
-		IL_00db: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e0: ldloc.1
-		IL_00e1: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-		IL_00e6: conv.r8
-		IL_00e7: box [System.Runtime]System.Double
-		IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f1: pop
-		IL_00f2: ret
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c1: stloc.s 4
+		IL_00c3: ldloc.s 4
+		IL_00c5: ldstr "apply"
+		IL_00ca: call class [System.Runtime]System.Func`3<object[], object, string> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_String()
+		IL_00cf: ldloc.2
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00d5: stloc.s 4
+		IL_00d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00dc: ldloc.s 4
+		IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e3: pop
+		IL_00e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e9: ldloc.1
+		IL_00ea: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+		IL_00ef: conv.r8
+		IL_00f0: box [System.Runtime]System.Double
+		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fa: pop
+		IL_00fb: ret
 	} // end of method Array_Slice_FromCharCode_Apply::__js_module_init__
 
 } // end of class Modules.Array_Slice_FromCharCode_Apply
@@ -122,7 +125,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2158
+		// Method begins at RVA 0x2161
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
