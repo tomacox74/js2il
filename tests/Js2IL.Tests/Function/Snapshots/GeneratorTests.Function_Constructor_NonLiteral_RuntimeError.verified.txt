@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e5
+				// Method begins at RVA 0x21dd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ee
+				// Method begins at RVA 0x21e6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f7
+				// Method begins at RVA 0x21ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2200
+				// Method begins at RVA 0x21f8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21d4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -122,7 +122,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 353 (0x161)
+		// Code size: 346 (0x15a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Constructor_NonLiteral_RuntimeError/Scope,
@@ -161,135 +161,127 @@
 			IL_0028: ldstr "call-no-error"
 			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_0032: pop
-			IL_0033: leave IL_00ad
+			IL_0033: leave IL_00a9
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_0038: stloc.3
 			IL_0039: ldloc.3
-			IL_003a: dup
-			IL_003b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0040: dup
-			IL_0041: brtrue IL_0057
+			IL_003a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_003f: dup
+			IL_0040: brtrue IL_0055
 
-			IL_0046: pop
-			IL_0047: dup
-			IL_0048: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_004d: dup
-			IL_004e: brtrue IL_0064
+			IL_0045: pop
+			IL_0046: ldloc.3
+			IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_004c: dup
+			IL_004d: brtrue IL_0061
 
-			IL_0053: pop
-			IL_0054: pop
-			IL_0055: rethrow
+			IL_0052: pop
+			IL_0053: rethrow
 
-			IL_0057: pop
-			IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_005d: stloc.s 4
-			IL_005f: br IL_0067
+			IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_005a: stloc.s 4
+			IL_005c: br IL_0063
 
-			IL_0064: pop
-			IL_0065: stloc.s 4
+			IL_0061: stloc.s 4
 
-			IL_0067: ldloc.s 4
-			IL_0069: stloc.s 13
-			IL_006b: ldloc.s 13
-			IL_006d: stloc.s 5
-			IL_006f: newobj instance void Modules.Function_Constructor_NonLiteral_RuntimeError/Scope/Block_L8C12::.ctor()
-			IL_0074: stloc.s 6
-			IL_0076: ldloc.s 5
-			IL_0078: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_007d: stloc.s 14
-			IL_007f: ldloc.s 14
-			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0086: stloc.s 13
-			IL_0088: ldloc.s 13
-			IL_008a: ldstr "includes"
-			IL_008f: ldstr "string literal arguments"
-			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0099: stloc.s 13
-			IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a0: ldloc.s 13
-			IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00a7: pop
-			IL_00a8: leave IL_00ad
+			IL_0063: ldloc.s 4
+			IL_0065: stloc.s 13
+			IL_0067: ldloc.s 13
+			IL_0069: stloc.s 5
+			IL_006b: newobj instance void Modules.Function_Constructor_NonLiteral_RuntimeError/Scope/Block_L8C12::.ctor()
+			IL_0070: stloc.s 6
+			IL_0072: ldloc.s 5
+			IL_0074: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0079: stloc.s 14
+			IL_007b: ldloc.s 14
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0082: stloc.s 13
+			IL_0084: ldloc.s 13
+			IL_0086: ldstr "includes"
+			IL_008b: ldstr "string literal arguments"
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0095: stloc.s 13
+			IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009c: ldloc.s 13
+			IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a3: pop
+			IL_00a4: leave IL_00a9
 		} // end handler
 		.try
 		{
-			IL_00ad: newobj instance void Modules.Function_Constructor_NonLiteral_RuntimeError/Scope/Block_L12C4::.ctor()
-			IL_00b2: stloc.s 7
-			IL_00b4: call class [System.Runtime]System.Func`3<object[], object, class [System.Runtime]System.Delegate> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Function()
-			IL_00b9: stloc.s 15
-			IL_00bb: ldc.i4.1
-			IL_00bc: newarr [System.Runtime]System.Object
-			IL_00c1: dup
-			IL_00c2: ldc.i4.0
-			IL_00c3: ldloc.1
-			IL_00c4: stelem.ref
-			IL_00c5: stloc.s 16
-			IL_00c7: ldloc.s 15
-			IL_00c9: ldloc.s 16
-			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-			IL_00d0: pop
-			IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d6: ldstr "new-no-error"
-			IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00e0: pop
-			IL_00e1: leave IL_015d
+			IL_00a9: newobj instance void Modules.Function_Constructor_NonLiteral_RuntimeError/Scope/Block_L12C4::.ctor()
+			IL_00ae: stloc.s 7
+			IL_00b0: call class [System.Runtime]System.Func`3<object[], object, class [System.Runtime]System.Delegate> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Function()
+			IL_00b5: stloc.s 15
+			IL_00b7: ldc.i4.1
+			IL_00b8: newarr [System.Runtime]System.Object
+			IL_00bd: dup
+			IL_00be: ldc.i4.0
+			IL_00bf: ldloc.1
+			IL_00c0: stelem.ref
+			IL_00c1: stloc.s 16
+			IL_00c3: ldloc.s 15
+			IL_00c5: ldloc.s 16
+			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+			IL_00cc: pop
+			IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00d2: ldstr "new-no-error"
+			IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00dc: pop
+			IL_00dd: leave IL_0156
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00e6: stloc.s 8
-			IL_00e8: ldloc.s 8
-			IL_00ea: dup
-			IL_00eb: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00f0: dup
-			IL_00f1: brtrue IL_0107
+			IL_00e2: stloc.s 8
+			IL_00e4: ldloc.s 8
+			IL_00e6: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00eb: dup
+			IL_00ec: brtrue IL_0102
 
-			IL_00f6: pop
-			IL_00f7: dup
-			IL_00f8: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00fd: dup
-			IL_00fe: brtrue IL_0114
+			IL_00f1: pop
+			IL_00f2: ldloc.s 8
+			IL_00f4: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00f9: dup
+			IL_00fa: brtrue IL_010e
 
-			IL_0103: pop
-			IL_0104: pop
-			IL_0105: rethrow
+			IL_00ff: pop
+			IL_0100: rethrow
 
-			IL_0107: pop
-			IL_0108: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_010d: stloc.s 9
-			IL_010f: br IL_0117
+			IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0107: stloc.s 9
+			IL_0109: br IL_0110
 
-			IL_0114: pop
-			IL_0115: stloc.s 9
+			IL_010e: stloc.s 9
 
-			IL_0117: ldloc.s 9
-			IL_0119: stloc.s 13
-			IL_011b: ldloc.s 13
-			IL_011d: stloc.s 10
-			IL_011f: newobj instance void Modules.Function_Constructor_NonLiteral_RuntimeError/Scope/Block_L15C12::.ctor()
-			IL_0124: stloc.s 11
-			IL_0126: ldloc.s 10
-			IL_0128: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_012d: stloc.s 14
-			IL_012f: ldloc.s 14
-			IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0136: stloc.s 13
-			IL_0138: ldloc.s 13
-			IL_013a: ldstr "includes"
-			IL_013f: ldstr "string literal arguments"
-			IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0149: stloc.s 13
-			IL_014b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0150: ldloc.s 13
-			IL_0152: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0157: pop
-			IL_0158: leave IL_015d
+			IL_0110: ldloc.s 9
+			IL_0112: stloc.s 13
+			IL_0114: ldloc.s 13
+			IL_0116: stloc.s 10
+			IL_0118: newobj instance void Modules.Function_Constructor_NonLiteral_RuntimeError/Scope/Block_L15C12::.ctor()
+			IL_011d: stloc.s 11
+			IL_011f: ldloc.s 10
+			IL_0121: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0126: stloc.s 14
+			IL_0128: ldloc.s 14
+			IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_012f: stloc.s 13
+			IL_0131: ldloc.s 13
+			IL_0133: ldstr "includes"
+			IL_0138: ldstr "string literal arguments"
+			IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0142: stloc.s 13
+			IL_0144: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0149: ldloc.s 13
+			IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0150: pop
+			IL_0151: leave IL_0156
 		} // end handler
 
-		IL_015d: ldnull
-		IL_015e: stloc.s 12
-		IL_0160: ret
+		IL_0156: ldnull
+		IL_0157: stloc.s 12
+		IL_0159: ret
 	} // end of method Function_Constructor_NonLiteral_RuntimeError::__js_module_init__
 
 } // end of class Modules.Function_Constructor_NonLiteral_RuntimeError
@@ -301,7 +293,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2209
+		// Method begins at RVA 0x2201
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

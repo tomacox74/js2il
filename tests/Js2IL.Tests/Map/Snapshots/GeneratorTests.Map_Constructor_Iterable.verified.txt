@@ -1013,7 +1013,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 720 (0x2d0)
+		// Code size: 717 (0x2cd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Constructor_Iterable/Scope,
@@ -1243,58 +1243,54 @@
 			IL_024f: ldstr "no error"
 			IL_0254: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_0259: pop
-			IL_025a: leave IL_02bb
+			IL_025a: leave IL_02b8
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_025f: stloc.s 8
 			IL_0261: ldloc.s 8
-			IL_0263: dup
-			IL_0264: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0269: dup
-			IL_026a: brtrue IL_0280
+			IL_0263: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0268: dup
+			IL_0269: brtrue IL_027f
 
-			IL_026f: pop
-			IL_0270: dup
+			IL_026e: pop
+			IL_026f: ldloc.s 8
 			IL_0271: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_0276: dup
-			IL_0277: brtrue IL_028d
+			IL_0277: brtrue IL_028b
 
 			IL_027c: pop
-			IL_027d: pop
-			IL_027e: rethrow
+			IL_027d: rethrow
 
-			IL_0280: pop
-			IL_0281: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0286: stloc.s 9
-			IL_0288: br IL_0290
+			IL_027f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0284: stloc.s 9
+			IL_0286: br IL_028d
 
-			IL_028d: pop
-			IL_028e: stloc.s 9
+			IL_028b: stloc.s 9
 
-			IL_0290: ldloc.s 9
-			IL_0292: stloc.s 14
-			IL_0294: ldloc.s 14
-			IL_0296: stloc.s 10
-			IL_0298: newobj instance void Modules.Map_Constructor_Iterable/Scope/Block_L89C16::.ctor()
-			IL_029d: stloc.s 11
-			IL_029f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02a4: ldloc.s 10
-			IL_02a6: ldstr "name"
-			IL_02ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_02b5: pop
-			IL_02b6: leave IL_02bb
+			IL_028d: ldloc.s 9
+			IL_028f: stloc.s 14
+			IL_0291: ldloc.s 14
+			IL_0293: stloc.s 10
+			IL_0295: newobj instance void Modules.Map_Constructor_Iterable/Scope/Block_L89C16::.ctor()
+			IL_029a: stloc.s 11
+			IL_029c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02a1: ldloc.s 10
+			IL_02a3: ldstr "name"
+			IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_02b2: pop
+			IL_02b3: leave IL_02b8
 		} // end handler
 
-		IL_02bb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_02c0: ldloc.0
-		IL_02c1: ldfld object Modules.Map_Constructor_Iterable/Scope::closedOnAbruptCompletion
-		IL_02c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_02cb: pop
-		IL_02cc: ldnull
-		IL_02cd: stloc.s 12
-		IL_02cf: ret
+		IL_02b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_02bd: ldloc.0
+		IL_02be: ldfld object Modules.Map_Constructor_Iterable/Scope::closedOnAbruptCompletion
+		IL_02c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_02c8: pop
+		IL_02c9: ldnull
+		IL_02ca: stloc.s 12
+		IL_02cc: ret
 	} // end of method Map_Constructor_Iterable::__js_module_init__
 
 } // end of class Modules.Map_Constructor_Iterable
