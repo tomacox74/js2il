@@ -43,7 +43,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
 
 
 
-    [Fact(DisplayName = "S12.6.1_A2", Skip = "ReferenceError propagation from do-while bodies is not yet aligned with this upstream case.")]
+    [Fact(DisplayName = "S12.6.1_A2")]
     public Task S12_6_1_A2()
         => ExecutionTest("S12.6.1_A2");
 
@@ -51,7 +51,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_1_A4_T5()
         => ExecutionTest("S12.6.1_A4_T5");
 
-    [Fact(DisplayName = "S12.6.1_A9", Skip = "ReferenceError propagation from do-while bodies is not yet aligned with this upstream case.")]
+    [Fact(DisplayName = "S12.6.1_A9")]
     public Task S12_6_1_A9()
         => ExecutionTest("S12.6.1_A9");
 }

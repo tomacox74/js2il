@@ -51,7 +51,7 @@ public sealed partial class HIRToLIRLowerer
     private TempVariable CreateObjectSlotTemp(string name)
     {
         var temp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstNull(temp));
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(temp));
         DefineTempStorage(temp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         SetTempVariableSlot(temp, CreateAnonymousVariableSlot(name, new ValueStorage(ValueStorageKind.Reference, typeof(object))));
         return temp;

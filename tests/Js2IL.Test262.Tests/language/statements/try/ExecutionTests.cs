@@ -99,11 +99,11 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_14_A6()
         => ExecutionTest("S12.14_A6");
 
-    [Fact(DisplayName = "S12.14_A7_T1", Skip = "Currently triggers invalid IL for this nested try/finally control-flow shape.")]
+    [Fact(DisplayName = "S12.14_A7_T1")]
     public Task S12_14_A7_T1()
         => ExecutionTest("S12.14_A7_T1");
 
-    [Fact(DisplayName = "S12.14_A7_T2", Skip = "Currently triggers invalid IL for this nested try/finally control-flow shape.")]
+    [Fact(DisplayName = "S12.14_A7_T2")]
     public Task S12_14_A7_T2()
         => ExecutionTest("S12.14_A7_T2");
 

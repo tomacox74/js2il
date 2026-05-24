@@ -35,7 +35,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_2_A2()
         => ExecutionTest("S12.6.2_A2");
 
-    [Fact(DisplayName = "S12.6.2_A4_T2", Skip = "Currently hangs due to nested while/break control-flow handling.")]
+    [Fact(DisplayName = "S12.6.2_A4_T2")]
     public Task S12_6_2_A4_T2()
         => ExecutionTest("S12.6.2_A4_T2");
 
@@ -43,7 +43,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_2_A4_T3()
         => ExecutionTest("S12.6.2_A4_T3");
 
-    [Fact(DisplayName = "S12.6.2_A4_T4", Skip = "Currently hangs due to nested while/break control-flow handling.")]
+    [Fact(DisplayName = "S12.6.2_A4_T4")]
     public Task S12_6_2_A4_T4()
         => ExecutionTest("S12.6.2_A4_T4");
 
@@ -51,7 +51,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_2_A4_T5()
         => ExecutionTest("S12.6.2_A4_T5");
 
-    [Fact(DisplayName = "S12.6.2_A9", Skip = "ReferenceError propagation from while bodies is not yet aligned with this upstream case.")]
+    [Fact(DisplayName = "S12.6.2_A9")]
     public Task S12_6_2_A9()
         => ExecutionTest("S12.6.2_A9");
 }

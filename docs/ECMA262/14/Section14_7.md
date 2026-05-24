@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:24:00Z
+> Last generated (UTC): 2026-05-24T19:45:31Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -54,7 +54,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| do-while legacy control-flow ports | Supported with Limitations | [`S12.6.1_A4_T5.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A4_T5.js) |  | The checked-in slice also includes `S12.6.1_A2` and `S12.6.1_A9`, kept as explicit skips while ReferenceError propagation from do-while bodies is brought in line with the upstream cases. |
+| do-while legacy control-flow ports | Supported | [`S12.6.1_A2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A2.js)<br>[`S12.6.1_A9.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A9.js)<br>[`S12.6.1_A4_T5.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A4_T5.js) |  | The checked-in legacy slice covers do-while body execution, labeled break/continue flow, and ReferenceError propagation from do-while test expressions through surrounding catch handlers. |
 | do-while loop (CountDownFromFive) | Supported | [`ControlFlow_DoWhile_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js) |  |  |
 | do-while loop: break | Supported | [`ControlFlow_DoWhile_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Break_AtThree.js) |  | break branches to loop end (LoopContext). |
 | do-while loop: continue (skip even) | Supported | [`ControlFlow_DoWhile_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js) |  | continue branches to the post-body test point (LoopContext). |
@@ -65,7 +65,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| while legacy control-flow ports | Supported with Limitations | [`S12.6.2_A2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A2.js)<br>[`S12.6.2_A4_T3.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T3.js)<br>[`S12.6.2_A4_T5.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T5.js) |  | Additional ports for `S12.6.2_A4_T2`, `S12.6.2_A4_T4`, and `S12.6.2_A9` are checked in as explicit skips while nested break handling and ReferenceError propagation are aligned with upstream behavior. |
+| while legacy control-flow ports | Supported | [`S12.6.2_A2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A2.js)<br>[`S12.6.2_A4_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T2.js)<br>[`S12.6.2_A4_T3.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T3.js)<br>[`S12.6.2_A4_T4.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T4.js)<br>[`S12.6.2_A9.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A9.js)<br>[`S12.6.2_A4_T5.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T5.js) |  | The checked-in legacy slice covers while body execution, nested break behavior with hoisted `var` declarations, and ReferenceError propagation from while test expressions through surrounding catch handlers. |
 | while loop (CountDownFromFive) | Supported | [`ControlFlow_While_CountDownFromFive.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_CountDownFromFive.js) |  |  |
 | while loop: break | Supported | [`ControlFlow_While_Break_AtThree.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Break_AtThree.js) |  | break branches to loop end (LoopContext). |
 | while loop: continue (skip even) | Supported | [`ControlFlow_While_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Continue_SkipEven.js) |  | continue branches to loop head (LoopContext). |
