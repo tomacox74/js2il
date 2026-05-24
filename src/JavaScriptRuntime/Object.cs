@@ -888,11 +888,12 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: true, writable: true);
 
             DefineBuiltinDataProperty(objectConstructorValue, "assign", _objectAssignValue);
+            InitializeBuiltinStaticFunction(_objectAssignValue, "assign", 2);
             DefineBuiltinDataProperty(objectConstructorValue, "create", _objectCreateValue);
             DefineBuiltinDataProperty(objectConstructorValue, "defineProperties", _objectDefinePropertiesValue);
             DefineBuiltinDataProperty(objectConstructorValue, "defineProperty", _objectDefinePropertyValue);
             DefineBuiltinDataProperty(objectConstructorValue, "entries", _objectEntriesValue);
-            DefineBuiltinFunctionName(_objectEntriesValue, "entries");
+            InitializeBuiltinStaticFunction(_objectEntriesValue, "entries", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "freeze", _objectFreezeValue);
             DefineBuiltinDataProperty(objectConstructorValue, "fromEntries", _objectFromEntriesValue);
             DefineBuiltinDataProperty(objectConstructorValue, "getOwnPropertyDescriptor", _objectGetOwnPropertyDescriptorValue);
@@ -907,10 +908,12 @@ namespace JavaScriptRuntime
             DefineBuiltinDataProperty(objectConstructorValue, "isFrozen", _objectIsFrozenValue);
             DefineBuiltinDataProperty(objectConstructorValue, "isSealed", _objectIsSealedValue);
             DefineBuiltinDataProperty(objectConstructorValue, "keys", _objectKeysValue);
+            InitializeBuiltinStaticFunction(_objectKeysValue, "keys", 1);
             DefineBuiltinDataProperty(objectConstructorValue, "preventExtensions", _objectPreventExtensionsValue);
             DefineBuiltinDataProperty(objectConstructorValue, "seal", _objectSealValue);
             DefineBuiltinDataProperty(objectConstructorValue, "setPrototypeOf", _objectSetPrototypeOfValue);
             DefineBuiltinDataProperty(objectConstructorValue, "values", _objectValuesValue);
+            InitializeBuiltinStaticFunction(_objectValuesValue, "values", 1);
 
             DefineBuiltinDataProperty(objectPrototypeValue, "constructor", objectConstructorValue, enumerable: false, configurable: true, writable: true);
             DefineBuiltinDataProperty(objectPrototypeValue, "hasOwnProperty", _objectPrototypeHasOwnPropertyValue, enumerable: false, configurable: true, writable: true);
@@ -935,6 +938,38 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = name
             });
+        }
+
+        private static void DefineBuiltinFunctionLength(object functionValue, double length)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = length
+            });
+        }
+
+        private static void MarkBuiltinFunctionAsNonConstructible(Delegate functionValue)
+        {
+            JavaScriptRuntime.Function.InitializeFunctionInstance(functionValue);
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+        }
+
+        private static void InitializeBuiltinStaticFunction(Delegate functionValue, string name, double length)
+        {
+            DefineBuiltinFunctionName(functionValue, name);
+            DefineBuiltinFunctionLength(functionValue, length);
+            MarkBuiltinFunctionAsNonConstructible(functionValue);
         }
 
         /// <summary>
@@ -1207,6 +1242,12 @@ namespace JavaScriptRuntime
         /// ECMA-262 Object.assign(target, ...sources).
         /// Copies enumerable own properties from source objects to the target.
         /// </summary>
+        public static object assign(object target)
+            => assign(target, System.Array.Empty<object?>());
+
+        public static object assign(object target, object? source)
+            => assign(target, new object?[] { source });
+
         public static object assign(object target, params object?[] sources)
         {
             if (target is null || target is JsNull)
@@ -1214,7 +1255,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot convert undefined or null to object");
             }
 
-            var targetObject = BoxAssignTarget(target);
+            var targetObject = Construct(target);
             foreach (var source in sources)
             {
                 // Skip null/undefined sources
@@ -1228,26 +1269,6 @@ namespace JavaScriptRuntime
             }
 
             return targetObject;
-        }
-
-        private static object BoxAssignTarget(object value)
-        {
-            if (value is string str)
-            {
-                return CreatePrimitiveWrapper(str, JavaScriptRuntime.String.Prototype, includeOwnStringMethods: true);
-            }
-
-            if (value is double or float or int or long or short or byte or System.Numerics.BigInteger)
-            {
-                return CreatePrimitiveWrapper(value, GlobalThis.NumberPrototypeValue, includeOwnStringMethods: false);
-            }
-
-            if (value is bool boolean)
-            {
-                return new JavaScriptRuntime.Boolean(boolean);
-            }
-
-            return value;
         }
 
         private static object CreatePrimitiveWrapper(object primitiveValue, object prototype, bool includeOwnStringMethods)
@@ -1535,6 +1556,18 @@ namespace JavaScriptRuntime
         private static bool IsPrimitiveObjectOperationTarget(object obj)
         {
             return obj is string || obj is Symbol || obj.GetType().IsValueType;
+        }
+
+        private static bool IsReadOnlyStringObjectIndex(object obj, string name)
+        {
+            if (!PropertyDescriptorStore.TryGetOwn(obj, JavaScriptRuntime.String.StringDataPropertyName, out var descriptor)
+                || descriptor.Kind != JsPropertyDescriptorKind.Data)
+            {
+                return false;
+            }
+
+            var stringValue = DotNet2JSConversions.ToString(descriptor.Value);
+            return TryGetCanonicalArrayIndexKey(name, out var index) && index < stringValue.Length;
         }
 
         private static IEnumerable<string> GetOwnKeysForIntegrity(object obj)
@@ -2141,6 +2174,13 @@ namespace JavaScriptRuntime
 
             if (constructor is Delegate)
             {
+                if (PropertyDescriptorStore.TryGetOwn(constructor, "prototype", out var prototypeDescriptor)
+                    && prototypeDescriptor.Kind == JsPropertyDescriptorKind.Data
+                    && prototypeDescriptor.Value is null)
+                {
+                    return false;
+                }
+
                 return true;
             }
 
@@ -5259,6 +5299,15 @@ namespace JavaScriptRuntime
                     PrototypeChain.SetPrototype(obj, value);
                 }
                 return value;
+            }
+            if (!hasOwn && IsReadOnlyStringObjectIndex(obj, name))
+            {
+                if (!throwOnError)
+                {
+                    return value;
+                }
+
+                throw new TypeError($"Cannot assign to read only property '{name}' of object");
             }
             if (!hasOwn && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
             {
