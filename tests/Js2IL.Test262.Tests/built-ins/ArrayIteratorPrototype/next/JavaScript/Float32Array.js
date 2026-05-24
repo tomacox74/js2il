@@ -68,8 +68,8 @@ assert.sameValue(result.value, 1, 'second result `value`');
 assert.sameValue(result.done, false, 'second result `done` flag');
 
 result = iterator.next();
-assert.sameValue(result.value, 2, 'second result `value`');
-assert.sameValue(result.done, false, 'second result `done` flag');
+assert.sameValue(result.value, 2, 'third result `value`');
+assert.sameValue(result.done, false, 'third result `done` flag');
 
 result = iterator.next();
 assert.sameValue(result.value, undefined, 'exhausted result `value`');
