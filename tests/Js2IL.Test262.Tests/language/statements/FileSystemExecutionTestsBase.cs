@@ -114,7 +114,10 @@ public abstract class FileSystemExecutionTestsBase
         string normalizedCategoryPath = _relativeCategoryPath
             .Replace('\\', Path.DirectorySeparatorChar)
             .Replace('/', Path.DirectorySeparatorChar);
-        string sourcePath = Path.Combine(projectRoot, normalizedCategoryPath, "JavaScript", testName + ".js");
+        string normalizedTestName = testName
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+        string sourcePath = Path.Combine(projectRoot, normalizedCategoryPath, "JavaScript", normalizedTestName + ".js");
         if (!File.Exists(sourcePath))
         {
             throw new FileNotFoundException($"JavaScript fixture not found: '{sourcePath}'.", sourcePath);

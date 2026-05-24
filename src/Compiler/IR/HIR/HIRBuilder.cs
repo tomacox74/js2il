@@ -2659,6 +2659,7 @@ class HIRMethodBuilder
                     }
 
                     BindingInfo? catchParamBinding = null;
+                    HIRPattern? catchParamPattern = null;
                     HIRStatement? catchBody = null;
                     if (tryStmt.Handler != null)
                     {
@@ -2678,7 +2679,20 @@ class HIRMethodBuilder
                         }
                         else if (tryStmt.Handler.Param != null)
                         {
-                            return false;
+                            var previousCatchPatternScope = _currentScope;
+                            var catchScope = FindChildScopeForAstNode(tryStmt.Handler.Body) ?? _currentScope;
+                            _currentScope = catchScope;
+                            try
+                            {
+                                if (!TryParsePattern(tryStmt.Handler.Param, out catchParamPattern))
+                                {
+                                    return false;
+                                }
+                            }
+                            finally
+                            {
+                                _currentScope = previousCatchPatternScope;
+                            }
                         }
                     }
 
@@ -2691,7 +2705,7 @@ class HIRMethodBuilder
                         }
                     }
 
-                    hirStatement = new HIRTryStatement(tryBlock!, catchParamBinding, catchBody, finallyBody);
+                    hirStatement = new HIRTryStatement(tryBlock!, catchParamBinding, catchParamPattern, catchBody, finallyBody);
                     return true;
                 }
 
