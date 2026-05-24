@@ -27,7 +27,7 @@ namespace JavaScriptRuntime
         {
             if (value is JavaScriptRuntime.Proxy proxy)
             {
-                return IsCallableValue(proxy.GetTarget("apply"));
+                return proxy.IsCallableTarget;
             }
 
             return value is Delegate;

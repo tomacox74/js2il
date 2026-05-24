@@ -112,6 +112,24 @@ namespace JavaScriptRuntime
             return new global::JavaScriptRuntime.Promise(executor);
         };
 
+        private static readonly JsFuncNoScopes2 _proxyConstructorValue = static (newTarget, target, handler) =>
+        {
+            if (newTarget is null)
+            {
+                throw new global::JavaScriptRuntime.TypeError("Constructor Proxy requires 'new'");
+            }
+
+            return new global::JavaScriptRuntime.Proxy(target!, handler!);
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _proxyRevocableValue = static (_, args) =>
+        {
+            args ??= global::System.Array.Empty<object?>();
+            return global::JavaScriptRuntime.Proxy.revocable(
+                args.Length > 0 ? args[0]! : null!,
+                args.Length > 1 ? args[1]! : null!);
+        };
+
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
         private static readonly Func<object[], object?, object> _objectConstructorValue = static (_, value) =>
@@ -290,6 +308,10 @@ namespace JavaScriptRuntime
                 Value = _arrayFromValue
             });
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyRevocableValue, 2d, "revocable");
+            DefineUndefinedPrototypeProperty(_proxyRevocableValue);
+            DefineIntrinsicDataProperty(_proxyConstructorValue, "revocable", _proxyRevocableValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
@@ -798,6 +820,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Promise), Promise);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
 
+            dict.TryAdd(nameof(GlobalThis.Proxy), Proxy);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Proxy), dict[nameof(GlobalThis.Proxy)]);
+
             dict.TryAdd(nameof(GlobalThis.Float64Array), Float64Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Float64Array), dict[nameof(GlobalThis.Float64Array)]);
 
@@ -1003,6 +1028,8 @@ namespace JavaScriptRuntime
         public static Type Date => typeof(JavaScriptRuntime.Date);
 
         public static Delegate Promise => _promiseConstructorValue;
+
+        public static Delegate Proxy => _proxyConstructorValue;
 
         public static Delegate Float64Array => _float64ArrayConstructorValue;
 
