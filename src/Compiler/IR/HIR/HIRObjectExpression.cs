@@ -30,10 +30,11 @@ public abstract class HIRObjectMember
 /// </summary>
 public sealed class HIRObjectProperty : HIRObjectMember
 {
-    public HIRObjectProperty(string key, HIRExpression value)
+    public HIRObjectProperty(string key, HIRExpression value, bool isPrototypeMutation = false)
     {
         Key = key;
         Value = value;
+        IsPrototypeMutation = isPrototypeMutation;
     }
 
     /// <summary>
@@ -45,6 +46,8 @@ public sealed class HIRObjectProperty : HIRObjectMember
     /// The property value expression.
     /// </summary>
     public HIRExpression Value { get; init; }
+
+    public bool IsPrototypeMutation { get; init; }
 }
 
 /// <summary>

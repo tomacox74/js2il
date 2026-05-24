@@ -819,6 +819,8 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRGetUserClassType(userClassType.RegistryClassName, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 return true;
+            case HIRClassHeritageValidationExpression validateClassHeritage:
+                return TryLowerClassHeritageValidationExpression(validateClassHeritage, out resultTempVar);
             case HIRDefineClassDataPropertyExpression defineClassDataProperty:
                 return TryLowerDefineClassDataPropertyExpression(defineClassDataProperty, out resultTempVar);
             case HIRDefineClassAccessorPropertyExpression defineClassAccessorProperty:

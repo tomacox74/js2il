@@ -106,6 +106,19 @@ namespace JavaScriptRuntime
                 enumerable: true);
         }
 
+        public static object SetObjectLiteralPrototype(object target, object? value)
+        {
+            if (value is JsNull || (value is not Symbol && TypeUtilities.IsConstructorReturnOverride(value)))
+            {
+                PrototypeChain.SetPrototype(target, value);
+            }
+
+            return target;
+        }
+
+        public static object? ValidateClassHeritage(object? heritage)
+            => RuntimeServices.ValidateClassHeritage(heritage);
+
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
             => DefineAccessorProperty(target, prop, getter, setter, enumerable: true, createDictionarySlot: true);
 

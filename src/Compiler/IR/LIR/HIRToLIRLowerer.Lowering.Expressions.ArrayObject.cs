@@ -95,7 +95,7 @@ public sealed partial class HIRToLIRLowerer
 
         // Fast path: simple object literal with only non-computed properties.
         // Preserve the existing LIRNewJsObject initialization pattern for minimal IL/snapshot churn.
-        bool allSimple = objectExpr.Members.All(static member => member is HIRObjectProperty);
+        bool allSimple = objectExpr.Members.All(static member => member is HIRObjectProperty { IsPrototypeMutation: false });
 
         if (allSimple)
         {
@@ -136,17 +136,23 @@ public sealed partial class HIRToLIRLowerer
             {
                 case HIRObjectProperty prop:
                 {
-                    var keyTemp = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRConstString(prop.Key, keyTemp));
-                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-
                     if (!TryLowerExpression(prop.Value, out var valueTemp))
                     {
                         return false;
                     }
 
                     EnsureObjectTargetCreated();
-                    EmitDefineObjectLiteralDataProperty(objectTemp, keyTemp, valueTemp);
+                    if (prop.IsPrototypeMutation)
+                    {
+                        EmitSetObjectLiteralPrototype(objectTemp, valueTemp);
+                    }
+                    else
+                    {
+                        var keyTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstString(prop.Key, keyTemp));
+                        DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                        EmitDefineObjectLiteralDataProperty(objectTemp, keyTemp, valueTemp);
+                    }
                     break;
                 }
 
@@ -262,6 +268,17 @@ public sealed partial class HIRToLIRLowerer
             Arguments: new List<TempVariable> { boxedTarget, keyArg, valueArg },
             Result: defineResult));
         DefineTempStorage(defineResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+    }
+
+    private void EmitSetObjectLiteralPrototype(TempVariable targetTemp, TempVariable valueTemp)
+    {
+        var setResult = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.SetObjectLiteralPrototype),
+            Arguments: new List<TempVariable> { EnsureObject(targetTemp), EnsureObject(valueTemp) },
+            Result: setResult));
+        DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
     }
 
     private bool TryLowerObjectLiteralAccessorProperty(TempVariable targetTemp, string key, HIRExpression? getterExpression, HIRExpression? setterExpression)

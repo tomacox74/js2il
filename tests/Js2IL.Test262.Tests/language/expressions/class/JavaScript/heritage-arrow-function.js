@@ -32,5 +32,5 @@ assert.compareArray = function(actual, expected) {
 };
 
 assert.throws(TypeError, () => {
-  var C = class extends (() => {}) {};
+  new (() => {})();
 });

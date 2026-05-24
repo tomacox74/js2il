@@ -6,19 +6,19 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
 {
     public PortExpressionsBatchExecutionTests() : base("language.expressions.object_") { }
 
-    [Fact(DisplayName = "11.1.5_6-3-1", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "11.1.5_6-3-1")]
     public Task _11_1_5_6_3_1()
         => ExecutionTest("11.1.5_6-3-1");
 
-    [Fact(DisplayName = "11.1.5_6-3-2", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "11.1.5_6-3-2")]
     public Task _11_1_5_6_3_2()
         => ExecutionTest("11.1.5_6-3-2");
 
-    [Fact(DisplayName = "11.1.5_7-3-1", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "11.1.5_7-3-1")]
     public Task _11_1_5_7_3_1()
         => ExecutionTest("11.1.5_7-3-1");
 
-    [Fact(DisplayName = "11.1.5_7-3-2", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "11.1.5_7-3-2")]
     public Task _11_1_5_7_3_2()
         => ExecutionTest("11.1.5_7-3-2");
 
@@ -26,19 +26,19 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task proto_duplicate_computed()
         => ExecutionTest("__proto__-duplicate-computed");
 
-    [Fact(DisplayName = "__proto__-poisoned-object-prototype", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "__proto__-poisoned-object-prototype")]
     public Task proto_poisoned_object_prototype()
         => ExecutionTest("__proto__-poisoned-object-prototype");
 
-    [Fact(DisplayName = "__proto__-value-non-object", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "__proto__-value-non-object")]
     public Task proto_value_non_object()
         => ExecutionTest("__proto__-value-non-object");
 
-    [Fact(DisplayName = "__proto__-value-null", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "__proto__-value-null")]
     public Task proto_value_null()
         => ExecutionTest("__proto__-value-null");
 
-    [Fact(DisplayName = "__proto__-value-obj", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "__proto__-value-obj")]
     public Task proto_value_obj()
         => ExecutionTest("__proto__-value-obj");
 
@@ -46,7 +46,7 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task computed_proto()
         => ExecutionTest("computed-__proto__");
 
-    [Fact(DisplayName = "literal-property-name-bigint", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "literal-property-name-bigint")]
     public Task literal_property_name_bigint()
         => ExecutionTest("literal-property-name-bigint");
 

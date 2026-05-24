@@ -6,15 +6,15 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
 {
     public PortExpressionsBatchExecutionTests() : base("language.expressions.class_") { }
 
-    [Fact(DisplayName = "heritage-arrow-function", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "heritage-arrow-function")]
     public Task heritage_arrow_function()
         => ExecutionTest("heritage-arrow-function");
 
-    [Fact(DisplayName = "poisoned-underscore-proto", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "poisoned-underscore-proto")]
     public Task poisoned_underscore_proto()
         => ExecutionTest("poisoned-underscore-proto");
 
-    [Fact(DisplayName = "restricted-properties", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "restricted-properties")]
     public Task restricted_properties()
         => ExecutionTest("restricted-properties");
 

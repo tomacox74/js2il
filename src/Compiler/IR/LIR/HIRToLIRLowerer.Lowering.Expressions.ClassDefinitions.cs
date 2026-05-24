@@ -26,6 +26,25 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryLowerClassHeritageValidationExpression(HIRClassHeritageValidationExpression expression, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!TryLowerExpression(expression.Heritage, out var heritageTemp))
+        {
+            return false;
+        }
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.ValidateClassHeritage),
+            Arguments: new List<TempVariable> { EnsureObject(heritageTemp) },
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
     private bool TryLowerDefineClassAccessorPropertyExpression(HIRDefineClassAccessorPropertyExpression expression, out TempVariable resultTempVar)
     {
         resultTempVar = default;

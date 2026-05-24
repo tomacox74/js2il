@@ -7,6 +7,7 @@ namespace JavaScriptRuntime
             Type = type;
             Scopes = scopes;
             FormalParameterCount = formalParameterCount;
+            PrototypeChain.SetPrototype(this, Function.Prototype);
         }
 
         public Type Type { get; }
