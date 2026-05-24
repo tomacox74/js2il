@@ -127,7 +127,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 245 (0xf5)
+		// Code size: 246 (0xf6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Sort_WithComparatorArrow/Scope,
@@ -177,43 +177,44 @@
 		IL_0092: conv.r8
 		IL_0093: ldstr ""
 		IL_0098: ldc.i4.0
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-		IL_009e: stloc.s 4
-		IL_00a0: ldloc.1
-		IL_00a1: ldc.i4.1
-		IL_00a2: newarr [System.Runtime]System.Object
-		IL_00a7: dup
-		IL_00a8: ldc.i4.0
-		IL_00a9: ldloc.s 4
-		IL_00ab: stelem.ref
-		IL_00ac: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
-		IL_00b1: pop
-		IL_00b2: ldc.r8 0.0
-		IL_00bb: stloc.2
-		// loop start (head: IL_00bc)
-			IL_00bc: ldloc.2
-			IL_00bd: ldloc.1
-			IL_00be: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_00c3: conv.r8
-			IL_00c4: clt
-			IL_00c6: brfalse IL_00f4
+		IL_0099: ldc.i4.1
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_009f: stloc.s 4
+		IL_00a1: ldloc.1
+		IL_00a2: ldc.i4.1
+		IL_00a3: newarr [System.Runtime]System.Object
+		IL_00a8: dup
+		IL_00a9: ldc.i4.0
+		IL_00aa: ldloc.s 4
+		IL_00ac: stelem.ref
+		IL_00ad: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_00b2: pop
+		IL_00b3: ldc.r8 0.0
+		IL_00bc: stloc.2
+		// loop start (head: IL_00bd)
+			IL_00bd: ldloc.2
+			IL_00be: ldloc.1
+			IL_00bf: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_00c4: conv.r8
+			IL_00c5: clt
+			IL_00c7: brfalse IL_00f5
 
-			IL_00cb: newobj instance void Modules.Array_Sort_WithComparatorArrow/Scope/Block_L5C37::.ctor()
-			IL_00d0: stloc.3
-			IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d6: ldloc.1
-			IL_00d7: ldloc.2
-			IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00e2: pop
-			IL_00e3: ldloc.2
-			IL_00e4: ldc.r8 1
-			IL_00ed: add
-			IL_00ee: stloc.2
-			IL_00ef: br IL_00bc
+			IL_00cc: newobj instance void Modules.Array_Sort_WithComparatorArrow/Scope/Block_L5C37::.ctor()
+			IL_00d1: stloc.3
+			IL_00d2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00d7: ldloc.1
+			IL_00d8: ldloc.2
+			IL_00d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00e3: pop
+			IL_00e4: ldloc.2
+			IL_00e5: ldc.r8 1
+			IL_00ee: add
+			IL_00ef: stloc.2
+			IL_00f0: br IL_00bd
 		// end loop
 
-		IL_00f4: ret
+		IL_00f5: ret
 	} // end of method Array_Sort_WithComparatorArrow::__js_module_init__
 
 } // end of class Modules.Array_Sort_WithComparatorArrow

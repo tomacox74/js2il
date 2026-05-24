@@ -95,7 +95,7 @@
 			)
 			// Method begins at RVA 0x20b0
 			// Header size: 12
-			// Code size: 78 (0x4e)
+			// Code size: 79 (0x4f)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/ArrowFunction_L3C14/Scope,
@@ -118,15 +118,16 @@
 			IL_0032: conv.r8
 			IL_0033: ldstr ""
 			IL_0038: ldc.i4.0
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-			IL_003e: stloc.1
-			IL_003f: ldloc.1
-			IL_0040: ldc.i4.0
-			IL_0041: newarr [System.Runtime]System.Object
-			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-			IL_004b: pop
-			IL_004c: ldnull
-			IL_004d: ret
+			IL_0039: ldc.i4.1
+			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_003f: stloc.1
+			IL_0040: ldloc.1
+			IL_0041: ldc.i4.0
+			IL_0042: newarr [System.Runtime]System.Object
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+			IL_004c: pop
+			IL_004d: ldnull
+			IL_004e: ret
 		} // end of method ArrowFunction_L3C14::__js_call__
 
 	} // end of class ArrowFunction_L3C14
@@ -164,7 +165,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 83 (0x53)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetImmediate_Nested_ExecutesInNextIteration/Scope,
@@ -188,18 +189,19 @@
 		IL_0027: conv.r8
 		IL_0028: ldstr ""
 		IL_002d: ldc.i4.0
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-		IL_0033: stloc.1
-		IL_0034: ldloc.1
-		IL_0035: ldc.i4.0
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0040: pop
-		IL_0041: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0046: ldstr "scheduled nested immediates."
-		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0050: pop
-		IL_0051: ret
+		IL_002e: ldc.i4.1
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0034: stloc.1
+		IL_0035: ldloc.1
+		IL_0036: ldc.i4.0
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0041: pop
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0047: ldstr "scheduled nested immediates."
+		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0051: pop
+		IL_0052: ret
 	} // end of method SetImmediate_Nested_ExecutesInNextIteration::__js_module_init__
 
 } // end of class Modules.SetImmediate_Nested_ExecutesInNextIteration

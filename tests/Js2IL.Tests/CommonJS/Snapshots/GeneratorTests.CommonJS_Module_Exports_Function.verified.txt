@@ -104,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 131 (0x83)
+		// Code size: 132 (0x84)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Exports_Function/Scope,
@@ -123,41 +123,42 @@
 		IL_0013: conv.r8
 		IL_0014: ldstr "greet"
 		IL_0019: ldc.i4.0
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-		IL_001f: stloc.3
-		IL_0020: ldloc.3
-		IL_0021: stloc.1
-		IL_0022: ldarg.2
-		IL_0023: ldstr "exports"
-		IL_0028: ldloc.1
-		IL_0029: ldc.i4.1
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_002f: pop
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldstr "typeof module.exports:"
-		IL_003a: ldarg.2
-		IL_003b: ldstr "exports"
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0045: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_004f: pop
-		IL_0050: ldarg.2
-		IL_0051: ldstr "exports"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005b: stloc.2
-		IL_005c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0061: stloc.s 4
-		IL_0063: ldloc.2
-		IL_0064: ldloc.s 4
-		IL_0066: ldstr "World"
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
-		IL_0070: stloc.3
-		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0076: ldstr "result:"
-		IL_007b: ldloc.3
-		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0081: pop
-		IL_0082: ret
+		IL_001a: ldc.i4.1
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0020: stloc.3
+		IL_0021: ldloc.3
+		IL_0022: stloc.1
+		IL_0023: ldarg.2
+		IL_0024: ldstr "exports"
+		IL_0029: ldloc.1
+		IL_002a: ldc.i4.1
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0030: pop
+		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0036: ldstr "typeof module.exports:"
+		IL_003b: ldarg.2
+		IL_003c: ldstr "exports"
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0046: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0050: pop
+		IL_0051: ldarg.2
+		IL_0052: ldstr "exports"
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005c: stloc.2
+		IL_005d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0062: stloc.s 4
+		IL_0064: ldloc.2
+		IL_0065: ldloc.s 4
+		IL_0067: ldstr "World"
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs1(object, object[], object)
+		IL_0071: stloc.3
+		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0077: ldstr "result:"
+		IL_007c: ldloc.3
+		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0082: pop
+		IL_0083: ret
 	} // end of method CommonJS_Module_Exports_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Function
