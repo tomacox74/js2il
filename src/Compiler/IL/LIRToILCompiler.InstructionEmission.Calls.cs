@@ -267,6 +267,71 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRTailCallFunctionReturn tailCall:
+                {
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false;
+                    }
+
+                    if (!reader.TryGetDeclaredToken(tailCall.CallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false;
+                    }
+
+                    if (tailCall.CallableId.NeedsArgumentsObject || tailCall.CallableId.HasRestParameters)
+                    {
+                        return false;
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+                    var callableSignature = reader.GetSignature(tailCall.CallableId);
+                    bool requiresScopes = callableSignature?.RequiresScopesParameter ?? true;
+                    bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
+                    int jsParamCount = tailCall.CallableId.JsParamCount;
+                    int argsToPass = Math.Min(tailCall.Arguments.Count, jsParamCount);
+
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            tailCall.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {tailCall.CallableId.DisplayName}."));
+                    }
+                    else
+                    {
+                        if (requiresScopes)
+                        {
+                            EmitLoadTemp(tailCall.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                        }
+                    }
+
+                    // new.target is undefined for ordinary function tail calls.
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        var parameterClrType = callableSignature?.ParameterClrTypes != null && i < callableSignature.ParameterClrTypes.Count
+                            ? callableSignature.ParameterClrTypes[i]
+                            : null;
+                        EmitLoadTempAsParameterType(tailCall.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Tail);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(methodHandle);
+                    ilEncoder.OpCode(ILOpCode.Ret);
+                    break;
+                }
+
             case LIRCallFunctionWithArgsArray callFuncArray:
                 {
                     if (callFuncArray.CallableId is not { } callableId)
