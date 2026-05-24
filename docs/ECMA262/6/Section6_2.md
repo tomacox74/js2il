@@ -4,7 +4,7 @@
 
 [Back to Section6](Section6.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-18T20:54:15Z
+> Last generated (UTC): 2026-05-24T04:56:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -70,7 +70,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js) |  | Identifier/member references work for supported language forms; spec-exact modeling of all Reference Record variants remains incomplete. |
+| Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/assignment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/call/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/member-expression/PortExpressionsBatchExecutionTests.cs` |  | Identifier/member references work for supported language forms, including the covered test262 GetValue/PutValue cases for computed members, null/undefined member bases, and function-call reference resolution. Spec-exact modeling of every Reference Record variant remains incomplete. |
 
 ### 6.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-property-descriptor-specification-type))
 
