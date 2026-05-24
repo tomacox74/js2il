@@ -37,6 +37,18 @@
           "tests/Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js"
         ],
         "notes": "Return exits the current function while ensuring finally blocks execute on the way out."
+      },
+      {
+        "clause": "14.10.1",
+        "feature": "tail-position conditional/logical expressions returned from functions",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-return-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/conditional/PortExpressionsBatchExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/language/expressions/logical-and/PortExpressionsBatchExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/language/expressions/logical-or/PortExpressionsBatchExecutionTests.cs"
+        ],
+        "notes": "Return lowering now preserves the tail-position behavior covered by the current test262 ports for conditional, logical-and, and logical-or expressions without regressing surrounding return-completion handling."
       }
     ]
   }
