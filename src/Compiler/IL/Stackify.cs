@@ -552,6 +552,7 @@ internal static class Stackify
 
             // LIRCallFunction calls a user-defined function.
             case LIRCallFunction:
+            case LIRTailCallFunctionReturn:
                 return false;
 
             case LIRCallFunctionWithArgsArray:
@@ -854,6 +855,9 @@ internal static class Stackify
 
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
+
+            case LIRTailCallFunctionReturn tailCall:
+                return (1 + tailCall.Arguments.Count, 0);
 
             case LIRCallFunctionWithArgsArray:
                 // scopesArray + argsArray -> result

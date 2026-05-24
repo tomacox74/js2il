@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T21:28:47Z
+> Last generated (UTC): 2026-05-24T04:54:21Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -75,7 +75,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.assign | Supported with Limitations | [`Object_Assign_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Assign_Basic.js) |  | Implemented in JavaScriptRuntime.Object.assign. Copies enumerable own properties from source objects to the target using SpreadInto semantics. Returns the target object. Symbol-keyed properties, property descriptor copying, and full error handling are not implemented. |
+| Object.assign | Supported with Limitations | [`Object_Assign_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Assign_Basic.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/assign/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.assign. Copies enumerable own properties from source objects to the target using SpreadInto semantics, including the covered primitive-target coercion cases from test262. Symbol-keyed properties, property descriptor copying, and full error handling are not implemented. |
 
 ### 20.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-object.create))
 
@@ -195,7 +195,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.keys | Supported with Limitations | [`Object_Keys_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js) |  | Implemented in JavaScriptRuntime.Object.keys. Returns an array of own enumerable string keys. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
+| Object.keys | Supported with Limitations | [`Object_Keys_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/keys/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.keys. Returns an array of own enumerable string keys, including the covered primitive-boxing and ordinary ordering cases from test262. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
 
 ### 20.1.2.20 ([tc39.es](https://tc39.es/ecma262/#sec-object.preventextensions))
 
@@ -225,7 +225,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.values | Supported with Limitations | [`Object_Values_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js) |  | Implemented in JavaScriptRuntime.Object.values. Returns an array of own enumerable property values. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
+| Object.values | Supported with Limitations | [`Object_Values_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Object/values/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.Object.values. Returns an array of own enumerable property values, including the covered primitive-boxing and ordinary ordering cases from test262. Respects PropertyDescriptorStore for enumerable:false filtering. Symbol-keyed properties and full spec ordering guarantees are not implemented. |
 
 ### 20.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.constructor))
 

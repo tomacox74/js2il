@@ -14,27 +14,27 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task exec_args()
         => ExecutionTestFromFile("exec-args");
 
-    [Fact(DisplayName = "executor-call-context-sloppy", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "executor-call-context-sloppy")]
     public Task executor_call_context_sloppy()
         => ExecutionTestFromFile("executor-call-context-sloppy");
 
-    [Fact(DisplayName = "executor-call-context-strict", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "executor-call-context-strict")]
     public Task executor_call_context_strict()
         => ExecutionTestFromFile("executor-call-context-strict");
 
-    [Fact(DisplayName = "executor-function-extensible", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "executor-function-extensible")]
     public Task executor_function_extensible()
         => ExecutionTestFromFile("executor-function-extensible");
 
-    [Fact(DisplayName = "executor-function-property-order", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "executor-function-property-order")]
     public Task executor_function_property_order()
         => ExecutionTestFromFile("executor-function-property-order");
 
-    [Fact(DisplayName = "executor-function-prototype", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "executor-function-prototype")]
     public Task executor_function_prototype()
         => ExecutionTestFromFile("executor-function-prototype");
 
-    [Fact(DisplayName = "property-order", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "property-order")]
     public Task property_order()
         => ExecutionTestFromFile("property-order");
 

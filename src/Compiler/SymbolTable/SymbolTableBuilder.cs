@@ -60,6 +60,20 @@ namespace Js2IL.SymbolTables
             }
         }
 
+        private bool TryBuildDirectEvalLiteralScope(Scope globalScope, Scope currentScope, CallExpression callExpr)
+        {
+            if (callExpr.Callee is not Identifier { Name: "eval" }
+                || callExpr.Arguments.Count != 1
+                || callExpr.Arguments[0] is not StringLiteral stringLiteral)
+            {
+                return false;
+            }
+
+            var evalProgram = _parser.ParseJavaScript(stringLiteral.Value, $"{_currentModulePath}:eval");
+            BuildScopeRecursive(globalScope, evalProgram, currentScope);
+            return true;
+        }
+
         public void Build(ModuleDefinition module)
         {
             _currentModulePath = module.Path;
@@ -868,6 +882,10 @@ namespace Js2IL.SymbolTables
                     {
                         BuildScopeRecursive(globalScope, classExprSuperFunction, classExprScope);
                     }
+                    else if (classExpr.SuperClass != null)
+                    {
+                        BuildScopeRecursive(globalScope, classExpr.SuperClass, classExprScope);
+                    }
 
                     foreach (var element in classExpr.Body.Body)
                     {
@@ -1446,6 +1464,11 @@ namespace Js2IL.SymbolTables
                     }
                     break;
                 case CallExpression callExpr:
+                    if (TryBuildDirectEvalLiteralScope(globalScope, currentScope, callExpr))
+                    {
+                        break;
+                    }
+
                     if (callExpr.Callee is Identifier callCalleeId)
                     {
                         TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callCalleeId, callExpr.Arguments.Cast<Node>());

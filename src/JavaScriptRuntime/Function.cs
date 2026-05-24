@@ -109,7 +109,17 @@ public static class Function
 
     internal static void ConfigureCallableObject(object functionValue, bool hasRestrictedProperties)
     {
-        PrototypeChain.SetPrototype(functionValue, hasRestrictedProperties ? RestrictedPropertiesPrototype : Prototype);
+        PrototypeChain.SetPrototype(functionValue, Prototype);
+        if (hasRestrictedProperties)
+        {
+            DefineRestrictedFunctionProperties(functionValue);
+        }
+    }
+
+    internal static void DefineRestrictedFunctionProperties(object functionValue)
+    {
+        DefineRestrictedProperty(functionValue, "caller");
+        DefineRestrictedProperty(functionValue, "arguments");
     }
 
     private static object? GetEffectiveThisArg(Delegate target, object? thisArg)
@@ -119,23 +129,26 @@ public static class Function
             : thisArg;
     }
 
+        private static bool IsCallableObject(object? target)
+            => target is Delegate || target is Proxy proxy && proxy.IsCallableTarget;
+
         private static object? PrototypeApply(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
-            if (target is not Delegate del)
+            if (!IsCallableObject(target))
             {
                 throw new TypeError("Function.prototype.apply called on non-function");
             }
 
             var thisArg = args != null && args.Length > 0 ? args[0] : null;
             var argArray = args != null && args.Length > 1 ? args[1] : null;
-            return Apply(del, thisArg, argArray);
+            return Apply(target!, thisArg, argArray);
         }
 
         private static object? PrototypeCall(object[] scopes, object?[]? args)
         {
             var target = RuntimeServices.GetCurrentThis();
-            if (target is not Delegate del)
+            if (!IsCallableObject(target))
             {
                 throw new TypeError("Function.prototype.call called on non-function");
             }
@@ -145,7 +158,7 @@ public static class Function
                 ? args.Skip(1).ToArray()
                 : System.Array.Empty<object?>();
 
-            return Call(del, thisArg, callArgs);
+            return Call(target!, thisArg, callArgs);
         }
 
         private static object? PrototypeBind(object[] scopes, object?[]? args)
@@ -212,37 +225,41 @@ public static class Function
             return ToSourceString(del);
         }
 
-        public static object? Apply(Delegate target, object? thisArg, object? argArray)
+        private static object?[] NormalizeApplyArguments(object? argArray)
         {
-            if (target is null) throw new ArgumentNullException(nameof(target));
-
-            object?[] argsList;
             if (argArray is null || argArray is JsNull)
             {
-                argsList = System.Array.Empty<object?>();
+                return System.Array.Empty<object?>();
             }
-            else if (argArray is JavaScriptRuntime.Array jsArr)
+
+            if (argArray is JavaScriptRuntime.Array jsArr)
             {
-                argsList = jsArr.ToArray();
+                return jsArr.ToArray();
             }
-            else if (argArray is object?[] objArr)
+
+            if (argArray is object?[] objArr)
             {
-                argsList = objArr;
+                return objArr;
             }
-            else if (argArray is IEnumerable enumerable && argArray is not string)
+
+            if (argArray is IEnumerable enumerable && argArray is not string)
             {
                 var list = new List<object?>();
                 foreach (var item in enumerable)
                 {
                     list.Add(item);
                 }
-                argsList = list.ToArray();
-            }
-            else
-            {
-                throw new TypeError("apply arguments must be an array (or null/undefined)");
+                return list.ToArray();
             }
 
+            throw new TypeError("apply arguments must be an array (or null/undefined)");
+        }
+
+        public static object? Apply(Delegate target, object? thisArg, object? argArray)
+        {
+            if (target is null) throw new ArgumentNullException(nameof(target));
+
+            var argsList = NormalizeApplyArguments(argArray);
             var effectiveThis = GetEffectiveThisArg(target, thisArg);
             var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
             try
@@ -253,6 +270,30 @@ public static class Function
             {
                 RuntimeServices.SetCurrentThis(prevThis);
             }
+        }
+
+        public static object? Apply(object target, object? thisArg, object? argArray)
+        {
+            if (target is Delegate del)
+            {
+                return Apply(del, thisArg, argArray);
+            }
+
+            if (target is Proxy proxy && proxy.IsCallableTarget)
+            {
+                var argsList = NormalizeApplyArguments(argArray);
+                var prevThis = RuntimeServices.SetCurrentThis(thisArg);
+                try
+                {
+                    return Closure.InvokeWithArgs(proxy, System.Array.Empty<object>(), argsList);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(prevThis);
+                }
+            }
+
+            throw new TypeError("Function.prototype.apply called on non-function");
         }
 
         public static object? Call(Delegate target, object? thisArg, object?[] args)
@@ -270,6 +311,30 @@ public static class Function
             {
                 RuntimeServices.SetCurrentThis(prevThis);
             }
+        }
+
+        public static object? Call(object target, object? thisArg, object?[] args)
+        {
+            if (target is Delegate del)
+            {
+                return Call(del, thisArg, args);
+            }
+
+            if (target is Proxy proxy && proxy.IsCallableTarget)
+            {
+                args ??= System.Array.Empty<object?>();
+                var prevThis = RuntimeServices.SetCurrentThis(thisArg);
+                try
+                {
+                    return Closure.InvokeWithArgs(proxy, System.Array.Empty<object>(), args);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(prevThis);
+                }
+            }
+
+            throw new TypeError("Function.prototype.call called on non-function");
         }
 
         public static Func<object[], object?[], object?> Bind(Delegate target, object? thisArg, object?[] boundArgs)
@@ -324,8 +389,15 @@ public static class Function
         }
 
         public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+            => InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties: false);
+
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
         {
             InitializeFunctionInstance(functionValue);
+            if (hasRestrictedProperties)
+            {
+                DefineRestrictedFunctionProperties(functionValue);
+            }
 
             if (functionValue is Delegate del)
             {
@@ -409,6 +481,11 @@ public static class Function
                 || (GlobalThis.String is Delegate stringConstructor && constructor.Method == stringConstructor.Method))
             {
                 return JavaScriptRuntime.String.Construct(callArgs, newTarget);
+            }
+
+            if (!JavaScriptRuntime.Object.IsConstructibleValue(constructor))
+            {
+                throw new TypeError("Value is not a constructor");
             }
 
             var instance = new System.Dynamic.ExpandoObject();

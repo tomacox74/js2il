@@ -96,11 +96,25 @@ namespace JavaScriptRuntime
         private static readonly Delegate _setConstructorValue =
             CreateCollectionConstructorValue("Set", static () => new JavaScriptRuntime.Set());
 
-        private static readonly Delegate _weakMapConstructorValue =
-            CreateCollectionConstructorValue("WeakMap", static () => new JavaScriptRuntime.WeakMap());
+        private static readonly JsFuncNoScopes1 _weakMapConstructorValue = static (newTarget, iterable) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor WeakMap requires 'new'");
+            }
 
-        private static readonly Delegate _weakSetConstructorValue =
-            CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
+            return new JavaScriptRuntime.WeakMap(iterable);
+        };
+
+        private static readonly JsFuncNoScopes1 _weakSetConstructorValue = static (newTarget, iterable) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor WeakSet requires 'new'");
+            }
+
+            return new JavaScriptRuntime.WeakSet(iterable);
+        };
 
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
@@ -110,6 +124,26 @@ namespace JavaScriptRuntime
             }
 
             return new global::JavaScriptRuntime.Promise(executor);
+        };
+        private static readonly Func<object[], object?, object?> _promiseResolveValue = static (_, value) =>
+            global::JavaScriptRuntime.Promise.ResolveForConstructor(RuntimeServices.GetCurrentThis(), value);
+
+        private static readonly JsFuncNoScopes2 _proxyConstructorValue = static (newTarget, target, handler) =>
+        {
+            if (newTarget is null)
+            {
+                throw new global::JavaScriptRuntime.TypeError("Constructor Proxy requires 'new'");
+            }
+
+            return new global::JavaScriptRuntime.Proxy(target, handler);
+        };
+
+        private static readonly Func<object[], object?[]?, object?> _proxyRevocableValue = static (_, args) =>
+        {
+            args ??= global::System.Array.Empty<object?>();
+            return global::JavaScriptRuntime.Proxy.revocable(
+                args.Length > 0 ? args[0] : null,
+                args.Length > 1 ? args[1] : null);
         };
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
@@ -290,11 +324,50 @@ namespace JavaScriptRuntime
                 Value = _arrayFromValue
             });
             ConfigurePromiseIntrinsicSurface(_promiseConstructorValue, _promisePrototypeValue);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyConstructorValue, 2d, "Proxy");
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_proxyRevocableValue, 2d, "revocable");
+            DefineUndefinedPrototypeProperty(_proxyRevocableValue);
+            DefineIntrinsicDataProperty(_proxyConstructorValue, "revocable", _proxyRevocableValue);
             ConfigureCollectionIntrinsicSurface(_mapConstructorValue, JavaScriptRuntime.Map.Prototype);
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
             ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Promise"
+            });
+            ConfigureBuiltinFunctionObject(_promiseResolveValue);
+            DefineUndefinedPrototypeProperty(_promiseResolveValue);
+            PropertyDescriptorStore.DefineOrUpdate(_promiseResolveValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_promiseResolveValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "resolve"
+            });
+            DefineIntrinsicDataProperty(_promiseConstructorValue, "resolve", _promiseResolveValue);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -798,6 +871,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Promise), Promise);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Promise), dict[nameof(GlobalThis.Promise)]);
 
+            dict.TryAdd(nameof(GlobalThis.Proxy), Proxy);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Proxy), dict[nameof(GlobalThis.Proxy)]);
+
             dict.TryAdd(nameof(GlobalThis.Float64Array), Float64Array);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Float64Array), dict[nameof(GlobalThis.Float64Array)]);
 
@@ -1003,6 +1079,8 @@ namespace JavaScriptRuntime
         public static Type Date => typeof(JavaScriptRuntime.Date);
 
         public static Delegate Promise => _promiseConstructorValue;
+
+        public static Delegate Proxy => _proxyConstructorValue;
 
         public static Delegate Float64Array => _float64ArrayConstructorValue;
 

@@ -66,7 +66,7 @@ public class EnvironmentLayoutBuilder
             CallableKind.Function => CallableAbi.ForFunction(jsParameterCount, needsParentScopes),
             CallableKind.Constructor => CallableAbi.ForConstructor(jsParameterCount, needsParentScopes),
             CallableKind.ClassMethod => CallableAbi.ForClassMethod(jsParameterCount, needsParentScopes),
-            CallableKind.ClassStaticMethod => CallableAbi.ForClassStaticMethod(jsParameterCount),
+            CallableKind.ClassStaticMethod => CallableAbi.ForClassStaticMethod(jsParameterCount, needsParentScopes),
             CallableKind.ClassStaticInitializer => CallableAbi.ForModuleMain(0),
             CallableKind.ModuleMain => CallableAbi.ForModuleMain(jsParameterCount),
             _ => throw new ArgumentException($"Unknown callable kind: {kind}", nameof(kind))

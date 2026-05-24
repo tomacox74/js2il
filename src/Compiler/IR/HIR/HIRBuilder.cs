@@ -214,7 +214,9 @@ public static class HIRBuilder
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
                     var ctorStatements = new List<HIRStatement>();
 
-                    var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null;
+                    var superClassNode = UnwrapExpression(GetClassSuperClass(enclosingClassNode));
+                    var isDerivedConstructor = superClassNode != null;
+                    var emitImplicitSuperCall = isDerivedConstructor;
 
                     static int GetMaxSuperCtorArgCount(Scope classScope, Node classNode)
                     {
@@ -261,7 +263,7 @@ public static class HIRBuilder
                     var parameterPatterns = new List<HIRPattern>();
                     var superArgs = new List<HIRExpression>();
                     HIRExpression? superClassExpression = null;
-                    if (isDerivedConstructor)
+                    if (emitImplicitSuperCall)
                     {
                         if (!TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
                         {
@@ -288,7 +290,7 @@ public static class HIRBuilder
 
                     // Derived constructors must call super() before accessing `this`.
                     // For implicit constructors in derived classes, insert an implicit super() call.
-                    if (isDerivedConstructor)
+                    if (emitImplicitSuperCall)
                     {
                         ctorStatements.Add(new HIRExpressionStatement(
                             new HIRCallExpression(new HIRSuperExpression(), superArgs.ToArray())));
@@ -890,6 +892,7 @@ class HIRMethodBuilder
     Scope _currentScope;
     readonly List<HIRStatement> _statements = new();
     readonly Dictionary<ClassDeclaration, bool> _eagerClassMetadataOmissionCache = new();
+    readonly JavaScriptParser _parser = new();
     string? _staticThisRegistryClassName;
 
     public HIRMethodBuilder(Scope scope)
@@ -921,6 +924,8 @@ class HIRMethodBuilder
     private HIRFunctionExpression CreateFunctionExpressionValue(Scope functionScope, FunctionExpression funcExpr)
     {
         var functionName = (funcExpr.Id as Identifier)?.Name;
+        var isStrictFunction = ArgumentsObjectSemantics.IsStrictScope(functionScope)
+            || IsCurrentClassHeritageFunctionExpression(funcExpr);
         var callableId = new CallableId
         {
             Kind = CallableKind.FunctionExpression,
@@ -930,10 +935,51 @@ class HIRMethodBuilder
             JsParamCount = funcExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
             NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
             HasRestParameters = functionScope.HasRestParameters,
+            UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+            ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+            IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !isStrictFunction,
+            HasRestrictedFunctionProperties = isStrictFunction,
             AstNode = funcExpr
         };
 
         return new HIRFunctionExpression(callableId, functionScope);
+    }
+
+    private bool IsCurrentClassHeritageFunctionExpression(FunctionExpression funcExpr)
+    {
+        if (_currentScope.Kind != ScopeKind.Class)
+        {
+            return false;
+        }
+
+        var superClass = _currentScope.AstNode switch
+        {
+            ClassDeclaration classDeclaration => classDeclaration.SuperClass,
+            ClassExpression classExpression => classExpression.SuperClass,
+            _ => null
+        };
+
+        return ReferenceEquals(UnwrapClassHeritageExpression(superClass), funcExpr);
+    }
+
+    private static Expression? UnwrapClassHeritageExpression(Expression? expression)
+    {
+        while (true)
+        {
+            var unwrapped = expression switch
+            {
+                ParenthesizedExpression p => p.Expression,
+                ChainExpression c => c.Expression,
+                _ => null
+            };
+
+            if (unwrapped == null)
+            {
+                return expression;
+            }
+
+            expression = unwrapped;
+        }
     }
 
     private Scope? FindDynamicFunctionScopeForSite(Node siteNode)
@@ -968,6 +1014,92 @@ class HIRMethodBuilder
 
         hirExpr = CreateFunctionExpressionValue(dynamicScope, dynamicFuncExpr);
         return true;
+    }
+
+    private bool TryParseDirectEvalLiteral(CallExpression callExpr, out HIRExpression? hirExpr)
+    {
+        hirExpr = null;
+
+        if (callExpr.Callee is not Identifier { Name: "eval" }
+            || callExpr.Arguments.Count != 1
+            || callExpr.Arguments[0] is not StringLiteral stringLiteral)
+        {
+            return false;
+        }
+
+        var program = _parser.ParseJavaScript(stringLiteral.Value, $"{GetCurrentDocumentId()}:eval");
+        if (program.Body.Count == 1)
+        {
+            switch (program.Body[0])
+            {
+                case ExpressionStatement expressionStatement:
+                    return TryParseExpression(expressionStatement.Expression, out hirExpr);
+
+                case VariableDeclaration variableDeclaration:
+                {
+                    var expressions = new List<HIRExpression>();
+                    foreach (var declaration in variableDeclaration.Declarations)
+                    {
+                        if (declaration.Id is not Identifier id)
+                        {
+                            return false;
+                        }
+
+                        if (declaration.Init != null)
+                        {
+                            if (!TryParseExpression(declaration.Init, out var initExpr) || initExpr == null)
+                            {
+                                return false;
+                            }
+
+                            var symbol = _currentScope.FindSymbol(id.Name);
+                            expressions.Add(new HIRAssignmentExpression(symbol, Acornima.Operator.Assignment, initExpr));
+                        }
+                    }
+
+                    expressions.Add(new HIRLiteralExpression(JavascriptType.Undefined, null));
+                    hirExpr = expressions.Count == 1 ? expressions[0] : new HIRSequenceExpression(expressions);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateClassExpressionNameValue(Symbol symbol, out HIRExpression? hirExpr)
+    {
+        hirExpr = null;
+        var binding = symbol.BindingInfo;
+        if (binding.DeclaringScope.Kind != ScopeKind.Class
+            || binding.DeclaringScope.AstNode is not ClassExpression classExpression
+            || classExpression.Id is not Identifier className
+            || !string.Equals(className.Name, binding.Name, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var registryClassName = $"{(binding.DeclaringScope.DotNetNamespace ?? "Classes")}.{(binding.DeclaringScope.DotNetTypeName ?? binding.DeclaringScope.Name)}";
+        hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, binding.DeclaringScope, []);
+        return true;
+    }
+
+    private static Expression? UnwrapExpression(Expression? expression)
+    {
+        while (true)
+        {
+            expression = expression switch
+            {
+                ParenthesizedExpression parenthesized => parenthesized.Expression,
+                ChainExpression chain => chain.Expression,
+                _ => expression
+            };
+
+            if (expression is not ParenthesizedExpression and not ChainExpression)
+            {
+                return expression;
+            }
+        }
     }
 
     private Scope? FindFunctionScopeForFunctionExpression(FunctionExpression funcExpr)
@@ -1124,6 +1256,10 @@ class HIRMethodBuilder
                     JsParamCount = fd.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
                     HasRestParameters = functionScope.HasRestParameters,
+                    UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+                    ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+                    IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !ArgumentsObjectSemantics.IsStrictScope(functionScope),
+                    HasRestrictedFunctionProperties = ArgumentsObjectSemantics.IsStrictScope(functionScope),
                     AstNode = fd
                 };
 
@@ -1379,6 +1515,38 @@ class HIRMethodBuilder
                                 Location = SourceLocation.FromNode(propertyDefinition)
                             });
                         }
+                        break;
+                    }
+
+                    case MethodDefinition methodDefinition
+                        when !ClassElementNames.IsConstructor(methodDefinition)
+                            && methodDefinition.Kind is PropertyKind.Get or PropertyKind.Set
+                            && ClassElementNames.TryGetPropertyName(methodDefinition.Key, methodDefinition.Computed, out var accessorName)
+                            && !string.IsNullOrWhiteSpace(accessorName):
+                    {
+                        HIRExpression targetExpr = methodDefinition.Static ? classTypeExpr : prototypeTypeExpr;
+                        var keyExpr = new HIRLiteralExpression(JavascriptType.String, accessorName);
+                        var clrMethodName = ClassElementNames.GetMethodRegistryName(methodDefinition);
+                        var functionName = methodDefinition.Kind == PropertyKind.Get
+                            ? $"get {accessorName}"
+                            : $"set {accessorName}";
+                        var isPrivate = methodDefinition.Key is PrivateIdentifier;
+                        var methodFunction = (FunctionExpression)methodDefinition.Value;
+                        HIRExpression definitionExpression = new HIRDefineClassAccessorMethodPropertyExpression(
+                            targetExpr,
+                            classTypeExpr,
+                            keyExpr,
+                            classScope,
+                            clrMethodName,
+                            CountExpectedFunctionLength(methodFunction.Params),
+                            functionName,
+                            methodDefinition.Static,
+                            isPrivate,
+                            methodDefinition.Kind == PropertyKind.Set,
+                            methodFunction.Generator,
+                            methodFunction.Async);
+
+                        statements.Add(new HIRExpressionStatement(definitionExpression));
                         break;
                     }
 
@@ -3021,6 +3189,12 @@ class HIRMethodBuilder
                 return true;
 
             case CallExpression callExpr:
+                if (TryParseDirectEvalLiteral(callExpr, out var evalExpr))
+                {
+                    hirExpr = evalExpr;
+                    return true;
+                }
+
                 if (callExpr.Callee is Identifier directFunctionId
                     && string.Equals(directFunctionId.Name, "Function", StringComparison.Ordinal)
                     && TryCreateDynamicFunctionExpression(callExpr, out var dynamicFunctionExpr))
@@ -3237,6 +3411,12 @@ class HIRMethodBuilder
                 var symbol = _currentScope.FindSymbol(identifierExpr.Name);
                 if (symbol.Kind != BindingKind.Global)
                 {
+                    if (TryCreateClassExpressionNameValue(symbol, out var classExpressionNameValue))
+                    {
+                        hirExpr = classExpressionNameValue;
+                        return true;
+                    }
+
                     hirExpr = new HIRVariableExpression(symbol);
                     return true;
                 }
@@ -3262,6 +3442,12 @@ class HIRMethodBuilder
                 if (assignExpr.Left is Identifier assignTargetId)
                 {
                     var targetSymbol = _currentScope.FindSymbol(assignTargetId.Name);
+                    if (TryCreateClassExpressionNameValue(targetSymbol, out _))
+                    {
+                        hirExpr = new HIRThrowTypeErrorExpression("Cannot assign to class name in class expression");
+                        return true;
+                    }
+
                     hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!);
                     return true;
                 }
@@ -3455,6 +3641,19 @@ class HIRMethodBuilder
                         return false;
                     }
 
+                    if (UnwrapExpression(classExpr.SuperClass) is Expression heritageExpression
+                        && heritageExpression is not Identifier)
+                    {
+                        var heritageBuilder = new HIRMethodBuilder(classExprScope);
+                        if (!heritageBuilder.TryParseExpressionForPrologue(heritageExpression, out var hirHeritageExpression)
+                            || hirHeritageExpression == null)
+                        {
+                            return false;
+                        }
+
+                        staticInitStatements.Insert(0, new HIRExpressionStatement(hirHeritageExpression));
+                    }
+
                     hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, staticInitStatements);
                     return true;
                 }
@@ -3501,6 +3700,8 @@ class HIRMethodBuilder
                     JsParamCount = arrowExpr.Params.Count(p => p is not Acornima.Ast.RestElement),
                     NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
                     HasRestParameters = arrowScope.HasRestParameters,
+                    IncludeCalleeInArgumentsObject = false,
+                    HasRestrictedFunctionProperties = true,
                     AstNode = arrowExpr
                 };
 
@@ -3919,6 +4120,12 @@ class HIRMethodBuilder
             var loc = decl.Location.Start;
             var forName = $"For_L{loc.Line}C{loc.Column}";
             return _currentScope.Children.FirstOrDefault(child => child.Kind == ScopeKind.Block && child.Name == forName);
+        }
+
+        if (astNode is ArrowFunctionExpression arrow)
+        {
+            var arrowName = $"ArrowFunction_L{arrow.Location.Start.Line}C{arrow.Location.Start.Column + 1}";
+            return _currentScope.Children.FirstOrDefault(child => child.Kind == ScopeKind.Function && child.Name == arrowName);
         }
 
         return null;
