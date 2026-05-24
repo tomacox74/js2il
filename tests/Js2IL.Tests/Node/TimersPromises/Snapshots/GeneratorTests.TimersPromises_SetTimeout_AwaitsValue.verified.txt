@@ -11,7 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
+		.class nested public auto ansi beforefieldinit Scope
 			extends [JavaScriptRuntime]JavaScriptRuntime.AsyncScope
 		{
 			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
@@ -177,7 +177,7 @@
 
 	} // end of class main
 
-	.class nested private auto ansi beforefieldinit Scope
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
@@ -217,7 +217,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TimersPromises_SetTimeout_AwaitsValue/Scope,
@@ -239,25 +239,26 @@
 		IL_001c: conv.r8
 		IL_001d: ldstr "main"
 		IL_0022: ldc.i4.0
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string, bool)
-		IL_0028: stloc.2
-		IL_0029: ldloc.2
-		IL_002a: stloc.1
-		IL_002b: ldarg.1
-		IL_002c: ldstr "node:timers/promises"
-		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0036: stloc.2
-		IL_0037: ldc.i4.1
-		IL_0038: newarr [System.Runtime]System.Object
-		IL_003d: dup
-		IL_003e: ldc.i4.0
-		IL_003f: ldloc.0
-		IL_0040: stelem.ref
-		IL_0041: ldnull
-		IL_0042: ldloc.2
-		IL_0043: call object Modules.TimersPromises_SetTimeout_AwaitsValue/main::__js_call__(object[], object, object)
-		IL_0048: pop
-		IL_0049: ret
+		IL_0023: ldc.i4.1
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.AsyncFunction::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0029: stloc.2
+		IL_002a: ldloc.2
+		IL_002b: stloc.1
+		IL_002c: ldarg.1
+		IL_002d: ldstr "node:timers/promises"
+		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0037: stloc.2
+		IL_0038: ldc.i4.1
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldloc.0
+		IL_0041: stelem.ref
+		IL_0042: ldnull
+		IL_0043: ldloc.2
+		IL_0044: call object Modules.TimersPromises_SetTimeout_AwaitsValue/main::__js_call__(object[], object, object)
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method TimersPromises_SetTimeout_AwaitsValue::__js_module_init__
 
 } // end of class Modules.TimersPromises_SetTimeout_AwaitsValue

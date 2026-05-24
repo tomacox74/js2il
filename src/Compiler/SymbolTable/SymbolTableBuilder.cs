@@ -60,6 +60,20 @@ namespace Js2IL.SymbolTables
             }
         }
 
+        private bool TryBuildDirectEvalLiteralScope(Scope globalScope, Scope currentScope, CallExpression callExpr)
+        {
+            if (callExpr.Callee is not Identifier { Name: "eval" }
+                || callExpr.Arguments.Count != 1
+                || callExpr.Arguments[0] is not StringLiteral stringLiteral)
+            {
+                return false;
+            }
+
+            var evalProgram = _parser.ParseJavaScript(stringLiteral.Value, $"{_currentModulePath}:eval");
+            BuildScopeRecursive(globalScope, evalProgram, currentScope);
+            return true;
+        }
+
         public void Build(ModuleDefinition module)
         {
             _currentModulePath = module.Path;
@@ -868,6 +882,10 @@ namespace Js2IL.SymbolTables
                     {
                         BuildScopeRecursive(globalScope, classExprSuperFunction, classExprScope);
                     }
+                    else if (classExpr.SuperClass != null)
+                    {
+                        BuildScopeRecursive(globalScope, classExpr.SuperClass, classExprScope);
+                    }
 
                     foreach (var element in classExpr.Body.Body)
                     {
@@ -1196,6 +1214,31 @@ namespace Js2IL.SymbolTables
                             continue;
                         }
 
+                        if (decl.Id is ArrayPattern)
+                        {
+                            var kind = varDecl.Kind switch
+                            {
+                                VariableDeclarationKind.Var => BindingKind.Var,
+                                VariableDeclarationKind.Let => BindingKind.Let,
+                                VariableDeclarationKind.Const => BindingKind.Const,
+                                _ => BindingKind.Var
+                            };
+
+                            Scope targetScope = kind == BindingKind.Var
+                                ? GetVarHoistingTarget(currentScope)
+                                : currentScope;
+
+                            BindPatternBindings(decl.Id, kind, targetScope, decl);
+                            BuildPatternInitializerScopes(globalScope, decl.Id, currentScope);
+
+                            if (decl.Init != null)
+                            {
+                                BuildScopeRecursive(globalScope, decl.Init, currentScope);
+                            }
+
+                            continue;
+                        }
+
                         // Fallback: just visit the initializer if present
                         if (decl.Init != null)
                         {
@@ -1421,6 +1464,11 @@ namespace Js2IL.SymbolTables
                     }
                     break;
                 case CallExpression callExpr:
+                    if (TryBuildDirectEvalLiteralScope(globalScope, currentScope, callExpr))
+                    {
+                        break;
+                    }
+
                     if (callExpr.Callee is Identifier callCalleeId)
                     {
                         TryCreateDynamicFunctionScope(globalScope, currentScope, callExpr, callCalleeId, callExpr.Arguments.Cast<Node>());
@@ -1596,8 +1644,7 @@ namespace Js2IL.SymbolTables
                             }
                             else if (handler.Param != null)
                             {
-                                // Destructured catch parameters not supported.
-                                break;
+                                BindPatternBindings(handler.Param, BindingKind.Let, catchScope, handler.Param);
                             }
 
                             foreach (var stmt in catchBlock.Body)
@@ -2486,6 +2533,43 @@ namespace Js2IL.SymbolTables
                 default:
                     // Unsupported pattern node kinds are ignored here. Validation + HIR parsing
                     // will reject patterns we cannot lower.
+                    return;
+            }
+        }
+
+
+        private void BuildPatternInitializerScopes(Scope globalScope, Node pattern, Scope currentScope)
+        {
+            switch (pattern)
+            {
+                case AssignmentPattern ap:
+                    BuildPatternInitializerScopes(globalScope, ap.Left, currentScope);
+                    BuildScopeRecursive(globalScope, ap.Right, currentScope);
+                    return;
+
+                case RestElement re:
+                    BuildPatternInitializerScopes(globalScope, re.Argument, currentScope);
+                    return;
+
+                case ObjectPattern op:
+                    foreach (var pnode in op.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            BuildPatternInitializerScopes(globalScope, prop.Value, currentScope);
+                        }
+                        else if (pnode is RestElement rest)
+                        {
+                            BuildPatternInitializerScopes(globalScope, rest.Argument, currentScope);
+                        }
+                    }
+                    return;
+
+                case ArrayPattern arr:
+                    foreach (var el in arr.Elements.Where(el => el != null))
+                    {
+                        BuildPatternInitializerScopes(globalScope, el!, currentScope);
+                    }
                     return;
             }
         }

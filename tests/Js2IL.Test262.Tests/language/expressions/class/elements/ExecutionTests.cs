@@ -28,7 +28,7 @@ public class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "fields-asi-5")]
     public Task fields_asi_5()
-        => ExecutionTest("fields-asi-5");
+        => ExecutionTest("fields-asi-5", preferOutOfProc: true);
 
     [Fact(DisplayName = "fields-computed-name-static-propname-prototype")]
     public Task fields_computed_name_static_propname_prototype()

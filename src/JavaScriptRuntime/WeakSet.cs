@@ -17,36 +17,74 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(this, Prototype);
         }
 
-        public object add(object? value)
+        public WeakSet(object? iterable)
+            : this()
         {
-            if (value == null)
+            if (iterable is null || iterable is JsNull)
             {
-                throw new Error("WeakSet value must be an object");
+                return;
             }
 
-            // In JavaScript, WeakSet values must be objects (not primitives)
-            _table.AddOrUpdate(value, _dummyValue);
+            AddValuesFromIterable(iterable);
+        }
+
+        private void AddValuesFromIterable(object iterable)
+        {
+            var iterator = ObjectRuntime.GetIterator(iterable);
+            var completedNormally = false;
+            try
+            {
+                while (true)
+                {
+                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
+                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    {
+                        break;
+                    }
+
+                    JavaScriptRuntime.Object.CallMember1(this, "add", JavaScriptRuntime.Object.IteratorResultValue(step));
+                }
+
+                completedNormally = true;
+            }
+            finally
+            {
+                if (!completedNormally)
+                {
+                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                }
+            }
+        }
+
+        public object add(object? value)
+        {
+            if (!TypeUtilities.CanBeHeldWeakly(value))
+            {
+                throw new TypeError("Invalid value used in weak set");
+            }
+
+            _table.AddOrUpdate(value!, _dummyValue);
             return this;
         }
 
         public bool has(object? value)
         {
-            if (value == null)
+            if (!TypeUtilities.CanBeHeldWeakly(value))
             {
                 return false;
             }
 
-            return _table.TryGetValue(value, out _);
+            return _table.TryGetValue(value!, out _);
         }
 
         public bool delete(object? value)
         {
-            if (value == null)
+            if (!TypeUtilities.CanBeHeldWeakly(value))
             {
                 return false;
             }
 
-            return _table.Remove(value);
+            return _table.Remove(value!);
         }
 
         private static object CreatePrototype()

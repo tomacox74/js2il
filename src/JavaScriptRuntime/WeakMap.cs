@@ -15,27 +15,97 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(this, Prototype);
         }
 
-        public object set(object? key, object? value)
+        public WeakMap(object? iterable)
+            : this()
         {
-            if (key == null)
+            if (iterable is null || iterable is JsNull)
             {
-                throw new Error("WeakMap key must be an object");
+                return;
             }
 
-            // In JavaScript, WeakMap keys must be objects (not primitives)
-            // For simplicity, we allow any non-null reference type
-            _table.AddOrUpdate(key, value!);
+            AddEntriesFromIterable(iterable);
+        }
+
+        private void AddEntriesFromIterable(object iterable)
+        {
+            var iterator = ObjectRuntime.GetIterator(iterable);
+            var completedNormally = false;
+            try
+            {
+                while (true)
+                {
+                    var step = JavaScriptRuntime.Object.IteratorNext(iterator);
+                    if (JavaScriptRuntime.Object.IteratorResultDone(step))
+                    {
+                        break;
+                    }
+
+                    var (key, value) = ExtractEntry(JavaScriptRuntime.Object.IteratorResultValue(step));
+                    JavaScriptRuntime.Object.CallMember2(this, "set", key, value);
+                }
+
+                completedNormally = true;
+            }
+            finally
+            {
+                if (!completedNormally)
+                {
+                    JavaScriptRuntime.Object.IteratorClose(iterator);
+                }
+            }
+        }
+
+        private static (object? Key, object? Value) ExtractEntry(object? entry)
+        {
+            if (entry is null || entry is JsNull)
+            {
+                throw new TypeError("Iterator value must be an object or function");
+            }
+
+            var entryType = TypeUtilities.Typeof(entry);
+            if (entryType != "object" && entryType != "function")
+            {
+                throw new TypeError("Iterator value is not an entry object");
+            }
+
+            if (entry is JavaScriptRuntime.Array arrayEntry)
+            {
+                return (
+                    arrayEntry.Count > 0 ? arrayEntry[0] : null,
+                    arrayEntry.Count > 1 ? arrayEntry[1] : null
+                );
+            }
+
+            if (entry is System.Collections.IList listEntry)
+            {
+                return (
+                    listEntry.Count > 0 ? listEntry[0] : null,
+                    listEntry.Count > 1 ? listEntry[1] : null
+                );
+            }
+
+            return (ObjectRuntime.GetItem(entry, 0.0), ObjectRuntime.GetItem(entry, 1.0));
+        }
+
+        public object set(object? key, object? value)
+        {
+            if (!TypeUtilities.CanBeHeldWeakly(key))
+            {
+                throw new TypeError("Invalid value used as weak map key");
+            }
+
+            _table.AddOrUpdate(key!, value!);
             return this;
         }
 
         public object? get(object? key)
         {
-            if (key == null)
+            if (!TypeUtilities.CanBeHeldWeakly(key))
             {
                 return null; // JavaScript undefined
             }
 
-            if (_table.TryGetValue(key, out var value))
+            if (_table.TryGetValue(key!, out var value))
             {
                 return value;
             }
@@ -44,22 +114,22 @@ namespace JavaScriptRuntime
 
         public bool has(object? key)
         {
-            if (key == null)
+            if (!TypeUtilities.CanBeHeldWeakly(key))
             {
                 return false;
             }
 
-            return _table.TryGetValue(key, out _);
+            return _table.TryGetValue(key!, out _);
         }
 
         public bool delete(object? key)
         {
-            if (key == null)
+            if (!TypeUtilities.CanBeHeldWeakly(key))
             {
                 return false;
             }
 
-            return _table.Remove(key);
+            return _table.Remove(key!);
         }
 
         private static object CreatePrototype()

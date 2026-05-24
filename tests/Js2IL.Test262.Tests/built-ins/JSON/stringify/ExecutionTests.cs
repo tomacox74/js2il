@@ -130,19 +130,19 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("replacer-array-undefined");
 
-    [Fact(DisplayName = "replacer-function-abrupt", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "replacer-function-abrupt")]
     public Task replacer_function_abrupt()
         => ExecutionTestFromFile("replacer-function-abrupt");
 
-    [Fact(DisplayName = "replacer-function-arguments", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "replacer-function-arguments")]
     public Task replacer_function_arguments()
         => ExecutionTestFromFile("replacer-function-arguments");
 
-    [Fact(DisplayName = "replacer-function-array-circular", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "replacer-function-array-circular")]
     public Task replacer_function_array_circular()
         => ExecutionTestFromFile("replacer-function-array-circular");
 
-    [Fact(DisplayName = "replacer-function-object-circular", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "replacer-function-object-circular")]
     public Task replacer_function_object_circular()
         => ExecutionTestFromFile("replacer-function-object-circular");
 

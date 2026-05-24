@@ -60,8 +60,15 @@ public static class AsyncFunction
     }
 
     public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+        => InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties: false);
+
+    public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
     {
         InitializeFunctionInstance(functionValue);
+        if (hasRestrictedProperties)
+        {
+            Function.DefineRestrictedFunctionProperties(functionValue);
+        }
 
         if (functionValue is Delegate del)
         {

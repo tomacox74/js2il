@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-03T15:15:03Z
+> Last generated (UTC): 2026-05-24T04:57:25Z
 
 try/catch/finally is supported for the synchronous cases covered by the current repo tests, including throwing and catching arbitrary JS values plus `finally` blocks on normal completion, return, and escaping throw paths. Remaining caveats are early-error coverage and exact host-level fidelity for uncaught throws after `finally` runs.
 
@@ -28,7 +28,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| try/catch (with binding; block-scoped catch parameter) | Supported | [`TryCatch_ScopedParam.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js)<br>[`ControlFlow_TryCatch_ScopedParam.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatch_ScopedParam.js) |  | Catch parameter binding is block-scoped to the catch clause. |
+| try/catch (with binding; block-scoped catch parameter) | Supported | [`TryCatch_ScopedParam.js`](../../../tests/Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js)<br>[`ControlFlow_TryCatch_ScopedParam.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatch_ScopedParam.js)<br>`tests/Js2IL.Test262.Tests/language/statements/try/ExecutionTests.cs` |  | Catch parameter binding is block-scoped to the catch clause, including the covered destructuring catch-parameter cases added by the current test262 slice. |
 
 ### 14.15.3 ([tc39.es](https://tc39.es/ecma262/#sec-try-statement-runtime-semantics-evaluation))
 

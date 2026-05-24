@@ -64,9 +64,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task function_length()
         => ExecutionTestFromFile("function-length");
 
-    [Fact(DisplayName = "function-name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "function-name")]
     public Task function_name()
         => ExecutionTestFromFile("function-name");
 
 }
-

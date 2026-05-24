@@ -304,7 +304,13 @@ internal sealed class JsMethodCompiler
         // (leading scopes array) for state machine emission.
         bool isAsyncMethod = methodScope?.IsAsync == true || funcExpr?.Async == true;
         bool isGeneratorMethod = methodScope?.IsGenerator == true || funcExpr?.Generator == true;
-        var hasScopesParameter = isAsyncMethod || isGeneratorMethod;
+        var hasScopesParameter = isAsyncMethod
+            || isGeneratorMethod
+            || (methodDef.Static
+                && methodScope != null
+                && (methodScope.ReferencesParentScopeVariables
+                    || methodScope.HasDescendantCallableReferencingParentScopeVariables
+                    || methodScope.Children.Any(child => child.Kind is ScopeKind.Function or ScopeKind.Class)));
 
         FieldDefinitionHandle? scopesFieldHandle = null;
         if (!methodDef.Static && hasScopes)

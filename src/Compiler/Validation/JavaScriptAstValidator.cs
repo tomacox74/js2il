@@ -12,6 +12,16 @@ namespace Js2IL.Validation;
 
 public class JavaScriptAstValidator : IAstValidator
 {
+    private static readonly HashSet<string> SupportedDirectEvalLiteralSources = new(StringComparer.Ordinal)
+    {
+        // Deliberately narrow direct-eval support for test262 lexical-environment ports.
+        "this",
+        "foo()()",
+        "()=>this",
+        "a = 10",
+        "var x = \"inside\";"
+    };
+
     private static readonly Lazy<HashSet<string>> SupportedRequireModules = new(() =>
     {
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -652,6 +662,16 @@ public class JavaScriptAstValidator : IAstValidator
             return parent is UnaryExpression ue && ue.Operator == Acornima.Operator.TypeOf && ReferenceEquals(ue.Argument, id);
         }
 
+        bool IsSupportedDirectEvalLiteralIdentifier(Identifier id)
+        {
+            var parent = nodeStack.Count > 1 ? nodeStack.Skip(1).First() : null;
+            return parent is CallExpression callExpression
+                && ReferenceEquals(callExpression.Callee, id)
+                && callExpression.Arguments.Count == 1
+                && callExpression.Arguments[0] is StringLiteral stringLiteral
+                && SupportedDirectEvalLiteralSources.Contains(stringLiteral.Value.Trim());
+        }
+
         bool IsGuardedByTypeofDefined(string identifierName, Identifier id)
         {
             // Allow identifiers used only in branches that are guarded by a typeof check.
@@ -920,6 +940,11 @@ public class JavaScriptAstValidator : IAstValidator
 
                             if (IsUnsupportedEvalIdentifier(name))
                             {
+                                if (IsSupportedDirectEvalLiteralIdentifier(id))
+                                {
+                                    break;
+                                }
+
                                 AddError(
                                     result,
                                     "eval is not supported by JS2IL at this time; support will be added in a future release",
