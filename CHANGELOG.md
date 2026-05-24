@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/docs/test262: port 40 additional Array and TypedArray upstream execution cases into `tests/Js2IL.Test262.Tests`, covering array indexing/holes/core prototype methods plus supported typed-array iterator and `%TypedArray%.from` basics, and refresh the linked ECMA-262 evidence.
 
 ## v0.9.25 - 2026-05-24
 

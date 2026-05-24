@@ -208,7 +208,7 @@
       "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.lastindexof"
     },
     {
-      "clause": "23.1.3.21",
+      "clause": "23.1.3.22 / 23.1.3.23",
       "title": "Array.prototype.map ( callback [ , thisArg ] )",
       "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.map"
@@ -419,14 +419,18 @@
           "tests/Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js",
           "tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/calling-from-valid-1-noStrict.js",
           "tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/Array.from-name.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/Array.from_arity.js"
+          "tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/Array.from_arity.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/from-string.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/from/JavaScript/from-array.js"
         ],
         "test262Paths": [
           "test/built-ins/Array/from/calling-from-valid-1-noStrict.js",
           "test/built-ins/Array/from/Array.from-name.js",
-          "test/built-ins/Array/from/Array.from_arity.js"
+          "test/built-ins/Array/from/Array.from_arity.js",
+          "test/built-ins/Array/from/from-string.js",
+          "test/built-ins/Array/from/from-array.js"
         ],
-        "notes": "Supports array, enumerable, and iterator-producing sources (including Array iterator methods) and exposes the standard Array.from name/length metadata; mapper and thisArg semantics are not fully modeled."
+        "notes": "Supports array, enumerable, and iterator-producing sources (including Array iterator methods) and exposes the standard Array.from name/length metadata. Current checked-in test262 coverage also exercises string sources and sparse arrays that materialize holes as undefined; mapper and thisArg semantics are not fully modeled."
       },
       {
         "clause": "23.1.2.2",
@@ -444,14 +448,22 @@
           "tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js",
           "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-1.js",
           "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-1.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js"
+          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-2.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-3.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-1-11.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-2-1.js"
         ],
         "test262Paths": [
           "test/built-ins/Array/isArray/15.4.3.2-0-1.js",
           "test/built-ins/Array/isArray/15.4.3.2-1-1.js",
-          "test/built-ins/Array/isArray/15.4.3.2-0-5.js"
+          "test/built-ins/Array/isArray/15.4.3.2-0-5.js",
+          "test/built-ins/Array/isArray/15.4.3.2-1-2.js",
+          "test/built-ins/Array/isArray/15.4.3.2-1-3.js",
+          "test/built-ins/Array/isArray/15.4.3.2-1-11.js",
+          "test/built-ins/Array/isArray/15.4.3.2-2-1.js"
         ],
-        "notes": "Returns true for JavaScriptRuntime.Array instances and the intrinsic Array.prototype object, and false otherwise."
+        "notes": "Returns true for JavaScriptRuntime.Array instances and the intrinsic Array.prototype object, and false otherwise. Current checked-in test262 coverage also exercises boxed primitives, host built-ins such as JSON, and objects that merely inherit from arrays."
       },
       {
         "clause": "23.1.2.4",
@@ -459,9 +471,13 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array.of",
         "testScripts": [
-          "tests/Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Static_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js"
         ],
-        "notes": "Creates arrays from argument lists with expected element ordering."
+        "notes": "Creates arrays from argument lists with expected element ordering. Current checked-in test262 coverage covers ordinary argument-list construction; broader custom-constructor and abrupt-completion edge cases remain limited.",
+        "test262Paths": [
+          "test/built-ins/Array/of/creates-a-new-array-from-arguments.js"
+        ]
       },
       {
         "clause": "23.1.3.2",
@@ -483,14 +499,20 @@
           "tests/Js2IL.Tests/Array/JavaScript/Array_Iterator_Methods.js",
           "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/Array.prototype.entries.js",
           "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/Array.prototype.keys.js",
-          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/Array.prototype.Symbol.iterator.js"
+          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/Array.prototype.Symbol.iterator.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/entries/JavaScript/iteration.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/keys/JavaScript/iteration.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/values/JavaScript/iteration.js"
         ],
         "test262Paths": [
           "test/language/statements/for-of/Array.prototype.entries.js",
           "test/language/statements/for-of/Array.prototype.keys.js",
-          "test/language/statements/for-of/Array.prototype.Symbol.iterator.js"
+          "test/language/statements/for-of/Array.prototype.Symbol.iterator.js",
+          "test/built-ins/Array/prototype/entries/iteration.js",
+          "test/built-ins/Array/prototype/keys/iteration.js",
+          "test/built-ins/Array/prototype/values/iteration.js"
         ],
-        "notes": "Exposes Array iterator methods plus Array.prototype[Symbol.iterator] as the values alias, supports borrowed array-like calls, and routes for..of / spread through the same iterator surface. %ArrayIteratorPrototype% metadata (for example %Symbol.toStringTag%) and broader exotic edge behavior remain limited."
+        "notes": "Exposes Array iterator methods plus Array.prototype[Symbol.iterator] as the values alias, supports borrowed array-like calls, and routes for..of / spread through the same iterator surface. Current checked-in test262 coverage now includes direct entries()/keys()/values() next() sequences in addition to for-of coverage; %ArrayIteratorPrototype% metadata (for example %Symbol.toStringTag%) and broader exotic edge behavior remain limited."
       },
       {
         "clause": "23.1.3.6",
@@ -544,6 +566,25 @@
         "notes": "Supports core flattening and map+flatten workflows for dense arrays; full species/holes/exotic edge behavior is not exhaustive."
       },
       {
+        "clause": "23.1.3.9",
+        "feature": "Array.prototype.find / findIndex",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.find",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/find/JavaScript/predicate-called-for-each-array-property.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/find/JavaScript/return-found-value-predicate-result-is-true.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/findIndex/JavaScript/predicate-called-for-each-array-property.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/findIndex/JavaScript/return-index-predicate-result-is-true.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Array/prototype/find/predicate-called-for-each-array-property.js",
+          "test/built-ins/Array/prototype/find/return-found-value-predicate-result-is-true.js",
+          "test/built-ins/Array/prototype/findIndex/predicate-called-for-each-array-property.js",
+          "test/built-ins/Array/prototype/findIndex/return-index-predicate-result-is-true.js"
+        ],
+        "notes": "Supports predicate-based search for ordinary arrays. Current checked-in test262 coverage exercises sparse-array hole visitation plus the returned element/index result path; exotic receivers and newer findLast-style variants remain limited."
+      },
+      {
         "clause": "23.1.3.16",
         "feature": "Array.prototype.includes",
         "status": "Supported with Limitations",
@@ -561,9 +602,36 @@
         "testScripts": [
           "tests/Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js",
           "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_Call.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_PrototypeMethods_ArrayLike_EdgeCases.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-4-1.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-9-8.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/indexOf/JavaScript/15.4.4.14-2-1.js"
         ],
-        "notes": "Supports standard array usage and array-like call patterns, including fromIndex edge cases; full sparse/exotic behavior is limited."
+        "notes": "Supports standard array usage and array-like call patterns, including fromIndex edge cases. Current checked-in test262 coverage also exercises empty-array misses, object-to-string search values, and array-like receivers with indexed properties; full sparse/exotic behavior is limited.",
+        "test262Paths": [
+          "test/built-ins/Array/prototype/indexOf/15.4.4.14-4-1.js",
+          "test/built-ins/Array/prototype/indexOf/15.4.4.14-9-8.js",
+          "test/built-ins/Array/prototype/indexOf/15.4.4.14-2-1.js"
+        ]
+      },
+      {
+        "clause": "23.1.3.22 / 23.1.3.23",
+        "feature": "Array.prototype.pop / push",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.pop",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/pop/JavaScript/S15.4.4.6_A1.1_T1.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/pop/JavaScript/S15.4.4.6_A1.2_T1.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/push/JavaScript/S15.4.4.7_A1_T1.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/push/JavaScript/S15.4.4.7_A1_T2.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Array/prototype/pop/S15.4.4.6_A1.1_T1.js",
+          "test/built-ins/Array/prototype/pop/S15.4.4.6_A1.2_T1.js",
+          "test/built-ins/Array/prototype/push/S15.4.4.7_A1_T1.js",
+          "test/built-ins/Array/prototype/push/S15.4.4.7_A1_T2.js"
+        ],
+        "notes": "Supports ordinary-array element removal/appending and length updates. Current checked-in test262 coverage exercises empty arrays, sparse holes, and multi-argument append ordering; generic non-array receivers and descriptor-heavy edge cases remain limited."
       },
       {
         "clause": "23.1.3.18",
@@ -572,9 +640,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-array.prototype.join",
         "testScripts": [
           "tests/Js2IL.Tests/Array/JavaScript/Array_Join_Basic.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_Stringification_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Stringification_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/join/JavaScript/S15.4.4.5_A1.1_T1.js"
         ],
-        "notes": "join and stringification are implemented; toLocaleString currently aliases basic stringification behavior."
+        "notes": "join and stringification are implemented; current checked-in test262 coverage covers ordinary-array empty-result behavior, and toLocaleString currently aliases basic stringification behavior.",
+        "test262Paths": [
+          "test/built-ins/Array/prototype/join/S15.4.4.5_A1.1_T1.js"
+        ]
       },
       {
         "clause": "23.1.3.21",
@@ -630,9 +702,13 @@
         "testScripts": [
           "tests/Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js",
           "tests/Js2IL.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/sort/JavaScript/S15.4.4.11_A1.1_T1.js"
         ],
-        "notes": "Supports default and callback comparator paths; full spec stability/exotic-object details are not fully modeled."
+        "notes": "Supports default and callback comparator paths. Current checked-in test262 coverage also exercises sparse ordinary-array sorting behavior; full spec stability/exotic-object details are not fully modeled.",
+        "test262Paths": [
+          "test/built-ins/Array/prototype/sort/S15.4.4.11_A1.1_T1.js"
+        ]
       },
       {
         "clause": "23.1.3.31",
@@ -642,9 +718,13 @@
         "testScripts": [
           "tests/Js2IL.Tests/Array/JavaScript/Array_Splice_Basic.js",
           "tests/Js2IL.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/prototype/splice/JavaScript/15.4.4.12-9-a-1.js"
         ],
-        "notes": "Core insertion/deletion semantics are implemented; complete exotic length/property descriptor interactions are not exhaustive."
+        "notes": "Core insertion/deletion semantics are implemented. Current checked-in test262 coverage also exercises negative-start deletion on ordinary arrays; complete exotic length/property descriptor interactions are not exhaustive.",
+        "test262Paths": [
+          "test/built-ins/Array/prototype/splice/15.4.4.12-9-a-1.js"
+        ]
       },
       {
         "clause": "23.1.3.33",
@@ -674,9 +754,19 @@
         "testScripts": [
           "tests/Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
           "tests/Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
+          "tests/Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/JavaScript/property-cast-boolean-primitive.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/JavaScript/property-cast-nan-infinity.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/JavaScript/property-cast-number.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Array/JavaScript/S15.4.5.2_A1_T1.js"
         ],
-        "notes": "Length reads and integer-validated writes are implemented; full array exotic descriptor semantics are not complete."
+        "notes": "Length reads and integer-validated writes are implemented. Current checked-in test262 coverage also exercises non-index property-name coercion and high-index length growth behavior; full array exotic descriptor semantics are not complete.",
+        "test262Paths": [
+          "test/built-ins/Array/property-cast-boolean-primitive.js",
+          "test/built-ins/Array/property-cast-nan-infinity.js",
+          "test/built-ins/Array/property-cast-number.js",
+          "test/built-ins/Array/S15.4.5.2_A1_T1.js"
+        ]
       },
       {
         "clause": "23.1.5.1",
