@@ -9,6 +9,7 @@ description: >
 flags: [onlyStrict]
 ---*/
 
+"use strict";
 
 function assert(value) {
   console.log(!!value);

@@ -6,19 +6,19 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
 {
     public PortExpressionsBatchExecutionTests() : base("language.expressions.arrow_function") { }
 
-    [Fact(DisplayName = "binding-tests-1", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "binding-tests-1")]
     public Task arrow_binding_tests_1()
         => ExecutionTest("arrow/binding-tests-1");
 
-    [Fact(DisplayName = "binding-tests-2", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "binding-tests-2")]
     public Task arrow_binding_tests_2()
         => ExecutionTest("arrow/binding-tests-2");
 
-    [Fact(DisplayName = "binding-tests-3", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "binding-tests-3")]
     public Task arrow_binding_tests_3()
         => ExecutionTest("arrow/binding-tests-3");
 
-    [Fact(DisplayName = "capturing-closure-variables-1", Skip = "Tracked by #1093: current runtime behavior does not yet pass this upstream expression test.")]
+    [Fact(DisplayName = "capturing-closure-variables-1")]
     public Task arrow_capturing_closure_variables_1()
         => ExecutionTest("arrow/capturing-closure-variables-1");
 

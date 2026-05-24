@@ -109,7 +109,17 @@ public static class Function
 
     internal static void ConfigureCallableObject(object functionValue, bool hasRestrictedProperties)
     {
-        PrototypeChain.SetPrototype(functionValue, hasRestrictedProperties ? RestrictedPropertiesPrototype : Prototype);
+        PrototypeChain.SetPrototype(functionValue, Prototype);
+        if (hasRestrictedProperties)
+        {
+            DefineRestrictedFunctionProperties(functionValue);
+        }
+    }
+
+    internal static void DefineRestrictedFunctionProperties(object functionValue)
+    {
+        DefineRestrictedProperty(functionValue, "caller");
+        DefineRestrictedProperty(functionValue, "arguments");
     }
 
     private static object? GetEffectiveThisArg(Delegate target, object? thisArg)
@@ -379,8 +389,15 @@ public static class Function
         }
 
         public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext)
+            => InitializeFunctionInstance(functionValue, length, name, requiresInvocationContext, hasRestrictedProperties: false);
+
+        public static object InitializeFunctionInstance(object functionValue, double length, string? name, bool requiresInvocationContext, bool hasRestrictedProperties)
         {
             InitializeFunctionInstance(functionValue);
+            if (hasRestrictedProperties)
+            {
+                DefineRestrictedFunctionProperties(functionValue);
+            }
 
             if (functionValue is Delegate del)
             {
@@ -464,6 +481,11 @@ public static class Function
                 || (GlobalThis.String is Delegate stringConstructor && constructor.Method == stringConstructor.Method))
             {
                 return JavaScriptRuntime.String.Construct(callArgs, newTarget);
+            }
+
+            if (!JavaScriptRuntime.Object.IsConstructibleValue(constructor))
+            {
+                throw new TypeError("Value is not a constructor");
             }
 
             var instance = new System.Dynamic.ExpandoObject();
