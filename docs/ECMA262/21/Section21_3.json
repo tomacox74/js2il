@@ -308,10 +308,31 @@
       "testScripts": [
         "tests/Js2IL.Test262.Tests/built-ins/Math/abs/ExecutionTests.cs",
         "tests/Js2IL.Test262.Tests/built-ins/Math/acos/ExecutionTests.cs",
+        "tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs",
         "tests/Js2IL.Test262.Tests/built-ins/Math/floor/ExecutionTests.cs",
         "tests/Js2IL.Test262.Tests/built-ins/Math/max/ExecutionTests.cs"
       ],
       "notes": "Math intrinsic methods now expose the expected callable metadata for the covered test262 cases, including function `name`, `length`, and property-descriptor characteristics on the static Math surface."
+    },
+    {
+      "clause": "21.3.2",
+      "feature": "Representative Math.ceil / Math.min / Math.round / Math.sign numeric semantics",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-function-properties-of-the-math-object",
+      "testScripts": [
+        "tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs"
+      ],
+      "test262Paths": [
+        "test/built-ins/Math/ceil/not-a-constructor.js",
+        "test/built-ins/Math/ceil/S15.8.2.6_A6.js",
+        "test/built-ins/Math/min/S15.8.2.12_A1.js",
+        "test/built-ins/Math/min/15.8.2.12-1.js",
+        "test/built-ins/Math/round/not-a-constructor.js",
+        "test/built-ins/Math/round/S15.8.2.15_A4.js",
+        "test/built-ins/Math/sign/sign-specialVals.js",
+        "test/built-ins/Math/sign/not-a-constructor.js"
+      ],
+      "notes": "Checked-in coverage now includes representative ceil/min/round/sign behavior for NaN, infinities, non-constructibility, and signed-zero-sensitive cases alongside the earlier Math metadata coverage."
     }
     ]
   }

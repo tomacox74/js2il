@@ -52,5 +52,20 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("toprimitive-valid-result");
 
-}
+    [Fact(DisplayName = "return-true-nan")]
+    public Task return_true_nan()
+        => ExecutionTestFromFile("return-true-nan");
 
+    [Fact(DisplayName = "not-a-constructor")]
+    public Task not_a_constructor()
+        => ExecutionTestFromFile("not-a-constructor");
+
+    [Fact(DisplayName = "toprimitive-call-abrupt")]
+    public Task toprimitive_call_abrupt()
+        => ExecutionTestFromFile("toprimitive-call-abrupt");
+
+    [Fact(DisplayName = "toprimitive-get-abrupt")]
+    public Task toprimitive_get_abrupt()
+        => ExecutionTestFromFile("toprimitive-get-abrupt");
+
+}

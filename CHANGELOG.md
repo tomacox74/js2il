@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/docs/test262: port 40 additional Number/Math/BigInt/Date test262 execution cases covering Number coercion edges, parseInt/parseFloat/isNaN/isFinite, representative Math intrinsic behavior, BigInt unary/bitwise/shift operators, and basic Date constructor/TimeClip semantics.
 
 ## v0.9.25 - 2026-05-24
 
