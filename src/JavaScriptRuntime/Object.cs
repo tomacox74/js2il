@@ -3718,7 +3718,7 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            Func<object[], object?[]?, object?> functionValue = (_, args) =>
+            Func<object[], object?[]?, object?> functionValue = (unusedScopes, args) =>
                 CallMember(target, propName, (object[]?)args);
 
             GlobalThis.ConfigureBuiltinFunctionObject(functionValue);
@@ -3795,13 +3795,14 @@ namespace JavaScriptRuntime
 
         private static double GetStaticClassMethodLength(Type staticClassType, string propName, IReadOnlyList<MethodInfo> methods)
         {
-            // ECMAScript specifies Math.max/min.length as 2 even though the operations accept
-            // additional variadic arguments, so the CLR params-array shape cannot be used directly.
-            if (staticClassType == typeof(JavaScriptRuntime.Math)
-                && (string.Equals(propName, nameof(JavaScriptRuntime.Math.max), StringComparison.Ordinal)
-                    || string.Equals(propName, nameof(JavaScriptRuntime.Math.min), StringComparison.Ordinal)))
+            if (TryGetEcmaScriptStaticMethodLengthOverride(staticClassType, propName, out var overriddenLength))
             {
-                return 2d;
+                return overriddenLength;
+            }
+
+            if (methods.Count == 0)
+            {
+                return 0d;
             }
 
             return methods.Min(GetCallableLength);
@@ -3824,6 +3825,22 @@ namespace JavaScriptRuntime
 
                 return System.Math.Max(0, hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount);
             }
+        }
+
+        private static bool TryGetEcmaScriptStaticMethodLengthOverride(Type staticClassType, string propName, out double length)
+        {
+            // ECMAScript specifies Math.max/min.length as 2 even though the operations accept
+            // additional variadic arguments, so the CLR params-array shape cannot be used directly.
+            if (staticClassType == typeof(JavaScriptRuntime.Math)
+                && (string.Equals(propName, nameof(JavaScriptRuntime.Math.max), StringComparison.Ordinal)
+                    || string.Equals(propName, nameof(JavaScriptRuntime.Math.min), StringComparison.Ordinal)))
+            {
+                length = 2d;
+                return true;
+            }
+
+            length = default;
+            return false;
         }
 
         private static bool TryGetOwnPropertyValue(object target, string propName, out object? value)
