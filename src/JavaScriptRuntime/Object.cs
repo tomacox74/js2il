@@ -4065,6 +4065,7 @@ namespace JavaScriptRuntime
             }
 
             // User-defined iterables: call obj[Symbol.iterator]().
+            // GetIterator propagates abrupt completions from retrieving @@iterator.
             object? iteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.iterator);
 
             if (iteratorMethod is Delegate del)
