@@ -25,6 +25,7 @@ public class Engine
             // Validate caller provided a valid entry point delegate.
             // Note: the delegate's Method/Module/Assembly is used to discover the compiled module assembly.
             ArgumentNullException.ThrowIfNull(scriptEntryPoint);
+            RuntimeServices.SetCurrentThis(null);
 
             // Configure per-thread services and install the Node-like synchronization context.
             // This enables timers/microtasks and other async behavior to run deterministically on this thread.
@@ -56,6 +57,7 @@ public class Engine
             // TODO: change globalthis to be a instance
             GlobalThis.ServiceProvider = null;
             _serviceProviderOverride.Value = null;
+            RuntimeServices.SetCurrentThis(null);
         }
     }
 
