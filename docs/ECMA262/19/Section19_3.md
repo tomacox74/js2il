@@ -4,7 +4,7 @@
 
 [Back to Section19](Section19.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-23T12:48:18Z
+> Last generated (UTC): 2026-05-24T19:56:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -83,7 +83,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map constructor and core prototype methods | Supported with Limitations | [`Map_Constructor_Empty.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js)<br>[`Map_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Set_Get_Basic.js)<br>[`Map_Has_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Has_Basic.js)<br>[`Map_Delete_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Delete_Basic.js)<br>[`Map_Clear_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Clear_Basic.js)<br>[`Map_Size_Property.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Size_Property.js)<br>[`Map_Keys_Values_Entries.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js) |  | Implements new Map() constructor and core prototype methods: set, get, has, delete, clear, size property, keys, values, and entries. Uses SameValueZero semantics for key equality. Does not support constructor with iterable argument or forEach method. Iterator support is basic - does not implement full iterator protocol with Symbol.iterator. |
+| Map constructor and core prototype methods | Supported with Limitations | [`Map_Constructor_Empty.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js)<br>[`Map_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Set_Get_Basic.js)<br>[`Map_Has_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Has_Basic.js)<br>[`Map_Delete_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Delete_Basic.js)<br>[`Map_Clear_Basic.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Clear_Basic.js)<br>[`Map_Size_Property.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Size_Property.js)<br>[`Map_Keys_Values_Entries.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Keys_Values_Entries.js) |  | Implements the Map constructor, iterable initialization through the runtime iterator protocol, and core prototype methods including set, get, has, delete, clear, forEach, size, keys, values, entries, and @@iterator. Uses SameValueZero semantics for key equality. Some advanced iterator prototype metadata remains incomplete. |
 
 ### 19.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-number))
 
@@ -113,7 +113,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakMap constructor and core prototype methods | Supported with Limitations | [`WeakMap_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js)<br>[`WeakMap_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js) |  | Implements new WeakMap() constructor and core prototype methods: set, get, has, delete. Keys must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of keys. Does not support constructor with iterable argument. Does not implement full object-type validation. |
+| WeakMap constructor and core prototype methods | Supported with Limitations | [`WeakMap_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js)<br>[`WeakMap_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js) |  | Implements the WeakMap constructor, iterable initialization through the constructor adder path, and core prototype methods: set, get, has, delete. Keys must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of keys. Full object-type validation remains partial. |
 
 ### 19.3.41 ([tc39.es](https://tc39.es/ecma262/#sec-constructor-properties-of-the-global-object-weakref))
 
@@ -125,5 +125,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakSet constructor and core prototype methods | Supported with Limitations | [`WeakSet_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js)<br>[`WeakSet_Add_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js) |  | Implements new WeakSet() constructor and core prototype methods: add, has, delete. Values must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of values. Does not support constructor with iterable argument. Does not implement full object-type validation. |
+| WeakSet constructor and core prototype methods | Supported with Limitations | [`WeakSet_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js)<br>[`WeakSet_Add_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js) |  | Implements the WeakSet constructor, iterable initialization through the constructor adder path, and core prototype methods: add, has, delete. Values must be objects (non-null reference types). Uses ConditionalWeakTable to allow garbage collection of values. Full object-type validation remains partial. |
 

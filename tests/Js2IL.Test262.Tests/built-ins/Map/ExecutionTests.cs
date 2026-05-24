@@ -17,10 +17,30 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "does-not-throw-when-set-is-not-callable")]
     public Task does_not_throw_when_set_is_not_callable()
         => ExecutionTestFromFile("does-not-throw-when-set-is-not-callable");
-
-    [Fact(DisplayName = "map-iterable-empty-does-not-call-set")]
-    public Task map_iterable_empty_does_not_call_set()
-        => ExecutionTestFromFile("map-iterable-empty-does-not-call-set");
+
+    [Fact(DisplayName = "get-set-method-failure")]
+    public Task get_set_method_failure()
+        => ExecutionTestFromFile("get-set-method-failure");
+
+    [Fact(DisplayName = "is-a-constructor")]
+    public Task is_a_constructor()
+        => ExecutionTestFromFile("is-a-constructor");
+
+    [Fact(DisplayName = "iterable-calls-set")]
+    public Task iterable_calls_set()
+        => ExecutionTestFromFile("iterable-calls-set");
+
+    [Fact(DisplayName = "iterator-is-undefined-throws")]
+    public Task iterator_is_undefined_throws()
+        => ExecutionTestFromFile("iterator-is-undefined-throws");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "map-iterable-empty-does-not-call-set")]
+    public Task map_iterable_empty_does_not_call_set()
+        => ExecutionTestFromFile("map-iterable-empty-does-not-call-set");
 
     [Fact(DisplayName = "map-iterable")]
     public Task map_iterable()
@@ -37,12 +57,28 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "newtarget")]
     public Task newtarget()
         => ExecutionTestFromFile("newtarget");
-
-    [Fact(DisplayName = "properties-of-map-instances")]
-    public Task properties_of_map_instances()
-        => ExecutionTestFromFile("properties-of-map-instances");
+
+    [Fact(DisplayName = "prototype-of-map")]
+    public Task prototype_of_map()
+        => ExecutionTestFromFile("prototype-of-map");
+
+    [Fact(DisplayName = "map")]
+    public Task map()
+        => ExecutionTestFromFile("map");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "properties-of-map-instances")]
+    public Task properties_of_map_instances()
+        => ExecutionTestFromFile("properties-of-map-instances");
 
     [Fact(DisplayName = "properties-of-the-map-prototype-object")]
     public Task properties_of_the_map_prototype_object()
         => ExecutionTestFromFile("properties-of-the-map-prototype-object");
-}
+
+    [Fact(DisplayName = "undefined-newtarget")]
+    public Task undefined_newtarget()
+        => ExecutionTestFromFile("undefined-newtarget");
+}

@@ -30,6 +30,7 @@ namespace JavaScriptRuntime
 
         private void AddValuesFromIterable(object iterable)
         {
+            var adder = GetCallableAdder("add");
             var iterator = ObjectRuntime.GetIterator(iterable);
             var completedNormally = false;
             try
@@ -42,7 +43,7 @@ namespace JavaScriptRuntime
                         break;
                     }
 
-                    JavaScriptRuntime.Object.CallMember1(this, "add", JavaScriptRuntime.Object.IteratorResultValue(step));
+                    CallAdder(adder, JavaScriptRuntime.Object.IteratorResultValue(step));
                 }
 
                 completedNormally = true;
@@ -53,6 +54,30 @@ namespace JavaScriptRuntime
                 {
                     JavaScriptRuntime.Object.IteratorClose(iterator);
                 }
+            }
+        }
+
+        private Delegate GetCallableAdder(string name)
+        {
+            var adder = ObjectRuntime.GetProperty(this, name);
+            if (adder is not Delegate del)
+            {
+                throw new TypeError($"WeakSet.prototype.{name} is not callable");
+            }
+
+            return del;
+        }
+
+        private object? CallAdder(Delegate adder, object? value)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(this);
+            try
+            {
+                return Closure.InvokeWithArgs(adder, System.Array.Empty<object>(), new object?[] { value });
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
             }
         }
 

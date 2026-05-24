@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:53:11Z
+> Last generated (UTC): 2026-05-24T19:56:41Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,14 +34,14 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| new WeakSet() | Supported | [`WeakSet_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js) |  | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
-| new WeakSet(iterable) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs` |  | WeakSet(iterable) now consumes iterable values through the constructor's adder path, covering the current test262 iterable-initialization cases. Weak-value validation and broader exotic iterator edge cases remain partial. |
+| new WeakSet() | Supported | [`WeakSet_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js) | `test/built-ins/WeakSet/undefined-newtarget.js` | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
+| new WeakSet(iterable) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs` |  | WeakSet(iterable) consumes iterable values through the constructor's adder path, including the covered test262 adder lookup failure semantics. Weak-value validation and broader exotic iterator edge cases remain partial. |
 
 ### 24.4.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakSet constructor value and WeakSet.prototype surface | Supported with Limitations | [`WeakSet_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction is supported; the remaining WeakSet prototype gaps are still incomplete. |
+| WeakSet constructor value and WeakSet.prototype surface | Supported with Limitations | [`WeakSet_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js) | `test/built-ins/WeakSet/prototype-of-weakset.js` | JS2IL exposes globalThis.WeakSet as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction is supported; the remaining WeakSet prototype gaps are still incomplete. |
 
 ### 24.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakset-prototype-object))
 
