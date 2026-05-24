@@ -91,9 +91,12 @@
       {
         "clause": "24.4.1.1",
         "feature": "new WeakSet(iterable)",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakset-iterable",
-        "notes": "JavaScriptRuntime.WeakSet exposes only a parameterless constructor, so iterable initialization is not available."
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs"
+        ],
+        "notes": "WeakSet(iterable) now consumes iterable values through the constructor's adder path, covering the current test262 iterable-initialization cases. Weak-value validation and broader exotic iterator edge cases remain partial."
       },
       {
         "clause": "24.4.2.1",
@@ -103,7 +106,7 @@
         "testScripts": [
           "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js"
         ],
-        "notes": "JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction and the remaining WeakSet prototype gaps are still incomplete."
+        "notes": "JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction is supported; the remaining WeakSet prototype gaps are still incomplete."
       },
       {
         "clause": "24.4.3",

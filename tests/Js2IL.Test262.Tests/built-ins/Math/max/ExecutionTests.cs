@@ -52,21 +52,20 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("zeros");
 
-    [Fact(DisplayName = "length", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "length")]
     public Task length()
         => ExecutionTestFromFile("length");
 
-    [Fact(DisplayName = "name", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "name")]
     public Task name()
         => ExecutionTestFromFile("name");
 
-    [Fact(DisplayName = "prop-desc", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "prop-desc")]
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
 
-    [Fact(DisplayName = "S15.8.2.11_A4", Skip = "Tracked by #1093: built-ins port is sound but JS2IL does not yet match expected runtime behavior.")]
+    [Fact(DisplayName = "S15.8.2.11_A4")]
     public Task S15_8_2_11_A4()
         => ExecutionTestFromFile("S15.8.2.11_A4");
 
 }
-

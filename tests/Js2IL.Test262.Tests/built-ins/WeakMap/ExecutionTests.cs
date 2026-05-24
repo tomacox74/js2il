@@ -10,19 +10,19 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task constructor()
         => ExecutionTestFromFile("constructor");
 
-    [Fact(DisplayName = "empty-iterable", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "empty-iterable")]
     public Task empty_iterable()
         => ExecutionTestFromFile("empty-iterable");
 
-    [Fact(DisplayName = "iterable-with-object-keys", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "iterable-with-object-keys")]
     public Task iterable_with_object_keys()
         => ExecutionTestFromFile("iterable-with-object-keys");
 
-    [Fact(DisplayName = "iterable-with-symbol-keys", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "iterable-with-symbol-keys")]
     public Task iterable_with_symbol_keys()
         => ExecutionTestFromFile("iterable-with-symbol-keys");
 
-    [Fact(DisplayName = "no-iterable", Skip = "Tracked by #1093: JS2IL does not yet pass this advanced test262 scenario.")]
+    [Fact(DisplayName = "no-iterable")]
     public Task no_iterable()
         => ExecutionTestFromFile("no-iterable");
 
