@@ -128,9 +128,11 @@
         "specUrl": "https://tc39.es/ecma262/#sec-asyncgenerator-objects",
         "testScripts": [
           "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
-          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js"
+          "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-dstr-let-obj-ptrn-empty.js",
+          "tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/head-lhs-async.js"
         ],
-        "notes": "Async generator objects are implemented as a runtime type implementing the async iterator protocol. Prototype intrinsics (e.g. %AsyncGeneratorPrototype% identity, toStringTag) are not fully modeled yet."
+        "notes": "Async generator objects are implemented as a runtime type implementing the async iterator protocol. Checked-in test262 ports now also exercise basic `for await..of` consumption in async functions (including identifier heads and empty object destructuring), while prototype intrinsics such as %AsyncGeneratorPrototype% identity and toStringTag are still not fully modeled."
       }
     ]
   }
