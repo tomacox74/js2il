@@ -113,6 +113,18 @@
         "notes": "Block scopes are materialized and lexical bindings are tracked, including dedicated loop-head scopes for let/const in for/for-in/for-of."
       },
       {
+        "clause": "8.2.4",
+        "feature": "expression-time lexical capture for arrow/function/class scopes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-lexicallydeclarednames",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/arrow-function/PortExpressionsBatchExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/PortExpressionsBatchExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/language/expressions/function/PortExpressionsBatchExecutionTests.cs"
+        ],
+        "notes": "Scope analysis now preserves the lexical environment boundaries needed by the covered expression test262 cases, so nested arrows, class elements, and function expressions close over the correct bindings instead of leaking parameter/body scope state."
+      },
+      {
         "clause": "8.2.6",
         "feature": "Var-declared names and var-scoped declarations",
         "status": "Supported with Limitations",

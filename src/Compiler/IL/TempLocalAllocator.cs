@@ -452,6 +452,13 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+            case LIRTailCallFunctionReturn tailCall:
+                yield return tailCall.ScopesArray;
+                foreach (var arg in tailCall.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             case LIRCallFunctionWithArgsArray callWithArgsArray:
                 yield return callWithArgsArray.ScopesArray;
                 yield return callWithArgsArray.ArgumentsArray;

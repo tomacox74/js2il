@@ -90,6 +90,11 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
+/// Tail-calls a user-defined function and immediately returns its result.
+/// </summary>
+public record LIRTailCallFunctionReturn(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, CallableId CallableId) : LIRInstruction;
+
+/// <summary>
 /// Calls a user-defined function using a runtime argument array (object[]).
 ///
 /// This is used when the call-site argument count is not statically known (e.g., spread arguments:

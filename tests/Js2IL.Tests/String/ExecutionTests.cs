@@ -114,7 +114,7 @@ namespace Js2IL.Tests.String
         [Fact]
         public Task String_RegExp_SymbolDispatch_RegExpPrototypeOverride()
         {
-            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_RegExpPrototypeOverride));
+            return ExecutionTest(nameof(String_RegExp_SymbolDispatch_RegExpPrototypeOverride), preferOutOfProc: true);
         }
 
         [Fact]

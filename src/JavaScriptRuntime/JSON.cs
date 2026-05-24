@@ -40,9 +40,10 @@ namespace JavaScriptRuntime
         public static object? Stringify(object? value, object? replacer, object? space)
         {
             var propertyList = CreatePropertyList(replacer);
+            var replacerFunction = replacer as Delegate;
             var holder = Object.CreateOrdinaryObject();
             ObjectRuntime.SetItem(holder, string.Empty, value);
-            return SerializeProperty(holder, string.Empty, propertyList);
+            return SerializeProperty(holder, string.Empty, propertyList, replacerFunction, new HashSet<object>(ReferenceEqualityComparer.Instance));
         }
 
         private static List<string>? CreatePropertyList(object? replacer)
@@ -143,13 +144,70 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static string? SerializeProperty(object holder, string key, List<string>? propertyList)
+        private static object? InvokeToJsonIfPresent(object? value, string key)
         {
-            var value = ObjectRuntime.GetItem(holder, key);
-            return SerializeValue(value, propertyList);
+            if (value is null
+                || value is JsNull
+                || value is Delegate
+                || value is Symbol
+                || value is string
+                || value.GetType().IsValueType)
+            {
+                return value;
+            }
+
+            var toJson = ObjectRuntime.GetItem(value, "toJSON");
+            if (toJson is not Delegate toJsonFunction)
+            {
+                return value;
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(value);
+            try
+            {
+                return Closure.InvokeWithArgs(toJsonFunction, System.Array.Empty<object>(), new object?[] { key });
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
 
-        private static string? SerializeValue(object? value, List<string>? propertyList)
+        private static void PushToStackOrThrowIfCircular(HashSet<object> stack, object value)
+        {
+            if (!stack.Add(value))
+            {
+                throw new TypeError("Converting circular structure to JSON");
+            }
+        }
+
+        private static object? ApplyReplacer(Delegate? replacerFunction, object holder, string key, object? value)
+        {
+            if (replacerFunction is null)
+            {
+                return value;
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(holder);
+            try
+            {
+                return Closure.InvokeWithArgs(replacerFunction, System.Array.Empty<object>(), new object?[] { key, value });
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+
+        private static string? SerializeProperty(object holder, string key, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
+        {
+            var value = ObjectRuntime.GetItem(holder, key);
+            value = InvokeToJsonIfPresent(value, key);
+            value = ApplyReplacer(replacerFunction, holder, key, value);
+            return SerializeValue(value, propertyList, replacerFunction, stack);
+        }
+
+        private static string? SerializeValue(object? value, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
         {
             switch (value)
             {
@@ -189,10 +247,10 @@ namespace JavaScriptRuntime
 
             if (value is Array array)
             {
-                return SerializeArray(array, propertyList);
+                return SerializeArray(array, propertyList, replacerFunction, stack);
             }
 
-            return SerializeObject(value!, propertyList);
+            return SerializeObject(value!, propertyList, replacerFunction, stack);
         }
 
         private static string SerializeNumber(double value)
@@ -225,36 +283,54 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(value);
         }
 
-        private static string SerializeArray(Array array, List<string>? propertyList)
+        private static string SerializeArray(Array array, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
         {
+            PushToStackOrThrowIfCircular(stack, array);
+
             var length = (int)array.length;
             var items = new List<string>(length);
-            for (var i = 0; i < length; i++)
+            try
             {
-                items.Add(SerializeValue(ObjectRuntime.GetItem(array, (double)i), propertyList) ?? "null");
+                for (var i = 0; i < length; i++)
+                {
+                    items.Add(SerializeProperty(array, i.ToString(CultureInfo.InvariantCulture), propertyList, replacerFunction, stack) ?? "null");
+                }
+            }
+            finally
+            {
+                stack.Remove(array);
             }
 
             return "[" + string.Join(",", items) + "]";
         }
 
-        private static string SerializeObject(object value, List<string>? propertyList)
+        private static string SerializeObject(object value, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
         {
+            PushToStackOrThrowIfCircular(stack, value);
+
             var keys = propertyList ?? Object.GetOwnEnumerableKeysInOrder(value);
             var parts = new List<string>();
-            foreach (var key in keys)
+            try
             {
-                if (!Object.hasOwn(value, key))
+                foreach (var key in keys)
                 {
-                    continue;
-                }
+                    if (!Object.hasOwn(value, key))
+                    {
+                        continue;
+                    }
 
-                var serialized = SerializeProperty(value, key, propertyList);
-                if (serialized is null)
-                {
-                    continue;
-                }
+                    var serialized = SerializeProperty(value, key, propertyList, replacerFunction, stack);
+                    if (serialized is null)
+                    {
+                        continue;
+                    }
 
-                parts.Add(Quote(key) + ":" + serialized);
+                    parts.Add(Quote(key) + ":" + serialized);
+                }
+            }
+            finally
+            {
+                stack.Remove(value);
             }
 
             return "{" + string.Join(",", parts) + "}";

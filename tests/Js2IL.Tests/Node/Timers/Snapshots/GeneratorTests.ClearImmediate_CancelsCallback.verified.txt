@@ -11,7 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested private auto ansi beforefieldinit Scope
+		.class nested public auto ansi beforefieldinit Scope
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -59,7 +59,7 @@
 
 	} // end of class ArrowFunction_L3C29
 
-	.class nested private auto ansi beforefieldinit Scope
+	.class nested public auto ansi beforefieldinit Scope
 		extends [System.Runtime]System.Object
 	{
 		// Methods
@@ -92,7 +92,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 107 (0x6b)
+		// Code size: 108 (0x6c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ClearImmediate_CancelsCallback/Scope,
@@ -117,27 +117,28 @@
 		IL_0027: conv.r8
 		IL_0028: ldstr ""
 		IL_002d: ldc.i4.0
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool)
-		IL_0033: stloc.2
-		IL_0034: ldloc.2
-		IL_0035: ldc.i4.0
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0040: stloc.2
-		IL_0041: ldloc.2
-		IL_0042: stloc.1
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0048: ldstr "setImmediate scheduled."
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0052: pop
-		IL_0053: ldloc.1
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearImmediate(object)
-		IL_0059: pop
-		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005f: ldstr "clearImmediate called."
-		IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0069: pop
-		IL_006a: ret
+		IL_002e: ldc.i4.1
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0034: stloc.2
+		IL_0035: ldloc.2
+		IL_0036: ldc.i4.0
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0041: stloc.2
+		IL_0042: ldloc.2
+		IL_0043: stloc.1
+		IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0049: ldstr "setImmediate scheduled."
+		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0053: pop
+		IL_0054: ldloc.1
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearImmediate(object)
+		IL_005a: pop
+		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0060: ldstr "clearImmediate called."
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_006a: pop
+		IL_006b: ret
 	} // end of method ClearImmediate_CancelsCallback::__js_module_init__
 
 } // end of class Modules.ClearImmediate_CancelsCallback

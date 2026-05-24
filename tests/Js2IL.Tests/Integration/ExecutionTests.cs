@@ -12,7 +12,7 @@ namespace Js2IL.Tests.Integration
         public ExecutionTests() : base("Integration") { }
 
         [Fact]
-        public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp));
+        public Task Compile_Performance_Dromaeo_Object_Regexp() => ExecutionTest(nameof(Compile_Performance_Dromaeo_Object_Regexp), preferOutOfProc: true);
 
         [Fact]
         public async Task Compile_Scripts_ExtractEcma262SectionHtml_UrlMode()

@@ -128,7 +128,11 @@ namespace Js2IL.Tests
 
             // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
             // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
+            var normalizedTestName = testName
+                .Replace('\\', Path.DirectorySeparatorChar)
+                .Replace('/', Path.DirectorySeparatorChar);
+            var normalizedTestFilePath = Path.Combine(outputDirectory, $"{normalizedTestName}.js");
+            var assemblyName = Path.GetFileNameWithoutExtension(normalizedTestFilePath);
             var assemblyPath = Path.Combine(outputDirectory, $"{assemblyName}.dll");
             var pdbPath = Path.Combine(outputDirectory, $"{assemblyName}.pdb");
 

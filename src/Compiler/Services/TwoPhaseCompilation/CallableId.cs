@@ -135,6 +135,11 @@ public sealed record CallableId
     /// True when the emitted arguments object should include a non-strict own <c>callee</c> data property.
     /// </summary>
     public bool IncludeCalleeInArgumentsObject { get; init; }
+
+    /// <summary>
+    /// True when the function object should expose restricted <c>caller</c>/<c>arguments</c> accessors.
+    /// </summary>
+    public bool HasRestrictedFunctionProperties { get; init; }
     
     /// <summary>
     /// Optional reference to the original AST node for diagnostics.

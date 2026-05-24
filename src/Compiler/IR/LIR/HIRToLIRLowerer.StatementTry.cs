@@ -130,6 +130,18 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
                 }
+                else if (tryStmt.CatchParamPattern != null)
+                {
+                    var jsCatchValue = CreateTempVariable();
+                    lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
+                    DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+                    if (!TryLowerDestructuringPattern(tryStmt.CatchParamPattern, EnsureObject(jsCatchValue), DestructuringWriteMode.Declaration, null))
+                    {
+                        return false;
+                    }
+                }
 
                 if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
                 {

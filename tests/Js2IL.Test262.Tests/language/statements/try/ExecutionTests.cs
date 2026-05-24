@@ -57,19 +57,19 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task completion_values_fn_finally_return()
         => ExecutionTest("completion-values-fn-finally-return");
 
-    [Fact(DisplayName = "ary-init-iter-close", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-init-iter-close")]
     public Task dstr_ary_init_iter_close()
         => ExecutionTest(@"dstr\ary-init-iter-close");
 
-    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Blocked by shared Array.prototype iterator fallback semantics.")]
     public Task dstr_ary_init_iter_get_err_array_prototype()
         => ExecutionTest(@"dstr\ary-init-iter-get-err-array-prototype");
 
-    [Fact(DisplayName = "ary-init-iter-no-close", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-init-iter-no-close")]
     public Task dstr_ary_init_iter_no_close()
         => ExecutionTest(@"dstr\ary-init-iter-no-close");
 
-    [Fact(DisplayName = "ary-name-iter-val", Skip = "Tracked by #1093: currently fails under Js2IL.")]
+    [Fact(DisplayName = "ary-name-iter-val")]
     public Task dstr_ary_name_iter_val()
         => ExecutionTest(@"dstr\ary-name-iter-val");
 
