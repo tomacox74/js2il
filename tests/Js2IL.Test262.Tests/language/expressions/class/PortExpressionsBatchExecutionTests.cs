@@ -6,6 +6,54 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
 {
     public PortExpressionsBatchExecutionTests() : base("language.expressions.class_") { }
 
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-string-literal")]
+    public Task cpn_class_expr_computed_property_name_from_string_literal()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-string-literal");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-numeric-literal")]
+    public Task cpn_class_expr_computed_property_name_from_numeric_literal()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-numeric-literal");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-identifier")]
+    public Task cpn_class_expr_computed_property_name_from_identifier()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-identifier");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-null")]
+    public Task cpn_class_expr_computed_property_name_from_null()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-null");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-identifier")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_identifier()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-identifier");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-null")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_null()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-null");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-string-literal")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_string_literal()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-string-literal");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-numeric-literal")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_numeric_literal()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-numeric-literal");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-identifier")]
+    public Task cpn_class_expr_fields_computed_property_name_from_identifier()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-identifier");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-null")]
+    public Task cpn_class_expr_fields_computed_property_name_from_null()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-null");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-string-literal")]
+    public Task cpn_class_expr_fields_computed_property_name_from_string_literal()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-string-literal");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-numeric-literal")]
+    public Task cpn_class_expr_fields_computed_property_name_from_numeric_literal()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-numeric-literal");
+
     [Fact(DisplayName = "heritage-arrow-function")]
     public Task heritage_arrow_function()
         => ExecutionTest("heritage-arrow-function");
