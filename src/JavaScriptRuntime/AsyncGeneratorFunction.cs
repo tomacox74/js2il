@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 namespace JavaScriptRuntime;
 
@@ -47,23 +46,12 @@ public static class AsyncGeneratorFunction
     private static object? AsyncGeneratorFunctionConstructor(object[] scopes, object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
-        var length = ParseDynamicFunctionParameterNames(callArgs).Length;
+        var length = JavaScriptRuntime.Function.ParseDynamicFunctionParameterNames(callArgs).Length;
 
         Func<object[], object?[]?, object?> functionValue = static (_, __) =>
-            throw new NotSupportedException("Dynamically constructed async generator functions are not invokable yet.");
+            throw new NotSupportedException("Dynamically constructed async generator functions are not invokable in js2il. Use statically declared async generator functions instead.");
         JavaScriptRuntime.AsyncFunction.InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
         InitializeFunctionObject(functionValue);
         return functionValue;
-    }
-
-    private static string[] ParseDynamicFunctionParameterNames(object?[] args)
-    {
-        if (args.Length <= 1)
-        {
-            return System.Array.Empty<string>();
-        }
-
-        return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 }

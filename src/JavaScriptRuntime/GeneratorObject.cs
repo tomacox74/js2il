@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace JavaScriptRuntime;
 
@@ -80,7 +79,7 @@ public sealed class GeneratorObject
     private static object CreateDynamicGeneratorFunction(object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
-        var parameterNames = ParseDynamicFunctionParameterNames(callArgs);
+        var parameterNames = Function.ParseDynamicFunctionParameterNames(callArgs);
         var body = callArgs.Length == 0 ? string.Empty : DotNet2JSConversions.ToString(callArgs[^1]);
 
         Func<object[], object?[]?, object?> functionValue = (_, invocationArgs) =>
@@ -91,19 +90,11 @@ public sealed class GeneratorObject
         return functionValue;
     }
 
-    private static string[] ParseDynamicFunctionParameterNames(object?[] args)
-    {
-        if (args.Length <= 1)
-        {
-            return System.Array.Empty<string>();
-        }
-
-        return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-    }
-
     private static object? EvaluateDynamicGeneratorBody(string body, string[] parameterNames, object?[] invocationArgs)
     {
+        // Minimal runtime fallback for dynamically constructed generator functions. Full Function-
+        // constructor parsing remains compile-time only; this supports the simple test262 bodies
+        // exercised here: empty bodies, a single numeric/identifier yield, or identifier addition.
         var trimmed = body.Trim();
         if (trimmed.Length == 0)
         {

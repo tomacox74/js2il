@@ -367,6 +367,17 @@ public static class Function
         internal static bool HasUndefinedPrototype(Delegate functionValue)
             => _undefinedPrototypeFunctions.TryGetValue(functionValue, out _);
 
+        internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
+        {
+            if (args.Length <= 1)
+            {
+                return System.Array.Empty<string>();
+            }
+
+            return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+
         internal static void DefineMetadataProperty(Delegate target, string propName, object? value)
         {
             PropertyDescriptorStore.DefineOrUpdate(target, propName, new JsPropertyDescriptor

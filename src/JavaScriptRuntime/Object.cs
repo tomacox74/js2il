@@ -1261,14 +1261,7 @@ namespace JavaScriptRuntime
         {
             var wrapper = CreateOrdinaryObject();
             PrototypeChain.SetPrototype(wrapper, prototype);
-            PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = false,
-                Writable = false,
-                Value = primitiveValue
-            });
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, CreatePrimitiveValueDescriptor(primitiveValue));
 
             if (!includeOwnStringMethods)
             {
@@ -1294,6 +1287,18 @@ namespace JavaScriptRuntime
             });
 
             return wrapper;
+        }
+
+        private static JsPropertyDescriptor CreatePrimitiveValueDescriptor(object primitiveValue)
+        {
+            return new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = primitiveValue
+            };
         }
 
         /// <summary>

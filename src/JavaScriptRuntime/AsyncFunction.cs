@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 namespace JavaScriptRuntime;
 
@@ -83,22 +82,11 @@ public static class AsyncFunction
     private static object CreateDynamicAsyncFunction(object?[]? args)
     {
         var callArgs = args ?? System.Array.Empty<object?>();
-        var length = ParseDynamicFunctionParameterNames(callArgs).Length;
+        var length = Function.ParseDynamicFunctionParameterNames(callArgs).Length;
 
         Func<object[], object?[]?, object?> functionValue = static (_, __) => Promise.resolve(null);
         InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
         return functionValue;
-    }
-
-    private static string[] ParseDynamicFunctionParameterNames(object?[] args)
-    {
-        if (args.Length <= 1)
-        {
-            return System.Array.Empty<string>();
-        }
-
-        return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
     private static void DefineDataProperty(object target, string key, object? value, bool writable = true, bool configurable = true)
