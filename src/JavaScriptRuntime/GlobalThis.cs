@@ -96,11 +96,25 @@ namespace JavaScriptRuntime
         private static readonly Delegate _setConstructorValue =
             CreateCollectionConstructorValue("Set", static () => new JavaScriptRuntime.Set());
 
-        private static readonly Delegate _weakMapConstructorValue =
-            CreateCollectionConstructorValue("WeakMap", static () => new JavaScriptRuntime.WeakMap());
+        private static readonly JsFuncNoScopes1 _weakMapConstructorValue = static (newTarget, iterable) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor WeakMap requires 'new'");
+            }
 
-        private static readonly Delegate _weakSetConstructorValue =
-            CreateCollectionConstructorValue("WeakSet", static () => new JavaScriptRuntime.WeakSet());
+            return new JavaScriptRuntime.WeakMap(iterable);
+        };
+
+        private static readonly JsFuncNoScopes1 _weakSetConstructorValue = static (newTarget, iterable) =>
+        {
+            if (newTarget is null)
+            {
+                throw new TypeError("Constructor WeakSet requires 'new'");
+            }
+
+            return new JavaScriptRuntime.WeakSet(iterable);
+        };
 
         private static readonly JsFuncNoScopes1 _promiseConstructorValue = static (newTarget, executor) =>
         {
