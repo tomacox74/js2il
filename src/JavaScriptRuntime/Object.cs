@@ -15,6 +15,8 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Object", IntrinsicCallKind.ObjectConstruct)]
     public class Object
     {
+        internal const string PrimitiveValuePropertyName = "__js2il_PrimitiveValue";
+
         private static bool IsNullableValueType(Type type)
         {
             return Nullable.GetUnderlyingType(type) != null;
@@ -974,6 +976,11 @@ namespace JavaScriptRuntime
                 throw new TypeError("Object.getPrototypeOf called on non-object");
             }
 
+            if (obj is JavaScriptRuntime.Symbol)
+            {
+                return GlobalThis.SymbolPrototypeValue;
+            }
+
             // Calling getPrototypeOf is itself an opt-in signal.
             PrototypeChain.Enable();
 
@@ -1254,6 +1261,14 @@ namespace JavaScriptRuntime
         {
             var wrapper = CreateOrdinaryObject();
             PrototypeChain.SetPrototype(wrapper, prototype);
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = primitiveValue
+            });
 
             if (!includeOwnStringMethods)
             {
@@ -2094,6 +2109,11 @@ namespace JavaScriptRuntime
             if (value is double or float or int or long or short or byte or sbyte or uint or ulong or ushort)
             {
                 return JavaScriptRuntime.Number.Construct(new object?[] { value }, newTarget: null);
+            }
+
+            if (value is JavaScriptRuntime.Symbol symbol)
+            {
+                return CreatePrimitiveWrapper(symbol, GlobalThis.SymbolPrototypeValue, includeOwnStringMethods: false);
             }
 
             return value;
@@ -5236,6 +5256,11 @@ namespace JavaScriptRuntime
         public static object? SetProperty(object obj, string name, object? value, bool throwOnError)
         {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
+            if (obj is JavaScriptRuntime.Symbol)
+            {
+                return value;
+            }
+
             InvalidateRegExpWellKnownSymbolFastPath(obj, name);
             var hasOwn = HasOwnProperty(obj, name);
             // Proxy set trap
