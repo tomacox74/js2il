@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-03T15:15:02Z
+> Last generated (UTC): 2026-05-24T08:22:42Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -21,7 +21,7 @@
 | 10.2.1.4 | OrdinaryCallEvaluateBody ( F , argumentsList ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinarycallevaluatebody) |
 | 10.2.2 | [[Construct]] ( argumentsList , newTarget ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-function-objects-construct-argumentslist-newtarget) |
 | 10.2.3 | OrdinaryFunctionCreate ( functionPrototype , sourceText , ParameterList , Body , thisMode , env , privateEnv ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ordinaryfunctioncreate) |
-| 10.2.4 | AddRestrictedFunctionProperties ( F , realm ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties) |
+| 10.2.4 | AddRestrictedFunctionProperties ( F , realm ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties) |
 | 10.2.4.1 | %ThrowTypeError% ( ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-%throwtypeerror%) |
 | 10.2.5 | MakeConstructor ( F [ , writablePrototype [ , prototype ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-makeconstructor) |
 | 10.2.6 | MakeClassConstructor ( F ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-makeclassconstructor) |
@@ -46,6 +46,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Constructor calls and new.target-aware function execution | Supported with Limitations | [`Function_NewTarget_NewVsCall.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js)<br>[`Function_NewTarget_Arrow_Inherits.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js)<br>[`Classes_Constructor_ReturnObjectOverridesThis.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js)<br>[`Classes_DeclareEmptyClass.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js) |  | JS2IL constructs delegate-backed functions and class constructors by creating an instance, binding this, and forwarding a newTarget value into the call path. Constructor return override works, but super/inheritance semantics and full OrdinaryCreateFromConstructor behavior remain incomplete. |
+
+### 10.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-addrestrictedfunctionproperties))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Restricted function caller/arguments properties | Supported with Limitations | [`prototype-rules.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/arrow-function/JavaScript/prototype-rules.js)<br>[`restricted-properties.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/restricted-properties.js) | suite `pr`<br>suite `nightly`<br>`test/language/expressions/arrow-function/prototype-rules.js`<br>`test/language/expressions/class/restricted-properties.js` | JS2IL installs throwing restricted caller/arguments accessors for the covered non-ordinary callable surfaces, including arrow functions and class constructors. Full %ThrowTypeError% identity/intrinsics coverage remains limited. |
 
 ### 10.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-makeconstructor))
 

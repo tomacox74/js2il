@@ -323,10 +323,30 @@
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperConstructor_Args.js",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_NestedClassExtendsGlobal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/heritage-arrow-function.js",
           "tests/Js2IL.Test262.Tests/language/statements/class/strict-mode/JavaScript/arguments-callee.js",
           "tests/Js2IL.Test262.Tests/language/statements/class/elements/JavaScript/class-field-is-observable-by-proxy.js"
         ],
-        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported. Function-valued base constructors are supported for super(), including object/proxy replacement returns from the base constructor."
+        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported. Function-valued base constructors are supported for super(), including object/proxy replacement returns from the base constructor. Class heritage validation rejects non-constructible callable values such as arrow functions."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Class constructor restricted properties and prototype linkage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/poisoned-underscore-proto.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/restricted-properties.js"
+        ],
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/poisoned-underscore-proto.js",
+          "test/language/expressions/class/restricted-properties.js"
+        ],
+        "notes": "Class constructor values expose Function.prototype inheritance and the covered restricted caller/arguments behavior without routing through poisoned Object.prototype.__proto__ accessors."
       },
       {
         "clause": "15.7.1",

@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-23T08:21:08Z
+> Last generated (UTC): 2026-05-24T08:22:42Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,12 +22,12 @@
 | 13.2.4 | Array Initializer | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-array-initializer) |
 | 13.2.4.1 | Runtime Semantics: ArrayAccumulation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-arrayaccumulation) |
 | 13.2.4.2 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-array-initializer-runtime-semantics-evaluation) |
-| 13.2.5 | Object Initializer | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer) |
+| 13.2.5 | Object Initializer | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer) |
 | 13.2.5.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer-static-semantics-early-errors) |
 | 13.2.5.2 | Static Semantics: IsComputedPropertyKey | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-iscomputedpropertykey) |
-| 13.2.5.3 | Static Semantics: PropertyNameList | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-propertynamelist) |
-| 13.2.5.4 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer-runtime-semantics-evaluation) |
-| 13.2.5.5 | Runtime Semantics: PropertyDefinitionEvaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-propertydefinitionevaluation) |
+| 13.2.5.3 | Static Semantics: PropertyNameList | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-static-semantics-propertynamelist) |
+| 13.2.5.4 | Runtime Semantics: Evaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-object-initializer-runtime-semantics-evaluation) |
+| 13.2.5.5 | Runtime Semantics: PropertyDefinitionEvaluation | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-propertydefinitionevaluation) |
 | 13.2.6 | Function Defining Expressions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-function-defining-expressions) |
 | 13.2.7 | Regular Expression Literals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-regular-expression-literals) |
 | 13.2.7.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-primary-expression-regular-expression-literals-static-semantics-early-errors) |
@@ -112,4 +112,16 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Object literal method definitions ({ m() { ... } }) | Supported | [`ObjectLiteral_ShorthandAndMethod.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js) | `test/language/expressions/object/method-definition/fn-name-gen.js`<br>`test/language/expressions/object/method-definition/generator-invoke-ctor.js`<br>`test/language/expressions/object/method-definition/generator-invoke-fn-no-strict.js`<br>`test/language/expressions/object/method-definition/generator-invoke-fn-strict.js` | Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis. Generator method values initialize the generator-function surface, reject construction with TypeError, and remain callable as generator functions. |
 | Object literal shorthand properties ({ a }) | Supported | [`ObjectLiteral_ShorthandAndMethod.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js) |  | Shorthand properties are parsed and lowered the same as explicit properties ({ a: a }). |
 | Object literal spread properties ({ ...x }) | Supported | [`ObjectLiteral_Spread_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js)<br>[`ObjectLiteral_Spread_Multiple.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Multiple.js)<br>[`ObjectLiteral_Spread_Clone.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Clone.js)<br>[`ObjectLiteral_Spread_Empty.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Empty.js)<br>[`ObjectLiteral_Spread_SymbolProperties.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SymbolProperties.js)<br>[`ObjectLiteral_Spread_NestedObjects.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_NestedObjects.js)<br>[`ObjectLiteral_Spread_SkipsNonEnumerable.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js) |  | Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored. Copies enumerable own properties (including symbol-keyed properties, modeled via a stable internal key string). |
+
+### 13.2.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-propertynamelist))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Object literal literal property-name normalization | Supported with Limitations | [`11.1.5_6-3-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_6-3-1.js)<br>[`11.1.5_6-3-2.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_6-3-2.js)<br>[`11.1.5_7-3-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_7-3-1.js)<br>[`11.1.5_7-3-2.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_7-3-2.js)<br>[`literal-property-name-bigint.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/literal-property-name-bigint.js) | suite `pr`<br>suite `nightly`<br>`test/language/expressions/object/11.1.5_6-3-1.js`<br>`test/language/expressions/object/11.1.5_6-3-2.js`<br>`test/language/expressions/object/11.1.5_7-3-1.js`<br>`test/language/expressions/object/11.1.5_7-3-2.js`<br>`test/language/expressions/object/literal-property-name-bigint.js` | Literal object property names now cover string, numeric, and BigInt literal names in the checked expression cases. Broader object-initializer status remains limited by unsupported edge cases outside the current test262 slice. |
+
+### 13.2.5.5 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-propertydefinitionevaluation))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Object literal __proto__ prototype mutation | Supported with Limitations | [`__proto__-duplicate-computed.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-duplicate-computed.js)<br>[`__proto__-poisoned-object-prototype.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-poisoned-object-prototype.js)<br>[`__proto__-value-non-object.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-non-object.js)<br>[`__proto__-value-null.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-null.js)<br>[`__proto__-value-obj.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-obj.js) | suite `pr`<br>suite `nightly`<br>`test/language/expressions/object/__proto__-duplicate-computed.js`<br>`test/language/expressions/object/__proto__-poisoned-object-prototype.js`<br>`test/language/expressions/object/__proto__-value-non-object.js`<br>`test/language/expressions/object/__proto__-value-null.js`<br>`test/language/expressions/object/__proto__-value-obj.js` | Non-computed object-literal __proto__ definitions update the new object's prototype for object/null values, ignore primitive values, and do not invoke poisoned Object.prototype.__proto__ accessors. Computed __proto__ remains a data property. |
 

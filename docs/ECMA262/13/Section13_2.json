@@ -60,7 +60,7 @@
     {
       "clause": "13.2.5",
       "title": "Object Initializer",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-initializer"
     },
     {
@@ -78,19 +78,19 @@
     {
       "clause": "13.2.5.3",
       "title": "Static Semantics: PropertyNameList",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-propertynamelist"
     },
     {
       "clause": "13.2.5.4",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-initializer-runtime-semantics-evaluation"
     },
     {
       "clause": "13.2.5.5",
       "title": "Runtime Semantics: PropertyDefinitionEvaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-propertydefinitionevaluation"
     },
     {
@@ -397,6 +397,56 @@
           "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
         ],
         "notes": "Lowered as sequential JavaScriptRuntime.Object.SetItem(target, key, value) calls to preserve left-to-right evaluation order and key coercion to string."
+      },
+      {
+        "clause": "13.2.5.3",
+        "feature": "Object literal literal property-name normalization",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-propertynamelist",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_6-3-1.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_6-3-2.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_7-3-1.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/11.1.5_7-3-2.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/literal-property-name-bigint.js"
+        ],
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/object/11.1.5_6-3-1.js",
+          "test/language/expressions/object/11.1.5_6-3-2.js",
+          "test/language/expressions/object/11.1.5_7-3-1.js",
+          "test/language/expressions/object/11.1.5_7-3-2.js",
+          "test/language/expressions/object/literal-property-name-bigint.js"
+        ],
+        "notes": "Literal object property names now cover string, numeric, and BigInt literal names in the checked expression cases. Broader object-initializer status remains limited by unsupported edge cases outside the current test262 slice."
+      },
+      {
+        "clause": "13.2.5.5",
+        "feature": "Object literal __proto__ prototype mutation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-propertydefinitionevaluation",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-duplicate-computed.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-poisoned-object-prototype.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-non-object.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-null.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/object/JavaScript/__proto__-value-obj.js"
+        ],
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/object/__proto__-duplicate-computed.js",
+          "test/language/expressions/object/__proto__-poisoned-object-prototype.js",
+          "test/language/expressions/object/__proto__-value-non-object.js",
+          "test/language/expressions/object/__proto__-value-null.js",
+          "test/language/expressions/object/__proto__-value-obj.js"
+        ],
+        "notes": "Non-computed object-literal __proto__ definitions update the new object's prototype for object/null values, ignore primitive values, and do not invoke poisoned Object.prototype.__proto__ accessors. Computed __proto__ remains a data property."
       },
       {
         "clause": "13.2.5.1",
