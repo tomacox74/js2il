@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/test262: align Promise constructor executor and resolve semantics with the newly unskipped test262 coverage, including strict/sloppy executor call context and the covered Promise surface ordering cases.
 - runtime/tests/docs/test262: fix Math built-in function metadata for static intrinsic methods, unskipping the related `Math.abs`, `Math.acos`, `Math.floor`, and `Math.max` test262 coverage.
 - runtime/tests/docs/test262: support `WeakMap(iterable)` and `WeakSet(iterable)` constructor initialization, unskipping the related weak-collection test262 coverage while keeping broader weak-collection edge cases tracked separately.
 - compiler/runtime/tests/docs/test262: fix issue #1097 by unskipping supported `for-in`/`for-of` statement ports, including loop-head TDZ binding checks, inherited array-index setters during `for-in`, typed-array iteration for `Float32Array`, `Int16Array`, and `Int8Array`, and iterator-close semantics for destructuring and generator `for-of` paths while leaving eval-only cases skipped.

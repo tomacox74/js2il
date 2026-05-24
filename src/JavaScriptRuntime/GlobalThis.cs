@@ -125,6 +125,8 @@ namespace JavaScriptRuntime
 
             return new global::JavaScriptRuntime.Promise(executor);
         };
+        private static readonly Func<object[], object?, object?> _promiseResolveValue = static (_, value) =>
+            global::JavaScriptRuntime.Promise.ResolveForConstructor(RuntimeServices.GetCurrentThis(), value);
 
         // Object constructor/function value. This enables patterns like `Object.prototype` and
         // allows libraries to pass `Object` around as a value.
@@ -309,6 +311,41 @@ namespace JavaScriptRuntime
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
             ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
+            PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Promise"
+            });
+            ConfigureBuiltinFunctionObject(_promiseResolveValue);
+            DefineUndefinedPrototypeProperty(_promiseResolveValue);
+            PropertyDescriptorStore.DefineOrUpdate(_promiseResolveValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 1d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_promiseResolveValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "resolve"
+            });
+            DefineIntrinsicDataProperty(_promiseConstructorValue, "resolve", _promiseResolveValue);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
