@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/tests/docs/test262: fix lexical scope handling for expression forms so arrow functions, class elements, and function expressions capture the correct bindings in the newly unskipped test262 cases.
 - compiler/runtime/tests/docs/test262: fix issue #1097 by unskipping supported `for-in`/`for-of` statement ports, including loop-head TDZ binding checks, inherited array-index setters during `for-in`, typed-array iteration for `Float32Array`, `Int16Array`, and `Int8Array`, and iterator-close semantics for destructuring and generator `for-of` paths while leaving eval-only cases skipped.
 - runtime/tests/docs/test262: fix issue #1104 by unskipping supported Array/String built-in ports, including `Array.from` metadata, `Array.isArray(Array.prototype)`, inherited array-index lookup for `reduce`, and array object-to-primitive coercion needed by `String.prototype.indexOf`, `isFinite`, and `isNaN`, while keeping the eval-dependent `indexOf` case explicitly skipped.
 - compiler/runtime/tests/docs/test262: fix issue #1107 by unskipping Date, Number, and RegExp built-in test262 ports; Date constructor metadata now matches `name`/`length`, `new Date(date)` copies the Date value without user coercion, Number exposes `EPSILON`, `parseFloat`, and `parseInt`, and discarded `Number(value)` calls still perform abrupt `ToNumber` coercion.
