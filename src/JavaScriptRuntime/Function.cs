@@ -27,8 +27,13 @@ public static class Function
         public bool RequiresInvocationContext;
     }
 
+    private sealed class UndefinedPrototypeSlot
+    {
+    }
+
     private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
     private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
+    private static readonly ConditionalWeakTable<Delegate, UndefinedPrototypeSlot> _undefinedPrototypeFunctions = new();
 
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
@@ -423,6 +428,26 @@ public static class Function
         {
             var slot = _invocationMetadata.GetOrCreateValue(functionValue);
             slot.RequiresInvocationContext = requiresInvocationContext;
+        }
+
+        internal static void MarkUndefinedPrototype(Delegate functionValue)
+        {
+            _undefinedPrototypeFunctions.GetOrCreateValue(functionValue);
+            PropertyDescriptorStore.Delete(functionValue, "prototype");
+        }
+
+        internal static bool HasUndefinedPrototype(Delegate functionValue)
+            => _undefinedPrototypeFunctions.TryGetValue(functionValue, out _);
+
+        internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
+        {
+            if (args.Length <= 1)
+            {
+                return System.Array.Empty<string>();
+            }
+
+            return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         }
 
         internal static void DefineMetadataProperty(Delegate target, string propName, object? value)

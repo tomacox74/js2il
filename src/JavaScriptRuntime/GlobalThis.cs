@@ -517,8 +517,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = (Func<object[], object?[]?, object?>)((_, __) =>
                 {
-                    var thisValue = RuntimeServices.GetCurrentThis();
-                    return thisValue is JavaScriptRuntime.Symbol symbol
+                    return TryGetThisSymbolValue(out var symbol)
                         ? symbol.toString()
                         : throw new TypeError("Symbol.prototype.toString called on incompatible receiver");
                 })
@@ -531,8 +530,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = (Func<object[], object?[]?, object?>)((_, __) =>
                 {
-                    var thisValue = RuntimeServices.GetCurrentThis();
-                    return thisValue is JavaScriptRuntime.Symbol symbol
+                    return TryGetThisSymbolValue(out var symbol)
                         ? symbol.valueOf()
                         : throw new TypeError("Symbol.prototype.valueOf called on incompatible receiver");
                 })
@@ -1532,6 +1530,27 @@ namespace JavaScriptRuntime
             return RuntimeServices.GetCurrentThis();
         }
 
+        private static bool TryGetThisSymbolValue([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out JavaScriptRuntime.Symbol? symbol)
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            if (thisValue is JavaScriptRuntime.Symbol directSymbol)
+            {
+                symbol = directSymbol;
+                return true;
+            }
+
+            if (thisValue != null
+                && PropertyDescriptorStore.TryGetOwn(thisValue, JavaScriptRuntime.Object.PrimitiveValuePropertyName, out var descriptor)
+                && descriptor.Value is JavaScriptRuntime.Symbol boxedSymbol)
+            {
+                symbol = boxedSymbol;
+                return true;
+            }
+
+            symbol = null;
+            return false;
+        }
+
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
         internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
@@ -1551,7 +1570,8 @@ namespace JavaScriptRuntime
                 || functionValue.Method == _parseIntValue.Method
                 || functionValue.Method == _isFiniteValue.Method
                 || functionValue.Method == _isNaNValue.Method
-                || functionValue.Method == _numberIsIntegerValue.Method;
+                || functionValue.Method == _numberIsIntegerValue.Method
+                || JavaScriptRuntime.Function.HasUndefinedPrototype(functionValue);
         }
 
         private static Func<object[], object?[], object?> CreateErrorConstructorValue(Func<string?, object> factory)

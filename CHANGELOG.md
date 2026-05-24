@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/test262: expose the covered intrinsic async/generator constructor objects with the expected callable metadata and extensibility surface, unskipping the corresponding built-in constructor tests while leaving the advanced construction cases tracked separately.
 - compiler/tests/docs/test262: support additional statement-level array destructuring cases, including the newly unskipped variable/const, `for`, and `catch` iterator-semantics coverage.
 - runtime/tests/docs/test262: align Proxy constructor and callable proxy apply semantics with the newly unskipped test262 coverage, including the covered validation and trap-dispatch cases.
 - compiler/tests/docs/test262: fix lexical scope handling for expression forms so arrow functions, class elements, and function expressions capture the correct bindings in the newly unskipped test262 cases.
