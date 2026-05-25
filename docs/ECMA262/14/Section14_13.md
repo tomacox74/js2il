@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T00:29:07Z
+> Last generated (UTC): 2026-05-24T13:24:00Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -27,5 +27,6 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
+| labels consumed by nested break and continue ports | Supported | [`S12.8_A4_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A4_T1.js)<br>[`S12.8_A4_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A4_T2.js)<br>[`S12.8_A4_T3.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A4_T3.js)<br>[`S12.7_A9_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/S12.7_A9_T1.js)<br>[`line-terminators.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/line-terminators.js) |  | The expanded test262 slice covers label-targeted break/continue across nested loops and the line-terminator case where `continue` must be treated as unlabeled. |
 | labels used for labeled break/continue | Supported | [`ControlFlow_ForLoop_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js)<br>[`ControlFlow_ForLoop_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js)<br>[`ControlFlow_While_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledBreak.js)<br>[`ControlFlow_While_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js)<br>[`ControlFlow_DoWhile_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledBreak.js)<br>[`ControlFlow_DoWhile_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledContinue.js)<br>[`ControlFlow_ForOf_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js)<br>[`ControlFlow_ForOf_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js)<br>[`ControlFlow_ForIn_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js)<br>[`ControlFlow_ForIn_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js)<br>[`ControlFlow_Switch_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js)<br>[`cptn-break.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/cptn-break.js)<br>[`cptn-nrml.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/cptn-nrml.js) |  | Supports label targeting for break/continue across nested statements and the non-eval labeled completion scenarios covered by the test262 ports. Annex-B labeled function semantics are not exhaustively tested. |
 

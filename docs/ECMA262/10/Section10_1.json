@@ -192,9 +192,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-getprototypeof",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js"
+          "tests/Js2IL.Tests/Object/JavaScript/PrototypeChain_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Object/getPrototypeOf/ExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/built-ins/Object/setPrototypeOf/ExecutionTests.cs"
         ],
-        "notes": "JS2IL stores an optional [[Prototype]] in the PrototypeChain side-table and only enables prototype-chain semantics when code exercises them. Null-prototype objects and explicit prototype mutation work, but ordinary/exotic invariants are not enforced."
+        "notes": "JS2IL stores an optional [[Prototype]] in the PrototypeChain side-table and only enables prototype-chain semantics when code exercises them. The bounded test262 ports now cover null/undefined guards, constructor prototype relationships, explicit prototype mutation success, and invalid-prototype rejection. Null-prototype objects and explicit prototype mutation work, but ordinary/exotic invariants are not enforced."
       },
       {
         "clause": "10.1.3",
@@ -202,9 +204,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ordinary-object-internal-methods-and-internal-slots-isextensible",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Object/freeze/ExecutionTests.cs"
         ],
-        "notes": "Integrity APIs are backed by a simplified ObjectIntegrityState plus descriptor rewrites for existing own properties. They cover the common preventExtensions/seal/freeze checks, but do not model every descriptor invariant or exotic-object edge case from the specification."
+        "notes": "Integrity APIs are backed by a simplified ObjectIntegrityState plus descriptor rewrites for existing own properties. The bounded test262 freeze ports cover ordinary own-data-property descriptor tightening and preserving pre-existing non-writable attributes while forcing configurability off. They cover the common preventExtensions/seal/freeze checks, but do not model every descriptor invariant or exotic-object edge case from the specification."
       },
       {
         "clause": "10.1.5",
@@ -228,9 +231,10 @@
           "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperties_Basic.js",
           "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_AccessorTransitions_And_Invariants.js",
           "tests/Js2IL.Tests/Object/JavaScript/Object_DefineProperty_NonExtensible_ReconfigureExisting.js",
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js"
+          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Object/defineProperty/ExecutionTests.cs"
         ],
-        "notes": "Ordinary-object defineProperty handling now preserves unspecified attributes on redefinition, rejects mixed data/accessor descriptors, blocks invalid non-configurable/non-writable redefinitions, and rejects new own properties on non-extensible ordinary objects. Array, typed-array, string, and other exotic-object descriptor edge cases are still not modeled end-to-end."
+        "notes": "Ordinary-object defineProperty handling now preserves unspecified attributes on redefinition, rejects mixed data/accessor descriptors, blocks invalid non-configurable/non-writable redefinitions, and rejects new own properties on non-extensible ordinary objects. The bounded test262 ports now cover descriptor-shape validation, default attribute filling, same-descriptor no-op redefinitions, and enumerable/configurable transition rejections for non-configurable properties. Array, typed-array, string, and other exotic-object descriptor edge cases are still not modeled end-to-end."
       },
       {
         "clause": "10.1.7",
@@ -267,9 +271,10 @@
           "tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js",
           "tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertyNames_Basic.js",
           "tests/Js2IL.Tests/Object/JavaScript/Object_GetOwnPropertySymbols_Basic.js",
-          "tests/Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js"
+          "tests/Js2IL.Tests/Object/JavaScript/Object_OwnPropertyKeyOrdering.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Object/getOwnPropertyNames/ExecutionTests.cs"
         ],
-        "notes": "Ordinary-object own-key reflection now follows the usual ECMA-262 ordering for array-index string keys (ascending), then string keys in insertion order, then symbols in insertion order across Object.keys/values/entries, getOwnPropertyNames, getOwnPropertySymbols, and for...in on dictionary-backed ordinary objects. Host objects and some exotic receivers still rely on simplified reflection ordering."
+        "notes": "Ordinary-object own-key reflection now follows the usual ECMA-262 ordering for array-index string keys (ascending), then string keys in insertion order, then symbols in insertion order across Object.keys/values/entries, getOwnPropertyNames, getOwnPropertySymbols, and for...in on dictionary-backed ordinary objects. The bounded test262 getOwnPropertyNames ports cover the function surface plus ordinary-object returned-array behavior. Host objects and some exotic receivers still rely on simplified reflection ordering."
       },
       {
         "clause": "10.1.12",
@@ -279,9 +284,10 @@
         "testScripts": [
           "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
           "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Object/create/ExecutionTests.cs"
         ],
-        "notes": "Object.create handles null and explicit prototypes, and function construction consults constructor.prototype when instantiating delegate-backed functions. newTarget-based default prototype selection and other constructor-side abstract operations are still simplified."
+        "notes": "Object.create handles null and explicit prototypes, and function construction consults constructor.prototype when instantiating delegate-backed functions. The bounded test262 create ports cover null-prototype creation, undefined rejection, explicit prototype wiring, and property-bag initialization. newTarget-based default prototype selection and other constructor-side abstract operations are still simplified."
       }
     ]
   }

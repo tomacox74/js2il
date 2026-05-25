@@ -1346,19 +1346,42 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var ctorName = JavaScriptRuntime.ObjectRuntime.GetItem(ctorPrototype, "name") as string;
-            return ctorName switch
+            if (ReferenceEquals(ctorPrototype, GlobalThis.ErrorPrototypeValue))
             {
-                "Error" => value is JavaScriptRuntime.Error,
-                "EvalError" => value is JavaScriptRuntime.EvalError,
-                "RangeError" => value is JavaScriptRuntime.RangeError,
-                "ReferenceError" => value is JavaScriptRuntime.ReferenceError,
-                "SyntaxError" => value is JavaScriptRuntime.SyntaxError,
-                "TypeError" => value is JavaScriptRuntime.TypeError,
-                "URIError" => value is JavaScriptRuntime.URIError,
-                "AggregateError" => value is JavaScriptRuntime.AggregateError,
-                _ => false
-            };
+                return value is JavaScriptRuntime.Error;
+            }
+
+            if (ReferenceEquals(ctorPrototype, GlobalThis.EvalErrorPrototypeValue))
+            {
+                return value is JavaScriptRuntime.EvalError;
+            }
+
+            if (ReferenceEquals(ctorPrototype, GlobalThis.RangeErrorPrototypeValue))
+            {
+                return value is JavaScriptRuntime.RangeError;
+            }
+
+            if (ReferenceEquals(ctorPrototype, GlobalThis.ReferenceErrorPrototypeValue))
+            {
+                return value is JavaScriptRuntime.ReferenceError;
+            }
+
+            if (ReferenceEquals(ctorPrototype, GlobalThis.SyntaxErrorPrototypeValue))
+            {
+                return value is JavaScriptRuntime.SyntaxError;
+            }
+
+            if (ReferenceEquals(ctorPrototype, GlobalThis.TypeErrorPrototypeValue))
+            {
+                return value is JavaScriptRuntime.TypeError;
+            }
+
+            if (ReferenceEquals(ctorPrototype, GlobalThis.URIErrorPrototypeValue))
+            {
+                return value is JavaScriptRuntime.URIError;
+            }
+
+            return false;
         }
 
         /// <summary>

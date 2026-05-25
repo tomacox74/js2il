@@ -68,4 +68,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_4_3_2_1_10()
         => ExecutionTestFromFile("15.4.3.2-1-10");
 
+    [Fact(DisplayName = "15.4.3.2-1-2")]
+    public Task _15_4_3_2_1_2()
+        => ExecutionTestFromFile("15.4.3.2-1-2");
+
+    [Fact(DisplayName = "15.4.3.2-1-3")]
+    public Task _15_4_3_2_1_3()
+        => ExecutionTestFromFile("15.4.3.2-1-3");
+
+    [Fact(DisplayName = "15.4.3.2-1-11")]
+    public Task _15_4_3_2_1_11()
+        => ExecutionTestFromFile("15.4.3.2-1-11");
+
+    [Fact(DisplayName = "15.4.3.2-2-1")]
+    public Task _15_4_3_2_2_1()
+        => ExecutionTestFromFile("15.4.3.2-2-1");
+
 }

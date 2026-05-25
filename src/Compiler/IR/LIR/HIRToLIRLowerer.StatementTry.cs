@@ -316,12 +316,12 @@ public sealed partial class HIRToLIRLowerer
                 lirInstructions.Add(new LIRBranchIfTrue(hasPendingReturn, pendingReturnLabel));
                 lirInstructions.Add(new LIRBranch(endLabel));
                 lirInstructions.Add(new LIRLabel(pendingReturnLabel));
-                EnsureReturnEpilogueStorage();
-                if (!_returnEpilogueLoadTemp.HasValue)
+                if (!_methodBodyIR.ReturnEpilogueLabelId.HasValue)
                 {
                     return false;
                 }
-                lirInstructions.Add(new LIRReturn(_returnEpilogueLoadTemp.Value));
+                _needsReturnEpilogueBlock = true;
+                lirInstructions.Add(new LIRLeave(_methodBodyIR.ReturnEpilogueLabelId.Value));
                 lirInstructions.Add(new LIRLabel(endLabel));
 
                 if (hasCatch)

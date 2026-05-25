@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b1
+				// Method begins at RVA 0x23ad
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ba
+				// Method begins at RVA 0x23b6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23a8
+			// Method begins at RVA 0x23a4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 826 (0x33a)
+		// Code size: 823 (0x337)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Map_Constructor_Prototype_Surface/Scope,
@@ -294,63 +294,59 @@
 			IL_02a7: ldstr "no-throw"
 			IL_02ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_02b1: pop
-			IL_02b2: leave IL_0336
+			IL_02b2: leave IL_0333
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_02b7: stloc.s 5
 			IL_02b9: ldloc.s 5
-			IL_02bb: dup
-			IL_02bc: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02c1: dup
-			IL_02c2: brtrue IL_02d8
+			IL_02bb: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_02c0: dup
+			IL_02c1: brtrue IL_02d7
 
-			IL_02c7: pop
-			IL_02c8: dup
+			IL_02c6: pop
+			IL_02c7: ldloc.s 5
 			IL_02c9: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_02ce: dup
-			IL_02cf: brtrue IL_02e5
+			IL_02cf: brtrue IL_02e3
 
 			IL_02d4: pop
-			IL_02d5: pop
-			IL_02d6: rethrow
+			IL_02d5: rethrow
 
-			IL_02d8: pop
-			IL_02d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02de: stloc.s 6
-			IL_02e0: br IL_02e8
+			IL_02d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02dc: stloc.s 6
+			IL_02de: br IL_02e5
 
-			IL_02e5: pop
-			IL_02e6: stloc.s 6
+			IL_02e3: stloc.s 6
 
-			IL_02e8: ldloc.s 6
-			IL_02ea: stloc.s 12
-			IL_02ec: ldloc.s 12
-			IL_02ee: stloc.s 7
-			IL_02f0: newobj instance void Modules.Map_Constructor_Prototype_Surface/Scope/Block_L26C12::.ctor()
-			IL_02f5: stloc.s 8
-			IL_02f7: ldloc.s 7
-			IL_02f9: ldstr "name"
-			IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0303: ldstr ": "
-			IL_0308: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_030d: stloc.s 14
-			IL_030f: ldloc.s 14
-			IL_0311: ldloc.s 7
-			IL_0313: ldstr "message"
-			IL_0318: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0322: stloc.s 14
-			IL_0324: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0329: ldloc.s 14
-			IL_032b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0330: pop
-			IL_0331: leave IL_0336
+			IL_02e5: ldloc.s 6
+			IL_02e7: stloc.s 12
+			IL_02e9: ldloc.s 12
+			IL_02eb: stloc.s 7
+			IL_02ed: newobj instance void Modules.Map_Constructor_Prototype_Surface/Scope/Block_L26C12::.ctor()
+			IL_02f2: stloc.s 8
+			IL_02f4: ldloc.s 7
+			IL_02f6: ldstr "name"
+			IL_02fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0300: ldstr ": "
+			IL_0305: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_030a: stloc.s 14
+			IL_030c: ldloc.s 14
+			IL_030e: ldloc.s 7
+			IL_0310: ldstr "message"
+			IL_0315: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_031a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_031f: stloc.s 14
+			IL_0321: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0326: ldloc.s 14
+			IL_0328: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_032d: pop
+			IL_032e: leave IL_0333
 		} // end handler
 
-		IL_0336: ldnull
-		IL_0337: stloc.s 9
-		IL_0339: ret
+		IL_0333: ldnull
+		IL_0334: stloc.s 9
+		IL_0336: ret
 	} // end of method Map_Constructor_Prototype_Surface::__js_module_init__
 
 } // end of class Modules.Map_Constructor_Prototype_Surface
@@ -362,7 +358,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23c3
+		// Method begins at RVA 0x23bf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

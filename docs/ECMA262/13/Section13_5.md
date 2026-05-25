@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-03T15:15:02Z
+> Last generated (UTC): 2026-05-24T13:09:52Z
 
 JS2IL covers the unary operator forms exercised by the current repo tests and imported test262 cases. `delete` remains tracked as limited because strict-mode early errors and some host-object deletion edge cases are not yet exhaustively validated.
 
@@ -58,7 +58,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Unary + | Supported | [`11.4.6-2-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-plus/JavaScript/11.4.6-2-1.js)<br>[`S11.4.6_A2.1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-plus/JavaScript/S11.4.6_A2.1_T1.js) |  | Implements JavaScript `ToNumber` coercion for unary plus through the compiler's numeric conversion path. Current test coverage includes empty-string and primitive/reference coercion cases imported from test262. |
+| Unary + | Supported | [`11.4.6-2-1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-plus/JavaScript/11.4.6-2-1.js)<br>[`S11.4.6_A2.1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/unary-plus/JavaScript/S11.4.6_A2.1_T1.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/unary-plus/PortExpressionsBatchExecutionTests.cs` |  | Implements JavaScript `ToNumber` coercion for unary plus through the compiler's numeric conversion path. Current coverage now includes empty-string, null, object/default-value, primitive/reference coercion, and unresolvable-reference cases imported from test262. |
 
 ### 13.5.5 ([tc39.es](https://tc39.es/ecma262/#sec-unary-minus-operator))
 

@@ -6,6 +6,22 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
 {
     public PortExpressionsBatchExecutionTests() : base("language.expressions.strict_equals") { }
 
+    [Fact(DisplayName = "S11.9.4_A2.4_T2")]
+    public Task S11_9_4_A2_4_T2()
+        => ExecutionTest("S11.9.4_A2.4_T2");
+
+    [Fact(DisplayName = "S11.9.4_A4.2")]
+    public Task S11_9_4_A4_2()
+        => ExecutionTest("S11.9.4_A4.2");
+
+    [Fact(DisplayName = "S11.9.4_A6.2")]
+    public Task S11_9_4_A6_2()
+        => ExecutionTest("S11.9.4_A6.2");
+
+    [Fact(DisplayName = "S11.9.4_A8_T4")]
+    public Task S11_9_4_A8_T4()
+        => ExecutionTest("S11.9.4_A8_T4");
+
     [Fact(DisplayName = "bigint-and-bigint")]
     public Task bigint_and_bigint()
         => ExecutionTest("bigint-and-bigint");

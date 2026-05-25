@@ -25,4 +25,17 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_8_A3()
         => ExecutionTest("S12.8_A3");
 
+
+
+    [Fact(DisplayName = "S12.8_A4_T1")]
+    public Task S12_8_A4_T1()
+        => ExecutionTest("S12.8_A4_T1");
+
+    [Fact(DisplayName = "S12.8_A4_T2")]
+    public Task S12_8_A4_T2()
+        => ExecutionTest("S12.8_A4_T2");
+
+    [Fact(DisplayName = "S12.8_A4_T3")]
+    public Task S12_8_A4_T3()
+        => ExecutionTest("S12.8_A4_T3");
 }

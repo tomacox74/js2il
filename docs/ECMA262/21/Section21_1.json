@@ -90,7 +90,7 @@
     {
       "clause": "21.1.2.11",
       "title": "Number.NEGATIVE_INFINITY",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.negative_infinity"
     },
     {
@@ -108,7 +108,7 @@
     {
       "clause": "21.1.2.14",
       "title": "Number.POSITIVE_INFINITY",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.positive_infinity"
     },
     {
@@ -185,9 +185,11 @@
         "feature": "Number ( value )",
         "status": "Supported with Limitations",
         "test262Paths": [
-          "built-ins/Number/return-abrupt-tonumber-value.js"
+          "built-ins/Number/return-abrupt-tonumber-value.js",
+          "built-ins/Number/S9.3_A1_T1.js",
+          "built-ins/Number/S9.3.1_A17.js"
         ],
-        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative NaN and hexadecimal-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
       },
       {
         "clause": "21.1.2.1",
@@ -215,6 +217,24 @@
           "built-ins/Number/parseInt.js"
         ],
         "notes": "Exposed as the same function value as the global parseInt property with writable, non-enumerable, configurable data-property attributes."
+      },
+      {
+        "clause": "21.1.2.11",
+        "feature": "Number.NEGATIVE_INFINITY",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/NEGATIVE_INFINITY/value.js"
+        ],
+        "notes": "Exposed on the Number constructor with the expected negative infinity numeric value."
+      },
+      {
+        "clause": "21.1.2.14",
+        "feature": "Number.POSITIVE_INFINITY",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/POSITIVE_INFINITY/value.js"
+        ],
+        "notes": "Exposed on the Number constructor with the expected positive infinity numeric value."
       }
     ]
   }
