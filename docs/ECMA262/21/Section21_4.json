@@ -648,6 +648,23 @@
           "tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
         ],
         "notes": "Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'."
+      },
+      {
+        "clause": "21.4.2",
+        "feature": "Date constructor basics (2-4 numeric arguments, Date copy, and TimeClip -0 normalization)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-date-constructor",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/Date/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/construct_with_date.js",
+          "test/built-ins/Date/S15.9.3.1_A1_T1.js",
+          "test/built-ins/Date/S15.9.3.1_A1_T2.js",
+          "test/built-ins/Date/S15.9.3.1_A1_T3.js",
+          "test/built-ins/Date/TimeClip_negative_zero.js"
+        ],
+        "notes": "Checked-in coverage now includes representative 2-4 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0."
       }
     ]
   }

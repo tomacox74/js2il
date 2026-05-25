@@ -52,5 +52,28 @@ public class ExecutionTests : DiskExecutionTestsBase
 
         => ExecutionTestFromFile("S15.1.2.2_A2_T1");
 
-}
+    [Fact(DisplayName = "not-a-constructor")]
+    public Task not_a_constructor()
+        => ExecutionTestFromFile("not-a-constructor");
 
+    [Fact(DisplayName = "S15.1.2.2_A2_T2")]
+    public Task S15_1_2_2_A2_T2()
+        => ExecutionTestFromFile("S15.1.2.2_A2_T2");
+
+    [Fact(DisplayName = "S15.1.2.2_A5.1_T1")]
+    public Task S15_1_2_2_A5_1_T1()
+        => ExecutionTestFromFile("S15.1.2.2_A5.1_T1");
+
+    [Fact(DisplayName = "S15.1.2.2_A6.1_T1")]
+    public Task S15_1_2_2_A6_1_T1()
+        => ExecutionTestFromFile("S15.1.2.2_A6.1_T1");
+
+    [Fact(DisplayName = "S15.1.2.2_A7.2_T1")]
+    public Task S15_1_2_2_A7_2_T1()
+        => ExecutionTestFromFile("S15.1.2.2_A7.2_T1");
+
+    [Fact(DisplayName = "S15.1.2.2_A8")]
+    public Task S15_1_2_2_A8()
+        => ExecutionTestFromFile("S15.1.2.2_A8");
+
+}
