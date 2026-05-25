@@ -1,0 +1,70 @@
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: |
+    A property name P (in the form of a string value) is an array index
+    if and only if ToString(ToUint32(P)) is equal to P and ToUint32(P) is not equal to 2^32 - 1
+es5id: 15.4_A1.1_T2
+description: Checking for number primitive
+---*/
+
+function assert(value) {
+  console.log(!!value);
+}
+
+assert.sameValue = function(actual, expected) {
+  console.log(Object.is(actual, expected));
+};
+
+assert.notSameValue = function(actual, unexpected) {
+  console.log(!Object.is(actual, unexpected));
+};
+
+function compareArray(actual, expected) {
+  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
+    return false;
+  }
+  for (let i = 0; i < actual.length; i++) {
+    if (!Object.is(actual[i], expected[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+assert.compareArray = function(actual, expected) {
+  console.log(compareArray(actual, expected));
+};
+
+assert.throws = function(expectedCtor, fn) {
+  try {
+    fn();
+    console.log(false);
+  } catch (error) {
+    console.log(error instanceof expectedCtor);
+  }
+};
+
+function Test262Error(message) {
+  this.name = 'Test262Error';
+  this.message = message || '';
+}
+Test262Error.prototype = Object.create(Error.prototype);
+Test262Error.prototype.constructor = Test262Error;
+
+var x = [];
+
+x[NaN] = 1;
+assert.sameValue(x[0], undefined, 'The value of x[0] is expected to equal undefined');
+assert.sameValue(x["NaN"], 1, 'The value of x["NaN"] is expected to be 1');
+
+var y = [];
+y[Number.POSITIVE_INFINITY] = 1;
+assert.sameValue(y[0], undefined, 'The value of y[0] is expected to equal undefined');
+assert.sameValue(y["Infinity"], 1, 'The value of y["Infinity"] is expected to be 1');
+
+var z = [];
+z[Number.NEGATIVE_INFINITY] = 1;
+assert.sameValue(z[0], undefined, 'The value of z[0] is expected to equal undefined');
+assert.sameValue(z["-Infinity"], 1, 'The value of z["-Infinity"] is expected to be 1');
