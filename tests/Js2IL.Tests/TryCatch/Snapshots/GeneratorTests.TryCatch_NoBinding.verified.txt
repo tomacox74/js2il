@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NoBinding/Scope,
@@ -111,39 +111,38 @@
 			IL_002d: ldloc.s 6
 			IL_002f: stloc.2
 			IL_0030: ldloc.2
-			IL_0031: dup
-			IL_0032: isinst [System.Runtime]System.Exception
-			IL_0037: dup
-			IL_0038: brtrue IL_0044
+			IL_0031: isinst [System.Runtime]System.Exception
+			IL_0036: dup
+			IL_0037: brtrue IL_0044
 
-			IL_003d: pop
+			IL_003c: pop
+			IL_003d: ldloc.2
 			IL_003e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_0043: throw
 
-			IL_0044: pop
-			IL_0045: throw
+			IL_0044: throw
 
-			IL_0046: leave IL_0068
+			IL_0045: leave IL_0067
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_004b: stloc.3
-			IL_004c: newobj instance void Modules.TryCatch_NoBinding/Scope/Block_L6C8::.ctor()
-			IL_0051: stloc.s 4
-			IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0058: ldstr "in catch"
-			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0062: pop
-			IL_0063: leave IL_0068
+			IL_004a: stloc.3
+			IL_004b: newobj instance void Modules.TryCatch_NoBinding/Scope/Block_L6C8::.ctor()
+			IL_0050: stloc.s 4
+			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0057: ldstr "in catch"
+			IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0061: pop
+			IL_0062: leave IL_0067
 		} // end handler
 
-		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006d: ldstr "after catch"
-		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0077: pop
-		IL_0078: ldnull
-		IL_0079: stloc.s 5
-		IL_007b: ret
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006c: ldstr "after catch"
+		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0076: pop
+		IL_0077: ldnull
+		IL_0078: stloc.s 5
+		IL_007a: ret
 	} // end of method TryCatch_NoBinding::__js_module_init__
 
 } // end of class Modules.TryCatch_NoBinding

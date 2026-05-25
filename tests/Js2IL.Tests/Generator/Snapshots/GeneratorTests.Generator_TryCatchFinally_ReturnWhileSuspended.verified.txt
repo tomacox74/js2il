@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2937
+					// Method begins at RVA 0x293f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2940
+					// Method begins at RVA 0x2948
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -62,7 +62,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2949
+					// Method begins at RVA 0x2951
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x292e
+				// Method begins at RVA 0x2936
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,7 +106,7 @@
 			)
 			// Method begins at RVA 0x23b8
 			// Header size: 12
-			// Code size: 673 (0x2a1)
+			// Code size: 677 (0x2a5)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Generator_TryCatchFinally_ReturnWhileSuspended/g1/Scope,
@@ -339,50 +339,50 @@
 			IL_0232: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
 			IL_0237: stloc.s 6
 			IL_0239: ldloc.s 6
-			IL_023b: brfalse IL_025b
+			IL_023b: brfalse IL_025f
 
 			IL_0240: ldloc.0
 			IL_0241: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_0246: dup
-			IL_0247: isinst [System.Runtime]System.Exception
-			IL_024c: dup
-			IL_024d: brtrue IL_0259
+			IL_0246: isinst [System.Runtime]System.Exception
+			IL_024b: dup
+			IL_024c: brtrue IL_025e
 
-			IL_0252: pop
-			IL_0253: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0258: throw
+			IL_0251: pop
+			IL_0252: ldloc.0
+			IL_0253: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_0258: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_025d: throw
 
-			IL_0259: pop
-			IL_025a: throw
+			IL_025e: throw
 
-			IL_025b: ldloc.0
-			IL_025c: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
-			IL_0261: stloc.s 6
-			IL_0263: ldloc.s 6
-			IL_0265: brfalse IL_0282
+			IL_025f: ldloc.0
+			IL_0260: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
+			IL_0265: stloc.s 6
+			IL_0267: ldloc.s 6
+			IL_0269: brfalse IL_0286
 
-			IL_026a: ldloc.0
-			IL_026b: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
-			IL_0270: stloc.s 7
-			IL_0272: ldloc.0
-			IL_0273: ldc.i4.1
-			IL_0274: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_0279: ldloc.s 7
-			IL_027b: ldc.i4.1
-			IL_027c: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_0281: ret
+			IL_026e: ldloc.0
+			IL_026f: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_0274: stloc.s 7
+			IL_0276: ldloc.0
+			IL_0277: ldc.i4.1
+			IL_0278: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_027d: ldloc.s 7
+			IL_027f: ldc.i4.1
+			IL_0280: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0285: ret
 
-			IL_0282: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0287: ldstr "g1:after-try"
-			IL_028c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0291: pop
-			IL_0292: ldloc.0
-			IL_0293: ldc.i4.1
-			IL_0294: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_0299: ldnull
-			IL_029a: ldc.i4.1
-			IL_029b: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_02a0: ret
+			IL_0286: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_028b: ldstr "g1:after-try"
+			IL_0290: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0295: pop
+			IL_0296: ldloc.0
+			IL_0297: ldc.i4.1
+			IL_0298: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_029d: ldnull
+			IL_029e: ldc.i4.1
+			IL_029f: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_02a4: ret
 		} // end of method g1::__js_call__
 
 	} // end of class g1
@@ -402,7 +402,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x295b
+					// Method begins at RVA 0x2963
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -422,7 +422,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2964
+					// Method begins at RVA 0x296c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -442,7 +442,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x296d
+					// Method begins at RVA 0x2975
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -460,7 +460,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2952
+				// Method begins at RVA 0x295a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -484,9 +484,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2668
+			// Method begins at RVA 0x266c
 			// Header size: 12
-			// Code size: 689 (0x2b1)
+			// Code size: 693 (0x2b5)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Generator_TryCatchFinally_ReturnWhileSuspended/g2/Scope,
@@ -723,50 +723,50 @@
 			IL_0242: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
 			IL_0247: stloc.s 6
 			IL_0249: ldloc.s 6
-			IL_024b: brfalse IL_026b
+			IL_024b: brfalse IL_026f
 
 			IL_0250: ldloc.0
 			IL_0251: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_0256: dup
-			IL_0257: isinst [System.Runtime]System.Exception
-			IL_025c: dup
-			IL_025d: brtrue IL_0269
+			IL_0256: isinst [System.Runtime]System.Exception
+			IL_025b: dup
+			IL_025c: brtrue IL_026e
 
-			IL_0262: pop
-			IL_0263: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_0268: throw
+			IL_0261: pop
+			IL_0262: ldloc.0
+			IL_0263: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_0268: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_026d: throw
 
-			IL_0269: pop
-			IL_026a: throw
+			IL_026e: throw
 
-			IL_026b: ldloc.0
-			IL_026c: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
-			IL_0271: stloc.s 6
-			IL_0273: ldloc.s 6
-			IL_0275: brfalse IL_0292
+			IL_026f: ldloc.0
+			IL_0270: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
+			IL_0275: stloc.s 6
+			IL_0277: ldloc.s 6
+			IL_0279: brfalse IL_0296
 
-			IL_027a: ldloc.0
-			IL_027b: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
-			IL_0280: stloc.s 7
-			IL_0282: ldloc.0
-			IL_0283: ldc.i4.1
-			IL_0284: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_0289: ldloc.s 7
-			IL_028b: ldc.i4.1
-			IL_028c: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_0291: ret
+			IL_027e: ldloc.0
+			IL_027f: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_0284: stloc.s 7
+			IL_0286: ldloc.0
+			IL_0287: ldc.i4.1
+			IL_0288: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_028d: ldloc.s 7
+			IL_028f: ldc.i4.1
+			IL_0290: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0295: ret
 
-			IL_0292: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0297: ldstr "g2:after-try"
-			IL_029c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_02a1: pop
-			IL_02a2: ldloc.0
-			IL_02a3: ldc.i4.1
-			IL_02a4: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_02a9: ldnull
-			IL_02aa: ldc.i4.1
-			IL_02ab: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_02b0: ret
+			IL_0296: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_029b: ldstr "g2:after-try"
+			IL_02a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_02a5: pop
+			IL_02a6: ldloc.0
+			IL_02a7: ldc.i4.1
+			IL_02a8: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_02ad: ldnull
+			IL_02ae: ldc.i4.1
+			IL_02af: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_02b4: ret
 		} // end of method g2::__js_call__
 
 	} // end of class g2
@@ -786,7 +786,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2925
+			// Method begins at RVA 0x292d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1109,7 +1109,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2976
+		// Method begins at RVA 0x297e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 812 (0x32c)
+		// Code size: 809 (0x329)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Set_Constructor_Prototype_Surface/Scope,
@@ -292,63 +292,59 @@
 			IL_0299: ldstr "no-throw"
 			IL_029e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_02a3: pop
-			IL_02a4: leave IL_0328
+			IL_02a4: leave IL_0325
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_02a9: stloc.s 5
 			IL_02ab: ldloc.s 5
-			IL_02ad: dup
-			IL_02ae: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02b3: dup
-			IL_02b4: brtrue IL_02ca
+			IL_02ad: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_02b2: dup
+			IL_02b3: brtrue IL_02c9
 
-			IL_02b9: pop
-			IL_02ba: dup
+			IL_02b8: pop
+			IL_02b9: ldloc.s 5
 			IL_02bb: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_02c0: dup
-			IL_02c1: brtrue IL_02d7
+			IL_02c1: brtrue IL_02d5
 
 			IL_02c6: pop
-			IL_02c7: pop
-			IL_02c8: rethrow
+			IL_02c7: rethrow
 
-			IL_02ca: pop
-			IL_02cb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02d0: stloc.s 6
-			IL_02d2: br IL_02da
+			IL_02c9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02ce: stloc.s 6
+			IL_02d0: br IL_02d7
 
-			IL_02d7: pop
-			IL_02d8: stloc.s 6
+			IL_02d5: stloc.s 6
 
-			IL_02da: ldloc.s 6
-			IL_02dc: stloc.s 12
-			IL_02de: ldloc.s 12
-			IL_02e0: stloc.s 7
-			IL_02e2: newobj instance void Modules.Set_Constructor_Prototype_Surface/Scope/Block_L26C12::.ctor()
-			IL_02e7: stloc.s 8
-			IL_02e9: ldloc.s 7
-			IL_02eb: ldstr "name"
-			IL_02f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02f5: ldstr ": "
-			IL_02fa: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_02ff: stloc.s 14
-			IL_0301: ldloc.s 14
-			IL_0303: ldloc.s 7
-			IL_0305: ldstr "message"
-			IL_030a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_030f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0314: stloc.s 14
-			IL_0316: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_031b: ldloc.s 14
-			IL_031d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0322: pop
-			IL_0323: leave IL_0328
+			IL_02d7: ldloc.s 6
+			IL_02d9: stloc.s 12
+			IL_02db: ldloc.s 12
+			IL_02dd: stloc.s 7
+			IL_02df: newobj instance void Modules.Set_Constructor_Prototype_Surface/Scope/Block_L26C12::.ctor()
+			IL_02e4: stloc.s 8
+			IL_02e6: ldloc.s 7
+			IL_02e8: ldstr "name"
+			IL_02ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02f2: ldstr ": "
+			IL_02f7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_02fc: stloc.s 14
+			IL_02fe: ldloc.s 14
+			IL_0300: ldloc.s 7
+			IL_0302: ldstr "message"
+			IL_0307: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_030c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0311: stloc.s 14
+			IL_0313: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0318: ldloc.s 14
+			IL_031a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_031f: pop
+			IL_0320: leave IL_0325
 		} // end handler
 
-		IL_0328: ldnull
-		IL_0329: stloc.s 9
-		IL_032b: ret
+		IL_0325: ldnull
+		IL_0326: stloc.s 9
+		IL_0328: ret
 	} // end of method Set_Constructor_Prototype_Surface::__js_module_init__
 
 } // end of class Modules.Set_Constructor_Prototype_Surface

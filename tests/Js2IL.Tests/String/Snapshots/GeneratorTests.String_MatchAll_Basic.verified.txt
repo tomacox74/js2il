@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 700 (0x2bc)
+		// Code size: 697 (0x2b9)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_MatchAll_Basic/Scope,
@@ -244,53 +244,49 @@
 			IL_024f: ldloc.s 9
 			IL_0251: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::from(object)
 			IL_0256: pop
-			IL_0257: leave IL_02b8
+			IL_0257: leave IL_02b5
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_025c: stloc.s 4
 			IL_025e: ldloc.s 4
-			IL_0260: dup
-			IL_0261: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0266: dup
-			IL_0267: brtrue IL_027d
+			IL_0260: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0265: dup
+			IL_0266: brtrue IL_027c
 
-			IL_026c: pop
-			IL_026d: dup
+			IL_026b: pop
+			IL_026c: ldloc.s 4
 			IL_026e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_0273: dup
-			IL_0274: brtrue IL_028a
+			IL_0274: brtrue IL_0288
 
 			IL_0279: pop
-			IL_027a: pop
-			IL_027b: rethrow
+			IL_027a: rethrow
 
-			IL_027d: pop
-			IL_027e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0283: stloc.s 5
-			IL_0285: br IL_028d
+			IL_027c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0281: stloc.s 5
+			IL_0283: br IL_028a
 
-			IL_028a: pop
-			IL_028b: stloc.s 5
+			IL_0288: stloc.s 5
 
-			IL_028d: ldloc.s 5
-			IL_028f: stloc.s 9
-			IL_0291: ldloc.s 9
-			IL_0293: stloc.s 6
-			IL_0295: newobj instance void Modules.String_MatchAll_Basic/Scope/Block_L21C16::.ctor()
-			IL_029a: stloc.s 7
-			IL_029c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02a1: ldloc.s 6
-			IL_02a3: ldstr "name"
-			IL_02a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_02b2: pop
-			IL_02b3: leave IL_02b8
+			IL_028a: ldloc.s 5
+			IL_028c: stloc.s 9
+			IL_028e: ldloc.s 9
+			IL_0290: stloc.s 6
+			IL_0292: newobj instance void Modules.String_MatchAll_Basic/Scope/Block_L21C16::.ctor()
+			IL_0297: stloc.s 7
+			IL_0299: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_029e: ldloc.s 6
+			IL_02a0: ldstr "name"
+			IL_02a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_02af: pop
+			IL_02b0: leave IL_02b5
 		} // end handler
 
-		IL_02b8: ldnull
-		IL_02b9: stloc.s 8
-		IL_02bb: ret
+		IL_02b5: ldnull
+		IL_02b6: stloc.s 8
+		IL_02b8: ret
 	} // end of method String_MatchAll_Basic::__js_module_init__
 
 } // end of class Modules.String_MatchAll_Basic

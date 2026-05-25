@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 320 (0x140)
+		// Code size: 317 (0x13d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Http_Request_Unsupported_Connect_Fails_Clearly/Scope,
@@ -148,69 +148,65 @@
 			IL_0098: ldstr "unexpected"
 			IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_00a2: pop
-			IL_00a3: leave IL_013c
+			IL_00a3: leave IL_0139
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_00a8: stloc.s 4
 			IL_00aa: ldloc.s 4
-			IL_00ac: dup
-			IL_00ad: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00b2: dup
-			IL_00b3: brtrue IL_00c9
+			IL_00ac: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00b1: dup
+			IL_00b2: brtrue IL_00c8
 
-			IL_00b8: pop
-			IL_00b9: dup
+			IL_00b7: pop
+			IL_00b8: ldloc.s 4
 			IL_00ba: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_00bf: dup
-			IL_00c0: brtrue IL_00d6
+			IL_00c0: brtrue IL_00d4
 
 			IL_00c5: pop
-			IL_00c6: pop
-			IL_00c7: rethrow
+			IL_00c6: rethrow
 
-			IL_00c9: pop
-			IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00cf: stloc.s 5
-			IL_00d1: br IL_00d9
+			IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00cd: stloc.s 5
+			IL_00cf: br IL_00d6
 
-			IL_00d6: pop
-			IL_00d7: stloc.s 5
+			IL_00d4: stloc.s 5
 
-			IL_00d9: ldloc.s 5
-			IL_00db: stloc.s 9
-			IL_00dd: ldloc.s 9
-			IL_00df: stloc.s 6
-			IL_00e1: newobj instance void Modules.Http_Request_Unsupported_Connect_Fails_Clearly/Scope/Block_L15C14::.ctor()
-			IL_00e6: stloc.s 7
-			IL_00e8: ldstr "CONNECT requests are not supported"
-			IL_00ed: ldstr ""
-			IL_00f2: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_00f7: stloc.s 10
-			IL_00f9: ldloc.s 10
-			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0100: stloc.s 9
-			IL_0102: ldloc.s 9
-			IL_0104: ldstr "test"
-			IL_0109: ldloc.s 6
-			IL_010b: ldstr "message"
-			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_011a: stloc.s 9
-			IL_011c: ldstr "connect unsupported:"
-			IL_0121: ldloc.s 9
-			IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0128: stloc.s 11
-			IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_012f: ldloc.s 11
-			IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0136: pop
-			IL_0137: leave IL_013c
+			IL_00d6: ldloc.s 5
+			IL_00d8: stloc.s 9
+			IL_00da: ldloc.s 9
+			IL_00dc: stloc.s 6
+			IL_00de: newobj instance void Modules.Http_Request_Unsupported_Connect_Fails_Clearly/Scope/Block_L15C14::.ctor()
+			IL_00e3: stloc.s 7
+			IL_00e5: ldstr "CONNECT requests are not supported"
+			IL_00ea: ldstr ""
+			IL_00ef: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_00f4: stloc.s 10
+			IL_00f6: ldloc.s 10
+			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00fd: stloc.s 9
+			IL_00ff: ldloc.s 9
+			IL_0101: ldstr "test"
+			IL_0106: ldloc.s 6
+			IL_0108: ldstr "message"
+			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0117: stloc.s 9
+			IL_0119: ldstr "connect unsupported:"
+			IL_011e: ldloc.s 9
+			IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0125: stloc.s 11
+			IL_0127: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_012c: ldloc.s 11
+			IL_012e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0133: pop
+			IL_0134: leave IL_0139
 		} // end handler
 
-		IL_013c: ldnull
-		IL_013d: stloc.s 8
-		IL_013f: ret
+		IL_0139: ldnull
+		IL_013a: stloc.s 8
+		IL_013c: ret
 	} // end of method Http_Request_Unsupported_Connect_Fails_Clearly::__js_module_init__
 
 } // end of class Modules.Http_Request_Unsupported_Connect_Fails_Clearly

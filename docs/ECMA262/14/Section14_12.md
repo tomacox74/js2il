@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-24T13:24:00Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -21,11 +21,12 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 14.12.1 ([tc39.es](https://tc39.es/ecma262/#sec-switch-statement-static-semantics-early-errors))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| switch statement (cases, fallthrough, default, break) | Supported | [`ControlFlow_Switch_Fallthrough.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_Fallthrough.js)<br>[`ControlFlow_Switch_DefaultInMiddle_Fallthrough.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_DefaultInMiddle_Fallthrough.js)<br>[`ControlFlow_Switch_MultiCaseSharedBody.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_MultiCaseSharedBody.js)<br>[`ControlFlow_Switch_NestedBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_NestedBreak.js)<br>[`ControlFlow_Switch_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js) | Supports fallthrough semantics, default placement, multiple case labels sharing a body, nested switch break behavior, and labeled break out of a switch. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| switch statement (cases, fallthrough, default, break) | Supported | [`ControlFlow_Switch_Fallthrough.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_Fallthrough.js)<br>[`ControlFlow_Switch_DefaultInMiddle_Fallthrough.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_DefaultInMiddle_Fallthrough.js)<br>[`ControlFlow_Switch_MultiCaseSharedBody.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_MultiCaseSharedBody.js)<br>[`ControlFlow_Switch_NestedBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_NestedBreak.js)<br>[`ControlFlow_Switch_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js) |  | Supports fallthrough semantics, default placement, multiple case labels sharing a body, nested switch break behavior, and labeled break out of a switch. |
+| switch statement early errors | Supported | [`S12.11_A2_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/S12.11_A2_T1.js)<br>[`S12.11_A3_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/S12.11_A3_T1.js)<br>[`S12.11_A3_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/S12.11_A3_T2.js) |  | The current negative ports assert parser rejection for duplicate `default` clauses and malformed switch heads. |
 
