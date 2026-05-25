@@ -32,6 +32,6 @@ public class ExecutionTests : ExecutionTestsBase
         => ExecutionTest("property-cast-nan-infinity");
     [Fact(DisplayName = "S15.4.5.2_A1_T1")]
     public Task S15_4_5_2_A1_T1()
-        => ExecutionTest("S15.4.5.2_A1_T1");
+        => ExecutionTest("S15.4.5.2_A1_T1", preferOutOfProc: true);
 
 }
