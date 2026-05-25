@@ -622,13 +622,7 @@ public sealed partial class HIRToLIRLowerer
                                 if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                                 {
                                     resultTempVar = CreateTempVariable();
-                                    var parentIndex = storage.ParentScopeIndex;
-                                    if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                        || _methodBodyIR.IsGenerator)
-                                    {
-                                        // Resumables prepend leaf scope at scopes[0], shifting parents right by one.
-                                        parentIndex += 1;
-                                    }
+                                    var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                                     _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     _tempBindingOrigin[resultTempVar] = binding;

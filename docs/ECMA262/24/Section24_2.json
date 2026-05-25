@@ -243,6 +243,10 @@
           "tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js",
           "tests/Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js"
         ],
+        "test262Paths": [
+          "test/built-ins/Set/set-does-not-throw-when-add-is-not-callable.js",
+          "test/built-ins/Set/set-undefined-newtarget.js"
+        ],
         "notes": "Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize."
       },
       {
@@ -253,7 +257,7 @@
         "testScripts": [
           "tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js"
         ],
-        "notes": "JavaScriptRuntime.Set now accepts a single iterable argument and consumes it with the runtime iterator protocol, preserving insertion order and ignoring duplicates."
+        "notes": "JavaScriptRuntime.Set accepts a single iterable argument, consumes it with the runtime iterator protocol, observes constructor adder lookup/call-order semantics, preserves insertion order, and ignores duplicates for the covered test262 constructor cases."
       },
       {
         "clause": "24.2.3.1",
@@ -263,7 +267,10 @@
         "testScripts": [
           "tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js"
         ],
-        "notes": "JS2IL now exposes globalThis.Set as a constructor value, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete."
+        "test262Paths": [
+          "test/built-ins/Set/prototype-of-set.js"
+        ],
+        "notes": "JS2IL exposes globalThis.Set as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete."
       },
       {
         "clause": "24.2.4",

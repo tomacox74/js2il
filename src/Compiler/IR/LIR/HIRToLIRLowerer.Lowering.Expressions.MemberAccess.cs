@@ -652,7 +652,8 @@ public sealed partial class HIRToLIRLowerer
                             && _environmentLayout?.Abi.ScopesSource is ScopesSource.Argument or ScopesSource.ThisField)
                         {
                             result = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, result));
+                            var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
+                            _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, result));
                             DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
                             _tempBindingOrigin[result] = binding;
                             return true;

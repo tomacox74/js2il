@@ -144,12 +144,7 @@ public sealed partial class HIRToLIRLowerer
                             return false;
                         }
                         {
-                            var parentIndex = updateStorage.ParentScopeIndex;
-                            if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                || _methodBodyIR.IsGenerator)
-                            {
-                                parentIndex += 1;
-                            }
+                            var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(updateStorage.ParentScopeIndex);
                             _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, parentIndex, updatedBoxed));
                         }
                         break;
@@ -668,12 +663,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             var boxedValue = EnsureObject(valueToStore);
                             {
-                                var parentIndex = storage.ParentScopeIndex;
-                                if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                    || _methodBodyIR.IsGenerator)
-                                {
-                                    parentIndex += 1;
-                                }
+                                var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                                 lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, boxedValue));
                             }
                             _variableMap[binding] = boxedValue;
@@ -1009,12 +999,7 @@ public sealed partial class HIRToLIRLowerer
                         {
                             var boxedValue = EnsureObject(valueToStore);
                             {
-                                var parentIndex = storage.ParentScopeIndex;
-                                if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                    || _methodBodyIR.IsGenerator)
-                                {
-                                    parentIndex += 1;
-                                }
+                                var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                                 lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, boxedValue));
                             }
                             // Also update SSA map for subsequent reads, mirroring leaf-scope behavior

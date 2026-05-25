@@ -162,6 +162,7 @@ namespace JavaScriptRuntime
 
         private void AddEntriesFromIterable(object iterable)
         {
+            var adder = GetCallableAdder("set");
             var iterator = ObjectRuntime.GetIterator(iterable);
             var completedNormally = false;
             try
@@ -175,7 +176,7 @@ namespace JavaScriptRuntime
                     }
 
                     var (key, value) = ExtractEntry(JavaScriptRuntime.Object.IteratorResultValue(step));
-                    set(key, value);
+                    CallAdder(adder, key, value);
                 }
 
                 completedNormally = true;
@@ -186,6 +187,30 @@ namespace JavaScriptRuntime
                 {
                     JavaScriptRuntime.Object.IteratorClose(iterator);
                 }
+            }
+        }
+
+        private Delegate GetCallableAdder(string name)
+        {
+            var adder = ObjectRuntime.GetProperty(this, name);
+            if (adder is not Delegate del)
+            {
+                throw new TypeError($"Map.prototype.{name} is not callable");
+            }
+
+            return del;
+        }
+
+        private object? CallAdder(Delegate adder, object? key, object? value)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(this);
+            try
+            {
+                return Closure.InvokeWithArgs(adder, System.Array.Empty<object>(), new object?[] { key, value });
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
             }
         }
 

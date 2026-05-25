@@ -760,6 +760,11 @@ public sealed partial class HIRToLIRLowerer
     private int AdjustCallerScopesArgumentIndex(int callerSlotIndex)
         => CallerPrependsLeafScopeToScopesArgument() ? callerSlotIndex + 1 : callerSlotIndex;
 
+    private int AdjustParentScopeFieldIndexForCurrentMethod(int parentScopeIndex)
+        => ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true) || _methodBodyIR.IsGenerator)
+            ? parentScopeIndex + 1
+            : parentScopeIndex;
+
     private bool TryMapScopeSlotToSource(ScopeSlot slot, out ScopeSlotSource slotSource)
     {
         slotSource = default;

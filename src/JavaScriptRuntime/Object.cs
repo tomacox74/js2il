@@ -4309,6 +4309,8 @@ namespace JavaScriptRuntime
 
             // User-defined iterables: call obj[Symbol.iterator]().
             // GetIterator propagates abrupt completions from retrieving @@iterator.
+            var iteratorKey = ToPropertyKeyString(Symbol.iterator);
+            var hasIteratorProperty = HasProperty(iterable, iteratorKey);
             object? iteratorMethod = ObjectRuntime.GetItem(iterable, Symbol.iterator);
 
             if (iteratorMethod is Delegate del)
@@ -4333,7 +4335,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (iteratorMethod != null)
+            if (iteratorMethod != null || hasIteratorProperty)
             {
                 throw new JavaScriptRuntime.TypeError("Symbol.iterator is not a function");
             }
