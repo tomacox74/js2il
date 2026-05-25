@@ -428,6 +428,16 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(getPromiseRef);
                 }
+                else if (MethodBody.IsAsync)
+                {
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    var resolveRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Promise),
+                        nameof(JavaScriptRuntime.Promise.resolve),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(resolveRef);
+                }
                 else
                 {
                     // JavaScript: functions/methods fallthrough returns 'undefined'

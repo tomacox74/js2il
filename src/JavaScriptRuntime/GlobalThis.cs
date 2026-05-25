@@ -127,6 +127,12 @@ namespace JavaScriptRuntime
         };
         private static readonly Func<object[], object?, object?> _promiseResolveValue = static (_, value) =>
             global::JavaScriptRuntime.Promise.ResolveForConstructor(RuntimeServices.GetCurrentThis(), value);
+        private static readonly Func<object[], object?, object?> _promiseAllValue = static (_, iterable) =>
+            global::JavaScriptRuntime.Promise.all(iterable);
+        private static readonly Func<object[], object?, object?> _promiseRaceValue = static (_, iterable) =>
+            global::JavaScriptRuntime.Promise.race(iterable);
+        private static readonly Func<object[], object?, object?> _promiseRejectValue = static (_, reason) =>
+            global::JavaScriptRuntime.Promise.reject(reason);
 
         private static readonly JsFuncNoScopes2 _proxyConstructorValue = static (newTarget, target, handler) =>
         {
@@ -372,6 +378,9 @@ namespace JavaScriptRuntime
                 Value = "resolve"
             });
             DefineIntrinsicDataProperty(_promiseConstructorValue, "resolve", _promiseResolveValue);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "all", _promiseAllValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "race", _promiseRaceValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "reject", _promiseRejectValue, 1d);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -820,6 +829,13 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = value
             });
+        }
+
+        private static void DefineBuiltinFunctionProperty(object target, string key, Delegate functionValue, double length)
+        {
+            JavaScriptRuntime.Function.InitializeFunctionInstance(functionValue, length, key);
+            DefineUndefinedPrototypeProperty(functionValue);
+            DefineIntrinsicDataProperty(target, key, functionValue);
         }
 
         private static void DefineUndefinedPrototypeProperty(Delegate functionValue)

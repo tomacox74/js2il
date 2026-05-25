@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-24T19:49:58Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,13 +22,13 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 15.5.1 ([tc39.es](https://tc39.es/ecma262/#sec-generator-function-definitions-static-semantics-early-errors))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Generator function declaration/expression (function*) | Supported with Limitations | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js) | MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: async generators are rejected; throw/return propagation through try/finally is not fully implemented. |
-| yield expression | Supported | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js) | Supports yielding values and resumption via next(). |
-| yield* delegation | Supported with Limitations | [`Generator_YieldStar_ArrayBasic.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_PassNextValue.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js) | Supports delegation to normalized indexables (arrays/strings/typed arrays) via NormalizeForOfIterable, and to nested js2il GeneratorObject instances with next/throw/return forwarding. Limitations: delegation to arbitrary user-defined iterators (custom next/return/throw objects) is not implemented; the normalized indexable path does not currently perform full iterator-protocol closing (IteratorClose/iterator.return) when the delegating generator is stopped via return()/throw(); throw/return propagation through try/finally remains incomplete. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Generator function declaration/expression (function*) | Supported with Limitations | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js) |  | MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: async generators are rejected; throw/return propagation through try/finally is not fully implemented. |
+| yield expression | Supported | [`Generator_BasicNext.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js)<br>[`captured-free-vars.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/captured-free-vars.js) |  | Supports yielding values, parent-scope captures in yielded operands, and resumption via next(). |
+| yield* delegation | Supported with Limitations | [`Generator_YieldStar_ArrayBasic.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ArrayBasic.js)<br>[`Generator_YieldStar_NestedGenerator.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_NestedGenerator.js)<br>[`Generator_YieldStar_PassNextValue.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_PassNextValue.js)<br>[`Generator_YieldStar_ReturnForwards.js`](../../../tests/Js2IL.Tests/Generator/JavaScript/Generator_YieldStar_ReturnForwards.js)<br>[`star-array.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-array.js)<br>[`star-iterable.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/yield/JavaScript/star-iterable.js) |  | Supports delegation through the iterator protocol for arrays, strings, typed arrays, nested js2il GeneratorObject instances, and user-defined [Symbol.iterator] iterables. Limitations: full custom throw/return forwarding and IteratorClose behavior for abrupt delegating-generator completion remain incomplete; throw/return propagation through try/finally remains incomplete. |
 

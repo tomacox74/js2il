@@ -4515,6 +4515,21 @@ namespace JavaScriptRuntime
             throw new JavaScriptRuntime.TypeError("Iterator is not an iterator");
         }
 
+        public static object IteratorNextForYieldStar(object iterator)
+        {
+            if (iterator is DynamicIterator dynamicIterator)
+            {
+                return dynamicIterator.NextRaw();
+            }
+
+            if (iterator is IJavaScriptIterator it)
+            {
+                return it.Next();
+            }
+
+            throw new JavaScriptRuntime.TypeError("Iterator is not an iterator");
+        }
+
         public static bool IteratorResultDone(object iteratorResult)
         {
             if (iteratorResult is IIteratorResult res)
@@ -4788,25 +4803,35 @@ namespace JavaScriptRuntime
 
             public IteratorResultObject Next()
             {
+                var result = NextRaw();
+                if (result is IteratorResultObject ro)
+                {
+                    return ro;
+                }
+
+                if (result is IIteratorResult ir)
+                {
+                    return new IteratorResultObject(ir.value, ir.done);
+                }
+
+                var doneObj = ObjectRuntime.GetItem(result, "done");
+                var done = JavaScriptRuntime.TypeUtilities.ToBoolean(doneObj);
+                var value = done ? null : ObjectRuntime.GetItem(result, "value");
+                return new IteratorResultObject(value, done);
+            }
+
+            public object NextRaw()
+            {
                 var previousThis = RuntimeServices.SetCurrentThis(_iterator);
                 try
                 {
                     var result = Closure.InvokeWithArgs(_next, System.Array.Empty<object>(), System.Array.Empty<object>());
-                    if (result is IteratorResultObject ro)
+                    if (result is null || result is JsNull || !IsObjectLikeForPrototype(result))
                     {
-                        return ro;
+                        throw new JavaScriptRuntime.TypeError("Iterator.next result must be an object");
                     }
 
-                    if (result is IIteratorResult ir)
-                    {
-                        return new IteratorResultObject(ir.value, ir.done);
-                    }
-
-                    // Normalize foreign iterator results to a strongly-typed shape.
-                    var doneObj = ObjectRuntime.GetItem(result, "done");
-                    var done = JavaScriptRuntime.TypeUtilities.ToBoolean(doneObj);
-                    var value = done ? null : ObjectRuntime.GetItem(result, "value");
-                    return new IteratorResultObject(value, done);
+                    return result;
                 }
                 finally
                 {
