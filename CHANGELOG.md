@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/test262: port 40 additional String and RegExp execution cases covering string coercion/indexing, selected prototype methods, RegExp construction, and match/result behavior.
 
 ## v0.9.25 - 2026-05-24
 
