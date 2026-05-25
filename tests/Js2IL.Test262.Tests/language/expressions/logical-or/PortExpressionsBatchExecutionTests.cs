@@ -6,6 +6,22 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
 {
     public PortExpressionsBatchExecutionTests() : base("language.expressions.logical_or") { }
 
+    [Fact(DisplayName = "S11.11.2_A2.4_T2")]
+    public Task S11_11_2_A2_4_T2()
+        => ExecutionTest("S11.11.2_A2.4_T2");
+
+    [Fact(DisplayName = "S11.11.2_A3_T2")]
+    public Task S11_11_2_A3_T2()
+        => ExecutionTest("S11.11.2_A3_T2");
+
+    [Fact(DisplayName = "S11.11.2_A4_T2")]
+    public Task S11_11_2_A4_T2()
+        => ExecutionTest("S11.11.2_A4_T2");
+
+    [Fact(DisplayName = "S11.11.2_A4_T4")]
+    public Task S11_11_2_A4_T4()
+        => ExecutionTest("S11.11.2_A4_T4");
+
     [Fact(DisplayName = "tco-right")]
     public Task tco_right()
         => ExecutionTest("tco-right");
