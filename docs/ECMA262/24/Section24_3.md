@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:53:11Z
+> Last generated (UTC): 2026-05-24T19:56:41Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,14 +37,14 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| new WeakMap() | Supported | [`WeakMap_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js) |  | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
-| new WeakMap(iterable) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs` |  | WeakMap(iterable) now consumes iterable entry pairs through the constructor's adder path, covering the current test262 iterable-initialization cases. Weak-key validation and broader exotic iterator edge cases remain partial. |
+| new WeakMap() | Supported | [`WeakMap_Constructor_Empty.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js) | `test/built-ins/WeakMap/undefined-newtarget.js` | Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection. |
+| new WeakMap(iterable) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs` |  | WeakMap(iterable) consumes iterable entry pairs through the constructor's adder path, including the covered test262 adder lookup failure semantics. Weak-key validation and broader exotic iterator edge cases remain partial. |
 
 ### 24.3.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakMap constructor value and WeakMap.prototype surface | Supported with Limitations | [`WeakMap_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.WeakMap as a constructor value, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction is supported; the remaining WeakMap prototype gaps are still incomplete. |
+| WeakMap constructor value and WeakMap.prototype surface | Supported with Limitations | [`WeakMap_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js) | `test/built-ins/WeakMap/prototype-of-weakmap.js` | JS2IL exposes globalThis.WeakMap as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction is supported; the remaining WeakMap prototype gaps are still incomplete. |
 
 ### 24.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object))
 

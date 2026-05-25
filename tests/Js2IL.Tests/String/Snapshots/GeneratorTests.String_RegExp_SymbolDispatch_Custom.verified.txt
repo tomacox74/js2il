@@ -384,7 +384,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 820 (0x334)
+		// Code size: 817 (0x331)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_RegExp_SymbolDispatch_Custom/Scope,
@@ -639,59 +639,55 @@
 			IL_02b0: ldloc.s 5
 			IL_02b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 			IL_02b7: pop
-			IL_02b8: leave IL_0330
+			IL_02b8: leave IL_032d
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_02bd: stloc.s 7
 			IL_02bf: ldloc.s 7
-			IL_02c1: dup
-			IL_02c2: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02c7: dup
-			IL_02c8: brtrue IL_02de
+			IL_02c1: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_02c6: dup
+			IL_02c7: brtrue IL_02dd
 
-			IL_02cd: pop
-			IL_02ce: dup
+			IL_02cc: pop
+			IL_02cd: ldloc.s 7
 			IL_02cf: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_02d4: dup
-			IL_02d5: brtrue IL_02eb
+			IL_02d5: brtrue IL_02e9
 
 			IL_02da: pop
-			IL_02db: pop
-			IL_02dc: rethrow
+			IL_02db: rethrow
 
-			IL_02de: pop
-			IL_02df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02e4: stloc.s 8
-			IL_02e6: br IL_02ee
+			IL_02dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02e2: stloc.s 8
+			IL_02e4: br IL_02eb
 
-			IL_02eb: pop
-			IL_02ec: stloc.s 8
+			IL_02e9: stloc.s 8
 
-			IL_02ee: ldloc.s 8
-			IL_02f0: stloc.s 12
-			IL_02f2: ldloc.s 12
-			IL_02f4: stloc.s 9
-			IL_02f6: newobj instance void Modules.String_RegExp_SymbolDispatch_Custom/Scope/Block_L50C12::.ctor()
-			IL_02fb: stloc.s 10
-			IL_02fd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0302: ldloc.s 9
-			IL_0304: ldstr "name"
-			IL_0309: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_030e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0313: pop
-			IL_0314: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0319: ldloc.s 9
-			IL_031b: ldstr "message"
-			IL_0320: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0325: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_032a: pop
-			IL_032b: leave IL_0330
+			IL_02eb: ldloc.s 8
+			IL_02ed: stloc.s 12
+			IL_02ef: ldloc.s 12
+			IL_02f1: stloc.s 9
+			IL_02f3: newobj instance void Modules.String_RegExp_SymbolDispatch_Custom/Scope/Block_L50C12::.ctor()
+			IL_02f8: stloc.s 10
+			IL_02fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_02ff: ldloc.s 9
+			IL_0301: ldstr "name"
+			IL_0306: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_030b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0310: pop
+			IL_0311: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0316: ldloc.s 9
+			IL_0318: ldstr "message"
+			IL_031d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0322: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0327: pop
+			IL_0328: leave IL_032d
 		} // end handler
 
-		IL_0330: ldnull
-		IL_0331: stloc.s 11
-		IL_0333: ret
+		IL_032d: ldnull
+		IL_032e: stloc.s 11
+		IL_0330: ret
 	} // end of method String_RegExp_SymbolDispatch_Custom::__js_module_init__
 
 } // end of class Modules.String_RegExp_SymbolDispatch_Custom

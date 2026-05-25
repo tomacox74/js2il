@@ -17,10 +17,18 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "ArgumentsObject_unmapped-aliasing")]
     public Task ArgumentsObject_unmapped_aliasing()
         => ExecutionTest("ArgumentsObject_unmapped-aliasing");
-
-    [Fact(DisplayName = "Array.prototype.Symbol.iterator")]
-    public Task Array_prototype_Symbol_iterator()
-        => ExecutionTest("Array.prototype.Symbol.iterator");
+
+    [Fact(DisplayName = "break")]
+    public Task @break()
+        => ExecutionTest("break");
+
+    [Fact(DisplayName = "break-label")]
+    public Task break_label()
+        => ExecutionTest("break-label");
+
+    [Fact(DisplayName = "Array.prototype.Symbol.iterator")]
+    public Task Array_prototype_Symbol_iterator()
+        => ExecutionTest("Array.prototype.Symbol.iterator");
 
     [Fact(DisplayName = "Array.prototype.entries")]
     public Task Array_prototype_entries()
@@ -86,6 +94,14 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task body_dstr_assign()
         => ExecutionTest("body-dstr-assign");
 
+    [Fact(DisplayName = "continue")]
+    public Task @continue()
+        => ExecutionTest("continue");
+
+    [Fact(DisplayName = "continue-label")]
+    public Task continue_label()
+        => ExecutionTest("continue-label");
+
     [Fact(DisplayName = "array-elem-init-assignment")]
     public Task dstr_array_elem_init_assignment()
         => ExecutionTest("dstr/array-elem-init-assignment");
@@ -137,6 +153,22 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "generator")]
     public Task generator()
         => ExecutionTest("generator");
+
+    [Fact(DisplayName = "generator-close-via-break")]
+    public Task generator_close_via_break()
+        => ExecutionTest("generator-close-via-break");
+
+    [Fact(DisplayName = "generator-close-via-continue")]
+    public Task generator_close_via_continue()
+        => ExecutionTest("generator-close-via-continue");
+
+    [Fact(DisplayName = "generator-close-via-return")]
+    public Task generator_close_via_return()
+        => ExecutionTest("generator-close-via-return");
+
+    [Fact(DisplayName = "generator-close-via-throw")]
+    public Task generator_close_via_throw()
+        => ExecutionTest("generator-close-via-throw");
 
     [Fact(DisplayName = "generic-iterable")]
     public Task generic_iterable()

@@ -91,10 +91,10 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
 
         private static readonly Delegate _mapConstructorValue =
-            CreateCollectionConstructorValue("Map", static () => new JavaScriptRuntime.Map());
+            CreateCollectionConstructorValue("Map", static iterable => new JavaScriptRuntime.Map(iterable));
 
         private static readonly Delegate _setConstructorValue =
-            CreateCollectionConstructorValue("Set", static () => new JavaScriptRuntime.Set());
+            CreateCollectionConstructorValue("Set", static iterable => new JavaScriptRuntime.Set(iterable));
 
         private static readonly JsFuncNoScopes1 _weakMapConstructorValue = static (newTarget, iterable) =>
         {
@@ -338,6 +338,10 @@ namespace JavaScriptRuntime
             ConfigureCollectionIntrinsicSurface(_setConstructorValue, JavaScriptRuntime.Set.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakMapConstructorValue, JavaScriptRuntime.WeakMap.Prototype);
             ConfigureCollectionIntrinsicSurface(_weakSetConstructorValue, JavaScriptRuntime.WeakSet.Prototype);
+            ConfigureCollectionConstructorMetadata(_mapConstructorValue, "Map");
+            ConfigureCollectionConstructorMetadata(_setConstructorValue, "Set");
+            ConfigureCollectionConstructorMetadata(_weakMapConstructorValue, "WeakMap");
+            ConfigureCollectionConstructorMetadata(_weakSetConstructorValue, "WeakSet");
             ConfigureConstructorPrototypeSurface(_promiseConstructorValue, JavaScriptRuntime.Promise.Prototype);
             PropertyDescriptorStore.DefineOrUpdate(_promiseConstructorValue, "length", new JsPropertyDescriptor
             {
@@ -1451,7 +1455,7 @@ namespace JavaScriptRuntime
             };
         }
 
-        private static JsFuncNoScopes1 CreateCollectionConstructorValue(string name, Func<object> factory)
+        private static JsFuncNoScopes1 CreateCollectionConstructorValue(string name, Func<object?, object> factory)
         {
             return (newTarget, iterable) =>
             {
@@ -1460,12 +1464,7 @@ namespace JavaScriptRuntime
                     throw new TypeError($"Constructor {name} requires 'new'");
                 }
 
-                if (iterable is not null && iterable is not JsNull)
-                {
-                    throw new NotSupportedException($"The {name} constructor only supports zero arguments in js2il.");
-                }
-
-                return factory();
+                return factory(iterable);
             };
         }
 
@@ -1522,6 +1521,26 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = constructorValue
+            });
+        }
+
+        private static void ConfigureCollectionConstructorMetadata(object constructorValue, string name)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 0d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = name
             });
         }
 

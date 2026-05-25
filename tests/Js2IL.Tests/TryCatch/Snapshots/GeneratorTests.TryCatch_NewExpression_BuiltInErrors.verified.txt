@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e1
+				// Method begins at RVA 0x21dd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ea
+				// Method begins at RVA 0x21e6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21d4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 362 (0x16a)
+		// Code size: 357 (0x165)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_NewExpression_BuiltInErrors/Scope,
@@ -110,119 +110,114 @@
 			IL_0026: ldloc.s 8
 			IL_0028: stloc.2
 			IL_0029: ldloc.2
-			IL_002a: dup
-			IL_002b: isinst [System.Runtime]System.Exception
-			IL_0030: dup
-			IL_0031: brtrue IL_003d
+			IL_002a: isinst [System.Runtime]System.Exception
+			IL_002f: dup
+			IL_0030: brtrue IL_003d
 
-			IL_0036: pop
+			IL_0035: pop
+			IL_0036: ldloc.2
 			IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
 			IL_003c: throw
 
-			IL_003d: pop
-			IL_003e: throw
+			IL_003d: throw
 
-			IL_003f: leave IL_0094
+			IL_003e: leave IL_008f
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0044: stloc.3
-			IL_0045: ldloc.3
-			IL_0046: dup
-			IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_004c: dup
-			IL_004d: brtrue IL_0063
+			IL_0043: stloc.3
+			IL_0044: ldloc.3
+			IL_0045: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_004a: dup
+			IL_004b: brtrue IL_0060
 
-			IL_0052: pop
-			IL_0053: dup
-			IL_0054: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0059: dup
-			IL_005a: brtrue IL_0070
+			IL_0050: pop
+			IL_0051: ldloc.3
+			IL_0052: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0057: dup
+			IL_0058: brtrue IL_006c
 
-			IL_005f: pop
-			IL_0060: pop
-			IL_0061: rethrow
+			IL_005d: pop
+			IL_005e: rethrow
 
-			IL_0063: pop
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0069: stloc.s 4
-			IL_006b: br IL_0073
+			IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0065: stloc.s 4
+			IL_0067: br IL_006e
 
-			IL_0070: pop
-			IL_0071: stloc.s 4
+			IL_006c: stloc.s 4
 
-			IL_0073: ldloc.s 4
-			IL_0075: stloc.s 8
-			IL_0077: ldloc.s 8
-			IL_0079: stloc.s 5
-			IL_007b: newobj instance void Modules.TryCatch_NewExpression_BuiltInErrors/Scope/Block_L6C12::.ctor()
-			IL_0080: stloc.s 6
-			IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0087: ldloc.s 5
-			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_008e: pop
-			IL_008f: leave IL_0094
+			IL_006e: ldloc.s 4
+			IL_0070: stloc.s 8
+			IL_0072: ldloc.s 8
+			IL_0074: stloc.s 5
+			IL_0076: newobj instance void Modules.TryCatch_NewExpression_BuiltInErrors/Scope/Block_L6C12::.ctor()
+			IL_007b: stloc.s 6
+			IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0082: ldloc.s 5
+			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0089: pop
+			IL_008a: leave IL_008f
 		} // end handler
 
-		IL_0094: ldstr "boom"
-		IL_0099: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_009e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_00a3: stloc.s 8
-		IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00aa: ldloc.s 8
-		IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b1: pop
-		IL_00b2: ldstr "eval"
-		IL_00b7: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00bc: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.EvalError::.ctor(string)
-		IL_00c1: stloc.s 8
-		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c8: ldloc.s 8
-		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cf: pop
-		IL_00d0: ldstr "range"
-		IL_00d5: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00da: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RangeError::.ctor(string)
-		IL_00df: stloc.s 8
-		IL_00e1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e6: ldloc.s 8
-		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ed: pop
-		IL_00ee: ldstr "ref"
-		IL_00f3: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_00f8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
-		IL_00fd: stloc.s 8
-		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0104: ldloc.s 8
-		IL_0106: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_010b: pop
-		IL_010c: ldstr "syntax"
-		IL_0111: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0116: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.SyntaxError::.ctor(string)
-		IL_011b: stloc.s 8
-		IL_011d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0122: ldloc.s 8
-		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0129: pop
-		IL_012a: ldstr "uri"
-		IL_012f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0134: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.URIError::.ctor(string)
-		IL_0139: stloc.s 8
-		IL_013b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0140: ldloc.s 8
-		IL_0142: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0147: pop
-		IL_0148: ldstr "agg"
-		IL_014d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-		IL_0152: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.AggregateError::.ctor(string)
-		IL_0157: stloc.s 8
-		IL_0159: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_015e: ldloc.s 8
-		IL_0160: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0165: pop
-		IL_0166: ldnull
-		IL_0167: stloc.s 7
-		IL_0169: ret
+		IL_008f: ldstr "boom"
+		IL_0094: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0099: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+		IL_009e: stloc.s 8
+		IL_00a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a5: ldloc.s 8
+		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ac: pop
+		IL_00ad: ldstr "eval"
+		IL_00b2: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00b7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.EvalError::.ctor(string)
+		IL_00bc: stloc.s 8
+		IL_00be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c3: ldloc.s 8
+		IL_00c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ca: pop
+		IL_00cb: ldstr "range"
+		IL_00d0: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00d5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RangeError::.ctor(string)
+		IL_00da: stloc.s 8
+		IL_00dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e1: ldloc.s 8
+		IL_00e3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e8: pop
+		IL_00e9: ldstr "ref"
+		IL_00ee: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00f3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.ReferenceError::.ctor(string)
+		IL_00f8: stloc.s 8
+		IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ff: ldloc.s 8
+		IL_0101: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0106: pop
+		IL_0107: ldstr "syntax"
+		IL_010c: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0111: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.SyntaxError::.ctor(string)
+		IL_0116: stloc.s 8
+		IL_0118: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_011d: ldloc.s 8
+		IL_011f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0124: pop
+		IL_0125: ldstr "uri"
+		IL_012a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_012f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.URIError::.ctor(string)
+		IL_0134: stloc.s 8
+		IL_0136: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_013b: ldloc.s 8
+		IL_013d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0142: pop
+		IL_0143: ldstr "agg"
+		IL_0148: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_014d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.AggregateError::.ctor(string)
+		IL_0152: stloc.s 8
+		IL_0154: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0159: ldloc.s 8
+		IL_015b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0160: pop
+		IL_0161: ldnull
+		IL_0162: stloc.s 7
+		IL_0164: ret
 	} // end of method TryCatch_NewExpression_BuiltInErrors::__js_module_init__
 
 } // end of class Modules.TryCatch_NewExpression_BuiltInErrors
@@ -234,7 +229,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f3
+		// Method begins at RVA 0x21ef
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

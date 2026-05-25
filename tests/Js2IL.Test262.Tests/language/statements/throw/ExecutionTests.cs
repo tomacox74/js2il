@@ -45,4 +45,21 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_13_A3_T3()
         => ExecutionTest("S12.13_A3_T3");
 
+
+
+    [Fact(DisplayName = "S12.13_A2_T6")]
+    public Task S12_13_A2_T6()
+        => ExecutionTest("S12.13_A2_T6");
+
+    [Fact(DisplayName = "S12.13_A3_T4")]
+    public Task S12_13_A3_T4()
+        => ExecutionTest("S12.13_A3_T4");
+
+    [Fact(DisplayName = "S12.13_A3_T5")]
+    public Task S12_13_A3_T5()
+        => ExecutionTest("S12.13_A3_T5");
+
+    [Fact(DisplayName = "S12.13_A3_T6")]
+    public Task S12_13_A3_T6()
+        => ExecutionTest("S12.13_A3_T6");
 }

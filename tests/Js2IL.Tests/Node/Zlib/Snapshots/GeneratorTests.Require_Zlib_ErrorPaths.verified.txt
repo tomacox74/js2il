@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x271a
+					// Method begins at RVA 0x2712
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2723
+					// Method begins at RVA 0x271b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2711
+				// Method begins at RVA 0x2709
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -85,9 +85,9 @@
 			.custom instance void [JavaScriptRuntime]Js2IL.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Js2IL.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2494
+			// Method begins at RVA 0x2490
 			// Header size: 12
-			// Code size: 230 (0xe6)
+			// Code size: 226 (0xe2)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Require_Zlib_ErrorPaths/logError/Scope/Block_L6C6,
@@ -118,80 +118,76 @@
 				IL_0027: box [System.Runtime]System.Boolean
 				IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 				IL_0031: pop
-				IL_0032: leave IL_00e0
+				IL_0032: leave IL_00dc
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
 				IL_0037: stloc.1
 				IL_0038: ldloc.1
-				IL_0039: dup
-				IL_003a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_003f: dup
-				IL_0040: brtrue IL_0056
+				IL_0039: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_003e: dup
+				IL_003f: brtrue IL_0054
 
-				IL_0045: pop
-				IL_0046: dup
-				IL_0047: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_004c: dup
-				IL_004d: brtrue IL_0062
+				IL_0044: pop
+				IL_0045: ldloc.1
+				IL_0046: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_004b: dup
+				IL_004c: brtrue IL_005f
 
-				IL_0052: pop
-				IL_0053: pop
-				IL_0054: rethrow
+				IL_0051: pop
+				IL_0052: rethrow
 
-				IL_0056: pop
-				IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_005c: stloc.2
-				IL_005d: br IL_0064
+				IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0059: stloc.2
+				IL_005a: br IL_0060
 
-				IL_0062: pop
-				IL_0063: stloc.2
+				IL_005f: stloc.2
 
-				IL_0064: ldloc.2
-				IL_0065: stloc.s 7
-				IL_0067: ldloc.s 7
-				IL_0069: stloc.3
-				IL_006a: newobj instance void Modules.Require_Zlib_ErrorPaths/logError/Scope/Block_L9C18::.ctor()
-				IL_006f: stloc.s 4
-				IL_0071: ldarg.1
-				IL_0072: ldstr " threw:"
-				IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_007c: stloc.s 6
-				IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0083: ldloc.s 6
-				IL_0085: ldc.i4.1
-				IL_0086: box [System.Runtime]System.Boolean
-				IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0090: pop
-				IL_0091: ldarg.1
-				IL_0092: ldstr " name:"
-				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_009c: stloc.s 6
-				IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00a3: ldloc.s 6
-				IL_00a5: ldloc.3
-				IL_00a6: ldstr "name"
-				IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_00b5: pop
-				IL_00b6: ldarg.1
-				IL_00b7: ldstr " message:"
-				IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00c1: stloc.s 6
-				IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00c8: ldloc.s 6
-				IL_00ca: ldloc.3
-				IL_00cb: ldstr "message"
-				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_00da: pop
-				IL_00db: leave IL_00e0
+				IL_0060: ldloc.2
+				IL_0061: stloc.s 7
+				IL_0063: ldloc.s 7
+				IL_0065: stloc.3
+				IL_0066: newobj instance void Modules.Require_Zlib_ErrorPaths/logError/Scope/Block_L9C18::.ctor()
+				IL_006b: stloc.s 4
+				IL_006d: ldarg.1
+				IL_006e: ldstr " threw:"
+				IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0078: stloc.s 6
+				IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_007f: ldloc.s 6
+				IL_0081: ldc.i4.1
+				IL_0082: box [System.Runtime]System.Boolean
+				IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_008c: pop
+				IL_008d: ldarg.1
+				IL_008e: ldstr " name:"
+				IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0098: stloc.s 6
+				IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_009f: ldloc.s 6
+				IL_00a1: ldloc.3
+				IL_00a2: ldstr "name"
+				IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_00b1: pop
+				IL_00b2: ldarg.1
+				IL_00b3: ldstr " message:"
+				IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00bd: stloc.s 6
+				IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_00c4: ldloc.s 6
+				IL_00c6: ldloc.3
+				IL_00c7: ldstr "message"
+				IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_00d6: pop
+				IL_00d7: leave IL_00dc
 			} // end handler
 
-			IL_00e0: ldnull
-			IL_00e1: stloc.s 5
-			IL_00e3: ldloc.s 5
-			IL_00e5: ret
+			IL_00dc: ldnull
+			IL_00dd: stloc.s 5
+			IL_00df: ldloc.s 5
+			IL_00e1: ret
 		} // end of method logError::__js_call__
 
 	} // end of class logError
@@ -207,7 +203,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x272c
+				// Method begins at RVA 0x2724
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -233,7 +229,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2598
+			// Method begins at RVA 0x2590
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -272,7 +268,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2735
+				// Method begins at RVA 0x272d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -298,7 +294,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x25dc
+			// Method begins at RVA 0x25d4
 			// Header size: 12
 			// Code size: 81 (0x51)
 			.maxstack 8
@@ -347,7 +343,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x273e
+				// Method begins at RVA 0x2736
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -373,7 +369,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x263c
+			// Method begins at RVA 0x2634
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -412,7 +408,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2747
+				// Method begins at RVA 0x273f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -438,7 +434,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x2680
+			// Method begins at RVA 0x2678
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -477,7 +473,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2750
+				// Method begins at RVA 0x2748
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -503,7 +499,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 09 00 00 02
 			)
-			// Method begins at RVA 0x26c4
+			// Method begins at RVA 0x26bc
 			// Header size: 12
 			// Code size: 56 (0x38)
 			.maxstack 8
@@ -547,7 +543,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2759
+				// Method begins at RVA 0x2751
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -567,7 +563,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2762
+				// Method begins at RVA 0x275a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -589,7 +585,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2708
+			// Method begins at RVA 0x2700
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -615,7 +611,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 1062 (0x426)
+		// Code size: 1058 (0x422)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Zlib_ErrorPaths/Scope,
@@ -912,98 +908,94 @@
 			IL_031b: box [System.Runtime]System.Boolean
 			IL_0320: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_0325: pop
-			IL_0326: leave IL_0422
+			IL_0326: leave IL_041e
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_032b: stloc.3
 			IL_032c: ldloc.3
-			IL_032d: dup
-			IL_032e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0333: dup
-			IL_0334: brtrue IL_034a
+			IL_032d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0332: dup
+			IL_0333: brtrue IL_0348
 
-			IL_0339: pop
-			IL_033a: dup
-			IL_033b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0340: dup
-			IL_0341: brtrue IL_0357
+			IL_0338: pop
+			IL_0339: ldloc.3
+			IL_033a: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_033f: dup
+			IL_0340: brtrue IL_0354
 
-			IL_0346: pop
-			IL_0347: pop
-			IL_0348: rethrow
+			IL_0345: pop
+			IL_0346: rethrow
 
-			IL_034a: pop
-			IL_034b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0350: stloc.s 4
-			IL_0352: br IL_035a
+			IL_0348: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_034d: stloc.s 4
+			IL_034f: br IL_0356
 
-			IL_0357: pop
-			IL_0358: stloc.s 4
+			IL_0354: stloc.s 4
 
-			IL_035a: ldloc.s 4
-			IL_035c: stloc.s 8
-			IL_035e: ldloc.s 8
-			IL_0360: stloc.s 5
-			IL_0362: newobj instance void Modules.Require_Zlib_ErrorPaths/Scope/Block_L34C16::.ctor()
-			IL_0367: stloc.s 6
-			IL_0369: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_036e: ldstr "gunzip invalid data threw:"
-			IL_0373: ldc.i4.1
-			IL_0374: box [System.Runtime]System.Boolean
-			IL_0379: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_037e: pop
-			IL_037f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0384: ldstr "gunzip invalid data name:"
-			IL_0389: ldloc.s 5
-			IL_038b: ldstr "name"
-			IL_0390: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0395: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_039a: pop
-			IL_039b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_03a0: stloc.s 11
-			IL_03a2: ldloc.s 5
-			IL_03a4: ldstr "message"
-			IL_03a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03ae: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_03b3: ldstr "string"
-			IL_03b8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_03bd: stloc.s 12
-			IL_03bf: ldloc.s 12
-			IL_03c1: box [System.Runtime]System.Boolean
-			IL_03c6: stloc.s 13
-			IL_03c8: ldloc.s 13
-			IL_03ca: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_03cf: stloc.s 12
-			IL_03d1: ldloc.s 12
-			IL_03d3: brfalse IL_040a
+			IL_0356: ldloc.s 4
+			IL_0358: stloc.s 8
+			IL_035a: ldloc.s 8
+			IL_035c: stloc.s 5
+			IL_035e: newobj instance void Modules.Require_Zlib_ErrorPaths/Scope/Block_L34C16::.ctor()
+			IL_0363: stloc.s 6
+			IL_0365: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_036a: ldstr "gunzip invalid data threw:"
+			IL_036f: ldc.i4.1
+			IL_0370: box [System.Runtime]System.Boolean
+			IL_0375: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_037a: pop
+			IL_037b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0380: ldstr "gunzip invalid data name:"
+			IL_0385: ldloc.s 5
+			IL_0387: ldstr "name"
+			IL_038c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0391: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0396: pop
+			IL_0397: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_039c: stloc.s 11
+			IL_039e: ldloc.s 5
+			IL_03a0: ldstr "message"
+			IL_03a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03aa: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_03af: ldstr "string"
+			IL_03b4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_03b9: stloc.s 12
+			IL_03bb: ldloc.s 12
+			IL_03bd: box [System.Runtime]System.Boolean
+			IL_03c2: stloc.s 13
+			IL_03c4: ldloc.s 13
+			IL_03c6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_03cb: stloc.s 12
+			IL_03cd: ldloc.s 12
+			IL_03cf: brfalse IL_0406
 
-			IL_03d8: ldloc.s 5
-			IL_03da: ldstr "message"
-			IL_03df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03e4: ldstr "length"
-			IL_03e9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_03ee: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_03f3: ldc.r8 0.0
-			IL_03fc: cgt
-			IL_03fe: box [System.Runtime]System.Boolean
-			IL_0403: stloc.s 15
-			IL_0405: br IL_040e
+			IL_03d4: ldloc.s 5
+			IL_03d6: ldstr "message"
+			IL_03db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03e0: ldstr "length"
+			IL_03e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_03ea: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_03ef: ldc.r8 0.0
+			IL_03f8: cgt
+			IL_03fa: box [System.Runtime]System.Boolean
+			IL_03ff: stloc.s 15
+			IL_0401: br IL_040a
 
-			IL_040a: ldloc.s 13
-			IL_040c: stloc.s 15
+			IL_0406: ldloc.s 13
+			IL_0408: stloc.s 15
 
-			IL_040e: ldloc.s 11
-			IL_0410: ldstr "gunzip invalid data message length > 0:"
-			IL_0415: ldloc.s 15
-			IL_0417: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_041c: pop
-			IL_041d: leave IL_0422
+			IL_040a: ldloc.s 11
+			IL_040c: ldstr "gunzip invalid data message length > 0:"
+			IL_0411: ldloc.s 15
+			IL_0413: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0418: pop
+			IL_0419: leave IL_041e
 		} // end handler
 
-		IL_0422: ldnull
-		IL_0423: stloc.s 7
-		IL_0425: ret
+		IL_041e: ldnull
+		IL_041f: stloc.s 7
+		IL_0421: ret
 	} // end of method Require_Zlib_ErrorPaths::__js_module_init__
 
 } // end of class Modules.Require_Zlib_ErrorPaths
@@ -1015,7 +1007,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x276b
+		// Method begins at RVA 0x2763
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

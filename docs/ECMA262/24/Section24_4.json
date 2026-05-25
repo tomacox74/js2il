@@ -86,6 +86,9 @@
         "testScripts": [
           "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Empty.js"
         ],
+        "test262Paths": [
+          "test/built-ins/WeakSet/undefined-newtarget.js"
+        ],
         "notes": "Parameterless construction succeeds and allocates a ConditionalWeakTable-backed collection."
       },
       {
@@ -96,7 +99,7 @@
         "testScripts": [
           "tests/Js2IL.Test262.Tests/built-ins/WeakSet/ExecutionTests.cs"
         ],
-        "notes": "WeakSet(iterable) now consumes iterable values through the constructor's adder path, covering the current test262 iterable-initialization cases. Weak-value validation and broader exotic iterator edge cases remain partial."
+        "notes": "WeakSet(iterable) consumes iterable values through the constructor's adder path, including the covered test262 adder lookup failure semantics. Weak-value validation and broader exotic iterator edge cases remain partial."
       },
       {
         "clause": "24.4.2.1",
@@ -106,7 +109,10 @@
         "testScripts": [
           "tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Constructor_Prototype_Surface.js"
         ],
-        "notes": "JS2IL now exposes globalThis.WeakSet as a constructor value, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction is supported; the remaining WeakSet prototype gaps are still incomplete."
+        "test262Paths": [
+          "test/built-ins/WeakSet/prototype-of-weakset.js"
+        ],
+        "notes": "JS2IL exposes globalThis.WeakSet as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires WeakSet.prototype and WeakSet.prototype.constructor, and attaches the public prototype to new WeakSet instances so Object.getPrototypeOf(weakSet) and weakSet instanceof WeakSet observe the JS-visible surface. Iterable construction is supported; the remaining WeakSet prototype gaps are still incomplete."
       },
       {
         "clause": "24.4.3",

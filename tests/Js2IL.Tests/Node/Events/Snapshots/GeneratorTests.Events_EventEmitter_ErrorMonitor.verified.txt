@@ -257,7 +257,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 452 (0x1c4)
+		// Code size: 449 (0x1c1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Events_EventEmitter_ErrorMonitor/Scope,
@@ -397,51 +397,47 @@
 			IL_015b: ldstr "NO_THROW"
 			IL_0160: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_0165: pop
-			IL_0166: leave IL_01c0
+			IL_0166: leave IL_01bd
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_016b: stloc.s 6
 			IL_016d: ldloc.s 6
-			IL_016f: dup
-			IL_0170: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0175: dup
-			IL_0176: brtrue IL_018c
+			IL_016f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0174: dup
+			IL_0175: brtrue IL_018b
 
-			IL_017b: pop
-			IL_017c: dup
+			IL_017a: pop
+			IL_017b: ldloc.s 6
 			IL_017d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_0182: dup
-			IL_0183: brtrue IL_0199
+			IL_0183: brtrue IL_0197
 
 			IL_0188: pop
-			IL_0189: pop
-			IL_018a: rethrow
+			IL_0189: rethrow
 
-			IL_018c: pop
-			IL_018d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0192: stloc.s 7
-			IL_0194: br IL_019c
+			IL_018b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0190: stloc.s 7
+			IL_0192: br IL_0199
 
-			IL_0199: pop
-			IL_019a: stloc.s 7
+			IL_0197: stloc.s 7
 
-			IL_019c: ldloc.s 7
-			IL_019e: stloc.s 11
-			IL_01a0: ldloc.s 11
-			IL_01a2: stloc.s 8
-			IL_01a4: newobj instance void Modules.Events_EventEmitter_ErrorMonitor/Scope/Block_L24C12::.ctor()
-			IL_01a9: stloc.s 9
-			IL_01ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01b0: ldstr "thrown"
-			IL_01b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_01ba: pop
-			IL_01bb: leave IL_01c0
+			IL_0199: ldloc.s 7
+			IL_019b: stloc.s 11
+			IL_019d: ldloc.s 11
+			IL_019f: stloc.s 8
+			IL_01a1: newobj instance void Modules.Events_EventEmitter_ErrorMonitor/Scope/Block_L24C12::.ctor()
+			IL_01a6: stloc.s 9
+			IL_01a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01ad: ldstr "thrown"
+			IL_01b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01b7: pop
+			IL_01b8: leave IL_01bd
 		} // end handler
 
-		IL_01c0: ldnull
-		IL_01c1: stloc.s 10
-		IL_01c3: ret
+		IL_01bd: ldnull
+		IL_01be: stloc.s 10
+		IL_01c0: ret
 	} // end of method Events_EventEmitter_ErrorMonitor::__js_module_init__
 
 } // end of class Modules.Events_EventEmitter_ErrorMonitor

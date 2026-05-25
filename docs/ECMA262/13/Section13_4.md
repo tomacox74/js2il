@@ -4,7 +4,7 @@
 
 [Back to Section13](Section13.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-24T13:09:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,59 +14,47 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 13.4.1 | Static Semantics: Early Errors | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-update-expressions-static-semantics-early-errors) |
-| 13.4.2 | Postfix Increment Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator) |
-| 13.4.2.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator-runtime-semantics-evaluation) |
-| 13.4.3 | Postfix Decrement Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator) |
-| 13.4.3.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator-runtime-semantics-evaluation) |
-| 13.4.4 | Prefix Increment Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-prefix-increment-operator) |
-| 13.4.4.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-prefix-increment-operator-runtime-semantics-evaluation) |
-| 13.4.5 | Prefix Decrement Operator | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator) |
-| 13.4.5.1 | Runtime Semantics: Evaluation | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator-runtime-semantics-evaluation) |
+| 13.4.1 | Static Semantics: Early Errors | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-update-expressions-static-semantics-early-errors) |
+| 13.4.2 | Postfix Increment Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator) |
+| 13.4.2.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator-runtime-semantics-evaluation) |
+| 13.4.3 | Postfix Decrement Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator) |
+| 13.4.3.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator-runtime-semantics-evaluation) |
+| 13.4.4 | Prefix Increment Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-prefix-increment-operator) |
+| 13.4.4.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-prefix-increment-operator-runtime-semantics-evaluation) |
+| 13.4.5 | Prefix Decrement Operator | Supported | [tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator) |
+| 13.4.5.1 | Runtime Semantics: Evaluation | Supported | [tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator-runtime-semantics-evaluation) |
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 13.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-update-expressions-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Update-expression early errors for invalid assignment targets | Supported with Limitations | `tests/Js2IL.Test262.Tests/language/expressions/postfix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/postfix-decrement/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/prefix-decrement/PortExpressionsBatchExecutionTests.cs` |  | The checked-in update-expression ports cover valid identifier targets and the runtime ToNumber/GetValue/PutValue flows behind them. Broader early-error coverage (for example every invalid complex target form) is still not exhaustively tracked in-repo. |
+
+### 13.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Postfix increment (x++) | Supported | [`UnaryOperator_PlusPlusPostfix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/postfix-increment/PortExpressionsBatchExecutionTests.cs` |  | Postfix increment preserves the original result value while writing back the incremented ToNumber result. The current test262 port covers primitive boolean coercion in addition to the project-local postfix regression. |
 
 ### 13.4.3 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| typeof | Supported | [`UnaryOperator_Typeof.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js) | Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Postfix decrement (x--) | Supported | [`UnaryOperator_MinusMinusPostfix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/postfix-decrement/PortExpressionsBatchExecutionTests.cs` |  | Postfix decrement returns the pre-update value while storing the decremented ToNumber result. The new test262 coverage exercises the same observable update flow for primitive boolean inputs. |
 
 ### 13.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-prefix-increment-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Unary ++ (Prefix increment) | Supported | [`UnaryOperator_PlusPlusPrefix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js) | Increments the value first, then returns the new value. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Prefix increment (++x) | Supported | [`UnaryOperator_PlusPlusPrefix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/prefix-increment/PortExpressionsBatchExecutionTests.cs` |  | Prefix increment writes back the incremented ToNumber result and returns that updated value. The checked-in test262 port adds explicit primitive-coercion coverage alongside the existing project-local prefix regression. |
 
 ### 13.4.5 ([tc39.es](https://tc39.es/ecma262/#sec-prefix-decrement-operator))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Unary -- (Prefix decrement) | Supported | [`UnaryOperator_MinusMinusPrefix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js) | Decrements the value first, then returns the new value. |
-
-### 13.4.6 ([tc39.es](https://tc39.es/ecma262/#sec-bitwise-not-operator))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Unary ~ (Bitwise NOT) | Supported | [`UnaryOperator_BitwiseNot.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js) | Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns. |
-
-### 13.4.7 ([tc39.es](https://tc39.es/ecma262/#sec-logical-not-operator))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Unary ! (Logical not) | Supported | [`UnaryOperator_LogicalNot.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js)<br>[`ControlFlow_If_NotFlag.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js) | Supported end-to-end in IR pipeline (HIR unary + LIRLogicalNot) using JavaScriptRuntime.TypeUtilities.ToBoolean for JS truthiness, then invert. Covered both in a dedicated unary-operator fixture and in control-flow conditionals (if (!x) ...). |
-
-### 13.4.9 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-increment-operator))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Unary ++ (Postfix increment) | Supported | [`UnaryOperator_PlusPlusPostfix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js) |  |
-
-### 13.4.10 ([tc39.es](https://tc39.es/ecma262/#sec-postfix-decrement-operator))
-
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| Unary -- (Postfix decrement) | Supported | [`UnaryOperator_MinusMinusPostfix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js) |  |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Prefix decrement (--x) | Supported | [`UnaryOperator_MinusMinusPrefix.js`](../../../tests/Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/prefix-decrement/PortExpressionsBatchExecutionTests.cs` |  | Prefix decrement writes back and returns the decremented ToNumber result. The checked-in test262 port adds a direct coercion/evaluation sanity check on top of the existing project-local regression. |
 

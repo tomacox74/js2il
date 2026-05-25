@@ -9,4 +9,12 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "Uint8Array_fromBase64_results")]
     public Task Uint8Array_fromBase64_results()
         => ExecutionTest("Uint8Array_fromBase64_results");
+
+    [Fact(DisplayName = "string-coercion")]
+    public Task string_coercion()
+        => ExecutionTest("string-coercion");
+    [Fact(DisplayName = "illegal-characters")]
+    public Task illegal_characters()
+        => ExecutionTest("illegal-characters");
+
 }

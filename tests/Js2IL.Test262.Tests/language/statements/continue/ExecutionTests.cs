@@ -37,4 +37,17 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task shadowing_loop_variable_in_same_scope_as_continue()
         => ExecutionTest("shadowing-loop-variable-in-same-scope-as-continue");
 
+
+
+    [Fact(DisplayName = "line-terminators")]
+    public Task line_terminators()
+        => ExecutionTest("line-terminators");
+
+    [Fact(DisplayName = "S12.7_A9_T1")]
+    public Task S12_7_A9_T1()
+        => ExecutionTest("S12.7_A9_T1");
+
+    [Fact(DisplayName = "S12.7_A9_T2")]
+    public Task S12_7_A9_T2()
+        => ExecutionTest("S12.7_A9_T2");
 }

@@ -439,9 +439,17 @@
           "test/language/statements/for-of/arguments-mapped-mutation.js",
           "test/language/statements/for-of/arguments-unmapped.js",
           "test/language/statements/for-of/arguments-unmapped-mutation.js",
-          "test/language/statements/for-of/array.js"
+          "test/language/statements/for-of/array.js",
+          "test/language/statements/for-of/break.js",
+          "test/language/statements/for-of/break-label.js",
+          "test/language/statements/for-of/continue.js",
+          "test/language/statements/for-of/continue-label.js",
+          "test/language/statements/for-of/generator-close-via-break.js",
+          "test/language/statements/for-of/generator-close-via-continue.js",
+          "test/language/statements/for-of/generator-close-via-return.js",
+          "test/language/statements/for-of/generator-close-via-throw.js"
         ],
-        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/throw/return and iterator throws), including generator-safe synthetic close paths. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals now flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
+        "notes": "Lowered using the iterator protocol via JavaScriptRuntime.Object.GetIterator + iterator.next() + result.value/result.done, and invokes JavaScriptRuntime.Object.IteratorClose on normal destructuring completion and abrupt completion (break/continue/throw/return and iterator throws), including generator-safe synthetic close paths. Supports built-ins (Array/string/Int8Array/Int16Array/Int32Array/Float32Array/Float64Array), user-defined iterables via [Symbol.iterator], mapped and unmapped arguments objects, generator objects, and a best-effort fallback for .NET IEnumerable. Sparse array literals flow through the IR path as arrays whose elisions iterate as undefined values, so explicit array[Symbol.iterator](), destructuring, typed-array, generator, generator close-on-abrupt-completion, and arguments-object for-of cases in the bounded test262 coverage compile successfully."
       },
       {
         "clause": "14.7.5.7",
@@ -499,6 +507,33 @@
           "tests/Js2IL.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
         ],
         "notes": "Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return)."
+      },
+      {
+        "clause": "14.7.2.2",
+        "feature": "do-while legacy control-flow ports",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-do-while-statement",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A2.js",
+          "tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A9.js",
+          "tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A4_T5.js"
+        ],
+        "notes": "The checked-in legacy slice covers do-while body execution, labeled break/continue flow, and ReferenceError propagation from do-while test expressions through surrounding catch handlers."
+      },
+      {
+        "clause": "14.7.3.2",
+        "feature": "while legacy control-flow ports",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-while-statement",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A2.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T2.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T3.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T4.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A9.js",
+          "tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A4_T5.js"
+        ],
+        "notes": "The checked-in legacy slice covers while body execution, nested break behavior with hoisted `var` declarations, and ReferenceError propagation from while test expressions through surrounding catch handlers."
       }
     ]
   }

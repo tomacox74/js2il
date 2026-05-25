@@ -54,32 +54,27 @@ internal sealed partial class LIRToILCompiler
                     var thrownType = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsThrownValueException));
                     var errorType = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Error));
 
-                    // Load exception (object)
+                    // Load exception and test for wrapped JS-thrown values first.
                     EmitLoadTemp(unwrapCatch.Exception, ilEncoder, allocation, methodDescriptor);
-
-                    // dup; isinst JsThrownValueException
-                    ilEncoder.OpCode(ILOpCode.Dup);
                     ilEncoder.OpCode(ILOpCode.Isinst);
                     ilEncoder.Token(thrownType);
                     ilEncoder.OpCode(ILOpCode.Dup);
                     ilEncoder.Branch(ILOpCode.Brtrue, isThrownValue);
                     ilEncoder.OpCode(ILOpCode.Pop); // pop null
 
-                    // dup; isinst Error
-                    ilEncoder.OpCode(ILOpCode.Dup);
+                    // Then test whether the CLR exception is already a JS Error object.
+                    EmitLoadTemp(unwrapCatch.Exception, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Isinst);
                     ilEncoder.Token(errorType);
                     ilEncoder.OpCode(ILOpCode.Dup);
                     ilEncoder.Branch(ILOpCode.Brtrue, isJsError);
                     ilEncoder.OpCode(ILOpCode.Pop); // pop null
 
-                    // Unknown exception: discard original and rethrow.
-                    ilEncoder.OpCode(ILOpCode.Pop);
+                    // Unknown exception: preserve the CLR exception.
                     ilEncoder.OpCode(ILOpCode.Rethrow);
 
                     ilEncoder.MarkLabel(isThrownValue);
-                    // Stack: ex, (JsThrownValueException)
-                    ilEncoder.OpCode(ILOpCode.Pop); // pop ex
+                    // Stack: JsThrownValueException
                     var getValue = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.JsThrownValueException),
                         $"get_{nameof(JavaScriptRuntime.JsThrownValueException.Value)}");
@@ -87,10 +82,9 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.Token(getValue);
                     EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
                     ilEncoder.Branch(ILOpCode.Br, done);
-
                     ilEncoder.MarkLabel(isJsError);
-                    // Stack: ex, (Error)
-                    ilEncoder.OpCode(ILOpCode.Pop); // pop ex
+                    ilEncoder.MarkLabel(isJsError);
+                    // Stack: Error
                     EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
                     ilEncoder.MarkLabel(done);
                     return true;
@@ -122,7 +116,6 @@ internal sealed partial class LIRToILCompiler
                         parameterTypes: new[] { typeof(object) });
 
                     EmitLoadTempAsObject(throwInstr.Value, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Dup);
                     ilEncoder.OpCode(ILOpCode.Isinst);
                     ilEncoder.Token(exceptionType);
                     ilEncoder.OpCode(ILOpCode.Dup);
@@ -130,13 +123,13 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Pop); // pop null
 
                     // Wrap and throw.
+                    EmitLoadTempAsObject(throwInstr.Value, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(wrapperCtor);
                     ilEncoder.OpCode(ILOpCode.Throw);
 
                     ilEncoder.MarkLabel(throwException);
-                    // Stack: value, exception
-                    ilEncoder.OpCode(ILOpCode.Pop); // pop original value
+                    // Stack: exception
                     ilEncoder.OpCode(ILOpCode.Throw);
                     return true;
                 }

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23a1
+				// Method begins at RVA 0x239d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23aa
+				// Method begins at RVA 0x23a6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2398
+			// Method begins at RVA 0x2394
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 811 (0x32b)
+		// Code size: 808 (0x328)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakSet_Constructor_Prototype_Surface/Scope,
@@ -295,63 +295,59 @@
 			IL_0298: ldstr "no-throw"
 			IL_029d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_02a2: pop
-			IL_02a3: leave IL_0327
+			IL_02a3: leave IL_0324
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_02a8: stloc.s 6
 			IL_02aa: ldloc.s 6
-			IL_02ac: dup
-			IL_02ad: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_02b2: dup
-			IL_02b3: brtrue IL_02c9
+			IL_02ac: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_02b1: dup
+			IL_02b2: brtrue IL_02c8
 
-			IL_02b8: pop
-			IL_02b9: dup
+			IL_02b7: pop
+			IL_02b8: ldloc.s 6
 			IL_02ba: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
 			IL_02bf: dup
-			IL_02c0: brtrue IL_02d6
+			IL_02c0: brtrue IL_02d4
 
 			IL_02c5: pop
-			IL_02c6: pop
-			IL_02c7: rethrow
+			IL_02c6: rethrow
 
-			IL_02c9: pop
-			IL_02ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_02cf: stloc.s 7
-			IL_02d1: br IL_02d9
+			IL_02c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_02cd: stloc.s 7
+			IL_02cf: br IL_02d6
 
-			IL_02d6: pop
-			IL_02d7: stloc.s 7
+			IL_02d4: stloc.s 7
 
-			IL_02d9: ldloc.s 7
-			IL_02db: stloc.s 13
-			IL_02dd: ldloc.s 13
-			IL_02df: stloc.s 8
-			IL_02e1: newobj instance void Modules.WeakSet_Constructor_Prototype_Surface/Scope/Block_L27C12::.ctor()
-			IL_02e6: stloc.s 9
-			IL_02e8: ldloc.s 8
-			IL_02ea: ldstr "name"
-			IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_02f4: ldstr ": "
-			IL_02f9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_02fe: stloc.s 15
-			IL_0300: ldloc.s 15
-			IL_0302: ldloc.s 8
-			IL_0304: ldstr "message"
-			IL_0309: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0313: stloc.s 15
-			IL_0315: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_031a: ldloc.s 15
-			IL_031c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0321: pop
-			IL_0322: leave IL_0327
+			IL_02d6: ldloc.s 7
+			IL_02d8: stloc.s 13
+			IL_02da: ldloc.s 13
+			IL_02dc: stloc.s 8
+			IL_02de: newobj instance void Modules.WeakSet_Constructor_Prototype_Surface/Scope/Block_L27C12::.ctor()
+			IL_02e3: stloc.s 9
+			IL_02e5: ldloc.s 8
+			IL_02e7: ldstr "name"
+			IL_02ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_02f1: ldstr ": "
+			IL_02f6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_02fb: stloc.s 15
+			IL_02fd: ldloc.s 15
+			IL_02ff: ldloc.s 8
+			IL_0301: ldstr "message"
+			IL_0306: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0310: stloc.s 15
+			IL_0312: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0317: ldloc.s 15
+			IL_0319: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_031e: pop
+			IL_031f: leave IL_0324
 		} // end handler
 
-		IL_0327: ldnull
-		IL_0328: stloc.s 10
-		IL_032a: ret
+		IL_0324: ldnull
+		IL_0325: stloc.s 10
+		IL_0327: ret
 	} // end of method WeakSet_Constructor_Prototype_Surface::__js_module_init__
 
 } // end of class Modules.WeakSet_Constructor_Prototype_Surface
@@ -363,7 +359,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23b3
+		// Method begins at RVA 0x23af
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

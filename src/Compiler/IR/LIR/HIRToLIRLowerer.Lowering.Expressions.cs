@@ -624,13 +624,7 @@ public sealed partial class HIRToLIRLowerer
                                 if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                                 {
                                     resultTempVar = CreateTempVariable();
-                                    var parentIndex = storage.ParentScopeIndex;
-                                    if ((_methodBodyIR.IsAsync && _methodBodyIR.AsyncInfo?.HasAwaits == true)
-                                        || _methodBodyIR.IsGenerator)
-                                    {
-                                        // Resumables prepend leaf scope at scopes[0], shifting parents right by one.
-                                        parentIndex += 1;
-                                    }
+                                    var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                                     _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     _tempBindingOrigin[resultTempVar] = binding;
@@ -675,25 +669,27 @@ public sealed partial class HIRToLIRLowerer
                         var storage = _environmentLayout.GetStorage(binding);
                         if (storage != null)
                         {
-                            var undefinedTemp = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefinedTemp));
-                            DefineTempStorage(undefinedTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-
                             if (storage.Kind == BindingStorageKind.LeafScopeField
                                 && !storage.Field.IsNil
                                 && !storage.DeclaringScope.IsNil)
                             {
-                                var storedUndefinedTemp = EnsureObject(undefinedTemp);
-                                _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, storedUndefinedTemp));
-                                _variableMap[binding] = storedUndefinedTemp;
-                                resultTempVar = storedUndefinedTemp;
+                                resultTempVar = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
+                                DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                _tempBindingOrigin[resultTempVar] = binding;
+                                _variableMap[binding] = resultTempVar;
                                 return true;
                             }
 
                             if (storage.Kind == BindingStorageKind.IlLocal)
                             {
-                                var slot = GetOrCreateVariableSlot(binding, varExpr.Name.Name, GetTempStorage(undefinedTemp));
-                                resultTempVar = EnsureTempMappedToSlot(slot, undefinedTemp);
+                                resultTempVar = CreateTempVariable();
+                                var defaultStorage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                                _methodBodyIR.Instructions.Insert(0, new LIRConstUndefined(resultTempVar));
+                                DefineTempStorage(resultTempVar, defaultStorage);
+                                var slot = GetOrCreateVariableSlot(binding, varExpr.Name.Name, defaultStorage);
+                                SetTempVariableSlot(resultTempVar, slot);
+                                _tempBindingOrigin[resultTempVar] = binding;
                                 _variableMap[binding] = resultTempVar;
                                 return true;
                             }

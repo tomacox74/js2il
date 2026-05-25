@@ -9,4 +9,12 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "Uint8Array_fromHex_results")]
     public Task Uint8Array_fromHex_results()
         => ExecutionTest("Uint8Array_fromHex_results");
+
+    [Fact(DisplayName = "string-coercion")]
+    public Task string_coercion()
+        => ExecutionTest("string-coercion");
+    [Fact(DisplayName = "odd-length-input")]
+    public Task odd_length_input()
+        => ExecutionTest("odd-length-input");
+
 }

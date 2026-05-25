@@ -26,4 +26,12 @@ public class ExecutionTests : ExecutionTestsBase
     public Task Array_from_arity()
         => ExecutionTest("Array.from_arity");
 
+    [Fact(DisplayName = "from-string")]
+    public Task from_string()
+        => ExecutionTest("from-string");
+
+    [Fact(DisplayName = "from-array")]
+    public Task from_array()
+        => ExecutionTest("from-array");
+
 }

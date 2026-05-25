@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-03T15:15:03Z
+> Last generated (UTC): 2026-05-24T19:56:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -52,14 +52,14 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| new Map() | Supported | [`Map_Constructor_Empty.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js) |  | Zero-argument construction lowers to JavaScriptRuntime.Map() and produces an insertion-ordered keyed collection. |
-| new Map(iterable) | Supported | [`Map_Constructor_Iterable.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Iterable.js) |  | JavaScriptRuntime.Map now accepts a single iterable argument, consumes it via the runtime iterator protocol, and inserts each [key, value] pair in order. |
+| new Map() | Supported | [`Map_Constructor_Empty.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js) | `test/built-ins/Map/undefined-newtarget.js` | Zero-argument construction lowers to JavaScriptRuntime.Map() and produces an insertion-ordered keyed collection. |
+| new Map(iterable) | Supported | [`Map_Constructor_Iterable.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Iterable.js) |  | JavaScriptRuntime.Map accepts a single iterable argument, consumes it via the runtime iterator protocol, observes constructor adder lookup/call-order semantics, treats an own/inherited undefined @@iterator as a TypeError, and inserts each [key, value] pair in order for the covered test262 constructor cases. |
 
 ### 24.1.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-map.prototype))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.Map as a constructor value, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are now implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete. |
+| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) | `test/built-ins/Map/prototype-of-map.js` | JS2IL exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete. |
 
 ### 24.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-prototype-object))
 

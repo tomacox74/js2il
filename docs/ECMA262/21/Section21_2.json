@@ -112,6 +112,21 @@
           "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js"
         ],
         "notes": "Supports BigInt(value) with basic conversion from integral Numbers and from decimal strings; typeof === 'bigint'. Does not implement the full spec ToBigInt / StringToBigInt grammar or the full BigInt constructor/prototype surface."
+      },
+      {
+        "clause": "21.2",
+        "feature": "BigInt primitive operator semantics (representative unary, bitwise, and shift cases)",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/expressions/bigint/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/expressions/unary-minus/bigint.js",
+          "test/language/expressions/bitwise-not/bigint.js",
+          "test/language/expressions/left-shift/bigint.js",
+          "test/language/expressions/unsigned-right-shift/bigint.js"
+        ],
+        "notes": "Checked-in coverage now includes representative primitive BigInt unary negation, bitwise NOT, left shift, and unsigned-right-shift TypeError behavior. The broader BigInt constructor/prototype surface remains incomplete."
       }
     ]
   }

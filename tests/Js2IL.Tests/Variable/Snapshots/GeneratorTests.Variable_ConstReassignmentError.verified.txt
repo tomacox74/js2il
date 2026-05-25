@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2105
+				// Method begins at RVA 0x2101
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210e
+				// Method begins at RVA 0x210a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x20f8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 137 (0x89)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ConstReassignmentError/Scope,
@@ -112,51 +112,47 @@
 			IL_0026: ldstr "NO_ERROR"
 			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_0030: pop
-			IL_0031: leave IL_0089
+			IL_0031: leave IL_0085
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_0036: stloc.3
 			IL_0037: ldloc.3
-			IL_0038: dup
-			IL_0039: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_003e: dup
-			IL_003f: brtrue IL_0055
+			IL_0038: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_003d: dup
+			IL_003e: brtrue IL_0053
 
-			IL_0044: pop
-			IL_0045: dup
-			IL_0046: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_004b: dup
-			IL_004c: brtrue IL_0062
+			IL_0043: pop
+			IL_0044: ldloc.3
+			IL_0045: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_004a: dup
+			IL_004b: brtrue IL_005f
 
-			IL_0051: pop
-			IL_0052: pop
-			IL_0053: rethrow
+			IL_0050: pop
+			IL_0051: rethrow
 
-			IL_0055: pop
-			IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_005b: stloc.s 4
-			IL_005d: br IL_0065
+			IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0058: stloc.s 4
+			IL_005a: br IL_0061
 
-			IL_0062: pop
-			IL_0063: stloc.s 4
+			IL_005f: stloc.s 4
 
-			IL_0065: ldloc.s 4
-			IL_0067: stloc.s 8
-			IL_0069: ldloc.s 8
-			IL_006b: stloc.s 5
-			IL_006d: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L7C12::.ctor()
-			IL_0072: stloc.s 6
-			IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0079: ldstr "CONST_REASSIGN_ERROR"
-			IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0083: pop
-			IL_0084: leave IL_0089
+			IL_0061: ldloc.s 4
+			IL_0063: stloc.s 8
+			IL_0065: ldloc.s 8
+			IL_0067: stloc.s 5
+			IL_0069: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L7C12::.ctor()
+			IL_006e: stloc.s 6
+			IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0075: ldstr "CONST_REASSIGN_ERROR"
+			IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_007f: pop
+			IL_0080: leave IL_0085
 		} // end handler
 
-		IL_0089: ldnull
-		IL_008a: stloc.s 7
-		IL_008c: ret
+		IL_0085: ldnull
+		IL_0086: stloc.s 7
+		IL_0088: ret
 	} // end of method Variable_ConstReassignmentError::__js_module_init__
 
 } // end of class Modules.Variable_ConstReassignmentError
@@ -168,7 +164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2117
+		// Method begins at RVA 0x2113
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

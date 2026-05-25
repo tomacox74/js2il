@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-03T15:15:03Z
+> Last generated (UTC): 2026-05-24T19:56:40Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -60,14 +60,14 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| new Set() | Supported | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js)<br>[`Require_Util_Types_Expanded.js`](../../../tests/Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js) |  | Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize. |
-| new Set(iterable) | Supported | [`Set_Constructor_Iterable.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js) |  | JavaScriptRuntime.Set now accepts a single iterable argument and consumes it with the runtime iterator protocol, preserving insertion order and ignoring duplicates. |
+| new Set() | Supported | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js)<br>[`Require_Util_Types_Expanded.js`](../../../tests/Js2IL.Tests/Node/Util/JavaScript/Require_Util_Types_Expanded.js) | `test/built-ins/Set/set-does-not-throw-when-add-is-not-callable.js`<br>`test/built-ins/Set/set-undefined-newtarget.js` | Parameterless construction succeeds and produces a JavaScriptRuntime.Set instance that other runtime services can recognize. |
+| new Set(iterable) | Supported | [`Set_Constructor_Iterable.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Iterable.js) |  | JavaScriptRuntime.Set accepts a single iterable argument, consumes it with the runtime iterator protocol, observes constructor adder lookup/call-order semantics, preserves insertion order, and ignores duplicates for the covered test262 constructor cases. |
 
 ### 24.2.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) |  | JS2IL now exposes globalThis.Set as a constructor value, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete. |
+| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) | `test/built-ins/Set/prototype-of-set.js` | JS2IL exposes globalThis.Set as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete. |
 
 ### 24.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object))
 

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c9
+				// Method begins at RVA 0x21c1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d2
+				// Method begins at RVA 0x21ca
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21db
+				// Method begins at RVA 0x21d3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e4
+				// Method begins at RVA 0x21dc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x21b8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -122,7 +122,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 327 (0x147)
+		// Code size: 320 (0x140)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope,
@@ -159,117 +159,109 @@
 			IL_002e: box [System.Runtime]System.Double
 			IL_0033: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object, object)
 			IL_0038: pop
-			IL_0039: leave IL_00af
+			IL_0039: leave IL_00ab
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
 			IL_003e: stloc.3
 			IL_003f: ldloc.3
-			IL_0040: dup
-			IL_0041: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0046: dup
-			IL_0047: brtrue IL_005d
+			IL_0040: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0045: dup
+			IL_0046: brtrue IL_005b
 
-			IL_004c: pop
-			IL_004d: dup
-			IL_004e: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0053: dup
-			IL_0054: brtrue IL_006a
+			IL_004b: pop
+			IL_004c: ldloc.3
+			IL_004d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0052: dup
+			IL_0053: brtrue IL_0067
 
-			IL_0059: pop
-			IL_005a: pop
-			IL_005b: rethrow
+			IL_0058: pop
+			IL_0059: rethrow
 
-			IL_005d: pop
-			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0063: stloc.s 4
-			IL_0065: br IL_006d
+			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0060: stloc.s 4
+			IL_0062: br IL_0069
 
-			IL_006a: pop
-			IL_006b: stloc.s 4
+			IL_0067: stloc.s 4
 
-			IL_006d: ldloc.s 4
-			IL_006f: stloc.s 14
-			IL_0071: ldloc.s 14
-			IL_0073: stloc.s 5
-			IL_0075: newobj instance void Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope/Block_L7C12::.ctor()
-			IL_007a: stloc.s 6
-			IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0081: ldloc.s 5
-			IL_0083: ldstr "name"
-			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0092: pop
-			IL_0093: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0098: ldloc.s 5
-			IL_009a: ldstr "message"
-			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00a9: pop
-			IL_00aa: leave IL_00af
+			IL_0069: ldloc.s 4
+			IL_006b: stloc.s 14
+			IL_006d: ldloc.s 14
+			IL_006f: stloc.s 5
+			IL_0071: newobj instance void Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope/Block_L7C12::.ctor()
+			IL_0076: stloc.s 6
+			IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007d: ldloc.s 5
+			IL_007f: ldstr "name"
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_008e: pop
+			IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0094: ldloc.s 5
+			IL_0096: ldstr "message"
+			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00a5: pop
+			IL_00a6: leave IL_00ab
 		} // end handler
 		.try
 		{
-			IL_00af: newobj instance void Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope/Block_L12C4::.ctor()
-			IL_00b4: stloc.s 7
-			IL_00b6: ldloc.1
-			IL_00b7: ldc.r8 4
-			IL_00c0: box [System.Runtime]System.Double
-			IL_00c5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Float64Array::.ctor(object, object)
-			IL_00ca: pop
-			IL_00cb: leave IL_0143
+			IL_00ab: newobj instance void Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope/Block_L12C4::.ctor()
+			IL_00b0: stloc.s 7
+			IL_00b2: ldloc.1
+			IL_00b3: ldc.r8 4
+			IL_00bc: box [System.Runtime]System.Double
+			IL_00c1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Float64Array::.ctor(object, object)
+			IL_00c6: pop
+			IL_00c7: leave IL_013c
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_00d0: stloc.s 8
-			IL_00d2: ldloc.s 8
-			IL_00d4: dup
-			IL_00d5: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_00da: dup
-			IL_00db: brtrue IL_00f1
+			IL_00cc: stloc.s 8
+			IL_00ce: ldloc.s 8
+			IL_00d0: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_00d5: dup
+			IL_00d6: brtrue IL_00ec
 
-			IL_00e0: pop
-			IL_00e1: dup
-			IL_00e2: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_00e7: dup
-			IL_00e8: brtrue IL_00fe
+			IL_00db: pop
+			IL_00dc: ldloc.s 8
+			IL_00de: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_00e3: dup
+			IL_00e4: brtrue IL_00f8
 
-			IL_00ed: pop
-			IL_00ee: pop
-			IL_00ef: rethrow
+			IL_00e9: pop
+			IL_00ea: rethrow
 
-			IL_00f1: pop
-			IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00f7: stloc.s 9
-			IL_00f9: br IL_0101
+			IL_00ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00f1: stloc.s 9
+			IL_00f3: br IL_00fa
 
-			IL_00fe: pop
-			IL_00ff: stloc.s 9
+			IL_00f8: stloc.s 9
 
-			IL_0101: ldloc.s 9
-			IL_0103: stloc.s 14
-			IL_0105: ldloc.s 14
-			IL_0107: stloc.s 10
-			IL_0109: newobj instance void Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope/Block_L14C12::.ctor()
-			IL_010e: stloc.s 11
-			IL_0110: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0115: ldloc.s 10
-			IL_0117: ldstr "name"
-			IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0121: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0126: pop
-			IL_0127: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_012c: ldloc.s 10
-			IL_012e: ldstr "message"
-			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0138: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_013d: pop
-			IL_013e: leave IL_0143
+			IL_00fa: ldloc.s 9
+			IL_00fc: stloc.s 14
+			IL_00fe: ldloc.s 14
+			IL_0100: stloc.s 10
+			IL_0102: newobj instance void Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError/Scope/Block_L14C12::.ctor()
+			IL_0107: stloc.s 11
+			IL_0109: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_010e: ldloc.s 10
+			IL_0110: ldstr "name"
+			IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_011f: pop
+			IL_0120: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0125: ldloc.s 10
+			IL_0127: ldstr "message"
+			IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0131: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0136: pop
+			IL_0137: leave IL_013c
 		} // end handler
 
-		IL_0143: ldnull
-		IL_0144: stloc.s 12
-		IL_0146: ret
+		IL_013c: ldnull
+		IL_013d: stloc.s 12
+		IL_013f: ret
 	} // end of method Int32Array_Construct_ArrayBuffer_Alignment_RangeError::__js_module_init__
 
 } // end of class Modules.Int32Array_Construct_ArrayBuffer_Alignment_RangeError
@@ -281,7 +273,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ed
+		// Method begins at RVA 0x21e5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

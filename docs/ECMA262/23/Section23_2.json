@@ -450,9 +450,23 @@
           "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
           "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/float32array.js",
           "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int16array.js",
-          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int8array.js"
+          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int8array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js"
         ],
-        "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete."
+        "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. Current checked-in test262 coverage now includes standalone ArrayIteratorPrototype.next sequences across those supported families. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete.",
+        "test262Paths": [
+          "test/built-ins/ArrayIteratorPrototype/next/Uint8Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Int8Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Int16Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Int32Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Float32Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Float64Array.js"
+        ]
       },
       {
         "clause": "23.2.2.3",
@@ -583,9 +597,23 @@
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.values",
         "testScripts": [
           "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Values_Iterator.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Iterator_Metadata.js"
+          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Iterator_Metadata.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js",
+          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js"
         ],
-        "notes": "values(), keys(), and entries() return callable iterator objects, supported TypedArrays expose [Symbol.iterator]() and [Symbol.toStringTag] reads, and they participate in for-of via the runtime iterator path, including Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array coverage. This is implemented via shared instance surface wiring rather than full prototype-object fidelity."
+        "notes": "values(), keys(), and entries() return callable iterator objects, supported TypedArrays expose [Symbol.iterator]() and [Symbol.toStringTag] reads, and they participate in for-of via the runtime iterator path, including Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array coverage. Current checked-in test262 coverage now includes standalone next() sequences for those supported families. This is implemented via shared instance surface wiring rather than full prototype-object fidelity.",
+        "test262Paths": [
+          "test/built-ins/ArrayIteratorPrototype/next/Uint8Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Int8Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Int16Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Int32Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Float32Array.js",
+          "test/built-ins/ArrayIteratorPrototype/next/Float64Array.js"
+        ]
       },
       {
         "clause": "23.2.2.1",
@@ -593,9 +621,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.from",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js"
+          "tests/Js2IL.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js",
+          "tests/Js2IL.Test262.Tests/built-ins/TypedArray/from/JavaScript/iterated-array-changed-by-tonumber.js"
         ],
-        "notes": "Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete."
+        "notes": "Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. Current checked-in test262 coverage also exercises the built-in array-iterator path where later numeric coercion mutates the original source after iteration materialization. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete.",
+        "test262Paths": [
+          "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js"
+        ]
       }
     ]
   }

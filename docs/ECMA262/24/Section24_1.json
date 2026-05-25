@@ -194,6 +194,9 @@
         "testScripts": [
           "tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Empty.js"
         ],
+        "test262Paths": [
+          "test/built-ins/Map/undefined-newtarget.js"
+        ],
         "notes": "Zero-argument construction lowers to JavaScriptRuntime.Map() and produces an insertion-ordered keyed collection."
       },
       {
@@ -204,7 +207,7 @@
         "testScripts": [
           "tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Iterable.js"
         ],
-        "notes": "JavaScriptRuntime.Map now accepts a single iterable argument, consumes it via the runtime iterator protocol, and inserts each [key, value] pair in order."
+        "notes": "JavaScriptRuntime.Map accepts a single iterable argument, consumes it via the runtime iterator protocol, observes constructor adder lookup/call-order semantics, treats an own/inherited undefined @@iterator as a TypeError, and inserts each [key, value] pair in order for the covered test262 constructor cases."
       },
       {
         "clause": "24.1.2.2",
@@ -214,7 +217,10 @@
         "testScripts": [
           "tests/Js2IL.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js"
         ],
-        "notes": "JS2IL now exposes globalThis.Map as a constructor value, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are now implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete."
+        "test262Paths": [
+          "test/built-ins/Map/prototype-of-map.js"
+        ],
+        "notes": "JS2IL exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete."
       },
       {
         "clause": "24.1.3",
