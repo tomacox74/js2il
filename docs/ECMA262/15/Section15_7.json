@@ -312,7 +312,64 @@
         "testScripts": [
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js"
         ],
-        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Object.getOwnPropertyDescriptor() correctly identifies getter/setter descriptors on class prototypes and static class objects. Static accessor methods use the correct CLR static ABI. Private accessors are compiled as hidden callable members. Computed class accessors still have limitations."
+        "notes": "Identifier-named instance and static accessors compile and dispatch correctly for normal property reads/writes, including accessor this binding and static access through the class object. Object.getOwnPropertyDescriptor() correctly identifies getter/setter descriptors on class prototypes and static class objects. Static accessor methods use the correct CLR static ABI. Private accessors are compiled as hidden callable members. More complex runtime-computed accessor keys still have limitations."
+      },
+      {
+        "clause": "15.7.1",
+        "feature": "Computed class accessor names (get ['x']() / static set [expr](v))",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-inst/JavaScript/computed.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-inst/JavaScript/computed-err-evaluation.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-inst/JavaScript/computed-err-to-prop-key.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-inst/JavaScript/computed-err-unresolvable.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-static/JavaScript/computed.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-static/JavaScript/computed-err-evaluation.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/accessor-name-static/JavaScript/computed-err-unresolvable.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/accessor-name-inst/JavaScript/computed.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/accessor-name-inst/JavaScript/computed-err-evaluation.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/accessor-name-inst/JavaScript/computed-err-unresolvable.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/accessor-name-static/JavaScript/computed.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/accessor-name-static/JavaScript/computed-err-evaluation.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/accessor-name-static/JavaScript/computed-err-unresolvable.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-accessors-computed-property-name-from-identifier.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-accessors-computed-property-name-from-null.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-accessors-computed-property-name-from-string-literal.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-accessors-computed-property-name-from-numeric-literal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-accessors-computed-property-name-from-identifier.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-accessors-computed-property-name-from-null.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-accessors-computed-property-name-from-string-literal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-accessors-computed-property-name-from-numeric-literal.js"
+        ],
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/accessor-name-inst/computed.js",
+          "test/language/statements/class/accessor-name-inst/computed-err-evaluation.js",
+          "test/language/statements/class/accessor-name-inst/computed-err-to-prop-key.js",
+          "test/language/statements/class/accessor-name-inst/computed-err-unresolvable.js",
+          "test/language/statements/class/accessor-name-static/computed.js",
+          "test/language/statements/class/accessor-name-static/computed-err-evaluation.js",
+          "test/language/statements/class/accessor-name-static/computed-err-unresolvable.js",
+          "test/language/expressions/class/accessor-name-inst/computed.js",
+          "test/language/expressions/class/accessor-name-inst/computed-err-evaluation.js",
+          "test/language/expressions/class/accessor-name-inst/computed-err-unresolvable.js",
+          "test/language/expressions/class/accessor-name-static/computed.js",
+          "test/language/expressions/class/accessor-name-static/computed-err-evaluation.js",
+          "test/language/expressions/class/accessor-name-static/computed-err-unresolvable.js",
+          "test/language/statements/class/cpn-class-decl-accessors-computed-property-name-from-identifier.js",
+          "test/language/statements/class/cpn-class-decl-accessors-computed-property-name-from-null.js",
+          "test/language/statements/class/cpn-class-decl-accessors-computed-property-name-from-string-literal.js",
+          "test/language/statements/class/cpn-class-decl-accessors-computed-property-name-from-numeric-literal.js",
+          "test/language/expressions/class/cpn-class-expr-accessors-computed-property-name-from-identifier.js",
+          "test/language/expressions/class/cpn-class-expr-accessors-computed-property-name-from-null.js",
+          "test/language/expressions/class/cpn-class-expr-accessors-computed-property-name-from-string-literal.js",
+          "test/language/expressions/class/cpn-class-expr-accessors-computed-property-name-from-numeric-literal.js"
+        ],
+        "notes": "Covered declaration and expression forms support computed accessor keys on both instance and static paths, including normal lookup and abrupt-completion cases during key evaluation / ToPropertyKey resolution. More complex runtime-computed accessor keys still have limitations."
       },
       {
         "clause": "15.7.1",
@@ -324,10 +381,23 @@
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
           "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_NestedClassExtendsGlobal.js",
           "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/heritage-arrow-function.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/subclass/JavaScript/class-definition-evaluation-empty-constructor-heritage-present.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/subclass/JavaScript/class-definition-null-proto-super.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/subclass/JavaScript/default-constructor.js",
           "tests/Js2IL.Test262.Tests/language/statements/class/strict-mode/JavaScript/arguments-callee.js",
           "tests/Js2IL.Test262.Tests/language/statements/class/elements/JavaScript/class-field-is-observable-by-proxy.js"
         ],
-        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported. Function-valued base constructors are supported for super(), including object/proxy replacement returns from the base constructor. Class heritage validation rejects non-constructible callable values such as arrow functions."
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/heritage-arrow-function.js",
+          "test/language/statements/class/subclass/class-definition-evaluation-empty-constructor-heritage-present.js",
+          "test/language/statements/class/subclass/class-definition-null-proto-super.js",
+          "test/language/statements/class/subclass/default-constructor.js"
+        ],
+        "notes": "Derived classes use the compiled base class as their CLR base type when resolvable, enabling direct base dispatch for instance methods. Nested classes that extend a globally-scoped class are now supported. Function-valued base constructors are supported for super(), including object/proxy replacement returns from the base constructor. The covered `test262` cases exercise implicit derived constructors, null-prototype heritage, and regular function-valued bases that forward through `super()`."
       },
       {
         "clause": "15.7.1",
@@ -455,9 +525,31 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "tests/Js2IL.Tests/ValidatorTests.cs",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-computed-property-name-from-identifier.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-computed-property-name-from-null.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-computed-property-name-from-string-literal.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-computed-property-name-from-numeric-literal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-computed-property-name-from-identifier.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-computed-property-name-from-null.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-computed-property-name-from-string-literal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-computed-property-name-from-numeric-literal.js"
         ],
-        "notes": "Identifier, string-literal, numeric-literal, and other simple literal computed method names compile onto the generated class surface. Arbitrary runtime-computed method keys still have limitations."
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/cpn-class-decl-computed-property-name-from-identifier.js",
+          "test/language/statements/class/cpn-class-decl-computed-property-name-from-null.js",
+          "test/language/statements/class/cpn-class-decl-computed-property-name-from-string-literal.js",
+          "test/language/statements/class/cpn-class-decl-computed-property-name-from-numeric-literal.js",
+          "test/language/expressions/class/cpn-class-expr-computed-property-name-from-identifier.js",
+          "test/language/expressions/class/cpn-class-expr-computed-property-name-from-null.js",
+          "test/language/expressions/class/cpn-class-expr-computed-property-name-from-string-literal.js",
+          "test/language/expressions/class/cpn-class-expr-computed-property-name-from-numeric-literal.js"
+        ],
+        "notes": "Identifier, string-literal, numeric-literal, and other simple literal computed method names compile onto the generated class surface across covered declaration and expression forms. Arbitrary runtime-computed method keys still have limitations."
       },
       {
         "clause": "15.7.10",
@@ -466,9 +558,33 @@
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-classfielddefinitionevaluation",
         "testScripts": [
           "tests/Js2IL.Tests/ValidatorTests.cs",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js"
+          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-condition-expression-true.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-identifier.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-null.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-string-literal.js",
+          "tests/Js2IL.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-numeric-literal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-fields-computed-property-name-from-identifier.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-fields-computed-property-name-from-null.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-fields-computed-property-name-from-string-literal.js",
+          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/cpn-class-expr-fields-computed-property-name-from-numeric-literal.js"
         ],
-        "notes": "Identifier/private-identifier field definitions are emitted as CLR fields. Simple literal computed names are resolved onto the generated class surface; dynamically computed field keys still use the generic runtime property path."
+        "test262Suites": [
+          "pr",
+          "nightly"
+        ],
+        "test262Paths": [
+          "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-condition-expression-true.js",
+          "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-identifier.js",
+          "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-null.js",
+          "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-string-literal.js",
+          "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-numeric-literal.js",
+          "test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-identifier.js",
+          "test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-null.js",
+          "test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-string-literal.js",
+          "test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-numeric-literal.js"
+        ],
+        "notes": "Identifier/private-identifier field definitions are emitted as CLR fields. Covered declaration and expression cases resolve identifier, null, string-literal, and numeric-literal computed field keys onto the generated class surface; dynamically computed field keys still use the generic runtime property path."
       },
       {
         "clause": "15.7.11",
