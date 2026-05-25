@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/test262: port 40 additional function, parameter, arrow-function, and closure-adjacent execution cases using the disk-backed test262 harness while preserving upstream paths and scenario names.
 
 ## v0.9.25 - 2026-05-24
 
