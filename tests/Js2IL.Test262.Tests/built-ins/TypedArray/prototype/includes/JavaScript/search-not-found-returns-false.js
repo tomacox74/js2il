@@ -1,0 +1,99 @@
+// Copyright (C) 2016 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+esid: sec-%typedarray%.prototype.includes
+description: returns false if the element is not found
+info: |
+  22.2.3.13 %TypedArray%.prototype.includes ( searchElement [ , fromIndex ] )
+
+  %TypedArray%.prototype.includes is a distinct function that implements the
+  same algorithm as Array.prototype.includes as defined in 22.1.3.11 except that
+  the this object's [[ArrayLength]] internal slot is accessed in place of
+  performing a [[Get]] of "length".
+
+  22.1.3.11 Array.prototype.includes ( searchElement [ , fromIndex ] )
+
+    ...
+  5. If n ≥ 0, then
+    a. Let k be n.
+  6. Else n < 0,
+    a. Let k be len + n.
+    b. If k < 0, let k be 0.
+  7. Repeat, while k < len
+    a. Let elementK be the result of ? Get(O, ! ToString(k)).
+    b. If SameValueZero(searchElement, elementK) is true, return true.
+    c. Increase k by 1.
+  8. Return false.
+includes: [testTypedArray.js]
+features: [TypedArray]
+---*/
+
+
+function assert(value) {
+  console.log(!!value);
+}
+
+assert.sameValue = function(actual, expected) {
+  console.log(Object.is(actual, expected));
+};
+
+assert.notSameValue = function(actual, unexpected) {
+  console.log(!Object.is(actual, unexpected));
+};
+
+function compareArray(actual, expected) {
+  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
+    return false;
+  }
+
+  for (let i = 0; i < actual.length; i++) {
+    if (!Object.is(actual[i], expected[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+assert.compareArray = function(actual, expected) {
+  console.log(compareArray(actual, expected));
+};
+
+assert.throws = function(expectedCtor, fn) {
+  try {
+    fn();
+    console.log(false);
+  } catch (error) {
+    console.log(error instanceof expectedCtor);
+  }
+};
+
+function Test262Error(message) {
+  this.name = 'Test262Error';
+  this.message = message || '';
+}
+
+Test262Error.prototype = Object.create(Error.prototype);
+Test262Error.prototype.constructor = Test262Error;
+
+var TypedArray = Object.getPrototypeOf(Int8Array);
+
+function testWithTypedArrayConstructors(fn) {
+  var ctors = [Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, Float64Array];
+  for (var i = 0; i < ctors.length; i++) {
+    fn(ctors[i], function(value) { return value; });
+  }
+}
+
+testWithTypedArrayConstructors(function(TA, makeCtorArg) {
+  var sample;
+
+  sample = new TA(makeCtorArg([42, 43, 42, 41]));
+  assert.sameValue(sample.includes(44), false, "includes(44)");
+  assert.sameValue(sample.includes(43, 2), false, "includes(43, 2)");
+  assert.sameValue(sample.includes(42, 3), false, "includes(42, 3)");
+  assert.sameValue(sample.includes(44, -4), false, "includes(44, -4)");
+  assert.sameValue(sample.includes(44, -5), false, "includes(44, -5)");
+  assert.sameValue(sample.includes(42, -1), false, "includes(42, -1)");
+});
