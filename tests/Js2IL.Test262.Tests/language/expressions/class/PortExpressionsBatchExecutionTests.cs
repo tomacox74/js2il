@@ -101,4 +101,44 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "scope-static-meth-paramsbody-var-open")]
     public Task scope_static_meth_paramsbody_var_open()
         => ExecutionTest("scope-static-meth-paramsbody-var-open");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-additive-expression-add")]
+    public Task cpn_class_expr_computed_property_name_from_additive_expression_add()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-additive-expression-add");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-condition-expression-false")]
+    public Task cpn_class_expr_computed_property_name_from_condition_expression_false()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-condition-expression-false");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-condition-expression-true")]
+    public Task cpn_class_expr_computed_property_name_from_condition_expression_true()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-condition-expression-true");
+
+    [Fact(DisplayName = "cpn-class-expr-computed-property-name-from-expression-logical-and")]
+    public Task cpn_class_expr_computed_property_name_from_expression_logical_and()
+        => ExecutionTest("cpn-class-expr-computed-property-name-from-expression-logical-and");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-additive-expression-add")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_additive_expression_add()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-additive-expression-add");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-condition-expression-true")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_condition_expression_true()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-condition-expression-true");
+
+    [Fact(DisplayName = "cpn-class-expr-accessors-computed-property-name-from-expression-logical-and")]
+    public Task cpn_class_expr_accessors_computed_property_name_from_expression_logical_and()
+        => ExecutionTest("cpn-class-expr-accessors-computed-property-name-from-expression-logical-and");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-additive-expression-add")]
+    public Task cpn_class_expr_fields_computed_property_name_from_additive_expression_add()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-additive-expression-add");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-condition-expression-false")]
+    public Task cpn_class_expr_fields_computed_property_name_from_condition_expression_false()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-condition-expression-false");
+
+    [Fact(DisplayName = "cpn-class-expr-fields-computed-property-name-from-expression-logical-and")]
+    public Task cpn_class_expr_fields_computed_property_name_from_expression_logical_and()
+        => ExecutionTest("cpn-class-expr-fields-computed-property-name-from-expression-logical-and");
 }
