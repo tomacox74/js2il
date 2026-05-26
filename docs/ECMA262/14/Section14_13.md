@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:24:00Z
+> Last generated (UTC): 2026-05-26T20:12:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,6 +22,18 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.13.1 ([tc39.es](https://tc39.es/ecma262/#sec-labelled-statements-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| labeled statement early errors | Supported | [`continue.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/continue.js)<br>[`let-array-with-newline.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/let-array-with-newline.js)<br>[`decl-const.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/decl-const.js) |  | The added ports cover parser rejection for invalid labeled continue targets, the `let [` lookahead restriction, and lexical declarations used directly as labelled items. |
+
+### 14.13.3 ([tc39.es](https://tc39.es/ecma262/#sec-labelled-statements-runtime-semantics-evaluation))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| labeled identifier forms accepted in non-strict code | Supported | [`let-identifier-with-newline.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/let-identifier-with-newline.js)<br>[`value-yield-non-strict-escaped.js`](../../../tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/value-yield-non-strict-escaped.js) |  | The current slice also covers non-strict forms where `let <bindingIdentifier>` and an escaped `yield` token remain valid label identifiers. |
 
 ### 14.13.4 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-labelledevaluation))
 

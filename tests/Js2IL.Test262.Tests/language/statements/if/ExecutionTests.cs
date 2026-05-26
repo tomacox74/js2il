@@ -74,4 +74,25 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "let-block-with-newline")]
     public Task let_block_with_newline()
         => ExecutionTest("let-block-with-newline");
+
+    [Fact(DisplayName = "S12.5_A6_T1")]
+    public Task S12_5_A6_T1()
+        => CompilationFailureTest("S12.5_A6_T1", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.5_A6_T2")]
+    public Task S12_5_A6_T2()
+        => CompilationFailureTest("S12.5_A6_T2", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.5_A8")]
+    public Task S12_5_A8()
+        => CompilationFailureTest("S12.5_A8", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.5_A11")]
+    public Task S12_5_A11()
+        => CompilationFailureTest("S12.5_A11", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "if-cls-no-else")]
+    public Task if_cls_no_else()
+        => CompilationFailureTest("if-cls-no-else", "Failed to parse JavaScript");
+
 }
