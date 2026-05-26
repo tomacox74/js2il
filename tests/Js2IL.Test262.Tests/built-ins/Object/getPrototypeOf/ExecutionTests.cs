@@ -9,6 +9,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.2-0-1")]
     public Task _15_2_3_2_0_1()
         => ExecutionTestFromFile("15.2.3.2-0-1");
+    [Fact(DisplayName = "15.2.3.2-0-2")]
+    public Task _15_2_3_2_0_2()
+        => ExecutionTestFromFile("15.2.3.2-0-2");
+    [Fact(DisplayName = "15.2.3.2-0-3")]
+    public Task _15_2_3_2_0_3()
+        => ExecutionTestFromFile("15.2.3.2-0-3");
     [Fact(DisplayName = "15.2.3.2-1-2")]
     public Task _15_2_3_2_1_2()
         => ExecutionTestFromFile("15.2.3.2-1-2");
@@ -27,4 +33,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.2.3.2-2-5")]
     public Task _15_2_3_2_2_5()
         => ExecutionTestFromFile("15.2.3.2-2-5");
+    [Fact(DisplayName = "15.2.3.2-2-6")]
+    public Task _15_2_3_2_2_6()
+        => ExecutionTestFromFile("15.2.3.2-2-6");
+    [Fact(DisplayName = "15.2.3.2-2-7")]
+    public Task _15_2_3_2_2_7()
+        => ExecutionTestFromFile("15.2.3.2-2-7");
+    [Fact(DisplayName = "15.2.3.2-2-10")]
+    public Task _15_2_3_2_2_10()
+        => ExecutionTestFromFile("15.2.3.2-2-10");
+    [Fact(DisplayName = "15.2.3.2-2-11")]
+    public Task _15_2_3_2_2_11()
+        => ExecutionTestFromFile("15.2.3.2-2-11");
 }
