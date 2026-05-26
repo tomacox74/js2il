@@ -15,7 +15,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - tests/test262: port 40 additional String and RegExp execution cases covering string coercion/indexing, selected prototype methods, RegExp construction, and match/result behavior.
 - tests/docs/test262: port 40 additional Number/Math/BigInt/Date test262 execution cases covering Number coercion edges, parseInt/parseFloat/isNaN/isFinite, representative Math intrinsic behavior, BigInt unary/bitwise/shift operators, and basic Date constructor/TimeClip semantics.
 - compiler/runtime/tests/docs/test262: fix the newly ported collection/iteration cases across Map/Set/WeakMap/WeakSet and `for-of`, including iterable constructor adder semantics, constructor/global metadata, and generator IteratorClose paths.
-- compiler/runtime/tests/docs/test262: port and unskip 40 additional Promise/async/generator `test262` cases, including Promise static/prototype function metadata, async no-await Promise completion/rejection semantics, and generator `yield`/`yield*` parent-scope and iterator delegation coverage.
+- compiler/runtime/tests/docs/test262: port 40 additional Promise/async/generator `test262` cases covering Promise.prototype.catch/finally callable/metadata semantics, async-function default/trailing-comma/finally ordering behavior, generator yielded-value flow and string delegation, async-generator `yield`/`await` operand ordering, and `for await..of` destructuring iteration.
 
 ## v0.9.25 - 2026-05-24
 
