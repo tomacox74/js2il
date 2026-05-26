@@ -113,4 +113,16 @@ public class ExecutionTests : ExecutionTestsBase
     public Task head_lhs_let()
         => ExecutionTest("head-lhs-let");
 
-}
+    [Fact(DisplayName = "order-simple-object")]
+    public Task order_simple_object()
+        => ExecutionTest("order-simple-object");
+
+    [Fact(DisplayName = "order-property-added")]
+    public Task order_property_added()
+        => ExecutionTest("order-property-added");
+
+    [Fact(DisplayName = "order-property-on-prototype")]
+    public Task order_property_on_prototype()
+        => ExecutionTest("order-property-on-prototype");
+
+}
