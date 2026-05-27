@@ -53,7 +53,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_ary_init_iter_close()
         => ExecutionTest(@"dstr\ary-init-iter-close");
 
-    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Blocked by shared Array.prototype iterator fallback semantics.")]
+    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype")]
     public Task dstr_ary_init_iter_get_err_array_prototype()
         => ExecutionTest(@"dstr\ary-init-iter-get-err-array-prototype");
 
