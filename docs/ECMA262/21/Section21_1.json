@@ -42,7 +42,7 @@
     {
       "clause": "21.1.2.3",
       "title": "Number.isInteger ( number )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number.isinteger"
     },
     {
@@ -199,6 +199,19 @@
           "built-ins/Number/EPSILON.js"
         ],
         "notes": "Exposed on the Number constructor with non-writable, non-enumerable, non-configurable data-property attributes."
+      },
+      {
+        "clause": "21.1.2.3",
+        "feature": "Number.isInteger(number)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-number.isinteger",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/Number/isInteger/JavaScript/nan.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Number/isInteger/nan.js"
+        ],
+        "notes": "Checked-in coverage now includes representative NaN classification for Number.isInteger. Broader Number.isInteger metadata and argument-shape coverage remain limited to the current test262 slice."
       },
       {
         "clause": "21.1.2.12",
