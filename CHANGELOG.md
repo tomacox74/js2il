@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tests/docs/test262: record the additional expression/operator `test262` slice in the active changelog, covering conditional, nullish-coalescing, equality/relational, unary-plus, update-expression, and addition cases alongside the refreshed ECMA-262 operator docs.
 - compiler/runtime/tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `throw`, and `try` flows; fix the covered while/do-while reference-error catches, nested while `var`/`break` behavior, and nested try/finally IL so the new supported cases run unskipped while refreshing the linked ECMA-262 statement coverage docs.
 - tests/docs/test262: port 40 additional expression/operator `test262` cases across addition, relational comparison, equality, logical, nullish-coalescing, conditional, unary-plus, and update-expression areas, and refresh the linked ECMA-262 operator coverage docs for the expanded checked-in slice.
 - tests/test262: port 40 additional function, parameter, arrow-function, and closure-adjacent execution cases using the disk-backed test262 harness while preserving upstream paths and scenario names.
