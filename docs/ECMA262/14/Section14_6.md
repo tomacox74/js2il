@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:24:00Z
+> Last generated (UTC): 2026-05-26T20:12:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.6.1 ([tc39.es](https://tc39.es/ecma262/#sec-if-statement-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| if statement early errors | Supported | [`S12.5_A6_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/if/JavaScript/S12.5_A6_T1.js)<br>[`S12.5_A6_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/if/JavaScript/S12.5_A6_T2.js)<br>[`S12.5_A8.js`](../../../tests/Js2IL.Test262.Tests/language/statements/if/JavaScript/S12.5_A8.js)<br>[`S12.5_A11.js`](../../../tests/Js2IL.Test262.Tests/language/statements/if/JavaScript/S12.5_A11.js)<br>[`if-cls-no-else.js`](../../../tests/Js2IL.Test262.Tests/language/statements/if/JavaScript/if-cls-no-else.js) |  | The expanded test262 slice now explicitly covers parser rejection for missing parenthesized conditions, empty if conditions, invalid object-literal-looking conditions, and class declarations used directly in statement position. |
 
 ### 14.6.2 ([tc39.es](https://tc39.es/ecma262/#sec-if-statement-runtime-semantics-evaluation))
 

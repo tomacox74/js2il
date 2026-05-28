@@ -4340,9 +4340,9 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Symbol.iterator is not a function");
             }
 
-            if (iterable is JavaScriptRuntime.Array arr)
+            if (iterable is JavaScriptRuntime.Array)
             {
-                return arr.values();
+                throw new JavaScriptRuntime.TypeError("Object is not iterable");
             }
 
             if (iterable is string s)
