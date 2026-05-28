@@ -45,9 +45,9 @@ public class ExecutionTests : ExecutionTestsBase
     public Task dstr_ary_init_iter_close()
         => ExecutionTest(@"dstr\ary-init-iter-close");
 
-    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Blocked by shared Array.prototype iterator fallback semantics.")]
+    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype")]
     public Task dstr_ary_init_iter_get_err_array_prototype()
-        => ExecutionTest(@"dstr\ary-init-iter-get-err-array-prototype");
+        => ExecutionTest(@"dstr\ary-init-iter-get-err-array-prototype", preferOutOfProc: true);
 
     [Fact(DisplayName = "ary-init-iter-no-close")]
     public Task dstr_ary_init_iter_no_close()
@@ -65,7 +65,7 @@ public class ExecutionTests : ExecutionTestsBase
     public Task dstr_ary_ptrn_elem_ary_elem_iter()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-elem-iter");
 
-    [Fact(DisplayName = "ary-ptrn-elem-ary-elision-init", Skip = "Blocked by existing generator scope capture issue.")]
+    [Fact(DisplayName = "ary-ptrn-elem-ary-elision-init")]
     public Task dstr_ary_ptrn_elem_ary_elision_init()
         => ExecutionTest(@"dstr\ary-ptrn-elem-ary-elision-init");
 

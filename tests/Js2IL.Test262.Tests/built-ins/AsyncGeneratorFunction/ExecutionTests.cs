@@ -14,7 +14,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task extensibility()
         => ExecutionTestFromFile("extensibility");
 
-    [Fact(DisplayName = "has-instance")]
-    public Task has_instance()
-        => ExecutionTestFromFile("has-instance");
-}
+    [Fact(DisplayName = "has-instance")]
+    public Task has_instance()
+        => ExecutionTestFromFile("has-instance");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+}

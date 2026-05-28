@@ -14,7 +14,7 @@ namespace JavaScriptRuntime;
 /// Each call to next/throw/return sets resume protocol fields on the leaf scope
 /// (which inherits <see cref="GeneratorScope"/>) and then invokes the step closure.
 /// </summary>
-public sealed class GeneratorObject
+public sealed class GeneratorObject : IJavaScriptIterator
 {
     // Stable singleton used as %GeneratorPrototype%.constructor.
     // Per ECMA-262, gen.constructor is the same function object for all generator instances.
@@ -259,6 +259,29 @@ public sealed class GeneratorObject
             scope.Done = true;
             throw;
         }
+    }
+
+    IteratorResultObject IJavaScriptIterator.Next()
+    {
+        var result = next();
+        if (result is IteratorResultObject iteratorResult)
+        {
+            return iteratorResult;
+        }
+
+        if (result is IIteratorResult iteratorLike)
+        {
+            return IteratorResult.Create(iteratorLike.value, iteratorLike.done);
+        }
+
+        return IteratorResult.Create(result, done: false);
+    }
+
+    bool IJavaScriptIterator.HasReturn => true;
+
+    void IJavaScriptIterator.Return()
+    {
+        _ = @return(null);
     }
 
     /// <summary>
