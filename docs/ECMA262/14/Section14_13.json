@@ -71,6 +71,29 @@
           "tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/line-terminators.js"
         ],
         "notes": "The expanded test262 slice covers label-targeted break/continue across nested loops and the line-terminator case where `continue` must be treated as unlabeled."
+      },
+      {
+        "clause": "14.13.1",
+        "feature": "labeled statement early errors",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-labelled-statements-static-semantics-early-errors",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/continue.js",
+          "tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/let-array-with-newline.js",
+          "tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/decl-const.js"
+        ],
+        "notes": "The added ports cover parser rejection for invalid labeled continue targets, the `let [` lookahead restriction, and lexical declarations used directly as labelled items."
+      },
+      {
+        "clause": "14.13.3",
+        "feature": "labeled identifier forms accepted in non-strict code",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-labelled-statements-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/let-identifier-with-newline.js",
+          "tests/Js2IL.Test262.Tests/language/statements/labeled/JavaScript/value-yield-non-strict-escaped.js"
+        ],
+        "notes": "The current slice also covers non-strict forms where `let <bindingIdentifier>` and an escaped `yield` token remain valid label identifiers."
       }
     ]
   }

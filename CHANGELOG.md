@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- compiler/runtime/tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `throw`, and `try` flows; fix the covered while/do-while reference-error catches, nested while `var`/`break` behavior, and nested try/finally IL so the new supported cases run unskipped while refreshing the linked ECMA-262 statement coverage docs.
+- tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `try`, and labeled statements, expanding the checked-in slice with additional early-error, switch-lexical-environment, catch-scope, and loop-control coverage while refreshing the linked ECMA-262 statement docs.
 - tests/docs/test262: port 40 additional expression/operator `test262` cases across addition, relational comparison, equality, logical, nullish-coalescing, conditional, unary-plus, and update-expression areas, and refresh the linked ECMA-262 operator coverage docs for the expanded checked-in slice.
 - tests/test262: port 40 additional function, parameter, arrow-function, and closure-adjacent execution cases using the disk-backed test262 harness while preserving upstream paths and scenario names.
 - tests/docs/test262: port 40 additional class/inheritance `test262` cases across declaration/expression computed elements, instance/static accessors, derived-constructor/prototype behavior, heritage validation, and `super` property reads; refresh the linked ECMA-262 support notes for class definitions and `super`.

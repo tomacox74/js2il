@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:24:00Z
+> Last generated (UTC): 2026-05-26T20:12:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.9.1 ([tc39.es](https://tc39.es/ecma262/#sec-break-statement-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| break statement early errors | Supported | [`S12.8_A1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A1_T1.js)<br>[`S12.8_A1_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A1_T2.js)<br>[`S12.8_A5_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A5_T1.js)<br>[`S12.8_A5_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A5_T2.js)<br>[`S12.8_A6.js`](../../../tests/Js2IL.Test262.Tests/language/statements/break/JavaScript/S12.8_A6.js) |  | The added test262 ports cover parser rejection for break outside breakable statements and for label targets that are not present in the enclosing statement stack. |
 
 ### 14.9.2 ([tc39.es](https://tc39.es/ecma262/#sec-break-statement-runtime-semantics-evaluation))
 
