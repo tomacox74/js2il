@@ -61,6 +61,20 @@
           "tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/S12.11_A3_T2.js"
         ],
         "notes": "The current negative ports assert parser rejection for duplicate `default` clauses and malformed switch heads."
+      },
+      {
+        "clause": "14.12.4",
+        "feature": "switch statement lexical environment isolation",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-switch-statement-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/scope-lex-const.js",
+          "tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/scope-lex-let.js",
+          "tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/scope-lex-class.js",
+          "tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/scope-lex-generator.js",
+          "tests/Js2IL.Test262.Tests/language/statements/switch/JavaScript/scope-lex-async-function.js"
+        ],
+        "notes": "The expanded switch slice shows that declarations introduced within the case block use the switch lexical environment and are not visible after the statement completes."
       }
     ]
   }

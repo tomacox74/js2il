@@ -29,4 +29,24 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task cptn_nrml()
         => ExecutionTest("cptn-nrml");
 
+    [Fact(DisplayName = "continue")]
+    public Task continue_()
+        => CompilationFailureTest("continue", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "let-array-with-newline")]
+    public Task let_array_with_newline()
+        => CompilationFailureTest("let-array-with-newline", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "let-identifier-with-newline")]
+    public Task let_identifier_with_newline()
+        => ExecutionTest("let-identifier-with-newline");
+
+    [Fact(DisplayName = "value-yield-non-strict-escaped")]
+    public Task value_yield_non_strict_escaped()
+        => ExecutionTest("value-yield-non-strict-escaped");
+
+    [Fact(DisplayName = "decl-const")]
+    public Task decl_const()
+        => CompilationFailureTest("decl-const", "Failed to parse JavaScript");
+
 }

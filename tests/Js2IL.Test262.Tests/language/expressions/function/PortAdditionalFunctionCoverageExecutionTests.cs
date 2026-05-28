@@ -61,4 +61,10 @@ public class PortAdditionalFunctionCoverageExecutionTests : DiskExecutionTestsBa
     [Fact(DisplayName = "ary-ptrn-empty")]
     public Task dstr_ary_ptrn_empty()
         => ExecutionTest("dstr/ary-ptrn-empty");
+    [Fact(DisplayName = "named-no-strict-reassign-fn-name-in-body-in-arrow")]
+    public Task named_no_strict_reassign_fn_name_in_body_in_arrow()
+        => ExecutionTest("named-no-strict-reassign-fn-name-in-body-in-arrow");
+    [Fact(DisplayName = "named-strict-error-reassign-fn-name-in-body-in-arrow")]
+    public Task named_strict_error_reassign_fn_name_in_body_in_arrow()
+        => ExecutionTest("named-strict-error-reassign-fn-name-in-body-in-arrow");
 }
