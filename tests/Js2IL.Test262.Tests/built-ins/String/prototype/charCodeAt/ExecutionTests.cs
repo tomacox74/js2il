@@ -21,4 +21,17 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S15.5.4.5_A3")]
     public Task S15_5_4_5_A3()
         => ExecutionTestFromFile("S15.5.4.5_A3");
+    [Fact(DisplayName = "S15.5.4.5_A1_T2")]
+    public Task S15_5_4_5_A1_T2()
+        => ExecutionTestFromFile("S15.5.4.5_A1_T2");
+    [Fact(DisplayName = "S15.5.4.5_A11")]
+    public Task S15_5_4_5_A11()
+        => ExecutionTestFromFile("S15.5.4.5_A11");
+    [Fact(DisplayName = "S15.5.4.5_A1_T1")]
+    public Task S15_5_4_5_A1_T1()
+        => ExecutionTestFromFile("S15.5.4.5_A1_T1");
+    [Fact(DisplayName = "S15.5.4.5_A1_T10")]
+    public Task S15_5_4_5_A1_T10()
+        => ExecutionTestFromFile("S15.5.4.5_A1_T10");
+
 }

@@ -54,4 +54,25 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "S12.11_A3_T2")]
     public Task S12_11_A3_T2()
         => CompilationFailureTest("S12.11_A3_T2", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "scope-lex-const")]
+    public Task scope_lex_const()
+        => ExecutionTest("scope-lex-const");
+
+    [Fact(DisplayName = "scope-lex-let")]
+    public Task scope_lex_let()
+        => ExecutionTest("scope-lex-let");
+
+    [Fact(DisplayName = "scope-lex-class")]
+    public Task scope_lex_class()
+        => ExecutionTest("scope-lex-class");
+
+    [Fact(DisplayName = "scope-lex-generator")]
+    public Task scope_lex_generator()
+        => ExecutionTest("scope-lex-generator");
+
+    [Fact(DisplayName = "scope-lex-async-function")]
+    public Task scope_lex_async_function()
+        => ExecutionTest("scope-lex-async-function");
+
 }

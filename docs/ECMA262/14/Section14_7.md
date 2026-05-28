@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:28Z
+> Last generated (UTC): 2026-05-28T19:13:35Z
 
 do/while/for loops are supported including break/continue (with labels). for..of uses the iterator protocol; for..in uses a dedicated For-In Iterator (mutation-aware key enumeration) but does not yet provide full spec fidelity for all exotic objects. for await..of is supported in async functions.
 
@@ -50,6 +50,12 @@ do/while/for loops are supported including break/continue (with labels). for..of
 
 Feature-level support tracking with repo test references and optional test262 evidence.
 
+### 14.7.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-do-while-statement-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| do-while statement early errors | Supported | [`S12.6.1_A6_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A6_T1.js)<br>[`S12.6.1_A6_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A6_T2.js)<br>[`S12.6.1_A6_T3.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A6_T3.js)<br>[`S12.6.1_A6_T4.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A6_T4.js)<br>[`S12.6.1_A6_T5.js`](../../../tests/Js2IL.Test262.Tests/language/statements/do-while/JavaScript/S12.6.1_A6_T5.js) |  | Current test262 ports cover parser rejection for do-while forms that omit or malform the required parenthesized test expression. |
+
 ### 14.7.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-dowhileloopevaluation))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
@@ -60,6 +66,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | do-while loop: continue (skip even) | Supported | [`ControlFlow_DoWhile_Continue_SkipEven.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js) |  | continue branches to the post-body test point (LoopContext). |
 | do-while loop: labeled break | Supported | [`ControlFlow_DoWhile_LabeledBreak.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledBreak.js) |  | Supports break <label> where <label> targets an enclosing loop. |
 | do-while loop: labeled continue | Supported | [`ControlFlow_DoWhile_LabeledContinue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledContinue.js) |  | Supports continue <label> where <label> targets an enclosing loop. |
+
+### 14.7.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-while-statement-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| while statement early errors | Supported | [`S12.6.2_A6_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A6_T1.js)<br>[`S12.6.2_A6_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A6_T2.js)<br>[`S12.6.2_A6_T3.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A6_T3.js)<br>[`S12.6.2_A6_T4.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A6_T4.js)<br>[`S12.6.2_A6_T5.js`](../../../tests/Js2IL.Test262.Tests/language/statements/while/JavaScript/S12.6.2_A6_T5.js) |  | Current test262 ports cover parser rejection for while forms that omit or malform the required parenthesized test expression. |
 
 ### 14.7.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-runtime-semantics-whileloopevaluation))
 

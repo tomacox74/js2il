@@ -4,7 +4,7 @@
 
 [Back to Section14](Section14.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T13:24:00Z
+> Last generated (UTC): 2026-05-26T20:12:10Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,6 +20,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 14.8.1 ([tc39.es](https://tc39.es/ecma262/#sec-continue-statement-static-semantics-early-errors))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| continue statement early errors | Supported | [`S12.7_A1_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/S12.7_A1_T1.js)<br>[`S12.7_A1_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/S12.7_A1_T2.js)<br>[`S12.7_A5_T1.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/S12.7_A5_T1.js)<br>[`S12.7_A5_T2.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/S12.7_A5_T2.js)<br>[`S12.7_A6.js`](../../../tests/Js2IL.Test262.Tests/language/statements/continue/JavaScript/S12.7_A6.js) |  | The added test262 ports cover parser rejection for continue outside iteration statements and for continue targets that do not resolve to an enclosing iteration label. |
 
 ### 14.8.2 ([tc39.es](https://tc39.es/ecma262/#sec-continue-statement-runtime-semantics-evaluation))
 
