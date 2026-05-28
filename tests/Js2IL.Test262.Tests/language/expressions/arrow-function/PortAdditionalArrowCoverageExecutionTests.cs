@@ -61,4 +61,26 @@ public class PortAdditionalArrowCoverageExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "low-precedence-expression-body-no-parens")]
     public Task low_precedence_expression_body_no_parens()
         => ExecutionTest("low-precedence-expression-body-no-parens");
+    [Fact(DisplayName = "non-strict")]
+    public Task non_strict()
+        => ExecutionTest("non-strict");
+    [Fact(DisplayName = "strict")]
+    public Task strict()
+        => ExecutionTest("strict");
+    [Fact(DisplayName = "throw-new")]
+    public Task throw_new()
+        => ExecutionTest("throw-new");
+    [Fact(DisplayName = "scope-paramsbody-var-close")]
+    public Task scope_paramsbody_var_close()
+        => ExecutionTest("scope-paramsbody-var-close");
+    [Fact(DisplayName = "dflt-params-trailing-comma")]
+    public Task dflt_params_trailing_comma()
+        => ExecutionTest("dflt-params-trailing-comma");
+
+    [Fact(DisplayName = "statement-body-requires-braces-must-return-explicitly-missing")]
+    public Task statement_body_requires_braces_must_return_explicitly_missing()
+        => ExecutionTest("statement-body-requires-braces-must-return-explicitly-missing");
+    [Fact(DisplayName = "statement-body-requires-braces-must-return-explicitly")]
+    public Task statement_body_requires_braces_must_return_explicitly()
+        => ExecutionTest("statement-body-requires-braces-must-return-explicitly");
 }

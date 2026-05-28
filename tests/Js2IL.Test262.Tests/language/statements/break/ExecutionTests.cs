@@ -38,4 +38,25 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "S12.8_A4_T3")]
     public Task S12_8_A4_T3()
         => ExecutionTest("S12.8_A4_T3");
+
+    [Fact(DisplayName = "S12.8_A1_T1")]
+    public Task S12_8_A1_T1()
+        => CompilationFailureTest("S12.8_A1_T1", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.8_A1_T2")]
+    public Task S12_8_A1_T2()
+        => CompilationFailureTest("S12.8_A1_T2", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.8_A5_T1")]
+    public Task S12_8_A5_T1()
+        => CompilationFailureTest("S12.8_A5_T1", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.8_A6")]
+    public Task S12_8_A6()
+        => CompilationFailureTest("S12.8_A6", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.8_A5_T2")]
+    public Task S12_8_A5_T2()
+        => CompilationFailureTest("S12.8_A5_T2", "Failed to parse JavaScript");
+
 }

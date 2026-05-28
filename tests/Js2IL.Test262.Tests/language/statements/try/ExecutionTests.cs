@@ -29,14 +29,6 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "12.14-6")]
     public Task _12_14_6()
         => ExecutionTest("12.14-6");
-
-    [Fact(DisplayName = "12.14-8")]
-    public Task _12_14_8()
-        => ExecutionTest("12.14-8");
-
-    [Fact(DisplayName = "12.14-9")]
-    public Task _12_14_9()
-        => ExecutionTest("12.14-9");
     [Fact(DisplayName = "12.14-13")]
     public Task _12_14_13()
         => ExecutionTest("12.14-13");
@@ -61,7 +53,7 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task dstr_ary_init_iter_close()
         => ExecutionTest(@"dstr\ary-init-iter-close");
 
-    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype", Skip = "Blocked by shared Array.prototype iterator fallback semantics.")]
+    [Fact(DisplayName = "ary-init-iter-get-err-array-prototype")]
     public Task dstr_ary_init_iter_get_err_array_prototype()
         => ExecutionTest(@"dstr\ary-init-iter-get-err-array-prototype");
 
@@ -110,4 +102,25 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     [Fact(DisplayName = "S12.14_A8")]
     public Task S12_14_A8()
         => ExecutionTest("S12.14_A8");
+
+    [Fact(DisplayName = "12.14-7")]
+    public Task _12_14_7()
+        => ExecutionTest("12.14-7");
+
+    [Fact(DisplayName = "S12.14_A10_T1")]
+    public Task S12_14_A10_T1()
+        => ExecutionTest("S12.14_A10_T1");
+
+    [Fact(DisplayName = "S12.14_A11_T1")]
+    public Task S12_14_A11_T1()
+        => ExecutionTest("S12.14_A11_T1");
+
+    [Fact(DisplayName = "S12.14_A12_T1")]
+    public Task S12_14_A12_T1()
+        => ExecutionTest("S12.14_A12_T1");
+
+    [Fact(DisplayName = "obj-init-null")]
+    public Task dstr_obj_init_null()
+        => ExecutionTest(@"dstr\obj-init-null");
+
 }

@@ -57,4 +57,29 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S15.10.2.15_A1_T20")]
     public Task S15_10_2_15_A1_T20()
         => ExecutionTestFromFile("S15.10.2.15_A1_T20");
+    [Fact(DisplayName = "S15.10.1_A1_T2")]
+    public Task S15_10_1_A1_T2()
+        => ExecutionTestFromFile("S15.10.1_A1_T2");
+    [Fact(DisplayName = "S15.10.1_A1_T3")]
+    public Task S15_10_1_A1_T3()
+        => ExecutionTestFromFile("S15.10.1_A1_T3");
+    [Fact(DisplayName = "S15.10.1_A1_T4")]
+    public Task S15_10_1_A1_T4()
+        => ExecutionTestFromFile("S15.10.1_A1_T4");
+    [Fact(DisplayName = "S15.10.1_A1_T5")]
+    public Task S15_10_1_A1_T5()
+        => ExecutionTestFromFile("S15.10.1_A1_T5");
+    [Fact(DisplayName = "S15.10.1_A1_T6")]
+    public Task S15_10_1_A1_T6()
+        => ExecutionTestFromFile("S15.10.1_A1_T6");
+    [Fact(DisplayName = "S15.10.1_A1_T7")]
+    public Task S15_10_1_A1_T7()
+        => ExecutionTestFromFile("S15.10.1_A1_T7");
+    [Fact(DisplayName = "S15.10.1_A1_T8")]
+    public Task S15_10_1_A1_T8()
+        => ExecutionTestFromFile("S15.10.1_A1_T8");
+    [Fact(DisplayName = "S15.10.1_A1_T9")]
+    public Task S15_10_1_A1_T9()
+        => ExecutionTestFromFile("S15.10.1_A1_T9");
+
 }
