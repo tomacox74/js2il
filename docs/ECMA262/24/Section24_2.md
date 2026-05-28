@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T19:56:40Z
+> Last generated (UTC): 2026-05-27T12:25:28Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -73,7 +73,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator | Supported | [`Set_Core_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js) |  | JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries. |
+| Implemented Set members: add, has, size, clear, delete, entries, forEach, keys, values, @@iterator | Supported | [`Set_Core_Methods.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js)<br>[`Set_Entries_Keys_Values.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js)<br>[`Set_ForEach_Basic.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js)<br>[`Set_Symbol_Iterator.js`](../../../tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js)<br>`tests/Js2IL.Test262.Tests/built-ins/Set/prototype/add/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Set/prototype/delete/ExecutionTests.cs` | `test/built-ins/Set/prototype/add/add.js`<br>`test/built-ins/Set/prototype/add/this-not-object-throw-undefined.js`<br>`test/built-ins/Set/prototype/add/will-not-add-duplicate-entry.js`<br>`test/built-ins/Set/prototype/add/will-not-add-duplicate-entry-normalizes-zero.js`<br>`test/built-ins/Set/prototype/delete/delete.js`<br>`test/built-ins/Set/prototype/delete/delete-entry-initial-iterable.js`<br>`test/built-ins/Set/prototype/delete/delete-entry-normalizes-zero.js`<br>`test/built-ins/Set/prototype/delete/returns-true-when-delete-operation-occurs.js`<br>`test/built-ins/Set/prototype/delete/this-not-object-throw-undefined.js` | JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries. Current checked-in coverage also exercises add/delete receiver checks, duplicate handling, insertion-order deletion, and SameValueZero normalization of -0/+0. |
 
 ### 24.2.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-set.prototype.clear))
 

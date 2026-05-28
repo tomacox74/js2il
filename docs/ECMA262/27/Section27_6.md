@@ -4,7 +4,7 @@
 
 [Back to Section27](Section27.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-05-26T20:34:21Z
 
 _Lists clause numbers/titles/links only (no spec text)._
 
@@ -37,10 +37,11 @@ _Lists clause numbers/titles/links only (no spec text)._
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 27.6.1.2 ([tc39.es](https://tc39.es/ecma262/#sec-asyncgenerator-prototype-next))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| async generator objects returned from `async function*` support next/return/throw and are consumable by `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`async-func-dstr-let-obj-ptrn-empty.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-dstr-let-obj-ptrn-empty.js)<br>[`head-lhs-async.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/head-lhs-async.js) | Async generator objects are implemented as a runtime type implementing the async iterator protocol. Checked-in test262 ports now also exercise basic `for await..of` consumption in async functions (including identifier heads and empty object destructuring), while prototype intrinsics such as %AsyncGeneratorPrototype% identity and toStringTag are still not fully modeled. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| async generator objects returned from `async function*` support next/return/throw and are consumable by `for await..of` | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`expression-await-as-yield-operand.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-as-yield-operand.js)<br>[`expression-await-promise-as-yield-operand.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-promise-as-yield-operand.js)<br>[`expression-await-thenable-as-yield-operand.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/async-generator/JavaScript/expression-await-thenable-as-yield-operand.js)<br>[`expression-yield-as-operand.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/async-generator/JavaScript/expression-yield-as-operand.js)<br>[`expression-yield-as-statement.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/async-generator/JavaScript/expression-yield-as-statement.js)<br>[`async-func-decl-dstr-array-rest-iteration.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-array-rest-iteration.js)<br>[`async-func-dstr-let-obj-ptrn-empty.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-dstr-let-obj-ptrn-empty.js)<br>[`head-lhs-async.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/head-lhs-async.js)<br>[`async-func-decl-dstr-obj-empty-bool.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-bool.js)<br>[`async-func-decl-dstr-obj-empty-num.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-num.js)<br>[`async-func-decl-dstr-obj-empty-obj.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-obj.js)<br>[`async-func-decl-dstr-obj-empty-string.js`](../../../tests/Js2IL.Test262.Tests/language/statements/for-await-of/JavaScript/async-func-decl-dstr-obj-empty-string.js) |  | Async generator objects are implemented as a runtime type implementing the async iterator protocol. Checked-in test262 ports now also exercise async-generator `yield`/`await` operand ordering plus `for await..of` consumption in async functions (including identifier heads, rest iteration exhaustion, and empty-object destructuring across primitive/object inputs), while prototype intrinsics such as %AsyncGeneratorPrototype% identity and toStringTag are still not fully modeled. |
+

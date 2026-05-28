@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T19:56:41Z
+> Last generated (UTC): 2026-05-27T12:25:29Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -47,7 +47,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakSet.prototype.add / has / delete | Supported with Limitations | [`WeakSet_Add_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js)<br>[`WeakSet_Object_Values.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Object_Values.js) |  | Core WeakSet flows work for the object values used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-value restrictions for every non-null primitive or boxed value. |
+| WeakSet.prototype.add / has / delete | Supported with Limitations | [`WeakSet_Add_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Add_Has_Basic.js)<br>[`WeakSet_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Delete_Basic.js)<br>[`WeakSet_Object_Values.js`](../../../tests/Js2IL.Tests/WeakSet/JavaScript/WeakSet_Object_Values.js)<br>`tests/Js2IL.Test262.Tests/built-ins/WeakSet/prototype/has/ExecutionTests.cs` | `test/built-ins/WeakSet/prototype/has/has.js`<br>`test/built-ins/WeakSet/prototype/has/returns-false-when-object-value-not-present.js`<br>`test/built-ins/WeakSet/prototype/has/returns-false-when-value-cannot-be-held-weakly.js`<br>`test/built-ins/WeakSet/prototype/has/this-not-object-throw-undefined.js` | Core WeakSet flows work for the object values used in tests. Current checked-in coverage includes has() receiver checks, object-value lookup, and false results for missing or non-weakly-held values. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-value restrictions for every non-null primitive or boxed value. |
 
 ### 24.4.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-weakset.prototype-%symbol.tostringtag%))
 
