@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T19:56:41Z
+> Last generated (UTC): 2026-05-27T12:25:28Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -50,7 +50,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| WeakMap.prototype.set / get / has / delete | Supported with Limitations | [`WeakMap_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js)<br>[`WeakMap_Object_Keys.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js) |  | Core WeakMap flows work for the object keys used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value. |
+| WeakMap.prototype.set / get / has / delete | Supported with Limitations | [`WeakMap_Set_Get_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js)<br>[`WeakMap_Has_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js)<br>[`WeakMap_Delete_Basic.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js)<br>[`WeakMap_Object_Keys.js`](../../../tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js)<br>`tests/Js2IL.Test262.Tests/built-ins/WeakMap/prototype/get/ExecutionTests.cs` | `test/built-ins/WeakMap/prototype/get/get.js`<br>`test/built-ins/WeakMap/prototype/get/returns-undefined-if-key-cannot-be-held-weakly.js`<br>`test/built-ins/WeakMap/prototype/get/returns-undefined-with-object-key.js`<br>`test/built-ins/WeakMap/prototype/get/this-not-object-throw.js` | Core WeakMap flows work for the object keys used in tests. Current checked-in coverage includes get() receiver checks, object-key lookup, and undefined results for missing or non-weakly-held keys. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value. |
 
 ### 24.3.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-weakmap.prototype.getorinsert))
 

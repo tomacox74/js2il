@@ -29,4 +29,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "Float64Array")]
     public Task Float64Array()
         => ExecutionTestFromFile("Float64Array");
+
+    [Fact(DisplayName = "iteration")]
+    public Task iteration()
+        => ExecutionTestFromFile("iteration");
+
+    [Fact(DisplayName = "property-descriptor")]
+    public Task property_descriptor()
+        => ExecutionTestFromFile("property-descriptor");
 }
