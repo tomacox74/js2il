@@ -22,6 +22,42 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     public Task _11_1_5_7_3_2()
         => ExecutionTest("11.1.5_7-3-2");
 
+    [Fact(DisplayName = "S11.1.5_A1.1")]
+    public Task S11_1_5_A1_1()
+        => ExecutionTest("S11.1.5_A1.1");
+
+    [Fact(DisplayName = "S11.1.5_A1.2")]
+    public Task S11_1_5_A1_2()
+        => ExecutionTest("S11.1.5_A1.2");
+
+    [Fact(DisplayName = "S11.1.5_A1.3")]
+    public Task S11_1_5_A1_3()
+        => ExecutionTest("S11.1.5_A1.3");
+
+    [Fact(DisplayName = "S11.1.5_A1.4")]
+    public Task S11_1_5_A1_4()
+        => ExecutionTest("S11.1.5_A1.4");
+
+    [Fact(DisplayName = "S11.1.5_A2")]
+    public Task S11_1_5_A2()
+        => ExecutionTest("S11.1.5_A2");
+
+    [Fact(DisplayName = "S11.1.5_A3")]
+    public Task S11_1_5_A3()
+        => ExecutionTest("S11.1.5_A3");
+
+    [Fact(DisplayName = "S11.1.5_A4.1")]
+    public Task S11_1_5_A4_1()
+        => ExecutionTest("S11.1.5_A4.1");
+
+    [Fact(DisplayName = "S11.1.5_A4.2")]
+    public Task S11_1_5_A4_2()
+        => ExecutionTest("S11.1.5_A4.2");
+
+    [Fact(DisplayName = "S11.1.5_A4.3")]
+    public Task S11_1_5_A4_3()
+        => ExecutionTest("S11.1.5_A4.3");
+
     [Fact(DisplayName = "__proto__-duplicate-computed")]
     public Task proto_duplicate_computed()
         => ExecutionTest("__proto__-duplicate-computed");
