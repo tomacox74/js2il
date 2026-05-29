@@ -1,0 +1,229 @@
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: Using "try" with "catch" or "finally" statement with a "return" statement
+es5id: 12.14_A13_T2
+description: Using try/finally syntax construction
+---*/
+
+
+function assert(value) {
+  console.log(!!value);
+}
+
+assert.sameValue = function(actual, expected) {
+  console.log(Object.is(actual, expected));
+};
+
+assert.notSameValue = function(actual, unexpected) {
+  console.log(!Object.is(actual, unexpected));
+};
+
+assert.compareArray = function(actual, expected) {
+  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
+    console.log(false);
+    return;
+  }
+
+  for (var i = 0; i < actual.length; i++) {
+    if (!Object.is(actual[i], expected[i])) {
+      console.log(false);
+      return;
+    }
+  }
+
+  console.log(true);
+};
+
+assert.throws = function(expectedCtor, fn) {
+  try {
+    fn();
+    console.log(false);
+  } catch (error) {
+    console.log(error instanceof expectedCtor);
+  }
+};
+
+function Test262Error(message) {
+  this.name = 'Test262Error';
+  this.message = message || '';
+}
+
+Test262Error.prototype = Object.create(Error.prototype);
+Test262Error.prototype.constructor = Test262Error;
+
+// CHECK#1
+var c1=0;
+function myFunction1(){
+  try{
+    return 1;
+  }finally{
+    c1=1;
+  }
+  return 2;
+}
+var x1=myFunction1();
+if(x1!==1){
+  throw new Test262Error('#1.1: x1===1. Actual: x1==='+x1);
+}
+if (c1!==1){
+  throw new Test262Error('#1.2: "finally" block must be evaluated');
+}
+
+// CHECK#2
+var c2=0;
+function myFunction2(){
+  try{
+    throw "exc";
+    return 1;
+  }finally{
+    c2=1;
+  }
+  return 2;
+}
+try{
+  var x2=myFunction2();
+  throw new Test262Error('#2.1: Throwing exception inside function lead to throwing exception outside this function');
+}
+catch(e){
+  if (c2!==1){
+    throw new Test262Error('#2.2: "finally" block must be evaluated');
+  }
+}
+
+// CHECK#3
+var c3=0;
+function myFunction3(){
+  try{
+    return someValue;
+  }finally{
+    c3=1;
+  }
+  return 2;
+}
+try{
+  var x3=myFunction3();
+  throw new Test262Error('#3.1: Throwing exception inside function lead to throwing exception outside this function');
+}
+catch(e){
+  if (c3!==1){
+    throw new Test262Error('#3.2: "finally" block must be evaluated');
+  }
+}
+
+// CHECK#4
+var c4=0;
+function myFunction4(){
+  try{
+    return 1;
+  }finally{
+    c4=1;
+    throw "exc";
+    return 0;
+  }
+  return 2;
+}
+try{
+  var x4=myFunction4();
+  throw new Test262Error('#4.2: Throwing exception inside function lead to throwing exception outside this function');
+}
+catch(e){
+  if (c4!==1){
+    throw new Test262Error('#4.3: "finally" block must be evaluated');
+  }
+}
+
+// CHECK#5
+var c5=0;
+function myFunction5(){
+  try{
+    return 1;
+  }finally{
+    c5=1;
+    return someValue;
+    return 0;
+  }
+  return 2;
+}
+try{
+  var x5=myFunction5();
+  throw new Test262Error('#5.2: Throwing exception inside function lead to throwing exception outside this function');
+}
+catch(e){
+  if (c5!==1){
+    throw new Test262Error('#5.3: "finally" block must be evaluated');
+  }
+}
+
+// CHECK#6
+var c6=0;
+function myFunction6(){
+  try{
+    throw "ex1";
+    return 1;
+  }finally{
+    c6=1;
+    throw "ex2";
+    return 2;
+  }
+  return 3;
+}
+try{
+  var x6=myFunction6();
+  throw new Test262Error('#6.1: Throwing exception inside function lead to throwing exception outside this function');
+}
+catch(e){
+  if(e==="ex1"){
+    throw new Test262Error('#6.2: Exception !=="ex1". Actual: catch previous exception');
+  }
+  if(e!=="ex2"){
+    throw new Test262Error('#6.3: Exception !=="ex1". Actual: '+e);
+  }
+  if (c6!==1){
+    throw new Test262Error('#6.4: "finally" block must be evaluated');
+  }
+}
+
+// CHECK#7
+var c7=0;
+function myFunction7(){
+  try{
+    return 1;
+  }finally{
+    c7=1;
+    return 2;
+  }
+  return 3;
+}
+var x7=myFunction7();
+if(x7!==2){
+  throw new Test262Error('#7.1: "catch" block must be evaluated');
+}
+if (c7!==1){
+  throw new Test262Error('#7.2: "finally" block must be evaluated');
+}
+
+// CHECK#8
+var c8=0;
+function myFunction8(){
+  try{
+    throw "ex1";
+  }finally{
+    c8=1;
+    return 2;
+  }
+  return 3;
+}
+try{
+  var x8=myFunction8();
+}
+catch(ex1){
+  c8=10;
+}
+if (c8!==1){
+  throw new Test262Error('#8: "finally" block must be evaluated');
+}
+
+
+console.log("pass");
