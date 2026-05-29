@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.26 - 2026-05-29
+
 - tests/docs/test262: record the additional expression/operator `test262` slice in the active changelog, covering conditional, nullish-coalescing, equality/relational, unary-plus, update-expression, and addition cases alongside the refreshed ECMA-262 operator docs.
 - tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `try`, and labeled statements, expanding the checked-in slice with additional early-error, switch-lexical-environment, catch-scope, and loop-control coverage while refreshing the linked ECMA-262 statement docs.
 - tests/docs/test262: port 40 additional expression/operator `test262` cases across addition, relational comparison, equality, logical, nullish-coalescing, conditional, unary-plus, and update-expression areas, and refresh the linked ECMA-262 operator coverage docs for the expanded checked-in slice.
