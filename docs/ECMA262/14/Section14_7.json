@@ -509,6 +509,25 @@
         "notes": "Lowered using the async iterator protocol (GetAsyncIterator/AsyncIteratorNext/AsyncIteratorClose), including awaiting AsyncIteratorClose on abrupt completion (break/throw/return)."
       },
       {
+        "clause": "14.7.5",
+        "feature": "additional for-in / for-of ordering and string iteration test262 coverage",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-for-in-and-for-of-statements",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/language/statements/for-in/ExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/language/statements/for-of/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/language/statements/for-in/order-property-added.js",
+          "test/language/statements/for-in/order-property-on-prototype.js",
+          "test/language/statements/for-in/order-simple-object.js",
+          "test/language/statements/for-of/nested.js",
+          "test/language/statements/for-of/string-astral.js",
+          "test/language/statements/for-of/string-bmp.js"
+        ],
+        "notes": "The checked-in collection/iteration slice now includes for-in property-order coverage for own, inherited, and added properties plus for-of coverage for nested loops and BMP/astral string iteration. Eval-dependent for-in cases remain skipped until eval support is implemented."
+      },
+      {
         "clause": "14.7.2.2",
         "feature": "do-while legacy control-flow ports",
         "status": "Supported",

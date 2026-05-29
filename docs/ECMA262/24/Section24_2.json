@@ -281,9 +281,22 @@
           "tests/Js2IL.Tests/Set/JavaScript/Set_Core_Methods.js",
           "tests/Js2IL.Tests/Set/JavaScript/Set_Entries_Keys_Values.js",
           "tests/Js2IL.Tests/Set/JavaScript/Set_ForEach_Basic.js",
-          "tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js"
+          "tests/Js2IL.Tests/Set/JavaScript/Set_Symbol_Iterator.js",
+          "tests/Js2IL.Test262.Tests/built-ins/Set/prototype/add/ExecutionTests.cs",
+          "tests/Js2IL.Test262.Tests/built-ins/Set/prototype/delete/ExecutionTests.cs"
         ],
-        "notes": "JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries."
+        "test262Paths": [
+          "test/built-ins/Set/prototype/add/add.js",
+          "test/built-ins/Set/prototype/add/this-not-object-throw-undefined.js",
+          "test/built-ins/Set/prototype/add/will-not-add-duplicate-entry.js",
+          "test/built-ins/Set/prototype/add/will-not-add-duplicate-entry-normalizes-zero.js",
+          "test/built-ins/Set/prototype/delete/delete.js",
+          "test/built-ins/Set/prototype/delete/delete-entry-initial-iterable.js",
+          "test/built-ins/Set/prototype/delete/delete-entry-normalizes-zero.js",
+          "test/built-ins/Set/prototype/delete/returns-true-when-delete-operation-occurs.js",
+          "test/built-ins/Set/prototype/delete/this-not-object-throw-undefined.js"
+        ],
+        "notes": "JavaScriptRuntime.Set now exposes the core prototype method family on the public Set.prototype surface and returns native iterator objects for keys/values/entries. Current checked-in coverage also exercises add/delete receiver checks, duplicate handling, insertion-order deletion, and SameValueZero normalization of -0/+0."
       },
       {
         "clause": "24.2.4.2",

@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- tests/docs/test262: record the additional Number, Math, BigInt, Date, and global numeric-function `test262` slice in the active changelog, including Number coercion/isInteger evidence, Math.floor/Math.max behavior, parseInt/parseFloat/isNaN/isFinite edges, BigInt primitive operators, and Date constructor/TimeClip basics.
+- tests/docs/test262: record the additional expression/operator `test262` slice in the active changelog, covering conditional, nullish-coalescing, equality/relational, unary-plus, update-expression, and addition cases alongside the refreshed ECMA-262 operator docs.
 - tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `try`, and labeled statements, expanding the checked-in slice with additional early-error, switch-lexical-environment, catch-scope, and loop-control coverage while refreshing the linked ECMA-262 statement docs.
 - tests/docs/test262: port 40 additional expression/operator `test262` cases across addition, relational comparison, equality, logical, nullish-coalescing, conditional, unary-plus, and update-expression areas, and refresh the linked ECMA-262 operator coverage docs for the expanded checked-in slice.
 - tests/docs/test262: port 40 additional function, parameter, arrow-function, rest-parameter, and closure-adjacent execution cases across function expressions/declarations, arrow bodies, strict caller/arguments restrictions, function-call this binding, and parameter/rest binding patterns while refreshing the linked ECMA-262 support notes.
