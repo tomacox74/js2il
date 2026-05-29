@@ -11,6 +11,17 @@ public sealed class MethodBodyIR
     public CallableId? CallableId { get; set; }
 
     /// <summary>
+    /// The MethodDef for async state-machine continuations when the method is not
+    /// represented by a CallableId (for example, a top-level-await module body).
+    /// </summary>
+    public System.Reflection.Metadata.MethodDefinitionHandle SelfMethodDefinitionHandle { get; set; }
+
+    /// <summary>
+    /// JavaScript-visible parameter count for <see cref="SelfMethodDefinitionHandle"/>.
+    /// </summary>
+    public int SelfJsParameterCount { get; set; }
+
+    /// <summary>
     /// Whether this callable is an async function.
     /// When true, the callable is lowered to a state machine with entry method + MoveNext.
     /// </summary>

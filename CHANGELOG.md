@@ -17,6 +17,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - tests/docs/test262: port 40 additional Number/Math/BigInt/Date test262 execution cases covering Number coercion edges, parseInt/parseFloat/isNaN/isFinite, representative Math intrinsic behavior, BigInt unary/bitwise/shift operators, and basic Date constructor/TimeClip semantics.
 - compiler/runtime/tests/docs/test262: fix the newly ported collection/iteration cases across Map/Set/WeakMap/WeakSet and `for-of`, including iterable constructor adder semantics, constructor/global metadata, and generator IteratorClose paths.
 - compiler/runtime/tests/docs/test262: port 40 additional Promise/async/generator `test262` cases covering Promise.prototype.catch/finally callable/metadata semantics, async-function default/trailing-comma/finally ordering behavior, generator yielded-value flow and string delegation, async-generator `yield`/`await` operand ordering, and `for await..of` destructuring iteration.
+- compiler/runtime/tests/docs: add top-level `await` support by parsing awaits outside functions, lowering async module bodies through the existing Promise state-machine pipeline, waiting for the top-level Promise in the generated module wrapper, and covering resolved, pending, and caught-rejection execution paths.
 
 ## v0.9.25 - 2026-05-24
 

@@ -368,13 +368,27 @@ internal sealed partial class LIRToILCompiler
 
                         var callableId = MethodBody.CallableId;
                         var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                        MethodDefinitionHandle methodHandle = default;
+                        int jsParamCount = 0;
+                        var hasContinuationTarget = false;
                         if (callableId != null && reader != null && reader.TryGetDeclaredToken(callableId, out var token) && token.Kind == HandleKind.MethodDefinition)
                         {
-                            var methodHandle = (MethodDefinitionHandle)token;
+                            methodHandle = (MethodDefinitionHandle)token;
+                            jsParamCount = callableId.JsParamCount;
+                            hasContinuationTarget = true;
+                        }
+                        else if (!MethodBody.SelfMethodDefinitionHandle.IsNil)
+                        {
+                            methodHandle = MethodBody.SelfMethodDefinitionHandle;
+                            jsParamCount = MethodBody.SelfJsParameterCount;
+                            hasContinuationTarget = true;
+                        }
+
+                        if (hasContinuationTarget)
+                        {
 
                             // Create delegate: ldnull/ldthis, ldftn, newobj Func<object[], object, ...>::.ctor
                             // Use the JS parameter count so the delegate signature matches the async method.
-                            int jsParamCount = callableId.JsParamCount;
                             if (methodDescriptor.IsStatic)
                             {
                                 ilEncoder.OpCode(ILOpCode.Ldnull);

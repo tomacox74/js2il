@@ -89,6 +89,13 @@ namespace Js2IL.SymbolTables
 
             AddModuleBuiltInParameters(globalScope, module.Ast);
 
+            var topLevelAwaitCount = CountAwaitExpressions(module.Ast);
+            if (topLevelAwaitCount > 0)
+            {
+                globalScope.IsAsync = true;
+                globalScope.AwaitPointCount = topLevelAwaitCount;
+            }
+
             BuildScopeRecursive(globalScope,module.Ast, globalScope);
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);

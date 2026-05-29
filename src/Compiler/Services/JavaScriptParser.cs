@@ -15,9 +15,8 @@ public class JavaScriptParser : IParser
             EcmaVersion = EcmaVersion.Latest,
             AllowReturnOutsideFunction = true,
             AllowImportExportEverywhere = true,
-            // JS2IL executes code via a CommonJS-style module wrapper (not ESM).
-            // Top-level await is an ESM feature, so keep it disabled.
-            AllowAwaitOutsideFunction = false
+            // JS2IL lowers top-level await through an async module wrapper.
+            AllowAwaitOutsideFunction = true
         };
         _parser = new Parser(parserOptions);
     }

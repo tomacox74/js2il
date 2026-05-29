@@ -85,7 +85,7 @@ namespace Js2IL.Services
                 .Reverse()
                 .Distinct()
                 .Count());
-            var totalModuleInitMethods = modules._modules.Values.Count;
+            var totalModuleEntryMethods = modules._modules.Values.Sum(m => m.SymbolTable!.Root.IsAsync ? 2 : 1);
 
             // Scope types are generated before callables are compiled (so variable binding has FieldDef handles),
             // but scope constructors are emitted later. We create a single TypeGenerator instance so it can
@@ -97,7 +97,7 @@ namespace Js2IL.Services
                 _memberReferenceRegistry,
                 methodBodyStream,
                 _variableRegistry,
-                deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleInitMethods + 1,
+                deferredCtorStartRow: _metadataBuilder.GetRowCount(TableIndex.MethodDef) + totalCallableMethods + totalModuleEntryMethods + 1,
                 emitDebuggerDisplay: compileOptions.EmitPdb);
 
             var moduleList = modules._modules.Values.ToList();
@@ -117,6 +117,7 @@ namespace Js2IL.Services
 
             // Track expected MethodDef tokens for module init methods so we can validate emission order.
             var expectedModuleInitHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
+            var expectedModuleAsyncBodyHandles = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
 
             // Reserve MethodDef row ids for module init methods first.
             var methodDefBaseRow = _metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
@@ -126,6 +127,10 @@ namespace Js2IL.Services
             {
                 var expectedInitHandle = MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
                 expectedModuleInitHandles[module.Name] = expectedInitHandle;
+                if (module.SymbolTable!.Root.IsAsync)
+                {
+                    expectedModuleAsyncBodyHandles[module.Name] = MetadataTokens.MethodDefinitionHandle(moduleInitMethodRow++);
+                }
 
                 var effectiveNamespace = !string.IsNullOrWhiteSpace(module.ClrNamespace)
                     ? module.ClrNamespace!
@@ -146,7 +151,7 @@ namespace Js2IL.Services
 
             // Phase 1: Predeclare callable owner TypeDefs + class TypeDefs for ALL modules.
             // Callable MethodDefs come AFTER module init MethodDefs.
-            var callableMethodDefBaseRow = methodDefBaseRow + totalModuleInitMethods;
+            var callableMethodDefBaseRow = methodDefBaseRow + totalModuleEntryMethods;
             foreach (var module in moduleList)
             {
                 var symbolTable = module.SymbolTable!;
@@ -210,7 +215,8 @@ namespace Js2IL.Services
             // Module types were declared earlier with MethodList pointing at these MethodDefs.
             foreach (var module in moduleList)
             {
-                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, module.Name);
+                expectedModuleAsyncBodyHandles.TryGetValue(module.Name, out var expectedAsyncBodyHandle);
+                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, module.Name, expectedAsyncBodyHandle);
                 if (!expectedModuleInitHandles.TryGetValue(module.Name, out var expectedInitHandle))
                 {
                     throw new InvalidOperationException($"Missing expected module init handle for module '{module.Name}'.");
@@ -316,13 +322,52 @@ namespace Js2IL.Services
             }
         }
 
-        private MethodDefinitionHandle GenerateModule(ModuleDefinition module, MethodBodyStreamEncoder methodBodyStream, string moduleName)
+        private MethodDefinitionHandle GenerateModule(
+            ModuleDefinition module,
+            MethodBodyStreamEncoder methodBodyStream,
+            string moduleName,
+            MethodDefinitionHandle expectedAsyncBodyHandle = default)
         {
-            // Get parameter info from shared ModuleParameters
-            var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
-            var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
-
             var symbolTable = module.SymbolTable!;
+
+            if (symbolTable.Root.IsAsync)
+            {
+                if (expectedAsyncBodyHandle.IsNil)
+                {
+                    throw new InvalidOperationException($"Missing expected async module body MethodDef for module '{moduleName}'.");
+                }
+
+                var wrapperHandle = GenerateTopLevelAwaitModuleWrapper(module, methodBodyStream, expectedAsyncBodyHandle);
+
+                var asyncMethodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+                var asyncBodyHandle = asyncMethodCompiler.TryCompileTopLevelAwaitMainBody(
+                    module.Name,
+                    module.Ast,
+                    symbolTable.Root!,
+                    expectedAsyncBodyHandle,
+                    methodBodyStream);
+                IR.IRPipelineMetrics.RecordMainMethodAttempt(!asyncBodyHandle.IsNil);
+                if (asyncBodyHandle.IsNil)
+                {
+                    var asyncLastFailure = IR.IRPipelineMetrics.GetLastFailure();
+                    if (!string.IsNullOrWhiteSpace(asyncLastFailure))
+                    {
+                        throw new NotSupportedException(
+                            $"IR pipeline could not compile async module '{moduleName}' main method.\nIR failure: {asyncLastFailure}");
+                    }
+
+                    throw new NotSupportedException(
+                        $"IR pipeline could not compile async module '{moduleName}' main method.");
+                }
+
+                if (asyncBodyHandle != expectedAsyncBodyHandle)
+                {
+                    throw new InvalidOperationException(
+                        $"Async module body MethodDef token mismatch for module '{moduleName}'. Expected 0x{MetadataTokens.GetToken(expectedAsyncBodyHandle):X8}, got 0x{MetadataTokens.GetToken(asyncBodyHandle):X8}.");
+                }
+
+                return wrapperHandle;
+            }
 
             // Now compile the module init method (IR pipeline).
             var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
@@ -342,6 +387,66 @@ namespace Js2IL.Services
 
             throw new NotSupportedException(
                 $"IR pipeline could not compile module '{moduleName}' main method.");
+        }
+
+        private MethodDefinitionHandle GenerateTopLevelAwaitModuleWrapper(
+            ModuleDefinition module,
+            MethodBodyStreamEncoder methodBodyStream,
+            MethodDefinitionHandle asyncBodyHandle)
+        {
+            var effectiveNamespace = !string.IsNullOrWhiteSpace(module.ClrNamespace)
+                ? module.ClrNamespace!
+                : (module.IsPackageModule ? "Packages" : "Modules");
+            var effectiveTypeName = !string.IsNullOrWhiteSpace(module.ClrTypeName)
+                ? module.ClrTypeName!
+                : module.Name;
+            var moduleTypeBuilder = new TypeBuilder(_metadataBuilder, effectiveNamespace, effectiveTypeName);
+
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(5, returnType => returnType.Void(), parameters =>
+                {
+                    parameters.AddParameter().Type().Object();
+                    parameters.AddParameter().Type().Type(
+                        _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)),
+                        isValueType: false);
+                    parameters.AddParameter().Type().Object();
+                    parameters.AddParameter().Type().String();
+                    parameters.AddParameter().Type().String();
+                });
+            var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+
+            var ilBuilder = new BlobBuilder();
+            var ilEncoder = new InstructionEncoder(ilBuilder);
+            ilEncoder.EmitNewObjectArray(1, _bclReferences.ObjectType, emitElementAt: (encoder, _) => encoder.OpCode(ILOpCode.Ldnull));
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            ilEncoder.LoadArgument(0);
+            ilEncoder.LoadArgument(1);
+            ilEncoder.LoadArgument(2);
+            ilEncoder.LoadArgument(3);
+            ilEncoder.LoadArgument(4);
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(asyncBodyHandle);
+            var awaitTopLevelRef = _memberReferenceRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.Promise),
+                nameof(JavaScriptRuntime.Promise.AwaitTopLevel),
+                parameterTypes: new[] { typeof(object) });
+            ilEncoder.OpCode(ILOpCode.Call);
+            ilEncoder.Token(awaitTopLevelRef);
+            ilEncoder.OpCode(ILOpCode.Ret);
+
+            var bodyOffset = methodBodyStream.AddMethodBody(
+                ilEncoder,
+                maxStack: 7,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            return moduleTypeBuilder.AddMethodDefinition(
+                MethodAttributes.Static | MethodAttributes.Public,
+                "__js_module_init__",
+                methodSig,
+                bodyOffset);
         }
 
         private void createEntryPoint(MethodBodyStreamEncoder methodBodyStream)
