@@ -55,6 +55,12 @@ public static class AsyncIterator
     private static object? PrototypeReturn(object[] scopes, object?[]? args)
     {
         var receiver = RuntimeServices.GetCurrentThis();
+        var returnValue = args != null && args.Length > 0 ? args[0] : null;
+        if (receiver is AsyncGeneratorObject asyncGenerator)
+        {
+            return asyncGenerator.@return(returnValue);
+        }
+
         if (receiver is IJavaScriptAsyncIterator iterator)
         {
             return iterator.HasReturn
