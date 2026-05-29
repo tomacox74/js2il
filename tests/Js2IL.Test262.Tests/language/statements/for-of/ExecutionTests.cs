@@ -333,28 +333,28 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task uint8array_mutate()
         => ExecutionTest("uint8array-mutate");
 
-    [Fact(DisplayName = "uint16array")]
-    public Task uint16array()
-        => ExecutionTest("uint16array");
+    [Fact(DisplayName = "map")]
+    public Task map()
+        => ExecutionTest("map");
 
-    [Fact(DisplayName = "uint16array-mutate")]
-    public Task uint16array_mutate()
-        => ExecutionTest("uint16array-mutate");
+    [Fact(DisplayName = "map-contract")]
+    public Task map_contract()
+        => ExecutionTest("map-contract");
 
-    [Fact(DisplayName = "uint32array")]
-    public Task uint32array()
-        => ExecutionTest("uint32array");
+    [Fact(DisplayName = "map-expand")]
+    public Task map_expand()
+        => ExecutionTest("map-expand");
 
-    [Fact(DisplayName = "uint32array-mutate")]
-    public Task uint32array_mutate()
-        => ExecutionTest("uint32array-mutate");
+    [Fact(DisplayName = "set")]
+    public Task set()
+        => ExecutionTest("set");
 
-    [Fact(DisplayName = "uint8clampedarray")]
-    public Task uint8clampedarray()
-        => ExecutionTest("uint8clampedarray");
+    [Fact(DisplayName = "set-contract")]
+    public Task set_contract()
+        => ExecutionTest("set-contract");
 
-    [Fact(DisplayName = "uint8clampedarray-mutate")]
-    public Task uint8clampedarray_mutate()
-        => ExecutionTest("uint8clampedarray-mutate");
+    [Fact(DisplayName = "set-expand")]
+    public Task set_expand()
+        => ExecutionTest("set-expand");
 
 }

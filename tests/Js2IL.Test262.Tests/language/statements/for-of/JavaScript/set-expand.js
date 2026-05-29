@@ -1,13 +1,13 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+
 /*---
-es6id: 13.6.4
-description: Uint16Array mutation during traversal using for..of
+description: Set entry insertaion during traversal using for..of
 info: |
-    Uint16Array instances should be able to be traversed using a `for..of`
-    loop, and dynamic changes to their contents should be reflected in the
-    iterated values.
-features: [TypedArray]
+    New entries inserted into a Set instance during traversal should be
+    visited.
+es6id: 13.6.4
+features: [Set]
 ---*/
 // test262 execution-port helpers
 var assert = function assert(condition) {
@@ -33,25 +33,23 @@ assert.throws = function (expectedError, fn) {
 };
 
 
+var set = new Set();
 var iterationCount = 0;
-var array = new Uint16Array([3, 2, 4, 1]);
 
-var first = 3;
-var second = 64;
-var third = 4;
-var fourth = 1;
+var first = 0;
+var second = 1;
 
-for (var x of array) {
+set.add(0);
+
+for (var x of set) {
   assert.sameValue(x, first);
 
   first = second;
-  second = third;
-  third = fourth;
-  fourth = null;
+  second = null;
 
-  array[1] = 64;
+  set.add(1);
 
   iterationCount += 1;
 }
 
-assert.sameValue(iterationCount, 4);
+assert.sameValue(iterationCount, 2);

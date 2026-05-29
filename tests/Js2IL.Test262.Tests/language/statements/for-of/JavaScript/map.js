@@ -1,13 +1,12 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+
 /*---
-es6id: 13.6.4
-description: Uint32Array mutation during traversal using for..of
+description: Map traversal using for..of
 info: |
-    Uint32Array instances should be able to be traversed using a `for..of`
-    loop, and dynamic changes to their contents should be reflected in the
-    iterated values.
-features: [TypedArray]
+    Map instances should be able to be traversed using a `for...of` loop.
+es6id: 13.6.4
+features: [Map]
 ---*/
 // test262 execution-port helpers
 var assert = function assert(condition) {
@@ -33,24 +32,27 @@ assert.throws = function (expectedError, fn) {
 };
 
 
+var map = new Map();
+var obj = {};
 var iterationCount = 0;
-var array = new Uint32Array([3, 2, 4, 1]);
 
-var first = 3;
-var second = 64;
-var third = 4;
-var fourth = 1;
+var first = [0, 'a'];
+var second = [true, false];
+var third = [null, undefined];
+var fourth = [NaN, obj];
 
-for (var x of array) {
-  assert.sameValue(x, first);
+map.set(0, 'a');
+map.set(true, false);
+map.set(null, undefined);
+map.set(NaN, obj);
 
+for (var x of map) {
+  assert.sameValue(x[0], first[0]);
+  assert.sameValue(x[1], first[1]);
   first = second;
   second = third;
   third = fourth;
   fourth = null;
-
-  array[1] = 64;
-
   iterationCount += 1;
 }
 

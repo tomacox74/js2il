@@ -1,12 +1,13 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+
 /*---
-es6id: 13.6.4
-description: Uint16Array traversal using for..of
+description: Map entry insertion during traversal using for..of
 info: |
-    Uint16Array instances should be able to be traversed using a `for..of`
-    loop.
-features: [TypedArray]
+    New entries inserted into a Map instance during traversal should be
+    visited.
+es6id: 13.6.4
+features: [Map]
 ---*/
 // test262 execution-port helpers
 var assert = function assert(condition) {
@@ -32,23 +33,24 @@ assert.throws = function (expectedError, fn) {
 };
 
 
+var map = new Map();
 var iterationCount = 0;
-var array = new Uint16Array([3, 2, 4, 1]);
 
-var first = 3;
-var second = 2;
-var third = 4;
-var fourth = 1;
+var first = [0, 'a'];
+var second = [1, 'b'];
 
-for (var x of array) {
-  assert.sameValue(x, first);
+map.set(0, 'a');
+
+for (var x of map) {
+  assert.sameValue(x[0], first[0]);
+  assert.sameValue(x[1], first[1]);
 
   first = second;
-  second = third;
-  third = fourth;
-  fourth = null;
+  second = null;
+
+  map.set(1, 'b');
 
   iterationCount += 1;
 }
 
-assert.sameValue(iterationCount, 4);
+assert.sameValue(iterationCount, 2);
