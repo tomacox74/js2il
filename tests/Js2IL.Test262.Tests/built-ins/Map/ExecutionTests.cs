@@ -81,4 +81,24 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "undefined-newtarget")]
     public Task undefined_newtarget()
         => ExecutionTestFromFile("undefined-newtarget");
+    [Fact(DisplayName = "iterator-items-are-not-object-close-iterator")]
+    public Task iterator_items_are_not_object_close_iterator()
+        => ExecutionTestFromFile("iterator-items-are-not-object-close-iterator");
+
+    [Fact(DisplayName = "iterator-items-are-not-object")]
+    public Task iterator_items_are_not_object()
+        => ExecutionTestFromFile("iterator-items-are-not-object");
+
+    [Fact(DisplayName = "iterator-next-failure")]
+    public Task iterator_next_failure()
+        => ExecutionTestFromFile("iterator-next-failure");
+
+    [Fact(DisplayName = "iterator-value-failure")]
+    public Task iterator_value_failure()
+        => ExecutionTestFromFile("iterator-value-failure");
+
+    [Fact(DisplayName = "map-iterable-throws-when-set-is-not-callable")]
+    public Task map_iterable_throws_when_set_is_not_callable()
+        => ExecutionTestFromFile("map-iterable-throws-when-set-is-not-callable");
+
 }
