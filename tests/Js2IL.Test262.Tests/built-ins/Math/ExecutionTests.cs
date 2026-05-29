@@ -37,4 +37,44 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "sign/not-a-constructor")]
     public Task sign_not_a_constructor()
         => ExecutionTestFromFile("sign/not-a-constructor");
+    [Fact(DisplayName = "E/value")]
+    public Task E_value()
+        => ExecutionTestFromFile("E/value");
+
+    [Fact(DisplayName = "LN10/value")]
+    public Task LN10_value()
+        => ExecutionTestFromFile("LN10/value");
+
+    [Fact(DisplayName = "LN2/value")]
+    public Task LN2_value()
+        => ExecutionTestFromFile("LN2/value");
+
+    [Fact(DisplayName = "LOG10E/value")]
+    public Task LOG10E_value()
+        => ExecutionTestFromFile("LOG10E/value");
+
+    [Fact(DisplayName = "LOG2E/value")]
+    public Task LOG2E_value()
+        => ExecutionTestFromFile("LOG2E/value");
+
+    [Fact(DisplayName = "PI/value")]
+    public Task PI_value()
+        => ExecutionTestFromFile("PI/value");
+
+    [Fact(DisplayName = "SQRT2/value")]
+    public Task SQRT2_value()
+        => ExecutionTestFromFile("SQRT2/value");
+
+    [Fact(DisplayName = "sqrt/S15.8.2.17_A1")]
+    public Task sqrt_S15_8_2_17_A1()
+        => ExecutionTestFromFile("sqrt/S15.8.2.17_A1");
+
+    [Fact(DisplayName = "sqrt/S15.8.2.17_A2")]
+    public Task sqrt_S15_8_2_17_A2()
+        => ExecutionTestFromFile("sqrt/S15.8.2.17_A2");
+
+    [Fact(DisplayName = "sqrt/S15.8.2.17_A5")]
+    public Task sqrt_S15_8_2_17_A5()
+        => ExecutionTestFromFile("sqrt/S15.8.2.17_A5");
+
 }

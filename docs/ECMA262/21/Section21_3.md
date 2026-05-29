@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:28Z
+> Last generated (UTC): 2026-05-29T14:16:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -15,14 +15,14 @@
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
 | 21.3.1 | Value Properties of the Math Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object) |
-| 21.3.1.1 | Math.E | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.e) |
-| 21.3.1.2 | Math.LN10 | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.ln10) |
-| 21.3.1.3 | Math.LN2 | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.ln2) |
-| 21.3.1.4 | Math.LOG10E | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.log10e) |
-| 21.3.1.5 | Math.LOG2E | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.log2e) |
-| 21.3.1.6 | Math.PI | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.pi) |
+| 21.3.1.1 | Math.E | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.e) |
+| 21.3.1.2 | Math.LN10 | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.ln10) |
+| 21.3.1.3 | Math.LN2 | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.ln2) |
+| 21.3.1.4 | Math.LOG10E | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.log10e) |
+| 21.3.1.5 | Math.LOG2E | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.log2e) |
+| 21.3.1.6 | Math.PI | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.pi) |
 | 21.3.1.7 | Math.SQRT1_2 | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt1_2) |
-| 21.3.1.8 | Math.SQRT2 | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt2) |
+| 21.3.1.8 | Math.SQRT2 | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt2) |
 | 21.3.1.9 | Math [ %Symbol.toStringTag% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math-%symbol.tostringtag%) |
 | 21.3.2 | Function Properties of the Math Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object) |
 | 21.3.2.1 | Math.abs ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.abs) |
@@ -57,7 +57,7 @@
 | 21.3.2.30 | Math.sign ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sign) |
 | 21.3.2.31 | Math.sin ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sin) |
 | 21.3.2.32 | Math.sinh ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sinh) |
-| 21.3.2.33 | Math.sqrt ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt) |
+| 21.3.2.33 | Math.sqrt ( x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt) |
 | 21.3.2.34 | Math.sumPrecise ( items ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sumprecise) |
 | 21.3.2.35 | Math.tan ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.tan) |
 | 21.3.2.36 | Math.tanh ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.tanh) |
@@ -66,6 +66,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 21.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math numeric value properties | Supported | `tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/E/value.js`<br>`test/built-ins/Math/LN10/value.js`<br>`test/built-ins/Math/LN2/value.js`<br>`test/built-ins/Math/LOG10E/value.js`<br>`test/built-ins/Math/LOG2E/value.js`<br>`test/built-ins/Math/PI/value.js`<br>`test/built-ins/Math/SQRT2/value.js` | Checked-in coverage now includes representative value checks for the exposed numeric Math constants E, LN10, LN2, LOG10E, LOG2E, PI, and SQRT2. |
 
 ### 21.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object))
 
@@ -85,4 +91,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Math.max(...args) numeric semantics | Supported with Limitations | [`15.8.2.11-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/max/JavaScript/15.8.2.11-1.js)<br>[`Math.max_each-element-coerced.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/max/JavaScript/Math.max_each-element-coerced.js)<br>[`S15.8.2.11_A1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/max/JavaScript/S15.8.2.11_A1.js) | `test/built-ins/Math/max/15.8.2.11-1.js`<br>`test/built-ins/Math/max/Math.max_each-element-coerced.js`<br>`test/built-ins/Math/max/S15.8.2.11_A1.js` | Checked-in coverage now includes the no-argument result, representative argument coercion order, and basic comparison behavior for the current Math.max slice. |
+
+### 21.3.2.33 ([tc39.es](https://tc39.es/ecma262/#sec-math.sqrt))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math.sqrt(x) numeric semantics | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/sqrt/S15.8.2.17_A1.js`<br>`test/built-ins/Math/sqrt/S15.8.2.17_A2.js`<br>`test/built-ins/Math/sqrt/S15.8.2.17_A5.js` | Checked-in coverage now includes representative Math.sqrt behavior for NaN, negative finite numbers, negative infinity, and positive infinity. |
 

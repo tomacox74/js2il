@@ -36,7 +36,7 @@
     {
       "clause": "21.1.2.2",
       "title": "Number.isFinite ( number )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.isfinite"
     },
     {
@@ -48,7 +48,7 @@
     {
       "clause": "21.1.2.4",
       "title": "Number.isNaN ( number )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.isnan"
     },
     {
@@ -187,9 +187,14 @@
         "test262Paths": [
           "built-ins/Number/return-abrupt-tonumber-value.js",
           "built-ins/Number/S9.3_A1_T1.js",
-          "built-ins/Number/S9.3.1_A17.js"
+          "built-ins/Number/S9.3.1_A17.js",
+          "built-ins/Number/S9.3_A2_T1.js",
+          "built-ins/Number/S9.3_A3_T1.js",
+          "built-ins/Number/S9.3_A4.1_T1.js",
+          "built-ins/Number/S9.3.1_A1.js",
+          "built-ins/Number/S9.3.1_A7.js"
         ],
-        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative NaN and hexadecimal-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, and hexadecimal-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
       },
       {
         "clause": "21.1.2.1",
@@ -199,6 +204,26 @@
           "built-ins/Number/EPSILON.js"
         ],
         "notes": "Exposed on the Number constructor with non-writable, non-enumerable, non-configurable data-property attributes."
+      },
+      {
+        "clause": "21.1.2.2",
+        "feature": "Number.isFinite(number)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-number.isfinite",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/Number/isFinite/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Number/isFinite/arg-is-not-number.js",
+          "test/built-ins/Number/isFinite/finite-numbers.js",
+          "test/built-ins/Number/isFinite/infinity.js",
+          "test/built-ins/Number/isFinite/length.js",
+          "test/built-ins/Number/isFinite/name.js",
+          "test/built-ins/Number/isFinite/nan.js",
+          "test/built-ins/Number/isFinite/not-a-constructor.js",
+          "test/built-ins/Number/isFinite/prop-desc.js"
+        ],
+        "notes": "Number.isFinite is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, rejects infinities and NaN, and accepts representative finite Number values."
       },
       {
         "clause": "21.1.2.3",
@@ -212,6 +237,25 @@
           "test/built-ins/Number/isInteger/nan.js"
         ],
         "notes": "Checked-in coverage now includes representative NaN classification for Number.isInteger. Broader Number.isInteger metadata and argument-shape coverage remain limited to the current test262 slice."
+      },
+      {
+        "clause": "21.1.2.4",
+        "feature": "Number.isNaN(number)",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-number.isnan",
+        "testScripts": [
+          "tests/Js2IL.Test262.Tests/built-ins/Number/isNaN/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Number/isNaN/arg-is-not-number.js",
+          "test/built-ins/Number/isNaN/length.js",
+          "test/built-ins/Number/isNaN/name.js",
+          "test/built-ins/Number/isNaN/nan.js",
+          "test/built-ins/Number/isNaN/not-a-constructor.js",
+          "test/built-ins/Number/isNaN/not-nan.js",
+          "test/built-ins/Number/isNaN/prop-desc.js"
+        ],
+        "notes": "Number.isNaN is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, and returns true only for Number NaN values."
       },
       {
         "clause": "21.1.2.12",

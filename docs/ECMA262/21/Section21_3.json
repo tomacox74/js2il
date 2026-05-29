@@ -18,37 +18,37 @@
     {
       "clause": "21.3.1.1",
       "title": "Math.E",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.e"
     },
     {
       "clause": "21.3.1.2",
       "title": "Math.LN10",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.ln10"
     },
     {
       "clause": "21.3.1.3",
       "title": "Math.LN2",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.ln2"
     },
     {
       "clause": "21.3.1.4",
       "title": "Math.LOG10E",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.log10e"
     },
     {
       "clause": "21.3.1.5",
       "title": "Math.LOG2E",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.log2e"
     },
     {
       "clause": "21.3.1.6",
       "title": "Math.PI",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.pi"
     },
     {
@@ -60,7 +60,7 @@
     {
       "clause": "21.3.1.8",
       "title": "Math.SQRT2",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-math.sqrt2"
     },
     {
@@ -270,7 +270,7 @@
     {
       "clause": "21.3.2.33",
       "title": "Math.sqrt ( x )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-math.sqrt"
     },
     {
@@ -300,6 +300,40 @@
   ],
   "support": {
     "entries": [
+    {
+      "clause": "21.3.1",
+      "feature": "Math numeric value properties",
+      "status": "Supported",
+      "specUrl": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
+      "testScripts": [
+        "tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs"
+      ],
+      "test262Paths": [
+        "test/built-ins/Math/E/value.js",
+        "test/built-ins/Math/LN10/value.js",
+        "test/built-ins/Math/LN2/value.js",
+        "test/built-ins/Math/LOG10E/value.js",
+        "test/built-ins/Math/LOG2E/value.js",
+        "test/built-ins/Math/PI/value.js",
+        "test/built-ins/Math/SQRT2/value.js"
+      ],
+      "notes": "Checked-in coverage now includes representative value checks for the exposed numeric Math constants E, LN10, LN2, LOG10E, LOG2E, PI, and SQRT2."
+    },
+    {
+      "clause": "21.3.2.33",
+      "feature": "Math.sqrt(x) numeric semantics",
+      "status": "Supported with Limitations",
+      "specUrl": "https://tc39.es/ecma262/#sec-math.sqrt",
+      "testScripts": [
+        "tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs"
+      ],
+      "test262Paths": [
+        "test/built-ins/Math/sqrt/S15.8.2.17_A1.js",
+        "test/built-ins/Math/sqrt/S15.8.2.17_A2.js",
+        "test/built-ins/Math/sqrt/S15.8.2.17_A5.js"
+      ],
+      "notes": "Checked-in coverage now includes representative Math.sqrt behavior for NaN, negative finite numbers, negative infinity, and positive infinity."
+    },
     {
       "clause": "21.3.2",
       "feature": "Math built-in function metadata (`name`, `length`, and descriptor surface)",
