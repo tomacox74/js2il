@@ -88,7 +88,9 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, double> _parseFloatValue = parseFloat;
         private static readonly Func<object?, bool> _isFiniteValue = isFinite;
         private static readonly Func<object?, bool> _isNaNValue = isNaN;
+        private static readonly Func<object?, bool> _numberIsFiniteValue = JavaScriptRuntime.Number.isFinite;
         private static readonly Func<object?, bool> _numberIsIntegerValue = JavaScriptRuntime.Number.isInteger;
+        private static readonly Func<object?, bool> _numberIsNaNValue = JavaScriptRuntime.Number.isNaN;
 
         private static readonly Delegate _mapConstructorValue =
             CreateCollectionConstructorValue("Map", static iterable => new JavaScriptRuntime.Map(iterable));
@@ -441,8 +443,14 @@ namespace JavaScriptRuntime
             });
             DefineIntrinsicDataProperty(_numberPrototypeValue, "constructor", _numberFunctionValue);
             ConfigureBuiltinFunctionObject(_numberIsIntegerValue);
+            ConfigureBuiltinFunctionObject(_numberIsFiniteValue);
+            ConfigureBuiltinFunctionObject(_numberIsNaNValue);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "isFinite", _numberIsFiniteValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "isInteger", _numberIsIntegerValue);
+            DefineIntrinsicDataProperty(_numberFunctionValue, "isNaN", _numberIsNaNValue);
+            DefineUndefinedPrototypeProperty(_numberIsFiniteValue);
             DefineUndefinedPrototypeProperty(_numberIsIntegerValue);
+            DefineUndefinedPrototypeProperty(_numberIsNaNValue);
             PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, "toString", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,

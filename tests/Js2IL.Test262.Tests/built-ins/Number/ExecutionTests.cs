@@ -54,4 +54,24 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S9_3_1_A17()
         => ExecutionTestFromFile("S9.3.1_A17");
 
+    [Fact(DisplayName = "S9.3_A2_T1")]
+    public Task S9_3_A2_T1()
+        => ExecutionTestFromFile("S9.3_A2_T1");
+
+    [Fact(DisplayName = "S9.3_A3_T1")]
+    public Task S9_3_A3_T1()
+        => ExecutionTestFromFile("S9.3_A3_T1");
+
+    [Fact(DisplayName = "S9.3_A4.1_T1")]
+    public Task S9_3_A4_1_T1()
+        => ExecutionTestFromFile("S9.3_A4.1_T1");
+
+    [Fact(DisplayName = "S9.3.1_A1")]
+    public Task S9_3_1_A1()
+        => ExecutionTestFromFile("S9.3.1_A1");
+
+    [Fact(DisplayName = "S9.3.1_A7")]
+    public Task S9_3_1_A7()
+        => ExecutionTestFromFile("S9.3.1_A7");
+
 }

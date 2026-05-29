@@ -21,6 +21,17 @@ namespace JavaScriptRuntime
             };
         }
 
+        public static bool isFinite(object? value)
+        {
+            return value switch
+            {
+                double d => double.IsFinite(d),
+                float f => float.IsFinite(f),
+                int or long or short or byte or sbyte or uint or ulong or ushort => true,
+                _ => false
+            };
+        }
+
         /// <summary>
         /// ECMAScript: Number.isInteger(x) returns true only for finite integral Number values.
         /// </summary>
