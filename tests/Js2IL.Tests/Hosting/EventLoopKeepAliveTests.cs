@@ -10,15 +10,19 @@ namespace Js2IL.Tests.Hosting;
 
 public class EventLoopKeepAliveTests
 {
-    [Fact(Skip = "Flaky timer scheduling on GitHub Actions")]
+    [Fact]
     public async Task Timers_Fire_WhileHostIsIdle()
     {
         using var exports = LoadExports(out _);
 
         exports.StartTimer(25);
 
-        // Regression coverage: timers should fire without the host having to pump the runtime.
-        await Task.Delay(TimeSpan.FromMilliseconds(250));
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+        while (exports.GetState() != 123 && DateTime.UtcNow < deadline)
+        {
+            // Regression coverage: timers should fire without the host having to pump the runtime.
+            await Task.Delay(TimeSpan.FromMilliseconds(25));
+        }
 
         Assert.Equal(123, exports.GetState());
     }

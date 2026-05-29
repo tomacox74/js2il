@@ -54,4 +54,19 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task star_string()
         => ExecutionTest("star-string");
 
+    [Fact(DisplayName = "rhs-iter")]
+    public Task rhs_iter()
+        => ExecutionTest("rhs-iter");
+
+    [Fact(DisplayName = "rhs-regexp")]
+    public Task rhs_regexp()
+        => ExecutionTest("rhs-regexp");
+
+    [Fact(DisplayName = "rhs-template-middle")]
+    public Task rhs_template_middle()
+        => ExecutionTest("rhs-template-middle");
+
+    [Fact(DisplayName = "then-return")]
+    public Task then_return()
+        => ExecutionTest("then-return");
 }
