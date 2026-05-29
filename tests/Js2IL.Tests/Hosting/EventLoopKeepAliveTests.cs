@@ -10,7 +10,7 @@ namespace Js2IL.Tests.Hosting;
 
 public class EventLoopKeepAliveTests
 {
-    [Fact(Skip = "Flaky timer scheduling on GitHub Actions")]
+    [Fact]
     public async Task Timers_Fire_WhileHostIsIdle()
     {
         using var exports = LoadExports(out _);
