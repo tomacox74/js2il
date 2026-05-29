@@ -32,5 +32,29 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "invoked-as-function-single-argument")]
     public Task invoked_as_function_single_argument()
-        => ExecutionTestFromFile("invoked-as-function-single-argument");
-}
+        => ExecutionTestFromFile("invoked-as-function-single-argument");
+
+    [Fact(DisplayName = "instance-construct-throws")]
+    public Task instance_construct_throws()
+        => ExecutionTestFromFile("instance-construct-throws");
+
+    [Fact(DisplayName = "instance-length")]
+    public Task instance_length()
+        => ExecutionTestFromFile("instance-length");
+
+    [Fact(DisplayName = "instance-name")]
+    public Task instance_name()
+        => ExecutionTestFromFile("instance-name");
+
+    [Fact(DisplayName = "instance-restricted-properties")]
+    public Task instance_restricted_properties()
+        => ExecutionTestFromFile("instance-restricted-properties");
+
+    [Fact(DisplayName = "is-a-constructor")]
+    public Task is_a_constructor()
+        => ExecutionTestFromFile("is-a-constructor");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+}

@@ -44,5 +44,69 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "resolve-function-extensible")]
     public Task resolve_function_extensible()
-        => ExecutionTestFromFile("resolve-function-extensible");
-}
+        => ExecutionTestFromFile("resolve-function-extensible");
+
+    [Fact(DisplayName = "exception-after-resolve-in-executor")]
+    public Task exception_after_resolve_in_executor()
+        => ExecutionTestFromFile("exception-after-resolve-in-executor");
+
+    [Fact(DisplayName = "executor-function-length")]
+    public Task executor_function_length()
+        => ExecutionTestFromFile("executor-function-length");
+
+    [Fact(DisplayName = "executor-function-name")]
+    public Task executor_function_name()
+        => ExecutionTestFromFile("executor-function-name");
+
+    [Fact(DisplayName = "executor-function-not-a-constructor")]
+    public Task executor_function_not_a_constructor()
+        => ExecutionTestFromFile("executor-function-not-a-constructor");
+
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
+
+    [Fact(DisplayName = "promise")]
+    public Task promise()
+        => ExecutionTestFromFile("promise");
+
+    [Fact(DisplayName = "reject-function-length")]
+    public Task reject_function_length()
+        => ExecutionTestFromFile("reject-function-length");
+
+    [Fact(DisplayName = "reject-function-prototype")]
+    public Task reject_function_prototype()
+        => ExecutionTestFromFile("reject-function-prototype");
+
+    [Fact(DisplayName = "reject-ignored-via-fn-immed")]
+    public Task reject_ignored_via_fn_immed()
+        => ExecutionTestFromFile("reject-ignored-via-fn-immed");
+
+    [Fact(DisplayName = "reject-via-fn-immed")]
+    public Task reject_via_fn_immed()
+        => ExecutionTestFromFile("reject-via-fn-immed");
+
+    [Fact(DisplayName = "resolve-function-length")]
+    public Task resolve_function_length()
+        => ExecutionTestFromFile("resolve-function-length");
+
+    [Fact(DisplayName = "resolve-function-prototype")]
+    public Task resolve_function_prototype()
+        => ExecutionTestFromFile("resolve-function-prototype");
+
+    [Fact(DisplayName = "resolve-ignored-via-fn-immed")]
+    public Task resolve_ignored_via_fn_immed()
+        => ExecutionTestFromFile("resolve-ignored-via-fn-immed");
+
+    [Fact(DisplayName = "resolve-non-obj-immed")]
+    public Task resolve_non_obj_immed()
+        => ExecutionTestFromFile("resolve-non-obj-immed");
+
+    [Fact(DisplayName = "resolve-non-thenable-immed")]
+    public Task resolve_non_thenable_immed()
+        => ExecutionTestFromFile("resolve-non-thenable-immed");
+}

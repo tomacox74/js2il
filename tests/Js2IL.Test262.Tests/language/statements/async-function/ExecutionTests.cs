@@ -74,4 +74,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task try_throw_finally_return()
         => ExecutionTest("try-throw-finally-return");
 
+    [Fact(DisplayName = "evaluation-body-that-returns-after-await")]
+    public Task evaluation_body_that_returns_after_await()
+        => ExecutionTest("evaluation-body-that-returns-after-await");
 }

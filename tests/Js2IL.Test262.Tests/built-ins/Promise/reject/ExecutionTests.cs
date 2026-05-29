@@ -18,4 +18,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task prop_desc()
         => ExecutionTestFromFile("prop-desc");
 
+    [Fact(DisplayName = "S25.4.4.4_A1.1_T1")]
+    public Task S25_4_4_4_A1_1_T1()
+        => ExecutionTestFromFile("S25.4.4.4_A1.1_T1");
+
+    [Fact(DisplayName = "S25.4.4.4_A2.1_T1")]
+    public Task S25_4_4_4_A2_1_T1()
+        => ExecutionTestFromFile("S25.4.4.4_A2.1_T1");
 }
