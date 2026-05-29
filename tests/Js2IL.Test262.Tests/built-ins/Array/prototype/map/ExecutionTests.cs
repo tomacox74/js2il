@@ -155,4 +155,52 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_4_4_19_2_14()
         => ExecutionTestFromFile("15.4.4.19-2-14");
 
+    [Fact(DisplayName = "15.4.4.19-2-2")]
+    public Task _15_4_4_19_2_2()
+        => ExecutionTestFromFile("15.4.4.19-2-2");
+
+    [Fact(DisplayName = "15.4.4.19-2-3")]
+    public Task _15_4_4_19_2_3()
+        => ExecutionTestFromFile("15.4.4.19-2-3");
+
+    [Fact(DisplayName = "15.4.4.19-2-4")]
+    public Task _15_4_4_19_2_4()
+        => ExecutionTestFromFile("15.4.4.19-2-4");
+
+    [Fact(DisplayName = "15.4.4.19-2-5")]
+    public Task _15_4_4_19_2_5()
+        => ExecutionTestFromFile("15.4.4.19-2-5");
+
+    [Fact(DisplayName = "15.4.4.19-2-6")]
+    public Task _15_4_4_19_2_6()
+        => ExecutionTestFromFile("15.4.4.19-2-6");
+
+    [Fact(DisplayName = "15.4.4.19-2-7")]
+    public Task _15_4_4_19_2_7()
+        => ExecutionTestFromFile("15.4.4.19-2-7");
+
+    [Fact(DisplayName = "15.4.4.19-2-8")]
+    public Task _15_4_4_19_2_8()
+        => ExecutionTestFromFile("15.4.4.19-2-8");
+
+    [Fact(DisplayName = "15.4.4.19-2-9")]
+    public Task _15_4_4_19_2_9()
+        => ExecutionTestFromFile("15.4.4.19-2-9");
+
+    [Fact(DisplayName = "15.4.4.19-2-12")]
+    public Task _15_4_4_19_2_12()
+        => ExecutionTestFromFile("15.4.4.19-2-12");
+
+    [Fact(DisplayName = "15.4.4.19-2-17")]
+    public Task _15_4_4_19_2_17()
+        => ExecutionTestFromFile("15.4.4.19-2-17");
+
+    [Fact(DisplayName = "15.4.4.19-2-18")]
+    public Task _15_4_4_19_2_18()
+        => ExecutionTestFromFile("15.4.4.19-2-18");
+
+    [Fact(DisplayName = "15.4.4.19-2-19")]
+    public Task _15_4_4_19_2_19()
+        => ExecutionTestFromFile("15.4.4.19-2-19");
+
 }

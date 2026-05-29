@@ -9,4 +9,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "constructor")]
     public Task constructor()
         => ExecutionTestFromFile("constructor");
+
+    [Fact(DisplayName = "proto")]
+    public Task proto()
+        => ExecutionTestFromFile("proto");
+
 }
