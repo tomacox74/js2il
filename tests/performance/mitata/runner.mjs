@@ -1,18 +1,15 @@
 import * as Mitata from "mitata";
 import process from "node:process";
 
-const asJSON = !!process?.env?.BENCHMARK_RUNNER;
+export const bench = Mitata.bench;
+export const group = Mitata.group;
+export const summary = Mitata.summary;
 
 /** @param {Parameters<typeof Mitata["run"]>["0"]} opts */
 export function run(opts = {}) {
-  if (asJSON) {
+  if (process?.env?.BENCHMARK_RUNNER) {
     opts.format = "json";
   }
 
   return Mitata.run(opts);
 }
-
-export const bench = Mitata.bench;
-export const group = Mitata.group;
-export const summary = Mitata.summary;
-
