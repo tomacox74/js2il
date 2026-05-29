@@ -770,11 +770,6 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        if (!_moduleTypeRegistry.TryGet(moduleName, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
-        {
-            throw new InvalidOperationException($"Expected module type handle to be registered for module '{moduleName}', but none was found.");
-        }
-
         // create the tools we need to generate the module type and method
         var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", moduleName);
 
@@ -796,8 +791,67 @@ internal sealed class JsMethodCompiler
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
+        RegisterModuleNesting(moduleName, scope);
+
+        return methodDefinitionHandle;
+    }
+
+    public MethodDefinitionHandle TryCompileTopLevelAwaitMainBody(
+        string moduleName,
+        Node node,
+        Scope scope,
+        MethodDefinitionHandle expectedMethodDef,
+        MethodBodyStreamEncoder methodBodyStreamEncoder)
+    {
+        if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
+
+        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.ModuleMain, hasScopesParameter: true, out var lirMethod))
+        {
+            return default;
+        }
+
+        lirMethod!.SelfMethodDefinitionHandle = expectedMethodDef;
+        lirMethod.SelfJsParameterCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
+
+        // create the tools we need to generate the module type and method
+        var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", moduleName);
+
+        var parameters = new List<MethodParameterDescriptor>
+        {
+            new("scopes", typeof(object[])),
+            new("newTarget", typeof(object))
+        };
+        parameters.AddRange(JavaScriptRuntime.CommonJS.ModuleParameters.Parameters
+            .Select(p => new MethodParameterDescriptor(p.Name, p.Type)));
+
+        var methodDescriptor = new MethodDescriptor(
+            "__js_module_async_body__",
+            programTypeBuilder,
+            parameters)
+        {
+            ReturnsVoid = false,
+            ReturnClrType = typeof(object),
+            HasScopesParameter = true,
+            HasNewTargetParameter = true,
+            ScopeAbiKind = Js2IL.Runtime.CallableScopeAbiKind.ScopeArray,
+            EmitCallableScopeAbiAttribute = false
+        };
+
+        var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod, methodBodyStreamEncoder);
+        RegisterModuleNesting(moduleName, scope);
+
+        return methodDefinitionHandle;
+    }
+
+    private void RegisterModuleNesting(string moduleName, Scope scope)
+    {
         // Establish all nesting relationships now that the module type exists.
         // This is done in sorted order to satisfy ECMA-335 NestedClass table ordering.
+        if (!_moduleTypeRegistry.TryGet(moduleName, out var moduleTypeHandle) || moduleTypeHandle.IsNil)
+        {
+            throw new InvalidOperationException($"Expected module type handle to be registered for module '{moduleName}', but none was found.");
+        }
+
         var nestingPlanner = new Services.Nesting.ScopeNestingPlanner(
             _scopeMetadataRegistry,
             _functionTypeMetadataRegistry,
@@ -808,8 +862,6 @@ internal sealed class JsMethodCompiler
         {
             _nestedTypeRelationshipRegistry.Add(nested, enclosing);
         }
-
-        return methodDefinitionHandle;
     }
 
     #endregion
@@ -873,7 +925,7 @@ internal sealed class JsMethodCompiler
             FunctionDeclaration fd => fd.Async || fd.Generator,
             FunctionExpression fe => fe.Async || fe.Generator,
             ArrowFunctionExpression af => af.Async,
-            _ => false
+            _ => scope.Kind == ScopeKind.Global && scope.IsAsync
         };
         if (isResumable)
         {
@@ -901,7 +953,7 @@ internal sealed class JsMethodCompiler
             FunctionExpression fe => fe.Async,
             ArrowFunctionExpression af => af.Async,
             Acornima.Ast.MethodDefinition md when md.Value is FunctionExpression mfe => mfe.Async,
-            _ => false
+            _ => scope.Kind == ScopeKind.Global && scope.IsAsync
         };
 
         var isGeneratorCallable = node switch

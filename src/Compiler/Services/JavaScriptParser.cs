@@ -6,31 +6,42 @@ namespace Js2IL.Services;
 
 public class JavaScriptParser : IParser
 {
-    private readonly Parser _parser;
+    private readonly Parser _scriptParser;
+    private readonly Parser _topLevelAwaitParser;
 
     public JavaScriptParser()
     {
-        var parserOptions = new ParserOptions
+        _scriptParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: false));
+        _topLevelAwaitParser = new Parser(CreateParserOptions(allowAwaitOutsideFunction: true));
+    }
+
+    private static ParserOptions CreateParserOptions(bool allowAwaitOutsideFunction)
+    {
+        return new ParserOptions
         {
             EcmaVersion = EcmaVersion.Latest,
             AllowReturnOutsideFunction = true,
             AllowImportExportEverywhere = true,
-            // JS2IL executes code via a CommonJS-style module wrapper (not ESM).
-            // Top-level await is an ESM feature, so keep it disabled.
-            AllowAwaitOutsideFunction = false
+            AllowAwaitOutsideFunction = allowAwaitOutsideFunction
         };
-        _parser = new Parser(parserOptions);
     }
 
     public Acornima.Ast.Program ParseJavaScript(string source, string sourceFile)
     {
         try
         {
-            return _parser.ParseScript(source, sourceFile);
+            return _scriptParser.ParseScript(source, sourceFile);
         }
         catch (ParseErrorException ex)
         {
-            throw new Exception($"Failed to parse JavaScript: {ex.Message}", ex);
+            try
+            {
+                return _topLevelAwaitParser.ParseScript(source, sourceFile);
+            }
+            catch (ParseErrorException)
+            {
+                throw new Exception($"Failed to parse JavaScript: {ex.Message}", ex);
+            }
         }
     }
 

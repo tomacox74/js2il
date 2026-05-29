@@ -259,6 +259,34 @@ public sealed class Promise
         }
     }
 
+    public static void AwaitTopLevel(object? awaited)
+    {
+        if (awaited is not Promise promise)
+        {
+            return;
+        }
+
+        var eventLoop = GlobalThis.ServiceProvider?.Resolve<NodeEventLoopPump>()
+            ?? throw new InvalidOperationException("Top-level await requires an active JS2IL runtime event loop.");
+
+        while (true)
+        {
+            lock (promise._reactions)
+            {
+                switch (promise._state)
+                {
+                    case State.Fulfilled:
+                        return;
+                    case State.Rejected:
+                        throw new JsThrownValueException(promise._result);
+                }
+            }
+
+            eventLoop.RunOneIteration();
+            eventLoop.WaitForWorkOrNextTimer();
+        }
+    }
+
     /// <summary>
     /// Creates a new scopes array with the async function's leaf scope prepended.
     /// This is called on initial invocation of an async function to create the scopes array

@@ -19,6 +19,15 @@ namespace Js2IL.Tests.Async
         public Task Async_PendingPromiseAwait() { var testName = nameof(Async_PendingPromiseAwait); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Async_TopLevelAwait_ResolvedPromise() { var testName = nameof(Async_TopLevelAwait_ResolvedPromise); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TopLevelAwait_PendingPromise() { var testName = nameof(Async_TopLevelAwait_PendingPromise); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TopLevelAwait_RejectionCaught() { var testName = nameof(Async_TopLevelAwait_RejectionCaught); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Async_Calls_Module_Function_Before_Await() { var testName = nameof(Async_Calls_Module_Function_Before_Await); return ExecutionTest(testName); }
 
         [Fact]

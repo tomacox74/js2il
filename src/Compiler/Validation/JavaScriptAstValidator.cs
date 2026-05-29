@@ -1246,8 +1246,9 @@ public class JavaScriptAstValidator : IAstValidator
     private static void ValidateAsyncAwait(Node ast, ValidationResult result)
     {
         // Track whether we're inside an async function for await validation.
-        // async functions themselves are now supported; await is only valid inside them.
+        // Top-level await is valid in module/script roots that JS2IL lowers as async module bodies.
         var asyncFunctionDepth = 0;
+        var functionDepth = 0;
         var finallyDepth = 0; // Track if we're inside a finally block
         var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
 
@@ -1257,6 +1258,7 @@ public class JavaScriptAstValidator : IAstValidator
             if (!visited.Add(node)) return;
 
             // Track entering async functions
+            bool isFunction = node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression;
             bool isAsyncFunction = node switch
             {
                 FunctionDeclaration fd => fd.Async,
@@ -1264,6 +1266,11 @@ public class JavaScriptAstValidator : IAstValidator
                 ArrowFunctionExpression af => af.Async,
                 _ => false
             };
+
+            if (isFunction)
+            {
+                functionDepth++;
+            }
 
             if (isAsyncFunction)
             {
@@ -1293,7 +1300,7 @@ public class JavaScriptAstValidator : IAstValidator
             // Validate await is only inside async functions
             if (node.Type == NodeType.AwaitExpression)
             {
-                if (asyncFunctionDepth == 0)
+                if (asyncFunctionDepth == 0 && functionDepth > 0)
                 {
                     result.Errors.Add($"The 'await' keyword is only valid inside async functions (line {node.Location.Start.Line})");
                     result.IsValid = false;
@@ -1303,7 +1310,7 @@ public class JavaScriptAstValidator : IAstValidator
             // Validate for-await-of is not yet supported
             if (node is ForOfStatement forOfStmt && forOfStmt.Await)
             {
-                if (asyncFunctionDepth == 0)
+                if (asyncFunctionDepth == 0 && functionDepth > 0)
                 {
                     result.Errors.Add($"The 'for await...of' statement is only valid inside async functions (line {node.Location.Start.Line})");
                     result.IsValid = false;
@@ -1343,6 +1350,10 @@ public class JavaScriptAstValidator : IAstValidator
             if (isAsyncFunction)
             {
                 asyncFunctionDepth--;
+            }
+            if (isFunction)
+            {
+                functionDepth--;
             }
         }
 
