@@ -141,9 +141,16 @@
           "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
           "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
           "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js",
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js"
+          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js",
+          "tests/Js2IL.Test262.Tests/built-ins/WeakMap/prototype/get/ExecutionTests.cs"
         ],
-        "notes": "Core WeakMap flows work for the object keys used in tests. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value."
+        "test262Paths": [
+          "test/built-ins/WeakMap/prototype/get/get.js",
+          "test/built-ins/WeakMap/prototype/get/returns-undefined-if-key-cannot-be-held-weakly.js",
+          "test/built-ins/WeakMap/prototype/get/returns-undefined-with-object-key.js",
+          "test/built-ins/WeakMap/prototype/get/this-not-object-throw.js"
+        ],
+        "notes": "Core WeakMap flows work for the object keys used in tests. Current checked-in coverage includes get() receiver checks, object-key lookup, and undefined results for missing or non-weakly-held keys. The runtime only rejects null, so it does not fully enforce ECMAScript's object-only weak-key restrictions for every non-null primitive or boxed value."
       },
       {
         "clause": "24.3.3.4",

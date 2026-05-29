@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-- tests/docs/test262: record the additional Array and TypedArray `test262` slice in the active changelog, covering Array constructor/indexing/core prototype behavior, iterator-producing entries/keys/values methods, and `%TypedArray%.from` edge cases alongside refreshed ECMA-262 docs.
+- tests/docs/test262: record the additional expression/operator `test262` slice in the active changelog, covering conditional, nullish-coalescing, equality/relational, unary-plus, update-expression, and addition cases alongside the refreshed ECMA-262 operator docs.
 - tests/docs/test262: port 40 additional statement/control-flow test262 cases across `if`, `switch`, `while`, `do-while`, `break`, `continue`, `try`, and labeled statements, expanding the checked-in slice with additional early-error, switch-lexical-environment, catch-scope, and loop-control coverage while refreshing the linked ECMA-262 statement docs.
 - tests/docs/test262: port 40 additional expression/operator `test262` cases across addition, relational comparison, equality, logical, nullish-coalescing, conditional, unary-plus, and update-expression areas, and refresh the linked ECMA-262 operator coverage docs for the expanded checked-in slice.
 - tests/docs/test262: port 40 additional function, parameter, arrow-function, rest-parameter, and closure-adjacent execution cases across function expressions/declarations, arrow bodies, strict caller/arguments restrictions, function-call this binding, and parameter/rest binding patterns while refreshing the linked ECMA-262 support notes.
@@ -16,7 +16,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - tests/docs/test262: port 40 additional String and RegExp execution cases covering String constructor coercion plus `charAt`/`charCodeAt`/`search`/`replace`, and RegExp constructor plus `exec`/`test` match-result behavior; refresh the linked ECMA-262 support evidence.
 - tests/docs/test262: port 40 additional Number/Math/BigInt/Date test262 execution cases covering Number coercion edges, parseInt/parseFloat/isNaN/isFinite, representative Math intrinsic behavior, BigInt unary/bitwise/shift operators, and basic Date constructor/TimeClip semantics.
 - compiler/runtime/tests/docs/test262: fix the newly ported collection/iteration cases across Map/Set/WeakMap/WeakSet and `for-of`, including iterable constructor adder semantics, constructor/global metadata, and generator IteratorClose paths.
-- compiler/runtime/tests/docs/test262: port and unskip 40 additional Promise/async/generator `test262` cases, including Promise static/prototype function metadata, async no-await Promise completion/rejection semantics, and generator `yield`/`yield*` parent-scope and iterator delegation coverage.
+- compiler/runtime/tests/docs/test262: port 40 additional Promise/async/generator `test262` cases covering Promise.prototype.catch/finally callable/metadata semantics, async-function default/trailing-comma/finally ordering behavior, generator yielded-value flow and string delegation, async-generator `yield`/`await` operand ordering, and `for await..of` destructuring iteration.
 
 ## v0.9.25 - 2026-05-24
 

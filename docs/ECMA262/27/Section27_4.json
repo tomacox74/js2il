@@ -93,9 +93,12 @@
         "testScripts": [
           "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js",
           "tests/Js2IL.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js",
-          "tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/AsyncGeneratorFunction_length.js"
+          "tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/AsyncGeneratorFunction_length.js",
+          "tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/JavaScript/length.js",
+          "tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/prop-desc.js",
+          "tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/prototype/JavaScript/not-callable.js"
         ],
-        "notes": "Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. Async generator function objects now expose a minimal `%AsyncGeneratorFunction.prototype%` constructor surface with correct `length` metadata, but the full spec-level AsyncGeneratorFunction constructor/prototype intrinsic set is still not exposed globally."
+        "notes": "Async generators are supported via syntax (`async function*`, `yield`, `await`) and a runtime async iterator object. Checked-in test262 evidence now also covers the callable `%AsyncGeneratorFunction%` length surface plus non-callable `%AsyncGeneratorFunction.prototype%` metadata, but the full spec-level AsyncGeneratorFunction constructor/prototype intrinsic set is still not exposed globally."
       }
     ]
   }

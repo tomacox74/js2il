@@ -201,4 +201,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "iterator-next-result-done-attr")]
     public Task iterator_next_result_done_attr()
         => ExecutionTest("iterator-next-result-done-attr");
-}
+
+    [Fact(DisplayName = "string-bmp")]
+    public Task string_bmp()
+        => ExecutionTest("string-bmp");
+
+    [Fact(DisplayName = "string-astral")]
+    public Task string_astral()
+        => ExecutionTest("string-astral");
+
+    [Fact(DisplayName = "nested")]
+    public Task nested()
+        => ExecutionTest("nested");
+}
