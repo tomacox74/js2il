@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: Set entry insertaion during traversal using for..of
+description: Set entry insertion during traversal using for..of
 info: |
     New entries inserted into a Set instance during traversal should be
     visited.
