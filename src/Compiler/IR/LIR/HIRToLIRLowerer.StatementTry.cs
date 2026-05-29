@@ -37,7 +37,7 @@ public sealed partial class HIRToLIRLowerer
         // our yield lowering suspends via 'ret'. CLR requires protected regions to exit via 'leave'.
         // When yields appear within a try/catch/finally in a generator, lower it as an explicit
         // state-machine routing (similar to async-with-await try/finally lowering).
-        if (_isGenerator && !_isAsync && (hasCatch || hasFinally) && yieldCount > 0)
+        if (_isGenerator && (hasCatch || hasFinally) && yieldCount > 0)
         {
             return TryLowerGeneratorTryWithYield(tryStmt);
         }
@@ -357,7 +357,7 @@ public sealed partial class HIRToLIRLowerer
 
     private bool TryLowerGeneratorTryWithYield(HIRTryStatement tryStmt)
     {
-        if (!_isGenerator || _isAsync || _methodBodyIR.LeafScopeId.IsNil)
+        if (!_isGenerator || _methodBodyIR.LeafScopeId.IsNil)
         {
             return false;
         }
