@@ -109,9 +109,19 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-bigint-constructor-number-value",
         "testScripts": [
-          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js"
+          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js",
+          "tests/Js2IL.Test262.Tests/built-ins/BigInt/ExecutionTests.cs"
         ],
-        "notes": "Supports BigInt(value) with basic conversion from integral Numbers and from decimal strings; typeof === 'bigint'. Does not implement the full spec ToBigInt / StringToBigInt grammar or the full BigInt constructor/prototype surface."
+        "test262Paths": [
+          "test/built-ins/BigInt/constructor-empty-string.js",
+          "test/built-ins/BigInt/constructor-from-binary-string.js",
+          "test/built-ins/BigInt/constructor-from-decimal-string.js",
+          "test/built-ins/BigInt/constructor-from-hex-string.js",
+          "test/built-ins/BigInt/constructor-from-octal-string.js",
+          "test/built-ins/BigInt/constructor-from-string-syntax-errors.js",
+          "test/built-ins/BigInt/constructor-trailing-leading-spaces.js"
+        ],
+        "notes": "Supports BigInt(value) with basic conversion from integral Numbers and from decimal, binary, octal, and hexadecimal strings, including empty/trimmed strings and representative string syntax errors; typeof === 'bigint'. The full BigInt constructor/prototype surface remains incomplete."
       },
       {
         "clause": "21.2",

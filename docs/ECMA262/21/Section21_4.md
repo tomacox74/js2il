@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-23T08:21:08Z
+> Last generated (UTC): 2026-05-29T14:16:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -51,8 +51,8 @@
 | 21.4.1.33 | Time Zone Offset String Format | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-time-zone-offset-strings) |
 | 21.4.1.33.1 | IsTimeZoneOffsetString ( offsetString ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-istimezoneoffsetstring) |
 | 21.4.1.33.2 | ParseTimeZoneOffsetString ( offsetString ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-parsetimezoneoffsetstring) |
-| 21.4.2 | The Date Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date-constructor) |
-| 21.4.2.1 | Date ( ... values ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date) |
+| 21.4.2 | The Date Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date-constructor) |
+| 21.4.2.1 | Date ( ... values ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date) |
 | 21.4.3 | Properties of the Date Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-date-constructor) |
 | 21.4.3.1 | Date.now ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.now) |
 | 21.4.3.2 | Date.parse ( string ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.parse) |
@@ -120,6 +120,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 |---|---|---|---|---|
 | new Date() (current time) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
 | new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Array/prototype/every/15.4.4.16-1-11.js`<br>`test/built-ins/Array/prototype/map/15.4.4.19-1-11.js`<br>`test/built-ins/Array/prototype/filter/15.4.4.20-1-11.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-11.js` | Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date. |
+
+### 21.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-date-constructor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Date constructor basics (2-7 numeric arguments, Date copy, and TimeClip -0 normalization) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/Date/ExecutionTests.cs` | `test/built-ins/Date/construct_with_date.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T1.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T2.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T3.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T4.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T5.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T6.js`<br>`test/built-ins/Date/TimeClip_negative_zero.js` | Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited. |
 
 ### 21.4.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-date))
 
