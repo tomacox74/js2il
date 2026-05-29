@@ -1,0 +1,106 @@
+function Test262Error(message) {
+    this.message = message || "";
+    this.name = "Test262Error";
+}
+Test262Error.prototype = Object.create(Error.prototype);
+Test262Error.prototype.constructor = Test262Error;
+var assert = function assert(value, message) {
+    if (!value) {
+        throw new Test262Error(message || "Assertion failed");
+    }
+};
+assert.sameValue = function(actual, expected, message) {
+    if (!Object.is(actual, expected)) {
+        throw new Test262Error(message || "Expected SameValue");
+    }
+};
+assert.notSameValue = function(actual, unexpected, message) {
+    if (Object.is(actual, unexpected)) {
+        throw new Test262Error(message || "Expected different values");
+    }
+};
+assert.throws = function(expectedErrorConstructor, func, message) {
+    try {
+        func();
+    } catch (error) {
+        if (error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor) {
+            return;
+        }
+        throw new Test262Error(message || "Unexpected error type");
+    }
+    throw new Test262Error(message || "Expected function to throw");
+};
+assert.compareArray = function(actual, expected, message) {
+    if (actual.length !== expected.length || !actual.every(function(value, index) { return Object.is(value, expected[index]); })) {
+        throw new Test262Error(message || "Expected arrays to match");
+    }
+};
+
+try {
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: Operator x && y uses GetValue
+es5id: 11.11.1_A2.1_T1
+description: Either Type is not Reference or GetBase is not null
+---*/
+
+//CHECK#1
+if ((false && true) !== false) {
+  throw new Test262Error('#1: (false && true) === false');
+}
+
+//CHECK#2
+if ((true && false) !== false) {
+  throw new Test262Error('#2: (true && false) === false');
+}
+
+//CHECK#3
+var x = false;
+if ((x && true) !== false) {
+  throw new Test262Error('#3: var x = false; (x && true) === false');
+}
+
+//CHECK#4
+var y = new Boolean(false);
+if ((true && y) !== y) {
+  throw new Test262Error('#4: var y = new Boolean(false); (true && y) === y');
+}
+
+//CHECK#5
+var x = false;
+var y = true;
+if ((x && y) !== false) {
+  throw new Test262Error('#5: var x = false; var y = true; (x && y) === false');
+}
+
+//CHECK#6
+var x = true;
+var y = new Boolean(false);
+if ((x && y) !== y) {
+  throw new Test262Error('#6: var x = true; var y = new Boolean(false); (x && y) === y');
+}
+
+//CHECK#7
+var objectx = new Object();
+var objecty = new Object();
+objectx.prop = true;
+objecty.prop = 1.1;
+if ((objectx.prop && objecty.prop) !== objecty.prop) {
+  throw new Test262Error('#7: var objectx = new Object(); var objecty = new Object(); objectx.prop = true; objecty.prop = 1; (objectx.prop && objecty.prop) === objecty.prop');
+}
+
+//CHECK#8
+var objectx = new Object();
+var objecty = new Object();
+objectx.prop = 0;
+objecty.prop = true;
+if ((objectx.prop && objecty.prop) !== objectx.prop) {
+  throw new Test262Error('#8: var objectx = new Object(); var objecty = new Object(); objectx.prop = 0; objecty.prop = true; (objectx.prop && objecty.prop) === objectx.prop');
+}
+
+    console.log(true);
+} catch (error) {
+    console.log(false);
+}

@@ -25,4 +25,12 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "tco-right")]
     public Task tco_right()
         => ExecutionTest("tco-right");
+
+    [Fact(DisplayName = "S11.11.2_A2.1_T1")]
+    public Task S11_11_2_A2_1_T1()
+        => ExecutionTest("S11.11.2_A2.1_T1");
+
+    [Fact(DisplayName = "S11.11.2_A2.1_T2")]
+    public Task S11_11_2_A2_1_T2()
+        => ExecutionTest("S11.11.2_A2.1_T2");
 }

@@ -9,4 +9,8 @@ public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S11.3.2_A3_T1")]
     public Task S11_3_2_A3_T1()
         => ExecutionTest("S11.3.2_A3_T1");
+
+    [Fact(DisplayName = "S11.3.2_A2.1_T1")]
+    public Task S11_3_2_A2_1_T1()
+        => ExecutionTest("S11.3.2_A2.1_T1");
 }
