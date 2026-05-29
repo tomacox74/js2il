@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:28Z
+> Last generated (UTC): 2026-05-29T12:01:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
