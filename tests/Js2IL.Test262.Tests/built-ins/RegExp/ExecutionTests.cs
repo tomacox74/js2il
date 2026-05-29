@@ -82,4 +82,64 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_10_1_A1_T9()
         => ExecutionTestFromFile("S15.10.1_A1_T9");
 
+    [Fact(DisplayName = "S15.10.1_A1_T11")]
+    public Task S15_10_1_A1_T11()
+        => ExecutionTestFromFile("S15.10.1_A1_T11");
+
+    [Fact(DisplayName = "S15.10.1_A1_T12")]
+    public Task S15_10_1_A1_T12()
+        => ExecutionTestFromFile("S15.10.1_A1_T12");
+
+    [Fact(DisplayName = "S15.10.1_A1_T13")]
+    public Task S15_10_1_A1_T13()
+        => ExecutionTestFromFile("S15.10.1_A1_T13");
+
+    [Fact(DisplayName = "S15.10.1_A1_T14")]
+    public Task S15_10_1_A1_T14()
+        => ExecutionTestFromFile("S15.10.1_A1_T14");
+
+    [Fact(DisplayName = "S15.10.1_A1_T15")]
+    public Task S15_10_1_A1_T15()
+        => ExecutionTestFromFile("S15.10.1_A1_T15");
+
+    [Fact(DisplayName = "S15.10.1_A1_T16")]
+    public Task S15_10_1_A1_T16()
+        => ExecutionTestFromFile("S15.10.1_A1_T16");
+
+    [Fact(DisplayName = "S15.10.2.10_A1.2_T1")]
+    public Task S15_10_2_10_A1_2_T1()
+        => ExecutionTestFromFile("S15.10.2.10_A1.2_T1");
+
+    [Fact(DisplayName = "S15.10.2.10_A1.3_T1")]
+    public Task S15_10_2_10_A1_3_T1()
+        => ExecutionTestFromFile("S15.10.2.10_A1.3_T1");
+
+    [Fact(DisplayName = "S15.10.2.10_A1.4_T1")]
+    public Task S15_10_2_10_A1_4_T1()
+        => ExecutionTestFromFile("S15.10.2.10_A1.4_T1");
+
+    [Fact(DisplayName = "S15.10.2.10_A1.5_T1")]
+    public Task S15_10_2_10_A1_5_T1()
+        => ExecutionTestFromFile("S15.10.2.10_A1.5_T1");
+
+    [Fact(DisplayName = "S15.10.2.11_A1_T4")]
+    public Task S15_10_2_11_A1_T4()
+        => ExecutionTestFromFile("S15.10.2.11_A1_T4");
+
+    [Fact(DisplayName = "S15.10.2.11_A1_T6")]
+    public Task S15_10_2_11_A1_T6()
+        => ExecutionTestFromFile("S15.10.2.11_A1_T6");
+
+    [Fact(DisplayName = "S15.10.2.11_A1_T8")]
+    public Task S15_10_2_11_A1_T8()
+        => ExecutionTestFromFile("S15.10.2.11_A1_T8");
+
+    [Fact(DisplayName = "S15.10.2.11_A1_T9")]
+    public Task S15_10_2_11_A1_T9()
+        => ExecutionTestFromFile("S15.10.2.11_A1_T9");
+
+    [Fact(DisplayName = "S15.10.2.12_A3_T5")]
+    public Task S15_10_2_12_A3_T5()
+        => ExecutionTestFromFile("S15.10.2.12_A3_T5");
+
 }
