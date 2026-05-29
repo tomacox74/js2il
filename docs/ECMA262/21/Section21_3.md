@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:53:45Z
+> Last generated (UTC): 2026-05-27T12:25:28Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -40,7 +40,7 @@
 | 21.3.2.13 | Math.cosh ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.cosh) |
 | 21.3.2.14 | Math.exp ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.exp) |
 | 21.3.2.15 | Math.expm1 ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.expm1) |
-| 21.3.2.16 | Math.floor ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.floor) |
+| 21.3.2.16 | Math.floor ( x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-math.floor) |
 | 21.3.2.17 | Math.fround ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.fround) |
 | 21.3.2.18 | Math.f16round ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.f16round) |
 | 21.3.2.19 | Math.hypot ( ... args ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.hypot) |
@@ -49,7 +49,7 @@
 | 21.3.2.22 | Math.log1p ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.log1p) |
 | 21.3.2.23 | Math.log10 ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.log10) |
 | 21.3.2.24 | Math.log2 ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.log2) |
-| 21.3.2.25 | Math.max ( ... args ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.max) |
+| 21.3.2.25 | Math.max ( ... args ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-math.max) |
 | 21.3.2.26 | Math.min ( ... args ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.min) |
 | 21.3.2.27 | Math.pow ( base , exponent ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.pow) |
 | 21.3.2.28 | Math.random ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.random) |
@@ -71,5 +71,18 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Math built-in function metadata (`name`, `length`, and descriptor surface) | Supported | `tests/Js2IL.Test262.Tests/built-ins/Math/abs/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/acos/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/floor/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/max/ExecutionTests.cs` |  | Math intrinsic methods now expose the expected callable metadata for the covered test262 cases, including function `name`, `length`, and property-descriptor characteristics on the static Math surface. |
+| Math built-in function metadata (`name`, `length`, and descriptor surface) | Supported | `tests/Js2IL.Test262.Tests/built-ins/Math/abs/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/acos/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/floor/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/built-ins/Math/max/ExecutionTests.cs` |  | Math intrinsic methods now expose the expected callable metadata for the covered test262 cases, including function `name`, `length`, and property-descriptor characteristics on the static Math surface. |
+| Representative Math.ceil / Math.min / Math.round / Math.sign numeric semantics | Supported | `tests/Js2IL.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/ceil/not-a-constructor.js`<br>`test/built-ins/Math/ceil/S15.8.2.6_A6.js`<br>`test/built-ins/Math/min/S15.8.2.12_A1.js`<br>`test/built-ins/Math/min/15.8.2.12-1.js`<br>`test/built-ins/Math/round/not-a-constructor.js`<br>`test/built-ins/Math/round/S15.8.2.15_A4.js`<br>`test/built-ins/Math/sign/sign-specialVals.js`<br>`test/built-ins/Math/sign/not-a-constructor.js` | Checked-in coverage now includes representative ceil/min/round/sign behavior for NaN, infinities, non-constructibility, and signed-zero-sensitive cases alongside the earlier Math metadata coverage. |
+
+### 21.3.2.16 ([tc39.es](https://tc39.es/ecma262/#sec-math.floor))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math.floor(x) numeric semantics | Supported with Limitations | [`S15.8.2.9_A1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/floor/JavaScript/S15.8.2.9_A1.js)<br>[`S15.8.2.9_A2.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/floor/JavaScript/S15.8.2.9_A2.js)<br>[`S15.8.2.9_A3.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/floor/JavaScript/S15.8.2.9_A3.js)<br>[`S15.8.2.9_A4.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/floor/JavaScript/S15.8.2.9_A4.js) | `test/built-ins/Math/floor/S15.8.2.9_A1.js`<br>`test/built-ins/Math/floor/S15.8.2.9_A2.js`<br>`test/built-ins/Math/floor/S15.8.2.9_A3.js`<br>`test/built-ins/Math/floor/S15.8.2.9_A4.js` | Checked-in coverage now includes representative Math.floor behavior for ordinary numbers, infinities, NaN, and signed-zero-sensitive values. |
+
+### 21.3.2.25 ([tc39.es](https://tc39.es/ecma262/#sec-math.max))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math.max(...args) numeric semantics | Supported with Limitations | [`15.8.2.11-1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/max/JavaScript/15.8.2.11-1.js)<br>[`Math.max_each-element-coerced.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/max/JavaScript/Math.max_each-element-coerced.js)<br>[`S15.8.2.11_A1.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Math/max/JavaScript/S15.8.2.11_A1.js) | `test/built-ins/Math/max/15.8.2.11-1.js`<br>`test/built-ins/Math/max/Math.max_each-element-coerced.js`<br>`test/built-ins/Math/max/S15.8.2.11_A1.js` | Checked-in coverage now includes the no-argument result, representative argument coercion order, and basic comparison behavior for the current Math.max slice. |
 
