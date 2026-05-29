@@ -25,4 +25,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "this-not-object-throw")]
     public Task this_not_object_throw()
         => ExecutionTestFromFile("this-not-object-throw");
+    [Fact(DisplayName = "does-not-have-mapdata-internal-slot-set")]
+    public Task does_not_have_mapdata_internal_slot_set()
+        => ExecutionTestFromFile("does-not-have-mapdata-internal-slot-set");
+
 }
