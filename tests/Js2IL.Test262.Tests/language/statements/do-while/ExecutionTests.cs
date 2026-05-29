@@ -75,4 +75,28 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_1_A6_T5()
         => CompilationFailureTest("S12.6.1_A6_T5", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "S12.6.1_A12")]
+    public Task S12_6_1_A12()
+        => CompilationFailureTest("S12.6.1_A12", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.6.1_A15")]
+    public Task S12_6_1_A15()
+        => CompilationFailureTest("S12.6.1_A15", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "S12.6.1_A6_T6")]
+    public Task S12_6_1_A6_T6()
+        => CompilationFailureTest("S12.6.1_A6_T6", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "decl-const")]
+    public Task decl_const()
+        => CompilationFailureTest("decl-const", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "decl-fun")]
+    public Task decl_fun()
+        => CompilationFailureTest("decl-fun", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "decl-let")]
+    public Task decl_let()
+        => CompilationFailureTest("decl-let", "Failed to parse JavaScript");
+
 }
