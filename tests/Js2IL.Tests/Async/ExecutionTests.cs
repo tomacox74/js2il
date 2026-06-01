@@ -28,6 +28,19 @@ namespace Js2IL.Tests.Async
         public Task Async_TopLevelAwait_RejectionCaught() { var testName = nameof(Async_TopLevelAwait_RejectionCaught); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Async_TopLevelAwait_ForOfClosureCapture() { var testName = nameof(Async_TopLevelAwait_ForOfClosureCapture); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TopLevelAwait_DefaultDestructuringFunctionExport() { var testName = nameof(Async_TopLevelAwait_DefaultDestructuringFunctionExport); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TopLevelAwait_ImportedNamedFunction()
+        {
+            var testName = nameof(Async_TopLevelAwait_ImportedNamedFunction);
+            return ExecutionTest(testName, additionalScripts: new[] { "Async_TopLevelAwait_ImportedNamedFunction_Dependency" });
+        }
+
+        [Fact]
         public Task Async_Calls_Module_Function_Before_Await() { var testName = nameof(Async_Calls_Module_Function_Before_Await); return ExecutionTest(testName); }
 
         [Fact]
@@ -80,6 +93,9 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_ForAwaitOf_Array() { var testName = nameof(Async_ForAwaitOf_Array); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_ForOf_AwaitInBody() { var testName = nameof(Async_ForOf_AwaitInBody); return ExecutionTest(testName); }
 
         [Fact]
         public Task Async_ForAwaitOf_AsyncIterator_BreakCloses() { var testName = nameof(Async_ForAwaitOf_AsyncIterator_BreakCloses); return ExecutionTest(testName); }

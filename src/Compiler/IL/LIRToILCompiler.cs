@@ -576,7 +576,13 @@ internal sealed partial class LIRToILCompiler
         }
         else
         {
-            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+
+            if (parameterClrType != null && parameterClrType != typeof(object) && !parameterClrType.IsValueType)
+            {
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(parameterClrType));
+            }
         }
     }
 

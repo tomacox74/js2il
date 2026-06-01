@@ -23,7 +23,8 @@ internal sealed partial class LIRToILCompiler
         // If any of these parameters are captured, the environment layout stores them as
         // leaf-scope fields. We must copy the IL arguments into those fields here so
         // module init code can safely read them via scope.<param>.
-        if (!string.Equals(methodDescriptor.Name, "__js_module_init__", StringComparison.Ordinal))
+        if (!string.Equals(methodDescriptor.Name, "__js_module_init__", StringComparison.Ordinal)
+            && !string.Equals(methodDescriptor.Name, "__js_module_async_body__", StringComparison.Ordinal))
         {
             return;
         }
@@ -35,12 +36,44 @@ internal sealed partial class LIRToILCompiler
             {
                 ilEncoder.LoadLocal(0);
                 ilEncoder.LoadArgument(GetIlArgIndexForJsParameter(methodDescriptor, jsParamIndex));
+
+                var fieldClrType = GetDeclaredScopeFieldClrType(scopeName, name);
+                if (fieldClrType.IsValueType)
+                {
+                    ilEncoder.OpCode(ILOpCode.Unbox_any);
+                    ilEncoder.Token(GetBoxingTypeToken(fieldClrType));
+                }
+                else if (fieldClrType != typeof(object))
+                {
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                }
+
                 ilEncoder.OpCode(ILOpCode.Stfld);
                 ilEncoder.Token(fieldHandle);
             }
 
             jsParamIndex++;
         }
+    }
+
+    private void EmitStoreBoundArgument(
+        InstructionEncoder ilEncoder,
+        int boundArgIndex,
+        int ilArgIndex,
+        MethodParameterDescriptor parameterDescriptor)
+    {
+        ilEncoder.OpCode(ILOpCode.Dup);
+        ilEncoder.LoadConstantI4(boundArgIndex);
+        ilEncoder.LoadArgument(ilArgIndex);
+
+        if (parameterDescriptor.ParameterType?.IsValueType == true)
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(GetBoxingTypeToken(parameterDescriptor.ParameterType));
+        }
+
+        ilEncoder.OpCode(ILOpCode.Stelem_ref);
     }
 
     private void EmitInitArgumentsObjectIfNeeded(InstructionEncoder ilEncoder, string scopeName, MethodDescriptor methodDescriptor)
@@ -161,6 +194,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
 
+                        EmitInitModuleParameterFieldsIfNeeded(ilEncoder, methodDescriptor, scopeName);
                         EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName, methodDescriptor);
 
                         // Build modified scopes array with leaf at [0]
@@ -217,10 +251,11 @@ internal sealed partial class LIRToILCompiler
 
                         for (var i = 0; i < jsParamCount; i++)
                         {
-                            ilEncoder.OpCode(ILOpCode.Dup);
-                            ilEncoder.LoadConstantI4(i);
-                            ilEncoder.LoadArgument(ilJsArgBase + i);
-                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                            EmitStoreBoundArgument(
+                                ilEncoder,
+                                i,
+                                ilJsArgBase + i,
+                                methodDescriptor.Parameters[jsParamsStartInSignature + i]);
                         }
 
                         var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
@@ -348,6 +383,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
 
+                        EmitInitModuleParameterFieldsIfNeeded(ilEncoder, methodDescriptor, scopeName);
                         EmitInitArgumentsObjectIfNeeded(ilEncoder, scopeName, methodDescriptor);
 
                         // Build modified scopes array using runtime helper:
@@ -428,10 +464,11 @@ internal sealed partial class LIRToILCompiler
                                 var firstJsArgIndex = (methodDescriptor.IsStatic ? 0 : 1) + jsParamsStartInSignature;
                                 for (var i = 0; i < jsParamCount; i++)
                                 {
-                                    ilEncoder.OpCode(ILOpCode.Dup);
-                                    ilEncoder.LoadConstantI4(i);
-                                    ilEncoder.LoadArgument(firstJsArgIndex + i);
-                                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                                    EmitStoreBoundArgument(
+                                        ilEncoder,
+                                        i,
+                                        firstJsArgIndex + i,
+                                        methodDescriptor.Parameters[jsParamsStartInSignature + i]);
                                 }
 
                                 var bindMoveNextRef = _memberRefRegistry.GetOrAddMethod(
