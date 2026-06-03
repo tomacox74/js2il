@@ -1775,6 +1775,15 @@ internal sealed partial class LIRToILCompiler
                 int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
                 ilEncoder.LoadArgument(ilArgIndex);
 
+                var methodParameterIndex = ilArgIndex - (methodDescriptor.IsStatic ? 0 : 1);
+                if (methodParameterIndex >= 0
+                    && methodParameterIndex < methodDescriptor.Parameters.Count
+                    && (!methodDescriptor.Parameters[methodParameterIndex].ParameterTypeHandle.IsNil
+                        || methodDescriptor.Parameters[methodParameterIndex].ParameterType != typeof(object)))
+                {
+                    return true;
+                }
+
                 var parameterStorage = GetTempStorage(loadParam.Result);
                 if (parameterStorage.Kind == ValueStorageKind.UnboxedValue && parameterStorage.ClrType != null)
                 {
@@ -1796,7 +1805,7 @@ internal sealed partial class LIRToILCompiler
                     && parameterStorage.ClrType != typeof(object))
                 {
                     ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(parameterStorage.ClrType));
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterStorage.ClrType));
                 }
                 return true;
             case LIRCallRuntimeServicesStatic callRuntimeServices:
@@ -2007,26 +2016,6 @@ internal sealed partial class LIRToILCompiler
         }
 
         var slot = GetSlotForTemp(temp, allocation);
-        var destinationStorage = GetMaterializedTempStorage(temp, allocation);
-        if (destinationStorage.Kind == ValueStorageKind.Reference && !string.IsNullOrWhiteSpace(destinationStorage.ScopeName))
-        {
-            ilEncoder.OpCode(ILOpCode.Castclass);
-            ilEncoder.Token(ResolveScopeTypeHandle(destinationStorage.ScopeName, "storing typed scope temp"));
-        }
-        else if (destinationStorage.Kind == ValueStorageKind.Reference && !destinationStorage.TypeHandle.IsNil)
-        {
-            ilEncoder.OpCode(ILOpCode.Castclass);
-            ilEncoder.Token(destinationStorage.TypeHandle);
-        }
-        else if (destinationStorage.Kind == ValueStorageKind.Reference
-            && destinationStorage.ClrType != null
-            && destinationStorage.ClrType != typeof(object)
-            && !destinationStorage.ClrType.IsArray)
-        {
-            ilEncoder.OpCode(ILOpCode.Castclass);
-            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(destinationStorage.ClrType));
-        }
-
         ilEncoder.StoreLocal(slot);
     }
 

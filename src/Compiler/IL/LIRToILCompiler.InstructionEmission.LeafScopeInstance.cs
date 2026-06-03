@@ -46,7 +46,7 @@ internal sealed partial class LIRToILCompiler
                 else if (fieldClrType != typeof(object))
                 {
                     ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(fieldClrType));
                 }
 
                 ilEncoder.OpCode(ILOpCode.Stfld);
