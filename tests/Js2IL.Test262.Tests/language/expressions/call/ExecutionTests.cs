@@ -21,4 +21,32 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "scope-var-open")]
     public Task scope_var_open()
         => ExecutionTest("scope-var-open");
+
+    [Fact(DisplayName = "spread-sngl-empty")]
+    public Task spread_sngl_empty()
+        => ExecutionTest("spread-sngl-empty");
+
+    [Fact(DisplayName = "spread-sngl-expr")]
+    public Task spread_sngl_expr()
+        => ExecutionTest("spread-sngl-expr");
+
+    [Fact(DisplayName = "spread-sngl-iter")]
+    public Task spread_sngl_iter()
+        => ExecutionTest("spread-sngl-iter");
+
+    [Fact(DisplayName = "spread-mult-empty")]
+    public Task spread_mult_empty()
+        => ExecutionTest("spread-mult-empty");
+
+    [Fact(DisplayName = "spread-mult-expr")]
+    public Task spread_mult_expr()
+        => ExecutionTest("spread-mult-expr");
+
+    [Fact(DisplayName = "spread-mult-literal")]
+    public Task spread_mult_literal()
+        => ExecutionTest("spread-mult-literal");
+
+    [Fact(DisplayName = "spread-mult-iter")]
+    public Task spread_mult_iter()
+        => ExecutionTest("spread-mult-iter");
 }

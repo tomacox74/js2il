@@ -36,7 +36,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "array-pattern")]
     public Task array_pattern()
         => ExecutionTest("array-pattern");
-    [Fact(DisplayName = "object-pattern")]
-    public Task object_pattern()
-        => ExecutionTest("object-pattern");
+[Fact(DisplayName = "object-pattern")]
+public Task object_pattern()
+    => ExecutionTest("object-pattern");
+
 }
