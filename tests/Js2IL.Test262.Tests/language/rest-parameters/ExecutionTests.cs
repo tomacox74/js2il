@@ -33,9 +33,11 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "rest-parameters-produce-an-array")]
     public Task rest_parameters_produce_an_array()
         => ExecutionTest("rest-parameters-produce-an-array");
-    [Fact(DisplayName = "array-pattern")]
-    public Task array_pattern()
-        => ExecutionTest("array-pattern");
+
+[Fact(DisplayName = "array-pattern")]
+public Task array_pattern()
+    => ExecutionTest("array-pattern");
+
 [Fact(DisplayName = "object-pattern")]
 public Task object_pattern()
     => ExecutionTest("object-pattern");
