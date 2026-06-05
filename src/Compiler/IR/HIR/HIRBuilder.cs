@@ -859,7 +859,7 @@ public static class HIRBuilder
 
     /// <summary>
     /// Returns true if parameters are supported by the IR pipeline for function expressions/arrow functions.
-    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern, RestElement.
+    /// Supports: Identifier, AssignmentPattern with supported pattern left-hand side, ObjectPattern, ArrayPattern, RestElement.
     /// RestElement must be the last parameter (enforced by JavaScript parser).
     /// </summary>
     internal static bool ParamsSupportedForIR(in NodeList<Node> parameters)
@@ -867,12 +867,25 @@ public static class HIRBuilder
         return parameters.All(param => param switch
         {
             Acornima.Ast.Identifier => true,
-            Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
+            Acornima.Ast.AssignmentPattern ap => IsSupportedParameterPattern(ap.Left),
             Acornima.Ast.ObjectPattern => true,
             Acornima.Ast.ArrayPattern => true,
             Acornima.Ast.RestElement => true,
             _ => false
         });
+    }
+
+    private static bool IsSupportedParameterPattern(Node pattern)
+    {
+        return pattern switch
+        {
+            Acornima.Ast.Identifier => true,
+            Acornima.Ast.ObjectPattern => true,
+            Acornima.Ast.ArrayPattern => true,
+            Acornima.Ast.AssignmentPattern assignmentPattern => IsSupportedParameterPattern(assignmentPattern.Left),
+            Acornima.Ast.RestElement restElement => IsSupportedParameterPattern(restElement.Argument),
+            _ => false
+        };
     }
 }
 

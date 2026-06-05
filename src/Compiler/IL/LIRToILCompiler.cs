@@ -94,31 +94,9 @@ internal sealed partial class LIRToILCompiler
                     {
                         parameters.AddParameter().Type().Type(parameterDefinition.ParameterTypeHandle, isValueType: false);
                     }
-                    else if (parameterDefinition.ParameterType == typeof(object))
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(string))
-                    {
-                        parameters.AddParameter().Type().String();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(double))
-                    {
-                        parameters.AddParameter().Type().Double();
-                    }
-                    else if (parameterDefinition.ParameterType == typeof(bool))
-                    {
-                        parameters.AddParameter().Type().Boolean();
-                    }
-                    else if (parameterDefinition.ParameterType.IsArray
-                        && parameterDefinition.ParameterType.GetElementType() == typeof(object))
-                    {
-                        parameters.AddParameter().Type().SZArray().Object();
-                    }
                     else
                     {
-                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
-                        parameters.AddParameter().Type().Type(typeRef, false);
+                        EmitSignatureClrType(parameters.AddParameter().Type(), parameterDefinition.ParameterType);
                     }
                 }
             });
@@ -576,7 +554,13 @@ internal sealed partial class LIRToILCompiler
         }
         else
         {
-            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+
+            if (parameterClrType != null && parameterClrType != typeof(object) && !parameterClrType.IsValueType)
+            {
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterClrType));
+            }
         }
     }
 

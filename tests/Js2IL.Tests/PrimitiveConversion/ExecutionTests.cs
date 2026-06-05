@@ -20,6 +20,12 @@ namespace Js2IL.Tests.PrimitiveConversion
         }
 
         [Fact]
+        public Task PrimitiveConversion_Number_IsSafeInteger()
+        {
+            return ExecutionTest(nameof(PrimitiveConversion_Number_IsSafeInteger));
+        }
+
+        [Fact]
         public Task PrimitiveConversion_Boolean_Callable()
         {
             return ExecutionTest(nameof(PrimitiveConversion_Boolean_Callable));

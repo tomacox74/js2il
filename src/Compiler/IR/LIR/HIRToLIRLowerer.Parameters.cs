@@ -216,14 +216,12 @@ public sealed partial class HIRToLIRLowerer
         {
             var p = parameters[i];
 
-            // Only handle direct Object/Array patterns for now.
-            // (Param-level defaults like ({a} = {}) are not yet supported by the IR pipeline gate.)
-            if (p is not HIRObjectPattern && p is not HIRArrayPattern)
+            var destructuringPattern = p is HIRDefaultPattern { Target: HIRObjectPattern or HIRArrayPattern } defaultDestructuring
+                ? defaultDestructuring.Target
+                : p;
+
+            if (destructuringPattern is not HIRObjectPattern && destructuringPattern is not HIRArrayPattern)
             {
-                if (p is HIRDefaultPattern def && (def.Target is HIRObjectPattern or HIRArrayPattern))
-                {
-                    return false;
-                }
                 continue;
             }
 
@@ -232,7 +230,7 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRLoadParameter(i, paramTemp));
             DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-            if (!TryLowerDestructuringPattern(p, paramTemp, DestructuringWriteMode.Declaration, sourceNameForError: null))
+            if (!TryLowerDestructuringPattern(destructuringPattern, paramTemp, DestructuringWriteMode.Declaration, sourceNameForError: null))
             {
                 return false;
             }
@@ -277,12 +275,6 @@ public sealed partial class HIRToLIRLowerer
             if (parameters[i] is not HIRDefaultPattern def)
             {
                 continue;
-            }
-
-            // Only support top-level default parameters for identifier params.
-            if (def.Target is not HIRIdentifierPattern)
-            {
-                return false;
             }
 
             // Record instruction count before we start, so we can roll back if lowering fails

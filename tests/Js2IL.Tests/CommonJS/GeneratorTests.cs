@@ -82,6 +82,12 @@ namespace Js2IL.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_NodeProcess_Module()
+        {
+            return GenerateTest(nameof(CommonJS_Require_NodeProcess_Module));
+        }
+
+        [Fact]
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object
@@ -223,6 +229,14 @@ namespace Js2IL.Tests.CommonJS
             return GenerateTest(
                 nameof(CommonJS_Require_Captures_Shadowed_Global_URL),
                 new[] { "CommonJS_Require_Captures_Shadowed_Global_URL_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Require_OptionalChain_InNestedFunction()
+        {
+            return GenerateTest(
+                nameof(CommonJS_Require_OptionalChain_InNestedFunction),
+                new[] { "CommonJS_Require_OptionalChain_Lib" });
         }
 
         [Fact]

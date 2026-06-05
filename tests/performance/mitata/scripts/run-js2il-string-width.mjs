@@ -13,7 +13,10 @@ const outputAssembly = path.join(outputDirectory, "string-width.dll");
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
     cwd: benchmarkDirectory,
-    env: process.env,
+    env: {
+      ...process.env,
+      JS2IL_SIMPLE_BENCH_RUNNER: "1",
+    },
     stdio: "inherit",
     ...options,
   });
@@ -50,4 +53,3 @@ mkdirSync(outputDirectory, { recursive: true });
 
 compileWithJs2IL();
 run("dotnet", [outputAssembly]);
-

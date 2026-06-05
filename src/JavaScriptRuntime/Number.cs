@@ -46,6 +46,25 @@ namespace JavaScriptRuntime
             };
         }
 
+        /// <summary>
+        /// ECMAScript: Number.isSafeInteger(x) returns true only for finite integral Number values
+        /// within the IEEE-754 safe integer range [-2^53 + 1, 2^53 - 1].
+        /// </summary>
+        public static bool isSafeInteger(object? value)
+        {
+            const double maxSafeInteger = 9007199254740991d;
+
+            return value switch
+            {
+                double d => double.IsFinite(d) && double.IsInteger(d) && System.Math.Abs(d) <= maxSafeInteger,
+                float f => float.IsFinite(f) && float.IsInteger(f) && System.Math.Abs(f) <= maxSafeInteger,
+                int or short or byte or sbyte or uint or ushort => true,
+                long l => System.Math.Abs((double)l) <= maxSafeInteger,
+                ulong ul => ul <= (ulong)maxSafeInteger,
+                _ => false
+            };
+        }
+
         internal static bool IsNumberConstructor(Delegate candidate)
         {
             ArgumentNullException.ThrowIfNull(candidate);
