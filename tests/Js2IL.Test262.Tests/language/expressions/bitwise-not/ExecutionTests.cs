@@ -118,4 +118,8 @@ public class ExecutionTests
         settings.UseDirectory(snapshotsDirectory);
         return Verify(value, settings);
     }
+
+    [Fact(DisplayName = "bigint")]
+    public Task bigint()
+        => ExecutionTestFromFile("bigint");
 }
