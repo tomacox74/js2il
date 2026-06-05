@@ -1774,6 +1774,39 @@ internal sealed partial class LIRToILCompiler
                 // Emit ldarg.X inline - no local slot needed
                 int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
                 ilEncoder.LoadArgument(ilArgIndex);
+
+                var methodParameterIndex = ilArgIndex - (methodDescriptor.IsStatic ? 0 : 1);
+                if (methodParameterIndex >= 0
+                    && methodParameterIndex < methodDescriptor.Parameters.Count
+                    && (!methodDescriptor.Parameters[methodParameterIndex].ParameterTypeHandle.IsNil
+                        || methodDescriptor.Parameters[methodParameterIndex].ParameterType != typeof(object)))
+                {
+                    return true;
+                }
+
+                var parameterStorage = GetTempStorage(loadParam.Result);
+                if (parameterStorage.Kind == ValueStorageKind.UnboxedValue && parameterStorage.ClrType != null)
+                {
+                    ilEncoder.OpCode(ILOpCode.Unbox_any);
+                    ilEncoder.Token(GetBoxingTypeToken(parameterStorage.ClrType));
+                }
+                else if (parameterStorage.Kind == ValueStorageKind.Reference && !string.IsNullOrWhiteSpace(parameterStorage.ScopeName))
+                {
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(ResolveScopeTypeHandle(parameterStorage.ScopeName, "parameter load (typed scope reference)"));
+                }
+                else if (parameterStorage.Kind == ValueStorageKind.Reference && !parameterStorage.TypeHandle.IsNil)
+                {
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(parameterStorage.TypeHandle);
+                }
+                else if (parameterStorage.Kind == ValueStorageKind.Reference
+                    && parameterStorage.ClrType != null
+                    && parameterStorage.ClrType != typeof(object))
+                {
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(parameterStorage.ClrType));
+                }
                 return true;
             case LIRCallRuntimeServicesStatic callRuntimeServices:
                 if (TryEmitOperatorsAddAndToNumber(callRuntimeServices, ilEncoder, allocation, methodDescriptor))
@@ -1994,6 +2027,13 @@ internal sealed partial class LIRToILCompiler
     {
         // Load the temp value
         EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+
+        if (TryFindDefInstruction(temp) is LIRConstNull)
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(GetBoxingTypeToken(typeof(JavaScriptRuntime.JsNull)));
+            return;
+        }
 
         // Check if boxing is needed based on the value actually on the stack.
         var storage = GetMaterializedTempStorage(temp, allocation);

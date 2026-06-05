@@ -886,20 +886,33 @@ internal sealed class JsMethodCompiler
 
     /// <summary>
     /// Returns true if parameters are supported by the IR pipeline for function declarations/methods.
-    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern, RestElement.
+    /// Supports: Identifier, AssignmentPattern with supported pattern left-hand side, ObjectPattern, ArrayPattern, RestElement.
     /// </summary>
     private static bool ParamsSupportedForIR(in NodeList<Node> parameters)
     {
         return parameters.All(param => param switch
         {
             Identifier => true,
-            AssignmentPattern ap => ap.Left is Identifier,
+            AssignmentPattern ap => IsSupportedParameterPattern(ap.Left),
             ObjectPattern => true,
             ArrayPattern => true,
             // RestElement at the parameter list level is a rest parameter (...args).
             RestElement => true,
             _ => false
         });
+    }
+
+    private static bool IsSupportedParameterPattern(Node pattern)
+    {
+        return pattern switch
+        {
+            Identifier => true,
+            ObjectPattern => true,
+            ArrayPattern => true,
+            AssignmentPattern assignmentPattern => IsSupportedParameterPattern(assignmentPattern.Left),
+            RestElement restElement => IsSupportedParameterPattern(restElement.Argument),
+            _ => false
+        };
     }
 
     private static (Js2IL.Runtime.CallableScopeAbiKind kind, string? singleScopeScopeName) ComputeCallableScopeAbi(

@@ -160,4 +160,47 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task _15_12_1_1_g4_4()
         => ExecutionTestFromFile("15.12.1.1-g4-4");
 
+    [Fact(DisplayName = "15.12.1.1-g5-1")]
+    public Task _15_12_1_1_g5_1()
+        => ExecutionTestFromFile("15.12.1.1-g5-1");
+
+    [Fact(DisplayName = "15.12.1.1-g5-2")]
+    public Task _15_12_1_1_g5_2()
+        => ExecutionTestFromFile("15.12.1.1-g5-2");
+
+    [Fact(DisplayName = "15.12.1.1-g5-3")]
+    public Task _15_12_1_1_g5_3()
+        => ExecutionTestFromFile("15.12.1.1-g5-3");
+
+    [Fact(DisplayName = "15.12.1.1-g6-1")]
+    public Task _15_12_1_1_g6_1()
+        => ExecutionTestFromFile("15.12.1.1-g6-1");
+
+    [Fact(DisplayName = "15.12.1.1-g6-2")]
+    public Task _15_12_1_1_g6_2()
+        => ExecutionTestFromFile("15.12.1.1-g6-2");
+
+    [Fact(DisplayName = "15.12.1.1-g6-3")]
+    public Task _15_12_1_1_g6_3()
+        => ExecutionTestFromFile("15.12.1.1-g6-3");
+
+    [Fact(DisplayName = "15.12.1.1-g6-4")]
+    public Task _15_12_1_1_g6_4()
+        => ExecutionTestFromFile("15.12.1.1-g6-4");
+
+    [Fact(DisplayName = "15.12.1.1-g6-5")]
+    public Task _15_12_1_1_g6_5()
+        => ExecutionTestFromFile("15.12.1.1-g6-5");
+
+    [Fact(DisplayName = "15.12.1.1-g6-6")]
+    public Task _15_12_1_1_g6_6()
+        => ExecutionTestFromFile("15.12.1.1-g6-6");
+
+    [Fact(DisplayName = "15.12.1.1-g6-7")]
+    public Task _15_12_1_1_g6_7()
+        => ExecutionTestFromFile("15.12.1.1-g6-7");
+
+    [Fact(DisplayName = "15.12.2-2-1")]
+    public Task _15_12_2_2_1()
+        => ExecutionTestFromFile("15.12.2-2-1");
 }

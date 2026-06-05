@@ -74,4 +74,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S9_3_1_A7()
         => ExecutionTestFromFile("S9.3.1_A7");
 
+    [Fact(DisplayName = "MAX_VALUE/S15.7.3.2_A2")]
+    public Task MAX_VALUE_S15_7_3_2_A2()
+        => ExecutionTestFromFile("MAX_VALUE/S15.7.3.2_A2");
+
 }

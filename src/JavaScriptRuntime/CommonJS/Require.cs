@@ -438,7 +438,8 @@ namespace JavaScriptRuntime.CommonJS
                 _registry[key] = type;
             }
 
-            var instance = Activator.CreateInstance(type)
+            var instance = GlobalThis.ServiceProvider?.Resolve(type)
+                ?? Activator.CreateInstance(type)
                 ?? throw new TypeError($"Failed to create module instance for '{key}'");
             _instances[key] = instance;
             return instance;

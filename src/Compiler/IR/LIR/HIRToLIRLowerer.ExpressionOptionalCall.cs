@@ -18,6 +18,8 @@ public sealed partial class HIRToLIRLowerer
         // Evaluate callee once, then short-circuit if nullish.
         if (!TryLowerExpression(optionalCallExpr.Callee, out var calleeTemp))
         {
+            IRPipelineMetrics.RecordFailureIfUnset(
+                $"HIR->LIR: failed lowering optional call callee {optionalCallExpr.Callee.GetType().Name}");
             return false;
         }
 
@@ -35,12 +37,14 @@ public sealed partial class HIRToLIRLowerer
 
         if (!TryLowerCallArgumentsToArgsArray(optionalCallExpr.Arguments, out var argsArrayTemp))
         {
+            IRPipelineMetrics.RecordFailureIfUnset("HIR->LIR: failed lowering optional call arguments");
             return false;
         }
 
         var scopesTemp = CreateTempVariable();
         if (!TryBuildCurrentScopesArray(scopesTemp))
         {
+            IRPipelineMetrics.RecordFailureIfUnset("HIR->LIR: failed building scopes array for optional call");
             return false;
         }
         DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));

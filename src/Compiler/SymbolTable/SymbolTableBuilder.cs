@@ -1828,6 +1828,14 @@ namespace Js2IL.SymbolTables
                     }
                     break;
 
+                case ChainExpression chain:
+                    CollectFreeVariables(chain.Expression, localVariables, targetVariables, result);
+                    break;
+
+                case ParenthesizedExpression parenthesized:
+                    CollectFreeVariables(parenthesized.Expression, localVariables, targetVariables, result);
+                    break;
+
                 case VariableDeclaration vd:
                     // Add declared variables to local set
                     var newLocals = new HashSet<string>(localVariables);
@@ -2091,6 +2099,10 @@ namespace Js2IL.SymbolTables
                 case Property prop:
                     CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
                     CollectFreeVariables(prop.Value as Node, localVariables, targetVariables, result);
+                    break;
+
+                case SpreadElement spread:
+                    CollectFreeVariables(spread.Argument, localVariables, targetVariables, result);
                     break;
 
                 case FunctionDeclaration funcDecl:

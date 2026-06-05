@@ -121,6 +121,56 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        {
+            if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+            {
+                return false;
+            }
+            objTemp = EnsureObject(objTemp);
+
+            var keyTemp = EmitConstString(assignExpr.PropertyName);
+            var boxedKey = EnsureObject(keyTemp);
+
+            var current = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedKey, current));
+            DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            resultTempVar = CreateTempVariable();
+            var evalRightLabel = CreateLabel();
+            var endLabel = CreateLabel();
+
+            var currentBoxed = EnsureObject(current);
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(currentBoxed, evalRightLabel));
+
+            var isJsNullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), currentBoxed, isJsNullTemp));
+            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
+            ClearNumericRefinementsAtLabel();
+
+            if (!TryLowerExpression(assignExpr.Value, out var rhsValue))
+            {
+                return false;
+            }
+
+            rhsValue = EnsureObject(rhsValue);
+            var setResult = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, rhsValue, setResult, UsesStrictAssignmentSemantics()));
+            DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
         {
@@ -162,6 +212,77 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerIndexAssignmentExpression(HIRIndexAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
+
+        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        {
+            if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+            {
+                return false;
+            }
+            objTemp = EnsureObject(objTemp);
+
+            if (!TryLowerExpression(assignExpr.Index, out var indexTemp))
+            {
+                return false;
+            }
+
+            TempVariable? boxedIndex = null;
+            var indexStorageForGet = GetTempStorage(indexTemp);
+            TempVariable indexForGet;
+            if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
+            {
+                indexForGet = indexTemp;
+            }
+            else
+            {
+                boxedIndex = EnsureObject(indexTemp);
+                indexForGet = boxedIndex.Value;
+            }
+
+            var current = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
+            DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            resultTempVar = CreateTempVariable();
+            var evalRightLabel = CreateLabel();
+            var endLabel = CreateLabel();
+
+            var currentBoxed = EnsureObject(current);
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(currentBoxed, evalRightLabel));
+
+            var isJsNullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), currentBoxed, isJsNullTemp));
+            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
+            ClearNumericRefinementsAtLabel();
+
+            if (!TryLowerExpression(assignExpr.Value, out var rhsValue))
+            {
+                return false;
+            }
+
+            rhsValue = EnsureObject(rhsValue);
+
+            var indexStorageForSet = GetTempStorage(indexTemp);
+            var indexForSet = indexStorageForSet.Kind == ValueStorageKind.UnboxedValue && indexStorageForSet.ClrType == typeof(double)
+                ? indexTemp
+                : boxedIndex ?? EnsureObject(indexTemp);
+
+            var setResult = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, rhsValue, setResult, UsesStrictAssignmentSemantics()));
+            DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
 
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)

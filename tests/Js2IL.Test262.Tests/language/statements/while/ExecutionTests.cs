@@ -75,4 +75,8 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task S12_6_2_A6_T5()
         => CompilationFailureTest("S12.6.2_A6_T5", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "S12.6.2_A15")]
+    public Task S12_6_2_A15()
+        => CompilationFailureTest("S12.6.2_A15", "Failed to parse JavaScript");
+
 }
