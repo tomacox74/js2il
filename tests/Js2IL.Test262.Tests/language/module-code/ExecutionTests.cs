@@ -46,22 +46,6 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task early_export_unresolvable()
         => CompilationFailureTest("early-export-unresolvable");
 
-    [Fact(DisplayName = "early-import-arguments")]
-    public Task early_import_arguments()
-        => CompilationFailureTest("early-import-arguments");
-
-    [Fact(DisplayName = "early-import-as-arguments")]
-    public Task early_import_as_arguments()
-        => CompilationFailureTest("early-import-as-arguments");
-
-    [Fact(DisplayName = "early-import-as-eval")]
-    public Task early_import_as_eval()
-        => CompilationFailureTest("early-import-as-eval");
-
-    [Fact(DisplayName = "early-import-eval")]
-    public Task early_import_eval()
-        => CompilationFailureTest("early-import-eval");
-
     [Fact(DisplayName = "early-lex-and-var")]
     public Task early_lex_and_var()
         => CompilationFailureTest("early-lex-and-var");
@@ -110,8 +94,24 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task parse_err_semi_export_star()
         => CompilationFailureTest("parse-err-semi-export-star");
 
+    [Fact(DisplayName = "parse-err-semi-name-space-export")]
+    public Task parse_err_semi_name_space_export()
+        => CompilationFailureTest("parse-err-semi-name-space-export");
+
     [Fact(DisplayName = "parse-err-semi-named-export")]
     public Task parse_err_semi_named_export()
         => CompilationFailureTest("parse-err-semi-named-export");
+
+    [Fact(DisplayName = "parse-err-semi-named-export-from")]
+    public Task parse_err_semi_named_export_from()
+        => CompilationFailureTest("parse-err-semi-named-export-from");
+
+    [Fact(DisplayName = "parse-err-syntax-1")]
+    public Task parse_err_syntax_1()
+        => CompilationFailureTest("parse-err-syntax-1");
+
+    [Fact(DisplayName = "parse-err-syntax-2")]
+    public Task parse_err_syntax_2()
+        => CompilationFailureTest("parse-err-syntax-2");
 
 }
