@@ -217,6 +217,7 @@ namespace JavaScriptRuntime
         // opt into prototype semantics as needed.
         private static readonly object _objectPrototypeValue = new JsObject();
         private static readonly object _jsonValue = new JsObject();
+        private static readonly object _intlValue = new JsObject();
         private static readonly object _numberPrototypeValue = new JsObject();
         private static readonly object _booleanPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
@@ -259,6 +260,9 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(Math, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Math");
             DefineIntrinsicDataProperty(JSON, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "JSON");
             DefineIntrinsicDataProperty(Reflect, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Reflect");
+            DefineIntrinsicDataProperty(_intlValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Intl");
+            DefineIntrinsicDataProperty(_intlValue, "NumberFormat", typeof(JavaScriptRuntime.IntlNumberFormat));
+            DefineIntrinsicDataProperty(_intlValue, "Segmenter", typeof(JavaScriptRuntime.IntlSegmenter));
 
             // Attach minimal prototypes to callable globals so patterns like
             // `Function.prototype.apply.bind(Array.prototype.push)` work even when code only
@@ -966,6 +970,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.JSON), JSON);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.JSON), dict[nameof(GlobalThis.JSON)]);
 
+            dict.TryAdd(nameof(GlobalThis.Intl), Intl);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.Intl), dict[nameof(GlobalThis.Intl)]);
+
             dict.TryAdd(nameof(GlobalThis.RegExp), RegExp);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.RegExp), dict[nameof(GlobalThis.RegExp)]);
 
@@ -1156,6 +1163,8 @@ namespace JavaScriptRuntime
         public static Func<object[], object?, object> Object => _objectConstructorValue;
 
         public static object JSON => _jsonValue;
+
+        public static object Intl => _intlValue;
 
         public static Delegate Symbol => _symbolFunctionValue;
 
