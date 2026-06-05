@@ -27,23 +27,24 @@ public sealed partial class HIRToLIRLowerer
         //   goto loop_start
         // end:
 
-        var perIterationBindings = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
-            ? forInStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).Where(b => b.IsCaptured).ToList()
+        var loopHeadLexicalBindings = (forInStmt.IsDeclaration && (forInStmt.DeclarationKind is BindingKind.Let or BindingKind.Const))
+            ? forInStmt.LoopHeadBindings.Where(b => b.Kind is BindingKind.Let or BindingKind.Const).ToList()
             : new List<BindingInfo>();
+        var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
 
         bool useTempPerIterationScope = false;
         TempVariable loopScopeTemp = default;
         ScopeId loopScopeId = default;
         string? loopScopeName = null;
 
-        if (perIterationBindings.Count > 0
-            && !_methodBodyIR.IsAsync
+        if (loopHeadLexicalBindings.Count > 0
             && !_methodBodyIR.IsGenerator)
         {
-            var declaringScope = perIterationBindings[0].DeclaringScope;
+            var declaringScope = loopHeadLexicalBindings[0].DeclaringScope;
             if (declaringScope != null
                 && declaringScope.Kind == ScopeKind.Block
-                && perIterationBindings.All(b => b.DeclaringScope == declaringScope))
+                && loopHeadLexicalBindings.All(b => b.DeclaringScope == declaringScope)
+                && (perIterationBindings.Count > 0 || declaringScope.HasDescendantCallableReferencingParentScopeVariables))
             {
                 useTempPerIterationScope = true;
                 loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);

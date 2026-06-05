@@ -152,8 +152,20 @@ public class AstWalker
                 Visit(condExpr.Alternate, visitor);
                 break;
 
+            case ChainExpression chainExpr:
+                Visit(chainExpr.Expression, visitor);
+                break;
+
+            case ParenthesizedExpression parenthesizedExpr:
+                Visit(parenthesizedExpr.Expression, visitor);
+                break;
+
             case UnaryExpression unaryExpr:
                 Visit(unaryExpr.Argument, visitor);
+                break;
+
+            case AwaitExpression awaitExpr:
+                Visit(awaitExpr.Argument, visitor);
                 break;
 
             case AssignmentExpression assignExpr:
@@ -199,6 +211,25 @@ public class AstWalker
             case PropertyDefinition propDef:
                 Visit(propDef.Key, visitor);
                 Visit(propDef.Value, visitor);
+                break;
+
+            case DoWhileStatement doWhileStmt:
+                Visit(doWhileStmt.Body, visitor);
+                Visit(doWhileStmt.Test, visitor);
+                break;
+
+            case TemplateLiteral templateLit:
+                VisitNodes(templateLit.Quasis, visitor);
+                VisitNodes(templateLit.Expressions, visitor);
+                break;
+
+            case TaggedTemplateExpression taggedTemplate:
+                Visit(taggedTemplate.Tag, visitor);
+                Visit(taggedTemplate.Quasi, visitor);
+                break;
+
+            case ImportExpression importExpr:
+                Visit(importExpr.Source, visitor);
                 break;
         }
     }
@@ -349,12 +380,24 @@ public class AstWalker
                 VisitWithContext(condExpr.Alternate, enterNode, exitNode);
                 break;
 
+            case ChainExpression chainExpr:
+                VisitWithContext(chainExpr.Expression, enterNode, exitNode);
+                break;
+
+            case ParenthesizedExpression parenthesizedExpr:
+                VisitWithContext(parenthesizedExpr.Expression, enterNode, exitNode);
+                break;
+
             case UpdateExpression updateExpr:
                 VisitWithContext(updateExpr.Argument, enterNode, exitNode);
                 break;
 
             case UnaryExpression unaryExpr:
                 VisitWithContext(unaryExpr.Argument, enterNode, exitNode);
+                break;
+
+            case AwaitExpression awaitExpr:
+                VisitWithContext(awaitExpr.Argument, enterNode, exitNode);
                 break;
 
             case AssignmentExpression assignExpr:
@@ -402,11 +445,6 @@ public class AstWalker
                 VisitWithContext(propDef.Value, enterNode, exitNode);
                 break;
 
-            case NewExpression newExpr:
-                VisitWithContext(newExpr.Callee, enterNode, exitNode);
-                VisitNodesWithContext(newExpr.Arguments, enterNode, exitNode);
-                break;
-
             case DoWhileStatement doWhileStmt:
                 VisitWithContext(doWhileStmt.Body, enterNode, exitNode);
                 VisitWithContext(doWhileStmt.Test, enterNode, exitNode);
@@ -420,6 +458,10 @@ public class AstWalker
             case TaggedTemplateExpression taggedTemplate:
                 VisitWithContext(taggedTemplate.Tag, enterNode, exitNode);
                 VisitWithContext(taggedTemplate.Quasi, enterNode, exitNode);
+                break;
+
+            case ImportExpression importExpr:
+                VisitWithContext(importExpr.Source, enterNode, exitNode);
                 break;
         }
 

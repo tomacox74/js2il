@@ -16,6 +16,8 @@ public sealed partial class HIRToLIRLowerer
 
         if (!TryLowerExpression(propAccessExpr.Object, out var objectTemp))
         {
+            IRPipelineMetrics.RecordFailureIfUnset(
+                $"HIR->LIR: failed lowering optional property base {propAccessExpr.Object.GetType().Name} for '.{propAccessExpr.PropertyName}'");
             return false;
         }
 
@@ -56,6 +58,8 @@ public sealed partial class HIRToLIRLowerer
 
         if (!TryLowerExpression(indexAccessExpr.Object, out var objectTemp))
         {
+            IRPipelineMetrics.RecordFailureIfUnset(
+                $"HIR->LIR: failed lowering optional index base {indexAccessExpr.Object.GetType().Name}");
             return false;
         }
 
@@ -76,6 +80,8 @@ public sealed partial class HIRToLIRLowerer
         // Non-nullish: evaluate index expression (must not run when base is nullish)
         if (!TryLowerExpression(indexAccessExpr.Index, out var indexTemp))
         {
+            IRPipelineMetrics.RecordFailureIfUnset(
+                $"HIR->LIR: failed lowering optional index expression {indexAccessExpr.Index.GetType().Name}");
             return false;
         }
 

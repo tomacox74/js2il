@@ -22,6 +22,13 @@ namespace Js2IL.Tests.PrimitiveConversion
         }
 
         [Fact]
+        public Task PrimitiveConversion_Number_IsSafeInteger()
+        {
+            var testName = nameof(PrimitiveConversion_Number_IsSafeInteger);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task PrimitiveConversion_Boolean_Callable()
         {
             var testName = nameof(PrimitiveConversion_Boolean_Callable);
