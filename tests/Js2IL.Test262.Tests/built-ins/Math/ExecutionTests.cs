@@ -77,4 +77,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task sqrt_S15_8_2_17_A5()
         => ExecutionTestFromFile("sqrt/S15.8.2.17_A5");
 
+    [Fact(DisplayName = "SQRT1_2/value")]
+    public Task SQRT1_2_value()
+        => ExecutionTestFromFile("SQRT1_2/value");
+
 }
