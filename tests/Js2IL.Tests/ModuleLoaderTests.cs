@@ -141,6 +141,79 @@ export const value = 1;
     }
 
     [Fact]
+    public void LoadModules_StaticModuleSyntax_AllowsDeclarationsAfterStatements()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var resolver = new NodeModuleResolver(fileSystem);
+        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.mjs"));
+        var depPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rootPath)!, "dep.mjs"));
+
+        fileSystem.AddFile(rootPath, """
+"use strict";
+const beforeImport = 1;
+import { value } from "./dep.mjs";
+const beforeExport = value + beforeImport;
+export const combined = beforeExport;
+""");
+        fileSystem.AddFile(depPath, """
+"use strict";
+export const value = 41;
+""");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.NotNull(modules);
+        Assert.True(string.IsNullOrWhiteSpace(logger.Errors), logger.Errors);
+        var record = modules!.rootModule.ModuleRecord;
+        Assert.NotNull(record);
+        Assert.Contains(record!.RequestedModules, request => request.Specifier == "./dep.mjs");
+        Assert.Contains(record.ImportEntries, entry =>
+            entry.Kind == ModuleImportKind.Named
+            && entry.ModuleRequest == "./dep.mjs"
+            && entry.LocalName == "value"
+            && entry.ImportName == "value");
+        Assert.Contains(record.LocalExportEntries, entry =>
+            entry.Kind == ModuleExportKind.Local
+            && entry.ExportName == "combined"
+            && entry.LocalName == "combined");
+    }
+
+    [Fact]
+    public void LoadModules_StaticModuleSyntax_AllowsNodeBuiltinImportsWithoutLinkErrors()
+    {
+        var fileSystem = new MockFileSystem();
+        var logger = new TestLogger();
+        var options = new CompilerOptions { Verbose = false };
+        var resolver = new NodeModuleResolver(fileSystem);
+        var loader = new ModuleLoader(options, fileSystem, resolver, logger);
+
+        var rootPath = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "js2il-tests", Guid.NewGuid().ToString("N"), "root.mjs"));
+
+        fileSystem.AddFile(rootPath, """
+"use strict";
+const beforeImport = 1;
+import process from "node:process";
+export const value = process.env && beforeImport;
+""");
+
+        var modules = loader.LoadModules(rootPath);
+
+        Assert.NotNull(modules);
+        Assert.True(string.IsNullOrWhiteSpace(logger.Errors), logger.Errors);
+        var record = modules!.rootModule.ModuleRecord;
+        Assert.NotNull(record);
+        Assert.DoesNotContain(record!.RequestedModules, request => request.Specifier == "node:process");
+        Assert.Contains(record.ImportEntries, entry =>
+            entry.Kind == ModuleImportKind.Default
+            && entry.ModuleRequest == "node:process"
+            && entry.LocalName == "process");
+    }
+
+    [Fact]
     public void LoadModules_ModuleRecordRequestedModules_ExcludeRuntimeOnlyDependencies()
     {
         var fileSystem = new MockFileSystem();

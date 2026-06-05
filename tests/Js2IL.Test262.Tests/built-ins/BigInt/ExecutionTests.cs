@@ -33,4 +33,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "constructor-from-string-syntax-errors")]
     public Task constructor_from_string_syntax_errors()
         => ExecutionTestFromFile("constructor-from-string-syntax-errors");
+
+    [Fact(DisplayName = "constructor-coercion")]
+    public Task constructor_coercion()
+        => ExecutionTestFromFile("constructor-coercion");
+
+    [Fact(DisplayName = "non-integer-rangeerror")]
+    public Task non_integer_rangeerror()
+        => ExecutionTestFromFile("non-integer-rangeerror");
+
+    [Fact(DisplayName = "tostring-throws")]
+    public Task tostring_throws()
+        => ExecutionTestFromFile("tostring-throws");
 }

@@ -117,6 +117,11 @@ internal sealed partial class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Unbox_any);
                 ilEncoder.Token(GetBoxingTypeToken(storage.ClrType ?? typeof(object)));
             }
+            else if (storage.Kind == ValueStorageKind.Reference && !string.IsNullOrWhiteSpace(storage.ScopeName))
+            {
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(ResolveScopeTypeHandle(storage.ScopeName, "async locals restore (typed scope local)"));
+            }
             else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != typeof(object))
             {
                 ilEncoder.OpCode(ILOpCode.Castclass);

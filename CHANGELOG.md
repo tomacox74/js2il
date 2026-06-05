@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/perf: fix issue #1196 by restoring the mitata `string-width` benchmark under js2il, including awaited import-binding rewriting, verifier-safe async `for..of` lowering, destructuring/capture/runtime gaps uncovered by the port (`Intl`, `Number.isSafeInteger`, `node:process`), and a js2il-safe benchmark runner path with focused regression coverage.
 
 ## v0.9.26 - 2026-05-29
 
