@@ -1,9 +1,11 @@
-// Copyright (C) 2011 the V8 project authors. All rights reserved.
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+
 /*---
-es6id: 13.6.4.13
 description: >
-    let ForDeclaration: creates a fresh binding per iteration
+    Entries removed from a Set instance during traversal should not be visited.
+es6id: 13.6.4
+features: [Set]
 ---*/
 // test262 execution-port helpers
 var assert = function assert(condition) {
@@ -29,14 +31,16 @@ assert.throws = function (expectedError, fn) {
 };
 
 
-let s = 0;
-let f = [undefined, undefined, undefined];
+var set = new Set();
+var iterationCount = 0;
 
-for (let x of [1, 2, 3]) {
-  s += x;
-  f[x-1] = function() { return x; }
+set.add(0);
+set.add(1);
+
+for (var x of set) {
+  assert.sameValue(x, 0);
+  set.delete(1);
+  iterationCount += 1;
 }
-assert.sameValue(s, 6, "The value of `s` is `6`");
-assert.sameValue(f[0](), 1, "`f[0]()` returns `1`");
-assert.sameValue(f[1](), 2, "`f[1]()` returns `2`");
-assert.sameValue(f[2](), 3, "`f[2]()` returns `3`");
+
+assert.sameValue(iterationCount, 1);
