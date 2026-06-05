@@ -47,6 +47,8 @@ public sealed class ILVerificationTests
     [InlineData("TryFinally_Return")]
     [InlineData("Function_ClosureMutatesOuterVariable")]
     [InlineData("Function_Closure_MultiLevel_ReadWriteAcrossScopes")]
+    [InlineData("Async_ForOf_AwaitInBody")]
+    [InlineData("Async_TopLevelAwait_ForOfClosureCapture")]
     [InlineData("Classes_ClassMethod_CallsAnotherMethod")]
     [InlineData("Classes_ClassWithMethod_HelloWorld")]
     [InlineData("Classes_Inheritance_SuperMethodCall")]
@@ -88,6 +90,8 @@ public sealed class ILVerificationTests
             category = "TryCatch";
         else if (testName.StartsWith("Function_"))
             category = "Function";
+        else if (testName.StartsWith("Async_"))
+            category = "Async";
         else if (testName.StartsWith("Classes_"))
             category = "Classes";
         else

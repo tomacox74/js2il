@@ -95,4 +95,28 @@ public class ExecutionTests : FileSystemExecutionTestsBase
     public Task if_cls_no_else()
         => CompilationFailureTest("if-cls-no-else", "Failed to parse JavaScript");
 
+    [Fact(DisplayName = "if-const-no-else")]
+    public Task if_const_no_else()
+        => CompilationFailureTest("if-const-no-else", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "if-const-else-stmt")]
+    public Task if_const_else_stmt()
+        => CompilationFailureTest("if-const-else-stmt", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "if-stmt-else-const")]
+    public Task if_stmt_else_const()
+        => CompilationFailureTest("if-stmt-else-const", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "if-let-no-else")]
+    public Task if_let_no_else()
+        => CompilationFailureTest("if-let-no-else", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "if-let-else-stmt")]
+    public Task if_let_else_stmt()
+        => CompilationFailureTest("if-let-else-stmt", "Failed to parse JavaScript");
+
+    [Fact(DisplayName = "if-stmt-else-let")]
+    public Task if_stmt_else_let()
+        => CompilationFailureTest("if-stmt-else-let", "Failed to parse JavaScript");
+
 }

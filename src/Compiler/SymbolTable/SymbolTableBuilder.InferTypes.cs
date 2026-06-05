@@ -958,6 +958,11 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
+                if (variableDeclarator.Id is not Identifier)
+                {
+                    continue;
+                }
+
                 var inferredType = InferExpressionClrType(variableDeclarator.Init, scope, proposedClrTypes, binding, scope);
                 if (inferredType != null)
                 {
@@ -1162,6 +1167,11 @@ public partial class SymbolTableBuilder
 
             inferredType = assignedType;
             return true;
+        }
+
+        if (declarator.Id is not Identifier)
+        {
+            return false;
         }
 
         var initializerType = InferExpressionClrType(declarator.Init, declaringScope, proposedClrTypes, binding);
@@ -2262,7 +2272,8 @@ public partial class SymbolTableBuilder
                                 return null;
                             }
 
-                            if (binding.DeclarationNode is VariableDeclarator { Init: not null } declarator)
+                            if (binding.DeclarationNode is VariableDeclarator { Init: not null } declarator
+                                && declarator.Id is Identifier)
                             {
                                 var initializerType = InferExpressionClrType(declarator.Init, currentScope, proposedTypes, excludedBinding, inferenceRootScope);
                                 if (initializerType != null)

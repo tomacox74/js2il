@@ -37,6 +37,38 @@ public class ExecutionTests
     public Task S11_1_4_A1_3()
         => ExecutionTestFromFile("S11.1.4_A1.3");
 
+    [Fact(DisplayName = "spread-sngl-empty")]
+    public Task spread_sngl_empty()
+        => ExecutionTestFromFile("spread-sngl-empty");
+
+    [Fact(DisplayName = "spread-sngl-expr")]
+    public Task spread_sngl_expr()
+        => ExecutionTestFromFile("spread-sngl-expr");
+
+    [Fact(DisplayName = "spread-sngl-iter")]
+    public Task spread_sngl_iter()
+        => ExecutionTestFromFile("spread-sngl-iter");
+
+    [Fact(DisplayName = "spread-sngl-literal")]
+    public Task spread_sngl_literal()
+        => ExecutionTestFromFile("spread-sngl-literal");
+
+    [Fact(DisplayName = "spread-mult-empty")]
+    public Task spread_mult_empty()
+        => ExecutionTestFromFile("spread-mult-empty");
+
+    [Fact(DisplayName = "spread-mult-expr")]
+    public Task spread_mult_expr()
+        => ExecutionTestFromFile("spread-mult-expr");
+
+    [Fact(DisplayName = "spread-mult-literal")]
+    public Task spread_mult_literal()
+        => ExecutionTestFromFile("spread-mult-literal");
+
+    [Fact(DisplayName = "spread-mult-iter")]
+    public Task spread_mult_iter()
+        => ExecutionTestFromFile("spread-mult-iter");
+
     private async Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
     {
         var sourceDirectory = Path.GetDirectoryName(sourceFilePath)

@@ -1108,6 +1108,26 @@ function __js2il_esm_export(name, getter) {
                     VisitExpression(ce2.Alternate);
                     return;
 
+                case AwaitExpression awaitExpression:
+                    VisitExpression(awaitExpression.Argument);
+                    return;
+
+                case ParenthesizedExpression parenthesized:
+                    VisitExpression(parenthesized.Expression);
+                    return;
+
+                case ChainExpression chainExpression:
+                    VisitExpression(chainExpression.Expression);
+                    return;
+
+                case SpreadElement spreadElement:
+                    VisitExpression(spreadElement.Argument);
+                    return;
+
+                case ImportExpression importExpression:
+                    VisitExpression(importExpression.Source);
+                    return;
+
                 case SequenceExpression se:
                     foreach (var ex in se.Expressions)
                     {
@@ -1312,26 +1332,6 @@ function __js2il_esm_export(name, getter) {
         {
             error = $"Static import/export declarations are only supported at top level (line {nestedStaticModuleNode.Location.Start.Line}).";
             return false;
-        }
-
-        var seenNonDirectiveNonModuleStatement = false;
-        foreach (var statement in ast.Body)
-        {
-            if (IsStaticModuleDeclaration(statement))
-            {
-                if (seenNonDirectiveNonModuleStatement)
-                {
-                    error = $"Static import/export declarations must appear before non-directive top-level statements in this MVP implementation (line {statement.Location.Start.Line}).";
-                    return false;
-                }
-
-                continue;
-            }
-
-            if (!IsDirectivePrologueStatement(statement))
-            {
-                seenNonDirectiveNonModuleStatement = true;
-            }
         }
 
         var insertPos = 0;
@@ -2631,6 +2631,11 @@ function __js2il_esm_export(name, getter) {
         foreach (var importEntry in record.ImportEntries)
         {
             if (importEntry.Kind is ModuleImportKind.SideEffect or ModuleImportKind.Namespace)
+            {
+                continue;
+            }
+
+            if (IsBuiltInModuleSpecifier(importEntry.ModuleRequest))
             {
                 continue;
             }
