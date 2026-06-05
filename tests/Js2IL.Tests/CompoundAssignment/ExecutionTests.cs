@@ -52,6 +52,9 @@ namespace Js2IL.Tests.CompoundAssignment
         public Task CompoundAssignment_LocalVarIndex() { var testName = nameof(CompoundAssignment_LocalVarIndex); return ExecutionTest(testName); }
 
         [Fact]
+        public Task CompoundAssignment_PropertyNullishAssignment() { var testName = nameof(CompoundAssignment_PropertyNullishAssignment); return ExecutionTest(testName); }
+
+        [Fact]
         public Task CompoundAssignment_NumericLoopCounter_PlusEquals() { var testName = nameof(CompoundAssignment_NumericLoopCounter_PlusEquals); return ExecutionTest(testName); }
     }
 }

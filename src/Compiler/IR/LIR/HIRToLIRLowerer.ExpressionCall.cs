@@ -558,15 +558,6 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            // Check if the function has simple identifier parameters (no defaults, destructuring, rest).
-            // If the function uses complex params, it will be compiled via traditional generator
-            // with a different calling convention, so we must bail out to ensure Main is also
-            // compiled traditionally to maintain calling convention consistency.
-            if (!FunctionHasSimpleParams(symbol))
-            {
-                return false;
-            }
-
             // Spread in call arguments requires runtime args array construction.
             if (hasSpreadArgs)
             {

@@ -39,7 +39,6 @@ public sealed partial class HIRToLIRLowerer
         string? loopScopeName = null;
 
         if (perIterationBindings.Count > 0
-            && !_methodBodyIR.IsAsync
             && !_methodBodyIR.IsGenerator)
         {
             var declaringScope = perIterationBindings[0].DeclaringScope;

@@ -41,4 +41,20 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_10_6_2_A1_T9()
         => ExecutionTestFromFile("S15.10.6.2_A1_T9");
 
+    [Fact(DisplayName = "S15.10.6.2_A3_T1")]
+    public Task S15_10_6_2_A3_T1()
+        => ExecutionTestFromFile("S15.10.6.2_A3_T1");
+
+    [Fact(DisplayName = "S15.10.6.2_A4_T1")]
+    public Task S15_10_6_2_A4_T1()
+        => ExecutionTestFromFile("S15.10.6.2_A4_T1");
+
+    [Fact(DisplayName = "S15.10.6.2_A4_T2")]
+    public Task S15_10_6_2_A4_T2()
+        => ExecutionTestFromFile("S15.10.6.2_A4_T2");
+
+    [Fact(DisplayName = "S15.10.6.2_A5_T1")]
+    public Task S15_10_6_2_A5_T1()
+        => ExecutionTestFromFile("S15.10.6.2_A5_T1");
+
 }

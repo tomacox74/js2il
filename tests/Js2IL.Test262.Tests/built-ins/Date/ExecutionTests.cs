@@ -62,4 +62,55 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_9_3_1_A1_T6()
         => ExecutionTestFromFile("S15.9.3.1_A1_T6");
 
+    [Fact(DisplayName = "S15.9.3.1_A4_T1")]
+    public Task S15_9_3_1_A4_T1()
+        => ExecutionTestFromFile("S15.9.3.1_A4_T1");
+
+    [Fact(DisplayName = "S15.9.3.1_A4_T2")]
+    public Task S15_9_3_1_A4_T2()
+        => ExecutionTestFromFile("S15.9.3.1_A4_T2");
+
+    [Fact(DisplayName = "S15.9.3.1_A4_T3")]
+    public Task S15_9_3_1_A4_T3()
+        => ExecutionTestFromFile("S15.9.3.1_A4_T3");
+
+    [Fact(DisplayName = "S15.9.3.1_A4_T4")]
+    public Task S15_9_3_1_A4_T4()
+        => ExecutionTestFromFile("S15.9.3.1_A4_T4");
+
+    [Fact(DisplayName = "S15.9.3.1_A4_T5")]
+    public Task S15_9_3_1_A4_T5()
+        => ExecutionTestFromFile("S15.9.3.1_A4_T5");
+
+    [Fact(DisplayName = "S15.9.3.1_A4_T6")]
+    public Task S15_9_3_1_A4_T6()
+        => ExecutionTestFromFile("S15.9.3.1_A4_T6");
+
+    [Fact(DisplayName = "S15.9.3.1_A5_T1")]
+    public Task S15_9_3_1_A5_T1()
+        => ExecutionTestFromFile("S15.9.3.1_A5_T1");
+
+    [Fact(DisplayName = "S15.9.3.1_A5_T2")]
+    public Task S15_9_3_1_A5_T2()
+        => ExecutionTestFromFile("S15.9.3.1_A5_T2");
+
+    [Fact(DisplayName = "S15.9.3.1_A5_T3")]
+    public Task S15_9_3_1_A5_T3()
+        => ExecutionTestFromFile("S15.9.3.1_A5_T3");
+
+    [Fact(DisplayName = "S15.9.3.1_A5_T4")]
+    public Task S15_9_3_1_A5_T4()
+        => ExecutionTestFromFile("S15.9.3.1_A5_T4");
+
+    [Fact(DisplayName = "S15.9.3.1_A5_T5")]
+    public Task S15_9_3_1_A5_T5()
+        => ExecutionTestFromFile("S15.9.3.1_A5_T5");
+
+    [Fact(DisplayName = "S15.9.3.1_A5_T6")]
+    public Task S15_9_3_1_A5_T6()
+        => ExecutionTestFromFile("S15.9.3.1_A5_T6");
+
+    [Fact(DisplayName = "year-zero")]
+    public Task year_zero()
+        => ExecutionTestFromFile("year-zero");
 }

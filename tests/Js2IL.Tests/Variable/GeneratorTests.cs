@@ -11,6 +11,7 @@ namespace Js2IL.Tests.Variable
         [Fact] public Task Variable_ConstSimple() { var testName = nameof(Variable_ConstSimple); return GenerateTest(testName); }
         [Fact] public Task Variable_CapturedConst_NumberFieldType() { var testName = nameof(Variable_CapturedConst_NumberFieldType); return GenerateTest(testName); }
         [Fact] public Task Variable_CapturedConst_BoolStringFieldType() { var testName = nameof(Variable_CapturedConst_BoolStringFieldType); return GenerateTest(testName); }
+        [Fact] public Task Variable_CapturedConst_SpreadArgument() { var testName = nameof(Variable_CapturedConst_SpreadArgument); return GenerateTest(testName); }
         [Fact] public Task Variable_LetBlockScope() { var testName = nameof(Variable_LetBlockScope); return GenerateTest(testName); }
         [Fact] public Task Variable_LetFunctionNestedShadowing() { var testName = nameof(Variable_LetFunctionNestedShadowing); return GenerateTest(testName); }
         [Fact] public Task Variable_LetNestedShadowingChain() { var testName = nameof(Variable_LetNestedShadowingChain); return GenerateTest(testName); }
