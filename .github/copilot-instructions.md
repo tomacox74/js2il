@@ -122,7 +122,7 @@ js2il input.js output                           # Installed tool
 - Snapshot updates: `node scripts/updateVerifiedFiles.js` (updates all `*.received.*` → `*.verified.*`).  This tool is useful when a IL change affects many tests.
 - Test categories: Array, BinaryOperator, Classes, CompoundAssignment, ControlFlow, Function, etc.
 - Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs js2il performance.
-- Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
+- The full `tests\Js2IL.Test262.Tests` suite takes a long time to run locally; prefer targeted test runs when possible and only run the entire suite when explicitly asked or when a task truly needs full-suite validation.
 
 ### Porting test262 coverage into this repo
 - Keep the original `test262` scenario as the source of truth whenever practical. Add the port under `tests\Js2IL.Test262.Tests\` using the matching spec-style folder structure (for example `language\expressions\arrow-function`).
@@ -148,7 +148,7 @@ node scripts/runPhasedBenchmarkScenario.js dromaeo-object-regexp
 
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
-- Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
+- The full `tests\Js2IL.Test262.Tests` suite takes a long time to run locally; prefer targeted test runs when possible and only run the entire suite when explicitly asked or when a task truly needs full-suite validation.
 
 ### Release Process
 
@@ -342,4 +342,3 @@ Remove-Item body.json -ErrorAction SilentlyContinue
 - **BOM issues**: `Out-File -Encoding utf8` adds BOM which breaks JSON parsing
 - **`WriteAllText` works**: Writes UTF-8 without BOM, handles escaping correctly
 - Thread IDs have format `PRRT_kwDO...` (Pull Request Review Thread)
-
