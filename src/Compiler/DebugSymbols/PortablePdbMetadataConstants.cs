@@ -1,6 +1,6 @@
 using System;
 
-namespace Js2IL.DebugSymbols;
+namespace Jroc.DebugSymbols;
 
 internal static class PortablePdbMetadataConstants
 {

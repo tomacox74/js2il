@@ -7,7 +7,7 @@
 
 Issue #934 follows the intake/bootstrap work (#928), metadata parser (#929), MVP runner (#930), classified baseline artifact (#931), CI/reporting workflow (#932), and docs/backlog linkage (#933).
 
-At this point JS2IL already has:
+At this point JROC already has:
 
 - a pinned upstream intake and local bootstrap model
 - a bounded MVP runner with named suites and `summary.json`
@@ -27,17 +27,17 @@ Keeping all of that behind one issue makes prioritization and contributor workfl
 
 ## Decision
 
-JS2IL replaces the single post-MVP bucket with a checked-in rollout plan plus dedicated follow-on issues for each expansion area.
+JROC replaces the single post-MVP bucket with a checked-in rollout plan plus dedicated follow-on issues for each expansion area.
 
 The machine-readable plan lives in `tests/test262/post-mvp-expansion.json`.
 
 ### Ranked rollout areas
 
-1. **Modules** - issue [#981](https://github.com/tomacox74/js2il/issues/981)
-2. **Async and Promise-dependent tests** - issue [#982](https://github.com/tomacox74/js2il/issues/982)
-3. **Raw and harness-heavy tests** - issue [#983](https://github.com/tomacox74/js2il/issues/983)
-4. **Intl and environment-sensitive suites** - issue [#985](https://github.com/tomacox74/js2il/issues/985)
-5. **Agent and `CanBlock`-dependent tests** - issue [#984](https://github.com/tomacox74/js2il/issues/984)
+1. **Modules** - issue [#981](https://github.com/tomacox74/jroc/issues/981)
+2. **Async and Promise-dependent tests** - issue [#982](https://github.com/tomacox74/jroc/issues/982)
+3. **Raw and harness-heavy tests** - issue [#983](https://github.com/tomacox74/jroc/issues/983)
+4. **Intl and environment-sensitive suites** - issue [#985](https://github.com/tomacox74/jroc/issues/985)
+5. **Agent and `CanBlock`-dependent tests** - issue [#984](https://github.com/tomacox74/jroc/issues/984)
 
 Each area records:
 

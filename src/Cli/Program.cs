@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using PowerArgs;
 using System.Reflection;
 
-namespace Js2IL;
+namespace Jroc;
 
 [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
-public class Js2ILArgs
+public class JrocArgs
 {
     [ArgPosition(0)]
     [ArgDescription("The JavaScript file to convert")]
@@ -50,7 +50,7 @@ class Program
     {
         try
         {
-            var parsed = Args.Parse<Js2ILArgs>(args);
+            var parsed = Args.Parse<JrocArgs>(args);
             if (parsed == null)
             {
                 // HelpHook likely handled output; treat as successful exit
@@ -65,7 +65,7 @@ class Program
                 var asm = Assembly.GetExecutingAssembly();
                 var name = asm.GetName();
                 var version = name.Version?.ToString() ?? "unknown";
-                versionLogger.WriteLine($"js2il {version}");
+                versionLogger.WriteLine($"jroc {version}");
                 return;
             }
 
@@ -152,8 +152,8 @@ class Program
     // Print usage information using the logger (outputs to stderr for error scenarios)
     private static void PrintUsage(ICompilerOutput logger)
     {
-        logger.WriteLineError("Usage: js2il <InputFile> [<OutputPath>] [options]");
-        logger.WriteLineError("   or: js2il --moduleid <ModuleId> [<OutputPath>] [options]");
+        logger.WriteLineError("Usage: jroc <InputFile> [<OutputPath>] [options]");
+        logger.WriteLineError("   or: jroc --moduleid <ModuleId> [<OutputPath>] [options]");
         logger.WriteLineError("");
         logger.WriteLineError("Option                 Description");
         logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");

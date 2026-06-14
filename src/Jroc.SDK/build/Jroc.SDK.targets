@@ -1,0 +1,76 @@
+<Project>
+
+  <UsingTask TaskName="Jroc.SDK.BuildTasks.JrocCompileTask"
+             AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\net10.0\Jroc.SDK.dll" />
+
+  <Target Name="_ResolveJrocCompileItems"
+          Condition="'@(JrocCompile)' != ''">
+    <ItemGroup>
+      <_JrocCompile Include="@(JrocCompile)">
+        <ResolvedSourcePath>$([System.IO.Path]::GetFullPath('%(JrocCompile.Identity)'))</ResolvedSourcePath>
+        <ResolvedOutputDirectory Condition="'%(JrocCompile.OutputDirectory)' == ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(JrocOutputRoot)', '%(JrocCompile.Filename)'))))</ResolvedOutputDirectory>
+        <ResolvedOutputDirectory Condition="'%(JrocCompile.OutputDirectory)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(JrocCompile.OutputDirectory)'))))</ResolvedOutputDirectory>
+        <ResolvedModuleResolutionBaseDirectory Condition="'%(JrocCompile.ModuleResolutionBaseDirectory)' == ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(JrocModuleResolutionBaseDirectory)'))))</ResolvedModuleResolutionBaseDirectory>
+        <ResolvedModuleResolutionBaseDirectory Condition="'%(JrocCompile.ModuleResolutionBaseDirectory)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(JrocCompile.ModuleResolutionBaseDirectory)'))))</ResolvedModuleResolutionBaseDirectory>
+        <ResolvedDiagnosticFilePath Condition="'%(JrocCompile.DiagnosticFilePath)' == '' and '$(JrocDiagnosticFilePath)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(JrocDiagnosticFilePath)'))))</ResolvedDiagnosticFilePath>
+        <ResolvedDiagnosticFilePath Condition="'%(JrocCompile.DiagnosticFilePath)' != ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '%(JrocCompile.DiagnosticFilePath)'))))</ResolvedDiagnosticFilePath>
+        <RootModuleId Condition="'%(JrocCompile.RootModuleId)' == '' and '$(JrocRootModuleId)' != ''">$(JrocRootModuleId)</RootModuleId>
+        <RootModuleId Condition="'%(JrocCompile.RootModuleId)' != ''">%(JrocCompile.RootModuleId)</RootModuleId>
+        <ReferenceOutputAssembly Condition="'%(JrocCompile.ReferenceOutputAssembly)' == ''">$(JrocReferenceOutputAssembly)</ReferenceOutputAssembly>
+        <ReferenceOutputAssembly Condition="'%(JrocCompile.ReferenceOutputAssembly)' != ''">%(JrocCompile.ReferenceOutputAssembly)</ReferenceOutputAssembly>
+        <CopyToOutputDirectory Condition="'%(JrocCompile.CopyToOutputDirectory)' == ''">$(JrocCopyToOutputDirectory)</CopyToOutputDirectory>
+        <CopyToOutputDirectory Condition="'%(JrocCompile.CopyToOutputDirectory)' != ''">%(JrocCompile.CopyToOutputDirectory)</CopyToOutputDirectory>
+        <EmitPdb Condition="'%(JrocCompile.EmitPdb)' == ''">$(JrocEmitPdb)</EmitPdb>
+        <EmitPdb Condition="'%(JrocCompile.EmitPdb)' != ''">%(JrocCompile.EmitPdb)</EmitPdb>
+        <AnalyzeUnused Condition="'%(JrocCompile.AnalyzeUnused)' == ''">$(JrocAnalyzeUnused)</AnalyzeUnused>
+        <AnalyzeUnused Condition="'%(JrocCompile.AnalyzeUnused)' != ''">%(JrocCompile.AnalyzeUnused)</AnalyzeUnused>
+        <Verbose Condition="'%(JrocCompile.Verbose)' == ''">$(JrocVerbose)</Verbose>
+        <Verbose Condition="'%(JrocCompile.Verbose)' != ''">%(JrocCompile.Verbose)</Verbose>
+      </_JrocCompile>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="JrocCompile"
+          DependsOnTargets="_ResolveJrocCompileItems"
+          BeforeTargets="ResolveAssemblyReferences"
+          Condition="'$(JrocCompileOnBuild)' == 'true' and '@(JrocCompile)' != ''">
+    <Jroc.SDK.BuildTasks.JrocCompileTask Sources="@(_JrocCompile)">
+      <Output TaskParameter="GeneratedAssemblies" ItemName="_JrocGeneratedAssembly" />
+      <Output TaskParameter="GeneratedOutputs" ItemName="_JrocGeneratedOutput" />
+    </Jroc.SDK.BuildTasks.JrocCompileTask>
+
+    <ItemGroup>
+      <JrocCompiledAssembly Include="@(_JrocGeneratedAssembly)" />
+      <JrocGeneratedOutput Include="@(_JrocGeneratedOutput)" />
+
+      <Reference Include="@(_JrocGeneratedAssembly)"
+                 Condition="'%(_JrocGeneratedAssembly.ReferenceOutputAssembly)' == 'true'">
+        <HintPath>%(_JrocGeneratedAssembly.Identity)</HintPath>
+        <Private>true</Private>
+      </Reference>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyJrocOutputsToOutputDirectory"
+          DependsOnTargets="JrocCompile"
+          AfterTargets="Build"
+          Condition="'$(JrocCompileOnBuild)' == 'true' and '@(JrocGeneratedOutput)' != '' and '$(TargetDir)' != ''">
+    <ItemGroup>
+      <_JrocFilesToCopy Include="@(JrocGeneratedOutput)"
+                         Condition="'%(JrocGeneratedOutput.CopyToOutputDirectory)' == 'true'" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_JrocFilesToCopy)"
+          DestinationFiles="@(_JrocFilesToCopy->'$(TargetDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="'@(_JrocFilesToCopy)' != ''" />
+  </Target>
+
+  <Target Name="CleanJrocOutputs"
+          DependsOnTargets="_ResolveJrocCompileItems"
+          AfterTargets="Clean"
+          Condition="'@(_JrocCompile)' != ''">
+    <RemoveDir Directories="@(_JrocCompile->'%(ResolvedOutputDirectory)')" />
+  </Target>
+
+</Project>

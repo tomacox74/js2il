@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="JavaScript\ArrayLiteral.js" />
+    <None Remove="JavaScript\BinaryOperator_Equal.js" />
+    <None Remove="JavaScript\BinaryOperator_LessThan.js" />
+    <None Remove="JavaScript\BinaryOperator_SubNumberNumber.js" />
+    <None Remove="JavaScript\Generate_ForLoopCountToFive.js" />
+    <None Remove="JavaScript\Generate_OperatorPlusPlusPostfix.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="**/JavaScript/**/*.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\scripts\generateNodeSupportMd.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_GenerateNodeSupportMd.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\scripts\bumpVersion.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_BumpVersion.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\scripts\ECMA262\extractEcma262SectionHtml.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_ExtractEcma262SectionHtml.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\scripts\ECMA262\convertEcmaExtractHtmlToMarkdown.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_ConvertEcmaExtractHtmlToMarkdown.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\scripts\decompileGeneratorTest.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_DecompileGeneratorTest.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Integration\Resources\extractEcma262SectionHtml_urlMode.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_ExtractEcma262SectionHtml_UrlMode.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Integration\Resources\extractEcma262SectionHtml_autoMode.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_ExtractEcma262SectionHtml_AutoMode.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Integration\Resources\extractEcma262SectionHtml_testHarness.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Scripts_ExtractEcma262SectionHtml_TestHarness.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Integration\Resources\turndown_index.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.node_modules.turndown.index.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\performance\Benchmarks\Scenarios\dromaeo-object-array-modern.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Array_Modern.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\performance\Benchmarks\Scenarios\dromaeo-object-regexp.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Performance_Dromaeo_Object_Regexp.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\performance\PrimeJavaScript.js">
+      <LogicalName>Jroc.Tests.Integration.JavaScript.Compile_Performance_PrimeJavaScript.js</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Acornima" Version="1.1.1" />
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="ICSharpCode.Decompiler" Version="9.1.0.7988" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Verify.Xunit" Version="30.4.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jroc.Testing\Jroc.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Jroc.Core\Jroc.Core.csproj" />
+    <ProjectReference Include="..\..\src\Cli\Jroc.csproj" />
+  </ItemGroup>
+</Project>

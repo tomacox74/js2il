@@ -45,13 +45,13 @@ function printHelp() {
   console.log([
     'Usage: node scripts/test262/runMvp.js [options]',
     '',
-    'Run the plain synchronous script MVP slice of test262 through js2il.',
+    'Run the plain synchronous script MVP slice of test262 through jroc.',
     '',
     'Options:',
     '  --pin <path>               Override the pin file used to resolve test262.',
     '  --root <path>              Use an explicit test262 checkout instead of the managed cache.',
     '  --force                    Reuse an out-of-date managed checkout instead of failing validation.',
-    '  --js2il <path>             Override the js2il executable or Js2IL.dll path.',
+    '  --jroc <path>             Override the jroc executable or Jroc.dll path.',
     '  --output <path>            Directory for generated case inputs and compiled assemblies.',
     '  --suite <name>             Apply a named bounded suite from tests/test262/mvp-suites.json.',
     '  --suite-config <path>      Override the named suite definition file used by --suite.',
@@ -72,7 +72,7 @@ function parseArgs(argv) {
     pin: bootstrap.defaultPinPath(),
     root: null,
     force: false,
-    js2il: null,
+    jroc: null,
     output: null,
     suite: null,
     suiteConfig: null,
@@ -103,8 +103,8 @@ function parseArgs(argv) {
       case '--force':
         args.force = true;
         break;
-      case '--js2il':
-        args.js2il = requireValue(argv, ++i, '--js2il');
+      case '--jroc':
+        args.jroc = requireValue(argv, ++i, '--jroc');
         break;
       case '--output':
         args.output = requireValue(argv, ++i, '--output');
@@ -838,7 +838,7 @@ function buildCompositeSource(rootPath, testCase) {
   return parts.join('\n\n');
 }
 
-function findJs2IL(override) {
+function findJroc(override) {
   if (override) {
     if (override.endsWith('.dll')) {
       return { type: 'dll', path: override };
@@ -847,26 +847,26 @@ function findJs2IL(override) {
     return { type: 'exec', path: override };
   }
 
-  if (process.env.JS2IL_DLL) {
-    return { type: 'dll', path: process.env.JS2IL_DLL };
+  if (process.env.JROC_DLL) {
+    return { type: 'dll', path: process.env.JROC_DLL };
   }
 
   for (const configuration of ['Release', 'Debug']) {
-    const dllPath = path.join(REPO_ROOT, 'src', 'Cli', 'bin', configuration, 'net10.0', 'Js2IL.dll');
+    const dllPath = path.join(REPO_ROOT, 'src', 'Cli', 'bin', configuration, 'net10.0', 'Jroc.dll');
     if (fs.existsSync(dllPath)) {
       return { type: 'dll', path: dllPath };
     }
   }
 
-  const lookup = spawnSync(process.platform === 'win32' ? 'where' : 'which', ['js2il'], { encoding: 'utf8' });
+  const lookup = spawnSync(process.platform === 'win32' ? 'where' : 'which', ['jroc'], { encoding: 'utf8' });
   if (lookup.status === 0 && lookup.stdout.trim()) {
-    return { type: 'exec', path: 'js2il' };
+    return { type: 'exec', path: 'jroc' };
   }
 
-  return { type: 'run', path: path.join(REPO_ROOT, 'src', 'Cli', 'Js2IL.csproj') };
+  return { type: 'run', path: path.join(REPO_ROOT, 'src', 'Cli', 'Jroc.csproj') };
 }
 
-function compileWithJs2IL(jsFilePath, outputDirectory, js2il, timeoutMs, extraArgs) {
+function compileWithJroc(jsFilePath, outputDirectory, jroc, timeoutMs, extraArgs) {
   const fileName = path.basename(jsFilePath, '.js');
   const compileOutDirectory = path.join(outputDirectory, fileName);
   fs.mkdirSync(compileOutDirectory, { recursive: true });
@@ -874,15 +874,15 @@ function compileWithJs2IL(jsFilePath, outputDirectory, js2il, timeoutMs, extraAr
 
   let command;
   let args;
-  if (js2il.type === 'dll') {
+  if (jroc.type === 'dll') {
     command = 'dotnet';
-    args = [js2il.path, jsFilePath, '-o', compileOutDirectory].concat(compilerArgs);
-  } else if (js2il.type === 'exec') {
-    command = js2il.path;
+    args = [jroc.path, jsFilePath, '-o', compileOutDirectory].concat(compilerArgs);
+  } else if (jroc.type === 'exec') {
+    command = jroc.path;
     args = [jsFilePath, '-o', compileOutDirectory].concat(compilerArgs);
   } else {
     command = 'dotnet';
-    args = ['run', '--project', js2il.path, '--', jsFilePath, '-o', compileOutDirectory].concat(compilerArgs);
+    args = ['run', '--project', jroc.path, '--', jsFilePath, '-o', compileOutDirectory].concat(compilerArgs);
   }
 
   const startedAt = Date.now();
@@ -1072,8 +1072,8 @@ function createReproCommand(rootPath, repro, args) {
     command.push('--variant', repro.variant);
   }
 
-  if (args.js2il) {
-    command.push('--js2il', quoteForDisplay(args.js2il));
+  if (args.jroc) {
+    command.push('--jroc', quoteForDisplay(args.jroc));
   }
 
   return command.join(' ');
@@ -1103,7 +1103,7 @@ function createUnexpectedCaseResult(testCase, kind, phase, detail, observed) {
   );
 }
 
-function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
+function evaluateCase(rootPath, outputRoot, testCase, jroc, args) {
   const caseDirectory = createCaseDirectory(outputRoot, testCase);
   fs.mkdirSync(caseDirectory, { recursive: true });
 
@@ -1111,10 +1111,10 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
   fs.writeFileSync(compositeSourcePath, buildCompositeSource(rootPath, testCase), 'utf8');
   const diagnosticContext = createDiagnosticContext(rootPath, outputRoot);
 
-  const compileResult = compileWithJs2IL(
+  const compileResult = compileWithJroc(
     compositeSourcePath,
     path.join(caseDirectory, 'compile'),
-    js2il,
+    jroc,
     args.compileTimeoutSeconds * 1000,
     [],
   );
@@ -1160,7 +1160,7 @@ function evaluateCase(rootPath, outputRoot, testCase, js2il, args) {
     };
 
     if (negative && negative.phase === 'parse') {
-      // Parse negatives are currently phase-classified at compile time. JS2IL does not yet surface
+      // Parse negatives are currently phase-classified at compile time. JROC does not yet surface
       // normalized parser error objects, so the MVP baseline records phase match but not parse error kind.
       return createMatchedCaseResult(
         testCase,
@@ -1447,7 +1447,7 @@ function createSummaryReport(pin, args, plan, results, exitCode, linkageSummary)
 
   const report = {
     schemaVersion: SUMMARY_SCHEMA_VERSION,
-    suite: 'js2il-test262-mvp',
+    suite: 'jroc-test262-mvp',
     pin: {
       commit: pin.upstream.commit,
       packageVersion: pin.upstream.packageVersion,
@@ -1467,7 +1467,7 @@ function createSummaryReport(pin, args, plan, results, exitCode, linkageSummary)
       },
       baselineArtifact: {
         fileName: SUMMARY_FILE_NAME,
-        format: 'js2il-test262-summary-v1',
+        format: 'jroc-test262-summary-v1',
       },
     },
     selection: {
@@ -1505,9 +1505,9 @@ function writeSummaryReport(summaryPath, report) {
   fs.writeFileSync(summaryPath, JSON.stringify(report, null, 2) + '\n', 'utf8');
 }
 
-function printPlanHeader(rootPath, outputRoot, js2il, plan, args) {
+function printPlanHeader(rootPath, outputRoot, jroc, plan, args) {
   console.log(`root ${rootPath}`);
-  console.log(`js2il ${js2il.path}`);
+  console.log(`jroc ${jroc.path}`);
   if (args.suiteDefinition) {
     console.log(`suite ${args.suiteDefinition.name}`);
   }
@@ -1532,10 +1532,10 @@ function runMvp(argv) {
   const resolvedRoot = bootstrap.resolveBootstrapRoot(pinPath, pin, args);
   const rootPath = resolvedRoot.rootPath;
   const outputRoot = path.resolve(args.output || defaultOutputRoot());
-  const js2il = findJs2IL(args.js2il);
+  const jroc = findJroc(args.jroc);
   const plan = createExecutionPlan(rootPath, pin, args);
 
-  printPlanHeader(rootPath, outputRoot, js2il, plan, args);
+  printPlanHeader(rootPath, outputRoot, jroc, plan, args);
 
   for (let i = 0; i < plan.skipped.length; i++) {
     console.log(formatResultStatus(plan.skipped[i]));
@@ -1555,7 +1555,7 @@ function runMvp(argv) {
   const results = plan.skipped.slice();
 
   for (let i = 0; i < plan.cases.length; i++) {
-    const result = evaluateCase(rootPath, outputRoot, plan.cases[i], js2il, args);
+    const result = evaluateCase(rootPath, outputRoot, plan.cases[i], jroc, args);
     results.push(result);
     console.log(formatResultStatus(result));
     if (result.classification.verdict === 'unexpected' && result.repro) {
@@ -1584,7 +1584,7 @@ function runMvp(argv) {
 module.exports = {
   createExecutionPlan,
   determineVariants,
-  findJs2IL,
+  findJroc,
   loadNamedSuites,
   parseArgs,
   runMvp,

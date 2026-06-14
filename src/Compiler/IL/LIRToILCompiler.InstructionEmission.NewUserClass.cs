@@ -1,14 +1,14 @@
-using Js2IL.IR;
-using Js2IL.Services;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities.Ecma335;
+using Jroc.IR;
+using Jroc.Services;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {
@@ -23,7 +23,7 @@ internal sealed partial class LIRToILCompiler
             case LIRNewUserClass newUserClass:
                 {
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
-                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
 
                     MethodDefinitionHandle ctorDef;
                     if (reader != null
@@ -237,7 +237,7 @@ internal sealed partial class LIRToILCompiler
                     // PL5.4a: If the JS constructor explicitly returned an object, new-expr evaluates to that object;
                     // if it returned a primitive/null/undefined, the constructed instance is used.
                     if (classRegistry != null
-                        && classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out var ctorReturnField)
+                        && classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__jroc_ctorReturn", out var ctorReturnField)
                         && classRegistry.TryGet(newUserClass.RegistryClassName, out var classTypeHandle))
                     {
                         var keepThis = ilEncoder.DefineLabel();

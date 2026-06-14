@@ -1,13 +1,13 @@
 # Hosting.Basic
 
 Minimal end-to-end hosting sample:
-- compile a JS module to a .NET assembly during `dotnet build` via `Js2IL.SDK`
+- compile a JS module to a .NET assembly during `dotnet build` via `Jroc.SDK`
 - load that compiled assembly and call `module.exports` via typed C# interfaces
 
 ## Layout
 
 - `compiler/JavaScript/` – source JS module compiled by the host project
-- `host/` – C# console app that restores `Js2IL.SDK` + `Js2IL.Runtime`, builds the JS module, and calls exports
+- `host/` – C# console app that restores `Jroc.SDK` + `Jroc.Runtime`, builds the JS module, and calls exports
 
 ## Prerequisites
 

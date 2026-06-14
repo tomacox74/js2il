@@ -1,9 +1,9 @@
 using Acornima.Ast;
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 using System;
 using System.Collections.Generic;
 
-namespace Js2IL.Utilities;
+namespace Jroc.Utilities;
 
 internal static class ArgumentsObjectSemantics
 {

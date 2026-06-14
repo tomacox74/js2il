@@ -1,12 +1,12 @@
 using Acornima.Ast;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Services.ScopesAbi;
-using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using Js2IL.SymbolTables;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Services.ScopesAbi;
+using TwoPhase = Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using Jroc.SymbolTables;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
@@ -14,7 +14,7 @@ public sealed partial class HIRToLIRLowerer
     private readonly Scope? _scope;
     private readonly EnvironmentLayout? _environmentLayout;
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
-    private readonly Js2IL.Services.ClassRegistry? _classRegistry;
+    private readonly Jroc.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
     private readonly HIRExpression? _superClassExpression;
     private readonly bool _isAsync;
@@ -66,7 +66,7 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
@@ -80,7 +80,7 @@ public sealed partial class HIRToLIRLowerer
         InitializeParameters(parameters);
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Jroc.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Jroc.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null)
     {
         lirMethod = null;
 
@@ -94,9 +94,9 @@ public sealed partial class HIRToLIRLowerer
                 environmentLayoutBuilder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
                 var needsParentScopesOverride = callableKind switch
                 {
-                    Js2IL.Services.ScopesAbi.CallableKind.Constructor => hasScopesParameter,
-                    Js2IL.Services.ScopesAbi.CallableKind.Function => hasScopesParameter,
-                    Js2IL.Services.ScopesAbi.CallableKind.ClassStaticMethod => hasScopesParameter,
+                    Jroc.Services.ScopesAbi.CallableKind.Constructor => hasScopesParameter,
+                    Jroc.Services.ScopesAbi.CallableKind.Function => hasScopesParameter,
+                    Jroc.Services.ScopesAbi.CallableKind.ClassStaticMethod => hasScopesParameter,
                     _ => (bool?)null
                 };
                 environmentLayout = environmentLayoutBuilder.Build(scope, callableKind, needsParentScopesOverride: needsParentScopesOverride);
@@ -192,7 +192,7 @@ public sealed partial class HIRToLIRLowerer
 #if DEBUG
             // Run LIR invariant checks in debug builds to surface lowering bugs early.
             // Validation is skipped in release builds for performance.
-            Js2IL.IL.LIRBodyValidator.Validate(lirMethod);
+            Jroc.IL.LIRBodyValidator.Validate(lirMethod);
 #endif
 
             return true;
@@ -204,7 +204,7 @@ public sealed partial class HIRToLIRLowerer
     // Backward compatibility overload for callers that don't provide callable kind
     internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
     {
-        return TryLower(hirMethod, scope, scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind.Function, hasScopesParameter: true, classRegistry: null, out lirMethod, isAsync: false, isGenerator: false, callableId: null);
+        return TryLower(hirMethod, scope, scopeMetadataRegistry, Jroc.Services.ScopesAbi.CallableKind.Function, hasScopesParameter: true, classRegistry: null, out lirMethod, isAsync: false, isGenerator: false, callableId: null);
     }
 
     private bool TryGetEnclosingClassRegistryName(out string? registryClassName)

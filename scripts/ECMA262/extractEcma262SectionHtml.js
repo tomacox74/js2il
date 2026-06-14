@@ -179,7 +179,7 @@ function fetchTextWithHttps(urlString, maxRedirects = 5) {
         headers: {
           // Avoid needing to implement gzip/br decoding.
           'Accept-Encoding': 'identity',
-          'User-Agent': 'js2il-docs-script',
+          'User-Agent': 'jroc-docs-script',
         },
       },
       (res) => {
@@ -225,7 +225,7 @@ async function fetchText(urlString) {
     const res = await fetch(urlString, {
       redirect: 'follow',
       headers: {
-        'User-Agent': 'js2il-docs-script',
+        'User-Agent': 'jroc-docs-script',
       },
     });
 

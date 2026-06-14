@@ -120,13 +120,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-createdynamicfunction",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_GlobalScope_NoClosure.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_NonLiteral_RuntimeError.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_SyntaxError.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_GlobalScope_NoClosure.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_NonLiteral_RuntimeError.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_SyntaxError.js"
         ],
-        "notes": "Stage 1 support only: direct `Function(...)` and `new Function(...)` sites are compiled ahead-of-time when every parameter/body argument is a string literal. JS2IL parses the generated source during compilation, emits a synthetic callable with global-scope semantics (so module locals and enclosing locals are not captured), derives `.length` from the parsed parameter list, reports `.name` as `anonymous`, throws `SyntaxError` for invalid literal source, and throws `Error` for non-literal runtime forms."
+        "notes": "Stage 1 support only: direct `Function(...)` and `new Function(...)` sites are compiled ahead-of-time when every parameter/body argument is a string literal. JROC parses the generated source during compilation, emits a synthetic callable with global-scope semantics (so module locals and enclosing locals are not captured), derives `.length` from the parsed parameter list, reports `.name` as `anonymous`, throws `SyntaxError` for invalid literal source, and throws `Error` for non-literal runtime forms."
       },
       {
         "clause": "20.2.4",
@@ -134,8 +134,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js"
         ],
         "notes": "JavaScript functions are compiled to CLR delegates and invoked directly (or via a small runtime dispatcher). Function.prototype.apply and Function.prototype.bind are supported for delegate-backed function values; most other Function.prototype APIs are not implemented."
       },
@@ -145,9 +145,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances",
         "testScripts": [
-          "tests/Js2IL.Test262.Tests/built-ins/AsyncFunction/ExecutionTests.cs",
-          "tests/Js2IL.Test262.Tests/built-ins/AsyncGeneratorFunction/ExecutionTests.cs",
-          "tests/Js2IL.Test262.Tests/built-ins/GeneratorFunction/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/AsyncFunction/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/AsyncGeneratorFunction/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/GeneratorFunction/ExecutionTests.cs"
         ],
         "notes": "The intrinsic constructor objects associated with async functions, generator functions, and async generator functions are exposed as first-class function values with the covered test262 length/extensibility/prototype surface. Full dynamic construction, subclassing, and the remaining advanced constructor scenarios are still tracked separately."
       },
@@ -157,7 +157,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances-prototype",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ObjectCreate_ObjectPrototype.js"
         ],
         "notes": "Delegate-backed function values behave like JavaScript objects and can carry ad-hoc properties via the runtime descriptor store (including 'prototype'). The runtime's dynamic constructor path (Object.ConstructValue) uses ctor.prototype to set the new instance's [[Prototype]] when it is object-like. Full Function exotic object semantics, metadata, and invariants are not implemented."
       },
@@ -167,9 +167,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.apply",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_ThisArg.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_ThisArg.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
         ],
         "notes": "Implemented for delegate-backed function values via the runtime member-call dispatcher. Supports null/undefined argArray as an empty argument list. Full CreateListFromArrayLike semantics and non-delegate callable objects are not implemented."
       },
@@ -179,15 +179,15 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.bind",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-0-1.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-2-1.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-10-1.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-16-1.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-0-1.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-2-1.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-10-1.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/bind/JavaScript/15.3.4.5-16-1.js"
         ],
         "test262Paths": [
           "test/built-ins/Function/prototype/bind/15.3.4.5-0-1.js",
@@ -212,12 +212,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.call",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Call_Basic.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/call/JavaScript/15.3.4.4-1-s.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A1_T1.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A10.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A11.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A3_T1.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Call_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/JavaScript/15.3.4.4-1-s.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A1_T1.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A10.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A11.js",
+          "tests/Jroc.Test262.Tests/built-ins/Function/prototype/call/JavaScript/S15.3.4.4_A3_T1.js"
         ],
         "test262Paths": [
           "test/built-ins/Function/prototype/call/15.3.4.4-1-s.js",
@@ -239,7 +239,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js"
         ],
         "notes": "Closures are implemented via the scope-as-class model (scope instances hold variables as fields)."
       },
@@ -249,8 +249,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
-          "tests/Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
+          "tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_CreatedInMethod.js"
         ],
         "notes": "Normal functions support receiver-based this for member calls; arrow functions implement lexical this binding via runtime helpers."
       },
@@ -260,7 +260,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.constructor",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Constructor_ReferencesFunction.js"
         ],
         "notes": "Function.prototype exposes a data property named constructor that references the runtime Function constructor value. Direct compile-time-literal `Function(...)` / `new Function(...)` forms are supported; non-literal runtime forms throw a documented `Error`."
       },
@@ -270,7 +270,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function.prototype.tostring",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
         "notes": "Implemented for delegate-backed function values with a native-source style string. Full source text reconstruction and HostHasSourceTextAvailable semantics are not implemented."
       },
@@ -280,11 +280,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances-length",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_Call_Length_Name.js"
         ],
         "notes": "Delegate-backed functions expose a numeric length property derived from ABI-aware callable parameter counting, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Bound functions compute `.length` as `max(target.length - boundArgsCount, 0)`. Function-constructor-created callables use the parsed parameter list to set `.length`. Exact ECMA-262 length metadata rules are not fully implemented."
       },
@@ -294,11 +294,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-instances-name",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Construct_NewTargetAndPrototype.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Metadata_LengthNameAndPrototype.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Instance_Length_Name_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Instance_Length_Name_DescriptorOwnProperties.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Constructor_New_ConstantString_Basic.js"
         ],
         "notes": "Delegate-backed functions expose a string name property based on the underlying CLR method name, and lazily materialize it as a non-enumerable own data descriptor (`writable: false`, `configurable: true`) so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` agree. Bound functions prefix that name with `bound ` for each bind layer. Function-constructor-created callables default to `anonymous`. Exact SetFunctionName behavior is not implemented."
       }

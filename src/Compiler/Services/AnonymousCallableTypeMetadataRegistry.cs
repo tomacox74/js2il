@@ -1,6 +1,6 @@
 using System.Reflection.Metadata;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 /// <summary>
 /// Tracks generated TypeDef handles for anonymous callable owner types (arrow functions and function expressions).

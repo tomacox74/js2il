@@ -6,7 +6,7 @@ namespace JavaScriptRuntime;
 /// <summary>
 /// Minimal runtime feature gate and storage for ECMAScript-like [[Prototype]] chains.
 ///
-/// This is intentionally opt-in: JS2IL emits a prologue call to <see cref="Enable"/> only
+/// This is intentionally opt-in: JROC emits a prologue call to <see cref="Enable"/> only
 /// when the compiler detects prototype-related usage (or when forced via compiler options).
 /// </summary>
 public static class PrototypeChain

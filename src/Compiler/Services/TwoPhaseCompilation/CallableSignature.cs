@@ -1,7 +1,7 @@
 using System;
 using System.Reflection.Metadata;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Specifies the invoke shape (delegate type) for a callable.
@@ -46,18 +46,18 @@ public sealed record CallableSignature
     /// <summary>
     /// The explicit callable scope ABI used by the method signature.
     /// </summary>
-    public Js2IL.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; }
+    public Jroc.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; }
 
     /// <summary>
     /// The registry scope name of the single scope payload when <see cref="ScopeAbiKind"/>
-    /// is <see cref="Js2IL.Runtime.CallableScopeAbiKind.SingleScope"/>.
+    /// is <see cref="Jroc.Runtime.CallableScopeAbiKind.SingleScope"/>.
     /// </summary>
     public string? SingleScopeScopeName { get; init; }
 
     /// <summary>
     /// Whether the callable requires an explicit scopes payload parameter.
     /// </summary>
-    public bool RequiresScopesParameter => ScopeAbiKind != Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
+    public bool RequiresScopesParameter => ScopeAbiKind != Jroc.Runtime.CallableScopeAbiKind.NoScopes;
     
     /// <summary>
     /// The number of JavaScript parameters (excluding the scopes parameter).

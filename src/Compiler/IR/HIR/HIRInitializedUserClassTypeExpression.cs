@@ -1,8 +1,8 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRInitializedUserClassTypeExpression : HIRExpression
 {
-    public HIRInitializedUserClassTypeExpression(string registryClassName, Js2IL.SymbolTables.Scope classScope, IReadOnlyList<HIRStatement> initializationStatements)
+    public HIRInitializedUserClassTypeExpression(string registryClassName, Jroc.SymbolTables.Scope classScope, IReadOnlyList<HIRStatement> initializationStatements)
     {
         RegistryClassName = registryClassName;
         ClassScope = classScope;
@@ -11,7 +11,7 @@ public sealed class HIRInitializedUserClassTypeExpression : HIRExpression
 
     public string RegistryClassName { get; }
 
-    public Js2IL.SymbolTables.Scope ClassScope { get; }
+    public Jroc.SymbolTables.Scope ClassScope { get; }
 
     public IReadOnlyList<HIRStatement> InitializationStatements { get; }
 }

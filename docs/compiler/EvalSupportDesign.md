@@ -1,17 +1,17 @@
 # JavaScript `eval` support design
 
-This document proposes a path to support JavaScript `eval` in JS2IL while preserving ECMAScript semantics and the current ahead-of-time compilation model.
+This document proposes a path to support JavaScript `eval` in JROC while preserving ECMAScript semantics and the current ahead-of-time compilation model.
 
 ## Status
 
 Proposed design.
 
-JS2IL currently has only deliberately narrow direct-eval handling for a few string-literal test262 lexical-environment ports. General `eval` is still rejected during validation with a compile-time diagnostic. This document describes the target design for full support.
+JROC currently has only deliberately narrow direct-eval handling for a few string-literal test262 lexical-environment ports. General `eval` is still rejected during validation with a compile-time diagnostic. This document describes the target design for full support.
 
 ## Goals
 
 - Support direct and indirect `eval` according to ECMA-262.
-- Preserve JS2IL's default ahead-of-time compilation model for code that does not use `eval`.
+- Preserve JROC's default ahead-of-time compilation model for code that does not use `eval`.
 - Keep generated code fast for non-eval paths and isolate eval-related deoptimizations to eval-sensitive scopes.
 - Keep the base runtime dependency-light for programs that do not need eval.
 - Provide clear host and CLI policy for enabling or disabling dynamic code execution.
@@ -77,7 +77,7 @@ Full eval requires parsing and executing source strings at runtime. Adding a par
 Use an optional dynamic-code package:
 
 - `JavaScriptRuntime` owns the stable eval facade and policy types.
-- A new optional package, tentatively `Js2IL.DynamicRuntime`, owns the runtime parser and dynamic evaluator/compiler.
+- A new optional package, tentatively `Jroc.DynamicRuntime`, owns the runtime parser and dynamic evaluator/compiler.
 - Generated assemblies call the stable facade, for example `EvalRuntime.Evaluate(context, source)`.
 - When a program contains reachable eval, the CLI includes the optional dynamic runtime next to the generated assembly by default.
 - If the optional runtime is absent, the facade throws a targeted `EvalError`/host diagnostic that explains the missing eval support package.
@@ -222,7 +222,7 @@ Bridge records should use generated descriptors and strongly typed access helper
 
 ### 4. Execution strategy
 
-Start with an interpreter in `Js2IL.DynamicRuntime`.
+Start with an interpreter in `Jroc.DynamicRuntime`.
 
 Reasons:
 
@@ -255,7 +255,7 @@ Eval support should be controlled by host policy:
 
 Recommended defaults:
 
-- CLI: `Enabled` when eval is used, packaging `Js2IL.DynamicRuntime` automatically.
+- CLI: `Enabled` when eval is used, packaging `Jroc.DynamicRuntime` automatically.
 - Hosting API: `Enabled` by default for Node/ECMA compatibility, with an explicit option to disable for sandboxed hosts.
 - Test262 runner: `Enabled`, except for cases requiring features that remain unsupported independently of eval.
 
@@ -323,7 +323,7 @@ Project-local tests should cover packaging and hosting behavior that test262 doe
 
 ## Open questions
 
-- Should `Js2IL.DynamicRuntime` be copied only when static analysis sees eval, or always with CLI output for simplicity?
+- Should `Jroc.DynamicRuntime` be copied only when static analysis sees eval, or always with CLI output for simplicity?
 - Should hosting default to eval enabled for compatibility, or disabled for safer embedding?
 - How should source maps/PDB sequence points represent dynamically evaluated code?
 - How much of the existing AST -> HIR lowering can the dynamic interpreter share without pulling compiler dependencies into the runtime package?

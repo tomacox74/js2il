@@ -1,6 +1,6 @@
 "use strict";
 // Risk area: Array .length and index-based arithmetic
-// Note: uses var for loop counters to avoid known JS2IL compound-assignment
+// Note: uses var for loop counters to avoid known JROC compound-assignment
 // issue with for-let iteration variables.
 
 const arr = [10, 20, 30, 40, 50];

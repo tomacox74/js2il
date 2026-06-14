@@ -1,16 +1,16 @@
-using Js2IL.DebugSymbols;
-using Js2IL.IR;
-using Js2IL.Services;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Services.VariableBindings;
-using Js2IL.Utilities.Ecma335;
+using Jroc.DebugSymbols;
+using Jroc.IR;
+using Jroc.Services;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Services.VariableBindings;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {
@@ -47,14 +47,14 @@ internal sealed partial class LIRToILCompiler
         // Constructor return override (PL5.4a) requires post-construction logic that overwrites
         // the result temp. If a class constructor can return a value, force materialization for
         // `new C()` results so we have a stable local slot.
-        var classRegistryForCtorReturn = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+        var classRegistryForCtorReturn = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
         if (classRegistryForCtorReturn != null)
         {
             foreach (var instr in MethodBody.Instructions.OfType<LIRNewUserClass>())
             {
                 if (instr.Result.Index >= 0
                     && instr.Result.Index < shouldMaterialize.Length
-                    && classRegistryForCtorReturn.TryGetPrivateField(instr.RegistryClassName, "__js2il_ctorReturn", out _))
+                    && classRegistryForCtorReturn.TryGetPrivateField(instr.RegistryClassName, "__jroc_ctorReturn", out _))
                 {
                     shouldMaterialize[instr.Result.Index] = true;
                 }
@@ -117,12 +117,12 @@ internal sealed partial class LIRToILCompiler
                 && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeInstanceField
                 && storeInstanceField.Value.Equals(newUserClass.Result))
             {
-                var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
                 var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
 
                 if (classRegistry != null
                     && reader != null
-                    && (!classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+                    && (!classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__jroc_ctorReturn", out _))
                     && reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token)
                     && token.Kind == HandleKind.MethodDefinition)
                 {
@@ -222,7 +222,7 @@ internal sealed partial class LIRToILCompiler
                 && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeIntrinsicField
                 && storeIntrinsicField.Value.Equals(newIntrinsic.Result))
             {
-                var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
                 if (classRegistry != null)
                 {
                     // Resolve the field handle.
@@ -453,7 +453,7 @@ internal sealed partial class LIRToILCompiler
         {
             switch (region.Kind)
             {
-                case Js2IL.IR.ExceptionRegionKind.Catch:
+                case Jroc.IR.ExceptionRegionKind.Catch:
                     {
                         var catchType = region.CatchType ?? typeof(System.Exception);
                         var catchTypeRef = _typeReferenceRegistry.GetOrAdd(catchType);
@@ -465,7 +465,7 @@ internal sealed partial class LIRToILCompiler
                             catchTypeRef);
                         break;
                     }
-                case Js2IL.IR.ExceptionRegionKind.Finally:
+                case Jroc.IR.ExceptionRegionKind.Finally:
                     controlFlowBuilder.AddFinallyRegion(
                         labelMap[region.TryStartLabelId],
                         labelMap[region.TryEndLabelId],

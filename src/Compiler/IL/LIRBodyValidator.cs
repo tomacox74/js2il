@@ -1,6 +1,6 @@
-using Js2IL.IR;
+using Jroc.IR;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 /// <summary>
 /// Validates invariants on a lowered <see cref="MethodBodyIR"/> before IL emission.

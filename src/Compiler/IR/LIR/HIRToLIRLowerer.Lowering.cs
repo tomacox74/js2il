@@ -1,12 +1,12 @@
 using Acornima.Ast;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Services.ScopesAbi;
-using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using Js2IL.SymbolTables;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Services.ScopesAbi;
+using TwoPhase = Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using Jroc.SymbolTables;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
@@ -120,10 +120,10 @@ public sealed partial class HIRToLIRLowerer
             case HIRForStatement forStmt:
                 return TryLowerForStatement(forStmt);
 
-            case Js2IL.HIR.HIRForOfStatement forOfStmt:
+            case Jroc.HIR.HIRForOfStatement forOfStmt:
                 return TryLowerForOfStatement(forOfStmt);
 
-            case Js2IL.HIR.HIRForInStatement forInStmt:
+            case Jroc.HIR.HIRForInStatement forInStmt:
                 return TryLowerForInStatement(forInStmt);
             case HIRWhileStatement whileStmt:
                 return TryLowerWhileStatement(whileStmt);

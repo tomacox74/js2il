@@ -1,6 +1,6 @@
 # Tutorial: Async exports + event loop
 
-JS2IL’s runtime includes a per-instance event-loop pump so that Promises and timers can make progress even when the host is idle.
+JROC’s runtime includes a per-instance event-loop pump so that Promises and timers can make progress even when the host is idle.
 
 ## Promise → Task mapping
 

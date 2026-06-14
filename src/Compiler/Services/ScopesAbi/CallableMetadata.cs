@@ -1,7 +1,7 @@
 using System.Reflection.Metadata;
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.Services.ScopesAbi;
+namespace Jroc.Services.ScopesAbi;
 
 /// <summary>
 /// Metadata about a compiled callable, including its method handle, environment layout,

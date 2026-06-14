@@ -6,7 +6,7 @@
 
 > Last generated (UTC): 2026-03-15T18:49:50Z
 
-JS2IL parses top-level source with `ParseScript`, validates it under a strict-mode policy, and executes it through a CommonJS module wrapper rather than the ECMA-262 Script Record / global-environment pipeline. Entry scripts run successfully, but top-level behavior is intentionally closer to Node/CommonJS hosting than spec script evaluation.
+JROC parses top-level source with `ParseScript`, validates it under a strict-mode policy, and executes it through a CommonJS module wrapper rather than the ECMA-262 Script Record / global-environment pipeline. Entry scripts run successfully, but top-level behavior is intentionally closer to Node/CommonJS hosting than spec script evaluation.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -38,5 +38,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| strict-mode directive prologue detection and enforcement policy | Supported with Limitations |  | JS2IL detects a leading `"use strict"` directive and, by default, requires it for successful compilation. `CompilerOptions.StrictMode` can downgrade missing strict mode to a warning or ignore it, but the compiler/runtime are designed around strict-mode semantics. |
+| strict-mode directive prologue detection and enforcement policy | Supported with Limitations |  | JROC detects a leading `"use strict"` directive and, by default, requires it for successful compilation. `CompilerOptions.StrictMode` can downgrade missing strict mode to a warning or ignore it, but the compiler/runtime are designed around strict-mode semantics. |
 

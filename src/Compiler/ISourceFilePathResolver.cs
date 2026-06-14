@@ -1,4 +1,4 @@
-namespace Js2IL;
+namespace Jroc;
 
 /// <summary>
 /// Optional extension for <see cref="IFileSystem"/> implementations that can provide a

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public abstract class HIRPattern;
 

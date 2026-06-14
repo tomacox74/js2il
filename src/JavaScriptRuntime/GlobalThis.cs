@@ -9,7 +9,7 @@ namespace JavaScriptRuntime
 {
     /// <summary>
     /// Holds global intrinsic variables for the current program (Node-like today, extensible later).
-    /// Minimal surface for js2il codegen: __dirname, __filename, and process.exitCode.
+    /// Minimal surface for jroc codegen: __dirname, __filename, and process.exitCode.
     /// </summary>
     public class GlobalThis : IDynamicMetaObjectProvider, IDictionary<string, object?>
     {
@@ -69,9 +69,9 @@ namespace JavaScriptRuntime
         };
 
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
-            throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in js2il.");
+            throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
 
-        // Placeholder Array constructor value. JS2IL uses dedicated codegen paths for `new Array(...)`.
+        // Placeholder Array constructor value. JROC uses dedicated codegen paths for `new Array(...)`.
         // We expose a callable value so libraries can reference `Array` as a global identifier and
         // access `Array.prototype.*` members.
         private static readonly Func<object[], object?[], object?> _arrayConstructorValue = static (_, __) =>
@@ -195,10 +195,10 @@ namespace JavaScriptRuntime
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.URIError(message));
 
         private static readonly Func<object[], object?[], object?> _iteratorConstructorValue = static (_, __) =>
-            throw new TypeError("Iterator is not directly constructible in js2il.");
+            throw new TypeError("Iterator is not directly constructible in jroc.");
 
         private static readonly Func<object[], object?[], object?> _asyncIteratorConstructorValue = static (_, __) =>
-            throw new TypeError("AsyncIterator is not directly constructible in js2il.");
+            throw new TypeError("AsyncIterator is not directly constructible in jroc.");
 
         private static readonly Func<object[], object?, object> _errorIsErrorValue = static (_, arg) =>
             arg is JavaScriptRuntime.Error;
@@ -226,7 +226,7 @@ namespace JavaScriptRuntime
 
         // TypedArray intrinsic constructor and prototype
         private static readonly Func<object[], object?[], object?> _typedArrayConstructorValue = static (_, __) =>
-            throw new TypeError("%TypedArray% is not directly constructible in js2il.");
+            throw new TypeError("%TypedArray% is not directly constructible in jroc.");
         private static readonly object _typedArrayPrototypeValue = new JsObject();
 
         // Typed array constructor values - supported and unsupported
@@ -241,17 +241,17 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _int8ArrayConstructorValue = 
             static (_, args) => new Int8Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _uint32ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Uint32Array constructor is not yet supported in js2il.");
+            static (_, __) => throw new NotSupportedException("The Uint32Array constructor is not yet supported in jroc.");
         private static readonly Func<object[], object?[], object?> _uint16ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Uint16Array constructor is not yet supported in js2il.");
+            static (_, __) => throw new NotSupportedException("The Uint16Array constructor is not yet supported in jroc.");
         private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue = 
             static (_, args) => new Uint8Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Uint8ClampedArray constructor is not yet supported in js2il.");
+            static (_, __) => throw new NotSupportedException("The Uint8ClampedArray constructor is not yet supported in jroc.");
         private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in js2il.");
+            static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in jroc.");
         private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The BigUint64Array constructor is not yet supported in js2il.");
+            static (_, __) => throw new NotSupportedException("The BigUint64Array constructor is not yet supported in jroc.");
 
         static GlobalThis()
         {
@@ -759,7 +759,7 @@ namespace JavaScriptRuntime
         /// Returns the global object for the current execution context.
         /// </summary>
         /// <remarks>
-        /// JS2IL models the global object as a dynamic bag (ExpandoObject) seeded with common globals.
+        /// JROC models the global object as a dynamic bag (ExpandoObject) seeded with common globals.
         /// This allows libraries to read/write properties via globalThis (e.g., globalThis.window = ...).
         /// </remarks>
         public static object globalThis => GetOrCreateGlobalObject();

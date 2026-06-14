@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Utilities.Ecma335
+namespace Jroc.Utilities.Ecma335
 {
     /// <summary>
     /// Centralized registry for MemberReferenceHandles to avoid duplicate metadata entries.
@@ -290,7 +290,7 @@ namespace Js2IL.Utilities.Ecma335
 
         /// <summary>
         /// Encodes a generic type argument into a TypeSpecification.
-        /// Supports the common types used in js2il (object, object[], string, int, etc.).
+        /// Supports the common types used in jroc (object, object[], string, int, etc.).
         /// </summary>
         private void EncodeGenericArgument(SignatureTypeEncoder encoder, Type type)
         {
@@ -457,9 +457,9 @@ namespace Js2IL.Utilities.Ecma335
                 var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(bclTypeReference, isValueType: false);
             }
-            // Runtime types (including nested types like Node.Process and hosting attributes in Js2IL.Runtime)
+            // Runtime types (including nested types like Node.Process and hosting attributes in Jroc.Runtime)
             else if ((type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
-                || (type.Namespace?.StartsWith("Js2IL.Runtime", StringComparison.Ordinal) == true))
+                || (type.Namespace?.StartsWith("Jroc.Runtime", StringComparison.Ordinal) == true))
             {
                 var typeRef = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(typeRef, isValueType: type.IsValueType);

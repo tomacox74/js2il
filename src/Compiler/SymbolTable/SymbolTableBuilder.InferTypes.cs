@@ -3,7 +3,7 @@ using Acornima;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace Js2IL.SymbolTables;
+namespace Jroc.SymbolTables;
 
 public partial class SymbolTableBuilder
 {
@@ -77,7 +77,7 @@ public partial class SymbolTableBuilder
             .ToDictionary(g => g.Key, g => g.ToArray(), StringComparer.Ordinal);
 
         var nodeScopes = BuildNodeScopeMap(root);
-        var walker = new Js2IL.Utilities.AstWalker();
+        var walker = new Jroc.Utilities.AstWalker();
 
         walker.Visit(root.AstNode, node =>
         {
@@ -416,7 +416,7 @@ public partial class SymbolTableBuilder
     {
         var parentMap = new Dictionary<Node, Node>(ReferenceEqualityComparer.Instance);
         var stack = new Stack<Node>();
-        var walker = new Js2IL.Utilities.AstWalker();
+        var walker = new Jroc.Utilities.AstWalker();
         walker.VisitWithContext(
             rootNode,
             node =>
@@ -444,7 +444,7 @@ public partial class SymbolTableBuilder
         var pushedScopes = new Stack<Scope?>();
         scopeStack.Push(root);
 
-        var walker = new Js2IL.Utilities.AstWalker();
+        var walker = new Jroc.Utilities.AstWalker();
         walker.VisitWithContext(
             root.AstNode,
             node =>

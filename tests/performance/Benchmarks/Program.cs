@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Reports;
+using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using Benchmarks;
 
@@ -25,14 +25,14 @@ else
 
         if (programArgs.Length > 0 && programArgs[0] == "--phased")
         {
-            // Run phased benchmarks (js2il compile/execute plus Jint prepare/prepared execution)
-            switcher = BenchmarkSwitcher.FromTypes([typeof(Js2ILPhasedBenchmarks)]);
+            // Run phased benchmarks (jroc compile/execute plus Jint prepare/prepared execution)
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JrocPhasedBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else if (programArgs.Length > 0 && programArgs[0] == "--all")
         {
             // Run all benchmarks
-            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(LateBoundDispatchBenchmarks), typeof(Js2ILPhasedBenchmarks)]);
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(LateBoundDispatchBenchmarks), typeof(JrocPhasedBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else
@@ -51,7 +51,7 @@ Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
 Console.WriteLine("\nFor more options:");
 Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
-Console.WriteLine("  dotnet run -c Release --phased # Run js2il phased + Jint prepared comparison");
+Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared comparison");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
 

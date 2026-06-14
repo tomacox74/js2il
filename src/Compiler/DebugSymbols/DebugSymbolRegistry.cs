@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.DebugSymbols;
+namespace Jroc.DebugSymbols;
 
 /// <summary>
 /// Collects debug symbol info (currently sequence points) during compilation so that

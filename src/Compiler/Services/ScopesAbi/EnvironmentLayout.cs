@@ -1,6 +1,6 @@
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.Services.ScopesAbi;
+namespace Jroc.Services.ScopesAbi;
 
 /// <summary>
 /// The complete environment specification attached to a compiled callable.

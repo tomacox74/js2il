@@ -2,7 +2,7 @@ using Acornima.Ast;
 using System;
 using System.Collections.Generic;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// The kind of callable construct in JavaScript.

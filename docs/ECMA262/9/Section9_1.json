@@ -370,7 +370,7 @@
       "specUrl": "https://tc39.es/ecma262/#sec-newmoduleenvironment"
     }
   ],
-  "intro": "JS2IL models lexical/function/global environments through compiler-managed scope structures and runtime helpers rather than first-class ECMA-262 Environment Record objects.",
+  "intro": "JROC models lexical/function/global environments through compiler-managed scope structures and runtime helpers rather than first-class ECMA-262 Environment Record objects.",
   "support": {
     "entries": [
       {
@@ -379,8 +379,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-declarative-environment-records",
         "testScripts": [
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js"
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js"
         ],
         "notes": "Lexical bindings are modeled by scope bindings and lowered storage operations; exact spec object shapes/invariants are approximated."
       },
@@ -390,7 +390,7 @@
         "status": "Not Yet Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-object-environment-records",
         "testScripts": [
-          "tests/Js2IL.Tests/ValidatorTests.cs"
+          "tests/Jroc.Tests/ValidatorTests.cs"
         ],
         "notes": "with statement/object environment semantics are intentionally rejected in validation."
       },
@@ -400,9 +400,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-function-environment-records",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_NewVsCall.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_NewTarget_Arrow_Inherits.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js"
         ],
         "notes": "RuntimeServices and lowering carry this/new.target/super behavior for supported forms, with subset coverage of exotic function cases."
       },
@@ -412,10 +412,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-global-environment-records",
         "testScripts": [
-          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js",
-          "tests/Js2IL.Tests/ValidatorTests.cs"
+          "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js",
+          "tests/Jroc.Tests/ValidatorTests.cs"
         ],
-        "notes": "Global bindings are modeled in JS2IL global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete."
+        "notes": "Global bindings are modeled in JROC global/module scope and GlobalThis runtime object, but ESM/global declarative record distinctions are incomplete."
       },
       {
         "clause": "9.1.1.5",
@@ -423,8 +423,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-module-environment-records",
         "testScripts": [
-          "tests/Js2IL.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js",
-          "tests/Js2IL.Tests/Import/JavaScript/Import_RequireEsmModule.js"
+          "tests/Jroc.Tests/Import/JavaScript/Import_StaticImport_FromCjs.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_RequireEsmModule.js"
         ],
         "notes": "Static import/export declarations are supported via lowering to the CommonJS runtime model. Full spec module environment records (including complete live-binding/linking semantics) remain incomplete."
       },
@@ -434,8 +434,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-getidentifierreference",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js"
         ],
         "notes": "Identifier resolution is implemented through symbol table + scope chain planning/lowering for supported syntax."
       },
@@ -445,8 +445,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-newdeclarativeenvironment",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Let_PerIterationBinding.js"
         ],
         "notes": "Compiler materializes declarative environments as scope instances, including loop-head lexical environments where required."
       }

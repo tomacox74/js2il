@@ -1,4 +1,4 @@
-# JS2IL Feature Implementation Roadmap
+# JROC Feature Implementation Roadmap
 
 > **Last Updated**: 2026-02-12  
 > **Based on**: ECMA-262 Documentation Analysis (docs/ECMA262)
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This document provides a prioritized roadmap for implementing ECMA-262 features in JS2IL, based on:
+This document provides a prioritized roadmap for implementing ECMA-262 features in JROC, based on:
 - Analysis of all ECMA-262 section documentation
 - Modern JavaScript usage patterns
 - Partner/developer demand

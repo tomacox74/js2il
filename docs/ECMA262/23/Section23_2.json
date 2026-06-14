@@ -444,21 +444,21 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray-objects",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_TypedArrays.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
-          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/float32array.js",
-          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int16array.js",
-          "tests/Js2IL.Test262.Tests/language/statements/for-of/JavaScript/int8array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_IsView_TypedArrays.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/float32array.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/int16array.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/JavaScript/int8array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js"
         ],
-        "notes": "JS2IL now provides a shared ArrayBuffer-backed TypedArray implementation for Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. Current checked-in test262 coverage now includes standalone ArrayIteratorPrototype.next sequences across those supported families. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete.",
+        "notes": "JROC now provides a shared ArrayBuffer-backed TypedArray implementation for Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array, including static from/of helpers, shared iterator surfaces, core transform/search helpers, and buffer-backed view semantics. Current checked-in test262 coverage now includes standalone ArrayIteratorPrototype.next sequences across those supported families. The full %TypedArray% constructor hierarchy, detached-buffer semantics, species hooks, and many prototype metadata/details are still incomplete.",
         "test262Paths": [
           "test/built-ins/ArrayIteratorPrototype/next/Uint8Array.js",
           "test/built-ins/ArrayIteratorPrototype/next/Int8Array.js",
@@ -474,7 +474,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype",
         "testScripts": [
-          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_TypedArray_ConstructorMetadataSurface.js"
         ],
         "test262Paths": [
           "test/built-ins/TypedArray/prototype.js"
@@ -487,10 +487,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js"
         ],
         "notes": "Int32Array supports length, array-like/typed-array copy, ArrayBuffer view construction, and static Int32Array.from/of helpers while keeping existing compiler-specialized member/index access entry points intact. Detached-buffer semantics, species construction, and constructor metadata/prototype parity remain incomplete."
       },
@@ -500,7 +500,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js"
         ],
         "notes": "Uint8Array supports length, array-like, and ArrayBuffer-backed construction plus static Uint8Array.from/of helpers with Uint8 coercion and shared TypedArray view metadata. Uint8ClampedArray and full constructor metadata/prototype parity remain out of scope."
       },
@@ -510,8 +510,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_Alignment_RangeError.js"
         ],
         "notes": "Float64Array supports length, array-like, and ArrayBuffer-backed construction plus static Float64Array.from/of helpers with IEEE-754 storage and shared TypedArray view metadata. BigInt-typed families and full constructor metadata/prototype parity remain incomplete."
       },
@@ -521,16 +521,16 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-typedarray-instances",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Wrapping_Semantics.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Infinity_Index_NoOp.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Fractional_Index_NoOp.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_ShiftDerived_Index_Access.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Wrapping_Semantics.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Infinity_Index_NoOp.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fractional_Index_NoOp.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_ShiftDerived_Index_Access.js"
         ],
         "notes": "buffer, byteOffset, byteLength, length, numeric index access, and instance BYTES_PER_ELEMENT reads are shared across the supported TypedArray families, backed by ArrayBuffer views. Out-of-range reads and writes, detached buffers, and full property-descriptor/prototype fidelity are not fully spec-complete."
       },
@@ -540,9 +540,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.at",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js"
         ],
         "notes": "The supported TypedArray families share at(), includes(), indexOf(), and lastIndexOf() implementations with numeric coercion and NaN handling for includes(). at() still returns numeric defaults rather than fully spec-accurate undefined behavior for every out-of-range case."
       },
@@ -552,8 +552,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.set",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_BoundsChecks.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Set_BoundsChecks.js"
         ],
         "notes": "set() supports array-like and typed-array sources, explicit offsets, bounds checks, and overlap-safe copying for the supported families. Species/detached-buffer semantics and broader TypedArray interoperability are still limited."
       },
@@ -563,10 +563,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.slice",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_RelativeIndices.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Subarray_ViewSemantics.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Construct_ArrayBuffer_Search.js"
         ],
         "notes": "slice() returns same-type copies backed by fresh ArrayBuffers, while subarray() returns same-type views over the original buffer. Species construction and broader constructor selection rules are not yet implemented."
       },
@@ -576,7 +576,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-%typedarrayprototype%-object",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Float64Array_Callback_Methods.js"
         ],
         "notes": "The supported TypedArray families now share every(), some(), find(), findIndex(), forEach(), map(), filter(), and reduce() with callback invocation and same-type result creation where applicable. reduceRight(), flatMap(), and newer callback-based methods remain unsupported."
       },
@@ -586,7 +586,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-%typedarrayprototype%-object",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fill_Reverse_Join_LastIndexOf.js"
         ],
         "notes": "fill(), reverse(), join(), toString(), and toLocaleString() are shared across the supported families and return same-type results/views where applicable. Locale-aware formatting, species interactions, and the remaining prototype metadata surface are still limited."
       },
@@ -596,14 +596,14 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.prototype.values",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Values_Iterator.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Uint8Array_Iterator_Metadata.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js",
-          "tests/Js2IL.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Values_Iterator.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Iterator_Metadata.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Uint8Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int8Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int16Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Int32Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float32Array.js",
+          "tests/Jroc.Test262.Tests/built-ins/ArrayIteratorPrototype/next/JavaScript/Float64Array.js"
         ],
         "notes": "values(), keys(), and entries() return callable iterator objects, supported TypedArrays expose [Symbol.iterator]() and [Symbol.toStringTag] reads, and they participate in for-of via the runtime iterator path, including Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array coverage. Current checked-in test262 coverage now includes standalone next() sequences for those supported families. This is implemented via shared instance surface wiring rather than full prototype-object fidelity.",
         "test262Paths": [
@@ -621,8 +621,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-%typedarray%.from",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js",
-          "tests/Js2IL.Test262.Tests/built-ins/TypedArray/from/JavaScript/iterated-array-changed-by-tonumber.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_Static_From_Of.js",
+          "tests/Jroc.Test262.Tests/built-ins/TypedArray/from/JavaScript/iterated-array-changed-by-tonumber.js"
         ],
         "notes": "Int8Array, Uint8Array, Int16Array, Int32Array, Float32Array, and Float64Array expose static from() and of() helpers for iterable and array-like sources, including mapper callbacks. Current checked-in test262 coverage also exercises the built-in array-iterator path where later numeric coercion mutates the original source after iteration materialization. The shared %TypedArray% intrinsic object and constructor metadata surface are still incomplete.",
         "test262Paths": [

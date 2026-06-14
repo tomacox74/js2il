@@ -27,5 +27,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Directive prologues; optional top-level "use strict" | Supported with Limitations |  |  | JS2IL recognizes directive prologues and accepts scripts with or without a top-level "use strict" directive. |
+| Directive prologues; optional top-level "use strict" | Supported with Limitations |  |  | JROC recognizes directive prologues and accepts scripts with or without a top-level "use strict" directive. |
 

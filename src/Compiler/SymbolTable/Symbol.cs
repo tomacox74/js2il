@@ -1,4 +1,4 @@
-namespace Js2IL.SymbolTables;
+namespace Jroc.SymbolTables;
 
 /// <summary>
 /// A reference to a symbol in the symbol table.

@@ -9,7 +9,7 @@ Dynamic hosting is useful when:
 ## Load by (Assembly, moduleId)
 
 ```csharp
-using Js2IL.Runtime;
+using Jroc.Runtime;
 using System.Reflection;
 
 var asm = Assembly.LoadFrom("path\\to\\compiled.dll");

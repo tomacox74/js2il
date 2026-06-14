@@ -2,7 +2,7 @@ using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 internal static class CallableScopeAbiAttributeEmitter
 {
@@ -13,7 +13,7 @@ internal static class CallableScopeAbiAttributeEmitter
         MetadataBuilder metadataBuilder,
         BaseClassLibraryReferences bclReferences,
         EntityHandle parent,
-        Js2IL.Runtime.CallableScopeAbiKind kind,
+        Jroc.Runtime.CallableScopeAbiKind kind,
         int singleScopeTypeMetadataToken = 0)
     {
         ArgumentNullException.ThrowIfNull(metadataBuilder);
@@ -23,7 +23,7 @@ internal static class CallableScopeAbiAttributeEmitter
         blob.WriteUInt16(0x0001);
         blob.WriteInt32((int)kind);
 
-        if (kind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope && singleScopeTypeMetadataToken != 0)
+        if (kind == Jroc.Runtime.CallableScopeAbiKind.SingleScope && singleScopeTypeMetadataToken != 0)
         {
             blob.WriteUInt16(1);
             blob.WriteByte(PropertyNamedArgument);

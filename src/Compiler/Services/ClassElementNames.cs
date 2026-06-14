@@ -1,7 +1,7 @@
 using Acornima.Ast;
 using System;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 internal static class ClassElementNames
 {
@@ -60,13 +60,13 @@ internal static class ClassElementNames
     }
 
     public static string ManglePrivateFieldName(string name)
-        => "__js2il_priv_" + name;
+        => "__jroc_priv_" + name;
 
     public static string ManglePrivateMethodName(string name)
-        => "__js2il_priv_method_" + name;
+        => "__jroc_priv_method_" + name;
 
     public static string ManglePrivateAccessorMethodName(string accessorKind, string name)
-        => $"__js2il_priv_{accessorKind}_{name}";
+        => $"__jroc_priv_{accessorKind}_{name}";
 
     public static string GetMethodRegistryName(MethodDefinition method)
     {

@@ -7,7 +7,7 @@
 
 Issue #933 follows the intake/bootstrap work (#928), metadata parser (#929), MVP runner (#930), baseline/result classification (#931), and CI/reporting workflow (#932).
 
-At this point JS2IL already has:
+At this point JROC already has:
 
 - bounded named test262 MVP suites
 - a machine-readable `summary.json` artifact for each runner invocation
@@ -21,7 +21,7 @@ What is still missing is the connection between those two surfaces. Without it, 
 
 ## Decision
 
-JS2IL keeps the ECMA-262 docs as the human-readable source of truth and treats test262 output as linked evidence.
+JROC keeps the ECMA-262 docs as the human-readable source of truth and treats test262 output as linked evidence.
 
 ### Linkage manifest
 

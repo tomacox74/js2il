@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     /// <summary>
     /// Tracks .NET type handles for JavaScript class declarations by name.

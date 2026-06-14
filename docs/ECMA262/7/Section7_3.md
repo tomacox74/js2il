@@ -60,89 +60,89 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Property get on object literals and host objects | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../tests/Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) |  | Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Descriptor APIs enable accessor/prototype lookup via side-tables; symbol-keyed properties and many exotic behaviors are incomplete. |
+| Property get on object literals and host objects | Supported with Limitations | [`JSON_Parse_SimpleObject.js`](../../../tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js)<br>[`Function_ClosureEscapesScope_ObjectLiteralProperty.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_ClosureEscapesScope_ObjectLiteralProperty.js) |  | Supported via runtime get dispatch for ExpandoObject/object literals and reflection for host objects. Descriptor APIs enable accessor/prototype lookup via side-tables; symbol-keyed properties and many exotic behaviors are incomplete. |
 
 ### 7.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-set-o-p-v-throw))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Property set on object literals and host objects | Supported with Limitations | [`ObjectLiteral_PropertyAssign.js`](../../../tests/Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js)<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../tests/Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js) |  | Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. Throw/invariant behavior is not fully spec-complete. |
+| Property set on object literals and host objects | Supported with Limitations | [`ObjectLiteral_PropertyAssign.js`](../../../tests/Jroc.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js)<br>[`Variable_AssignmentTargets_MemberAndIndex.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js) |  | Supported via runtime set dispatch for ExpandoObject/object literals and reflection for host objects. Throw/invariant behavior is not fully spec-complete. |
 
 ### 7.3.7 ([tc39.es](https://tc39.es/ecma262/#sec-createnonenumerabledatapropertyorthrow))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| CreateNonEnumerableDataPropertyOrThrow (approx.) | Supported with Limitations | [`ObjectDefineProperty_Enumerable_ForIn.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js) |  | Non-enumerable data properties can be created through descriptor APIs; strict throw/invariant semantics are approximate. |
+| CreateNonEnumerableDataPropertyOrThrow (approx.) | Supported with Limitations | [`ObjectDefineProperty_Enumerable_ForIn.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js) |  | Non-enumerable data properties can be created through descriptor APIs; strict throw/invariant semantics are approximate. |
 
 ### 7.3.8 ([tc39.es](https://tc39.es/ecma262/#sec-definepropertyorthrow))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| DefinePropertyOrThrow (approx.) | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) |  | Approximated by runtime defineProperty/defineProperties/create using PropertyDescriptorStore; many spec validation and throw paths are incomplete. |
+| DefinePropertyOrThrow (approx.) | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectDefineProperty_Enumerable_ForIn.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectDefineProperty_Enumerable_ForIn.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js) |  | Approximated by runtime defineProperty/defineProperties/create using PropertyDescriptorStore; many spec validation and throw paths are incomplete. |
 
 ### 7.3.9 ([tc39.es](https://tc39.es/ecma262/#sec-deletepropertyorthrow))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| DeletePropertyOrThrow (approx.) | Supported with Limitations | [`ControlFlow_ForIn_Mutation_DeleteAndAdd.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js) |  | Delete operations are supported for dynamic object shapes; full non-configurable property behavior and strict throw fidelity are incomplete. |
+| DeletePropertyOrThrow (approx.) | Supported with Limitations | [`ControlFlow_ForIn_Mutation_DeleteAndAdd.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Mutation_DeleteAndAdd.js) |  | Delete operations are supported for dynamic object shapes; full non-configurable property behavior and strict throw fidelity are incomplete. |
 
 ### 7.3.11 ([tc39.es](https://tc39.es/ecma262/#sec-hasproperty))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Property presence checks (in operator / HasProperty) | Supported with Limitations | [`BinaryOperator_In_Object_OwnAndMissing.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js)<br>[`ControlFlow_ForIn_Object_Basic.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js) |  | Implemented for object literals, arrays, typed arrays, strings, and host objects. Prototype traversal is supported with prototype-chain mode; symbol support is limited. |
+| Property presence checks (in operator / HasProperty) | Supported with Limitations | [`BinaryOperator_In_Object_OwnAndMissing.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js)<br>[`ControlFlow_ForIn_Object_Basic.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js) |  | Implemented for object literals, arrays, typed arrays, strings, and host objects. Prototype traversal is supported with prototype-chain mode; symbol support is limited. |
 
 ### 7.3.12 ([tc39.es](https://tc39.es/ecma262/#sec-hasownproperty))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| HasOwnProperty | Supported with Limitations | [`Object_Prototype_HasOwnProperty_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js) |  | Object.prototype.hasOwnProperty is provided with descriptor-store, dictionary, and host-object fallbacks. |
+| HasOwnProperty | Supported with Limitations | [`Object_Prototype_HasOwnProperty_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_HasOwnProperty_Basic.js) |  | Object.prototype.hasOwnProperty is provided with descriptor-store, dictionary, and host-object fallbacks. |
 
 ### 7.3.13 ([tc39.es](https://tc39.es/ecma262/#sec-call))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Function and method calls | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js)<br>[`Function_Apply_Basic.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js)<br>[`Function_Bind_Basic_PartialApplication.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js) |  | Supports common declared/function-expression/delegate call paths. Some exotic call semantics are not implemented. |
+| Function and method calls | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`Function_ObjectLiteralMethod_ThisBinding.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js)<br>[`Function_CallViaVariable_Reassignment.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js)<br>[`Function_Apply_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js)<br>[`Function_Bind_Basic_PartialApplication.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js) |  | Supports common declared/function-expression/delegate call paths. Some exotic call semantics are not implemented. |
 
 ### 7.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-construct))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Construction (new) including dynamic constructor values | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`CommonJS_Export_ClassWithConstructor.js`](../../../tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js)<br>[`NewExpression_Number_Sugar.js`](../../../tests/Js2IL.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js)<br>[`ctorPadding.js`](../../../tests/Js2IL.Tests/Hosting/JavaScript/ctorPadding.js) |  | Supports statically-known constructors and runtime fallback for dynamic constructor values; full newTarget and exotic constructor behavior is incomplete. |
+| Construction (new) including dynamic constructor values | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`CommonJS_Export_ClassWithConstructor.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Export_ClassWithConstructor.js)<br>[`NewExpression_Number_Sugar.js`](../../../tests/Jroc.Tests/Literals/JavaScript/NewExpression_Number_Sugar.js)<br>[`ctorPadding.js`](../../../tests/Jroc.Tests/Hosting/JavaScript/ctorPadding.js) |  | Supports statically-known constructors and runtime fallback for dynamic constructor values; full newTarget and exotic constructor behavior is incomplete. |
 
 ### 7.3.18 ([tc39.es](https://tc39.es/ecma262/#sec-lengthofarraylike))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| LengthOfArrayLike | Supported with Limitations | [`Array_LengthProperty_ReturnsCount.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js)<br>[`Int32Array_Construct_Length.js`](../../../tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`String_Split_Basic.js`](../../../tests/Js2IL.Tests/String/JavaScript/String_Split_Basic.js) |  | Implemented for supported array-like runtime types with partial coercion behavior. |
+| LengthOfArrayLike | Supported with Limitations | [`Array_LengthProperty_ReturnsCount.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js)<br>[`Int32Array_Construct_Length.js`](../../../tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js)<br>[`String_Split_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Split_Basic.js) |  | Implemented for supported array-like runtime types with partial coercion behavior. |
 
 ### 7.3.21 ([tc39.es](https://tc39.es/ecma262/#sec-ordinaryhasinstance))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| OrdinaryHasInstance (instanceof paths) | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js) |  | Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete. |
+| OrdinaryHasInstance (instanceof paths) | Supported with Limitations | [`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js) |  | Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete. |
 
 ### 7.3.23 ([tc39.es](https://tc39.es/ecma262/#sec-enumerableownproperties))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| EnumerableOwnProperties (keys/values/entries) | Supported with Limitations | [`Object_Keys_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Keys_Basic.js)<br>[`Object_Values_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Values_Basic.js)<br>[`Object_Entries_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Entries_Basic.js) |  | Implemented for supported object shapes with descriptor-store enumerable filtering. |
+| EnumerableOwnProperties (keys/values/entries) | Supported with Limitations | [`Object_Keys_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Keys_Basic.js)<br>[`Object_Values_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Values_Basic.js)<br>[`Object_Entries_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Entries_Basic.js) |  | Implemented for supported object shapes with descriptor-store enumerable filtering. |
 
 ### 7.3.25 ([tc39.es](https://tc39.es/ecma262/#sec-copydataproperties))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| CopyDataProperties (object spread) | Supported with Limitations | [`ObjectLiteral_Spread_Basic.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js)<br>[`ObjectLiteral_Spread_SkipsNonEnumerable.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js) |  | Implemented via SpreadInto/Object spread for enumerable own string-keyed properties; full symbol/exotic semantics are incomplete. |
+| CopyDataProperties (object spread) | Supported with Limitations | [`ObjectLiteral_Spread_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js)<br>[`ObjectLiteral_Spread_SkipsNonEnumerable.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Spread_SkipsNonEnumerable.js) |  | Implemented via SpreadInto/Object spread for enumerable own string-keyed properties; full symbol/exotic semantics are incomplete. |
 
 ### 7.3.26 ([tc39.es](https://tc39.es/ecma262/#sec-privateelementfind))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| PrivateElementFind for private fields | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js) |  | Private field access works for supported class forms. Supported private methods participate in receiver brand checks, including static private methods rejecting proxy receivers; private accessors and complete validation coverage remain limited. |
+| PrivateElementFind for private fields | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js) |  | Private field access works for supported class forms. Supported private methods participate in receiver brand checks, including static private methods rejecting proxy receivers; private accessors and complete validation coverage remain limited. |
 
 ### 7.3.33 ([tc39.es](https://tc39.es/ecma262/#sec-initializeinstanceelements))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| InitializeInstanceElements (class fields + private fields) | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`constructor-this-tdz-during-initializers.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js) |  | Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks and supported private methods are implemented; private accessors and some inheritance details remain incomplete. |
+| InitializeInstanceElements (class fields + private fields) | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`constructor-this-tdz-during-initializers.js`](../../../tests/Jroc.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js) |  | Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks and supported private methods are implemented; private accessors and some inheritance details remain incomplete. |
 

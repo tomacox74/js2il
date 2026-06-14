@@ -1,13 +1,13 @@
 # Captured Variables: Scopes ABI Facade (Design)
 
-This document is a **spec/design for the target (“ideal”) scopes ABI** used by JS2IL.
+This document is a **spec/design for the target (“ideal”) scopes ABI** used by JROC.
 
 - The **ABI Contract (Authoritative)** section is normative.
 - Any sections labeled **compatibility** exist only to constrain incremental rollout.
 
 ## Background (non-normative)
 
-JS2IL compiles JavaScript using a **AST → HIR → LIR → IL** lowering pipeline. Closures and captured variables are implemented via a **scope-as-class** model:
+JROC compiles JavaScript using a **AST → HIR → LIR → IL** lowering pipeline. Closures and captured variables are implemented via a **scope-as-class** model:
 
 - Every JavaScript scope becomes a generated .NET reference type ("scope class").
 - Captured bindings (and other field-backed bindings like hoisted function declarations) become **instance fields** on the scope class.
@@ -97,7 +97,7 @@ The next iteration of this design made the callable scope ABI explicit and versi
 
 The staged rollout described above is now implemented with the following concrete behavior:
 
-- Generated callable methods now carry `Js2IL.Runtime.JsCallableScopeAbiAttribute`.
+- Generated callable methods now carry `Jroc.Runtime.JsCallableScopeAbiAttribute`.
 - The emitted enum is `CallableScopeAbiKind` with values `NoScopes`, `SingleScope`, and `ScopeArray`.
 - The compiler emits the attribute in both the single-phase and two-phase compilation paths.
 - `SingleScope` currently serializes `SingleScopeTypeMetadataToken` rather than a named `Type` value. The runtime resolves that token back to a `Type` via `MethodInfo.Module.ResolveType(...)` when needed.

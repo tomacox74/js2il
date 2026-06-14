@@ -17,20 +17,20 @@
       "docs": "https://nodejs.org/api/child_process.html#child_processspawncommand-args-options",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Basic",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Ignore",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Spawn_Ignore",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Basic",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Ignore",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Spawn_Ignore",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         }
       ]
     },
@@ -42,12 +42,12 @@
       "docs": "https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Exec_Callback",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Exec_Callback",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Exec_Callback",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Exec_Callback",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         }
       ]
     },
@@ -59,12 +59,12 @@
       "docs": "https://nodejs.org/api/child_process.html#child_processexecfilefile-args-options-callback",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFile_NonZero",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFile_NonZero",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFile_NonZero",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         }
       ]
     },
@@ -72,40 +72,40 @@
       "name": "fork(modulePath[, args][, options])",
       "kind": "function",
       "status": "supported",
-      "notes": "Launches another compiled JS2IL child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, explicit `options.silent` control (`true` keeps piped stdio, `false` maps stdio[0-2] to `inherit` while preserving IPC), `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics. In hosted `JsEngine` scenarios, the child is launched only when the host explicitly supplies `JsModuleLoadOptions.CompiledAssemblyPath`; if that configuration is missing, `fork()` throws a targeted runtime error instead of inferring a launch target. Hosts can customize process creation through `IChildProcessLauncher`.",
+      "notes": "Launches another compiled JROC child from the current assembly, resolves `modulePath` relative to the compiled program entry module, and enables an authenticated JSON-only IPC channel by default. Supports `cwd`, merged `env` overrides, stdio values `'pipe'`, `'inherit'`, `'ignore'`, plus `'ipc'` at `stdio[3]`, explicit `options.silent` control (`true` keeps piped stdio, `false` maps stdio[0-2] to `inherit` while preserving IPC), `child.send(...)`, `child.on('message')`, `process.send(...)`, `process.on('message')`, deterministic `disconnect` before `exit`/`close`, and `kill('SIGTERM'|'SIGKILL'|'SIGINT')` reporting. Detached children, advanced serialization, handle passing, and Node-internal IPC behaviors remain explicit unsupported diagnostics. In hosted `JsEngine` scenarios, the child is launched only when the host explicitly supplies `JsModuleLoadOptions.CompiledAssemblyPath`; if that configuration is missing, `fork()` throws a targeted runtime error instead of inferring a launch target. Hosts can customize process creation through `IChildProcessLauncher`.",
       "docs": "https://nodejs.org/api/child_process.html#child_processforkmodulepath-args-options",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_MessagePassing",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Kill_And_Env",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Silent",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Silent",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/ExecutionTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_Fork_Unsupported_Options",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_MessagePassing",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Kill_And_Env",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Silent",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Silent",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         },
         {
-          "name": "Js2IL.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options",
-          "file": "tests/Js2IL.Tests/Node/ChildProcess/GeneratorTests.cs"
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_Fork_Unsupported_Options",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
         }
       ]
     },

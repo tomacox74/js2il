@@ -1,10 +1,10 @@
-# Async/Await Lowering Spec (JS2IL)
+# Async/Await Lowering Spec (JROC)
 
 ## Goals
 
 - Support JavaScript `async function` and `await` by lowering to a resumable state machine.
 - No blocking and **no manual message-loop pumping** in the runtime.
-- Preserve JS2IL’s **scope-as-class** closure model and scopes-array ABI.
+- Preserve JROC’s **scope-as-class** closure model and scopes-array ABI.
 - Stay compatible with **CommonJS** execution (module wrapper; no top-level await).
 
 ## Non-Goals (initial implementation)
@@ -18,7 +18,7 @@
 - **Async function**: `async function f() { ... }`, `async () => { ... }`, async methods.
 - **Await point**: `await <expr>`.
 - **Continuation**: code that runs after an await point.
-- **Leaf scope**: the per-invocation scope object allocated for a callable (JS2IL “scope-as-class” instance).
+- **Leaf scope**: the per-invocation scope object allocated for a callable (JROC “scope-as-class” instance).
 
 ## Semantics Summary
 
@@ -63,11 +63,11 @@ This includes:
 - awaited intermediate values that must be referenced after resumption
 - values for `try/catch/finally` bookkeeping (see below)
 
-Rationale: JS2IL already uses scope instances for closure lifetime; storing async state there keeps lifetime rules consistent and avoids separate heap allocations.
+Rationale: JROC already uses scope instances for closure lifetime; storing async state there keeps lifetime rules consistent and avoids separate heap allocations.
 
 ### Where `MoveNext` lives (chosen design)
 
-JS2IL will implement async functions using a **static `MoveNext` method** on the function’s registry type.
+JROC will implement async functions using a **static `MoveNext` method** on the function’s registry type.
 
 - Signature shape: `static void MoveNext(object[] scopes)` (optionally `static void MoveNext(<ScopeType> scope, object[] scopes)` as an optimization to reduce casts).
 - Rationale: simple metadata model, fits the existing callable plumbing, and keeps leaf scope types primarily as state containers.
@@ -144,7 +144,7 @@ Key points:
 
 ### Emitted Types (conceptual)
 
-JS2IL already emits a scope class per callable. For an async callable, the leaf scope additionally holds async state and any surviving locals.
+JROC already emits a scope class per callable. For an async callable, the leaf scope additionally holds async state and any surviving locals.
 
 ```csharp
 // Scope-as-class for the invocation of f
@@ -198,7 +198,7 @@ static class Functions.f
 
 Notes:
 
-- The *exact* `scopes` layout and how the leaf scope instance is placed into it must follow the JS2IL scopes ABI.
+- The *exact* `scopes` layout and how the leaf scope instance is placed into it must follow the JROC scopes ABI.
 - The numeric locals shown as `double` assume stable type inference; otherwise they are boxed as `object`.
 
 ### `MoveNext` Shape (pseudo-code)
@@ -294,7 +294,7 @@ Important details:
 - Each `await` site is assigned a stable resume state id (`1`, `2`, …).
 - The loop variables (`i`, `total`) live on the scope so they survive suspension.
 - Nested awaits become sequential suspension points.
-- In real emitted IL, the `onFulfilled` / `onRejected` lambdas are emitted as normal JS2IL callables (static methods + `Closure.Bind(scopes)`), not as C# closures.
+- In real emitted IL, the `onFulfilled` / `onRejected` lambdas are emitted as normal JROC callables (static methods + `Closure.Bind(scopes)`), not as C# closures.
 - The rejection path should flow back into `MoveNext` with “throw into state machine” semantics; the pseudo-code uses `throw r` as shorthand.
 
 

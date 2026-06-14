@@ -6,10 +6,10 @@ using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
 using JavaScriptRuntime.Node;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
-/// Hosts a single JS2IL "runtime instance" on a dedicated thread.
+/// Hosts a single JROC "runtime instance" on a dedicated thread.
 /// All JS execution (module load + subsequent invocations) is serialized onto that thread.
 /// </summary>
 internal sealed class JsRuntimeInstance : IDisposable
@@ -65,7 +65,7 @@ internal sealed class JsRuntimeInstance : IDisposable
             // This does not affect scheduling/priority; it only affects process shutdown semantics.
             // We may make this configurable in the future.
             IsBackground = true,
-            Name = $"Js2IL.ScriptThread[{CompiledAssemblyName}:{normalized}]"
+            Name = $"Jroc.ScriptThread[{CompiledAssemblyName}:{normalized}]"
         };
 
         _thread.Start();

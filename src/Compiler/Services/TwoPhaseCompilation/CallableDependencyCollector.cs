@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Acornima.Ast;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities;
+using Jroc.SymbolTables;
+using Jroc.Utilities;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// AST-based dependency discovery.

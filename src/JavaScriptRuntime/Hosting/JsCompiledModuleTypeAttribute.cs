@@ -1,9 +1,9 @@
 using System;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
-/// Assembly-level mapping emitted by the JS2IL compiler.
+/// Assembly-level mapping emitted by the JROC compiler.
 /// Maps a logical module id (e.g. "calculator/index" or "turndown") to the CLR type name
 /// that implements the module (e.g. "Modules.calculator_index").
 ///

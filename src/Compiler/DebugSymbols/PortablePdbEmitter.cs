@@ -9,7 +9,7 @@ using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 using System.Threading;
 
-namespace Js2IL.DebugSymbols;
+namespace Jroc.DebugSymbols;
 
 internal static class PortablePdbEmitter
 {

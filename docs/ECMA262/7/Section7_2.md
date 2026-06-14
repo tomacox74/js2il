@@ -37,53 +37,53 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsArray | Supported | [`Array_IsArray_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js)<br>[`Array_AsArray_Ternary.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_AsArray_Ternary.js)<br>[`15.4.3.2-0-5.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js) |  | Implemented by JavaScriptRuntime.Array.isArray for JS array instances and the intrinsic Array.prototype object. |
+| IsArray | Supported | [`Array_IsArray_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_IsArray_Basic.js)<br>[`Array_AsArray_Ternary.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_AsArray_Ternary.js)<br>[`15.4.3.2-0-5.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js) |  | Implemented by JavaScriptRuntime.Array.isArray for JS array instances and the intrinsic Array.prototype object. |
 
 ### 7.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-iscallable))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsCallable checks in invocation paths | Supported with Limitations | [`Function_CallViaVariable_Reassignment.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js)<br>[`Function_Apply_Basic.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js) |  | Callable detection is primarily delegate-based in runtime dispatch and intrinsic paths. |
+| IsCallable checks in invocation paths | Supported with Limitations | [`Function_CallViaVariable_Reassignment.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js)<br>[`Function_Apply_Basic.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js) |  | Callable detection is primarily delegate-based in runtime dispatch and intrinsic paths. |
 
 ### 7.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-isconstructor))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsConstructor checks for new-expression paths | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js) |  | Dynamic construction supports delegate/type/Construct-member shapes used by JS2IL; full constructability semantics are not complete. |
+| IsConstructor checks for new-expression paths | Supported with Limitations | [`Classes_DeclareEmptyClass.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js)<br>[`BinaryOperator_InstanceOf_Basic.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js) |  | Dynamic construction supports delegate/type/Construct-member shapes used by JROC; full constructability semantics are not complete. |
 
 ### 7.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-isregexp))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsRegExp classification in RegExp-aware operations | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) |  | RegExp-aware behavior is implemented for JavaScriptRuntime.RegExp call sites; Symbol.match override semantics are not fully modeled. |
+| IsRegExp classification in RegExp-aware operations | Supported with Limitations | [`IntrinsicCallables_RegExp_Callable_CreatesRegex.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js)<br>[`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js) |  | RegExp-aware behavior is implemented for JavaScriptRuntime.RegExp call sites; Symbol.match override semantics are not fully modeled. |
 
 ### 7.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-samevalue))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| SameValue | Supported | [`Object_Is_SameValue.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js) |  | Implemented by Operators.SameValue and exposed via Object.is. |
+| SameValue | Supported | [`Object_Is_SameValue.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Is_SameValue.js) |  | Implemented by Operators.SameValue and exposed via Object.is. |
 
 ### 7.2.10 ([tc39.es](https://tc39.es/ecma262/#sec-samevaluezero))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| SameValueZero | Supported | [`Array_SearchOps_Basic.js`](../../../tests/Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js) |  | Implemented in array includes/search paths and runtime helper comparisons. |
+| SameValueZero | Supported | [`Array_SearchOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_SearchOps_Basic.js) |  | Implemented in array includes/search paths and runtime helper comparisons. |
 
 ### 7.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-islessthan))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsLessThan relational comparison | Supported with Limitations | [`BinaryOperator_LessThan.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js)<br>[`BinaryOperator_GreaterThan.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js)<br>[`BinaryOperator_LessThanOrEqual.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js)<br>[`BinaryOperator_GreaterThanOrEqual.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js) |  | Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete. |
+| IsLessThan relational comparison | Supported with Limitations | [`BinaryOperator_LessThan.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js)<br>[`BinaryOperator_GreaterThan.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js)<br>[`BinaryOperator_LessThanOrEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js)<br>[`BinaryOperator_GreaterThanOrEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js) |  | Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete. |
 
 ### 7.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-islooselyequal))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsLooselyEqual (==) | Supported with Limitations | [`BinaryOperator_Equal.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js)<br>[`BinaryOperator_NotEqual.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js)<br>[`BinaryOperator_EqualBoolean.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js) |  | Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented. |
+| IsLooselyEqual (==) | Supported with Limitations | [`BinaryOperator_Equal.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js)<br>[`BinaryOperator_NotEqual.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js)<br>[`BinaryOperator_EqualBoolean.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js) |  | Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented. |
 
 ### 7.2.14 ([tc39.es](https://tc39.es/ecma262/#sec-isstrictlyequal))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| IsStrictlyEqual (===) | Supported with Limitations | [`BinaryOperator_StrictEqualCapturedVariable.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js) |  | Implements strict-equality behavior across supported runtime representations, with CLR/JS representation normalization in key paths. |
+| IsStrictlyEqual (===) | Supported with Limitations | [`BinaryOperator_StrictEqualCapturedVariable.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js) |  | Implements strict-equality behavior across supported runtime representations, with CLR/JS representation normalization in key paths. |
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Bounded differential test harness: Node.js vs JS2IL
+ * Bounded differential test harness: Node.js vs JROC
  *
  * For every JS program in the corpus this script:
  *   1. Runs the program with Node.js and captures stdout/stderr/exit-code.
- *   2. Compiles the program with JS2IL.
+ *   2. Compiles the program with JROC.
  *   3. Runs the compiled assembly with `dotnet` and captures stdout/stderr/exit-code.
  *   4. Normalises both outputs and reports any mismatch.
  *
@@ -18,7 +18,7 @@
  *   --generate <count>  Also run <count> generated programs (default: 0)
  *   --seed    <number>  RNG seed for generated programs (default: 42)
  *   --output  <dir>     Scratch dir for compiled DLLs (default: OS temp)
- *   --js2il   <path>    Path to js2il DLL or executable (auto-detected)
+ *   --jroc   <path>    Path to jroc DLL or executable (auto-detected)
  *   --verbose           Print all diffs even for passing tests
  */
 
@@ -40,7 +40,7 @@ function parseArgs(argv) {
         generate:        0,
         seed:            42,
         output:          null,
-        js2il:           null,
+        jroc:           null,
         verbose:         false,
     };
     for (let i = 0; i < argv.length; i++) {
@@ -51,7 +51,7 @@ function parseArgs(argv) {
         if ((a === '--generate'        || a === '-g') && argv[i + 1]) { args.generate        = Number(argv[++i]); continue; }
         if ((a === '--seed'            || a === '-s') && argv[i + 1]) { args.seed            = Number(argv[++i]); continue; }
         if ((a === '--output'          || a === '-o') && argv[i + 1]) { args.output          = argv[++i]; continue; }
-        if ((a === '--js2il'           || a === '-j') && argv[i + 1]) { args.js2il           = argv[++i]; continue; }
+        if ((a === '--jroc'           || a === '-j') && argv[i + 1]) { args.jroc           = argv[++i]; continue; }
         if (a === '--verbose' || a === '-v') { args.verbose = true; continue; }
     }
     if (args.compileTimeout === null) {
@@ -64,20 +64,20 @@ function parseArgs(argv) {
 }
 
 // ---------------------------------------------------------------------------
-// JS2IL invocation
+// JROC invocation
 // ---------------------------------------------------------------------------
 
 /**
- * Locate the JS2IL binary.  Priority:
- *   1. --js2il <path> argument
- *   2. JS2IL_DLL env var
- *   3. Built DLL at src/Cli/bin/{Release,Debug}/net10.0/Js2IL.dll
- *   4. `js2il` global tool on PATH
- *   5. `dotnet run --project src/Cli/Js2IL.csproj`
+ * Locate the JROC binary.  Priority:
+ *   1. --jroc <path> argument
+ *   2. JROC_DLL env var
+ *   3. Built DLL at src/Cli/bin/{Release,Debug}/net10.0/Jroc.dll
+ *   4. `jroc` global tool on PATH
+ *   5. `dotnet run --project src/Cli/Jroc.csproj`
  *
  * Returns { type: 'dll'|'exec'|'run', path: string }
  */
-function findJs2IL(override) {
+function findJroc(override) {
     const repoRoot = path.resolve(__dirname, '..', '..');
 
     if (override) {
@@ -86,47 +86,47 @@ function findJs2IL(override) {
         return { type: 'exec', path: override };
     }
 
-    if (process.env.JS2IL_DLL) {
-        return { type: 'dll', path: process.env.JS2IL_DLL };
+    if (process.env.JROC_DLL) {
+        return { type: 'dll', path: process.env.JROC_DLL };
     }
 
     for (const cfg of ['Release', 'Debug']) {
-        const dll = path.join(repoRoot, 'src', 'Cli', 'bin', cfg, 'net10.0', 'Js2IL.dll');
+        const dll = path.join(repoRoot, 'src', 'Cli', 'bin', cfg, 'net10.0', 'Jroc.dll');
         if (fs.existsSync(dll)) return { type: 'dll', path: dll };
     }
 
-    // Check if `js2il` is on PATH
+    // Check if `jroc` is on PATH
     const whichResult = spawnSync(process.platform === 'win32' ? 'where' : 'which',
-        ['js2il'], { encoding: 'utf8' });
+        ['jroc'], { encoding: 'utf8' });
     if (whichResult.status === 0 && whichResult.stdout.trim()) {
-        return { type: 'exec', path: 'js2il' };
+        return { type: 'exec', path: 'jroc' };
     }
 
     // Fall back to dotnet run
-    const proj = path.join(repoRoot, 'src', 'Cli', 'Js2IL.csproj');
+    const proj = path.join(repoRoot, 'src', 'Cli', 'Jroc.csproj');
     return { type: 'run', path: proj };
 }
 
 /**
- * Compile a JS file with JS2IL.
+ * Compile a JS file with JROC.
  * Returns { success: boolean, dllPath: string|null, stderr: string, durationMs: number }
  */
-function compileWithJs2IL(jsFile, outDir, js2il, timeoutMs) {
+function compileWithJroc(jsFile, outDir, jroc, timeoutMs) {
     const baseName = path.basename(jsFile, '.js');
     const compileOutDir = path.join(outDir, baseName);
     fs.mkdirSync(compileOutDir, { recursive: true });
 
     let cmd, args;
-    if (js2il.type === 'dll') {
+    if (jroc.type === 'dll') {
         cmd  = 'dotnet';
-        args = [js2il.path, jsFile, '-o', compileOutDir];
-    } else if (js2il.type === 'exec') {
-        cmd  = js2il.path;
+        args = [jroc.path, jsFile, '-o', compileOutDir];
+    } else if (jroc.type === 'exec') {
+        cmd  = jroc.path;
         args = [jsFile, '-o', compileOutDir];
     } else {
         // dotnet run
         cmd  = 'dotnet';
-        args = ['run', '--project', js2il.path, '--', jsFile, '-o', compileOutDir];
+        args = ['run', '--project', jroc.path, '--', jsFile, '-o', compileOutDir];
     }
 
     const t0 = Date.now();
@@ -235,69 +235,69 @@ function extractJsError(stderr) {
 // Test execution
 // ---------------------------------------------------------------------------
 
-function runOneProgram(jsFile, js2il, timeoutSec, compileTimeoutSec, outDir) {
+function runOneProgram(jsFile, jroc, timeoutSec, compileTimeoutSec, outDir) {
     const label = path.relative(process.cwd(), jsFile);
 
     // Step 1 – Node
     const nodeResult = runWithNode(jsFile, timeoutSec * 1000);
 
     // Step 2 – Compile
-    const compileResult = compileWithJs2IL(jsFile, outDir, js2il, compileTimeoutSec * 1000);
+    const compileResult = compileWithJroc(jsFile, outDir, jroc, compileTimeoutSec * 1000);
     if (!compileResult.success) {
         return {
             label,
             status: 'compile-error',
             nodeResult,
             compileError: compileResult.stderr,
-            js2ilResult:  null,
+            jrocResult:  null,
         };
     }
 
     // Step 3 – Run compiled assembly
-    const js2ilResult = runDotnet(compileResult.dllPath, timeoutSec * 1000);
+    const jrocResult = runDotnet(compileResult.dllPath, timeoutSec * 1000);
 
     // Step 4 – Compare
     let status;
     let detail = null;
 
-    if (nodeResult.timedOut && js2ilResult.timedOut) {
+    if (nodeResult.timedOut && jrocResult.timedOut) {
         status = 'both-timeout';
     } else if (nodeResult.timedOut) {
         status = 'node-timeout';
-    } else if (js2ilResult.timedOut) {
-        status = 'js2il-timeout';
-        detail = 'JS2IL execution timed out but Node finished';
+    } else if (jrocResult.timedOut) {
+        status = 'jroc-timeout';
+        detail = 'JROC execution timed out but Node finished';
     } else {
         const nodeStdout   = normaliseOutput(nodeResult.stdout);
-        const js2ilStdout  = normaliseOutput(js2ilResult.stdout);
+        const jrocStdout  = normaliseOutput(jrocResult.stdout);
         const nodeExitedOk = nodeResult.exitCode  === 0;
-        const dotnetOk     = js2ilResult.exitCode === 0;
+        const dotnetOk     = jrocResult.exitCode === 0;
 
         if (nodeExitedOk && dotnetOk) {
-            if (nodeStdout === js2ilStdout) {
+            if (nodeStdout === jrocStdout) {
                 status = 'pass';
             } else {
                 status = 'stdout-mismatch';
-                detail = `Node stdout:\n${nodeStdout}\n\nJS2IL stdout:\n${js2ilStdout}`;
+                detail = `Node stdout:\n${nodeStdout}\n\nJROC stdout:\n${jrocStdout}`;
             }
         } else if (!nodeExitedOk && !dotnetOk) {
             // Both failed – compare JS-level error messages
             const nodeErr   = extractJsError(nodeResult.stderr);
-            const js2ilErr  = extractJsError(js2ilResult.stderr);
-            if (nodeErr !== null && js2ilErr !== null && nodeErr === js2ilErr) {
+            const jrocErr  = extractJsError(jrocResult.stderr);
+            if (nodeErr !== null && jrocErr !== null && nodeErr === jrocErr) {
                 status = 'pass'; // same error
             } else {
                 status = 'error-mismatch';
-                detail = `Node error:   ${nodeErr || nodeResult.stderr.slice(0, 200)}\nJS2IL error:  ${js2ilErr || js2ilResult.stderr.slice(0, 200)}`;
+                detail = `Node error:   ${nodeErr || nodeResult.stderr.slice(0, 200)}\nJROC error:  ${jrocErr || jrocResult.stderr.slice(0, 200)}`;
             }
         } else {
             // One exited OK, the other didn't
             status = 'exit-code-mismatch';
-            detail = `Node exit ${nodeResult.exitCode}, JS2IL exit ${js2ilResult.exitCode}`;
+            detail = `Node exit ${nodeResult.exitCode}, JROC exit ${jrocResult.exitCode}`;
         }
     }
 
-    return { label, status, detail, nodeResult, js2ilResult };
+    return { label, status, detail, nodeResult, jrocResult };
 }
 
 // ---------------------------------------------------------------------------
@@ -320,8 +320,8 @@ function printResult(r, verbose) {
             console.log(c('green', `  PASS  ${r.label}`));
             if (verbose) {
                 const nodeOk = r.nodeResult && r.nodeResult.exitCode === 0 && !r.nodeResult.timedOut;
-                const js2ilOk = r.js2ilResult && r.js2ilResult.exitCode === 0 && !r.js2ilResult.timedOut;
-                if (nodeOk && js2ilOk) {
+                const jrocOk = r.jrocResult && r.jrocResult.exitCode === 0 && !r.jrocResult.timedOut;
+                if (nodeOk && jrocOk) {
                     const stdout = normaliseOutput(r.nodeResult.stdout);
                     if (stdout) {
                         stdout.split('\n').forEach(l => console.log(c('gray', `         ${l}`)));
@@ -344,8 +344,8 @@ function printResult(r, verbose) {
         case 'node-timeout':
             console.log(c('yellow', `  SKIP  ${r.label}  (Node timed out)`));
             break;
-        case 'js2il-timeout':
-            console.log(c('red',    `  FAIL  ${r.label}  (JS2IL timed out)`));
+        case 'jroc-timeout':
+            console.log(c('red',    `  FAIL  ${r.label}  (JROC timed out)`));
             if (r.detail) console.log(c('gray', `         ${r.detail}`));
             break;
         default:
@@ -367,13 +367,13 @@ async function main() {
     // Scratch directory for compiled DLLs
     const outDir = args.output || fs.mkdtempSync(path.join(os.tmpdir(), 'diff-test-'));
 
-    // Locate js2il
-    const js2il = findJs2IL(args.js2il);
-    console.log(c('cyan', `\nDifferential test harness  –  Node.js vs JS2IL`));
+    // Locate jroc
+    const jroc = findJroc(args.jroc);
+    console.log(c('cyan', `\nDifferential test harness  –  Node.js vs JROC`));
     console.log(c('gray',  `  corpus  : ${args.corpus}`));
     console.log(c('gray',  `  timeout : ${args.timeout}s per execution, ${args.compileTimeout}s per compilation`));
     console.log(c('gray',  `  output  : ${outDir}`));
-    console.log(c('gray',  `  js2il   : [${js2il.type}] ${js2il.path}`));
+    console.log(c('gray',  `  jroc   : [${jroc.type}] ${jroc.path}`));
     console.log();
 
     // Collect programs: corpus files + generated
@@ -395,14 +395,14 @@ async function main() {
     // Execute
     const results = [];
     for (const jsFile of allFiles) {
-        const r = runOneProgram(jsFile, js2il, args.timeout, args.compileTimeout, outDir);
+        const r = runOneProgram(jsFile, jroc, args.timeout, args.compileTimeout, outDir);
         results.push(r);
         printResult(r, args.verbose);
     }
 
     // Summary
     const passed    = results.filter(r => r.status === 'pass').length;
-    const failed    = results.filter(r => ['stdout-mismatch', 'error-mismatch', 'exit-code-mismatch', 'js2il-timeout'].includes(r.status)).length;
+    const failed    = results.filter(r => ['stdout-mismatch', 'error-mismatch', 'exit-code-mismatch', 'jroc-timeout'].includes(r.status)).length;
     const skipped   = results.filter(r => ['compile-error', 'both-timeout', 'node-timeout'].includes(r.status)).length;
 
     console.log();
@@ -417,7 +417,7 @@ async function main() {
         console.log();
         console.log(c('red', 'Failing programs (reproduction):'));
         results
-            .filter(r => ['stdout-mismatch', 'error-mismatch', 'exit-code-mismatch', 'js2il-timeout'].includes(r.status))
+            .filter(r => ['stdout-mismatch', 'error-mismatch', 'exit-code-mismatch', 'jroc-timeout'].includes(r.status))
             .forEach(r => {
                 console.log(c('red',  `  ${r.label}`));
                 if (r.detail) r.detail.split('\n').forEach(l => console.log(c('gray', `    ${l}`)));
@@ -430,9 +430,9 @@ async function main() {
 }
 
 module.exports = {
-    compileWithJs2IL,
+    compileWithJroc,
     extractJsError,
-    findJs2IL,
+    findJroc,
     normaliseOutput,
     parseArgs,
     runDotnet,

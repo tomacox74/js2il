@@ -1,7 +1,7 @@
 using System.Reflection;
 using JavaScriptRuntime;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
 /// Base type for all exceptions intentionally surfaced by the hosting API.

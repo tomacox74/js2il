@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using JavaScriptRuntime;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 internal static class JsPromiseTaskInterop
 {

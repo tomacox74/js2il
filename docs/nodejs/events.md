@@ -30,13 +30,13 @@ Complete EventEmitter implementation for event-driven programming patterns. Supp
 Comprehensive EventEmitter implementation supporting all core listener lifecycle APIs: on/addListener, once, off/removeListener, emit (with argument forwarding), listenerCount, removeAllListeners, prependListener, prependOnceListener, eventNames, listeners, rawListeners, setMaxListeners, getMaxListeners, and errorMonitor behavior for error events.
 
 **Tests:**
-- `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_On_Off_Once` (`tests/Js2IL.Tests/Node/Events/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_On_Off_Once` (`tests/Js2IL.Tests/Node/Events/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_Emit_Args` (`tests/Js2IL.Tests/Node/Events/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Emit_Args` (`tests/Js2IL.Tests/Node/Events/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_Complete` (`tests/Js2IL.Tests/Node/Events/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Complete` (`tests/Js2IL.Tests/Node/Events/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Events.ExecutionTests.Events_EventEmitter_ErrorMonitor` (`tests/Js2IL.Tests/Node/Events/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Events.GeneratorTests.Events_EventEmitter_ErrorMonitor` (`tests/Js2IL.Tests/Node/Events/GeneratorTests.cs`)
-- `Js2IL.Tests.Node.Events.ExecutionTests.Events_AsyncHelpers_On_Once` (`tests/Js2IL.Tests/Node/Events/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Events.GeneratorTests.Events_AsyncHelpers_On_Once` (`tests/Js2IL.Tests/Node/Events/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Events.ExecutionTests.Events_EventEmitter_On_Off_Once` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Events.GeneratorTests.Events_EventEmitter_On_Off_Once` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Events.ExecutionTests.Events_EventEmitter_Emit_Args` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Emit_Args` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Events.ExecutionTests.Events_EventEmitter_Complete` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Events.GeneratorTests.Events_EventEmitter_Complete` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Events.ExecutionTests.Events_EventEmitter_ErrorMonitor` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Events.GeneratorTests.Events_EventEmitter_ErrorMonitor` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Events.ExecutionTests.Events_AsyncHelpers_On_Once` (`tests/Jroc.Tests/Node/Events/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Events.GeneratorTests.Events_AsyncHelpers_On_Once` (`tests/Jroc.Tests/Node/Events/GeneratorTests.cs`)

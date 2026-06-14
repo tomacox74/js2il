@@ -1,7 +1,7 @@
 import * as Mitata from "mitata";
 import process from "node:process";
 
-const useSimpleRunner = !!process?.env?.JS2IL_SIMPLE_BENCH_RUNNER;
+const useSimpleRunner = !!process?.env?.JROC_SIMPLE_BENCH_RUNNER;
 const simpleBenchmarks = [];
 
 function createSimpleBenchHandle() {
@@ -61,7 +61,7 @@ async function simpleRun() {
   const now = globalThis.performance?.now
     ? () => globalThis.performance.now() * 1e6
     : () => Date.now() * 1e6;
-  const iterations = Number.parseInt(process?.env?.JS2IL_SIMPLE_BENCH_ITERATIONS ?? "", 10);
+  const iterations = Number.parseInt(process?.env?.JROC_SIMPLE_BENCH_ITERATIONS ?? "", 10);
   const runsPerBenchmark = Number.isFinite(iterations) && iterations > 0 ? iterations : 1;
   const results = [];
 
@@ -96,7 +96,7 @@ async function simpleRun() {
 
   if (process?.env?.BENCHMARK_RUNNER) {
     console.log(JSON.stringify({
-      runtime: "js2il",
+      runtime: "jroc",
       iterations: runsPerBenchmark,
       benchmarks: results.map(result => ({
         ...result,

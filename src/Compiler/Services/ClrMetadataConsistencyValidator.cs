@@ -6,7 +6,7 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 internal static class ClrMetadataConsistencyValidator
 {
@@ -67,7 +67,7 @@ internal static class ClrMetadataConsistencyValidator
         var runtimeAssembly = typeof(JavaScriptRuntime.Object).Assembly;
         var runtimeAssemblyPath = runtimeAssembly.Location;
         var runtimeAssemblyName = runtimeAssembly.GetName().Name;
-        var alc = new AssemblyLoadContext("Js2IL_MetadataValidation", isCollectible: true);
+        var alc = new AssemblyLoadContext("Jroc_MetadataValidation", isCollectible: true);
 
         Assembly? ResolveValidationDependency(AssemblyLoadContext context, AssemblyName assemblyName)
         {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Immutable directed dependency graph of callables: Caller -> Callee.

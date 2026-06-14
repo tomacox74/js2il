@@ -1,6 +1,6 @@
-using Js2IL.HIR;
+using Jroc.HIR;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {

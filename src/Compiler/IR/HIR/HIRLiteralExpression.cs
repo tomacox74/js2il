@@ -1,6 +1,6 @@
-using Js2IL.Services;
+using Jroc.Services;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRLiteralExpression : HIRExpression
 {

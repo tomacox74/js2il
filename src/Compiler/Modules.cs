@@ -1,10 +1,10 @@
 using Acornima.Ast;
-using Js2IL.DebugSymbols;
-using Js2IL.SymbolTables;
+using Jroc.DebugSymbols;
+using Jroc.SymbolTables;
 using System;
 using System.Collections.Generic;
 
-namespace Js2IL;
+namespace Jroc;
 
 public sealed class ModuleDefinition
 {

@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Determine js2il tool version
+      - name: Determine jroc tool version
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -44,7 +44,7 @@ jobs:
           "Using tool version: $version" | Write-Output
           "TOOL_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Wait for published Js2IL packages
+      - name: Wait for published Jroc packages
         if: github.event_name == 'release'
         uses: actions/github-script@v8
         with:
@@ -99,11 +99,11 @@ jobs:
           $ErrorActionPreference = 'Stop'
           node scripts/waitForNuGetPackageVersions.js `
             --version $env:TOOL_VERSION `
-            --package js2il `
-            --package Js2IL.Runtime `
-            --package Js2IL.SDK
+            --package jroc `
+            --package Jroc.Runtime `
+            --package Jroc.SDK
 
-      - name: Install js2il tool from NuGet (specific version with retry)
+      - name: Install jroc tool from NuGet (specific version with retry)
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -114,28 +114,28 @@ jobs:
 
           for ($i = 1; $i -le $tries; $i++) {
             dotnet nuget locals http-cache --clear | Write-Output
-            dotnet tool install --global js2il --version $env:TOOL_VERSION
+            dotnet tool install --global jroc --version $env:TOOL_VERSION
             if ($LASTEXITCODE -eq 0) {
-              "Installed js2il $env:TOOL_VERSION" | Write-Output
+              "Installed jroc $env:TOOL_VERSION" | Write-Output
               exit 0
             }
 
-            "Attempt $i/${tries}: js2il $env:TOOL_VERSION not available yet on NuGet; waiting ${delaySeconds}s..." | Write-Output
+            "Attempt $i/${tries}: jroc $env:TOOL_VERSION not available yet on NuGet; waiting ${delaySeconds}s..." | Write-Output
             Start-Sleep -Seconds $delaySeconds
           }
 
-          throw "Failed to install js2il $env:TOOL_VERSION from NuGet after $tries attempts"
+          throw "Failed to install jroc $env:TOOL_VERSION from NuGet after $tries attempts"
 
-      - name: Show js2il version
+      - name: Show jroc version
         shell: pwsh
         run: |
           # Older previews may not support --version; fall back to help
-          js2il --version
-          if ($LASTEXITCODE -ne 0) { js2il -h | Out-Null }
+          jroc --version
+          if ($LASTEXITCODE -ne 0) { jroc -h | Out-Null }
 
       - name: Convert tests/simple.js to IL
         shell: pwsh
-        run: js2il tests/simple.js -o out
+        run: jroc tests/simple.js -o out
 
       - name: Run generated assembly and verify output
         shell: pwsh
@@ -194,19 +194,19 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:Js2ILRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
           $outputText = ($output -join "`n")
-          if ($outputText -notmatch 'title=JS2IL Domino Sample') { throw 'Expected output containing title=JS2IL Domino Sample' }
+          if ($outputText -notmatch 'title=JROC Domino Sample') { throw 'Expected output containing title=JROC Domino Sample' }
           if ($outputText -notmatch 'links=2') { throw 'Expected output containing links=2' }
 
       - name: Build and run Hosting.Basic sample
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:Js2ILRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
@@ -218,7 +218,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:Js2ILRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output

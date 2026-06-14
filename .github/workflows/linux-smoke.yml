@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Determine js2il tool version
+      - name: Determine jroc tool version
         run: |
           set -euo pipefail
           # Use the highest semver-like tag (vX.Y.Z[-suffix]) available
@@ -42,7 +42,7 @@ jobs:
           echo "Using tool version: $version"
           echo "TOOL_VERSION=$version" >> "$GITHUB_ENV"
 
-      - name: Wait for published Js2IL packages
+      - name: Wait for published Jroc packages
         if: github.event_name == 'release'
         uses: actions/github-script@v8
         with:
@@ -96,11 +96,11 @@ jobs:
           set -euo pipefail
           node scripts/waitForNuGetPackageVersions.js \
             --version "$TOOL_VERSION" \
-            --package js2il \
-            --package Js2IL.Runtime \
-            --package Js2IL.SDK
+            --package jroc \
+            --package Jroc.Runtime \
+            --package Jroc.SDK
 
-      - name: Install js2il tool from NuGet (specific version with retry)
+      - name: Install jroc tool from NuGet (specific version with retry)
         run: |
           set -euo pipefail
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
@@ -108,23 +108,23 @@ jobs:
           delay=30
           for i in $(seq 1 $tries); do
             dotnet nuget locals http-cache --clear || true
-            if dotnet tool install --global js2il --version "$TOOL_VERSION"; then
-              echo "Installed js2il $TOOL_VERSION"
+            if dotnet tool install --global jroc --version "$TOOL_VERSION"; then
+              echo "Installed jroc $TOOL_VERSION"
               exit 0
             fi
-            echo "Attempt $i/$tries: js2il $TOOL_VERSION not available yet on NuGet; waiting ${delay}s..."
+            echo "Attempt $i/$tries: jroc $TOOL_VERSION not available yet on NuGet; waiting ${delay}s..."
             sleep $delay
           done
-          echo "Failed to install js2il $TOOL_VERSION from NuGet after $tries attempts" >&2
+          echo "Failed to install jroc $TOOL_VERSION from NuGet after $tries attempts" >&2
           exit 1
 
-      - name: Show js2il version
+      - name: Show jroc version
         run: |
           # Older previews may not support --version; fall back to help
-          js2il --version || js2il -h || true
+          jroc --version || jroc -h || true
 
       - name: Convert tests/simple.js to IL
-        run: js2il tests/simple.js -o out
+        run: jroc tests/simple.js -o out
 
       - name: Run generated assembly and verify output
         run: |
@@ -167,16 +167,16 @@ jobs:
       - name: Build and run Hosting.Domino sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:Js2ILRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
-          echo "$output" | grep -i "title=JS2IL Domino Sample"
+          echo "$output" | grep -i "title=JROC Domino Sample"
           echo "$output" | grep -i "links=2"
 
       - name: Build and run Hosting.Basic sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:Js2ILRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "version="
@@ -185,7 +185,7 @@ jobs:
       - name: Build and run Hosting.Typed sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:Js2ILRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "version="

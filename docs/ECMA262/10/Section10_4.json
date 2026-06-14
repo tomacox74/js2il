@@ -4,7 +4,7 @@
   "title": "Built-in Exotic Object Internal Methods and Slots",
   "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots",
-  "intro": "JS2IL implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.",
+  "intro": "JROC implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.",
   "parent": {
     "clause": "10"
   },
@@ -385,9 +385,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-bound-function-exotic-objects",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
         ],
         "test262Paths": [
           "test/built-ins/Function/prototype/bind/15.3.4.5-0-1.js",
@@ -412,9 +412,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-array-exotic-objects",
         "testScripts": [
-          "tests/Js2IL.Tests/Array/JavaScript/Array_New_Length.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_New_MultipleArgs.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_New_Length.js",
+          "tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js",
+          "tests/Jroc.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
         ],
         "notes": "Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled."
       },
@@ -424,18 +424,18 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-arguments-exotic-objects",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Basics.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Length_Delete.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-12-2.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-13-c-2-s.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-13-c-3-s.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-13-a-2.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/10.6-13-a-3.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/ArgumentsObject_callee-descriptor-non-strict.js",
-          "tests/Js2IL.Test262.Tests/language/arguments-object/JavaScript/ArgumentsObject_global-TypeError.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_Basics.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_ComputedKey_TriggersBinding.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_Length_Delete.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_MappedParameterAliasing.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-12-2.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-13-c-2-s.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-13-c-3-s.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-13-a-2.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/10.6-13-a-3.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/ArgumentsObject_callee-descriptor-non-strict.js",
+          "tests/Jroc.Test262.Tests/language/arguments-object/JavaScript/ArgumentsObject_global-TypeError.js"
         ],
         "test262Suites": [
           "pr",
@@ -467,12 +467,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-typedarray-exotic-objects",
         "testScripts": [
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
-          "tests/Js2IL.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js"
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Index_Assign.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_NaN_Index_NoOp.js"
         ],
-        "notes": "JS2IL currently implements only Int32Array, with construction from length/iterables, integer index reads and writes, and pragmatic out-of-bounds handling. It does not model ArrayBuffer-backed typed-array witness records, detach/out-of-bounds abstract operations, or the full family of typed array exotics."
+        "notes": "JROC currently implements only Int32Array, with construction from length/iterables, integer index reads and writes, and pragmatic out-of-bounds handling. It does not model ArrayBuffer-backed typed-array witness records, detach/out-of-bounds abstract operations, or the full family of typed array exotics."
       },
       {
         "clause": "10.4.6",
@@ -480,8 +480,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-module-namespace-exotic-objects",
         "testScripts": [
-          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
-          "tests/Js2IL.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
+          "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_Esm_Basic.js",
+          "tests/Jroc.Tests/Import/JavaScript/Import_Namespace_FromCjs_Stable.js"
         ],
         "notes": "JSImport namespace lowering rewrites imports to a helper that builds a plain object with accessor descriptors for live reads of exported members. That captures common namespace-import behavior, but the result is not a true Module Namespace Exotic Object with the full non-extensible, non-configurable invariant set from the spec."
       },
@@ -490,7 +490,7 @@
         "feature": "Immutable prototype exotic invariants",
         "status": "Not Yet Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-immutable-prototype-exotic-objects",
-        "notes": "JS2IL does not currently model any object with a dedicated immutable-prototype exotic internal method. Prototype mutation is handled through the ordinary PrototypeChain side-table instead."
+        "notes": "JROC does not currently model any object with a dedicated immutable-prototype exotic internal method. Prototype mutation is handled through the ordinary PrototypeChain side-table instead."
       }
     ]
   }

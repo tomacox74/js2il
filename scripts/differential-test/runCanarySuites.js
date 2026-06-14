@@ -6,8 +6,8 @@ const os = require('os');
 const path = require('path');
 
 const {
-  compileWithJs2IL,
-  findJs2IL,
+  compileWithJroc,
+  findJroc,
   normaliseOutput,
   runDotnet,
   runWithNode,
@@ -33,7 +33,7 @@ function parseArgs(argv) {
     timeout: 20,
     compileTimeout: null,
     output: null,
-    js2il: null,
+    jroc: null,
     verbose: false,
     help: false,
   };
@@ -71,8 +71,8 @@ function parseArgs(argv) {
       continue;
     }
 
-    if ((a === '--js2il' || a === '-j') && argv[i + 1]) {
-      args.js2il = argv[++i];
+    if ((a === '--jroc' || a === '-j') && argv[i + 1]) {
+      args.jroc = argv[++i];
       continue;
     }
 
@@ -105,7 +105,7 @@ function usage() {
   console.log('  --timeout, -t          Per-execution timeout in seconds (default: 20)');
   console.log('  --compile-timeout      Compilation timeout in seconds (default: 2x timeout)');
   console.log('  --output, -o           Output/artifact directory (default: OS temp)');
-  console.log('  --js2il, -j            Path to Js2IL.dll or js2il executable');
+  console.log('  --jroc, -j            Path to Jroc.dll or jroc executable');
   console.log('  --verbose, -v          Print expected output for passing canaries');
 }
 
@@ -215,7 +215,7 @@ function formatCompileFailure(compileResult) {
       : '';
 
     return [
-      `JS2IL compilation timed out${durationSuffix}.`,
+      `JROC compilation timed out${durationSuffix}.`,
       '',
       'Compiler stderr/stdout:',
       normalisedStderr || '(no output)',
@@ -223,14 +223,14 @@ function formatCompileFailure(compileResult) {
   }
 
   return [
-    'JS2IL compilation failed.',
+    'JROC compilation failed.',
     '',
     'Compiler stderr/stdout:',
     normalisedStderr || '(no output)',
   ].join('\n');
 }
 
-function runCanaryCase(canaryCase, js2il, timeoutSec, compileTimeoutSec, outputRoot) {
+function runCanaryCase(canaryCase, jroc, timeoutSec, compileTimeoutSec, outputRoot) {
   const expected = normaliseOutput(fs.readFileSync(canaryCase.expectedFile, 'utf8'));
   const artifactDir = buildArtifactDirectory(outputRoot, canaryCase);
   const compileOutputDir = buildCompileOutputDirectory(outputRoot, canaryCase);
@@ -269,10 +269,10 @@ function runCanaryCase(canaryCase, js2il, timeoutSec, compileTimeoutSec, outputR
     };
   }
 
-  const compileResult = compileWithJs2IL(
+  const compileResult = compileWithJroc(
     canaryCase.jsFile,
     compileOutputDir,
-    js2il,
+    jroc,
     compileTimeoutSec * 1000
   );
   if (!compileResult.success) {
@@ -285,33 +285,33 @@ function runCanaryCase(canaryCase, js2il, timeoutSec, compileTimeoutSec, outputR
     };
   }
 
-  const js2ilResult = runDotnet(compileResult.dllPath, timeoutSec * 1000);
-  if (js2ilResult.timedOut) {
+  const jrocResult = runDotnet(compileResult.dllPath, timeoutSec * 1000);
+  if (jrocResult.timedOut) {
     return {
       name: canaryCase.name,
-      status: 'js2il-timeout',
-      detail: `JS2IL execution timed out after ${timeoutSec}s.`,
+      status: 'jroc-timeout',
+      detail: `JROC execution timed out after ${timeoutSec}s.`,
       artifactDir,
       expected,
     };
   }
 
-  if (js2ilResult.exitCode !== 0) {
+  if (jrocResult.exitCode !== 0) {
     return {
       name: canaryCase.name,
-      status: 'js2il-failure',
-      detail: formatProcessFailure('JS2IL', js2ilResult),
+      status: 'jroc-failure',
+      detail: formatProcessFailure('JROC', jrocResult),
       artifactDir,
       expected,
     };
   }
 
-  const js2ilStdout = normaliseOutput(js2ilResult.stdout);
-  if (js2ilStdout !== expected) {
+  const jrocStdout = normaliseOutput(jrocResult.stdout);
+  if (jrocStdout !== expected) {
     return {
       name: canaryCase.name,
-      status: 'js2il-output-mismatch',
-      detail: formatExpectedMismatch(expected, js2ilStdout, 'JS2IL'),
+      status: 'jroc-output-mismatch',
+      detail: formatExpectedMismatch(expected, jrocStdout, 'JROC'),
       artifactDir,
       expected,
     };
@@ -358,8 +358,8 @@ async function main() {
     args.output = process.env.npm_config_output.trim();
   }
 
-  if (!args.js2il && typeof process.env.npm_config_js2il === 'string' && process.env.npm_config_js2il.trim()) {
-    args.js2il = process.env.npm_config_js2il.trim();
+  if (!args.jroc && typeof process.env.npm_config_jroc === 'string' && process.env.npm_config_jroc.trim()) {
+    args.jroc = process.env.npm_config_jroc.trim();
   }
 
   if (!args.verbose && (process.env.npm_config_loglevel === 'verbose' || truthy(process.env.npm_config_verbose))) {
@@ -371,7 +371,7 @@ async function main() {
     return;
   }
 
-  const js2il = findJs2IL(args.js2il);
+  const jroc = findJroc(args.jroc);
   const outputRoot = args.output || fs.mkdtempSync(path.join(os.tmpdir(), 'canary-smoke-'));
   const suiteDirectories = getSuiteDirectories(args.suite);
   const cases = discoverCases(suiteDirectories);
@@ -380,7 +380,7 @@ async function main() {
   console.log(c('gray', `  suite   : ${args.suite}`));
   console.log(c('gray', `  timeout : ${args.timeout}s per execution, ${args.compileTimeout}s per compilation`));
   console.log(c('gray', `  output  : ${outputRoot}`));
-  console.log(c('gray', `  js2il   : [${js2il.type}] ${js2il.path}`));
+  console.log(c('gray', `  jroc   : [${jroc.type}] ${jroc.path}`));
   console.log();
   console.log(c('cyan', `Running ${cases.length} real-world canaries...\n`));
 
@@ -388,7 +388,7 @@ async function main() {
   for (const canaryCase of cases) {
     const result = runCanaryCase(
       canaryCase,
-      js2il,
+      jroc,
       args.timeout,
       args.compileTimeout,
       outputRoot

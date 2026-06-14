@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text.Json;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 public enum ModuleResolutionMode
 {
@@ -13,7 +13,7 @@ public enum ModuleResolutionMode
 /// <summary>
 /// Resolves CommonJS and ESM module specifiers to concrete JavaScript module files at compile time.
 ///
-/// This mirrors Node.js module resolution rules as closely as practical for JS2IL,
+/// This mirrors Node.js module resolution rules as closely as practical for JROC,
 /// and supports <c>.js</c>, <c>.mjs</c>, and <c>.cjs</c> targets.
 /// </summary>
 public sealed class NodeModuleResolver

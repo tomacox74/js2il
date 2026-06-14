@@ -1,4 +1,4 @@
-namespace Js2IL.SymbolTables;
+namespace Jroc.SymbolTables;
 
 /// <summary>
 /// Represents the symbol table for JavaScript source code.

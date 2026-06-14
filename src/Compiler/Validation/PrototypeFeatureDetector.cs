@@ -1,8 +1,8 @@
 using Acornima.Ast;
-using Js2IL.Utilities;
+using Jroc.Utilities;
 using System;
 
-namespace Js2IL.Validation;
+namespace Jroc.Validation;
 
 internal static class PrototypeFeatureDetector
 {

@@ -1,8 +1,8 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using Js2IL.IR;
+using Jroc.IR;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 /// <summary>
 /// Optimizer for branch conditions.

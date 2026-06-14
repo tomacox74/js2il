@@ -1,11 +1,11 @@
-﻿using Js2IL.IR;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.TwoPhaseCompilation;
+using Jroc.IR;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.TwoPhaseCompilation;
 using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {

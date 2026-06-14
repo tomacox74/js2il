@@ -213,8 +213,8 @@ sequenceDiagram
 
 ## Suggested test locations
 
-- `tests/Js2IL.Tests/Node/FS/ExecutionTests.cs`
-- `tests/Js2IL.Tests/Node/NodeEventLoopPumpTests.cs`
+- `tests/Jroc.Tests/Node/FS/ExecutionTests.cs`
+- `tests/Jroc.Tests/Node/NodeEventLoopPumpTests.cs`
 
 ## Backward Compatibility
 

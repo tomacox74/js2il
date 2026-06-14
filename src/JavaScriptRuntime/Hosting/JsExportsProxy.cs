@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
 /// DispatchProxy that projects a module's CommonJS exports object onto a .NET interface.

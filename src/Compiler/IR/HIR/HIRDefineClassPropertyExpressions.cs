@@ -1,7 +1,7 @@
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 using System.Collections.Generic;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRDefineClassDataPropertyExpression : HIRExpression
 {

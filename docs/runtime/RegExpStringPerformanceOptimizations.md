@@ -9,8 +9,8 @@ The goal was to recover the severe `dromaeo-object-regexp` regression that appea
   - `v0.8.28`: about `78.5 ms`
   - `v0.8.29`: about `401 ms`
 - Local reproduction before the fix on the issue #833 branch:
-  - non-modern `js2il execute (pre-compiled)`: about `671.7 ms`
-  - non-modern `js2il compile`: about `347.3 ms`
+  - non-modern `jroc execute (pre-compiled)`: about `671.7 ms`
+  - non-modern `jroc compile`: about `347.3 ms`
 
 The first investigation pointed at the new generic well-known-symbol dispatch used by:
 
@@ -116,8 +116,8 @@ This PR fixes that fallback and adds focused coverage so the performance fast pa
 
 | Measurement | Before | After |
 | --- | ---: | ---: |
-| non-modern `js2il execute (pre-compiled)` | `671.7 ms` | `239.6 ms` |
-| non-modern `js2il compile` | `347.3 ms` | `248.7 ms` |
+| non-modern `jroc execute (pre-compiled)` | `671.7 ms` | `239.6 ms` |
+| non-modern `jroc compile` | `347.3 ms` | `248.7 ms` |
 
 ### Targeted hotspot probe
 
@@ -138,7 +138,7 @@ Focused behavior coverage was added for:
 Validation commands used during the work:
 
 ```powershell
-dotnet test .\tests\Js2IL.Tests\Js2IL.Tests.csproj -c Release --filter "FullyQualifiedName~Js2IL.Tests.String.ExecutionTests|FullyQualifiedName~Js2IL.Tests.String.GeneratorTests|FullyQualifiedName~Js2IL.Tests.IntrinsicCallables.ExecutionTests.IntrinsicCallables_RegExp|FullyQualifiedName~Js2IL.Tests.IntrinsicCallables.GeneratorTests.IntrinsicCallables_RegExp" --nologo
+dotnet test .\tests\Jroc.Tests\Jroc.Tests.csproj -c Release --filter "FullyQualifiedName~Jroc.Tests.String.ExecutionTests|FullyQualifiedName~Jroc.Tests.String.GeneratorTests|FullyQualifiedName~Jroc.Tests.IntrinsicCallables.ExecutionTests.IntrinsicCallables_RegExp|FullyQualifiedName~Jroc.Tests.IntrinsicCallables.GeneratorTests.IntrinsicCallables_RegExp" --nologo
 ```
 
 ```powershell
@@ -151,12 +151,12 @@ node .\scripts\runPhasedBenchmarkScenario.js dromaeo-object-regexp
 - `src\JavaScriptRuntime\RegExp.cs`
 - `src\JavaScriptRuntime\Object.cs`
 - `src\JavaScriptRuntime\Symbol.cs`
-- `tests\Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpOverride.js`
-- `tests\Js2IL.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpPrototypeOverride.js`
-- `tests\Js2IL.Tests\String\JavaScript\String_Split_Regex_Empty.js`
+- `tests\Jroc.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpOverride.js`
+- `tests\Jroc.Tests\String\JavaScript\String_RegExp_SymbolDispatch_RegExpPrototypeOverride.js`
+- `tests\Jroc.Tests\String\JavaScript\String_Split_Regex_Empty.js`
 
 ## Takeaways
 
 - Generic well-known-symbol dispatch can be a major cost in RegExp-heavy benchmark scenarios.
 - Empty-RegExp split is worth treating as a dedicated runtime path because its semantics are stable and its hot-path cost is unusually high.
-- In JS2IL, performance fast paths must always be paired with explicit invalidation and tests for instance/prototype mutation so JavaScript behavior stays correct.
+- In JROC, performance fast paths must always be paired with explicit invalidation and tests for instance/prototype mutation so JavaScript behavior stays correct.

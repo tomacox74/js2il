@@ -1,4 +1,4 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents a continue statement that skips to the next iteration of the innermost loop or labeled loop.

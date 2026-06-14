@@ -1,5 +1,5 @@
-using Js2IL.Runtime;
-using Js2IL.HostedCounterModule;
+using Jroc.Runtime;
+using Jroc.HostedCounterModule;
 using System.Threading.Tasks;
 
 namespace Hosting.Typed;
@@ -9,7 +9,7 @@ internal static class Program
     private static async Task Main()
     {
         // Demonstrates:
-        // - Using only JS2IL-generated contracts (no handwritten interfaces).
+        // - Using only JROC-generated contracts (no handwritten interfaces).
         // - Exported functions and values projected onto a strongly-typed exports interface.
         // - Exported ES class projected as IJsConstructor<T> and instances as IJsHandle (dispose when done).
         // - Invoking an async JS export that returns a Promise, then bridging it to Task.

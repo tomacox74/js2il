@@ -1,10 +1,10 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
-using Js2IL.Utilities.Ecma335;
+using Jroc.Utilities.Ecma335;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     internal sealed class Runtime
     {

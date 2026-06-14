@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents a JavaScript object literal expression, e.g., { name: "Alice", age: 31 }.

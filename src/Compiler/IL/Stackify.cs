@@ -1,7 +1,7 @@
-using Js2IL.IR;
+using Jroc.IR;
 using System.Linq;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 /// <summary>
 /// Result of stackify analysis - indicates which temps can stay on the evaluation stack

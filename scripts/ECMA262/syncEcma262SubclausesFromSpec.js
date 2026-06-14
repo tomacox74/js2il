@@ -171,7 +171,7 @@ async function fetchSpecHtml() {
   const res = await fetch(SPEC_URL, {
     headers: {
       // Some environments serve slightly different content without a UA; set one.
-      'User-Agent': 'js2il-doc-sync-script',
+      'User-Agent': 'jroc-doc-sync-script',
     },
   });
   if (!res.ok) {

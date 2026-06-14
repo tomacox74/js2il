@@ -63,10 +63,10 @@ jobs:
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Restore
-        run: dotnet restore js2il.sln
+        run: dotnet restore jroc.sln
 
       - name: Build
-        run: dotnet build js2il.sln -c Release --no-restore
+        run: dotnet build jroc.sln -c Release --no-restore
 
       - name: Validate coordinated release package set
         run: npm run release:validate
@@ -80,9 +80,9 @@ jobs:
 
           $projects = @(
             'src/JavaScriptRuntime/JavaScriptRuntime.csproj',
-            'src/Cli/Js2IL.csproj',
-            'src/Js2IL.Core/Js2IL.Core.csproj',
-            'src/Js2IL.SDK/Js2IL.SDK.csproj'
+            'src/Cli/Jroc.csproj',
+            'src/Jroc.Core/Jroc.Core.csproj',
+            'src/Jroc.SDK/Jroc.SDK.csproj'
           )
 
           foreach ($project in $projects) {
@@ -95,10 +95,10 @@ jobs:
         shell: pwsh
         run: |
           $packageNames = @(
-            "Js2IL.Runtime.$env:VERSION.nupkg",
-            "js2il.$env:VERSION.nupkg",
-            "Js2IL.Core.$env:VERSION.nupkg",
-            "Js2IL.SDK.$env:VERSION.nupkg"
+            "Jroc.Runtime.$env:VERSION.nupkg",
+            "jroc.$env:VERSION.nupkg",
+            "Jroc.Core.$env:VERSION.nupkg",
+            "Jroc.SDK.$env:VERSION.nupkg"
           )
 
           foreach ($packageName in $packageNames) {

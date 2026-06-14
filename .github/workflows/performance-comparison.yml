@@ -32,14 +32,14 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       
-      - name: Build JS2IL
+      - name: Build JROC
         run: |
           dotnet build -c Release
           dotnet pack -c Release
       
-      - name: Install JS2IL as global tool
+      - name: Install JROC as global tool
         run: |
-          dotnet tool install --global --add-source ./src/Cli/bin/Release js2il
+          dotnet tool install --global --add-source ./src/Cli/bin/Release jroc
       
       - name: Build Jint and Okojo comparison projects
         run: |

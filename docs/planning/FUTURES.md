@@ -1,10 +1,10 @@
 # Futures
 
-This file captures forward-looking ideas discussed for JS2IL strategy and roadmap.
+This file captures forward-looking ideas discussed for JROC strategy and roadmap.
 
 ## Product Positioning
 
-JS2IL should not try to out-V8 V8 on raw peak performance in the short term.  
+JROC should not try to out-V8 V8 on raw peak performance in the short term.  
 Its strongest differentiator is **.NET-native JavaScript execution and hosting**:
 
 - AOT-compiled JavaScript to .NET assemblies
@@ -44,7 +44,7 @@ OpenTelemetry should be treated as a flagship differentiator:
 - built-in trace/span propagation across JS and .NET calls
 - consistent correlation with ASP.NET Core request/activity pipelines
 - simple export wiring for enterprise observability stacks
-- benchmarking/profiling hooks to explain JS2IL runtime behavior in production
+- benchmarking/profiling hooks to explain JROC runtime behavior in production
 
 ### 3) Deployment Economics
 
@@ -61,12 +61,12 @@ Proposed strategy:
 - keep **core runtime APIs** Node-compatible by default
 - add **opt-in .NET extension modules** for platform-specific power features
 - avoid polluting the global/common API surface with .NET-specific contracts
-- clearly document portability tiers (`node-compatible`, `js2il-dotnet-extension`)
+- clearly document portability tiers (`node-compatible`, `jroc-dotnet-extension`)
 - provide fallback/adapter guidance so teams can isolate non-portable code paths
 
 Example direction:
 
-- `import { db } from 'js2il/dotnet/efcore'` (explicitly non-portable extension)
+- `import { db } from 'jroc/dotnet/efcore'` (explicitly non-portable extension)
 - keep app/business logic in portable modules where possible
 
 ## PrimeJavaScript Performance Program
@@ -95,12 +95,12 @@ Main optimization themes:
 
 ### Hosting DX
 
-**Hosting DX** means the day-to-day developer experience of embedding and operating JS2IL inside a .NET app:
+**Hosting DX** means the day-to-day developer experience of embedding and operating JROC inside a .NET app:
 
 - how easy it is to set up and call
 - how predictable value marshaling and async behavior are
 - how easy it is to debug, observe, and secure
 - how much glue code is required to achieve production use cases
 
-In short: *how fast and confidently a .NET developer can ship with JS2IL as a hosted engine/compiler component*.
+In short: *how fast and confidently a .NET developer can ship with JROC as a hosted engine/compiler component*.
 

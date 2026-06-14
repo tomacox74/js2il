@@ -1,10 +1,10 @@
 using Acornima.Ast;
-using Js2IL.Services;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities;
+using Jroc.Services;
+using Jroc.SymbolTables;
+using Jroc.Utilities;
 using System;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Discovers all callables in a module by walking the AST and symbol table.

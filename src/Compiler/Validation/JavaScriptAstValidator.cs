@@ -1,14 +1,14 @@
 using Acornima.Ast;
-using Js2IL;
-using Js2IL.Services;
-using Js2IL.Utilities;
+using Jroc;
+using Jroc.Services;
+using Jroc.Utilities;
 using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Reflection;
 using System.Linq;
 
-namespace Js2IL.Validation;
+namespace Jroc.Validation;
 
 public class JavaScriptAstValidator : IAstValidator
 {
@@ -369,7 +369,7 @@ public class JavaScriptAstValidator : IAstValidator
         return names;
     });
 
-    // CommonJS/module wrapper globals that are provided by js2il hosting/module loader.
+    // CommonJS/module wrapper globals that are provided by jroc hosting/module loader.
     // Collated from the runtime's shared module parameter list to avoid duplication.
     private static readonly Lazy<HashSet<string>> AllowedInjectedGlobals = new(() =>
     {
@@ -950,7 +950,7 @@ public class JavaScriptAstValidator : IAstValidator
 
                                 AddError(
                                     result,
-                                    "eval is not supported by JS2IL at this time; support will be added in a future release",
+                                    "eval is not supported by JROC at this time; support will be added in a future release",
                                     id);
                                 break;
                             }
@@ -1246,7 +1246,7 @@ public class JavaScriptAstValidator : IAstValidator
     private static void ValidateAsyncAwait(Node ast, ValidationResult result)
     {
         // Track whether we're inside an async function for await validation.
-        // Top-level await is valid in module/script roots that JS2IL lowers as async module bodies.
+        // Top-level await is valid in module/script roots that JROC lowers as async module bodies.
         var asyncFunctionDepth = 0;
         var functionDepth = 0;
         var finallyDepth = 0; // Track if we're inside a finally block

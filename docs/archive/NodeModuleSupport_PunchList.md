@@ -2,7 +2,7 @@
 
 # Node module support punch list (internal scripts)
 
-This checklist captures Node.js module APIs required so internal project scripts in scripts/ can be compiled with js2il.
+This checklist captures Node.js module APIs required so internal project scripts in scripts/ can be compiled with jroc.
 
 ## child_process
 Required by:

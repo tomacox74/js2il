@@ -63,19 +63,19 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.isFinite(number) | Supported | `tests/Js2IL.Test262.Tests/built-ins/Number/isFinite/ExecutionTests.cs` | `test/built-ins/Number/isFinite/arg-is-not-number.js`<br>`test/built-ins/Number/isFinite/finite-numbers.js`<br>`test/built-ins/Number/isFinite/infinity.js`<br>`test/built-ins/Number/isFinite/length.js`<br>`test/built-ins/Number/isFinite/name.js`<br>`test/built-ins/Number/isFinite/nan.js`<br>`test/built-ins/Number/isFinite/not-a-constructor.js`<br>`test/built-ins/Number/isFinite/prop-desc.js` | Number.isFinite is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, rejects infinities and NaN, and accepts representative finite Number values. |
+| Number.isFinite(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isFinite/ExecutionTests.cs` | `test/built-ins/Number/isFinite/arg-is-not-number.js`<br>`test/built-ins/Number/isFinite/finite-numbers.js`<br>`test/built-ins/Number/isFinite/infinity.js`<br>`test/built-ins/Number/isFinite/length.js`<br>`test/built-ins/Number/isFinite/name.js`<br>`test/built-ins/Number/isFinite/nan.js`<br>`test/built-ins/Number/isFinite/not-a-constructor.js`<br>`test/built-ins/Number/isFinite/prop-desc.js` | Number.isFinite is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, rejects infinities and NaN, and accepts representative finite Number values. |
 
 ### 21.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-number.isinteger))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.isInteger(number) | Supported with Limitations | [`nan.js`](../../../tests/Js2IL.Test262.Tests/built-ins/Number/isInteger/JavaScript/nan.js) | `test/built-ins/Number/isInteger/nan.js` | Checked-in coverage now includes representative NaN classification for Number.isInteger. Broader Number.isInteger metadata and argument-shape coverage remain limited to the current test262 slice. |
+| Number.isInteger(number) | Supported with Limitations | [`nan.js`](../../../tests/Jroc.Test262.Tests/built-ins/Number/isInteger/JavaScript/nan.js) | `test/built-ins/Number/isInteger/nan.js` | Checked-in coverage now includes representative NaN classification for Number.isInteger. Broader Number.isInteger metadata and argument-shape coverage remain limited to the current test262 slice. |
 
 ### 21.1.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-number.isnan))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number.isNaN(number) | Supported | `tests/Js2IL.Test262.Tests/built-ins/Number/isNaN/ExecutionTests.cs` | `test/built-ins/Number/isNaN/arg-is-not-number.js`<br>`test/built-ins/Number/isNaN/length.js`<br>`test/built-ins/Number/isNaN/name.js`<br>`test/built-ins/Number/isNaN/nan.js`<br>`test/built-ins/Number/isNaN/not-a-constructor.js`<br>`test/built-ins/Number/isNaN/not-nan.js`<br>`test/built-ins/Number/isNaN/prop-desc.js` | Number.isNaN is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, and returns true only for Number NaN values. |
+| Number.isNaN(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isNaN/ExecutionTests.cs` | `test/built-ins/Number/isNaN/arg-is-not-number.js`<br>`test/built-ins/Number/isNaN/length.js`<br>`test/built-ins/Number/isNaN/name.js`<br>`test/built-ins/Number/isNaN/nan.js`<br>`test/built-ins/Number/isNaN/not-a-constructor.js`<br>`test/built-ins/Number/isNaN/not-nan.js`<br>`test/built-ins/Number/isNaN/prop-desc.js` | Number.isNaN is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, and returns true only for Number NaN values. |
 
 ### 21.1.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-number.negative_infinity))
 

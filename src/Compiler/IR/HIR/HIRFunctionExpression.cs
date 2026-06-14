@@ -1,7 +1,7 @@
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.SymbolTables;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRFunctionExpression : HIRExpression
 {

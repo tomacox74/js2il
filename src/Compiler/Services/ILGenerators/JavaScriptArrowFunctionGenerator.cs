@@ -2,12 +2,12 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities.Ecma335;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Js2IL.Services.ILGenerators
+namespace Jroc.Services.ILGenerators
 {
     internal sealed class JavaScriptArrowFunctionGenerator
     {

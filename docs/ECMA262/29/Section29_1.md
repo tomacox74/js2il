@@ -6,7 +6,7 @@
 
 > Last generated (UTC): 2026-03-15T19:43:29Z
 
-JS2IL does not currently expose the multi-agent shared-memory runtime required by the ECMAScript memory model.
+JROC does not currently expose the multi-agent shared-memory runtime required by the ECMAScript memory model.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|

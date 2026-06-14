@@ -1,12 +1,12 @@
-# js2il
+# jroc
 
-[![NuGet](https://img.shields.io/nuget/v/js2il.svg)](https://www.nuget.org/packages/js2il/)
+[![NuGet](https://img.shields.io/nuget/v/jroc.svg)](https://www.nuget.org/packages/jroc/)
 
 Modern JavaScript dotnet compiler.
 
-# JS2IL — JavaScript to .NET IL compiler
+# JROC — JavaScript to .NET IL compiler
 
-JS2IL compiles JavaScript source code to native .NET assemblies. It includes runtime support for some Node.js core modules, enabling JavaScript applications and libraries to run on the .NET runtime.
+JROC compiles JavaScript source code to native .NET assemblies. It includes runtime support for some Node.js core modules, enabling JavaScript applications and libraries to run on the .NET runtime.
 
 ## Usage
 
@@ -15,13 +15,13 @@ Prerequisite: .NET 10 SDK.
 - Convert a JavaScript file (writes output next to the input file by default):
 
 ```powershell
-js2il .\tests\simple.js
+jroc .\tests\simple.js
 ```
 
 - Specify an output directory and optional flags:
 
 ```powershell
-js2il -i .\tests\simple.js -o .\out -v -a
+jroc -i .\tests\simple.js -o .\out -v -a
 ```
 
 Options
@@ -42,10 +42,10 @@ dotnet .\out\simple.dll
 
 ### Try it
 
-First, install js2il as a global tool:
+First, install jroc as a global tool:
 
 ```powershell
-dotnet tool install -g js2il
+dotnet tool install -g jroc
 ```
 
 Use the sample script at `tests/simple.js`:
@@ -58,7 +58,7 @@ console.log('x is ', x);
 Compile and run it:
 
 ```powershell
-js2il .\tests\simple.js .\out
+jroc .\tests\simple.js .\out
 dotnet .\out\simple.dll
 ```
 
@@ -120,7 +120,7 @@ dotnet publish -c Release
 ## Release pipeline
 
 
-When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build the solution, run the coordinated `npm run release:validate` gate, then pack and publish the coordinated NuGet package set: `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK`. The same workflow also supports manual dispatch with a release-tag input so a failed tagged publish can be retried without moving the release tag.
+When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/publish-tool.yml` to build the solution, run the coordinated `npm run release:validate` gate, then pack and publish the coordinated NuGet package set: `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK`. The same workflow also supports manual dispatch with a release-tag input so a failed tagged publish can be retried without moving the release tag.
 
 The legacy `.github/workflows/release.yml` workflow still produces a published artifact bundle, but NuGet publishing happens in `.github/workflows/publish-tool.yml`.
 
@@ -186,11 +186,11 @@ npm run release:major  # For major version (0.x.y -> x+1.0.0)
 ```
 
 What the script does:
-- Reads current version from `src/Cli/Js2IL.csproj`
+- Reads current version from `src/Cli/Jroc.csproj`
 - Extracts the `## Unreleased` section from `CHANGELOG.md`
 - Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
 - Resets the `## Unreleased` section to placeholder
-- Updates `samples/Directory.Build.props` plus the `<Version>` in `src/Cli/Js2IL.csproj`, `src/Js2IL.Core/Js2IL.Core.csproj`, `src/Js2IL.SDK/Js2IL.SDK.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
+- Updates `samples/Directory.Build.props` plus the `<Version>` in `src/Cli/Jroc.csproj`, `src/Jroc.Core/Jroc.Core.csproj`, `src/Jroc.SDK/Jroc.SDK.csproj`, and `src/JavaScriptRuntime/JavaScriptRuntime.csproj`
 
 #### 3. Validate the Release Package Set
 
@@ -202,10 +202,10 @@ npm run release:validate
 
 This command currently does two things:
 
-- runs the PR canary suite against a freshly packed local `js2il` tool
-- runs the focused `Js2ILSdkPackageTests` suite, which packs `Js2IL.Runtime`, `Js2IL.Core`, and `Js2IL.SDK` into a local feed and verifies the SDK consumption path
+- runs the PR canary suite against a freshly packed local `jroc` tool
+- runs the focused `JrocSdkPackageTests` suite, which packs `Jroc.Runtime`, `Jroc.Core`, and `Jroc.SDK` into a local feed and verifies the SDK consumption path
 
-After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `js2il` tool from NuGet and build/run the `Hosting.Domino`, `Hosting.Basic`, and `Hosting.Typed` samples against the matching `Js2IL.SDK` / `Js2IL.Runtime` version.
+After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `jroc` tool from NuGet and build/run the `Hosting.Domino`, `Hosting.Basic`, and `Hosting.Typed` samples against the matching `Jroc.SDK` / `Jroc.Runtime` version.
 
 For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/hosting/PackagingValidation.md](docs/hosting/PackagingValidation.md).
 
@@ -214,7 +214,7 @@ For the full restore/build/post-publish validation matrix used to close issues `
 Commit the changes on the release branch:
 
 ```powershell
-git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
+git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
 
@@ -237,7 +237,7 @@ git pull
 gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
 ```
 
-This creates the tag and triggers the GitHub Actions release workflows. `.github/workflows/publish-tool.yml` builds/tests and publishes `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet, while `.github/workflows/release.yml` continues to upload the published binaries as an artifact bundle.
+This creates the tag and triggers the GitHub Actions release workflows. `.github/workflows/publish-tool.yml` builds/tests and publishes `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` to NuGet, while `.github/workflows/release.yml` continues to upload the published binaries as an artifact bundle.
 
 ### Manual Version Override
 

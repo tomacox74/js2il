@@ -15,4 +15,4 @@
 
 ## Tests
 
-- `Js2IL.Tests.ConsoleTests` (`tests/Js2IL.Tests/ConsoleTests.cs`)
+- `Jroc.Tests.ConsoleTests` (`tests/Jroc.Tests/ConsoleTests.cs`)

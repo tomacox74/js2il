@@ -5,7 +5,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Complete information about a callable, combining identity and signature.

@@ -32,8 +32,8 @@ function getAssemblyFileBaseName(testName) {
 function getCandidateCategoryRoots(category) {
   const tempDir = os.tmpdir();
   return [
-    path.join(tempDir, 'Js2IL.Tests', `${category}.GeneratorTests`),
-    path.join(tempDir, 'Js2IL.Tests', `${category}.ExecutionTests`),
+    path.join(tempDir, 'Jroc.Tests', `${category}.GeneratorTests`),
+    path.join(tempDir, 'Jroc.Tests', `${category}.ExecutionTests`),
   ];
 }
 
@@ -78,8 +78,8 @@ function findProjectRoot(startDir) {
   // Walk upward from __dirname until we find the repo markers.
   let dir = startDir;
   while (true) {
-    const sln = path.join(dir, 'js2il.sln');
-    const testsDir = path.join(dir, 'tests', 'Js2IL.Tests');
+    const sln = path.join(dir, 'jroc.sln');
+    const testsDir = path.join(dir, 'tests', 'Jroc.Tests');
     if (fs.existsSync(sln) && fs.existsSync(testsDir)) {
       return dir;
     }
@@ -87,7 +87,7 @@ function findProjectRoot(startDir) {
     if (!parent || parent === dir) break;
     dir = parent;
   }
-  throw new Error(`Could not locate js2il repo root starting from: ${startDir}`);
+  throw new Error(`Could not locate jroc repo root starting from: ${startDir}`);
 }
 
 const projectRoot = findProjectRoot(__dirname);
@@ -118,8 +118,8 @@ function main() {
 
   const category = args[0];
   const testName = args[1];
-  const fullTestName = `Js2IL.Tests.${category}.GeneratorTests.${testName}`;
-  const testProject = path.join(projectRoot, 'tests', 'Js2IL.Tests', 'Js2IL.Tests.csproj');
+  const fullTestName = `Jroc.Tests.${category}.GeneratorTests.${testName}`;
+  const testProject = path.join(projectRoot, 'tests', 'Jroc.Tests', 'Jroc.Tests.csproj');
 
   console.log(`Running test: ${fullTestName}`);
 
@@ -155,8 +155,8 @@ function main() {
 
   // Step 2: Find the generated assembly
   // Current test harness can write to either:
-  //   %TEMP%/Js2IL.Tests/{Category}.GeneratorTests/{runId}/{assemblyName}.dll
-  //   %TEMP%/Js2IL.Tests/{Category}.ExecutionTests/{runId}/{assemblyName}.dll
+  //   %TEMP%/Jroc.Tests/{Category}.GeneratorTests/{runId}/{assemblyName}.dll
+  //   %TEMP%/Jroc.Tests/{Category}.ExecutionTests/{runId}/{assemblyName}.dll
   // where assemblyName is the basename of the JS entry file.
   const assemblyFileBaseName = getAssemblyFileBaseName(testName);
   const assemblyPath =

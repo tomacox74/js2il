@@ -1,4 +1,4 @@
-namespace Js2IL;
+namespace Jroc;
 
 /// <summary>
 /// Default implementation of IFileSystem that uses System.IO.File.

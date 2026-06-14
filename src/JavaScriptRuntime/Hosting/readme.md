@@ -1,6 +1,6 @@
 # Hosting
 
-This directory contains the .NET hosting surface for running JS2IL-compiled JavaScript assemblies as libraries.
+This directory contains the .NET hosting surface for running JROC-compiled JavaScript assemblies as libraries.
 
 ## Contents
 

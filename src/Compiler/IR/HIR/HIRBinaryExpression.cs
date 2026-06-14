@@ -1,6 +1,6 @@
 using Acornima;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 public sealed class HIRBinaryExpression : HIRExpression
 {
     public HIRBinaryExpression(Operator op, HIRExpression left, HIRExpression right)

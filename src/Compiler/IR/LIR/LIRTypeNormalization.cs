@@ -1,7 +1,7 @@
-using Js2IL.Services;
+using Jroc.Services;
 using System.Reflection;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Normalizes generic LIR patterns into more explicit typed forms when provably safe.
@@ -49,7 +49,7 @@ internal static class LIRTypeNormalization
             }
 
             if (newUserClass.IsDerivedConstructor
-                || classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+                || classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__jroc_ctorReturn", out _))
             {
                 continue;
             }

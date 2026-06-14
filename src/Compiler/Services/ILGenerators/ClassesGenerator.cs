@@ -5,13 +5,13 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities;
-using Js2IL.Utilities.Ecma335;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
+using Jroc.Utilities;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Js2IL.Services.ILGenerators
+namespace Jroc.Services.ILGenerators
 {
     internal sealed class ClassesGenerator
     {
@@ -570,8 +570,8 @@ namespace Js2IL.Services.ILGenerators
                 // This field is read from the `new C()` call site (outside the class) to implement
                 // JavaScript constructor return override semantics. It must be accessible from
                 // other types in the same generated assembly.
-                var fh = tb.AddFieldDefinition(FieldAttributes.Assembly, "__js2il_ctorReturn", fSigHandle);
-                _classRegistry.RegisterPrivateField(registryClassName, "__js2il_ctorReturn", fh);
+                var fh = tb.AddFieldDefinition(FieldAttributes.Assembly, "__jroc_ctorReturn", fSigHandle);
+                _classRegistry.RegisterPrivateField(registryClassName, "__jroc_ctorReturn", fh);
             }
 
             // Pre-scan methods for this.<prop> assignments to declare backing fields.
@@ -801,7 +801,7 @@ namespace Js2IL.Services.ILGenerators
 
                 var clrName = ClassElementNames.GetMethodRegistryName(member);
 
-                // Resumable class methods (async/generator) require the standard js2il calling convention
+                // Resumable class methods (async/generator) require the standard jroc calling convention
                 // (leading object[] scopes) so the state machine can bind/resume correctly.
                 // We keep ClassRegistry min/max counts as JS parameter counts (excluding scopes).
                 var hasScopesParam = isAsyncMethod || isGeneratorMethod;
@@ -903,7 +903,7 @@ namespace Js2IL.Services.ILGenerators
 
         private static string ManglePrivateFieldName(string name)
         {
-            return "__js2il_priv_" + name;
+            return "__jroc_priv_" + name;
         }
 
         private bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr, Scope classScope)
@@ -987,10 +987,10 @@ namespace Js2IL.Services.ILGenerators
                                     // to catch cases like: Outer().ctor news Inner(), and Inner().ctor reads a global.
                                     try
                                     {
-                                        var layoutBuilder = _serviceProvider.GetService<Js2IL.Services.ScopesAbi.EnvironmentLayoutBuilder>();
+                                        var layoutBuilder = _serviceProvider.GetService<Jroc.Services.ScopesAbi.EnvironmentLayoutBuilder>();
                                         if (layoutBuilder != null)
                                         {
-                                            var layout = layoutBuilder.Build(foundClassScope, Js2IL.Services.ScopesAbi.CallableKind.Constructor);
+                                            var layout = layoutBuilder.Build(foundClassScope, Jroc.Services.ScopesAbi.CallableKind.Constructor);
                                             instantiatedClassNeedsScopes = layout.NeedsParentScopes;
                                         }
                                     }

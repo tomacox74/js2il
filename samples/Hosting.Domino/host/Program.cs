@@ -1,4 +1,4 @@
-using Js2IL.Runtime;
+using Jroc.Runtime;
 using System.Reflection;
 using System.Linq;
 
@@ -16,7 +16,7 @@ internal static class Program
             var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
             var asm = Assembly.LoadFrom(compiledModulePath);
 
-            if (Environment.GetEnvironmentVariable("JS2IL_DOMINO_LISTMODULES") == "1")
+            if (Environment.GetEnvironmentVariable("JROC_DOMINO_LISTMODULES") == "1")
             {
                 var ids = JsEngine.GetModuleIds(asm);
 
@@ -48,7 +48,7 @@ internal static class Program
             Console.WriteLine($"elements={elementCount}");
             Console.WriteLine($"links={linkCount}");
         }
-        catch (Exception ex) when (Environment.GetEnvironmentVariable("JS2IL_DOMINO_DIAG") == "1")
+        catch (Exception ex) when (Environment.GetEnvironmentVariable("JROC_DOMINO_DIAG") == "1")
         {
             DumpDiagnostic(ex);
             throw;

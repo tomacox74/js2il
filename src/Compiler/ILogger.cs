@@ -1,4 +1,4 @@
-namespace Js2IL;
+namespace Jroc;
 
 public interface ICompilerOutput
 {

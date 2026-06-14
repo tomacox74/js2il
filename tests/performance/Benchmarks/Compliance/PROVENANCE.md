@@ -40,7 +40,7 @@ The following scripts were copied from the Jint benchmark suite:
    - License: BSD 2-Clause (Jint project)
 
 6. **Additional scripts imported (minimal compatibility modification)**
-   - Changes applied for js2il compatibility:
+   - Changes applied for jroc compatibility:
      - Prepended `"use strict";` to support strict-only parsing.
      - Added local no-op harness shims (`startTest`, `endTest`, `prep`, `test`) so scenarios can run standalone.
      - Replaced unsupported constructs in specific files:
@@ -75,7 +75,7 @@ Requirements:
 
 This project complies with these requirements by:
 1. Including this provenance document with copyright and license information
-2. Preserving original benchmark intent and script bodies as much as possible, with only targeted compatibility edits required by js2il
+2. Preserving original benchmark intent and script bodies as much as possible, with only targeted compatibility edits required by jroc
 3. Including the full BSD 2-Clause license text below
 
 ## Full License Text

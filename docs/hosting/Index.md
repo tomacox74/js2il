@@ -1,6 +1,6 @@
 # .NET Hosting (Library Mode)
 
-JS2IL can compile a JavaScript module into a normal .NET assembly and let a .NET application **load that compiled module as a library**, then call `module.exports` from C#.
+JROC can compile a JavaScript module into a normal .NET assembly and let a .NET application **load that compiled module as a library**, then call `module.exports` from C#.
 
 This page is the **canonical user documentation** for hosting. The older document [`docs/runtime/DotNetLibraryHosting.md`](../runtime/DotNetLibraryHosting.md) is kept as a design/implementation reference.
 
@@ -14,14 +14,14 @@ This page is the **canonical user documentation** for hosting. The older documen
   - **Dynamic**: use `dynamic` with `JsEngine.LoadModule(Assembly, moduleId)`.
 - Stable hosting exception types (`JsModuleLoadException`, `JsInvocationException`, etc.).
 
-For build-integrated host projects, start with the `Js2IL.SDK` NuGet package and declare one or more `Js2ILCompile` items in your `.csproj`.
+For build-integrated host projects, start with the `Jroc.SDK` NuGet package and declare one or more `JrocCompile` items in your `.csproj`.
 
 ## Quick start (typed)
 
 When contracts are generated into the compiled module assembly (default), the easiest pattern is:
 
 ```csharp
-using Js2IL.Runtime;
+using Jroc.Runtime;
 
 // The generated interface type lives in the compiled module assembly.
 // It is annotated with [JsModule("<moduleId>")] so no module id is needed here.
@@ -40,7 +40,7 @@ using var exports = JsEngine.LoadModule<IMyModuleExports>("calculator/index");
 ## Quick start (dynamic)
 
 ```csharp
-using Js2IL.Runtime;
+using Jroc.Runtime;
 using System.Reflection;
 
 var asm = Assembly.LoadFrom("path\\to\\compiled.dll");
@@ -71,7 +71,7 @@ Console.WriteLine((double)exports.add(1, 2));
 
 ## Samples
 
-The repo includes runnable `Js2IL.SDK`-based samples:
+The repo includes runnable `Jroc.SDK`-based samples:
 
 - `samples/Hosting.Basic`
 - `samples/Hosting.Typed`

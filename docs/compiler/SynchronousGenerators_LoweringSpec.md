@@ -1,4 +1,4 @@
-# 0. Synchronous Generator Lowering Spec (JS2IL)
+# 0. Synchronous Generator Lowering Spec (JROC)
 
 ## 1. Goals
 
@@ -9,13 +9,13 @@
   - Left-to-right evaluation order.
   - Correct `next(value)`, `throw(error)`, and `return(value)` behavior.
   - Correct interaction with `try/catch/finally` inside generator bodies.
-- Reuse JS2ILâ€™s **scope-as-class** closure model and scopes-array ABI.
+- Reuse JROCâ€™s **scope-as-class** closure model and scopes-array ABI.
 - Keep the runtime small and avoid reflection-heavy hot paths.
 
 ## 2. Non-Goals (initial implementation)
 
 - Async generators (`async function*`) and `for await (...)`.
-- Symbol keys (e.g., `Symbol.iterator`) beyond what JS2IL already models.
+- Symbol keys (e.g., `Symbol.iterator`) beyond what JROC already models.
 - Full spec-accurate iterator closing semantics for every exotic host iterable on day 1.
 
 ## 3. Terminology
@@ -24,7 +24,7 @@
 - **Generator object**: result of calling a generator function; implements `next`, `throw`, `return`.
 - **Suspension point**: a `yield` / `yield*` where execution pauses and control returns to caller.
 - **Resume**: a subsequent `next/throw/return` call.
-- **Leaf scope**: per-invocation scope instance allocated for the generator body (JS2IL â€œscope-as-classâ€).
+- **Leaf scope**: per-invocation scope instance allocated for the generator body (JROC â€œscope-as-classâ€).
 
 ### 3.1. ECMA-262 references (local docs)
 
@@ -65,7 +65,7 @@ Each `next/throw/return` returns an **iterator result** object:
 
 - `{ value: any, done: boolean }`
 
-JS2IL runtime will model this as an `ExpandoObject` (or a small dedicated runtime type), consistent with existing object-literal behavior.
+JROC runtime will model this as an `ExpandoObject` (or a small dedicated runtime type), consistent with existing object-literal behavior.
 
 ### 4.3. `next(value)`
 
@@ -126,7 +126,7 @@ Proposed fields on `GeneratorScope`:
 - `bool _hasReturn`
 - Spill slots for temps/locals that must survive across yields (same approach as async).
 
-Rationale: matches JS2ILâ€™s existing closure lifetime and avoids separate heap allocations.
+Rationale: matches JROCâ€™s existing closure lifetime and avoids separate heap allocations.
 
 ### 5.3. Step method signature
 
@@ -286,7 +286,7 @@ This requires a runtime helper for â€œget iteratorâ€ and optional `thro
 
 ## 8. Testing plan
 
-Add tests under `tests/Js2IL.Tests/Generator/`:
+Add tests under `tests/Jroc.Tests/Generator/`:
 
 1. Basic yield sequence:
    - `g().next()` returns expected `{value,done}` triples

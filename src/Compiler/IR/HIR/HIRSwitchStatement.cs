@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed record HIRSwitchCase(HIRExpression? Test, ImmutableArray<HIRStatement> Consequent);
 

@@ -219,7 +219,7 @@ The public API is designed around a single entry point class (`JsEngine`) that a
 
 The canonical entry point type name is:
 
-- `Js2IL.Runtime.JsEngine` (project/type casing: `Js2IL`)
+- `Jroc.Runtime.JsEngine` (project/type casing: `Jroc`)
 
 The API uses:
 
@@ -235,7 +235,7 @@ Generated types are expected to come in two layers:
 ### Entry point
 
 ```csharp
-// Js2IL.Runtime.JsEngine
+// Jroc.Runtime.JsEngine
 public static class JsEngine
 {
       // Loads a module using metadata associated with TExports (module id + compiled assembly identity).
@@ -332,20 +332,20 @@ Recommended behavior:
 
 Modules commonly have path-like ids (e.g., `calculator/index`). Generated contract names should avoid collisions while remaining pleasant to use.
 
-Generated contract namespaces should default to being prefixed with `Js2IL.` + the **compiled assembly name**.
+Generated contract namespaces should default to being prefixed with `Jroc.` + the **compiled assembly name**.
 
 Notes:
 
 - During compilation, the assembly name currently defaults to the script name being compiled.
-  - Example: `js2il foo.js` produces `foo.dll` with `<AssemblyName> = foo`.
+  - Example: `jroc foo.js` produces `foo.dll` with `<AssemblyName> = foo`.
 
 Recommended convention:
 
-1. Root namespace is `Js2IL.<AssemblyName>`.
+1. Root namespace is `Jroc.<AssemblyName>`.
 2. The “entry module” exports interface is `I<AssemblyName>Exports`.
-      - Example: `Js2IL.foo.IFooExports`
+      - Example: `Jroc.foo.IFooExports`
 3. For non-entry modules (including `require(...)` dependencies), use:
-      - namespace: `Js2IL.<AssemblyName>.<ModuleName>`
+      - namespace: `Jroc.<AssemblyName>.<ModuleName>`
       - exports interface: `I<ModuleName>Exports`
 4. `<ModuleName>` is derived from the module id:
       - split on `/` and `\\`
@@ -354,13 +354,13 @@ Recommended convention:
 
 Examples (within `foo.dll`):
 
-- entry module → `Js2IL.foo.IFooExports`
-- module id `calculator/index` → `Js2IL.foo.Calculator.ICalculatorExports`
-- module id `calculator/advanced` → `Js2IL.foo.Calculator.IAdvancedExports`
+- entry module → `Jroc.foo.IFooExports`
+- module id `calculator/index` → `Jroc.foo.Calculator.ICalculatorExports`
+- module id `calculator/advanced` → `Jroc.foo.Calculator.IAdvancedExports`
 
 Exports for `require(...)` dependencies follow the same rule:
 
-- `Js2IL.<AssemblyName>.<ModuleName>.I<ModuleName>Exports`
+- `Jroc.<AssemblyName>.<ModuleName>.I<ModuleName>Exports`
 
  This is preferred over `calculator.IIndexExports` because:
 

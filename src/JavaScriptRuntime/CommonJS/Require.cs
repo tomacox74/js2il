@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Reflection;
 using System.Linq;
-using Js2IL.Runtime;
+using Jroc.Runtime;
 
 namespace JavaScriptRuntime.CommonJS
 {

@@ -6,7 +6,7 @@
 
 > Last generated (UTC): 2026-03-15T19:43:30Z
 
-This clause is guidance for engines that expose shared memory. JS2IL does not currently expose shared-memory primitives, so this material is tracked as informational background only.
+This clause is guidance for engines that expose shared memory. JROC does not currently expose shared-memory primitives, so this material is tracked as informational background only.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|

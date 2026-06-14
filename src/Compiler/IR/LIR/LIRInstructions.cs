@@ -1,9 +1,9 @@
-using Js2IL.Services.ScopesAbi;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.SymbolTables;
+using Jroc.Services.ScopesAbi;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 using System.Reflection.Metadata;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public enum ValueStorageKind
 {
@@ -144,8 +144,8 @@ public record LIRCallFunctionValue3(TempVariable FunctionValue, TempVariable Sco
 /// <summary>
 /// Calls the CommonJS module-scoped <c>require</c> function.
 ///
-/// In js2il-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.CommonJS.RequireDelegate"/>
-/// which does not take the standard js2il <c>scopes</c> array. For performance, this call is emitted as a direct
+/// In jroc-hosted CommonJS modules, <c>require</c> is provided as a <see cref="JavaScriptRuntime.CommonJS.RequireDelegate"/>
+/// which does not take the standard jroc <c>scopes</c> array. For performance, this call is emitted as a direct
 /// delegate invocation instead of going through <see cref="JavaScriptRuntime.Closure.InvokeWithArgs"/>.
 ///
 /// Emits: castclass RequireDelegate; callvirt RequireDelegate::Invoke
@@ -244,7 +244,7 @@ public record LIRCallFunctionBaseConstructor(TempVariable ConstructorValue, Temp
 
 /// <summary>
 /// Calls a user-defined JavaScript class instance method directly on the implicit 'this'.
-/// The method handle and max parameter count are resolved during lowering via <see cref="Js2IL.Services.ClassRegistry"/>
+/// The method handle and max parameter count are resolved during lowering via <see cref="Jroc.Services.ClassRegistry"/>
 /// and carried through to IL emission to avoid repeating lookup work.
 /// Emits: ldarg.0, [args], callvirt instance object &lt;Class&gt;::&lt;Method&gt;(...)
 /// </summary>
@@ -508,7 +508,7 @@ public record LIRLoadUserClassInstanceField(
 
 /// <summary>
 /// Loads a static field from a user-defined JavaScript class (compiled as a .NET type).
-/// The field handle is resolved via <see cref="Js2IL.Services.ClassRegistry"/> using <see cref="RegistryClassName"/>.
+/// The field handle is resolved via <see cref="Jroc.Services.ClassRegistry"/> using <see cref="RegistryClassName"/>.
 /// Emits: ldsfld object <Class>::<Field>
 /// </summary>
 public record LIRLoadUserClassStaticField(

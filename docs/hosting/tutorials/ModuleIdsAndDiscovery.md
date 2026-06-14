@@ -15,7 +15,7 @@ When hosting, you select a module using a **module id** (CommonJS module specifi
 If you are loading an assembly dynamically and need to know what it contains:
 
 ```csharp
-using Js2IL.Runtime;
+using Jroc.Runtime;
 using System.Reflection;
 
 var asm = Assembly.LoadFrom("compiled.dll");
@@ -37,5 +37,5 @@ When loading, the runtime treats bare specifiers as local modules by default (`"
 
 ## Package ids
 
-JS2IL also supports compiling and hosting modules with package-like ids (e.g., `@mixmark-io/domino`).
+JROC also supports compiling and hosting modules with package-like ids (e.g., `@mixmark-io/domino`).
 In those cases, you typically pass the full id to `LoadModule(...)`.

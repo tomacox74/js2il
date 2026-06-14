@@ -20,5 +20,5 @@ Exposes the WHATWG `URL` constructor on `globalThis` and reuses the same constru
 
 ## Tests
 
-- `Js2IL.Tests.Node.Url.ExecutionTests.Global_Url_And_SearchParams` (`tests/Js2IL.Tests/Node/Url/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Url.GeneratorTests.Global_Url_And_SearchParams` (`tests/Js2IL.Tests/Node/Url/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Url.ExecutionTests.Global_Url_And_SearchParams` (`tests/Jroc.Tests/Node/Url/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Url.GeneratorTests.Global_Url_And_SearchParams` (`tests/Jroc.Tests/Node/Url/GeneratorTests.cs`)

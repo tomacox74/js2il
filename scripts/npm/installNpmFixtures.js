@@ -68,9 +68,9 @@ function main() {
   }
 
   const pkg = {
-    name: 'js2il-npm-fixtures',
+    name: 'jroc-npm-fixtures',
     private: true,
-    description: 'Local test fixtures for JS2IL npm/CommonJS module resolution',
+    description: 'Local test fixtures for JROC npm/CommonJS module resolution',
     version: '0.0.0',
     license: 'UNLICENSED',
     dependencies,

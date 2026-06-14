@@ -1,7 +1,7 @@
 using System.Reflection.Metadata;
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.Services.VariableBindings
+namespace Jroc.Services.VariableBindings
 {
     /// <summary>
     /// Type of variable based on JavaScript declaration.

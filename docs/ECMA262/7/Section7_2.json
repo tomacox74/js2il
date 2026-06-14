@@ -102,9 +102,9 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-isarray",
         "testScripts": [
-          "tests/Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js",
-          "tests/Js2IL.Tests/Array/JavaScript/Array_AsArray_Ternary.js",
-          "tests/Js2IL.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_IsArray_Basic.js",
+          "tests/Jroc.Tests/Array/JavaScript/Array_AsArray_Ternary.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/isArray/JavaScript/15.4.3.2-0-5.js"
         ],
         "notes": "Implemented by JavaScriptRuntime.Array.isArray for JS array instances and the intrinsic Array.prototype object."
       },
@@ -114,8 +114,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-iscallable",
         "testScripts": [
-          "tests/Js2IL.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_Apply_Basic.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js"
         ],
         "notes": "Callable detection is primarily delegate-based in runtime dispatch and intrinsic paths."
       },
@@ -125,10 +125,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-isconstructor",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js",
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
         ],
-        "notes": "Dynamic construction supports delegate/type/Construct-member shapes used by JS2IL; full constructability semantics are not complete."
+        "notes": "Dynamic construction supports delegate/type/Construct-member shapes used by JROC; full constructability semantics are not complete."
       },
       {
         "clause": "7.2.6",
@@ -136,8 +136,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-isregexp",
         "testScripts": [
-          "tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
-          "tests/Js2IL.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Callable_CreatesRegex.js",
+          "tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js"
         ],
         "notes": "RegExp-aware behavior is implemented for JavaScriptRuntime.RegExp call sites; Symbol.match override semantics are not fully modeled."
       },
@@ -147,7 +147,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-samevalue",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/Object_Is_SameValue.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Is_SameValue.js"
         ],
         "notes": "Implemented by Operators.SameValue and exposed via Object.is."
       },
@@ -157,7 +157,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-samevaluezero",
         "testScripts": [
-          "tests/Js2IL.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_SearchOps_Basic.js"
         ],
         "notes": "Implemented in array includes/search paths and runtime helper comparisons."
       },
@@ -167,10 +167,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-islessthan",
         "testScripts": [
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js",
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js",
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js",
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js",
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js",
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js",
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
         ],
         "notes": "Implements numeric and BigInt relational behavior for supported operand kinds; full coercion-order edge cases are incomplete."
       },
@@ -180,9 +180,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-islooselyequal",
         "testScripts": [
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_EqualBoolean.js"
         ],
         "notes": "Covers core loose-equality coercions (including nullish and numeric cases); complete spec edge-case parity is not yet implemented."
       },
@@ -192,7 +192,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-isstrictlyequal",
         "testScripts": [
-          "tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js"
+          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_StrictEqualCapturedVariable.js"
         ],
         "notes": "Implements strict-equality behavior across supported runtime representations, with CLR/JS representation normalization in key paths."
       }

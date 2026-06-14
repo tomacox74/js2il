@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 internal static class BuiltInErrorTypes
 {

@@ -6,7 +6,7 @@ namespace Benchmarks.Runtimes;
 public class RuntimeExecutionResult
 {
     /// <summary>
-    /// Time taken to compile the JavaScript (for AOT runtimes like js2il).
+    /// Time taken to compile the JavaScript (for AOT runtimes like jroc).
     /// Null for interpreted or JIT runtimes.
     /// </summary>
     public TimeSpan? CompileTime { get; set; }
@@ -38,7 +38,7 @@ public class RuntimeExecutionResult
 public interface IJavaScriptRuntime
 {
     /// <summary>
-    /// Name of the runtime (e.g., "Node.js", "Jint", "js2il").
+    /// Name of the runtime (e.g., "Node.js", "Jint", "jroc").
     /// </summary>
     string Name { get; }
 

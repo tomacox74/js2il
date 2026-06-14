@@ -69,18 +69,18 @@ public static class ValidationTest
             Console.WriteLine($"   Exception: {ex.Message}");
         }
 
-        // Test js2il
-        Console.WriteLine("\n3. Testing js2il...");
+        // Test jroc
+        Console.WriteLine("\n3. Testing jroc...");
         try
         {
-            var js2ilRuntime = new Js2ILRuntime();
-            var js2ilResult = js2ilRuntime.Execute(script, "minimal.js");
-            Console.WriteLine($"   Success: {js2ilResult.Success}");
-            Console.WriteLine($"   Compile Time: {js2ilResult.CompileTime?.TotalMilliseconds ?? 0}ms");
-            Console.WriteLine($"   Execution Time: {js2ilResult.ExecutionTime.TotalMilliseconds}ms");
-            if (!js2ilResult.Success)
+            var jrocRuntime = new JrocRuntime();
+            var jrocResult = jrocRuntime.Execute(script, "minimal.js");
+            Console.WriteLine($"   Success: {jrocResult.Success}");
+            Console.WriteLine($"   Compile Time: {jrocResult.CompileTime?.TotalMilliseconds ?? 0}ms");
+            Console.WriteLine($"   Execution Time: {jrocResult.ExecutionTime.TotalMilliseconds}ms");
+            if (!jrocResult.Success)
             {
-                Console.WriteLine($"   Error: {js2ilResult.Error}");
+                Console.WriteLine($"   Error: {jrocResult.Error}");
             }
         }
         catch (Exception ex)

@@ -1,6 +1,6 @@
-using Js2IL.IR;
+using Jroc.IR;
 
-namespace Js2IL.Services.ScopesAbi;
+namespace Jroc.Services.ScopesAbi;
 
 /// <summary>
 /// Represents a single slot in the scopes array (object[] scopes).

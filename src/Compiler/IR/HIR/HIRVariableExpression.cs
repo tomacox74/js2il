@@ -1,5 +1,5 @@
-using Js2IL.SymbolTables;
-namespace Js2IL.HIR;
+using Jroc.SymbolTables;
+namespace Jroc.HIR;
 public sealed class HIRVariableExpression : HIRExpression
 {
     public HIRVariableExpression(Symbol name)

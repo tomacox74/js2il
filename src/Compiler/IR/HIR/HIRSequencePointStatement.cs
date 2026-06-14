@@ -1,6 +1,6 @@
-using Js2IL.DebugSymbols;
+using Jroc.DebugSymbols;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Marker statement inserted by the HIR builder to preserve source locations for debugging.

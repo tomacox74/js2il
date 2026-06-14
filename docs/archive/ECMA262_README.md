@@ -3,7 +3,7 @@
 > **Created**: February 12, 2026  
 > **Purpose**: Central hub for all ECMA-262 feature implementation documentation
 
-This directory contains comprehensive analysis and prioritization of ECMA-262 features for implementation in JS2IL.
+This directory contains comprehensive analysis and prioritization of ECMA-262 features for implementation in JROC.
 
 ---
 
@@ -24,7 +24,7 @@ This directory contains comprehensive analysis and prioritization of ECMA-262 fe
 
 ### 1. Feature Status Quick Reference
 **File**: `ECMA262FeatureStatus.md` (11.8 KB)  
-**Audience**: Developers actively using JS2IL  
+**Audience**: Developers actively using JROC  
 **Purpose**: Quick lookup table for feature support
 
 **Contains**:
@@ -297,7 +297,7 @@ If you're implementing features from this roadmap:
 ## Questions?
 
 ### Where do I start?
-- **New to JS2IL?** Start with [Feature Status](./ECMA262FeatureStatus.md)
+- **New to JROC?** Start with [Feature Status](./ECMA262FeatureStatus.md)
 - **Planning implementation?** Read [Technical Roadmap](./FeatureImplementationRoadmap.md)
 - **Need executive overview?** See [Executive Summary](./ECMA262FeaturePriority.md)
 
@@ -334,4 +334,4 @@ Check the [Feature Status](./ECMA262FeatureStatus.md) quick reference or [ECMA-2
 
 *Last updated: February 12, 2026*  
 *Next review: After Phase 1 completion*  
-*Maintained by: JS2IL Team*
+*Maintained by: JROC Team*

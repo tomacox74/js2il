@@ -5,10 +5,10 @@ This tutorial walks through compiling a JavaScript module and calling it from a 
 ## Prerequisites
 
 - .NET 10 SDK
-- `js2il` installed:
+- `jroc` installed:
 
 ```powershell
-dotnet tool install --global js2il
+dotnet tool install --global jroc
 ```
 
 ## 1) Create a JavaScript module
@@ -28,14 +28,14 @@ module.exports = {
 };
 ```
 
-## 2) Compile it with js2il
+## 2) Compile it with jroc
 
 ```powershell
 # Default (no debug symbols)
-js2il .\math.js .\out
+jroc .\math.js .\out
 
 # Optional: emit Portable PDB debug symbols (.pdb) for stepping and better stack traces
-js2il .\math.js .\out --pdb
+jroc .\math.js .\out --pdb
 ```
 
 This produces (at minimum):
@@ -77,12 +77,12 @@ If contract generation is enabled (it is **enabled by default**), `math.dll` con
 In your host app:
 
 ```csharp
-using Js2IL.Runtime;
+using Jroc.Runtime;
 
 // Namespace and type name are generated from the compiled assembly name.
 // For an assembly named "math", the entry exports contract is:
-//   Js2IL.math.IMathExports
-using Js2IL.math;
+//   Jroc.math.IMathExports
+using Jroc.math;
 
 using var exports = JsEngine.LoadModule<IMathExports>();
 
@@ -95,7 +95,7 @@ Console.WriteLine(exports.Add(1, 2));
 If you want to avoid compile-time references to generated contracts:
 
 ```csharp
-using Js2IL.Runtime;
+using Jroc.Runtime;
 using System.Reflection;
 
 var asm = Assembly.LoadFrom("..\\out\\math.dll");

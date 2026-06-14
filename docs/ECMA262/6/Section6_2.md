@@ -58,25 +58,25 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ECMAScript Specification Types (overall) | Incomplete |  |  | This section is normative and implementation-relevant. JS2IL partially maps these spec types via runtime/compiler behavior, but Environment Records and several internal-spec types remain untracked. |
+| ECMAScript Specification Types (overall) | Incomplete |  |  | This section is normative and implementation-relevant. JROC partially maps these spec types via runtime/compiler behavior, but Environment Records and several internal-spec types remain untracked. |
 
 ### 6.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-completion-record-specification-type))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Completion records (normal/throw/return control flow) | Supported with Limitations | [`ControlFlow_TryCatchFinally_ThrowValue.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js)<br>[`ControlFlow_TryFinally_Return.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js) |  | Core completion behavior is represented by emitted control flow and exception handling, not as first-class Completion Record values. |
+| Completion records (normal/throw/return control flow) | Supported with Limitations | [`ControlFlow_TryCatchFinally_ThrowValue.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js)<br>[`ControlFlow_TryFinally_Return.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js) |  | Core completion behavior is represented by emitted control flow and exception handling, not as first-class Completion Record values. |
 
 ### 6.2.5 ([tc39.es](https://tc39.es/ecma262/#sec-reference-record-specification-type))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../tests/Js2IL.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>`tests/Js2IL.Test262.Tests/language/expressions/assignment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/call/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/member-expression/PortExpressionsBatchExecutionTests.cs` |  | Identifier/member references work for supported language forms, including the covered test262 GetValue/PutValue cases for computed members, null/undefined member bases, and function-call reference resolution. Spec-exact modeling of every Reference Record variant remains incomplete. |
+| Reference records (GetValue/PutValue for identifiers and members) | Supported with Limitations | [`Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js)<br>[`Classes_Inheritance_SuperMethodCall.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js)<br>`tests/Jroc.Test262.Tests/language/expressions/assignment/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/call/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/member-expression/PortExpressionsBatchExecutionTests.cs` |  | Identifier/member references work for supported language forms, including the covered test262 GetValue/PutValue cases for computed members, null/undefined member bases, and function-call reference resolution. Spec-exact modeling of every Reference Record variant remains incomplete. |
 
 ### 6.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-property-descriptor-specification-type))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Property descriptor specification type | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js) |  | Descriptor creation and usage are implemented for supported object/runtime paths via PropertyDescriptorStore; full spec parity is incomplete. |
+| Property descriptor specification type | Supported with Limitations | [`ObjectDefineProperty_Accessor.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js)<br>[`ObjectCreate_WithPropertyDescriptors.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js)<br>[`ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js`](../../../tests/Jroc.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js) |  | Descriptor creation and usage are implemented for supported object/runtime paths via PropertyDescriptorStore; full spec parity is incomplete. |
 
 ### 6.2.9 ([tc39.es](https://tc39.es/ecma262/#sec-data-blocks))
 
@@ -88,19 +88,19 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| PrivateElement specification type | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js) |  | Private instance fields and supported private methods use compiler-managed private element metadata. Static private method receiver checks reject proxy wrappers; private accessors still have limitations. |
+| PrivateElement specification type | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js)<br>[`Classes_ClassPrivateProperty_HelperMethod_Log.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js)<br>[`fields-multiple-definitions-static-private-methods-proxy.js`](../../../tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js) |  | Private instance fields and supported private methods use compiler-managed private element metadata. Static private method receiver checks reject proxy wrappers; private accessors still have limitations. |
 
 ### 6.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-classfielddefinition-record-specification-type))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ClassFieldDefinition record | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassWithStaticProperty_DefaultAndLog.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js) |  | Supports public/private instance and static fields with initializer constraints; computed names and some class element forms remain unsupported. |
+| ClassFieldDefinition record | Supported with Limitations | [`Classes_ClassProperty_DefaultAndLog.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js)<br>[`Classes_ClassWithStaticProperty_DefaultAndLog.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js) |  | Supports public/private instance and static fields with initializer constraints; computed names and some class element forms remain unsupported. |
 
 ### 6.2.12 ([tc39.es](https://tc39.es/ecma262/#sec-private-names))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Private Names | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js) |  | Private names for fields are supported with validator/runtime constraints; invalid/private-name edge cases are not fully spec-complete. |
+| Private Names | Supported with Limitations | [`Classes_ClassPrivateField_HelperMethod_Log.js`](../../../tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js) |  | Private names for fields are supported with validator/runtime constraints; invalid/private-name edge cases are not fully spec-complete. |
 
 ### 6.2.13 ([tc39.es](https://tc39.es/ecma262/#sec-classstaticblockdefinition-record-specification-type))
 

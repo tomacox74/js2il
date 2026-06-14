@@ -2,7 +2,7 @@ using Acornima;
 using Acornima.Ast;
 using System.Reflection.Metadata;
 
-namespace Js2IL.DebugSymbols;
+namespace Jroc.DebugSymbols;
 
 public readonly record struct SourcePosition(int Line, int Column)
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Utilities.Ecma335
+namespace Jroc.Utilities.Ecma335
 {
     /// <summary>
     /// Registry for type references in a MetadataBuilder.

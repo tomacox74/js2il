@@ -1,6 +1,6 @@
 # Stackify: Keeping Temps on the IL Evaluation Stack
 
-This document explains how **Stackify** works in JS2IL.
+This document explains how **Stackify** works in JROC.
 
 **Goal:** teach you *why* Stackify exists, *what problem it solves*, and *how the algorithm decides* whether a temporary value (a “temp”) can stay on the .NET IL **evaluation stack** instead of being stored into an IL local variable.
 
@@ -32,7 +32,7 @@ Example (conceptually):
 - `ldc.i4.3` pushes 3
 - `add` pops 3 and 5, pushes 8
 
-JS2IL’s internal pipelines often make data flow explicit using **temps**:
+JROC’s internal pipelines often make data flow explicit using **temps**:
 
 - A temp represents a value produced by one instruction and consumed by another.
 - A straightforward IL backend would implement a temp as an IL local:
@@ -509,7 +509,7 @@ Stackify refuses to keep temps on the stack across control flow (`LIRLabel`/bran
 
 ### 4) Add/adjust tests
 
-`tests/Js2IL.Tests/StackifyTests.cs` is the best place to lock in expected behavior.
+`tests/Jroc.Tests/StackifyTests.cs` is the best place to lock in expected behavior.
 
 - Add a test for “should stackify” when it’s obviously safe.
 - Add a test for “must not stackify” for:

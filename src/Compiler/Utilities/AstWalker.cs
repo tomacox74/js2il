@@ -1,6 +1,6 @@
 using Acornima.Ast;
 
-namespace Js2IL.Utilities;
+namespace Jroc.Utilities;
 
 public class AstWalker
 {

@@ -1,7 +1,7 @@
-using Js2IL.HIR;
-using Js2IL.SymbolTables;
+using Jroc.HIR;
+using Jroc.SymbolTables;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {

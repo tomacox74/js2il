@@ -227,7 +227,7 @@
         "feature": "ECMAScript Specification Types (overall)",
         "status": "Incomplete",
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-specification-types",
-        "notes": "This section is normative and implementation-relevant. JS2IL partially maps these spec types via runtime/compiler behavior, but Environment Records and several internal-spec types remain untracked."
+        "notes": "This section is normative and implementation-relevant. JROC partially maps these spec types via runtime/compiler behavior, but Environment Records and several internal-spec types remain untracked."
       },
       {
         "clause": "6.2.4",
@@ -235,8 +235,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-completion-record-specification-type",
         "testScripts": [
-          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js",
-          "tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js"
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_TryCatchFinally_ThrowValue.js",
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_TryFinally_Return.js"
         ],
         "notes": "Core completion behavior is represented by emitted control flow and exception handling, not as first-class Completion Record values."
       },
@@ -246,11 +246,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-reference-record-specification-type",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
-          "tests/Js2IL.Test262.Tests/language/expressions/assignment/PortExpressionsBatchExecutionTests.cs",
-          "tests/Js2IL.Test262.Tests/language/expressions/call/PortExpressionsBatchExecutionTests.cs",
-          "tests/Js2IL.Test262.Tests/language/expressions/member-expression/PortExpressionsBatchExecutionTests.cs"
+          "tests/Jroc.Tests/Object/JavaScript/Object_AssignmentExpression_PropertySet_ResultStoredToScopeField.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
+          "tests/Jroc.Test262.Tests/language/expressions/assignment/PortExpressionsBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/call/PortExpressionsBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/member-expression/PortExpressionsBatchExecutionTests.cs"
         ],
         "notes": "Identifier/member references work for supported language forms, including the covered test262 GetValue/PutValue cases for computed members, null/undefined member bases, and function-call reference resolution. Spec-exact modeling of every Reference Record variant remains incomplete."
       },
@@ -260,9 +260,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-property-descriptor-specification-type",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectDefineProperty_Accessor.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_WithPropertyDescriptors.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectCreate_NullPrototype_And_GetOwnPropertyDescriptor.js"
         ],
         "notes": "Descriptor creation and usage are implemented for supported object/runtime paths via PropertyDescriptorStore; full spec parity is incomplete."
       },
@@ -279,9 +279,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-privateelement-specification-type",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js",
-          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateProperty_HelperMethod_Log.js",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
         ],
         "notes": "Private instance fields and supported private methods use compiler-managed private element metadata. Static private method receiver checks reject proxy wrappers; private accessors still have limitations."
       },
@@ -291,8 +291,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-classfielddefinition-record-specification-type",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
         ],
         "notes": "Supports public/private instance and static fields with initializer constraints; computed names and some class element forms remain unsupported."
       },
@@ -302,7 +302,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-private-names",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
         ],
         "notes": "Private names for fields are supported with validator/runtime constraints; invalid/private-name edge cases are not fully spec-complete."
       },

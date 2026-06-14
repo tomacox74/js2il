@@ -1,4 +1,4 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents an import.meta meta property expression.

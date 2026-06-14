@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Utilities.Ecma335
+namespace Jroc.Utilities.Ecma335
 {
     /// <summary>
     /// Registry for assembly references in a MetadataBuilder.
@@ -112,7 +112,7 @@ namespace Js2IL.Utilities.Ecma335
             if (assemblyName.StartsWith("System.", StringComparison.Ordinal))
             {
                 // IMPORTANT:
-                // JS2IL emits assemblies intended to be referenced by normal SDK-style projects.
+                // JROC emits assemblies intended to be referenced by normal SDK-style projects.
                 // Those projects compile against reference assemblies in Microsoft.NETCore.App.Ref,
                 // where System.* assemblies are strong-named with the standard Microsoft token
                 // (b03f5f7f11d50a3a). Using the runtime token (e.g. System.Private.CoreLib's 7cec...)

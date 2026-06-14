@@ -6,7 +6,7 @@
 
 > Last generated (UTC): 2026-05-24T10:40:21Z
 
-JS2IL lowers runtime evaluation semantics for the supported JavaScript subset through its HIR/LIR/IL pipeline. This clause remains incomplete because full dynamic evaluation semantics, including general direct/indirect eval, are not yet supported.
+JROC lowers runtime evaluation semantics for the supported JavaScript subset through its HIR/LIR/IL pipeline. This clause remains incomplete because full dynamic evaluation semantics, including general direct/indirect eval, are not yet supported.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,5 +20,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Runtime evaluation lowering for supported statements and expressions | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`BinaryOperator_AddNumberNumber.js`](../../../tests/Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js)<br>[`ControlFlow_If_BooleanLiteral.js`](../../../tests/Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_BooleanLiteral.js) |  | Evaluation is implemented for the supported syntax subset via HIR parsing and LIR/IL lowering. Full clause coverage is incomplete: general direct/indirect eval, eval-introduced bindings, and unsupported grammar/runtime forms remain outside current support. |
+| Runtime evaluation lowering for supported statements and expressions | Supported with Limitations | [`Function_HelloWorld.js`](../../../tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js)<br>[`BinaryOperator_AddNumberNumber.js`](../../../tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js)<br>[`ControlFlow_If_BooleanLiteral.js`](../../../tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_If_BooleanLiteral.js) |  | Evaluation is implemented for the supported syntax subset via HIR parsing and LIR/IL lowering. Full clause coverage is incomplete: general direct/indirect eval, eval-introduced bindings, and unsupported grammar/runtime forms remain outside current support. |
 

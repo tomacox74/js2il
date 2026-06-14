@@ -1,6 +1,6 @@
-# js2il – JavaScript to .NET IL (consumer guide)
+# jroc – JavaScript to .NET IL (consumer guide)
 
-js2il is a JavaScript to .NET compiler, available as a .NET global tool. It compiles JavaScript source code to native .NET assemblies you can run on .NET.
+jroc is a JavaScript to .NET compiler, available as a .NET global tool. It compiles JavaScript source code to native .NET assemblies you can run on .NET.
 
 ## Install
 
@@ -8,38 +8,38 @@ js2il is a JavaScript to .NET compiler, available as a .NET global tool. It comp
 - Install the tool globally:
 
 ```powershell
-dotnet tool install --global js2il
+dotnet tool install --global jroc
 ```
 
 Update later:
 
 ```powershell
-dotnet tool update --global js2il
+dotnet tool update --global jroc
 ```
 
 Uninstall:
 
 ```powershell
-dotnet tool uninstall --global js2il
+dotnet tool uninstall --global jroc
 ```
 
 ## Which package should I use?
 
-- [`js2il`](https://www.nuget.org/packages/js2il)
+- [`jroc`](https://www.nuget.org/packages/jroc)
   - The global CLI tool for ad-hoc/manual JavaScript compilation from a terminal.
-- [`Js2IL.SDK`](https://www.nuget.org/packages/Js2IL.SDK)
+- [`Jroc.SDK`](https://www.nuget.org/packages/Jroc.SDK)
   - The MSBuild/NuGet integration for host projects that should compile JavaScript during `dotnet build`.
-- [`Js2IL.Core`](https://www.nuget.org/packages/Js2IL.Core)
+- [`Jroc.Core`](https://www.nuget.org/packages/Jroc.Core)
   - The reusable compiler library for custom tooling, build tasks, or other programmatic .NET integration.
-- [`Js2IL.Runtime`](https://www.nuget.org/packages/Js2IL.Runtime)
+- [`Jroc.Runtime`](https://www.nuget.org/packages/Jroc.Runtime)
   - The runtime support library used by generated assemblies and .NET hosting scenarios.
 
-Official releases publish `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
+Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` together at the same version. When you mix these packages in one workflow, keep the versions aligned.
 
 ## Usage
 
 ```powershell
-js2il <InputFile> [<OutputPath>] [options]
+jroc <InputFile> [<OutputPath>] [options]
 ```
 
 Options
@@ -57,15 +57,15 @@ Example:
 
 ```powershell
 # Convert tests\simple.js and write output next to the file
-js2il .\tests\simple.js
+jroc .\tests\simple.js
 
 # Convert to a specific directory with verbose output
-js2il .\tests\simple.js -o .\out -v
+jroc .\tests\simple.js -o .\out -v
 ```
 
 ## What gets generated?
 
-Given an input like `C:\code\sample.js`, js2il will emit the following into the output directory (default: alongside the input file):
+Given an input like `C:\code\sample.js`, jroc will emit the following into the output directory (default: alongside the input file):
 
 - `sample.dll`
 	- A .NET assembly (targeting net10.0) containing IL corresponding to your JavaScript.
@@ -103,16 +103,16 @@ Notes:
 
 ## Hosting samples
 
-The `js2il` tool package no longer carries the hosted C# samples. Those samples now ship with `Js2IL.SDK`, because they are intended to validate the MSBuild/NuGet integration path that hosting consumers use in real projects.
+The `jroc` tool package no longer carries the hosted C# samples. Those samples now ship with `Jroc.SDK`, because they are intended to validate the MSBuild/NuGet integration path that hosting consumers use in real projects.
 
 See:
 
 - the repo `samples\` directory
-- `Js2IL.SDK` package page: `https://www.nuget.org/packages/Js2IL.SDK`
-- `Js2IL.Core` package page: `https://www.nuget.org/packages/Js2IL.Core`
+- `Jroc.SDK` package page: `https://www.nuget.org/packages/Jroc.SDK`
+- `Jroc.Core` package page: `https://www.nuget.org/packages/Jroc.Core`
 
 ## Links
 
-- Hosting (.NET library mode): https://github.com/tomacox74/js2il/blob/master/docs/hosting/Index.md
-- Source, issues, docs: https://github.com/tomacox74/js2il
+- Hosting (.NET library mode): https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md
+- Source, issues, docs: https://github.com/tomacox74/jroc
 - License: Apache-2.0

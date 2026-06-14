@@ -1,4 +1,4 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents a spread element in an array literal, e.g., [...arr].

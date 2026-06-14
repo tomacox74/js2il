@@ -1,4 +1,4 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents the implicit scopes array available to certain callables.

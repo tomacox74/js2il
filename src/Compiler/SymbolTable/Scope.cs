@@ -1,9 +1,9 @@
 using Acornima.Ast;
-using Js2IL.DebugSymbols;
+using Jroc.DebugSymbols;
 using System;
 using System.Collections.Generic;
 
-namespace Js2IL.SymbolTables;
+namespace Jroc.SymbolTables;
 
 public enum ScopeKind
 {

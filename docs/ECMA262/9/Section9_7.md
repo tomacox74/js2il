@@ -6,7 +6,7 @@
 
 > Last generated (UTC): 2026-03-07T01:50:59Z
 
-JS2IL currently runs with a single host/runtime agent model, effectively treating execution as one agent cluster.
+JROC currently runs with a single host/runtime agent model, effectively treating execution as one agent cluster.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,5 +20,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| Single-cluster host execution model | Supported with Limitations | [`Process_NextTick_And_Promise_Ordering.js`](../../../tests/Js2IL.Tests/Node/Process/JavaScript/Process_NextTick_And_Promise_Ordering.js) | No multi-agent shared-memory cluster semantics are exposed; current runtime assumes one cluster context. |
+| Single-cluster host execution model | Supported with Limitations | [`Process_NextTick_And_Promise_Ordering.js`](../../../tests/Jroc.Tests/Node/Process/JavaScript/Process_NextTick_And_Promise_Ordering.js) | No multi-agent shared-memory cluster semantics are exposed; current runtime assumes one cluster context. |
 

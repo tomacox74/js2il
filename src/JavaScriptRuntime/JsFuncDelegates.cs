@@ -31,7 +31,7 @@ internal static class JsFuncDelegates
     }
 }
 
-// Custom delegate types used by js2il to bypass System.Func<> arity limits.
+// Custom delegate types used by jroc to bypass System.Func<> arity limits.
 // Signature convention: (object[] scopes, object? newTarget, object? a1..aN) -> object?
 public delegate object? JsFunc0(object[] scopes, object? newTarget);
 public delegate object? JsFunc1(object[] scopes, object? newTarget, object? a1);
