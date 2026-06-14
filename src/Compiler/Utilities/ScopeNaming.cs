@@ -1,7 +1,7 @@
 using System;
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.Utilities;
+namespace Jroc.Utilities;
 
 internal static class ScopeNaming
 {

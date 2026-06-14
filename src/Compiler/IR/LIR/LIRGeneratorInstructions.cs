@@ -1,4 +1,4 @@
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Represents a yield expression inside a synchronous generator.

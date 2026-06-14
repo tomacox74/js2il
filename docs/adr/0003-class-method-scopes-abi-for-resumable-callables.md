@@ -5,12 +5,12 @@
 
 ## Context
 
-JS2IL implements closures via a `scopes` chain ABI (`object[] scopes`):
+JROC implements closures via a `scopes` chain ABI (`object[] scopes`):
 - Each JS scope is represented as a .NET class instance.
 - Variables become fields on that scope instance.
 - Captured variables are accessed via the scope chain.
 
-JS2IL implements resumable execution (`async`/`await` today, `yield`/generators planned) using **scope-attached state** (see ADR 0002):
+JROC implements resumable execution (`async`/`await` today, `yield`/generators planned) using **scope-attached state** (see ADR 0002):
 - A leaf scope instance stores a program counter (`_asyncState` / `_genState`) and spill slots.
 - Resumption binds and re-invokes a compiled “move-next” function with the correct environment chain.
 
@@ -61,11 +61,11 @@ The async/generator state machine:
 Static methods have no receiver to hold `_scopes`. For resumable static methods, capture the declaring scopes chain once:
 
 - Emit a private static field on the class:
-  - `private static object[] __js2il_class_scopes;`
+  - `private static object[] __jroc_class_scopes;`
 - Initialize it during module/class initialization using the declaring environment.
 
 Then apply the same wrapper pattern:
-- Public static method has normal JS signature and forwards to `m__scoped(__js2il_class_scopes, ...)`.
+- Public static method has normal JS signature and forwards to `m__scoped(__jroc_class_scopes, ...)`.
 - State machine binds/resumes `m__scoped`.
 
 ### Non-resumable methods
@@ -139,7 +139,7 @@ Cons:
 ## Open Questions
 
 - **Classes declared inside functions**:
-  - If the enclosing function can be invoked multiple times, should `__js2il_class_scopes` be per invocation rather than a single static field?
+  - If the enclosing function can be invoked multiple times, should `__jroc_class_scopes` be per invocation rather than a single static field?
   - Do we need “class objects” or factory patterns for correct per-instantiation capture?
 - **ES class fields/initializers**:
   - How should initializers that reference outer scopes interact with captured environment?

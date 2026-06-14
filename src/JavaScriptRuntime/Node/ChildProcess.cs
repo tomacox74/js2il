@@ -1537,14 +1537,14 @@ namespace JavaScriptRuntime.Node
 
     internal static class ChildProcessRuntimeOptions
     {
-        internal const string ForkEntryModuleEnvVar = "JS2IL_CHILD_PROCESS_ENTRY_MODULE";
-        internal const string ForkIpcPortEnvVar = "JS2IL_CHILD_PROCESS_IPC_PORT";
-        internal const string ForkIpcTokenEnvVar = "JS2IL_CHILD_PROCESS_IPC_TOKEN";
+        internal const string ForkEntryModuleEnvVar = "JROC_CHILD_PROCESS_ENTRY_MODULE";
+        internal const string ForkIpcPortEnvVar = "JROC_CHILD_PROCESS_IPC_PORT";
+        internal const string ForkIpcTokenEnvVar = "JROC_CHILD_PROCESS_IPC_TOKEN";
     }
 
     internal sealed class ChildProcessIpcChannel : IDisposable
     {
-        private const string HandshakePrefix = "__js2il_child_process_ipc__:";
+        private const string HandshakePrefix = "__jroc_child_process_ipc__:";
         private readonly Action<Action> _queueImmediate;
         private readonly IIOScheduler? _ioScheduler;
         private readonly TaskCompletionSource _connected = new(TaskCreationOptions.RunContinuationsAsynchronously);

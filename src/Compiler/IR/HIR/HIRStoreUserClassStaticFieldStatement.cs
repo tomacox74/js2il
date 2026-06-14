@@ -1,6 +1,6 @@
-using Js2IL.Services.TwoPhaseCompilation;
+using Jroc.Services.TwoPhaseCompilation;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Stores a value into a known static field on a user-defined class compiled as a .NET type.

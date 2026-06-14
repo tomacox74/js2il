@@ -24,5 +24,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Abstract equality (==) and strict equality (===) evaluation | Supported | `tests/Js2IL.Test262.Tests/language/expressions/equals/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/equals/PortExpressionsBatchExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/strict-equals/PortExpressionsBatchExecutionTests.cs` |  | The checked-in equality ports now cover BigInt/object/string cases, SameValue-style strict comparisons, null/undefined handling, evaluation-order errors, and representative abstract-equality coercion cases from test262. |
+| Abstract equality (==) and strict equality (===) evaluation | Supported | `tests/Jroc.Test262.Tests/language/expressions/equals/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/equals/PortExpressionsBatchExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/strict-equals/PortExpressionsBatchExecutionTests.cs` |  | The checked-in equality ports now cover BigInt/object/string cases, SameValue-style strict comparisons, null/undefined handling, evaluation-order errors, and representative abstract-equality coercion cases from test262. |
 

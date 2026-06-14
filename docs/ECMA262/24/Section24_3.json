@@ -102,7 +102,7 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable",
         "testScripts": [
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js"
+          "tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Constructor_Empty.js"
         ],
         "test262Paths": [
           "test/built-ins/WeakMap/undefined-newtarget.js"
@@ -115,7 +115,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap-iterable",
         "testScripts": [
-          "tests/Js2IL.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/ExecutionTests.cs"
         ],
         "notes": "WeakMap(iterable) consumes iterable entry pairs through the constructor's adder path, including the covered test262 adder lookup failure semantics. Weak-key validation and broader exotic iterator edge cases remain partial."
       },
@@ -125,12 +125,12 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-weakmap.prototype",
         "testScripts": [
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js"
+          "tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Constructor_Prototype_Surface.js"
         ],
         "test262Paths": [
           "test/built-ins/WeakMap/prototype-of-weakmap.js"
         ],
-        "notes": "JS2IL exposes globalThis.WeakMap as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction is supported; the remaining WeakMap prototype gaps are still incomplete."
+        "notes": "JROC exposes globalThis.WeakMap as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires WeakMap.prototype and WeakMap.prototype.constructor, and stamps new WeakMap instances with the public prototype so reflective prototype checks and instanceof use the JS-visible surface. Iterable construction is supported; the remaining WeakMap prototype gaps are still incomplete."
       },
       {
         "clause": "24.3.3",
@@ -138,11 +138,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-weakmap-prototype-object",
         "testScripts": [
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js",
-          "tests/Js2IL.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js",
-          "tests/Js2IL.Test262.Tests/built-ins/WeakMap/prototype/get/ExecutionTests.cs"
+          "tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Set_Get_Basic.js",
+          "tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Has_Basic.js",
+          "tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Delete_Basic.js",
+          "tests/Jroc.Tests/WeakMap/JavaScript/WeakMap_Object_Keys.js",
+          "tests/Jroc.Test262.Tests/built-ins/WeakMap/prototype/get/ExecutionTests.cs"
         ],
         "test262Paths": [
           "test/built-ins/WeakMap/prototype/get/get.js",

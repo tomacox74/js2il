@@ -1,6 +1,6 @@
 using Acornima.Ast;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 public interface IParser
 {

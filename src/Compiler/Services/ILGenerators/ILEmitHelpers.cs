@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Services.ILGenerators
+namespace Jroc.Services.ILGenerators
 {
     /// <summary>
     /// Convenience helpers for emitting common IL instruction patterns using System.Reflection.Metadata encoders.

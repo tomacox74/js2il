@@ -1,6 +1,6 @@
-using Js2IL.DebugSymbols;
+using Jroc.DebugSymbols;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Marker instruction that indicates the next emitted IL should be associated with the given source span.

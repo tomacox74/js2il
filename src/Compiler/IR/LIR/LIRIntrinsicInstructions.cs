@@ -1,8 +1,8 @@
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.SymbolTables;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 using System.Reflection.Metadata;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 // Intrinsic-related LIR instructions (globals, intrinsic types, and intrinsic calls).
 

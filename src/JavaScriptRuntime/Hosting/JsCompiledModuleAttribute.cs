@@ -1,9 +1,9 @@
 using System;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
-/// Assembly-level manifest entry emitted by the JS2IL compiler.
+/// Assembly-level manifest entry emitted by the JROC compiler.
 /// Used by hosts to discover which module ids exist inside a compiled assembly.
 /// </summary>
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]

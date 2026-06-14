@@ -1,10 +1,10 @@
 using Acornima.Ast;
 using System.Reflection;
 using System.Linq;
-using Js2IL.Services;
-using Js2IL.Utilities;
+using Jroc.Services;
+using Jroc.Utilities;
 
-namespace Js2IL.SymbolTables
+namespace Jroc.SymbolTables
 {
     /// <summary>
     /// Builds a SymbolTable from a JavaScript AST.
@@ -1704,7 +1704,7 @@ namespace Js2IL.SymbolTables
             // When a function has parameter expressions, default initializers should still resolve the
             // implicit arguments object even if the body declares its own `arguments` binding.
             if (functionScope.Bindings.ContainsKey("arguments")
-                && !Js2IL.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(functionScope.AstNode))
+                && !Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(functionScope.AstNode))
             {
                 return;
             }
@@ -1722,12 +1722,12 @@ namespace Js2IL.SymbolTables
 
             functionScope.Bindings["arguments"] = binding;
 
-            if (!Js2IL.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope))
+            if (!Jroc.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope))
             {
                 return;
             }
 
-            foreach (var parameterName in Js2IL.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(functionScope))
+            foreach (var parameterName in Jroc.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(functionScope))
             {
                 if (functionScope.Bindings.TryGetValue(parameterName, out var parameterBinding))
                 {
@@ -2353,7 +2353,7 @@ namespace Js2IL.SymbolTables
     }
 }
 
-namespace Js2IL.SymbolTables
+namespace Jroc.SymbolTables
 {
     public partial class SymbolTableBuilder
     {

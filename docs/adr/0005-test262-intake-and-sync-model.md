@@ -5,7 +5,7 @@
 
 ## Context
 
-Issue #927 introduces a phased test262 conformance program, and Issue #928 is the first dependency because every later runner/reporting decision depends on how JS2IL acquires and pins upstream `tc39/test262`.
+Issue #927 introduces a phased test262 conformance program, and Issue #928 is the first dependency because every later runner/reporting decision depends on how JROC acquires and pins upstream `tc39/test262`.
 
 We need one canonical intake model that keeps:
 
@@ -23,12 +23,12 @@ The candidate models were:
 
 ## Decision
 
-JS2IL uses a **scripted fetch + pinned commit** model for test262 intake.
+JROC uses a **scripted fetch + pinned commit** model for test262 intake.
 
 - The canonical pin lives in `tests/test262/test262.pin.json`.
 - Local bootstrap and CI both use `node scripts/test262/bootstrap.js`.
 - The managed checkout lives outside source control under `artifacts/test262/cache/<sha>`.
-- Developers may override the managed checkout with `JS2IL_TEST262_ROOT` (or `--root`) for local experimentation, but that override is not the canonical path and must not become the required workflow.
+- Developers may override the managed checkout with `JROC_TEST262_ROOT` (or `--root`) for local experimentation, but that override is not the canonical path and must not become the required workflow.
 - The managed checkout is materialized as a sparse git checkout with `core.autocrlf=false` and `core.eol=lf` so Windows does not rewrite upstream files to CRLF.
 
 ## MVP Intake Scope
@@ -66,7 +66,7 @@ The default local workflow is:
 2. let the script materialize or reuse `artifacts/test262/cache/<sha>`
 3. point later tooling at that resolved root (or call `npm run test262:root`)
 
-For local-only experimentation, a developer may point `JS2IL_TEST262_ROOT` at a sibling checkout or another prepared test262 directory. The bootstrap script still validates the expected root files, harness files, and pinned `package.json` version before accepting the override.
+For local-only experimentation, a developer may point `JROC_TEST262_ROOT` at a sibling checkout or another prepared test262 directory. The bootstrap script still validates the expected root files, harness files, and pinned `package.json` version before accepting the override.
 
 ## CI Flow
 
@@ -82,7 +82,7 @@ This keeps the repository small while still making CI deterministic.
 
 ## Licensing and Attribution
 
-JS2IL does not vendor the upstream suite into the repository for this phase, but the managed checkout still preserves upstream attribution material.
+JROC does not vendor the upstream suite into the repository for this phase, but the managed checkout still preserves upstream attribution material.
 
 - The sparse checkout always includes `LICENSE` and `INTERPRETING.md`.
 - Any later generated baselines, mirrored files, or exported reports that copy upstream content must preserve the relevant upstream notices.
@@ -121,7 +121,7 @@ This keeps test262 updates explicit and reviewable instead of introducing silent
 
 ## Alternatives Considered
 
-### 1) Vendored snapshot committed into JS2IL
+### 1) Vendored snapshot committed into JROC
 
 Rejected because upstream test262 is large, would create noisy update PRs, and is unnecessary now that CI may fetch and cache by SHA.
 

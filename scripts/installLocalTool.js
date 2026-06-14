@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * Build a Release nupkg of js2il and install it as either:
+ * Build a Release nupkg of jroc and install it as either:
  * 1. The global dotnet tool (default)
  * 2. A local isolated tool path (`--tool-path`)
  *
@@ -13,7 +13,7 @@
  *
  * Usage:
  *   node scripts/installLocalTool.js
- *   node scripts/installLocalTool.js --tool-path artifacts/local-js2il
+ *   node scripts/installLocalTool.js --tool-path artifacts/local-jroc
  */
 const {
   defaultPackDir,
@@ -59,6 +59,6 @@ try {
 
   console.log(`Done. Run "${installResult.executable} --version" to verify.`);
 } catch (err) {
-  console.error('Failed to build/install local js2il:', err.message || err);
+  console.error('Failed to build/install local jroc:', err.message || err);
   process.exit(1);
 }

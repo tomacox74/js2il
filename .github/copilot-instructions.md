@@ -1,20 +1,20 @@
-# JS2IL AI Agent Instructions
+# JROC AI Agent Instructions
 
-JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to native .NET assemblies using System.Reflection.Metadata for direct IL emission. 
+JROC is a JavaScript-to-.NET IL compiler that compiles JavaScript source to native .NET assemblies using System.Reflection.Metadata for direct IL emission. 
 
 ## Project goals are sorted by priority
-* JS2IL should be easy to to use for both library authors and end users.  This means good documentation, good error messages, and a good developer experience.  It should be low friction.
-* JS2IL completely conform to the JavaScript language specification (ECMA-262).  Currently we are targeting ES2025.
-* The JS2IL runtime behavior should be completely compatible with Node.js.  Any script that runs in Node.js should compile with run with js2il.
-* The JS2IL compiler and runtime should be NPM compatibale and have the same module resolution rules as node.js.
-* Given that js2il is a true compiler there is a very reasonable expectation that its output should be faster than other solutions. A lot of the performance comparisons are against jint with is a dotnet interpreted solution.
+* JROC should be easy to to use for both library authors and end users.  This means good documentation, good error messages, and a good developer experience.  It should be low friction.
+* JROC completely conform to the JavaScript language specification (ECMA-262).  Currently we are targeting ES2025.
+* The JROC runtime behavior should be completely compatible with Node.js.  Any script that runs in Node.js should compile with run with jroc.
+* The JROC compiler and runtime should be NPM compatibale and have the same module resolution rules as node.js.
+* Given that jroc is a true compiler there is a very reasonable expectation that its output should be faster than other solutions. A lot of the performance comparisons are against jint with is a dotnet interpreted solution.
 * it is not expected to ever match node.js performance because that is a project that has had a decade of optimiizations but it should be able to run real world node applications with acceptable performance.
 
 These goals drive choices made.  And their ranking above should be clear. For example if I have a 10x perf inprovement but it breaks compatiblity with node or ECMA 262 it is a non-starter.
 
 ## Current compatibility goal
 
-- A major current goal is to have JS2IL pass as much of `test262` as possible.
+- A major current goal is to have JROC pass as much of `test262` as possible.
 - The default assumption should be that `test262` coverage is the target unless a feature is explicitly unsupported today.
 - Known unsupported JavaScript features such as `eval` are valid exceptions for now; when those gaps matter, document them clearly instead of treating them as silent failures.
 - Prefer work that improves real `test262` pass rate over adding redundant project-local regressions for behavior that `test262` already covers well.
@@ -61,7 +61,7 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 - `src/JavaScriptRuntime/`: Runtime library (Array, Object, Operators, Math, String, Closure helpers)
 
 ## Development Workflows
-- the typical pattern for adding support for javascript and node features is to add tests first under JS2IL.Tests/*area*/ExecutionTests and GeneratorTests
+- the typical pattern for adding support for javascript and node features is to add tests first under JROC.Tests/*area*/ExecutionTests and GeneratorTests
 - Confirm the tests are failing but and also create the expected snapshot file for the ExecutionTest output.  At this point there is no snapshot for the GeneratorTest.
 - Implmenent the new feature
 - Run all tests and confirm that all execution tests are running.  It is ok if generator tests are failing.
@@ -111,25 +111,25 @@ These goals drive choices made.  And their ranking above should be clear. For ex
 dotnet build                                    # Debug build
 dotnet publish -c Release                       # Release build
 dotnet run --project src/Cli -- input.js output  # Run from source
-js2il input.js output                           # Installed tool
+jroc input.js output                           # Installed tool
 ```
 
 ### Testing
 - **Execution tests**: `ExecutionTestsBase` - compile JS → run .dll → verify output
 - **Generator tests**: `GeneratorTestsBase` - compile JS → decompile IL → snapshot test via Verify
 - The same test cases are used for both execution and generator tests. The test javascript is shared.
-- **Test262 tests**: live under `tests\Js2IL.Test262.Tests\` and are the preferred place for standards-based compatibility coverage.
+- **Test262 tests**: live under `tests\Jroc.Test262.Tests\` and are the preferred place for standards-based compatibility coverage.
 - Snapshot updates: `node scripts/updateVerifiedFiles.js` (updates all `*.received.*` → `*.verified.*`).  This tool is useful when a IL change affects many tests.
 - Test categories: Array, BinaryOperator, Classes, CompoundAssignment, ControlFlow, Function, etc.
-- Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs js2il performance.
-- The full `tests\Js2IL.Test262.Tests` suite takes a long time to run locally; prefer targeted test runs when possible and only run the entire suite when explicitly asked or when a task truly needs full-suite validation.
+- Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs jroc performance.
+- The full `tests\Jroc.Test262.Tests` suite takes a long time to run locally; prefer targeted test runs when possible and only run the entire suite when explicitly asked or when a task truly needs full-suite validation.
 
 ### Porting test262 coverage into this repo
-- Keep the original `test262` scenario as the source of truth whenever practical. Add the port under `tests\Js2IL.Test262.Tests\` using the matching spec-style folder structure (for example `language\expressions\arrow-function`).
+- Keep the original `test262` scenario as the source of truth whenever practical. Add the port under `tests\Jroc.Test262.Tests\` using the matching spec-style folder structure (for example `language\expressions\arrow-function`).
 - Add a `JavaScript\` fixture file and a matching `ExecutionTests.cs` entry in that folder. Follow the existing pattern where the xUnit `DisplayName` preserves the original test name and the C# method name uses an identifier-safe variant.
 - Add the expected execution snapshot under the matching `Snapshots\` folder.
-- Prefer **not** to add a duplicate `tests\Js2IL.Tests\...` regression when the `test262` port already covers the runtime behavior clearly. Only keep a `Js2IL.Tests` companion when we need project-specific generator/IL assertions or coverage that does not map cleanly to `test262`.
-- PR #1011 is the reference example for this workflow: the arrow-function restricted `caller` / `arguments` scenario belongs under `tests\Js2IL.Test262.Tests\language\expressions\arrow-function\`, and the parallel `tests\Js2IL.Tests\ArrowFunction\ArrowFunction_RestrictedCallerArgumentsProperties` regression is considered redundant.
+- Prefer **not** to add a duplicate `tests\Jroc.Tests\...` regression when the `test262` port already covers the runtime behavior clearly. Only keep a `Jroc.Tests` companion when we need project-specific generator/IL assertions or coverage that does not map cleanly to `test262`.
+- PR #1011 is the reference example for this workflow: the arrow-function restricted `caller` / `arguments` scenario belongs under `tests\Jroc.Test262.Tests\language\expressions\arrow-function\`, and the parallel `tests\Jroc.Tests\ArrowFunction\ArrowFunction_RestrictedCallerArgumentsProperties` regression is considered redundant.
 - When a new `test262` case changes the documented support story, update the relevant ECMA-262 docs and changelog entry in the same PR.
 - For the full step-by-step individual porting workflow, use the dedicated Copilot skill in `.github\skills\test262-porting\SKILL.md`.
 
@@ -148,7 +148,7 @@ node scripts/runPhasedBenchmarkScenario.js dromaeo-object-regexp
 
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
-- The full `tests\Js2IL.Test262.Tests` suite takes a long time to run locally; prefer targeted test runs when possible and only run the entire suite when explicitly asked or when a task truly needs full-suite validation.
+- The full `tests\Jroc.Test262.Tests` suite takes a long time to run locally; prefer targeted test runs when possible and only run the entire suite when explicitly asked or when a task truly needs full-suite validation.
 
 ### Release Process
 
@@ -193,7 +193,7 @@ Follow these steps IN ORDER:
    # OR
    npm run release:major  # For major version (0.x.y -> x+1.0.0)
    ```
-   This updates CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
+   This updates CHANGELOG.md, samples/Directory.Build.props, src/Cli/Jroc.csproj, src/Jroc.Core/Jroc.Core.csproj, src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
 
 3. **Validate the coordinated release package set** (on the release branch):
    ```powershell
@@ -202,7 +202,7 @@ Follow these steps IN ORDER:
 
 4. **Commit version bump** (on the release branch):
    ```powershell
-   git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
+   git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj
    git commit -m "chore(release): cut v0.x.y"
    ```
 
@@ -221,7 +221,7 @@ Follow these steps IN ORDER:
    gh release create v0.x.y --title "v0.x.y" --notes-file release-notes.md --target master
    ```
 
-GitHub Actions (`.github/workflows/publish-tool.yml`) builds, tests, packs, and publishes `Js2IL.Runtime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` to NuGet when the release tag is created. The legacy `.github/workflows/release.yml` workflow still uploads the published binaries as an artifact bundle.
+GitHub Actions (`.github/workflows/publish-tool.yml`) builds, tests, packs, and publishes `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` to NuGet when the release tag is created. The legacy `.github/workflows/release.yml` workflow still uploads the published binaries as an artifact bundle.
 
 ## Project Conventions
 
@@ -315,7 +315,7 @@ When branch protection requires all conversations to be resolved before merging,
 
 ### Step 1: Get Review Thread IDs
 ```powershell
-gh api graphql -f query='query { repository(owner: \"tomacox74\", name: \"js2il\") { pullRequest(number: <PR_NUMBER>) { reviewThreads(first: 50) { nodes { id isResolved } } } } }'
+gh api graphql -f query='query { repository(owner: \"tomacox74\", name: \"jroc\") { pullRequest(number: <PR_NUMBER>) { reviewThreads(first: 50) { nodes { id isResolved } } } } }'
 ```
 
 ### Step 2: Resolve Each Thread

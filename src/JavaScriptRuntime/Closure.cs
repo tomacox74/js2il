@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
-using Js2IL.Runtime;
+using Jroc.Runtime;
 
 namespace JavaScriptRuntime
 {
@@ -239,7 +239,7 @@ namespace JavaScriptRuntime
             bool hasParamsArray = metadata.HasParamsArray;
             int fixedJsParamCount = metadata.FixedJsParamCount;
 
-            // Fast-path: most JS2IL-generated functions are strongly typed as Func<object[], object, ... , object>.
+            // Fast-path: most JROC-generated functions are strongly typed as Func<object[], object, ... , object>.
             // Avoid Delegate.DynamicInvoke() for these common cases to reduce overhead and (on some runtimes)
             // sidestep reflection invoke stub/JIT edge cases.
             if (!hasParamsArray)
@@ -388,7 +388,7 @@ namespace JavaScriptRuntime
                 var delegateType = target.GetType();
                 var openInstance = target.Target == null && !method.IsStatic;
 
-                if (Environment.GetEnvironmentVariable("JS2IL_CLOSURE_DIAG") == "1")
+                if (Environment.GetEnvironmentVariable("JROC_CLOSURE_DIAG") == "1")
                 {
                     global::System.Console.WriteLine("[closure] DynamicInvoke failed: null instance");
                     global::System.Console.WriteLine($"[closure] DelegateType: {delegateType.FullName}");
@@ -417,7 +417,7 @@ namespace JavaScriptRuntime
             }
             catch (TargetInvocationException tie) when (tie.InnerException != null)
             {
-                if (Environment.GetEnvironmentVariable("JS2IL_CLOSURE_DIAG") == "1")
+                if (Environment.GetEnvironmentVariable("JROC_CLOSURE_DIAG") == "1")
                 {
                     var method = target.Method;
                     var delegateType = target.GetType();
@@ -649,7 +649,7 @@ namespace JavaScriptRuntime
 
 
                 // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
-                // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
+                // the standard jroc scopes array parameter. Support calling it via the generic dispatcher.
                 if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
                 {
                     return require(args.Length > 0 ? args[0] : null)!;

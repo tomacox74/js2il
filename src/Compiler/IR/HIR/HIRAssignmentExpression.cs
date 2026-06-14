@@ -1,6 +1,6 @@
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents an assignment expression in HIR (e.g., x = 5, y = x + 1).

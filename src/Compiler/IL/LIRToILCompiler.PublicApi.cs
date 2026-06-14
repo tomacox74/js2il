@@ -1,16 +1,16 @@
-using Js2IL.IR;
-using Js2IL.Services;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Services.VariableBindings;
-using Js2IL.Utilities.Ecma335;
+using Jroc.IR;
+using Jroc.Services;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Services.VariableBindings;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
-using Js2IL.DebugSymbols;
+using Jroc.DebugSymbols;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {

@@ -4,7 +4,7 @@ Typed hosting is the recommended UX when you control the compilation step (or yo
 
 ## Key idea
 
-- JS2IL emits a generated exports contract interface into the compiled module assembly.
+- JROC emits a generated exports contract interface into the compiled module assembly.
 - The interface is annotated with `[JsModule("<moduleId>")]`.
 - `JsEngine.LoadModule<TExports>()` uses that attribute to load the module with **no module id argument**.
 
@@ -12,9 +12,9 @@ Typed hosting is the recommended UX when you control the compilation step (or yo
 
 Contracts follow these conventions (see the generator for the authoritative rules):
 
-- Root namespace: `Js2IL.<AssemblyName>`
+- Root namespace: `Jroc.<AssemblyName>`
 - Entry module exports interface: `I<AssemblyName>Exports`
-  - Example: assembly `HostedCounterModule.dll` → `Js2IL.HostedCounterModule.IHostedCounterModuleExports`
+  - Example: assembly `HostedCounterModule.dll` → `Jroc.HostedCounterModule.IHostedCounterModuleExports`
 - Non-entry modules:
   - Namespace includes path segments (PascalCase)
   - Interface name is `I<DisplayName>Exports` (`index` maps to the parent folder name)
@@ -44,8 +44,8 @@ module.exports = {
 ## Calling it from C#
 
 ```csharp
-using Js2IL.Runtime;
-using Js2IL.HostedCounterModule;
+using Jroc.Runtime;
+using Jroc.HostedCounterModule;
 
 using var exports = JsEngine.LoadModule<IHostedCounterModuleExports>();
 

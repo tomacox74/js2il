@@ -27,5 +27,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Addition operator (+) evaluation order and coercion | Supported | `tests/Js2IL.Test262.Tests/language/expressions/addition/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/addition/PortExpressionsBatchExecutionTests.cs` |  | The checked-in addition ports now cover mixed BigInt/string cases plus GetValue, abrupt-completion ordering, numeric addition, and string-concatenation coercion paths from test262. |
+| Addition operator (+) evaluation order and coercion | Supported | `tests/Jroc.Test262.Tests/language/expressions/addition/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/addition/PortExpressionsBatchExecutionTests.cs` |  | The checked-in addition ports now cover mixed BigInt/string cases plus GetValue, abrupt-completion ordering, numeric addition, and string-concatenation coercion paths from test262. |
 

@@ -1,6 +1,6 @@
 using System.Reflection.Metadata;
 
-namespace Js2IL.Services.VariableBindings;
+namespace Jroc.Services.VariableBindings;
 
 /// <summary>
 /// Registry for scope type handles and field handles.

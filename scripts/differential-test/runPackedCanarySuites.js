@@ -39,12 +39,12 @@ function extractArgs(argv) {
       continue;
     }
 
-    if ((arg === '--js2il' || arg === '-j') && argv[i + 1]) {
+    if ((arg === '--jroc' || arg === '-j') && argv[i + 1]) {
       i++;
       continue;
     }
 
-    if (arg.startsWith('--js2il=')) {
+    if (arg.startsWith('--jroc=')) {
       continue;
     }
 
@@ -71,7 +71,7 @@ function getOutputRoot(requestedOutput) {
     return resolved;
   }
 
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'js2il-packed-canary-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'jroc-packed-canary-'));
 }
 
 function main() {
@@ -101,7 +101,7 @@ function main() {
       ...forwarded,
       '--output',
       outputRoot,
-      '--js2il',
+      '--jroc',
       installResult.executable,
     ],
     {

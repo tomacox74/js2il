@@ -1,8 +1,8 @@
 # API: JsEngine
 
-Namespace: `Js2IL.Runtime` (assembly: `JavaScriptRuntime.dll` / NuGet package: `Js2IL.Runtime`)
+Namespace: `Jroc.Runtime` (assembly: `JavaScriptRuntime.dll` / NuGet package: `Jroc.Runtime`)
 
-`JsEngine` is the public entry point for hosting compiled JS2IL assemblies.
+`JsEngine` is the public entry point for hosting compiled JROC assemblies.
 
 ## LoadModule<TExports>()
 
@@ -40,8 +40,8 @@ public static IDisposable LoadModule(Assembly compiledAssembly, string moduleId)
 public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)
 ```
 
-- Returns module ids present in a compiled JS2IL assembly.
-- Prefer this over scanning types directly; compiled assemblies emitted by JS2IL include an assembly-level manifest via `[JsCompiledModule]`.
+- Returns module ids present in a compiled JROC assembly.
+- Prefer this over scanning types directly; compiled assemblies emitted by JROC include an assembly-level manifest via `[JsCompiledModule]`.
 - Includes a back-compat fallback for older compiled assemblies.
 
 ## Threading model (high level)

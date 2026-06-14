@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using Js2IL.Runtime;
+using Jroc.Runtime;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime.CommonJS;

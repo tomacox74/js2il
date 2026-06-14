@@ -1,4 +1,4 @@
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
 /// Represents an exported JavaScript constructor (class/function) that can be invoked with <c>new</c> semantics.

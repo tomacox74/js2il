@@ -1,12 +1,12 @@
 # Plan: npm Package Imports (Node/CommonJS Resolution)
 
 ## Goal
-Enable JS2IL to compile and execute code that imports npm packages in two ways:
+Enable JROC to compile and execute code that imports npm packages in two ways:
 
 1. **CLI entry by npm module id**
    - Example (Hosting.Domino):
-     - Today: `js2il node_modules/@mixmark-io/domino/lib/index.js`
-     - Target: `js2il --moduleid @mixmark-io/domino`
+     - Today: `jroc node_modules/@mixmark-io/domino/lib/index.js`
+     - Target: `jroc --moduleid @mixmark-io/domino`
      - `@mixmark-io/domino` resolves to the package’s `.js` entry (e.g. `lib/index.js`).
 
 2. **`require()` of npm packages inside JavaScript modules**
@@ -18,9 +18,9 @@ The **core requirement** is to resolve module IDs to physical JavaScript files a
 ## Non-Goals (for this feature increment)
 - Implementing ESM `import` / `export` semantics.
 - Supporting non-`.js` runtime loading (`.json`, `.node`, `.mjs`, `.cjs`) as compile targets.
-  - If Node resolution leads to a non-`.js` target, JS2IL should report a **compile-time error**.
+  - If Node resolution leads to a non-`.js` target, JROC should report a **compile-time error**.
 - Reproducing Node’s filesystem resolution at runtime.
-  - JS2IL is a compiler; runtime should resolve *types*, not walk `node_modules`.
+  - JROC is a compiler; runtime should resolve *types*, not walk `node_modules`.
 
 ## Constraints / Principles
 1. **Resolution mirrors Node.js CommonJS as closely as possible**
@@ -40,7 +40,7 @@ The **core requirement** is to resolve module IDs to physical JavaScript files a
 - Runtime require: `src/JavaScriptRuntime/CommonJS/Require.cs`
   - Bare specifiers are treated as **Node core modules** only.
 - Host module loading: `src/JavaScriptRuntime/Hosting/JsEngine.cs`, `src/JavaScriptRuntime/Hosting/JsRuntimeInstance.cs`
-- Assembly module-id manifest: `Js2IL.Runtime.JsCompiledModuleAttribute`
+- Assembly module-id manifest: `Jroc.Runtime.JsCompiledModuleAttribute`
 
 ## Design Overview
 ### High-level architecture
@@ -112,14 +112,14 @@ Target behavior is **CommonJS** resolution with modern `exports` support.
   - Fall back to `index.js` under package root.
 
 ### File type policy
-- JS2IL only compiles `.js` sources for npm resolution.
+- JROC only compiles `.js` sources for npm resolution.
 - If resolution results in:
   - `.json`, `.node`, `.mjs`, `.cjs` (or any non-`.js`) → **compile-time error**.
 
 > Note: Many packages ship `.cjs` files. This plan keeps the initial scope strict per current requirements.
 
 ### Canonical module IDs
-Resolution produces a physical file path, but JS2IL needs a **logical module id** to:
+Resolution produces a physical file path, but JROC needs a **logical module id** to:
 - uniquely represent the module inside the compilation
 - allow runtime `require()` lookups by ID
 
@@ -219,7 +219,7 @@ The runtime mapping makes `LoadModule("turndown")` and `LoadModule("@mixmark-io/
 
 ## CLI: `--moduleid`
 Add a new CLI option:
-- `js2il --moduleid <npmModuleId> [--output ...] [options]`
+- `jroc --moduleid <npmModuleId> [--output ...] [options]`
 
 Behavior:
 - Mutually exclusive with positional `InputFile`.

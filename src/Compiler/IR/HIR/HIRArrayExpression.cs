@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents a JavaScript array literal expression, e.g., [1, 2, 3] or ['a', 'b', ...rest].

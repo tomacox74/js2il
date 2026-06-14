@@ -1,7 +1,7 @@
 using System;
-using Js2IL.Services.TwoPhaseCompilation;
+using Jroc.Services.TwoPhaseCompilation;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Represents a tagged template expression: tag`template${expr}literal`.

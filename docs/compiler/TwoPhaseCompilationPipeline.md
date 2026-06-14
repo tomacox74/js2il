@@ -1,6 +1,6 @@
-# JS2IL Two-Phase Compilation Pipeline
+# JROC Two-Phase Compilation Pipeline
 
-This document describes a proposed **two-phase compilation pipeline** for JS2IL that is **eventually dependency-safe** across:
+This document describes a proposed **two-phase compilation pipeline** for JROC that is **eventually dependency-safe** across:
 
 - Classes (constructors, methods) *(dynamic member-call dependency tracking such as `obj.m()` remains out-of-scope; see Milestone 2b1)*
 - Function declarations/expressions
@@ -19,7 +19,7 @@ This doc is written **ideal-first**:
 
 ## Current implementation snapshot (Milestone 1 + Milestone 2c)
 
-JS2IL now has a real two-phase coordinator:
+JROC now has a real two-phase coordinator:
 
 - **Phase 1: Discovery** runs via `CallableDiscovery` and populates `CallableRegistry` keyed by `CallableId`.
 - **Milestone 2b/2b1: Planner** computes a dependency graph, SCC groups, and a deterministic stage order.
@@ -198,7 +198,7 @@ Important metadata detail (ties back to current behavior):
 - This means `MetadataBuilder.AddTypeDefinition(...)` can be *called at any time*, but you can only do it safely “in advance” if you already know what values to use for `fieldList` / `methodList`.
 - Practically, Phase 1 must handle this in one of two ways:
   - **Precompute layout:** discover all fields/methods for each type and add type definitions in an order where the starting handles are known deterministically.
-  - **Defer emission:** use a builder that buffers member declarations and only writes the `TypeDefinition` row once it can compute the correct list starts (this is effectively what JS2IL’s type-building helpers do today).
+  - **Defer emission:** use a builder that buffers member declarations and only writes the `TypeDefinition` row once it can compute the correct list starts (this is effectively what JROC’s type-building helpers do today).
 
 ### Function declarations
 
@@ -339,7 +339,7 @@ This section explains the “escape hatch” strategy for **strongly connected c
 
 An [SCC][scc] is a set of callables where each callable is reachable from every other callable in the set (directly or indirectly).
 
-In JS2IL terms, [SCC][scc]s arise from:
+In JROC terms, [SCC][scc]s arise from:
 
 - Mutual recursion between functions
 - A class method referencing a function value that (transitively) references the class
@@ -821,7 +821,7 @@ A “callable” is any construct that can be invoked or referenced as a functio
 
 ## Naming and identity (very explicit)
 
-JS2IL uses several different “names” for the same concept (JS name, scope name, registry key, .NET type name, IL method name). This section documents the **current conventions** that the two-phase plan must preserve.
+JROC uses several different “names” for the same concept (JS name, scope name, registry key, .NET type name, IL method name). This section documents the **current conventions** that the two-phase plan must preserve.
 
 ### Terminology
 

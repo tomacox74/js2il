@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Runtime.ExceptionServices;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 internal static class ExportMemberResolver
 {
@@ -312,7 +312,7 @@ internal static class ExportMemberResolver
     private static bool TryBuildInvokeArgs(ParameterInfo[] parameters, object[] args, object? target, out object?[] invokeArgs)
     {
         // Support varargs-style CLR methods like Foo(object[] args) by passing the entire argument list.
-        // But do NOT treat the js2il ABI scopes parameter (object[] scopes) as varargs.
+        // But do NOT treat the jroc ABI scopes parameter (object[] scopes) as varargs.
         if (parameters.Length == 1
             && parameters[0].ParameterType == typeof(object[])
             && !string.Equals(parameters[0].Name, "scopes", StringComparison.OrdinalIgnoreCase))
@@ -321,7 +321,7 @@ internal static class ExportMemberResolver
             return true;
         }
 
-        // js2il ABI callables may have hidden leading parameters:
+        // jroc ABI callables may have hidden leading parameters:
         // - scopes: object[]
         // - newTarget: object (immediately after scopes)
         // Hosting callers provide only JavaScript args; inject hidden ABI slots here.

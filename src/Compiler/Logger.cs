@@ -1,4 +1,4 @@
-namespace Js2IL;
+namespace Jroc;
 
 internal class Logger : ILogger
 {

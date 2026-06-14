@@ -24,5 +24,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Conditional operator (? :) evaluation | Supported | `tests/Js2IL.Test262.Tests/language/expressions/conditional/ExecutionTests.cs`<br>`tests/Js2IL.Test262.Tests/language/expressions/conditional/PortExpressionsBatchExecutionTests.cs` |  | The checked-in conditional-expression slice covers GetValue on the test expression, truthy/falsy branch selection, branch-local abrupt completions, coalesce/conditional interaction, and the tail-position return cases exercised by the imported test262 ports. |
+| Conditional operator (? :) evaluation | Supported | `tests/Jroc.Test262.Tests/language/expressions/conditional/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/language/expressions/conditional/PortExpressionsBatchExecutionTests.cs` |  | The checked-in conditional-expression slice covers GetValue on the test expression, truthy/falsy branch selection, branch-local abrupt completions, coalesce/conditional interaction, and the tail-position return cases exercised by the imported test262 ports. |
 

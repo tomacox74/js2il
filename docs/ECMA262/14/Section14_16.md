@@ -24,5 +24,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| debugger statement | Not Yet Supported |  | Rejected by Js2IL.Validation.JavaScriptAstValidator as unsupported. |
+| debugger statement | Not Yet Supported |  | Rejected by Jroc.Validation.JavaScriptAstValidator as unsupported. |
 

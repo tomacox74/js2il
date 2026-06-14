@@ -2,14 +2,14 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
-using Js2IL.SymbolTables;
-using Js2IL.Services.VariableBindings;
+using Jroc.SymbolTables;
+using Jroc.Services.VariableBindings;
 using System.Linq;
-using Js2IL.Utilities.Ecma335;
-using Js2IL.Utilities;
+using Jroc.Utilities.Ecma335;
+using Jroc.Utilities;
 using System.Text;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     /// <summary>
     /// Generates .NET type definitions from a JavaScript scope tree.

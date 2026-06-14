@@ -5,18 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Acornima;
 using Acornima.Ast;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities.Ecma335;
+using Jroc.SymbolTables;
+using Jroc.Utilities.Ecma335;
 
-namespace Js2IL.Services.Contracts;
+namespace Jroc.Services.Contracts;
 
 /// <summary>
 /// Emits strongly-typed .NET contract interfaces for CommonJS <c>module.exports</c>.
 ///
 /// Design goals:
 /// - Minimal, conservative shape inference (safe defaults to <see cref="object"/>)
-/// - Hosting-friendly: exports contracts implement <see cref="IDisposable"/>, nested objects/instances implement <see cref="Js2IL.Runtime.IJsHandle"/>
-/// - Exports contracts are annotated with <see cref="Js2IL.Runtime.JsModuleAttribute"/> so <see cref="Js2IL.Runtime.JsEngine.LoadModule{TExports}()"/> can resolve the module id.
+/// - Hosting-friendly: exports contracts implement <see cref="IDisposable"/>, nested objects/instances implement <see cref="Jroc.Runtime.IJsHandle"/>
+/// - Exports contracts are annotated with <see cref="Jroc.Runtime.JsModuleAttribute"/> so <see cref="Jroc.Runtime.JsEngine.LoadModule{TExports}()"/> can resolve the module id.
 /// </summary>
 internal sealed class ModuleExportsContractEmitter
 {
@@ -147,7 +147,7 @@ internal sealed class ModuleExportsContractEmitter
                     continue;
                 }
 
-                var openCtorRef = _typeRefs.GetOrAdd(typeof(Js2IL.Runtime.IJsConstructor<>));
+                var openCtorRef = _typeRefs.GetOrAdd(typeof(Jroc.Runtime.IJsConstructor<>));
                 var ph = EmitReadOnlyProperty(
                     exportsTypeBuilder,
                     ToPascalCase(exportName),
@@ -193,7 +193,7 @@ internal sealed class ModuleExportsContractEmitter
             // Prefer stable binding type from symbol table when available (e.g. const x = complexExpr).
             TypeOrHandle clrType;
             if (valueNode is Identifier exportedId
-                && symbolTable?.Root is Js2IL.SymbolTables.Scope globalScope
+                && symbolTable?.Root is Jroc.SymbolTables.Scope globalScope
                 && globalScope.Bindings.TryGetValue(exportedId.Name, out var exportedBinding)
                 && exportedBinding.IsStableType
                 && exportedBinding.ClrType != null)
@@ -237,7 +237,7 @@ internal sealed class ModuleExportsContractEmitter
         PropertyDefinitionHandle firstProperty = default;
 
         Dictionary<string, Type>? stableFields = null;
-        if (!string.IsNullOrWhiteSpace(classNameForFields) && symbolTable?.Root is Js2IL.SymbolTables.Scope rootScope)
+        if (!string.IsNullOrWhiteSpace(classNameForFields) && symbolTable?.Root is Jroc.SymbolTables.Scope rootScope)
         {
             var classScope = FindClassScope(rootScope, classNameForFields!);
             stableFields = classScope?.StableInstanceFieldClrTypes;
@@ -349,12 +349,12 @@ internal sealed class ModuleExportsContractEmitter
         }
 
         // Handles should be projected via JsHandleProxy.
-        _metadata.AddInterfaceImplementation(typeDef, _typeRefs.GetOrAdd(typeof(Js2IL.Runtime.IJsHandle)));
+        _metadata.AddInterfaceImplementation(typeDef, _typeRefs.GetOrAdd(typeof(Jroc.Runtime.IJsHandle)));
 
         return typeDef;
     }
 
-    private static Js2IL.SymbolTables.Scope? FindClassScope(Js2IL.SymbolTables.Scope scope, string className)
+    private static Jroc.SymbolTables.Scope? FindClassScope(Jroc.SymbolTables.Scope scope, string className)
     {
         if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
         {
@@ -484,7 +484,7 @@ internal sealed class ModuleExportsContractEmitter
     private static (string Namespace, string ExportsInterfaceName) GetExportsContractName(string assemblyName, string moduleId, bool isRootModule)
     {
         // See docs/runtime/DotNetLibraryHosting.md "Naming generated export contracts for nested modules".
-        var rootNamespace = $"Js2IL.{assemblyName}";
+        var rootNamespace = $"Jroc.{assemblyName}";
 
         if (isRootModule)
         {

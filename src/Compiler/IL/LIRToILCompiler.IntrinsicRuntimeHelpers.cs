@@ -1,4 +1,4 @@
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {

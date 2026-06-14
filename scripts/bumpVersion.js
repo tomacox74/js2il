@@ -3,8 +3,8 @@
 
 /*
  * bumpVersion.js
- * Automates version bumping across CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj,
- * src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj.
+ * Automates version bumping across CHANGELOG.md, samples/Directory.Build.props, src/Cli/Jroc.csproj,
+ * src/Jroc.Core/Jroc.Core.csproj, src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj.
  * Usage examples:
  *   node scripts/bumpVersion.js patch
  *   node scripts/bumpVersion.js minor
@@ -12,15 +12,15 @@
  *   node scripts/bumpVersion.js 0.2.0        # explicit version
  *
  * Behavior:
- * - Reads current project version from Js2IL.csproj <Version> element.
+ * - Reads current project version from Jroc.csproj <Version> element.
  * - Computes new version (semantic: major.minor.patch), ignoring pre-release labels for now.
  * - Validates that CHANGELOG.md has an '## Unreleased' section.
  * - Moves content under '## Unreleased' (excluding placeholder lines like '_Nothing yet._')
  *   into a new section '## vX.Y.Z - YYYY-MM-DD' above the previous releases.
  * - If Unreleased is empty and you request a bump, it still creates an empty release section unless --skip-empty.
- * - Updates <Js2ILPackageVersion> in samples/Directory.Build.props.
- * - Updates <Version> in src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj,
- *   src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
+ * - Updates <JrocPackageVersion> in samples/Directory.Build.props.
+ * - Updates <Version> in src/Cli/Jroc.csproj, src/Jroc.Core/Jroc.Core.csproj,
+ *   src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj
  *   (adds if not present).
  * - Writes files only if actual changes differ.
  * - Prints next steps (commit, tag).
@@ -30,9 +30,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Js2IL.csproj');
-const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.Core', 'Js2IL.Core.csproj');
-const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.SDK', 'Js2IL.SDK.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Jroc.csproj');
+const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.Core', 'Jroc.Core.csproj');
+const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.SDK', 'Jroc.SDK.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 const SAMPLES_PROPS_PATH = path.join(ROOT, 'samples', 'Directory.Build.props');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
@@ -42,7 +42,7 @@ function writeFile(p, c) { fs.writeFileSync(p, c, 'utf8'); }
 
 function parseCurrentVersion(csprojText) {
   const m = csprojText.match(/<Version>([^<]+)<\/Version>/);
-  if(!m) throw new Error('Could not find <Version> in Js2IL.csproj');
+  if(!m) throw new Error('Could not find <Version> in Jroc.csproj');
   return m[1].trim();
 }
 
@@ -81,12 +81,12 @@ function updateCsprojVersion(text, newVersion) {
 }
 
 function updateSamplesPropsVersion(text, newVersion) {
-  const pattern = /<Js2ILPackageVersion\b([^>]*)>[^<]+<\/Js2ILPackageVersion>/;
+  const pattern = /<JrocPackageVersion\b([^>]*)>[^<]+<\/JrocPackageVersion>/;
   if(!pattern.test(text)) {
-    throw new Error('Could not find <Js2ILPackageVersion> in samples/Directory.Build.props');
+    throw new Error('Could not find <JrocPackageVersion> in samples/Directory.Build.props');
   }
 
-  return text.replace(pattern, `<Js2ILPackageVersion$1>${newVersion}<\/Js2ILPackageVersion>`);
+  return text.replace(pattern, `<JrocPackageVersion$1>${newVersion}<\/JrocPackageVersion>`);
 }
 
 function extractUnreleased(changelog) {
@@ -169,9 +169,9 @@ function perform() {
   writeFile(SAMPLES_PROPS_PATH, updatedSamplesProps);
 
   console.log(`Bumped version: ${currentVersion} -> ${newVersion}`);
-  console.log('Updated CHANGELOG.md, samples/Directory.Build.props, src/Cli/Js2IL.csproj, src/Js2IL.Core/Js2IL.Core.csproj, src/Js2IL.SDK/Js2IL.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj');
+  console.log('Updated CHANGELOG.md, samples/Directory.Build.props, src/Cli/Jroc.csproj, src/Jroc.Core/Jroc.Core.csproj, src/Jroc.SDK/Jroc.SDK.csproj, and src/JavaScriptRuntime/JavaScriptRuntime.csproj');
   console.log('\nNext steps:');
-  console.log(`  git add CHANGELOG.md samples/Directory.Build.props src/Cli/Js2IL.csproj src/Js2IL.Core/Js2IL.Core.csproj src/Js2IL.SDK/Js2IL.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj`);
+  console.log(`  git add CHANGELOG.md samples/Directory.Build.props src/Cli/Jroc.csproj src/Jroc.Core/Jroc.Core.csproj src/Jroc.SDK/Jroc.SDK.csproj src/JavaScriptRuntime/JavaScriptRuntime.csproj`);
   console.log(`  git commit -m "chore(release): cut ${newVersion}"`);
   console.log(`  git tag -a v${newVersion} -m "Release ${newVersion}"`);
   console.log('  git push && git push --tags');

@@ -1,13 +1,13 @@
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 public static class JsEngine
 {
     /// <summary>
-    /// Returns module ids present in a compiled JS2IL assembly.
-    /// Prefer this over scanning types directly; compiled assemblies emitted by JS2IL include
+    /// Returns module ids present in a compiled JROC assembly.
+    /// Prefer this over scanning types directly; compiled assemblies emitted by JROC include
     /// an assembly-level manifest via <see cref="JsCompiledModuleAttribute"/>.
     /// </summary>
     public static IReadOnlyList<string> GetModuleIds(Assembly compiledAssembly)

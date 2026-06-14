@@ -3,7 +3,7 @@
 Status: draft (design note / future TODO)
 
 ## 1. Background
-JS2IL uses a **scope-as-class** model:
+JROC uses a **scope-as-class** model:
 - Each JavaScript scope (global/function/block/class method scope) is represented as a .NET type.
 - Variables are stored as fields on scope instances.
 - Captured variables are implemented by passing around a **scopes chain** (`object[] scopes`) that contains scope instances.
@@ -98,11 +98,11 @@ Static methods have no `this`, so we need a stable source for scopes.
 
 Proposed approach:
 - For each class, emit a hidden static field capturing the declaring scopes chain:
-  - `private static object[] __js2il_class_scopes;`
+  - `private static object[] __jroc_class_scopes;`
 - Initialize it during module/class initialization using the module’s current scopes.
 
 Then apply the same wrapper pattern:
-- public static `m(a,b)` calls `m__scoped(__js2il_class_scopes, a,b)`
+- public static `m(a,b)` calls `m__scoped(__jroc_class_scopes, a,b)`
 - async/generator machinery binds/resumes `m__scoped`
 
 This keeps the public signature stable and avoids passing scopes as a public parameter.
@@ -152,7 +152,7 @@ Cons:
 ## 11. Open Questions
 - How should class static scope capture behave for classes declared inside functions (multiple instantiations of the enclosing function)?
   - Do we need per-instantiation “class objects” rather than static fields?
-- Should `__js2il_class_scopes` be per class or per declaring scope instance?
+- Should `__jroc_class_scopes` be per class or per declaring scope instance?
 - How to model ES2022 class fields initializers that reference outer scope variables?
 
 ## 12. Recommendation

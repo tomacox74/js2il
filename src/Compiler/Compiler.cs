@@ -1,8 +1,8 @@
-using Js2IL.Services;
-using Js2IL.SymbolTables;
+using Jroc.Services;
+using Jroc.SymbolTables;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-namespace Js2IL;
+namespace Jroc;
 
 public class Compiler
 {

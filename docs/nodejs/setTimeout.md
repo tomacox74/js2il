@@ -19,6 +19,6 @@ Schedules a callback to be executed after a specified delay in milliseconds. Ret
 
 ## Tests
 
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetTimeout_ZeroDelay` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetTimeout_MultipleZeroDelay_ExecutedInOrder` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
-- `Js2IL.Tests.Node.Timers.ExecutionTests.SetTimeout_OneSecondDelay` (`tests/Js2IL.Tests/Node/Timers/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetTimeout_ZeroDelay` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetTimeout_MultipleZeroDelay_ExecutedInOrder` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Timers.ExecutionTests.SetTimeout_OneSecondDelay` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)

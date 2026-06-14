@@ -1,0 +1,17 @@
+<Project>
+
+  <PropertyGroup>
+    <JrocCompileOnBuild Condition="'$(JrocCompileOnBuild)' == ''">true</JrocCompileOnBuild>
+    <JrocOutputRoot Condition="'$(JrocOutputRoot)' == ''">$([System.IO.Path]::Combine('$(IntermediateOutputPath)', 'jroc'))</JrocOutputRoot>
+    <JrocRootModuleId Condition="'$(JrocRootModuleId)' == ''"></JrocRootModuleId>
+    <JrocModuleResolutionBaseDirectory Condition="'$(JrocModuleResolutionBaseDirectory)' == ''">$(MSBuildProjectDirectory)</JrocModuleResolutionBaseDirectory>
+    <JrocReferenceOutputAssembly Condition="'$(JrocReferenceOutputAssembly)' == ''">true</JrocReferenceOutputAssembly>
+    <JrocCopyToOutputDirectory Condition="'$(JrocCopyToOutputDirectory)' == ''">false</JrocCopyToOutputDirectory>
+    <JrocEmitPdb Condition="'$(JrocEmitPdb)' == '' and '$(Configuration)' == 'Debug'">true</JrocEmitPdb>
+    <JrocEmitPdb Condition="'$(JrocEmitPdb)' == ''">false</JrocEmitPdb>
+    <JrocAnalyzeUnused Condition="'$(JrocAnalyzeUnused)' == ''">false</JrocAnalyzeUnused>
+    <JrocVerbose Condition="'$(JrocVerbose)' == ''">false</JrocVerbose>
+    <JrocDiagnosticFilePath Condition="'$(JrocDiagnosticFilePath)' == ''"></JrocDiagnosticFilePath>
+  </PropertyGroup>
+
+</Project>

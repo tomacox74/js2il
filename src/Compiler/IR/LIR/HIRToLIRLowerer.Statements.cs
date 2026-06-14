@@ -1,13 +1,13 @@
 using Acornima.Ast;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Services.ScopesAbi;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Services.ScopesAbi;
 using System.Linq;
-using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using Js2IL.SymbolTables;
+using TwoPhase = Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using Jroc.SymbolTables;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {

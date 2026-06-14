@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRSequenceExpression : HIRExpression
 {

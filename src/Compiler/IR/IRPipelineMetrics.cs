@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Tracks metrics for IR pipeline compilation attempts.

@@ -32,7 +32,7 @@ namespace JavaScriptRuntime.CommonJS
 
     /// <summary>
     /// Defines the standard parameters passed to compiled JavaScript module main methods.
-    /// This list is shared between compilation (Js2IL) and runtime (JavaScriptRuntime).
+    /// This list is shared between compilation (Jroc) and runtime (JavaScriptRuntime).
     /// 
     /// The parameters mirror Node.js CommonJS module wrapper:
     /// (exports, require, module, __filename, __dirname) => { ... }

@@ -1,0 +1,548 @@
+// IL code: CommonJS_Export_NestedObjects
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.CommonJS_Export_NestedObjects
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x22ea
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 320 (0x140)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.CommonJS_Export_NestedObjects/Scope,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Modules.CommonJS_Export_NestedObjects/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "./CommonJS_Export_NestedObjects_Lib"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.2
+		IL_0012: ldloc.2
+		IL_0013: stloc.1
+		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0019: ldstr "name:"
+		IL_001e: ldloc.1
+		IL_001f: ldstr "name"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_002e: pop
+		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0034: ldstr "version:"
+		IL_0039: ldloc.1
+		IL_003a: ldstr "version"
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0049: pop
+		IL_004a: ldloc.1
+		IL_004b: ldstr "math"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005a: stloc.2
+		IL_005b: ldloc.2
+		IL_005c: ldstr "add"
+		IL_0061: ldc.r8 10
+		IL_006a: box [System.Runtime]System.Double
+		IL_006f: ldc.r8 5
+		IL_0078: box [System.Runtime]System.Double
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0082: stloc.2
+		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0088: ldstr "add:"
+		IL_008d: ldloc.2
+		IL_008e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0093: pop
+		IL_0094: ldloc.1
+		IL_0095: ldstr "math"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a4: stloc.2
+		IL_00a5: ldloc.2
+		IL_00a6: ldstr "multiply"
+		IL_00ab: ldc.r8 4
+		IL_00b4: box [System.Runtime]System.Double
+		IL_00b9: ldc.r8 3
+		IL_00c2: box [System.Runtime]System.Double
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00cc: stloc.2
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: ldstr "multiply:"
+		IL_00d7: ldloc.2
+		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00dd: pop
+		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e3: ldstr "prefix:"
+		IL_00e8: ldloc.1
+		IL_00e9: ldstr "utils"
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f3: ldstr "prefix"
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00fd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0102: pop
+		IL_0103: ldloc.1
+		IL_0104: ldstr "utils"
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0113: stloc.2
+		IL_0114: ldloc.2
+		IL_0115: ldstr "formatNum"
+		IL_011a: ldc.r8 42
+		IL_0123: box [System.Runtime]System.Double
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_012d: stloc.2
+		IL_012e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0133: ldstr "formatNum:"
+		IL_0138: ldloc.2
+		IL_0139: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_013e: pop
+		IL_013f: ret
+	} // end of method CommonJS_Export_NestedObjects::__js_module_init__
+
+} // end of class Modules.CommonJS_Export_NestedObjects
+
+.class private auto ansi beforefieldinit Modules.CommonJS_Export_NestedObjects_Lib
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L9C13
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x22fc
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object a,
+				object b
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2294
+			// Header size: 12
+			// Code size: 10 (0xa)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: ldarg.2
+			IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0007: stloc.0
+			IL_0008: ldloc.0
+			IL_0009: ret
+		} // end of method FunctionExpression_L9C13::__js_call__
+
+	} // end of class FunctionExpression_L9C13
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L12C18
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2305
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object a,
+				object b
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x22ac
+			// Header size: 12
+			// Code size: 21 (0x15)
+			.maxstack 8
+			.locals init (
+				[0] float64
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: stloc.0
+			IL_0007: ldloc.0
+			IL_0008: ldarg.2
+			IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000e: mul
+			IL_000f: box [System.Runtime]System.Double
+			IL_0014: ret
+		} // end of method FunctionExpression_L12C18::__js_call__
+
+	} // end of class FunctionExpression_L12C18
+
+	.class nested public auto ansi abstract sealed beforefieldinit FunctionExpression_L18C19
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x230e
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object 'value'
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x22d0
+			// Header size: 12
+			// Code size: 14 (0xe)
+			.maxstack 8
+			.locals init (
+				[0] object
+			)
+
+			IL_0000: ldstr "Num: "
+			IL_0005: ldarg.1
+			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: ret
+		} // end of method FunctionExpression_L18C19::__js_call__
+
+	} // end of class FunctionExpression_L18C19
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x22f3
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x219c
+		// Header size: 12
+		// Code size: 236 (0xec)
+		.maxstack 9
+		.locals init (
+			[0] class Modules.CommonJS_Export_NestedObjects_Lib/Scope,
+			[1] object,
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		)
+
+		IL_0000: newobj instance void Modules.CommonJS_Export_NestedObjects_Lib/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L9C13::__js_call__(object, object, object)
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_0012: ldc.i4.2
+		IL_0013: conv.r8
+		IL_0014: ldstr ""
+		IL_0019: ldc.i4.0
+		IL_001a: ldc.i4.1
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0020: stloc.1
+		IL_0021: ldnull
+		IL_0022: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L12C18::__js_call__(object, object, object)
+		IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes2::.ctor(object, native int)
+		IL_002d: ldc.i4.2
+		IL_002e: conv.r8
+		IL_002f: ldstr ""
+		IL_0034: ldc.i4.0
+		IL_0035: ldc.i4.1
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_003b: stloc.2
+		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0041: dup
+		IL_0042: ldstr "add"
+		IL_0047: ldloc.1
+		IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_004d: dup
+		IL_004e: ldstr "multiply"
+		IL_0053: ldloc.2
+		IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0059: stloc.3
+		IL_005a: ldnull
+		IL_005b: ldftn object Modules.CommonJS_Export_NestedObjects_Lib/FunctionExpression_L18C19::__js_call__(object, object)
+		IL_0061: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0066: ldc.i4.1
+		IL_0067: conv.r8
+		IL_0068: ldstr ""
+		IL_006d: ldc.i4.0
+		IL_006e: ldc.i4.1
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0074: stloc.2
+		IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007a: dup
+		IL_007b: ldstr "prefix"
+		IL_0080: ldstr "Result: "
+		IL_0085: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_008a: dup
+		IL_008b: ldstr "formatNum"
+		IL_0090: ldloc.2
+		IL_0091: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0096: stloc.s 4
+		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_009d: dup
+		IL_009e: ldstr "name"
+		IL_00a3: ldstr "Calculator"
+		IL_00a8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00ad: dup
+		IL_00ae: ldstr "version"
+		IL_00b3: ldc.r8 1
+		IL_00bc: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00c1: dup
+		IL_00c2: ldstr "math"
+		IL_00c7: ldloc.3
+		IL_00c8: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00cd: dup
+		IL_00ce: ldstr "utils"
+		IL_00d3: ldloc.s 4
+		IL_00d5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00da: stloc.s 4
+		IL_00dc: ldarg.2
+		IL_00dd: ldstr "exports"
+		IL_00e2: ldloc.s 4
+		IL_00e4: ldc.i4.1
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_00ea: pop
+		IL_00eb: ret
+	} // end of method CommonJS_Export_NestedObjects_Lib::__js_module_init__
+
+} // end of class Modules.CommonJS_Export_NestedObjects_Lib
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2317
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.CommonJS_Export_NestedObjects::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
+.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.IMath
+	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
+{
+	// Methods
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Add (
+			float64 a,
+			float64 b
+		) cil managed 
+	{
+	} // end of method IMath::Add
+
+	.method public hidebysig newslot abstract virtual 
+		instance float64 Multiply (
+			float64 a,
+			float64 b
+		) cil managed 
+	{
+	} // end of method IMath::Multiply
+
+} // end of class Jroc.CommonJS_Export_NestedObjects.IMath
+
+.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.IUtils
+	implements [JavaScriptRuntime]Jroc.Runtime.IJsHandle
+{
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance string get_Prefix () cil managed 
+	{
+	} // end of method IUtils::get_Prefix
+
+	.method public hidebysig newslot abstract virtual 
+		instance float64 FormatNum (
+			float64 'value'
+		) cil managed 
+	{
+	} // end of method IUtils::FormatNum
+
+	// Properties
+	.property instance string Prefix()
+	{
+		.get instance string Jroc.CommonJS_Export_NestedObjects.IUtils::get_Prefix()
+	}
+
+} // end of class Jroc.CommonJS_Export_NestedObjects.IUtils
+
+.class interface public auto ansi abstract Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
+	implements [System.Runtime]System.IDisposable
+{
+	.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsModuleAttribute::.ctor(string) = (
+		01 00 21 43 6f 6d 6d 6f 6e 4a 53 5f 45 78 70 6f
+		72 74 5f 4e 65 73 74 65 64 4f 62 6a 65 63 74 73
+		5f 4c 69 62 00 00
+	)
+	// Methods
+	.method public hidebysig specialname newslot abstract virtual 
+		instance string get_Name () cil managed 
+	{
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Name
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance float64 get_Version () cil managed 
+	{
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Version
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance class Jroc.CommonJS_Export_NestedObjects.IMath get_Math () cil managed 
+	{
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Math
+
+	.method public hidebysig specialname newslot abstract virtual 
+		instance class Jroc.CommonJS_Export_NestedObjects.IUtils get_Utils () cil managed 
+	{
+	} // end of method ICommonJSExportNestedObjectsLibExports::get_Utils
+
+	// Properties
+	.property instance string Name()
+	{
+		.get instance string Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Name()
+	}
+	.property instance float64 Version()
+	{
+		.get instance float64 Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Version()
+	}
+	.property instance class Jroc.CommonJS_Export_NestedObjects.IMath Math()
+	{
+		.get instance class Jroc.CommonJS_Export_NestedObjects.IMath Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Math()
+	}
+	.property instance class Jroc.CommonJS_Export_NestedObjects.IUtils Utils()
+	{
+		.get instance class Jroc.CommonJS_Export_NestedObjects.IUtils Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports::get_Utils()
+	}
+
+} // end of class Jroc.CommonJS_Export_NestedObjects.ICommonJSExportNestedObjectsLibExports
+

@@ -1,7 +1,7 @@
-using Js2IL.IR;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities.Ecma335;
+using Jroc.IR;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {
@@ -164,7 +164,7 @@ internal sealed partial class LIRToILCompiler
                     {
                         if (!methodDescriptor.HasScopesParameter)
                         {
-                            throw new InvalidOperationException("Async generator methods must use the js2il ABI and declare a leading scopes parameter.");
+                            throw new InvalidOperationException("Async generator methods must use the jroc ABI and declare a leading scopes parameter.");
                         }
 
                         int scopesArgIndex = GetIlArgIndexForScopesArray(methodDescriptor);
@@ -521,7 +521,7 @@ internal sealed partial class LIRToILCompiler
                         // Detect step calls by checking if scopes[0] is our leaf scope type.
                         if (!methodDescriptor.HasScopesParameter)
                         {
-                            throw new InvalidOperationException("Generator methods must use the js2il ABI and declare a leading scopes parameter.");
+                            throw new InvalidOperationException("Generator methods must use the jroc ABI and declare a leading scopes parameter.");
                         }
 
                         int scopesArgIndex = GetIlArgIndexForScopesArray(methodDescriptor);

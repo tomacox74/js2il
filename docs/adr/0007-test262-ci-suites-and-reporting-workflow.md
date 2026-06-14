@@ -7,7 +7,7 @@
 
 Issue #932 follows the intake/bootstrap work (#928), metadata parser (#929), MVP runner (#930), and classified `summary.json` baseline artifact (#931).
 
-At this point JS2IL already has:
+At this point JROC already has:
 
 - a local manual runner entry point (`npm run test262:run-mvp`)
 - a bounded MVP contract
@@ -22,7 +22,7 @@ What it still lacks is a repository-level CI/reporting story:
 
 ## Decision
 
-JS2IL adds **named test262 MVP suites** plus a dedicated **`test262 MVP` GitHub Actions workflow**.
+JROC adds **named test262 MVP suites** plus a dedicated **`test262 MVP` GitHub Actions workflow**.
 
 ## Named suites
 
@@ -54,7 +54,7 @@ and records named-suite metadata in `summary.json` under `selection.namedSuite`.
 Both jobs:
 
 - restore dependencies
-- build JS2IL in Release
+- build JROC in Release
 - bootstrap the pinned test262 intake
 - run the named suite
 - upload `summary.json` as an artifact

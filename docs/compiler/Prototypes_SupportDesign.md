@@ -1,7 +1,7 @@
 # Prototype Support Design (Hybrid Typed + Dynamic)
 
 ## Context
-JS2IL currently leans heavily on .NET types to represent JavaScript values:
+JROC currently leans heavily on .NET types to represent JavaScript values:
 
 - **Scopes-as-classes**: every JS scope becomes a CLR class with fields for bindings.
 - **Intrinsics and runtime objects**: e.g. `JavaScriptRuntime.Array`, `String`, etc. are CLR types.
@@ -264,4 +264,4 @@ Add execution tests that cover:
 - Should user-defined `class` instances use a separate JS-level prototype object even when mapped to CLR types?
 - How to represent Symbols in property keys (future)?
 - How much of property descriptors (get/set, writable, enumerable) is needed short-term?
-- What granularity of deopt is worth it for JS2IL’s target workloads (Node scripts vs general JS)?
+- What granularity of deopt is worth it for JROC’s target workloads (Node scripts vs general JS)?

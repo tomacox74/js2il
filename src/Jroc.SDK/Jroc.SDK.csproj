@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PackageId>Jroc.SDK</PackageId>
+    <Version>0.9.27</Version>
+    <Authors>tomacox74</Authors>
+    <Company></Company>
+    <Description>MSBuild SDK package for compiling JavaScript sources into .NET assemblies during dotnet build.</Description>
+    <PackageProjectUrl>https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tomacox74/jroc</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.jpg</PackageIcon>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>javascript;js;il;ecma-335;dotnet;compiler;msbuild;sdk;hosting</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <NoWarn>$(NoWarn);NU5100;NU5128</NoWarn>
+
+    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);PackTaskDependencies</TargetsForTfmSpecificBuildOutput>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackTaskAuxiliaryFiles</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>$(MSBuildBinPath)\Microsoft.Build.Framework.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.Core">
+      <HintPath>$(MSBuildBinPath)\Microsoft.Build.Utilities.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jroc.Core\Jroc.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build\Jroc.SDK.props" Pack="true" PackagePath="build\Jroc.SDK.props" />
+    <None Include="build\Jroc.SDK.targets" Pack="true" PackagePath="build\Jroc.SDK.targets" />
+    <None Include="..\..\docs\Jroc.SDK.NuGet.README.md" Pack="true" PackagePath="README.md" />
+    <None Include="..\..\icon.jpg" Pack="true" PackagePath="" />
+    <None Include="..\..\samples\**\*"
+          Exclude="..\..\samples\**\bin\**;..\..\samples\**\obj\**;..\..\samples\**\out\**;..\..\samples\**\out2\**;..\..\samples\**\node_modules\**;..\..\samples\**\jroc\**"
+          Pack="true"
+          PackagePath="samples/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <Target Name="PackTaskDependencies">
+    <ItemGroup>
+      <_JrocSdkTaskDependency Include="$(TargetDir)*.dll"
+                               Exclude="$(TargetDir)Jroc.SDK.dll" />
+      <_JrocSdkTaskDependency Include="$(TargetDir)*.pdb"
+                               Exclude="$(TargetDir)Jroc.SDK.pdb" />
+      <BuildOutputInPackage Include="@(_JrocSdkTaskDependency)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PackTaskAuxiliaryFiles">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(TargetDir)Jroc.SDK.deps.json"
+                              Condition="Exists('$(TargetDir)Jroc.SDK.deps.json')">
+        <PackagePath>tasks\$(TargetFramework)\</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+</Project>

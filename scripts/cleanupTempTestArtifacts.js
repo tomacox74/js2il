@@ -4,11 +4,11 @@
 /*
   cleanupTempTestArtifacts.js
 
-  Cleans up JS2IL test artifacts left behind in the OS temp directory.
+  Cleans up JROC test artifacts left behind in the OS temp directory.
 
   Safety goals:
   - Only touches entries under os.tmpdir()
-  - Only considers known JS2IL test prefixes and directories used by the test suite
+  - Only considers known JROC test prefixes and directories used by the test suite
   - Dry-run by default; pass --apply to actually delete
   - Skips items modified recently (default: last 24 hours)
 
@@ -126,16 +126,16 @@ async function getSizeBytes(root) {
 
 function isTopLevelCandidateName(name) {
   // Roots created by .NET tests
-  if (name === 'Js2IL.Tests') return true;
-  if (name.startsWith('Js2IL.Tests.')) return true; // e.g. Js2IL.Tests.ILVerification
-  if (name === 'js2il-tests') return true;
+  if (name === 'Jroc.Tests') return true;
+  if (name.startsWith('Jroc.Tests.')) return true; // e.g. Jroc.Tests.ILVerification
+  if (name === 'jroc-tests') return true;
 
   // Per-test roots created by CLI tests
-  if (name.startsWith('js2il_cli_test_')) return true;
+  if (name.startsWith('jroc_cli_test_')) return true;
 
   // JS execution fixtures that create their own tmp artifacts
   const prefixes = [
-    'js2il-',
+    'jroc-',
     'test-readfile-callback-',
     'test-writefile-callback-',
     'test-stat-callback-',
@@ -151,7 +151,7 @@ function isTopLevelCandidateName(name) {
 
 function isManagedRootName(name) {
   // For these roots we clean their children (not just the root itself)
-  return name === 'Js2IL.Tests' || name.startsWith('Js2IL.Tests.') || name === 'js2il-tests';
+  return name === 'Jroc.Tests' || name.startsWith('Jroc.Tests.') || name === 'jroc-tests';
 }
 
 async function listTopLevelCandidates(tempRoot) {

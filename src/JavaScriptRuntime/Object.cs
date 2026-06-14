@@ -15,7 +15,7 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Object", IntrinsicCallKind.ObjectConstruct)]
     public class Object
     {
-        internal const string PrimitiveValuePropertyName = "__js2il_PrimitiveValue";
+        internal const string PrimitiveValuePropertyName = "__jroc_PrimitiveValue";
 
         private static bool IsNullableValueType(Type type)
         {
@@ -2411,7 +2411,7 @@ namespace JavaScriptRuntime
                 throw tie.InnerException;
             }
 
-            if (Environment.GetEnvironmentVariable("JS2IL_DOMINO_DIAG") == "1" && constructor is System.Dynamic.ExpandoObject expDiag)
+            if (Environment.GetEnvironmentVariable("JROC_DOMINO_DIAG") == "1" && constructor is System.Dynamic.ExpandoObject expDiag)
             {
                 var dict = (IDictionary<string, object?>)expDiag;
                 var keys = string.Join(", ", dict.Keys.OrderBy(k => k, StringComparer.Ordinal).Take(12));
@@ -2445,7 +2445,7 @@ namespace JavaScriptRuntime
             var callArgs = args ?? System.Array.Empty<object>();
 
             // Function.prototype.apply / Function.prototype.bind support.
-            // In JS2IL, function values are represented as CLR delegates.
+            // In JROC, function values are represented as CLR delegates.
             if (receiver is Delegate del)
             {
                 if (string.Equals(methodName, "apply", StringComparison.Ordinal))
@@ -3904,9 +3904,9 @@ namespace JavaScriptRuntime
             static int GetCallableLength(MethodInfo method)
             {
                 var parameters = method.GetParameters();
-                var abi = Js2IL.Runtime.JsCallableScopeAbiResolver.Resolve(method);
+                var abi = Jroc.Runtime.JsCallableScopeAbiResolver.Resolve(method);
                 bool hasScopes = abi.HasExplicitScopePayload;
-                bool hasNewTarget = Js2IL.Runtime.JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
+                bool hasNewTarget = Jroc.Runtime.JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
                 int scopeOffset = hasScopes ? 1 : 0;
                 int newTargetOffset = hasNewTarget ? 1 : 0;
                 int jsParamStart = scopeOffset + newTargetOffset;
@@ -5744,7 +5744,7 @@ namespace JavaScriptRuntime
                 // Swallow and fall through to return value to mimic JS permissiveness
             }
 
-            // Prototype-setter semantics for "plain" CLR objects (e.g., JS2IL-generated scope classes).
+            // Prototype-setter semantics for "plain" CLR objects (e.g., JROC-generated scope classes).
             // If no own writable field/property exists, but a prototype accessor defines a setter,
             // route the assignment to that setter.
             if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
@@ -5825,7 +5825,7 @@ namespace JavaScriptRuntime
 
             var srcArgs = args ?? System.Array.Empty<object>();
 
-            // Prefer js2il-style methods with a leading scopes array:
+            // Prefer jroc-style methods with a leading scopes array:
             // - legacy: (object[] scopes, [object x N])
             // - current JsFunc ABI: (object[] scopes, object newTarget, [object x N])
             MethodInfo? chosen = methods.FirstOrDefault(mi =>
@@ -5913,7 +5913,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            // Resolve scopes for js2il-style calls.
+            // Resolve scopes for jroc-style calls.
             object[] ResolveScopesArray(object target)
             {
                 try

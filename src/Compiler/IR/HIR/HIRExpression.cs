@@ -1,4 +1,4 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public abstract class HIRExpression : HIRNode
 {

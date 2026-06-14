@@ -1,4 +1,4 @@
-namespace Js2IL.Services.ScopesAbi;
+namespace Jroc.Services.ScopesAbi;
 
 /// <summary>
 /// Indicates where the scopes array comes from at runtime within a callable.

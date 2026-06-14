@@ -118,36 +118,36 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| new Date() (current time) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
-| new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Array/prototype/every/15.4.4.16-1-11.js`<br>`test/built-ins/Array/prototype/map/15.4.4.19-1-11.js`<br>`test/built-ins/Array/prototype/filter/15.4.4.20-1-11.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-11.js` | Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date. |
+| new Date() (current time) | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
+| new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Array/prototype/every/15.4.4.16-1-11.js`<br>`test/built-ins/Array/prototype/map/15.4.4.19-1-11.js`<br>`test/built-ins/Array/prototype/filter/15.4.4.20-1-11.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-11.js` | Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date. |
 
 ### 21.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-date-constructor))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date constructor basics (2-7 numeric arguments, Date copy, and TimeClip -0 normalization) | Supported with Limitations | `tests/Js2IL.Test262.Tests/built-ins/Date/ExecutionTests.cs` | `test/built-ins/Date/construct_with_date.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T1.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T2.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T3.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T4.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T5.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T6.js`<br>`test/built-ins/Date/TimeClip_negative_zero.js` | Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited. |
+| Date constructor basics (2-7 numeric arguments, Date copy, and TimeClip -0 normalization) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/ExecutionTests.cs` | `test/built-ins/Date/construct_with_date.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T1.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T2.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T3.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T4.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T5.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T6.js`<br>`test/built-ins/Date/TimeClip_negative_zero.js` | Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited. |
 
 ### 21.4.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-date))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.now() | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs` |  | Returns current time in milliseconds since Unix epoch as a number (boxed double). |
+| Date.now() | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs` |  | Returns current time in milliseconds since Unix epoch as a number (boxed double). |
 
 ### 21.4.2.2 ([tc39.es](https://tc39.es/ecma262/#sec-date.parse))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.parse(string) | Supported | `tests/Js2IL.Tests/Date/ExecutionTests.cs`<br>[`Date_Parse_IsoString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Parse_IsoString.js) |  | Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double). |
+| Date.parse(string) | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs`<br>[`Date_Parse_IsoString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Parse_IsoString.js) |  | Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double). |
 
 ### 21.4.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettime))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.prototype.getTime | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns milliseconds since Unix epoch as a number (boxed double). |
+| Date.prototype.getTime | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns milliseconds since Unix epoch as a number (boxed double). |
 
 ### 21.4.3.27 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.toisostring))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.prototype.toISOString | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
+| Date.prototype.toISOString | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
 

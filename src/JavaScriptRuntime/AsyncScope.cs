@@ -63,14 +63,14 @@ public class AsyncScope : IAsyncScope
         string resultFieldName,
         object? moveNext)
     {
-        if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+        if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
         {
             try
             {
                 var promiseState = awaited is Promise debugPromise
                     ? debugPromise.GetType().GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(debugPromise)?.ToString()
                     : null;
-                System.Console.Error.WriteLine($"[js2il] await setup: awaited={awaited?.GetType().FullName ?? "null"}, promiseState={promiseState ?? "n/a"}, resultField={resultFieldName}");
+                System.Console.Error.WriteLine($"[jroc] await setup: awaited={awaited?.GetType().FullName ?? "null"}, promiseState={promiseState ?? "n/a"}, resultField={resultFieldName}");
             }
             catch
             {
@@ -146,14 +146,14 @@ public class AsyncScope : IAsyncScope
         int rejectStateId,
         string pendingExceptionFieldName)
     {
-        if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+        if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
         {
             try
             {
                 var promiseState = awaited is Promise debugPromise
                     ? debugPromise.GetType().GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(debugPromise)?.ToString()
                     : null;
-                System.Console.Error.WriteLine($"[js2il] await setup(reject->{rejectStateId}): awaited={awaited?.GetType().FullName ?? "null"}, promiseState={promiseState ?? "n/a"}, resultField={resultFieldName}, pendingField={pendingExceptionFieldName}");
+                System.Console.Error.WriteLine($"[jroc] await setup(reject->{rejectStateId}): awaited={awaited?.GetType().FullName ?? "null"}, promiseState={promiseState ?? "n/a"}, resultField={resultFieldName}, pendingField={pendingExceptionFieldName}");
             }
             catch
             {
@@ -243,11 +243,11 @@ public class AsyncScope : IAsyncScope
             var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
             try
             {
-                if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+                if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
                 {
                     try
                     {
-                        System.Console.Error.WriteLine($"[js2il] await fulfilled: value={value} ({value?.GetType().FullName ?? "null"}), resultField={(resultField?.Name ?? "<none>")}, moveNextType={(moveNext?.GetType().FullName ?? "null")}");
+                        System.Console.Error.WriteLine($"[jroc] await fulfilled: value={value} ({value?.GetType().FullName ?? "null"}), resultField={(resultField?.Name ?? "<none>")}, moveNextType={(moveNext?.GetType().FullName ?? "null")}");
                     }
                     catch
                     {
@@ -282,11 +282,11 @@ public class AsyncScope : IAsyncScope
             var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
             try
             {
-                if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+                if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
                 {
                     try
                     {
-                        System.Console.Error.WriteLine($"[js2il] await rejected -> state {rejectStateId}: {reason} ({reason?.GetType().FullName ?? "null"})");
+                        System.Console.Error.WriteLine($"[jroc] await rejected -> state {rejectStateId}: {reason} ({reason?.GetType().FullName ?? "null"})");
                     }
                     catch
                     {
@@ -320,11 +320,11 @@ public class AsyncScope : IAsyncScope
             var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
             try
             {
-                if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+                if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
                 {
                     try
                     {
-                        System.Console.Error.WriteLine($"[js2il] await fulfilled(typed): value={value} ({value?.GetType().FullName ?? "null"}), resultField={resultFieldName}, moveNextType={moveNext.GetType().FullName}");
+                        System.Console.Error.WriteLine($"[jroc] await fulfilled(typed): value={value} ({value?.GetType().FullName ?? "null"}), resultField={resultFieldName}, moveNextType={moveNext.GetType().FullName}");
                     }
                     catch
                     {
@@ -356,11 +356,11 @@ public class AsyncScope : IAsyncScope
             var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
             try
             {
-                if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+                if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
                 {
                     try
                     {
-                        System.Console.Error.WriteLine($"[js2il] await rejected(typed) -> state {rejectStateId}: {reason} ({reason?.GetType().FullName ?? "null"})");
+                        System.Console.Error.WriteLine($"[jroc] await rejected(typed) -> state {rejectStateId}: {reason} ({reason?.GetType().FullName ?? "null"})");
                     }
                     catch
                     {
@@ -440,11 +440,11 @@ public class AsyncScope : IAsyncScope
                 "Cannot resume async function: _moveNext is null. The async function closure was not properly initialized.");
         }
 
-        if (string.Equals(Environment.GetEnvironmentVariable("JS2IL_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
+        if (string.Equals(Environment.GetEnvironmentVariable("JROC_DEBUG_ASYNC_REJECTIONS"), "1", StringComparison.Ordinal))
         {
             try
             {
-                System.Console.Error.WriteLine($"[js2il] invoking MoveNext: {moveNext.GetType().FullName}");
+                System.Console.Error.WriteLine($"[jroc] invoking MoveNext: {moveNext.GetType().FullName}");
             }
             catch
             {

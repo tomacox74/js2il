@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Acornima.Ast;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Services.ScopesAbi;
-using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using Js2IL.SymbolTables;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Services.ScopesAbi;
+using TwoPhase = Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using Jroc.SymbolTables;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
@@ -950,7 +950,7 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
-                // Resumable static class methods (async/generator) follow the js2il calling convention and
+                // Resumable static class methods (async/generator) follow the jroc calling convention and
                 // require a leading scopes array.
                 // Use an ABI-compatible empty scopes array (1-element array with null) for now.
                 TempVariable? scopesArgTemp = null;

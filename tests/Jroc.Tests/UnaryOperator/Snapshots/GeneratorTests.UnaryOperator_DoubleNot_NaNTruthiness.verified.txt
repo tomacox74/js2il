@@ -1,0 +1,267 @@
+// IL code: UnaryOperator_DoubleNot_NaNTruthiness
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.UnaryOperator_DoubleNot_NaNTruthiness
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit C
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2122
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+		.class nested public auto ansi beforefieldinit Scope_returnNaN
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x212b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_returnNaN::.ctor
+
+		} // end of class Scope_returnNaN
+
+		.class nested public auto ansi beforefieldinit Scope_returnNumber
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2134
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_returnNumber::.ctor
+
+		} // end of class Scope_returnNumber
+
+		.class nested public auto ansi beforefieldinit Scope_ctor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x213d
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope_ctor::.ctor
+
+		} // end of class Scope_ctor
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x2094
+			// Header size: 12
+			// Code size: 89 (0x59)
+			.maxstack 8
+			.locals init (
+				[0] float64,
+				[1] bool,
+				[2] object
+			)
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNaN()
+			IL_000c: stloc.0
+			IL_000d: ldloc.0
+			IL_000e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+			IL_0013: ldc.i4.0
+			IL_0014: ceq
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldc.i4.0
+			IL_0019: ceq
+			IL_001b: stloc.1
+			IL_001c: ldloc.1
+			IL_001d: box [System.Runtime]System.Boolean
+			IL_0022: stloc.2
+			IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0028: ldloc.2
+			IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002e: pop
+			IL_002f: ldarg.0
+			IL_0030: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNumber()
+			IL_0035: stloc.0
+			IL_0036: ldloc.0
+			IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+			IL_003c: ldc.i4.0
+			IL_003d: ceq
+			IL_003f: stloc.1
+			IL_0040: ldloc.1
+			IL_0041: ldc.i4.0
+			IL_0042: ceq
+			IL_0044: stloc.1
+			IL_0045: ldloc.1
+			IL_0046: box [System.Runtime]System.Boolean
+			IL_004b: stloc.2
+			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0051: ldloc.2
+			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0057: pop
+			IL_0058: ret
+		} // end of method C::.ctor
+
+		.method public hidebysig 
+			instance float64 returnNaN () cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x20f9
+			// Header size: 1
+			// Code size: 20 (0x14)
+			.maxstack 8
+
+			IL_0000: ldc.r8 0.0
+			IL_0009: ldc.r8 0.0
+			IL_0012: div
+			IL_0013: ret
+		} // end of method C::returnNaN
+
+		.method public hidebysig 
+			instance float64 returnNumber () cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x210e
+			// Header size: 1
+			// Code size: 10 (0xa)
+			.maxstack 8
+
+			IL_0000: ldc.r8 1
+			IL_0009: ret
+		} // end of method C::returnNumber
+
+	} // end of class C
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2119
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 53 (0x35)
+		.maxstack 8
+		.locals (
+			[0] class Modules.UnaryOperator_DoubleNot_NaNTruthiness/Scope
+		)
+
+		IL_0000: newobj instance void Modules.UnaryOperator_DoubleNot_NaNTruthiness/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.0
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PushCurrentArguments(object[])
+		IL_0011: newobj instance void Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::.ctor()
+		IL_0016: call void [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::PopCurrentArguments()
+		IL_001b: ldtoken Modules.UnaryOperator_DoubleNot_NaNTruthiness/C
+		IL_0020: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_0025: ldstr "prototype"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
+		IL_0034: ret
+	} // end of method UnaryOperator_DoubleNot_NaNTruthiness::__js_module_init__
+
+} // end of class Modules.UnaryOperator_DoubleNot_NaNTruthiness
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2146
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.UnaryOperator_DoubleNot_NaNTruthiness::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

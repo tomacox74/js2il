@@ -1,0 +1,792 @@
+// IL code: FS_Append_Rename_Unlink_Callback
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.FS_Append_Rename_Unlink_Callback
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L15C36
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L21C32
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L28C28
+				extends [System.Runtime]System.Object
+			{
+				// Nested Types
+				.class nested public auto ansi beforefieldinit Scope
+					extends [System.Runtime]System.Object
+				{
+					.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+						01 00 1b 53 63 6f 70 65 20 75 6e 6c 69 6e 6b 45
+						72 72 3d 7b 75 6e 6c 69 6e 6b 45 72 72 7d 00 00
+					)
+					// Nested Types
+					.class nested public auto ansi beforefieldinit Block_L29C27
+						extends [System.Runtime]System.Object
+					{
+						// Methods
+						.method public hidebysig specialname rtspecialname 
+							instance void .ctor () cil managed 
+						{
+							// Method begins at RVA 0x258f
+							// Header size: 1
+							// Code size: 8 (0x8)
+							.maxstack 8
+
+							IL_0000: ldarg.0
+							IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+							IL_0006: nop
+							IL_0007: ret
+						} // end of method Block_L29C27::.ctor
+
+					} // end of class Block_L29C27
+
+
+					// Fields
+					.field public object unlinkErr
+
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x2586
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Scope::.ctor
+
+				} // end of class Scope
+
+
+				// Methods
+				.method public hidebysig static 
+					object __js_call__ (
+						object[] scopes,
+						object newTarget,
+						object unlinkErr
+					) cil managed 
+				{
+					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+						01 00 02 00 00 00 00 00
+					)
+					// Method begins at RVA 0x2484
+					// Header size: 12
+					// Code size: 201 (0xc9)
+					.maxstack 8
+					.locals init (
+						[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/Scope/Block_L29C27,
+						[1] bool,
+						[2] object
+					)
+
+					IL_0000: ldarg.2
+					IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+					IL_0006: stloc.1
+					IL_0007: ldloc.1
+					IL_0008: brfalse IL_0030
+
+					IL_000d: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28/Scope/Block_L29C27::.ctor()
+					IL_0012: stloc.0
+					IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0018: ldstr "UnlinkError:"
+					IL_001d: ldarg.2
+					IL_001e: ldstr "message"
+					IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_002d: pop
+					IL_002e: ldnull
+					IL_002f: ret
+
+					IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0035: ldstr "RenamedText:"
+					IL_003a: ldarg.0
+					IL_003b: ldc.i4.2
+					IL_003c: ldelem.ref
+					IL_003d: castclass Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope
+					IL_0042: ldfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+					IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_004c: pop
+					IL_004d: ldarg.0
+					IL_004e: ldc.i4.0
+					IL_004f: ldelem.ref
+					IL_0050: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_0055: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+					IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_005f: stloc.2
+					IL_0060: ldloc.2
+					IL_0061: ldstr "existsSync"
+					IL_0066: ldarg.0
+					IL_0067: ldc.i4.0
+					IL_0068: ldelem.ref
+					IL_0069: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_006e: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+					IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_0078: stloc.2
+					IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_007e: ldstr "SourceExists:"
+					IL_0083: ldloc.2
+					IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_0089: pop
+					IL_008a: ldarg.0
+					IL_008b: ldc.i4.0
+					IL_008c: ldelem.ref
+					IL_008d: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_0092: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+					IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_009c: stloc.2
+					IL_009d: ldloc.2
+					IL_009e: ldstr "existsSync"
+					IL_00a3: ldarg.0
+					IL_00a4: ldc.i4.0
+					IL_00a5: ldelem.ref
+					IL_00a6: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+					IL_00ab: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+					IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_00b5: stloc.2
+					IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_00bb: ldstr "RenamedExists:"
+					IL_00c0: ldloc.2
+					IL_00c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+					IL_00c6: pop
+					IL_00c7: ldnull
+					IL_00c8: ret
+				} // end of method ArrowFunction_L28C28::__js_call__
+
+			} // end of class ArrowFunction_L28C28
+
+			.class nested public auto ansi beforefieldinit Scope
+				extends [System.Runtime]System.Object
+			{
+				.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+					01 00 28 53 63 6f 70 65 20 72 65 6e 61 6d 65 45
+					72 72 3d 7b 72 65 6e 61 6d 65 45 72 72 7d 2c 20
+					74 65 78 74 3d 7b 74 65 78 74 7d 00 00
+				)
+				// Nested Types
+				.class nested public auto ansi beforefieldinit Block_L22C23
+					extends [System.Runtime]System.Object
+				{
+					// Methods
+					.method public hidebysig specialname rtspecialname 
+						instance void .ctor () cil managed 
+					{
+						// Method begins at RVA 0x257d
+						// Header size: 1
+						// Code size: 8 (0x8)
+						.maxstack 8
+
+						IL_0000: ldarg.0
+						IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+						IL_0006: nop
+						IL_0007: ret
+					} // end of method Block_L22C23::.ctor
+
+				} // end of class Block_L22C23
+
+
+				// Fields
+				.field public object renameErr
+				.field public object text
+
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x2574
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Scope::.ctor
+
+			} // end of class Scope
+
+
+			// Methods
+			.method public hidebysig static 
+				object __js_call__ (
+					object[] scopes,
+					object newTarget,
+					object renameErr
+				) cil managed 
+			{
+				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+					01 00 02 00 00 00 00 00
+				)
+				// Method begins at RVA 0x238c
+				// Header size: 12
+				// Code size: 233 (0xe9)
+				.maxstack 8
+				.locals init (
+					[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope,
+					[1] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope/Block_L22C23,
+					[2] bool,
+					[3] object,
+					[4] object,
+					[5] object
+				)
+
+				IL_0000: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::.ctor()
+				IL_0005: stloc.0
+				IL_0006: ldarg.2
+				IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_000c: stloc.2
+				IL_000d: ldloc.2
+				IL_000e: brfalse IL_0036
+
+				IL_0013: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope/Block_L22C23::.ctor()
+				IL_0018: stloc.1
+				IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_001e: ldstr "RenameError:"
+				IL_0023: ldarg.2
+				IL_0024: ldstr "message"
+				IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0033: pop
+				IL_0034: ldnull
+				IL_0035: ret
+
+				IL_0036: ldarg.0
+				IL_0037: ldc.i4.0
+				IL_0038: ldelem.ref
+				IL_0039: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_003e: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+				IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0048: stloc.3
+				IL_0049: ldarg.0
+				IL_004a: ldc.i4.0
+				IL_004b: ldelem.ref
+				IL_004c: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_0051: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+				IL_0056: stloc.s 4
+				IL_0058: ldloc.3
+				IL_0059: ldstr "readFileSync"
+				IL_005e: ldloc.s 4
+				IL_0060: ldstr "utf8"
+				IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_006a: stloc.s 4
+				IL_006c: ldloc.0
+				IL_006d: ldloc.s 4
+				IL_006f: stfld object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/Scope::text
+				IL_0074: ldarg.0
+				IL_0075: ldc.i4.0
+				IL_0076: ldelem.ref
+				IL_0077: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_007c: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+				IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0086: stloc.s 4
+				IL_0088: ldarg.0
+				IL_0089: ldc.i4.0
+				IL_008a: ldelem.ref
+				IL_008b: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+				IL_0090: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+				IL_0095: stloc.3
+				IL_0096: ldnull
+				IL_0097: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32/ArrowFunction_L28C28::__js_call__(object[], object, object)
+				IL_009d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+				IL_00a2: ldc.i4.3
+				IL_00a3: newarr [System.Runtime]System.Object
+				IL_00a8: dup
+				IL_00a9: ldc.i4.0
+				IL_00aa: ldarg.0
+				IL_00ab: ldc.i4.0
+				IL_00ac: ldelem.ref
+				IL_00ad: stelem.ref
+				IL_00ae: dup
+				IL_00af: ldc.i4.1
+				IL_00b0: ldarg.0
+				IL_00b1: ldc.i4.1
+				IL_00b2: ldelem.ref
+				IL_00b3: stelem.ref
+				IL_00b4: dup
+				IL_00b5: ldc.i4.2
+				IL_00b6: ldloc.0
+				IL_00b7: stelem.ref
+				IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+				IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+				IL_00c2: ldc.i4.1
+				IL_00c3: conv.r8
+				IL_00c4: ldstr ""
+				IL_00c9: ldc.i4.0
+				IL_00ca: ldc.i4.1
+				IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+				IL_00d5: stloc.s 5
+				IL_00d7: ldloc.s 4
+				IL_00d9: ldstr "unlink"
+				IL_00de: ldloc.3
+				IL_00df: ldloc.s 5
+				IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_00e6: pop
+				IL_00e7: ldnull
+				IL_00e8: ret
+			} // end of method ArrowFunction_L21C32::__js_call__
+
+		} // end of class ArrowFunction_L21C32
+
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 1b 53 63 6f 70 65 20 61 70 70 65 6e 64 45
+				72 72 3d 7b 61 70 70 65 6e 64 45 72 72 7d 00 00
+			)
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L16C19
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x256b
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L16C19::.ctor
+
+			} // end of class Block_L16C19
+
+
+			// Fields
+			.field public object appendErr
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2562
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.FS_Append_Rename_Unlink_Callback/Scope scope,
+				object newTarget,
+				object appendErr
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 06 00 00 02
+			)
+			// Method begins at RVA 0x22e0
+			// Header size: 12
+			// Code size: 159 (0x9f)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope,
+				[1] class Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope/Block_L16C19,
+				[2] bool,
+				[3] object,
+				[4] object,
+				[5] object,
+				[6] object
+			)
+
+			IL_0000: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldarg.2
+			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_000c: stloc.2
+			IL_000d: ldloc.2
+			IL_000e: brfalse IL_0036
+
+			IL_0013: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/Scope/Block_L16C19::.ctor()
+			IL_0018: stloc.1
+			IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001e: ldstr "AppendError:"
+			IL_0023: ldarg.2
+			IL_0024: ldstr "message"
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0033: pop
+			IL_0034: ldnull
+			IL_0035: ret
+
+			IL_0036: ldarg.0
+			IL_0037: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0041: stloc.3
+			IL_0042: ldarg.0
+			IL_0043: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+			IL_0048: stloc.s 4
+			IL_004a: ldarg.0
+			IL_004b: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+			IL_0050: stloc.s 5
+			IL_0052: ldnull
+			IL_0053: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36/ArrowFunction_L21C32::__js_call__(object[], object, object)
+			IL_0059: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc1::.ctor(object, native int)
+			IL_005e: ldc.i4.2
+			IL_005f: newarr [System.Runtime]System.Object
+			IL_0064: dup
+			IL_0065: ldc.i4.0
+			IL_0066: ldarg.0
+			IL_0067: stelem.ref
+			IL_0068: dup
+			IL_0069: ldc.i4.1
+			IL_006a: ldloc.0
+			IL_006b: stelem.ref
+			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+			IL_0076: ldc.i4.1
+			IL_0077: conv.r8
+			IL_0078: ldstr ""
+			IL_007d: ldc.i4.0
+			IL_007e: ldc.i4.1
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+			IL_0089: stloc.s 6
+			IL_008b: ldloc.3
+			IL_008c: ldstr "rename"
+			IL_0091: ldloc.s 4
+			IL_0093: ldloc.s 5
+			IL_0095: ldloc.s 6
+			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_009c: pop
+			IL_009d: ldnull
+			IL_009e: ret
+		} // end of method ArrowFunction_L15C36::__js_call__
+
+	} // end of class ArrowFunction_L15C36
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 31 53 63 6f 70 65 20 66 73 3d 7b 66 73 7d
+			2c 20 73 6f 75 72 63 65 3d 7b 73 6f 75 72 63 65
+			7d 2c 20 72 65 6e 61 6d 65 64 3d 7b 72 65 6e 61
+			6d 65 64 7d 00 00
+		)
+		// Fields
+		.field public object fs
+		.field public object source
+		.field public object renamed
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2559
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 642 (0x282)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.FS_Append_Rename_Unlink_Callback/Scope,
+			[1] object,
+			[2] object,
+			[3] string,
+			[4] object,
+			[5] string,
+			[6] float64,
+			[7] object,
+			[8] string,
+			[9] object,
+			[10] object[]
+		)
+
+		IL_0000: newobj instance void Modules.FS_Append_Rename_Unlink_Callback/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "fs"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.s 4
+		IL_0013: ldloc.0
+		IL_0014: ldloc.s 4
+		IL_0016: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_001b: ldarg.1
+		IL_001c: ldstr "path"
+		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0026: stloc.s 4
+		IL_0028: ldloc.s 4
+		IL_002a: stloc.1
+		IL_002b: ldarg.1
+		IL_002c: ldstr "os"
+		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0036: stloc.s 4
+		IL_0038: ldloc.s 4
+		IL_003a: stloc.2
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Date::now()
+		IL_0040: stloc.s 4
+		IL_0042: ldloc.s 4
+		IL_0044: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0049: stloc.s 5
+		IL_004b: ldstr ""
+		IL_0050: ldloc.s 5
+		IL_0052: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0057: stloc.s 5
+		IL_0059: ldloc.s 5
+		IL_005b: ldstr "-"
+		IL_0060: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0065: stloc.s 5
+		IL_0067: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::random()
+		IL_006c: stloc.s 6
+		IL_006e: ldloc.s 6
+		IL_0070: ldc.r8 1000000000
+		IL_0079: mul
+		IL_007a: stloc.s 6
+		IL_007c: ldloc.s 6
+		IL_007e: box [System.Runtime]System.Double
+		IL_0083: stloc.s 7
+		IL_0085: ldloc.s 7
+		IL_0087: call float64 [JavaScriptRuntime]JavaScriptRuntime.Math::floor(object)
+		IL_008c: stloc.s 6
+		IL_008e: ldloc.s 6
+		IL_0090: box [System.Runtime]System.Double
+		IL_0095: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_009a: stloc.s 8
+		IL_009c: ldloc.s 5
+		IL_009e: ldloc.s 8
+		IL_00a0: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00a5: stloc.s 8
+		IL_00a7: ldloc.s 8
+		IL_00a9: stloc.3
+		IL_00aa: ldloc.1
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b0: stloc.s 4
+		IL_00b2: ldloc.2
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b8: stloc.s 9
+		IL_00ba: ldloc.s 9
+		IL_00bc: ldstr "tmpdir"
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00c6: stloc.s 9
+		IL_00c8: ldloc.3
+		IL_00c9: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_00ce: stloc.s 8
+		IL_00d0: ldstr "jroc-fs-callback-append-"
+		IL_00d5: ldloc.s 8
+		IL_00d7: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00dc: stloc.s 8
+		IL_00de: ldloc.s 8
+		IL_00e0: ldstr ".txt"
+		IL_00e5: call string [System.Runtime]System.String::Concat(string, string)
+		IL_00ea: stloc.s 8
+		IL_00ec: ldloc.s 4
+		IL_00ee: ldstr "join"
+		IL_00f3: ldloc.s 9
+		IL_00f5: ldloc.s 8
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00fc: stloc.s 9
+		IL_00fe: ldloc.0
+		IL_00ff: ldloc.s 9
+		IL_0101: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_0106: ldloc.1
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010c: stloc.s 9
+		IL_010e: ldloc.2
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0114: stloc.s 4
+		IL_0116: ldloc.s 4
+		IL_0118: ldstr "tmpdir"
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0122: stloc.s 4
+		IL_0124: ldloc.3
+		IL_0125: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_012a: stloc.s 8
+		IL_012c: ldstr "jroc-fs-callback-append-"
+		IL_0131: ldloc.s 8
+		IL_0133: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0138: stloc.s 8
+		IL_013a: ldloc.s 8
+		IL_013c: ldstr "-renamed.txt"
+		IL_0141: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0146: stloc.s 8
+		IL_0148: ldloc.s 9
+		IL_014a: ldstr "join"
+		IL_014f: ldloc.s 4
+		IL_0151: ldloc.s 8
+		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0158: stloc.s 4
+		IL_015a: ldloc.0
+		IL_015b: ldloc.s 4
+		IL_015d: stfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+		IL_0162: ldloc.0
+		IL_0163: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_016d: stloc.s 4
+		IL_016f: ldloc.0
+		IL_0170: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_0175: stloc.s 9
+		IL_0177: ldloc.s 4
+		IL_0179: ldstr "rmSync"
+		IL_017e: ldloc.s 9
+		IL_0180: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0185: dup
+		IL_0186: ldstr "force"
+		IL_018b: ldc.i4.1
+		IL_018c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0196: pop
+		IL_0197: ldloc.0
+		IL_0198: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_019d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01a2: stloc.s 9
+		IL_01a4: ldloc.0
+		IL_01a5: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::renamed
+		IL_01aa: stloc.s 4
+		IL_01ac: ldloc.s 9
+		IL_01ae: ldstr "rmSync"
+		IL_01b3: ldloc.s 4
+		IL_01b5: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_01ba: dup
+		IL_01bb: ldstr "force"
+		IL_01c0: ldc.i4.1
+		IL_01c1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_01c6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01cb: pop
+		IL_01cc: ldloc.0
+		IL_01cd: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01d7: stloc.s 4
+		IL_01d9: ldloc.0
+		IL_01da: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_01df: stloc.s 9
+		IL_01e1: ldloc.s 4
+		IL_01e3: ldstr "writeFileSync"
+		IL_01e8: ldloc.s 9
+		IL_01ea: ldstr "a"
+		IL_01ef: ldstr "utf8"
+		IL_01f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_01f9: pop
+		IL_01fa: ldloc.0
+		IL_01fb: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::fs
+		IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0205: stloc.s 9
+		IL_0207: ldc.i4.1
+		IL_0208: newarr [System.Runtime]System.Object
+		IL_020d: dup
+		IL_020e: ldc.i4.0
+		IL_020f: ldloc.0
+		IL_0210: stelem.ref
+		IL_0211: ldc.i4.0
+		IL_0212: ldelem.ref
+		IL_0213: castclass Modules.FS_Append_Rename_Unlink_Callback/Scope
+		IL_0218: ldftn object Modules.FS_Append_Rename_Unlink_Callback/ArrowFunction_L15C36::__js_call__(class Modules.FS_Append_Rename_Unlink_Callback/Scope, object, object)
+		IL_021e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0223: ldc.i4.1
+		IL_0224: newarr [System.Runtime]System.Object
+		IL_0229: dup
+		IL_022a: ldc.i4.0
+		IL_022b: ldloc.0
+		IL_022c: stelem.ref
+		IL_022d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0232: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0237: ldc.i4.1
+		IL_0238: conv.r8
+		IL_0239: ldstr ""
+		IL_023e: ldc.i4.0
+		IL_023f: ldc.i4.1
+		IL_0240: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0245: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_024a: stloc.s 4
+		IL_024c: ldc.i4.4
+		IL_024d: newarr [System.Runtime]System.Object
+		IL_0252: dup
+		IL_0253: ldc.i4.0
+		IL_0254: ldloc.0
+		IL_0255: ldfld object Modules.FS_Append_Rename_Unlink_Callback/Scope::source
+		IL_025a: stelem.ref
+		IL_025b: dup
+		IL_025c: ldc.i4.1
+		IL_025d: ldstr "b"
+		IL_0262: stelem.ref
+		IL_0263: dup
+		IL_0264: ldc.i4.2
+		IL_0265: ldstr "utf8"
+		IL_026a: stelem.ref
+		IL_026b: dup
+		IL_026c: ldc.i4.3
+		IL_026d: ldloc.s 4
+		IL_026f: stelem.ref
+		IL_0270: stloc.s 10
+		IL_0272: ldloc.s 9
+		IL_0274: ldstr "appendFile"
+		IL_0279: ldloc.s 10
+		IL_027b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0280: pop
+		IL_0281: ret
+	} // end of method FS_Append_Rename_Unlink_Callback::__js_module_init__
+
+} // end of class Modules.FS_Append_Rename_Unlink_Callback
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2598
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.FS_Append_Rename_Unlink_Callback::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

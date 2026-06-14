@@ -25,5 +25,5 @@ Feature-level support tracking with test script references.
 
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
-| with statement | Not Yet Supported |  | Rejected by Js2IL.Validation.JavaScriptAstValidator as unsupported (deprecated and problematic). |
+| with statement | Not Yet Supported |  | Rejected by Jroc.Validation.JavaScriptAstValidator as unsupported (deprecated and problematic). |
 

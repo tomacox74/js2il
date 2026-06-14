@@ -5,14 +5,14 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Js2IL.Runtime;
+using Jroc.Runtime;
 
 namespace JavaScriptRuntime
 {
     /// <summary>
     /// Minimal Function.prototype helpers for delegate-backed function values.
     ///
-    /// JS2IL models JavaScript functions as CLR delegates; these helpers provide a small subset
+    /// JROC models JavaScript functions as CLR delegates; these helpers provide a small subset
     /// of Function.prototype behavior (apply/bind) for those values.
     /// </summary>
 public static class Function

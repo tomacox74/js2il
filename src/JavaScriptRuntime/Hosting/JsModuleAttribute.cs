@@ -1,6 +1,6 @@
 using System;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
 /// Associates a generated exports contract type with a compiled module id.

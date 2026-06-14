@@ -29,7 +29,7 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Best-effort runtime approximation of ECMA-262 CanBeHeldWeakly.
-        /// JS2IL currently treats non-null reference types (including symbols/functions) as weakly holdable.
+        /// JROC currently treats non-null reference types (including symbols/functions) as weakly holdable.
         /// </summary>
         public static bool CanBeHeldWeakly(object? value)
         {

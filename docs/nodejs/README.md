@@ -1,6 +1,6 @@
 # Node.js Support Documentation
 
-This directory contains modular documentation for JS2IL's Node.js API support.
+This directory contains modular documentation for JROC's Node.js API support.
 
 ## Structure
 
@@ -81,8 +81,8 @@ See `ModuleDoc.schema.json` for the complete schema definition.
       "docs": "https://nodejs.org/api/path.html#pathjoinpaths",
       "tests": [
         {
-          "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_Basic",
-          "file": "tests/Js2IL.Tests/Node/ExecutionTests.cs#L9"
+          "name": "Jroc.Tests.Node.ExecutionTests.Require_Path_Join_Basic",
+          "file": "tests/Jroc.Tests/Node/ExecutionTests.cs#L9"
         }
       ]
     }
@@ -103,8 +103,8 @@ See `ModuleDoc.schema.json` for the complete schema definition.
   "implementation": "src/JavaScriptRuntime/Node/GlobalVariables.cs",
   "tests": [
     {
-      "name": "Js2IL.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory",
-      "file": "tests/Js2IL.Tests/Node/ExecutionTests.cs#L15"
+      "name": "Jroc.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory",
+      "file": "tests/Jroc.Tests/Node/ExecutionTests.cs#L15"
     }
   ]
 }

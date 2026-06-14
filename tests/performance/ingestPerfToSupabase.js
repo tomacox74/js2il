@@ -69,12 +69,12 @@ function normalizeRuntime(raw) {
     if (text.includes('jint') && text.includes('prepared')) return 'jint-execute-prepared';
     if (text.includes('jint') && text.includes('prepare')) return 'jint-prepare';
     if (text.includes('jint')) return 'jint';
-    if (text.includes('js2il') && text.includes('execute') && text.includes('pre-compiled')) return 'js2il-execute';
-    if (text.includes('js2il') && text.includes('execute') && text.includes('precompiled')) return 'js2il-execute';
-    if (text.includes('js2il') && text.includes('compile') && text.includes('execute')) return 'js2il-total';
-    if (text.includes('js2il') && text.includes('compile')) return 'js2il-compile';
-    if (text.includes('js2il') && text.includes('execute')) return 'js2il-execute';
-    if (text.includes('js2il')) return 'js2il';
+    if (text.includes('jroc') && text.includes('execute') && text.includes('pre-compiled')) return 'jroc-execute';
+    if (text.includes('jroc') && text.includes('execute') && text.includes('precompiled')) return 'jroc-execute';
+    if (text.includes('jroc') && text.includes('compile') && text.includes('execute')) return 'jroc-total';
+    if (text.includes('jroc') && text.includes('compile')) return 'jroc-compile';
+    if (text.includes('jroc') && text.includes('execute')) return 'jroc-execute';
+    if (text.includes('jroc')) return 'jroc';
     return slugify(raw);
 }
 

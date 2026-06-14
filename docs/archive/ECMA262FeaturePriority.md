@@ -1,4 +1,4 @@
-# JS2IL ECMA-262 Feature Priority - Executive Summary
+# JROC ECMA-262 Feature Priority - Executive Summary
 
 > **Date**: February 12, 2026  
 > **Status**: Historical Snapshot (superseded for active sequencing)  

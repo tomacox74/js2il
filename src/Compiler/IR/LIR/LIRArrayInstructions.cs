@@ -1,4 +1,4 @@
-﻿namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Creates and initializes an object array with the given elements in a single operation.

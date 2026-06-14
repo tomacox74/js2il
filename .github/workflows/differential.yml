@@ -1,7 +1,7 @@
 name: Differential Tests
 run-name: ${{ github.workflow }} - ${{ github.event_name }} - ${{ github.event.release.tag_name || github.event.inputs.branch || github.head_ref || github.ref_name }}
 
-# Bounded differential test suite – Node.js vs JS2IL
+# Bounded differential test suite – Node.js vs JROC
 #
 # Schedule : runs corpus + 50 generated programs (deterministic seed).
 # Manual   : workflow_dispatch can run corpus only (generate=0) or corpus + generated.
@@ -28,7 +28,7 @@ env:
 
 jobs:
   differential:
-    name: Differential (Node vs JS2IL)
+    name: Differential (Node vs JROC)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -50,8 +50,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build JS2IL (Release)
-        run: dotnet build src/Cli/Js2IL.csproj --no-restore -c Release
+      - name: Build JROC (Release)
+        run: dotnet build src/Cli/Jroc.csproj --no-restore -c Release
 
       - name: Run differential tests – corpus (+ optional generated)
         run: |

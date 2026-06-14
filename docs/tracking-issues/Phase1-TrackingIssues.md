@@ -11,7 +11,7 @@ This document contains the historical tracking drafts for the original Phase 1 r
 
 - ✅ Phase 1 scope is long since shipped on `master` (rest parameters; spread in calls, arrays, and objects).
 - ✅ The active queue has moved on to Node compatibility, `test262` follow-ons, and the deferred performance lane.
-- ✅ The current live queue is **20 open issues / 1 open PR**, with Node follow-ons [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://github.com/tomacox74/js2il/issues/956), docs/tooling follow-on [#979](https://github.com/tomacox74/js2il/issues/979), and the concrete `test262` post-MVP issues [#981](https://github.com/tomacox74/js2il/issues/981)-[#985](https://github.com/tomacox74/js2il/issues/985) now taking priority instead.
+- ✅ The current live queue is **20 open issues / 1 open PR**, with Node follow-ons [#949](https://github.com/tomacox74/jroc/issues/949) and [#956](https://github.com/tomacox74/jroc/issues/956), docs/tooling follow-on [#979](https://github.com/tomacox74/jroc/issues/979), and the concrete `test262` post-MVP issues [#981](https://github.com/tomacox74/jroc/issues/981)-[#985](https://github.com/tomacox74/jroc/issues/985) now taking priority instead.
 - ℹ️ Any unchecked acceptance items below are preserved as historical drafting artifacts rather than current blockers.
 
 ---

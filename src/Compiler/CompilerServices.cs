@@ -2,15 +2,15 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Js2IL.IL;
-using Js2IL.Services.ScopesAbi;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Services.VariableBindings;
-using Js2IL.Services;
-using Js2IL.DebugSymbols;
-using Js2IL.Diagnostics;
+using Jroc.IL;
+using Jroc.Services.ScopesAbi;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Services.VariableBindings;
+using Jroc.Services;
+using Jroc.DebugSymbols;
+using Jroc.Diagnostics;
  
-namespace Js2IL;
+namespace Jroc;
  
 public static class CompilerServices
 {

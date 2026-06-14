@@ -1,6 +1,6 @@
 # ECMA-262 Docs Workflow (docs/ECMA262)
 
-This directory contains JS2IL’s **ECMA-262 coverage index** and per-section “hub” documents.
+This directory contains JROC’s **ECMA-262 coverage index** and per-section “hub” documents.
 
 Important conventions
 - These markdown files are **indexes only**: clause numbers, titles, status, and links.

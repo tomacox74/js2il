@@ -3,16 +3,16 @@ using System.Reflection.Metadata.Ecma335;
 using System.Linq;
 using System.Reflection;
 using Acornima.Ast;
-using Js2IL.Services;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.ScopesAbi;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities.Ecma335;
-using Js2IL.Utilities;
+using Jroc.Services;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.ScopesAbi;
+using Jroc.SymbolTables;
+using Jroc.Utilities.Ecma335;
+using Jroc.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Coordinates the two-phase compilation pipeline:
@@ -1803,7 +1803,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// <summary>
     /// Computes the callable scope ABI based on scope analysis.
     /// </summary>
-    private static (Js2IL.Runtime.CallableScopeAbiKind Kind, string? SingleScopeScopeName) ComputeCallableScopeAbi(
+    private static (Jroc.Runtime.CallableScopeAbiKind Kind, string? SingleScopeScopeName) ComputeCallableScopeAbi(
         CallableId callable,
         SymbolTable symbolTable)
     {
@@ -1815,7 +1815,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     || staticScope.HasDescendantCallableReferencingParentScopeVariables
                     || staticScope.Children.Any(child => child.Kind is ScopeKind.Function or ScopeKind.Class)))
             {
-                return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+                return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
             }
         }
 
@@ -1827,45 +1827,45 @@ public sealed class TwoPhaseCompilationCoordinator
             or CallableKind.ClassStaticSetter
             or CallableKind.ClassStaticInitializer)
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.NoScopes, null);
+            return (Jroc.Runtime.CallableScopeAbiKind.NoScopes, null);
         }
 
         if (IsResumableCallable(callable))
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+            return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
         if (callable.AstNode == null)
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+            return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
         var scope = symbolTable.FindScopeByAstNode(callable.AstNode);
         if (scope == null)
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+            return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
         if (!scope.ReferencesParentScopeVariables)
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.NoScopes, null);
+            return (Jroc.Runtime.CallableScopeAbiKind.NoScopes, null);
         }
 
         if (callable.Kind is not CallableKind.FunctionDeclaration
             and not CallableKind.FunctionExpression
             and not CallableKind.Arrow)
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+            return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
         }
 
         var layoutBuilder = new EnvironmentLayoutBuilder(new Services.VariableBindings.ScopeMetadataRegistry());
-        var layout = layoutBuilder.Build(scope, Js2IL.Services.ScopesAbi.CallableKind.Function);
+        var layout = layoutBuilder.Build(scope, Jroc.Services.ScopesAbi.CallableKind.Function);
         if (layout.Abi.ScopesSource == ScopesSource.Argument && layout.ScopeChain.Slots.Count == 1)
         {
-            return (Js2IL.Runtime.CallableScopeAbiKind.SingleScope, layout.ScopeChain.Slots[0].ScopeName);
+            return (Jroc.Runtime.CallableScopeAbiKind.SingleScope, layout.ScopeChain.Slots[0].ScopeName);
         }
 
-        return (Js2IL.Runtime.CallableScopeAbiKind.ScopeArray, null);
+        return (Jroc.Runtime.CallableScopeAbiKind.ScopeArray, null);
     }
     
     /// <summary>

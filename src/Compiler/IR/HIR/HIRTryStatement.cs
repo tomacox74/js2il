@@ -1,8 +1,8 @@
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRTryStatement : HIRStatement
 {
-    public HIRTryStatement(HIRStatement tryBlock, Js2IL.SymbolTables.BindingInfo? catchParamBinding, HIRPattern? catchParamPattern, HIRStatement? catchBody, HIRStatement? finallyBody)
+    public HIRTryStatement(HIRStatement tryBlock, Jroc.SymbolTables.BindingInfo? catchParamBinding, HIRPattern? catchParamPattern, HIRStatement? catchBody, HIRStatement? finallyBody)
     {
         TryBlock = tryBlock;
         CatchParamBinding = catchParamBinding;
@@ -12,7 +12,7 @@ public sealed class HIRTryStatement : HIRStatement
     }
 
     public HIRStatement TryBlock { get; }
-    public Js2IL.SymbolTables.BindingInfo? CatchParamBinding { get; }
+    public Jroc.SymbolTables.BindingInfo? CatchParamBinding { get; }
     public HIRPattern? CatchParamPattern { get; }
     public HIRStatement? CatchBody { get; }
     public HIRStatement? FinallyBody { get; }

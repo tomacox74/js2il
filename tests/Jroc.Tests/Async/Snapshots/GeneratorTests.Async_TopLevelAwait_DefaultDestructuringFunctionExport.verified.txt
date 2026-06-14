@@ -1,0 +1,363 @@
+// IL code: Async_TopLevelAwait_DefaultDestructuringFunctionExport
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit pick
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 13 53 63 6f 70 65 20 76 61 6c 75 65 3d 7b
+				76 61 6c 75 65 7d 00 00
+			)
+			// Fields
+			.field public object 'value'
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x224c
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				object newTarget,
+				object $p0
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 00 00 00 00 00 00
+			)
+			// Method begins at RVA 0x21e8
+			// Header size: 12
+			// Code size: 79 (0x4f)
+			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] object
+			)
+
+			IL_0000: ldarg.1
+			IL_0001: brtrue IL_000d
+
+			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_000b: starg.s $p0
+
+			IL_000d: ldarg.1
+			IL_000e: brfalse IL_001e
+
+			IL_0013: ldarg.1
+			IL_0014: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0019: brfalse IL_002e
+
+			IL_001e: ldarg.1
+			IL_001f: ldstr ""
+			IL_0024: ldstr "value"
+			IL_0029: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+			IL_002e: ldarg.1
+			IL_002f: ldstr "value"
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0039: stloc.1
+			IL_003a: ldloc.1
+			IL_003b: brtrue IL_004b
+
+			IL_0040: ldstr "default"
+			IL_0045: stloc.0
+			IL_0046: br IL_004d
+
+			IL_004b: ldloc.1
+			IL_004c: stloc.0
+
+			IL_004d: ldloc.0
+			IL_004e: ret
+		} // end of method pick::__js_call__
+
+	} // end of class pick
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [JavaScriptRuntime]JavaScriptRuntime.AsyncScope
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 11 53 63 6f 70 65 20 70 69 63 6b 3d 7b 70
+			69 63 6b 7d 00 00
+		)
+		// Fields
+		.field public object pick
+		.field public object _awaited1
+		.field public object _awaited2
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2243
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public static 
+		void __js_module_init__ (
+			object '',
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate '',
+			object '',
+			string '',
+			string ''
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 28 (0x1c)
+		.maxstack 8
+
+		IL_0000: ldc.i4.1
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldnull
+		IL_0009: stelem.ref
+		IL_000a: ldnull
+		IL_000b: ldarg.0
+		IL_000c: ldarg.1
+		IL_000d: ldarg.2
+		IL_000e: ldarg.3
+		IL_000f: ldarg.s 4
+		IL_0011: call object Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport::__js_module_async_body__(object[], object, object, object, object, object, object)
+		IL_0016: call void [JavaScriptRuntime]JavaScriptRuntime.Promise::AwaitTopLevel(object)
+		IL_001b: ret
+	} // end of method Async_TopLevelAwait_DefaultDestructuringFunctionExport::__js_module_init__
+
+	.method public hidebysig static 
+		object __js_module_async_body__ (
+			object[] scopes,
+			object newTarget,
+			object exports,
+			object require,
+			object module,
+			object __filename,
+			object __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2070
+		// Header size: 12
+		// Code size: 363 (0x16b)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/Scope,
+			[1] object,
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: isinst Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/Scope
+		IL_0008: dup
+		IL_0009: brtrue IL_0058
+
+		IL_000e: pop
+		IL_000f: newobj instance void Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/Scope::.ctor()
+		IL_0014: stloc.0
+		IL_0015: ldloc.0
+		IL_0016: ldarg.0
+		IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
+		IL_001c: starg.s scopes
+		IL_001e: ldloc.0
+		IL_001f: ldnull
+		IL_0020: ldftn object Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport::__js_module_async_body__(object[], object, object, object, object, object, object)
+		IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFunc5::.ctor(object, native int)
+		IL_002b: ldarg.0
+		IL_002c: ldc.i4.5
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldarg.2
+		IL_0035: stelem.ref
+		IL_0036: dup
+		IL_0037: ldc.i4.1
+		IL_0038: ldarg.3
+		IL_0039: stelem.ref
+		IL_003a: dup
+		IL_003b: ldc.i4.2
+		IL_003c: ldarg.s module
+		IL_003e: stelem.ref
+		IL_003f: dup
+		IL_0040: ldc.i4.3
+		IL_0041: ldarg.s __filename
+		IL_0043: stelem.ref
+		IL_0044: dup
+		IL_0045: ldc.i4.4
+		IL_0046: ldarg.s __dirname
+		IL_0048: stelem.ref
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindMoveNext(object, object[], object[])
+		IL_004e: stfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+		IL_0053: br IL_0059
+
+		IL_0058: stloc.0
+
+		IL_0059: ldloc.0
+		IL_005a: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+		IL_005f: brtrue IL_0070
+
+		IL_0064: ldloc.0
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: stfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+
+		IL_0070: ldloc.0
+		IL_0071: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+		IL_0076: ldc.i4.0
+		IL_0077: ble IL_0087
+
+		IL_007c: ldloc.0
+		IL_007d: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+		IL_0082: dup
+		IL_0083: ldc.i4.0
+		IL_0084: ldelem.ref
+		IL_0085: stloc.1
+		IL_0086: pop
+
+		IL_0087: ldloc.0
+		IL_0088: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+		IL_008d: switch (IL_009a, IL_00fb)
+
+		IL_009a: ldnull
+		IL_009b: ldftn object Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/pick::__js_call__(object, object)
+		IL_00a1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_00a6: ldc.i4.0
+		IL_00a7: conv.r8
+		IL_00a8: ldstr "pick"
+		IL_00ad: ldc.i4.0
+		IL_00ae: ldc.i4.0
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00b4: stloc.2
+		IL_00b5: ldloc.2
+		IL_00b6: stloc.1
+		IL_00b7: call class [System.Runtime]System.Delegate [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Promise()
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c1: stloc.2
+		IL_00c2: ldloc.2
+		IL_00c3: ldstr "resolve"
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00cd: stloc.2
+		IL_00ce: ldloc.0
+		IL_00cf: ldc.i4.1
+		IL_00d0: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+		IL_00d5: ldloc.0
+		IL_00d6: ldloc.2
+		IL_00d7: ldarg.0
+		IL_00d8: ldc.i4.1
+		IL_00d9: ldloc.0
+		IL_00da: ldfld object [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_moveNext
+		IL_00df: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::SetupAwaitContinuationTyped(object, object[], int32, object)
+		IL_00e4: ldloc.0
+		IL_00e5: ldfld object[] [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_locals
+		IL_00ea: dup
+		IL_00eb: ldc.i4.0
+		IL_00ec: ldloc.1
+		IL_00ed: stelem.ref
+		IL_00ee: pop
+		IL_00ef: ldloc.0
+		IL_00f0: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+		IL_00f5: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_00fa: ret
+
+		IL_00fb: ldloc.0
+		IL_00fc: ldfld object Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/Scope::_awaited1
+		IL_0101: pop
+		IL_0102: ldnull
+		IL_0103: ldnull
+		IL_0104: call object Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/pick::__js_call__(object, object)
+		IL_0109: stloc.2
+		IL_010a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010f: ldloc.2
+		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0115: pop
+		IL_0116: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_011b: dup
+		IL_011c: ldstr "value"
+		IL_0121: ldstr "provided"
+		IL_0126: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_012b: stloc.3
+		IL_012c: ldnull
+		IL_012d: ldloc.3
+		IL_012e: call object Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport/pick::__js_call__(object, object)
+		IL_0133: stloc.2
+		IL_0134: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0139: ldloc.2
+		IL_013a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_013f: pop
+		IL_0140: ldloc.0
+		IL_0141: ldc.i4.m1
+		IL_0142: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_asyncState
+		IL_0147: ldloc.0
+		IL_0148: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+		IL_014d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+		IL_0152: ldarg.0
+		IL_0153: ldc.i4.1
+		IL_0154: newarr [System.Runtime]System.Object
+		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_015e: pop
+		IL_015f: ldloc.0
+		IL_0160: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.AsyncScope::_deferred
+		IL_0165: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_016a: ret
+	} // end of method Async_TopLevelAwait_DefaultDestructuringFunctionExport::__js_module_async_body__
+
+} // end of class Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2255
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Async_TopLevelAwait_DefaultDestructuringFunctionExport::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

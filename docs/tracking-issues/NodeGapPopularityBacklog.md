@@ -11,17 +11,17 @@
 - Stated runtime limitations: `docs/nodejs/NodeLimitations.json`
 - Module-level coverage: `docs/nodejs/*.json`
 - Runtime module footprint: `src/JavaScriptRuntime/Node/*` and `src/JavaScriptRuntime/CommonJS/*`
-- Repo-local demand signals: `tests/Js2IL.Tests/Node/**/*`, `tests/Js2IL.Tests/CommonJS/**/*`, and `tests/Js2IL.Tests/Import/**/*`
-- Current open Node/runtime follow-up issues: [#949](https://github.com/tomacox74/js2il/issues/949), [#956](https://github.com/tomacox74/js2il/issues/956)
-- Recently closed Node/runtime issues that changed the backlog shape: [#946](https://github.com/tomacox74/js2il/issues/946), [#947](https://github.com/tomacox74/js2il/issues/947), [#950](https://github.com/tomacox74/js2il/issues/950)-[#955](https://github.com/tomacox74/js2il/issues/955), and the architecture investigation [#841](https://github.com/tomacox74/js2il/issues/841)
+- Repo-local demand signals: `tests/Jroc.Tests/Node/**/*`, `tests/Jroc.Tests/CommonJS/**/*`, and `tests/Jroc.Tests/Import/**/*`
+- Current open Node/runtime follow-up issues: [#949](https://github.com/tomacox74/jroc/issues/949), [#956](https://github.com/tomacox74/jroc/issues/956)
+- Recently closed Node/runtime issues that changed the backlog shape: [#946](https://github.com/tomacox74/jroc/issues/946), [#947](https://github.com/tomacox74/jroc/issues/947), [#950](https://github.com/tomacox74/jroc/issues/950)-[#955](https://github.com/tomacox74/jroc/issues/955), and the architecture investigation [#841](https://github.com/tomacox74/jroc/issues/841)
 
 ## Current Baseline (Snapshot)
 
 - The JSON-backed Node docs currently track **19 modules** (**16 `partial`**, **3 `completed`**) and **16 globals** (**15 `supported`**, **1 `partial`**).
-- No Node-specific merges landed after the previous pass; the ranking below is therefore materially unchanged even though [#975](https://github.com/tomacox74/js2il/pull/975) moved the broader repo queue by closing a `test262` follow-on.
+- No Node-specific merges landed after the previous pass; the ranking below is therefore materially unchanged even though [#975](https://github.com/tomacox74/jroc/pull/975) moved the broader repo queue by closing a `test262` follow-on.
 - Several previously top-ranked gaps are now shipped on `master`:
   - `globalThis.URL` is supported and shares constructor identity with `node:url`.
-  - The extractor network-mode follow-on landed, so JS2IL can now run the real `scripts/ECMA262` networking path instead of being limited to offline/manual fetch flows.
+  - The extractor network-mode follow-on landed, so JROC can now run the real `scripts/ECMA262` networking path instead of being limited to offline/manual fetch flows.
   - `child_process`, `timers/promises`, loader/runtime probing, `fs`, `crypto`, and `stream` all moved forward enough that their previous issue-backed follow-ons are now closed.
 - The biggest remaining popularity-weighted gaps are now concentrated in:
   - missing high-level web-style globals (`fetch`, `Headers`, `Request`, `Response`)
@@ -44,12 +44,12 @@
 
 ## Current ranked backlog (recommended order)
 
-Only [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://github.com/tomacox74/js2il/issues/956) remain open from the previous issue-backed top 10. Ranks 3-10 below are the best current **issue-creation candidates** if they remain high-priority after those two land.
+Only [#949](https://github.com/tomacox74/jroc/issues/949) and [#956](https://github.com/tomacox74/jroc/issues/956) remain open from the previous issue-backed top 10. Ranks 3-10 below are the best current **issue-creation candidates** if they remain high-priority after those two land.
 
 | Rank | Feature family | Primary Node area | GitHub issue | Current status signal | Why it is top-10 now |
 |---:|---|---|---|---|---|
-| 1 | [Global `fetch` / `Headers` / `Request` / `Response` baseline](https://github.com/tomacox74/js2il/issues/949) | globals + web platform | [#949](https://github.com/tomacox74/js2il/issues/949) | These globals are still absent from the supported global inventory even though the lower transport stack now exists in partial form | Modern Node 18+/22 packages increasingly assume fetch-style APIs first and only fall back to raw `node:http` in edge cases. |
-| 2 | [TLS trust, client-auth, and agent parity](https://github.com/tomacox74/js2il/issues/956) | `https` / `tls` | [#956](https://github.com/tomacox74/js2il/issues/956) | Local self-signed loopback flows work, but custom CA trust, client certificates, ALPN, and richer agent behavior remain unsupported | Real outbound service integrations still fail here even after the recent HTTP/TLS baseline wins. |
+| 1 | [Global `fetch` / `Headers` / `Request` / `Response` baseline](https://github.com/tomacox74/jroc/issues/949) | globals + web platform | [#949](https://github.com/tomacox74/jroc/issues/949) | These globals are still absent from the supported global inventory even though the lower transport stack now exists in partial form | Modern Node 18+/22 packages increasingly assume fetch-style APIs first and only fall back to raw `node:http` in edge cases. |
+| 2 | [TLS trust, client-auth, and agent parity](https://github.com/tomacox74/jroc/issues/956) | `https` / `tls` | [#956](https://github.com/tomacox74/jroc/issues/956) | Local self-signed loopback flows work, but custom CA trust, client certificates, ALPN, and richer agent behavior remain unsupported | Real outbound service integrations still fail here even after the recent HTTP/TLS baseline wins. |
 | 3 | `os` surface expansion | `os` | No dedicated issue yet | The documented baseline is still only `tmpdir()` and `homedir()` | CLI and tooling code frequently expects many more environment and platform helpers than the current tiny slice exposes. |
 | 4 | `URLSearchParams` completion and legacy `url` follow-ons | globals + `url` | No dedicated issue yet | `URL` is now supported, but `URLSearchParams` is still `partial`, and legacy `url.parse` / `url.format` remain unimplemented | URL support is much more useful now, which makes the remaining gaps more visible to real workloads. |
 | 5 | `path.posix` / `path.win32` completeness | `path` | No dedicated issue yet | Core `path` helpers are in good shape, but the namespaced `posix` / `win32` surfaces are intentionally minimal | Bundlers, build tools, and cross-platform fixtures often rely on the namespaced helpers rather than the host-default surface. |
@@ -67,7 +67,7 @@ Only [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://gi
 
 ## Recommended sequencing
 
-- **Finish the remaining issue-backed Node work first:** [#949](https://github.com/tomacox74/js2il/issues/949) -> [#956](https://github.com/tomacox74/js2il/issues/956).
+- **Finish the remaining issue-backed Node work first:** [#949](https://github.com/tomacox74/jroc/issues/949) -> [#956](https://github.com/tomacox74/jroc/issues/956).
 - **Then cut the next issue from the highest remaining untracked gap:** ranks 3-5 above are the strongest current candidates.
 - **Keep transport follow-ons layered:** do not start a higher-level convenience surface (`fetch`, advanced HTTPS, agent pooling) without the minimum lower-layer HTTP/TLS behavior it depends on.
 
@@ -86,14 +86,14 @@ Only [#949](https://github.com/tomacox74/js2il/issues/949) and [#956](https://gi
 
 ## Issue #841 investigation addendum (closed 2026-04-09)
 
-This addendum is the concrete output for [#841](https://github.com/tomacox74/js2il/issues/841). It remains useful reference material for the remaining network work; it is no longer an open queue item.
+This addendum is the concrete output for [#841](https://github.com/tomacox74/jroc/issues/841). It remains useful reference material for the remaining network work; it is no longer an open queue item.
 
 ### Current-state inventory
 
 - `src/JavaScriptRuntime/Node/Net.cs` owns the transport/event-loop model through `TcpClient` / `TcpListener`, `IIOScheduler`, `NodeSchedulerState`, incremental reads/writes, and Node-shaped socket lifecycle behavior.
 - `src/JavaScriptRuntime/Node/Http.cs` owns the custom HTTP/1.1 request/response model: `HttpClientRequest`, `HttpServer`, `IncomingMessage`, `ServerResponse`, custom parsing/decoding, chunked framing, sequential keep-alive reuse, and explicit unsupported handling for CONNECT, Upgrade, Expect/100-continue, and pipelining.
 - `src/JavaScriptRuntime/Node/Https.cs` layers TLS on top of that same transport through `SslStream`, with a documented local/self-signed baseline and explicit omissions around custom CA trust, client certificates, ALPN, and advanced `https.Agent` behavior.
-- Because JS2IL already exposes Node-shaped request/response/socket/event surfaces, any .NET-backed reuse has to sit behind those existing objects instead of replacing them wholesale.
+- Because JROC already exposes Node-shaped request/response/socket/event surfaces, any .NET-backed reuse has to sit behind those existing objects instead of replacing them wholesale.
 
 ### Options comparison
 
@@ -111,14 +111,14 @@ This addendum is the concrete output for [#841](https://github.com/tomacox74/js2
 - If that outbound adapter is spiked, require all of the following up front:
   - `AllowAutoRedirect = false` so Node redirect semantics stay explicit.
   - Headers-first streaming (`ResponseHeadersRead`) so response bodies can still surface incrementally.
-  - No hidden cookies or automatic decompression unless JS2IL explicitly models those behaviors.
+  - No hidden cookies or automatic decompression unless JROC explicitly models those behaviors.
   - Explicit mapping for abort/destroy/error timing and clear preservation of supported keep-alive / agent behavior.
   - A deliberate answer for any supported `request.socket` / `response.socket` expectations before widening the public surface.
 - Do not pursue `HttpListener` or Kestrel as the baseline `node:http` server implementation; both fight the Node evented stream model harder than the current parser path helps.
 
 ### Follow-on map
 
-- [#947](https://github.com/tomacox74/js2il/issues/947) is now closed and should be treated as the first worked example of this recommendation being applied to a real tooling workload.
-- [#949](https://github.com/tomacox74/js2il/issues/949) should reuse the same transport guidance when layering fetch-style globals over the current HTTP/HTTPS baseline.
-- [#956](https://github.com/tomacox74/js2il/issues/956) should only build on a `HttpClient` path if the spike proves we can map CA trust, client certificates, ALPN, and agent behavior cleanly; otherwise it should continue extending the current `SslStream` + `NetSocket` / `https` stack.
+- [#947](https://github.com/tomacox74/jroc/issues/947) is now closed and should be treated as the first worked example of this recommendation being applied to a real tooling workload.
+- [#949](https://github.com/tomacox74/jroc/issues/949) should reuse the same transport guidance when layering fetch-style globals over the current HTTP/HTTPS baseline.
+- [#956](https://github.com/tomacox74/jroc/issues/956) should only build on a `HttpClient` path if the spike proves we can map CA trust, client certificates, ALPN, and agent behavior cleanly; otherwise it should continue extending the current `SslStream` + `NetSocket` / `https` stack.
 - Non-goals for the next transport follow-ons: server rewrite, HTTP/2, WebSocket/Upgrade, CONNECT tunneling, or replacing `node:net`.

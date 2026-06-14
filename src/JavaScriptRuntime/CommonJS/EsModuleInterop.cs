@@ -7,7 +7,7 @@ namespace JavaScriptRuntime.CommonJS
     internal static class EsModuleInterop
     {
         private const string EsModuleProperty = "__esModule";
-        private const string NamespaceCacheProperty = "__js2il_esm_namespace";
+        private const string NamespaceCacheProperty = "__jroc_esm_namespace";
         private static readonly ConditionalWeakTable<object, object> NamespaceSideCache = new();
 
         public static object ToDynamicImportResult(object? exports)

@@ -1,6 +1,6 @@
 # API: Hosting exceptions
 
-Namespace: `Js2IL.Runtime`
+Namespace: `Jroc.Runtime`
 
 The hosting layer translates internal exceptions at the boundary so consuming apps can catch a stable set of exceptions.
 

@@ -1,10 +1,10 @@
 # Prototype Chain Support Strategy
 
-This document describes how JS2IL should support JavaScript’s prototype-based inheritance while preserving **early-bound** (fast) field/method access for the common case.
+This document describes how JROC should support JavaScript’s prototype-based inheritance while preserving **early-bound** (fast) field/method access for the common case.
 
 ## 1. Motivation
 
-Today, JS2IL can compile many calls as **early-bound direct calls** (e.g., a known method on a known runtime type) without guards.
+Today, JROC can compile many calls as **early-bound direct calls** (e.g., a known method on a known runtime type) without guards.
 
 Example: `tests/performance/PrimeJavaScript.js` contains calls that are currently compiled into fast direct calls (e.g., an early-bound call to `setBitsTrue` around the loop-heavy hot path). This is the performance posture we want to preserve by default.
 
@@ -14,7 +14,7 @@ However, JavaScript allows mutation of behavior via:
 - Per-instance method replacement (e.g., `a.indexOf = ...`)
 - Prototype reassignment (e.g., `Object.setPrototypeOf(a, ...)` or `a.__proto__ = ...`)
 
-When these appear, JS2IL should switch to a semantics-preserving strategy that is compliant with JavaScript’s property lookup rules.
+When these appear, JROC should switch to a semantics-preserving strategy that is compliant with JavaScript’s property lookup rules.
 
 ## 2. High-level Goal
 
@@ -56,7 +56,7 @@ This section proposes runtime data structures for implementing prototype-chain s
 
 ### 5.2 Current Runtime Reality (Baseline)
 
-Today, JS2IL uses pragmatic CLR representations:
+Today, JROC uses pragmatic CLR representations:
 
 - Object literals are typically `System.Dynamic.ExpandoObject` accessed via `JavaScriptRuntime.Object.GetProperty/SetProperty`.
 - Arrays are `JavaScriptRuntime.Array` (a `List<object?>`) with index access and a few intrinsic methods.
@@ -130,7 +130,7 @@ Prototype-aware `Get` can follow the spec-shaped approach:
 3. If found:
    - For data properties: return value.
    - For accessors: call getter with `thisArg`.
-4. If missing: return `undefined` (represented as CLR `null` in JS2IL).
+4. If missing: return `undefined` (represented as CLR `null` in JROC).
 
 Prototype-aware `Set`:
 
@@ -281,7 +281,7 @@ For `class C { m() {} }`:
 - `C.prototype` is an object containing methods like `m`.
 - Instances’ `[[Prototype]]` points at `C.prototype`.
 
-JS2IL can keep its current early-bound method calls for classes when prototype sensitivity is absent, but when prototype semantics are enabled the runtime model above gives a place for:
+JROC can keep its current early-bound method calls for classes when prototype sensitivity is absent, but when prototype semantics are enabled the runtime model above gives a place for:
 
 - adding/replacing `C.prototype.m`
 - per-instance overrides `obj.m = ...`
@@ -307,7 +307,7 @@ JavaScript property access can be affected by:
 4. **Property attributes** and lookup behavior (`[[Get]]`, `[[Set]]`, `[[HasProperty]]`)
 5. **Prototype mutation** after object creation
 
-JS2IL does not need to implement every edge case on day one, but the selection logic must be conservative: if we can’t prove early-binding is safe, we must fall back to late-bound.
+JROC does not need to implement every edge case on day one, but the selection logic must be conservative: if we can’t prove early-binding is safe, we must fall back to late-bound.
 
 ## 8. Design: Tiered Compilation Modes
 
@@ -510,7 +510,7 @@ Maintain a version counter for:
 
 Any mutation increments a version; caches become invalid.
 
-## 14. Interaction with JS2IL’s Architecture
+## 14. Interaction with JROC’s Architecture
 
 Relevant compilation phases:
 

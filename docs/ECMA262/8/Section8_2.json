@@ -84,9 +84,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-boundnames",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_ArrayDestructuring_Basic.js",
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Basic.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_ArrayDestructuring_Basic.js",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Basic.js"
         ],
         "notes": "SymbolTableBuilder records declared identifiers from variable/function/class declarations and supported destructuring patterns; unsupported pattern forms are rejected earlier."
       },
@@ -96,8 +96,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-isconstantdeclaration",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_ConstSimple.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_ConstSimple.js"
         ],
         "notes": "Declaration kinds are mapped to BindingKind (var/let/const) in scope analysis and reused by lowering/codegen."
       },
@@ -107,8 +107,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-lexicallydeclarednames",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js"
         ],
         "notes": "Block scopes are materialized and lexical bindings are tracked, including dedicated loop-head scopes for let/const in for/for-in/for-of."
       },
@@ -118,9 +118,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-lexicallydeclarednames",
         "testScripts": [
-          "tests/Js2IL.Test262.Tests/language/expressions/arrow-function/PortExpressionsBatchExecutionTests.cs",
-          "tests/Js2IL.Test262.Tests/language/expressions/class/PortExpressionsBatchExecutionTests.cs",
-          "tests/Js2IL.Test262.Tests/language/expressions/function/PortExpressionsBatchExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/expressions/arrow-function/PortExpressionsBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/class/PortExpressionsBatchExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/function/PortExpressionsBatchExecutionTests.cs"
         ],
         "notes": "Scope analysis now preserves the lexical environment boundaries needed by the covered expression test262 cases, so nested arrows, class elements, and function expressions close over the correct bindings instead of leaking parameter/body scope state."
       },
@@ -130,8 +130,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-vardeclarednames",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js"
         ],
         "notes": "Var/function declarations are hoisted to the nearest function/global scope, with module-parameter shadowing behavior handled explicitly."
       },
@@ -141,10 +141,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-toplevellexicallydeclarednames",
         "testScripts": [
-          "tests/Js2IL.Tests/SymbolTableBuilderTests.cs",
-          "tests/Js2IL.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js"
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js"
         ],
-        "notes": "Top-level declarations are tracked in the module/global scope used by JS2IL's CommonJS-style compilation model; ESM-specific top-level semantics are outside current support."
+        "notes": "Top-level declarations are tracked in the module/global scope used by JROC's CommonJS-style compilation model; ESM-specific top-level semantics are outside current support."
       }
     ]
   }

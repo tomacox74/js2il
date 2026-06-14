@@ -93,7 +93,7 @@ async function isVersionAvailable(source, packageId, version) {
   try {
     response = await fetch(url, {
       headers: {
-        "User-Agent": "js2il-release-workflow/1.0",
+        "User-Agent": "jroc-release-workflow/1.0",
       },
     });
   } catch (error) {

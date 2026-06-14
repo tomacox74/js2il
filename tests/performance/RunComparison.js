@@ -1,5 +1,5 @@
 // Performance Comparison Script
-// Compares Node.js vs Jint vs Okojo vs YantraJS vs JS2IL performance on PrimeJavaScript.js
+// Compares Node.js vs Jint vs Okojo vs YantraJS vs JROC performance on PrimeJavaScript.js
 
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -31,11 +31,11 @@ function header(title) {
 const results = [];
 
 // Clean output directories
-const js2ilOutput = path.join(__dirname, 'out_comparison');
-if (fs.existsSync(js2ilOutput)) {
-    fs.rmSync(js2ilOutput, { recursive: true, force: true });
+const jrocOutput = path.join(__dirname, 'out_comparison');
+if (fs.existsSync(jrocOutput)) {
+    fs.rmSync(jrocOutput, { recursive: true, force: true });
 }
-fs.mkdirSync(js2ilOutput, { recursive: true });
+fs.mkdirSync(jrocOutput, { recursive: true });
 
 header("JavaScript Runtime Performance Comparison: Prime Sieve");
 
@@ -198,12 +198,12 @@ try {
 console.log();
 
 // ============================================================================
-// 5. JS2IL Benchmark
+// 5. JROC Benchmark
 // ============================================================================
-log("5. Compiling with JS2IL...", 'yellow');
+log("5. Compiling with JROC...", 'yellow');
 try {
     const compileStart = Date.now();
-    execSync(`js2il "${path.join(__dirname, 'PrimeJavaScript.js')}" "${path.join(js2ilOutput, 'PrimeJavaScript')}"`, {
+    execSync(`jroc "${path.join(__dirname, 'PrimeJavaScript.js')}" "${path.join(jrocOutput, 'PrimeJavaScript')}"`, {
         encoding: 'utf8',
         stdio: 'pipe'
     });
@@ -212,34 +212,34 @@ try {
     log(`   [OK] Compilation completed in: ${compileDuration} ms`, 'green');
 
     console.log();
-    log("6. Running JS2IL compiled benchmark...", 'yellow');
-    const js2ilStart = Date.now();
-    const js2ilResult = execSync(`dotnet "${path.join(js2ilOutput, 'PrimeJavaScript', 'PrimeJavaScript.dll')}"`, {
+    log("6. Running JROC compiled benchmark...", 'yellow');
+    const jrocStart = Date.now();
+    const jrocResult = execSync(`dotnet "${path.join(jrocOutput, 'PrimeJavaScript', 'PrimeJavaScript.dll')}"`, {
         encoding: 'utf8',
         stdio: 'pipe'
     });
-    const js2ilEnd = Date.now();
-    const js2ilMs = js2ilEnd - js2ilStart;
+    const jrocEnd = Date.now();
+    const jrocMs = jrocEnd - jrocStart;
 
-    // Extract passes and duration from JS2IL output
-    const js2ilMatch = js2ilResult.match(/rogiervandam-[^;]+;(\d+);([\d.]+);/);
-    if (js2ilMatch) {
-        const js2ilPasses = parseInt(js2ilMatch[1]);
-        const js2ilDuration = parseFloat(js2ilMatch[2]);
-        log(`   [OK] JS2IL completed: ${js2ilMs} ms total`, 'green');
-        log(`        Passes: ${js2ilPasses} in ${js2ilDuration} s`, 'gray');
+    // Extract passes and duration from JROC output
+    const jrocMatch = jrocResult.match(/rogiervandam-[^;]+;(\d+);([\d.]+);/);
+    if (jrocMatch) {
+        const jrocPasses = parseInt(jrocMatch[1]);
+        const jrocDuration = parseFloat(jrocMatch[2]);
+        log(`   [OK] JROC completed: ${jrocMs} ms total`, 'green');
+        log(`        Passes: ${jrocPasses} in ${jrocDuration} s`, 'gray');
 
         results.push({
-            runtime: "JS2IL",
-            totalTimeMs: js2ilMs,
-            passes: js2ilPasses,
-            passDuration: js2ilDuration,
-            passesPerSecond: Math.round((js2ilPasses / js2ilDuration) * 100) / 100,
+            runtime: "JROC",
+            totalTimeMs: jrocMs,
+            passes: jrocPasses,
+            passDuration: jrocDuration,
+            passesPerSecond: Math.round((jrocPasses / jrocDuration) * 100) / 100,
             compileDuration
         });
     }
 } catch (error) {
-    log(`   [ERROR] JS2IL failed: ${error.message}`, 'red');
+    log(`   [ERROR] JROC failed: ${error.message}`, 'red');
 }
 
 console.log();
@@ -287,40 +287,40 @@ const nodeResult = results.find(r => r.runtime === "Node.js");
 const jintResult = results.find(r => r.runtime === "Jint");
 const okojoResult = results.find(r => r.runtime === "Okojo");
 const yantraResult = results.find(r => r.runtime === "YantraJS");
-const js2ilResult = results.find(r => r.runtime === "JS2IL");
+const jrocResult = results.find(r => r.runtime === "JROC");
 
-if (js2ilResult && jintResult) {
-    const js2ilVsJint = Math.round((js2ilResult.passes / jintResult.passes) * 100) / 100;
-    log(`  * JS2IL is ${js2ilVsJint}x faster than Jint (interpreted .NET)`, 'green');
+if (jrocResult && jintResult) {
+    const jrocVsJint = Math.round((jrocResult.passes / jintResult.passes) * 100) / 100;
+    log(`  * JROC is ${jrocVsJint}x faster than Jint (interpreted .NET)`, 'green');
 }
 
-if (js2ilResult && okojoResult) {
-    if (js2ilResult.passes > okojoResult.passes) {
-        const js2ilVsOkojo = Math.round((js2ilResult.passes / okojoResult.passes) * 100) / 100;
-        log(`  * JS2IL is ${js2ilVsOkojo}x faster than Okojo`, 'green');
+if (jrocResult && okojoResult) {
+    if (jrocResult.passes > okojoResult.passes) {
+        const jrocVsOkojo = Math.round((jrocResult.passes / okojoResult.passes) * 100) / 100;
+        log(`  * JROC is ${jrocVsOkojo}x faster than Okojo`, 'green');
     } else {
-        const okojoVsJs2il = Math.round((okojoResult.passes / js2ilResult.passes) * 100) / 100;
-        log(`  * Okojo is ${okojoVsJs2il}x faster than JS2IL`, 'yellow');
+        const okojoVsJroc = Math.round((okojoResult.passes / jrocResult.passes) * 100) / 100;
+        log(`  * Okojo is ${okojoVsJroc}x faster than JROC`, 'yellow');
     }
 }
 
-if (js2ilResult && yantraResult) {
-    if (js2ilResult.passes > yantraResult.passes) {
-        const js2ilVsYantra = Math.round((js2ilResult.passes / yantraResult.passes) * 100) / 100;
-        log(`  * JS2IL is ${js2ilVsYantra}x faster than YantraJS`, 'green');
+if (jrocResult && yantraResult) {
+    if (jrocResult.passes > yantraResult.passes) {
+        const jrocVsYantra = Math.round((jrocResult.passes / yantraResult.passes) * 100) / 100;
+        log(`  * JROC is ${jrocVsYantra}x faster than YantraJS`, 'green');
     } else {
-        const yantraVsJs2il = Math.round((yantraResult.passes / js2ilResult.passes) * 100) / 100;
-        log(`  * YantraJS is ${yantraVsJs2il}x faster than JS2IL`, 'yellow');
+        const yantraVsJroc = Math.round((yantraResult.passes / jrocResult.passes) * 100) / 100;
+        log(`  * YantraJS is ${yantraVsJroc}x faster than JROC`, 'yellow');
     }
 }
 
-if (js2ilResult && nodeResult) {
-    if (js2ilResult.passes > nodeResult.passes) {
-        const js2ilVsNode = Math.round((js2ilResult.passes / nodeResult.passes) * 100) / 100;
-        log(`  * JS2IL is ${js2ilVsNode}x faster than Node.js`, 'green');
+if (jrocResult && nodeResult) {
+    if (jrocResult.passes > nodeResult.passes) {
+        const jrocVsNode = Math.round((jrocResult.passes / nodeResult.passes) * 100) / 100;
+        log(`  * JROC is ${jrocVsNode}x faster than Node.js`, 'green');
     } else {
-        const nodeVsJs2il = Math.round((nodeResult.passes / js2ilResult.passes) * 100) / 100;
-        log(`  * Node.js is ${nodeVsJs2il}x faster than JS2IL`, 'yellow');
+        const nodeVsJroc = Math.round((nodeResult.passes / jrocResult.passes) * 100) / 100;
+        log(`  * Node.js is ${nodeVsJroc}x faster than JROC`, 'yellow');
     }
 }
 
@@ -341,8 +341,8 @@ if (nodeResult && yantraResult) {
 
 console.log();
 log("Note: More passes = better performance. Test runs for 5 seconds.", 'gray');
-if (js2ilResult && js2ilResult.compileDuration) {
-    log(`      JS2IL compilation time: ${js2ilResult.compileDuration} ms (excluded from benchmark)`, 'gray');
+if (jrocResult && jrocResult.compileDuration) {
+    log(`      JROC compilation time: ${jrocResult.compileDuration} ms (excluded from benchmark)`, 'gray');
 }
 
 // ============================================================================
@@ -352,16 +352,16 @@ const jsonOutput = {
     timestamp: new Date().toISOString(),
     results: {
         node: nodeResult ? { passes: nodeResult.passes, passesPerSecond: nodeResult.passesPerSecond } : null,
-        js2il: js2ilResult ? { passes: js2ilResult.passes, passesPerSecond: js2ilResult.passesPerSecond, compileDuration: js2ilResult.compileDuration } : null,
+        jroc: jrocResult ? { passes: jrocResult.passes, passesPerSecond: jrocResult.passesPerSecond, compileDuration: jrocResult.compileDuration } : null,
         okojo: okojoResult ? { passes: okojoResult.passes, passesPerSecond: okojoResult.passesPerSecond } : null,
         yantraJS: yantraResult ? { passes: yantraResult.passes, passesPerSecond: yantraResult.passesPerSecond } : null,
         jint: jintResult ? { passes: jintResult.passes, passesPerSecond: jintResult.passesPerSecond } : null
     },
     comparisons: {
-        vsOkojo: js2ilResult && okojoResult ? Math.round((js2ilResult.passes / okojoResult.passes) * 100) / 100 : null,
-        vsYantraJS: js2ilResult && yantraResult ? Math.round((js2ilResult.passes / yantraResult.passes) * 100) / 100 : null,
-        vsJint: js2ilResult && jintResult ? Math.round((js2ilResult.passes / jintResult.passes) * 100) / 100 : null,
-        vsNode: js2ilResult && nodeResult ? Math.round((nodeResult.passes / js2ilResult.passes) * 100) / 100 : null
+        vsOkojo: jrocResult && okojoResult ? Math.round((jrocResult.passes / okojoResult.passes) * 100) / 100 : null,
+        vsYantraJS: jrocResult && yantraResult ? Math.round((jrocResult.passes / yantraResult.passes) * 100) / 100 : null,
+        vsJint: jrocResult && jintResult ? Math.round((jrocResult.passes / jintResult.passes) * 100) / 100 : null,
+        vsNode: jrocResult && nodeResult ? Math.round((nodeResult.passes / jrocResult.passes) * 100) / 100 : null
     }
 };
 

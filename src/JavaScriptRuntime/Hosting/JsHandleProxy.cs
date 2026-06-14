@@ -3,7 +3,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 internal class JsHandleProxy : DispatchProxy
 {

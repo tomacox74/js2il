@@ -1,13 +1,13 @@
 using Acornima.Ast;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Services.ScopesAbi;
-using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using Js2IL.SymbolTables;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Services.ScopesAbi;
+using TwoPhase = Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using Jroc.SymbolTables;
 using System;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
@@ -812,7 +812,7 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
                 return true;
-            case Js2IL.HIR.HIRUserClassTypeExpression userClassType:
+            case Jroc.HIR.HIRUserClassTypeExpression userClassType:
                 resultTempVar = CreateTempVariable();
                 _methodBodyIR.Instructions.Add(new LIRGetUserClassType(userClassType.RegistryClassName, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
@@ -1150,7 +1150,7 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private Js2IL.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForFunctionDeclaration(Symbol symbol)
+    private Jroc.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForFunctionDeclaration(Symbol symbol)
     {
         if (_scope == null)
         {
@@ -1215,38 +1215,38 @@ public sealed partial class HIRToLIRLowerer
         var bodyScope = FindCallableBodyScope(declaringScope, declNode);
         var needsArgumentsObject = bodyScope?.NeedsArgumentsObject ?? false;
         var hasRestParameters = bodyScope?.HasRestParameters ?? false;
-        var isStrictScope = bodyScope != null && Js2IL.Utilities.ArgumentsObjectSemantics.IsStrictScope(bodyScope);
+        var isStrictScope = bodyScope != null && Jroc.Utilities.ArgumentsObjectSemantics.IsStrictScope(bodyScope);
 
         switch (declNode)
         {
             case FunctionDeclaration funcDecl:
-                return new Js2IL.Services.TwoPhaseCompilation.CallableId
+                return new Jroc.Services.TwoPhaseCompilation.CallableId
                 {
-                    Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
+                    Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
                     DeclaringScopeName = declaringScopeName,
                     Name = symbol.Name,
                     JsParamCount = CountNonRestParameters(funcDecl.Params),
                     NeedsArgumentsObject = needsArgumentsObject,
                     HasRestParameters = hasRestParameters,
-                    UsesMappedArgumentsObject = bodyScope != null && Js2IL.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
-                    ArgumentsParameterNames = bodyScope != null ? Js2IL.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
+                    UsesMappedArgumentsObject = bodyScope != null && Jroc.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
+                    ArgumentsParameterNames = bodyScope != null ? Jroc.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
                     IncludeCalleeInArgumentsObject = needsArgumentsObject && !isStrictScope,
                     HasRestrictedFunctionProperties = isStrictScope,
                     AstNode = funcDecl
                 };
 
             case FunctionExpression funcExpr:
-                return new Js2IL.Services.TwoPhaseCompilation.CallableId
+                return new Jroc.Services.TwoPhaseCompilation.CallableId
                 {
-                    Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionExpression,
+                    Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.FunctionExpression,
                     DeclaringScopeName = declaringScopeName,
                     Name = (funcExpr.Id as Identifier)?.Name,
-                    Location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(funcExpr),
+                    Location = Jroc.Services.TwoPhaseCompilation.SourceLocation.FromNode(funcExpr),
                     JsParamCount = CountNonRestParameters(funcExpr.Params),
                     NeedsArgumentsObject = needsArgumentsObject,
                     HasRestParameters = hasRestParameters,
-                    UsesMappedArgumentsObject = bodyScope != null && Js2IL.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
-                    ArgumentsParameterNames = bodyScope != null ? Js2IL.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
+                    UsesMappedArgumentsObject = bodyScope != null && Jroc.Utilities.ArgumentsObjectSemantics.UsesMappedArgumentsObject(bodyScope),
+                    ArgumentsParameterNames = bodyScope != null ? Jroc.Utilities.ArgumentsObjectSemantics.GetMappedParameterNames(bodyScope) : Array.Empty<string>(),
                     IncludeCalleeInArgumentsObject = needsArgumentsObject && !isStrictScope,
                     HasRestrictedFunctionProperties = isStrictScope,
                     AstNode = funcExpr

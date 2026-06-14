@@ -1,6 +1,6 @@
 using JavaScriptRuntime.Node;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 public sealed class JsModuleLoadOptions
 {

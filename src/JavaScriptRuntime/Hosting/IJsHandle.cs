@@ -1,4 +1,4 @@
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
 /// Marker interface for proxies/handles that represent JavaScript values living on a runtime instance.

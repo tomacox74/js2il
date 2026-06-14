@@ -1,8 +1,8 @@
 using Acornima;
 using Acornima.Ast;
-using Js2IL.Utilities;
+using Jroc.Utilities;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 public class JavaScriptParser : IParser
 {

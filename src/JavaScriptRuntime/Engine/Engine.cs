@@ -73,7 +73,7 @@ public class Engine
         if (GlobalThis.ServiceProvider != null)
         {
             throw new InvalidOperationException(
-                "A JS2IL runtime is already configured for the current thread. " +
+                "A JROC runtime is already configured for the current thread. " +
                 "Create a dedicated thread per loaded module/runtime, or ensure the previous engine cleaned up correctly.");
         }
 

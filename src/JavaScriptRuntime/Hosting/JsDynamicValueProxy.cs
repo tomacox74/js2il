@@ -1,7 +1,7 @@
 using System.Dynamic;
 using System.Runtime.ExceptionServices;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 /// <summary>
 /// Dynamic proxy for JS values returned from the runtime.

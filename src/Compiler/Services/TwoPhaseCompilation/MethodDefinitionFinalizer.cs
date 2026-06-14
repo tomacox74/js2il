@@ -2,9 +2,9 @@ using System;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using Js2IL.Utilities.Ecma335;
+using Jroc.Utilities.Ecma335;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 internal static class MethodDefinitionFinalizer
 {

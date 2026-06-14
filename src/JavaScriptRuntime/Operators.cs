@@ -1241,7 +1241,7 @@ namespace JavaScriptRuntime
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");
             }
 
-            // Minimal: require a callable delegate-backed function value or a JS2IL class constructor Type.
+            // Minimal: require a callable delegate-backed function value or a JROC class constructor Type.
             if (ctor is not Delegate && ctor is not Type && ctor is not ClassConstructorValue)
             {
                 throw new TypeError("Right-hand side of 'instanceof' is not callable");

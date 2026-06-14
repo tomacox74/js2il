@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Services.ILGenerators
+namespace Jroc.Services.ILGenerators
 {
     internal static class MethodBuilder
     {

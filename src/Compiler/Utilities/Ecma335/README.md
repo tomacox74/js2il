@@ -1,6 +1,6 @@
 # Ecma335 utilities
 
-This folder contains helpers for emitting ECMA-335 metadata and IL constructs used by Js2IL.
+This folder contains helpers for emitting ECMA-335 metadata and IL constructs used by Jroc.
 
 ## Components
 

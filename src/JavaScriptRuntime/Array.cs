@@ -172,9 +172,9 @@ namespace JavaScriptRuntime
             var receiver = RuntimeServices.GetCurrentThis();
             if (receiver is null || receiver is JsNull)
             {
-                if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JS2IL_DIAG_REDUCE")))
+                if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JROC_DIAG_REDUCE")))
                 {
-                    System.Console.Error.WriteLine("[JS2IL_DIAG_REDUCE] Array.prototype.reduce called with null/undefined receiver");
+                    System.Console.Error.WriteLine("[JROC_DIAG_REDUCE] Array.prototype.reduce called with null/undefined receiver");
                     System.Console.Error.WriteLine(new System.Diagnostics.StackTrace(true).ToString());
                 }
                 throw new TypeError("Reduce called on null or undefined");
@@ -275,9 +275,9 @@ namespace JavaScriptRuntime
             var receiver = RuntimeServices.GetCurrentThis();
             if (receiver is null || receiver is JsNull)
             {
-                if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JS2IL_DIAG_REDUCE")))
+                if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("JROC_DIAG_REDUCE")))
                 {
-                    System.Console.Error.WriteLine("[JS2IL_DIAG_REDUCE] Array.prototype.reduceRight called with null/undefined receiver");
+                    System.Console.Error.WriteLine("[JROC_DIAG_REDUCE] Array.prototype.reduceRight called with null/undefined receiver");
                     System.Console.Error.WriteLine(new System.Diagnostics.StackTrace(true).ToString());
                 }
                 throw new TypeError("Reduce called on null or undefined");
@@ -1236,9 +1236,9 @@ namespace JavaScriptRuntime
                 double d = value;
                 if (double.IsNaN(d) || double.IsInfinity(d) || d < 0)
                 {
-                    if (Environment.GetEnvironmentVariable("JS2IL_DIAG_ARRAY_LENGTH") == "1")
+                    if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
                     {
-                        System.Console.WriteLine($"[JS2IL_DIAG_ARRAY_LENGTH] invalid length value={d}");
+                        System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] invalid length value={d}");
                         System.Console.WriteLine(Environment.StackTrace);
                     }
                     throw new RangeError("Invalid array length");
@@ -1248,9 +1248,9 @@ namespace JavaScriptRuntime
                 double truncated = global::System.Math.Truncate(d);
                 if (truncated != d)
                 {
-                    if (Environment.GetEnvironmentVariable("JS2IL_DIAG_ARRAY_LENGTH") == "1")
+                    if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
                     {
-                        System.Console.WriteLine($"[JS2IL_DIAG_ARRAY_LENGTH] non-integer length value={d}");
+                        System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] non-integer length value={d}");
                         System.Console.WriteLine(Environment.StackTrace);
                     }
                     throw new RangeError("Invalid array length");
@@ -1259,9 +1259,9 @@ namespace JavaScriptRuntime
                 d = truncated;
                 if (d > int.MaxValue)
                 {
-                    if (Environment.GetEnvironmentVariable("JS2IL_DIAG_ARRAY_LENGTH") == "1")
+                    if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
                     {
-                        System.Console.WriteLine($"[JS2IL_DIAG_ARRAY_LENGTH] too-large length value={d}");
+                        System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] too-large length value={d}");
                         System.Console.WriteLine(Environment.StackTrace);
                     }
                     throw new RangeError("Invalid array length");
@@ -2125,7 +2125,7 @@ namespace JavaScriptRuntime
             // Optional debug: print incoming argument shapes to stderr when enabled
             try
             {
-                if (System.Environment.GetEnvironmentVariable("JS2IL_DEBUG_SLICE") == "1")
+                if (System.Environment.GetEnvironmentVariable("JROC_DEBUG_SLICE") == "1")
                 {
                     var alen = args?.Length ?? 0;
                     string a0t = alen > 0 ? (args![0]?.GetType().FullName ?? "<null>") : "<none>";

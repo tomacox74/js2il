@@ -4,14 +4,14 @@ This directory contains a comprehensive BenchmarkDotNet-based performance benchm
 
 - **ClearScript** - .NET-hosted V8 runtime
 - **Jint** - .NET JavaScript interpreter
-- **js2il** - JavaScript-to-IL AOT compiler
+- **jroc** - JavaScript-to-IL AOT compiler
 
 ## Purpose
 
 This suite provides:
 
 1. **Standardized statistical benchmarking** - Uses BenchmarkDotNet for warmup, iterations, and outlier detection
-2. **Separate compile/execute phase reporting** - Captures js2il AOT compilation separately from execution
+2. **Separate compile/execute phase reporting** - Captures jroc AOT compilation separately from execution
 3. **Structured scenario catalog** - Organized, reusable benchmark scenarios
 4. **Machine-readable outputs** - JSON and structured reports for historical trend analysis
 5. **Licensing compliance** - Tracked provenance for all benchmark scripts
@@ -31,7 +31,7 @@ Benchmarks/
 │   ├── IJavaScriptRuntime.cs
 │   ├── ClearScriptRuntime.cs
 │   ├── JintRuntime.cs
-│   └── Js2ILRuntime.cs
+│   └── JrocRuntime.cs
 ├── Compliance/          # Licensing and provenance tracking
 │   └── PROVENANCE.md
 └── Benchmarks.csproj    # Project configuration
@@ -79,7 +79,7 @@ cd tests/performance/Benchmarks
 dotnet build -c Release
 ```
 
-By default this project references the checked-out `src\Js2IL.Core` and `src\JavaScriptRuntime` projects so local benchmark runs measure your current working tree. To benchmark a published package set instead, pass `-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion=<version>` to `dotnet restore`, `dotnet build`, or `dotnet run`.
+By default this project references the checked-out `src\Jroc.Core` and `src\JavaScriptRuntime` projects so local benchmark runs measure your current working tree. To benchmark a published package set instead, pass `-p:UsePublishedJrocPackages=true -p:JrocPackageVersion=<version>` to `dotnet restore`, `dotnet build`, or `dotnet run`.
 
 ### Run Benchmarks
 
@@ -90,8 +90,8 @@ Compares the hosted .NET runtimes across all scenarios:
 dotnet run -c Release
 ```
 
-#### Phased Comparison (js2il + Jint prepared)
-Benchmarks js2il compile and execute phases separately, alongside Jint prepare and prepared execution for direct comparison:
+#### Phased Comparison (jroc + Jint prepared)
+Benchmarks jroc compile and execute phases separately, alongside Jint prepare and prepared execution for direct comparison:
 
 ```powershell
 dotnet run -c Release -- --phased
@@ -146,9 +146,9 @@ dotnet run -c Release -- --exporters html,json,markdown
 
 ### Phased Metrics
 
-- **js2il (compile+execute)**: Total time including AOT compilation
-- **js2il compile**: AOT compilation time only
-- **js2il execute (pre-compiled)**: Execution time of pre-compiled assembly
+- **jroc (compile+execute)**: Total time including AOT compilation
+- **jroc compile**: AOT compilation time only
+- **jroc execute (pre-compiled)**: Execution time of pre-compiled assembly
 - **Jint prepare**: Script preparation/parsing phase via `Engine.PrepareScript`
 - **Jint execute (prepared)**: Execution phase using a previously prepared script
 
@@ -156,9 +156,9 @@ dotnet run -c Release -- --exporters html,json,markdown
 
 When comparing runtimes, consider:
 
-1. **Jint vs js2il**: js2il should generally win on steady-state .NET execution, but the exact ratio is scenario-dependent
-2. **ClearScript vs js2il**: ClearScript represents a .NET client hosting V8 in-process, avoiding the process-spawn cost that made direct Node.js numbers misleading in this suite
-3. **Compile overhead**: js2il compile time can exceed execution for short-running scripts
+1. **Jint vs jroc**: jroc should generally win on steady-state .NET execution, but the exact ratio is scenario-dependent
+2. **ClearScript vs jroc**: ClearScript represents a .NET client hosting V8 in-process, avoiding the process-spawn cost that made direct Node.js numbers misleading in this suite
+3. **Compile overhead**: jroc compile time can exceed execution for short-running scripts
 
 ## Output
 
@@ -178,7 +178,7 @@ Intel Core i7-9700K CPU 3.60GHz (Coffee Lake), 1 CPU, 8 logical and 8 physical c
 | Method       | ScriptName | Mean         | Error      | StdDev     | Rank |
 |------------- |----------- |-------------:|-----------:|-----------:|-----:|
 | ClearScript  | minimal    |     12.45 ms |   0.24 ms |   0.22 ms |    1 |
-| js2il (...)  | minimal    |    234.12 ms |   4.56 ms |   4.27 ms |    2 |
+| jroc (...)  | minimal    |    234.12 ms |   4.56 ms |   4.27 ms |    2 |
 | Jint         | minimal    |  2,345.67 ms |  45.23 ms |  42.31 ms |    3 |
 ```
 
@@ -188,7 +188,7 @@ Intel Core i7-9700K CPU 3.60GHz (Coffee Lake), 1 CPU, 8 logical and 8 physical c
 
 - **ClearScript**: New hosted V8 engine instance per iteration
 - **Jint**: New engine instance per iteration
-- **js2il**: Pre-compiled or compile+execute per iteration
+- **jroc**: Pre-compiled or compile+execute per iteration
 
 Direct Node.js process-per-iteration measurements are intentionally excluded from the default cross-runtime suite because they include temp-file creation, process startup, stdout/stderr capture, and process teardown. Those numbers are useful as a CLI cold-start metric, but they are not a fair comparison to in-process .NET runtimes. ClearScript is used instead as the .NET-hosted V8 comparison point.
 
@@ -229,8 +229,8 @@ Both are maintained for different use cases:
 
 The repository ships a `BenchmarkDotNet Performance Suite` workflow for CI benchmarking:
 
-- Release-triggered runs restore `Js2IL.Core` and `Js2IL.Runtime` from NuGet using the published release version, with retry logic to wait for NuGet indexing.
-- Manual `workflow_dispatch` runs use the checked-out source tree by default, but can benchmark a published package version by setting the `js2il_package_version` input.
+- Release-triggered runs restore `Jroc.Core` and `Jroc.Runtime` from NuGet using the published release version, with retry logic to wait for NuGet indexing.
+- Manual `workflow_dispatch` runs use the checked-out source tree by default, but can benchmark a published package version by setting the `jroc_package_version` input.
 - Structured BenchmarkDotNet artifacts are uploaded, and the JSON results can be ingested into Supabase for historical tracking.
 
 ## Future Enhancements
@@ -265,7 +265,7 @@ ClearScript requires a native V8 package for the current platform. The benchmark
 
 ### Compilation Errors
 
-Check js2il logs in `BenchmarkDotNet.Artifacts/logs/`.
+Check jroc logs in `BenchmarkDotNet.Artifacts/logs/`.
 
 ## Contributing
 
@@ -281,4 +281,4 @@ When adding new scenarios:
 - [BenchmarkDotNet Documentation](https://benchmarkdotnet.org/)
 - [ClearScript Documentation](https://microsoft.github.io/ClearScript/)
 - [Jint Repository](https://github.com/sebastienros/jint)
-- [js2il Repository](https://github.com/tomacox74/js2il)
+- [jroc Repository](https://github.com/tomacox74/jroc)

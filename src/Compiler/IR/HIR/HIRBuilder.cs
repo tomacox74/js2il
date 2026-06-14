@@ -3,15 +3,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Immutable;
 using Acornima.Ast;
-using Js2IL.DebugSymbols;
-using Js2IL.Services;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
+using Jroc.DebugSymbols;
+using Jroc.Services;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using ScopesCallableKind = Jroc.Services.ScopesAbi.CallableKind;
 
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 public static class HIRBuilder
 {
     /// <summary>
@@ -406,7 +406,7 @@ public static class HIRBuilder
             case Acornima.Ast.MethodDefinition classMethodDef:
                 if (classMethodDef.Value is not FunctionExpression methodFuncExpr)
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR parse failed for class method value {classMethodDef.Value?.Type}");
                     method = null!;
                     return false;
@@ -414,7 +414,7 @@ public static class HIRBuilder
 
                 if (!ParamsSupportedForIR(methodFuncExpr.Params))
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR parse rejected unsupported class method parameters for {classMethodDef.Key.Type}");
                     method = null!;
                     return false;
@@ -422,7 +422,7 @@ public static class HIRBuilder
 
                 if (methodFuncExpr.Body is not BlockStatement methodBlock)
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR parse failed for class method body {methodFuncExpr.Body?.Type}");
                     method = null!;
                     return false;
@@ -431,7 +431,7 @@ public static class HIRBuilder
                 var methodBuilder = new HIRMethodBuilder(scope);
                 if (!methodBuilder.TryParseParameters(methodFuncExpr.Params, out var methodParams))
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR parse failed for class method parameters in {classMethodDef.Key.Type}");
                     method = null!;
                     return false;
@@ -441,7 +441,7 @@ public static class HIRBuilder
                 {
                     if (!TryGetEnclosingClass(scope, out var enclosingClassScope, out var enclosingClassNode, out var enclosingClassBody))
                     {
-                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed to find enclosing class for constructor MethodDefinition");
                         method = null!;
                         return false;
@@ -453,7 +453,7 @@ public static class HIRBuilder
                     if (isDerivedConstructor
                         && !TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
                     {
-                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed for constructor superclass expression");
                         method = null!;
                         return false;
@@ -490,7 +490,7 @@ public static class HIRBuilder
                                 if (propertyValueExpr != null
                                     && (!initBuilder.TryParseExpressionForPrologue(propertyValueExpr, out initExpr) || initExpr == null))
                                 {
-                                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                                         $"HIR parse failed for constructor instance field initializer {propertyValueExpr.Type}");
                                     method = null!;
                                     return false;
@@ -505,7 +505,7 @@ public static class HIRBuilder
                                 {
                                     if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
                                     {
-                                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                                             $"HIR parse failed for constructor computed instance field key {propertyDefinition.Key.Type}");
                                         method = null!;
                                         return false;
@@ -561,7 +561,7 @@ public static class HIRBuilder
 
                     if (!methodBuilder.TryParseStatementsToList(methodBlock.Body, out var bodyStatements))
                     {
-                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed while parsing explicit constructor body statements");
                         method = null!;
                         return false;
@@ -573,7 +573,7 @@ public static class HIRBuilder
 
                         if (superCallIndex < 0)
                         {
-                            Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                                 "HIR parse failed to locate a usable super() evaluation point for derived constructor initialization");
                             method = null!;
                             return false;
@@ -629,14 +629,14 @@ public static class HIRBuilder
                 // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
                 if (!ParamsSupportedForIR(funcExpr.Params))
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         "HIR parse rejected unsupported function expression parameters");
                     method = null!;
                     return false;
                 }
                 if (funcExpr.Body is not BlockStatement funcBlock)
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR parse failed for function expression body {funcExpr.Body?.Type}");
                     method = null!;
                     return false;
@@ -644,7 +644,7 @@ public static class HIRBuilder
                 var funcExprBuilder = new HIRMethodBuilder(scope);
                 if (!funcExprBuilder.TryParseParameters(funcExpr.Params, out var funcParams))
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         "HIR parse failed for function expression parameters");
                     method = null!;
                     return false;
@@ -655,7 +655,7 @@ public static class HIRBuilder
                 {
                     if (!TryGetEnclosingClass(scope, out var enclosingClassScope, out var enclosingClassNode, out var enclosingClassBody))
                     {
-                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed to find enclosing class for constructor function expression");
                         method = null!;
                         return false;
@@ -667,7 +667,7 @@ public static class HIRBuilder
                     if (isDerivedConstructor
                         && !TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
                     {
-                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed for function-expression constructor superclass expression");
                         method = null!;
                         return false;
@@ -704,7 +704,7 @@ public static class HIRBuilder
                                 if (propertyValueExpr != null
                                     && (!initBuilder.TryParseExpressionForPrologue(propertyValueExpr, out initExpr) || initExpr == null))
                                 {
-                                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                                         $"HIR parse failed for function-expression constructor instance field initializer {propertyValueExpr.Type}");
                                     method = null!;
                                     return false;
@@ -719,7 +719,7 @@ public static class HIRBuilder
                                 {
                                     if (!initBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var computedKeyExpr) || computedKeyExpr == null)
                                     {
-                                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                                             $"HIR parse failed for function-expression constructor computed instance field key {propertyDefinition.Key.Type}");
                                         method = null!;
                                         return false;
@@ -775,7 +775,7 @@ public static class HIRBuilder
 
                     if (!funcExprBuilder.TryParseStatementsToList(funcBlock.Body, out var bodyStatements))
                     {
-                        Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed while parsing function-expression constructor body statements");
                         method = null!;
                         return false;
@@ -791,7 +791,7 @@ public static class HIRBuilder
 
                         if (superCallIndex < 0)
                         {
-                            Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                                 "HIR parse failed to locate a usable super() evaluation point for derived constructor initialization");
                             method = null!;
                             return false;
@@ -1297,7 +1297,7 @@ class HIRMethodBuilder
 
             if (!TryParseStatement(statement, out var hirStatement))
             {
-                Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                     $"HIR parse failed for statement {statement.Type}");
                 return false;
             }
@@ -1460,7 +1460,7 @@ class HIRMethodBuilder
                         if (propertyValueExpr != null
                             && (!TryParseExpressionForPrologue(propertyValueExpr, out hirValue) || hirValue == null))
                         {
-                            Js2IL.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for static property initializer expression {propertyValueExpr.Type}");
+                            Jroc.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for static property initializer expression {propertyValueExpr.Type}");
                             return false;
                         }
 
@@ -1481,7 +1481,7 @@ class HIRMethodBuilder
                                 var evaluationBuilder = CreateClassElementEvaluationBuilder(classScope, registryClassName);
                                 if (!evaluationBuilder.TryParseExpressionForPrologue((Expression)propertyDefinition.Key, out var parsedKey) || parsedKey == null)
                                 {
-                                    Js2IL.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed static property key expression {propertyDefinition.Key.Type}");
+                                    Jroc.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed static property key expression {propertyDefinition.Key.Type}");
                                     return false;
                                 }
 
@@ -1612,13 +1612,13 @@ class HIRMethodBuilder
                         var evaluationBuilder = CreateClassElementEvaluationBuilder(classScope, registryClassName);
                         if (!evaluationBuilder.TryParseExpressionForPrologue((Expression)methodDefinition.Key, out var hirKey) || hirKey == null)
                         {
-                            Js2IL.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed class element key expression {methodDefinition.Key.Type}");
+                            Jroc.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed class element key expression {methodDefinition.Key.Type}");
                             return false;
                         }
 
                         if (!TryParseExpressionForPrologue((Expression)methodDefinition.Value, out var hirMethodValue) || hirMethodValue == null)
                         {
-                            Js2IL.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed class element value expression {methodDefinition.Value.Type}");
+                            Jroc.IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for computed class element value expression {methodDefinition.Value.Type}");
                             return false;
                         }
 
@@ -2068,7 +2068,7 @@ class HIRMethodBuilder
             case ExpressionStatement exprStmt:
                 if (!TryParseExpression(exprStmt.Expression, out var hirExpr))
                 {
-                    Js2IL.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                         $"HIR parse failed for expression statement {exprStmt.Expression.Type}");
                     return false;
                 }
@@ -3077,7 +3077,7 @@ class HIRMethodBuilder
                 return true;
 
             case MetaProperty metaProp:
-                // Handle MetaProperty forms used by js2il.
+                // Handle MetaProperty forms used by jroc.
                 if (metaProp.Meta.Name == "new" && metaProp.Property.Name == "target")
                 {
                     hirExpr = new HIRNewTargetExpression();
@@ -3327,7 +3327,7 @@ class HIRMethodBuilder
 
                 var calleeName = newCalleeId.Name;
 
-                bool isBuiltInError = Js2IL.IR.BuiltInErrorTypes.IsBuiltInErrorTypeName(calleeName);
+                bool isBuiltInError = Jroc.IR.BuiltInErrorTypes.IsBuiltInErrorTypeName(calleeName);
                 bool isArrayCtor = string.Equals(calleeName, "Array", StringComparison.Ordinal);
                 bool isStringCtor = string.Equals(calleeName, "String", StringComparison.Ordinal);
                 bool isBooleanCtor = string.Equals(calleeName, "Boolean", StringComparison.Ordinal);

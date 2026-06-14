@@ -1,15 +1,15 @@
-using Js2IL.IR;
-using Js2IL.Services;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Services.VariableBindings;
-using Js2IL.Utilities.Ecma335;
+using Jroc.IR;
+using Jroc.Services;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.Services.VariableBindings;
+using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 /// <summary>
 /// Compiles LIR (Low-level IR) to IL bytecode.
@@ -131,7 +131,7 @@ internal sealed partial class LIRToILCompiler
             throw new InvalidOperationException("Expected a scopes parameter but methodDescriptor.HasScopesParameter is false");
         }
 
-        if (methodDescriptor.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        if (methodDescriptor.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope)
         {
             throw new InvalidOperationException("SingleScope methods do not expose an object[] scopes argument directly.");
         }
@@ -151,10 +151,10 @@ internal sealed partial class LIRToILCompiler
     }
 
     private static bool UsesSingleScopeAbi(MethodDescriptor methodDescriptor)
-        => methodDescriptor.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope;
+        => methodDescriptor.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope;
 
     private static bool UsesSingleScopeAbi(CallableSignature? signature)
-        => signature?.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope;
+        => signature?.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope;
 
     private void EmitLoadSingleScopePayload(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
     {
@@ -173,7 +173,7 @@ internal sealed partial class LIRToILCompiler
         MethodDescriptor methodDescriptor,
         CallableSignature signature)
     {
-        if (signature.ScopeAbiKind != Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+        if (signature.ScopeAbiKind != Jroc.Runtime.CallableScopeAbiKind.SingleScope)
         {
             throw new InvalidOperationException("Expected SingleScope callable signature when loading a single scope from scopes array.");
         }
@@ -384,7 +384,7 @@ internal sealed partial class LIRToILCompiler
     }
 
     private static Type GetDeclaredUserClassFieldClrType(
-        Js2IL.Services.ClassRegistry classRegistry,
+        Jroc.Services.ClassRegistry classRegistry,
         string registryClassName,
         string fieldName,
         bool isPrivateField,
@@ -410,7 +410,7 @@ internal sealed partial class LIRToILCompiler
     }
 
     private static bool TryGetDeclaredUserClassFieldTypeHandle(
-        Js2IL.Services.ClassRegistry classRegistry,
+        Jroc.Services.ClassRegistry classRegistry,
         string registryClassName,
         string fieldName,
         bool isPrivateField,

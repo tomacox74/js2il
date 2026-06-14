@@ -10,7 +10,7 @@ _Nothing yet._
 
 ## v0.9.27 - 2026-06-05
 
-- compiler/runtime/tests/perf: fix issue #1196 by restoring the mitata `string-width` benchmark under js2il, including awaited import-binding rewriting, verifier-safe async `for..of` lowering, destructuring/capture/runtime gaps uncovered by the port (`Intl`, `Number.isSafeInteger`, `node:process`), and a js2il-safe benchmark runner path with focused regression coverage.
+- compiler/runtime/tests/perf: fix issue #1196 by restoring the mitata `string-width` benchmark under jroc, including awaited import-binding rewriting, verifier-safe async `for..of` lowering, destructuring/capture/runtime gaps uncovered by the port (`Intl`, `Number.isSafeInteger`, `node:process`), and a jroc-safe benchmark runner path with focused regression coverage.
 
 ## v0.9.26 - 2026-05-29
 
@@ -20,7 +20,7 @@ _Nothing yet._
 - tests/docs/test262: port 40 additional function, parameter, arrow-function, rest-parameter, and closure-adjacent execution cases across function expressions/declarations, arrow bodies, strict caller/arguments restrictions, function-call this binding, and parameter/rest binding patterns while refreshing the linked ECMA-262 support notes.
 - tests/docs/test262: port 40 additional class/inheritance `test262` cases across declaration/expression computed elements, instance/static accessors, derived-constructor/prototype behavior, heritage validation, and `super` property reads; refresh the linked ECMA-262 support notes for class definitions and `super`.
 - tests/docs/test262: port 40 additional object/property/prototype `test262` execution cases under `built-ins/Object/{create,getOwnPropertyDescriptor,getOwnPropertyNames,getPrototypeOf,setPrototypeOf}` and `language/expressions/object`, covering object-literal property-name forms, `Object.create` property-bag behavior, own-property descriptor lookup, own-name reflection, prototype queries, and the supported `Object.setPrototypeOf` surface while refreshing the linked ECMA-262 support evidence.
-- tests/docs/test262: port 40 additional Array and TypedArray upstream execution cases into `tests/Js2IL.Test262.Tests`, covering array indexing/holes/core prototype methods plus supported typed-array iterator and `%TypedArray%.from` basics, and refresh the linked ECMA-262 evidence.
+- tests/docs/test262: port 40 additional Array and TypedArray upstream execution cases into `tests/Jroc.Test262.Tests`, covering array indexing/holes/core prototype methods plus supported typed-array iterator and `%TypedArray%.from` basics, and refresh the linked ECMA-262 evidence.
 - tests/docs/test262: port 40 additional String and RegExp execution cases covering String constructor coercion plus `charAt`/`charCodeAt`/`search`/`replace`, and RegExp constructor plus `exec`/`test` match-result behavior; refresh the linked ECMA-262 support evidence.
 - runtime/tests/docs/test262: port 40 additional Number/Math/BigInt/Date test262 execution cases covering Number coercion plus `Number.isFinite`/`Number.isNaN`, Math value properties and `sqrt`, BigInt string construction, and additional Date constructor arities.
 - compiler/runtime/tests/docs/test262: fix the newly ported collection/iteration cases across Map/Set/WeakMap/WeakSet and `for-of`, including iterable constructor adder semantics, constructor/global metadata, and generator IteratorClose paths.
@@ -77,7 +77,7 @@ _Nothing yet._
 
 ## v0.9.18 - 2026-05-16
 
-- tooling/perf/docs: expand the BenchmarkDotNet scenario catalog, make phased js2il benchmark failures surface explicitly instead of being skipped, and make benchmark runs exit non-zero when any benchmark case fails so broken perf scripts are not misreported as successful timings.
+- tooling/perf/docs: expand the BenchmarkDotNet scenario catalog, make phased jroc benchmark failures surface explicitly instead of being skipped, and make benchmark runs exit non-zero when any benchmark case fails so broken perf scripts are not misreported as successful timings.
 - compiler/tests/perf: fix issue #1068 by allowing unknown global constructor identifiers in `new` expressions to lower through the dynamic `ConstructValue` path, restoring `linq-js` benchmark compilation and adding focused try/catch regression coverage for the parser gap.
 - compiler/tests/perf: fix issue #1067 by requiring native numeric compound-assignment lowering to operate only on proven unboxed doubles, so boxed loop counters fall back through numeric coercion instead of corrupting `+=` updates; this restores the `dromaeo-string-base64*` benchmarks and adds focused compound-assignment regression coverage.
 
@@ -96,8 +96,8 @@ _Nothing yet._
 
 ## v0.9.14 - 2026-05-08
 
-- compiler/cli/sdk/tests/docs: remove the top-level `"use strict"` requirement and its configurable warning/error flag so JS2IL accepts both strict and non-strict scripts by default.
-- tests/docs: port 400 additional crosscutting `test262` cases into `tests/Js2IL.Test262.Tests`, fix the newly added collection/iteration coverage so the PR does not add explicit skips, sync the linked ECMA-262 evidence docs for the newly strengthened areas, and remove stray PR-1010 function snapshot files that should never have been added.
+- compiler/cli/sdk/tests/docs: remove the top-level `"use strict"` requirement and its configurable warning/error flag so JROC accepts both strict and non-strict scripts by default.
+- tests/docs: port 400 additional crosscutting `test262` cases into `tests/Jroc.Test262.Tests`, fix the newly added collection/iteration coverage so the PR does not add explicit skips, sync the linked ECMA-262 evidence docs for the newly strengthened areas, and remove stray PR-1010 function snapshot files that should never have been added.
 - compiler/runtime/tests/test262: follow PR #1043 by fixing and unskipping 138 previously skipped `test262` ports across arrays/functions, JSON/string/object built-ins, control-flow/binding semantics, and class/expression semantics, reducing the remaining checked-in skip count to 135.
 
 ## v0.9.13 - 2026-05-04
@@ -110,11 +110,11 @@ _Nothing yet._
 
 ## v0.9.11 - 2026-05-03
 
-- compiler/runtime/tests/test262: remove the remaining skipped representative `test262` execution ports by fixing block/function scope materialization, hosted global service resolution, sloppy assignment and unary lowering edge cases, and several built-in/runtime semantics gaps (including `Object.values`, `Number.isInteger`, `parseInt`, `isNaN`, `isFinite`, `Array.isArray`, loose BigInt equality, and non-constructible intrinsics), bringing the checked-in `Js2IL.Test262.Tests` slice to 326 passing tests with 0 skips.
+- compiler/runtime/tests/test262: remove the remaining skipped representative `test262` execution ports by fixing block/function scope materialization, hosted global service resolution, sloppy assignment and unary lowering edge cases, and several built-in/runtime semantics gaps (including `Object.values`, `Number.isInteger`, `parseInt`, `isNaN`, `isFinite`, `Array.isArray`, loose BigInt equality, and non-constructible intrinsics), bringing the checked-in `Jroc.Test262.Tests` slice to 326 passing tests with 0 skips.
 
 ## v0.9.10 - 2026-04-30
 
-- compiler/runtime/node/tests/docs: remove the remaining skipped `Js2IL.Test262.Tests` ports by fixing block/switch lexical-scope materialization and block-scope type visibility, constructor `_scopes` initialization/insertion rules, sloppy assignment `ThrowOnError` behavior, Number wrapper / `RegExp.prototype.toString` gaps, and hosted `child_process.fork()` IPC ordering; refresh the affected generator snapshots, add an on-demand Copilot skill for porting individual `test262` cases, and bring the checked-in `test262` slice to 121 passing tests with 0 skips.
+- compiler/runtime/node/tests/docs: remove the remaining skipped `Jroc.Test262.Tests` ports by fixing block/switch lexical-scope materialization and block-scope type visibility, constructor `_scopes` initialization/insertion rules, sloppy assignment `ThrowOnError` behavior, Number wrapper / `RegExp.prototype.toString` gaps, and hosted `child_process.fork()` IPC ordering; refresh the affected generator snapshots, add an on-demand Copilot skill for porting individual `test262` cases, and bring the checked-in `test262` slice to 121 passing tests with 0 skips.
 
 ## v0.9.9 - 2026-04-27
 
@@ -127,7 +127,7 @@ _Nothing yet._
 - tooling/tests/docs: close issue #933 by mapping bounded test262 MVP results back to ECMA-262 support docs and backlog ownership through a checked-in linkage manifest, annotating `summary.json` with clause/doc linkage, surfacing test262 evidence in the relevant ECMA-262 section docs, and documenting when linked failures should update docs vs attach to or create issues.
 - tooling/tests/docs: close issue #932 by adding named bounded test262 MVP suites for PR vs nightly runs, exposing local npm entrypoints for those suites, publishing `summary.json` artifacts from a dedicated GitHub Actions workflow, and reusing the repository's scheduled-failure issue pattern for nightly regressions while extending focused runner integration coverage.
 - tooling/tests/docs: close issue #931 by formalizing test262 MVP result kinds/verdicts, classifying parse/runtime negatives plus policy skips vs unsupported requirements, emitting a stable `summary.json` baseline artifact for each runner invocation, documenting the contract in a new ADR, and extending focused runner integration coverage.
-- tooling/tests: close issue #930 by adding a plain synchronous script MVP test262 runner that resolves the pinned checkout, filters unsupported/module/async/agent cases, executes strict/non-strict variants plus parse/runtime negatives through js2il, emits per-test outcomes with repro commands, and adds focused runner integration coverage.
+- tooling/tests: close issue #930 by adding a plain synchronous script MVP test262 runner that resolves the pinned checkout, filters unsupported/module/async/agent cases, executes strict/non-strict variants plus parse/runtime negatives through jroc, emits per-test outcomes with repro commands, and adds focused runner integration coverage.
 - tooling/tests: close issue #929 by adding a test262 frontmatter parser with a normalized runner-facing metadata model, explicit MVP blocker/unsupported metadata reporting, and focused integration coverage for representative strict/module/async/negative/fixture cases.
 - tooling/tests/docs: close issue #928 by adopting a pinned sparse-checkout intake model for upstream `tc39/test262`, adding the bootstrap CLI + pin metadata used by local/CI acquisition, recording the licensing/update policy in a new ADR, and adding focused integration coverage for the bootstrap describe flow.
 - node/http/https/tests/docs: fix WHATWG `URL` + second-argument request-option interop for `http.request(...)` / `https.request(...)` so URL-derived path/query and TLS/client overrides stay aligned with Node call shapes, add focused HTTPS regression coverage plus end-to-end `--url` / `--auto` smoke tests for the ECMA-262 extractor network workflow, and refresh the HTTPS docs.
@@ -157,7 +157,7 @@ _Nothing yet._
 
 ## v0.9.5 - 2026-03-29
 
-- packaging/hosting/samples/tests: support npm/module-id entrypoints in `Js2IL.SDK` with Node-style package resolution, keep `ModuleResolutionBaseDirectory` / `Js2ILModuleResolutionBaseDirectory` available only for non-default layouts, and simplify `Hosting.Domino` so the host project restores domino in place without a separate `compiler/` directory.
+- packaging/hosting/samples/tests: support npm/module-id entrypoints in `Jroc.SDK` with Node-style package resolution, keep `ModuleResolutionBaseDirectory` / `JrocModuleResolutionBaseDirectory` available only for non-default layouts, and simplify `Hosting.Domino` so the host project restores domino in place without a separate `compiler/` directory.
 - compiler/perf/tests: refine captured lexical TDZ lowering by separating semantic TDZ participation from runtime field guards so safe captured `let`/`const` bindings keep typed scope fields and direct loads, while conservatively preserving runtime guards for captures that can still be observed before initialization; this recovers the PR #909 benchmark-adjacent regressions and refreshes the affected generator coverage.
 - tests/node/child_process: stabilize the `fork(...)` message-passing coverage under full-suite load by widening the child fallback exit window and refreshing the paired execution/generator expectations.
 
@@ -180,25 +180,25 @@ _Nothing yet._
 
 - node/stream/tests/docs: close issue #872 by expanding the stream baseline with `pause()` / `resume()`, UTF-8 `setEncoding()`, `destroy()` / `destroyed`, callback-oriented `pipeline(...)` / `finished(...)`, deterministic writable drain/finish teardown, and focused execution/generator coverage plus refreshed Node tracking.
 - compiler/runtime/spec/tests/docs: close issue #858 by supporting getter/setter method definitions in object literals and classes, lowering complex object literals through descriptor-backed property helpers, dispatching class instance/static accessors through the existing runtime property surface with correct `this` binding, adding focused execution/generator/validator coverage, and refreshing ECMA-262 tracking.
-- docs/samples/workflows: close issue #850 and umbrella #439 by aligning the hosting sample docs and release smoke workflows with the `Js2IL.Runtime` package name and documenting the coordinated restore/build/post-publish validation matrix for the packaged hosting flow.
+- docs/samples/workflows: close issue #850 and umbrella #439 by aligning the hosting sample docs and release smoke workflows with the `Jroc.Runtime` package name and documenting the coordinated restore/build/post-publish validation matrix for the packaged hosting flow.
 - node/esm/tests/docs: close issue #869 by resolving static ESM package requests with import-aware `package.json` `exports` / `imports` conditions, preserving require-mode package aliases for CommonJS parity, adding mixed CJS/ESM `node_modules` coverage plus resolver diagnostics, and refreshing the Node loader docs/triage snapshot (PR #888).
 
 ## v0.9.2 - 2026-03-14
 
-- packaging/runtime/docs/tests: rename the runtime NuGet package from `JavaScriptRuntime` to `Js2IL.Runtime`, add first-class package metadata/readme coverage for its package page, and update the SDK samples/docs/workflow/package tests to reference the new package ID while keeping the runtime assembly name `JavaScriptRuntime.dll`.
+- packaging/runtime/docs/tests: rename the runtime NuGet package from `JavaScriptRuntime` to `Jroc.Runtime`, add first-class package metadata/readme coverage for its package page, and update the SDK samples/docs/workflow/package tests to reference the new package ID while keeping the runtime assembly name `JavaScriptRuntime.dll`.
 
 ## v0.9.1 - 2026-03-14
 
-- packaging/hosting/tests/docs: add the new `Js2IL.SDK` NuGet package for issue #846, shipping an in-process MSBuild task plus `build\Js2IL.SDK.props` / `.targets` so host projects can declare `Js2ILCompile` items, compile JavaScript during `dotnet build`, and consume the generated module assembly without shelling out to the `js2il` tool.
-- packaging/hosting/samples/docs: migrate the hosting samples for issue #847 from the legacy `compiler\*.proj` shell-out flow onto direct `Js2IL.SDK` usage, move packaged sample content from the `js2il` tool nupkg into the `Js2IL.SDK` nupkg, and clarify when to use `js2il`, `Js2IL.Core`, and `Js2IL.SDK`.
-- release/tooling/docs: close issue #848 by teaching tagged release builds to pack and publish coordinated `JavaScriptRuntime`, `js2il`, `Js2IL.Core`, and `Js2IL.SDK` packages, adding a `npm run release:validate` gate that pairs packed-tool canaries with local SDK package-consumption tests, and staging `samples/Directory.Build.props` so release commits preserve aligned package versions.
-- packaging/nuget/docs/tests: close issue #849 by expanding the packaged `Js2IL.Core` / `Js2IL.SDK` README copy, cross-linking the `js2il`, `Js2IL.Core`, and `Js2IL.SDK` package pages, adding package-project URLs/tags for discoverability, and asserting the shipped nuspec/readme metadata in focused package tests before first publish.
-- release/tooling: fix `scripts/bumpVersion.js` so release cuts still update `samples/Directory.Build.props` after the shared `Js2ILPackageVersion` property gained a `Condition=...` attribute.
+- packaging/hosting/tests/docs: add the new `Jroc.SDK` NuGet package for issue #846, shipping an in-process MSBuild task plus `build\Jroc.SDK.props` / `.targets` so host projects can declare `JrocCompile` items, compile JavaScript during `dotnet build`, and consume the generated module assembly without shelling out to the `jroc` tool.
+- packaging/hosting/samples/docs: migrate the hosting samples for issue #847 from the legacy `compiler\*.proj` shell-out flow onto direct `Jroc.SDK` usage, move packaged sample content from the `jroc` tool nupkg into the `Jroc.SDK` nupkg, and clarify when to use `jroc`, `Jroc.Core`, and `Jroc.SDK`.
+- release/tooling/docs: close issue #848 by teaching tagged release builds to pack and publish coordinated `JavaScriptRuntime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` packages, adding a `npm run release:validate` gate that pairs packed-tool canaries with local SDK package-consumption tests, and staging `samples/Directory.Build.props` so release commits preserve aligned package versions.
+- packaging/nuget/docs/tests: close issue #849 by expanding the packaged `Jroc.Core` / `Jroc.SDK` README copy, cross-linking the `jroc`, `Jroc.Core`, and `Jroc.SDK` package pages, adding package-project URLs/tags for discoverability, and asserting the shipped nuspec/readme metadata in focused package tests before first publish.
+- release/tooling: fix `scripts/bumpVersion.js` so release cuts still update `samples/Directory.Build.props` after the shared `JrocPackageVersion` property gained a `Condition=...` attribute.
 
 ## v0.9.0 - 2026-03-13
 
-- packaging/compiler/layout: implement issue #845 by extracting the reusable compiler into `Js2IL.Compiler.dll`, adding the referenceable `Js2IL.Core` package, wiring the `js2il` tool to consume the new compiler assembly while staying self-contained, splitting the repo layout into `src\Compiler\` sources plus a thin `src\Cli\` tool project, and updating solution/tests/workflows/scripts/samples to follow the new paths.
-- release/tooling/workflows: strengthen pre-release confidence for the repackaged `js2il` tool by teaching version bumps to update `Js2IL.Core`, adding packaged-tool canary commands that pack and locally install `js2il` before running smoke suites, and wiring the release automation plus `canary-smoke` workflow to validate the actual nupkg instead of a source-run build.
+- packaging/compiler/layout: implement issue #845 by extracting the reusable compiler into `Jroc.Compiler.dll`, adding the referenceable `Jroc.Core` package, wiring the `jroc` tool to consume the new compiler assembly while staying self-contained, splitting the repo layout into `src\Compiler\` sources plus a thin `src\Cli\` tool project, and updating solution/tests/workflows/scripts/samples to follow the new paths.
+- release/tooling/workflows: strengthen pre-release confidence for the repackaged `jroc` tool by teaching version bumps to update `Jroc.Core`, adding packaged-tool canary commands that pack and locally install `jroc` before running smoke suites, and wiring the release automation plus `canary-smoke` workflow to validate the actual nupkg instead of a source-run build.
 - hosting/runtime/tests/docs: add issue #419 mutable CommonJS exports support by making typed and dynamic hosting exports proxies write through to `module.exports` on the owning script thread, adding focused hosting coverage for root-exports mutation, and updating the hosting docs to reflect the new read/write behavior.
 - runtime/spec/tests/docs: complete the issue #728 bound-function baseline by tracking `Function.prototype.bind` metadata for `length` / `name`, routing `new` on bound constructors through target/new-target semantics and target prototypes, suppressing bound-function own `prototype`, adding focused Function execution/generator coverage, and refreshing ECMA-262 tracking.
 - runtime/spec/tests/docs: make delegate-backed function `length`/`name` behave as descriptor-backed own properties for issue #727 so direct reads, `Object.getOwnPropertyDescriptor(...)`, and `Object.hasOwn(...)` share the same metadata path; add focused Function execution/generator coverage and refresh ECMA-262 §20.2 tracking.

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     /// <summary>
     /// Collects NestedClass table relationships and emits them in a single, sorted pass.

@@ -4,7 +4,7 @@
 /*
  * release.js
  *
- * Automates the JS2IL release process:
+ * Automates the JROC release process:
  *  1) Ensure clean, up-to-date master
  *  2) Compute next version (patch/minor/major)
  *  3) Create release/<version> branch
@@ -31,9 +31,9 @@ const cp = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
-const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Js2IL.csproj');
-const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.Core', 'Js2IL.Core.csproj');
-const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Js2IL.SDK', 'Js2IL.SDK.csproj');
+const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Jroc.csproj');
+const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.Core', 'Jroc.Core.csproj');
+const SDK_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.SDK', 'Jroc.SDK.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 const SAMPLES_PROPS_PATH = path.join(ROOT, 'samples', 'Directory.Build.props');
 
@@ -165,7 +165,7 @@ function readText(p) {
 
 function parseCsprojVersion(csprojText) {
   const m = csprojText.match(/<Version>([^<]+)<\/Version>/);
-  if (!m) throw new Error('Could not find <Version> in Js2IL.csproj');
+  if (!m) throw new Error('Could not find <Version> in Jroc.csproj');
   return m[1].trim();
 }
 

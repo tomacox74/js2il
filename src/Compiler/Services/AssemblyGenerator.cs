@@ -1,19 +1,19 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Linq;
-using Js2IL.DebugSymbols;
-using Js2IL.Services.ILGenerators;
-using Js2IL.Services.Contracts;
-using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities.Ecma335;
-using Js2IL.Validation;
+using Jroc.DebugSymbols;
+using Jroc.Services.ILGenerators;
+using Jroc.Services.Contracts;
+using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
+using Jroc.Utilities.Ecma335;
+using Jroc.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     internal class AssemblyGenerator
     {

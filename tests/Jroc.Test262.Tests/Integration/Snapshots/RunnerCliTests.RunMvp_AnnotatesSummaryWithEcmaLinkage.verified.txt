@@ -1,0 +1,274 @@
+exit: 0
+stdout:
+root <temp>/test262-root
+jroc <repo>/src/Cli/bin/<configuration>/net10.0/Jroc.dll
+suite pr
+output <temp>/runner-output
+discovered 6
+selected-files 2
+selected-cases 3
+PASS test/language/mvp/basic-pass.js [non-strict] positive
+PASS test/language/mvp/basic-pass.js [strict] positive
+RUNTIME-REJECTION test/language/mvp/runtime-negative.js [non-strict] matched negative(runtime:TypeError)
+SUMMARY matched=3 unexpected=0 not-run=0 selected=3 classified=3 pass=2 runtime-rejection=1
+REPORT <temp>/runner-output/summary.json
+summary.json:
+{
+  "schemaVersion": 1,
+  "suite": "jroc-test262-mvp",
+  "pin": {
+    "commit": "2b2ecead6e828dd9af13a9ec72065e645724a50f",
+    "packageVersion": "5.0.0"
+  },
+  "policy": {
+    "pathExclusions": [
+      "test/annexB/**",
+      "test/intl402/**",
+      "test/staging/**"
+    ],
+    "unsupportedResultSources": [
+      "metadata.unsupported",
+      "metadata.mvpBlockers"
+    ],
+    "negativeExpectations": {
+      "parse": {
+        "expectedObservedPhase": "compile",
+        "validateErrorType": false
+      },
+      "runtime": {
+        "expectedObservedPhase": "runtime",
+        "validateErrorType": true
+      }
+    },
+    "baselineArtifact": {
+      "fileName": "summary.json",
+      "format": "jroc-test262-summary-v1"
+    }
+  },
+  "selection": {
+    "namedSuite": {
+      "name": "pr",
+      "description": "fixture PR suite",
+      "sourceConfig": "<temp>/fixture.suites.json",
+      "files": [
+        "test/language/mvp/basic-pass.js",
+        "test/language/mvp/runtime-negative.js"
+      ]
+    },
+    "file": null,
+    "filter": null,
+    "limit": null,
+    "variant": null,
+    "discoveredFiles": 6,
+    "selectedFiles": 2,
+    "selectedCases": 3,
+    "classifiedEntries": 3
+  },
+  "summary": {
+    "exitCode": 0,
+    "verdictCounts": {
+      "matched": 3
+    },
+    "kindCounts": {
+      "pass": 2,
+      "runtime-rejection": 1
+    }
+  },
+  "results": [
+    {
+      "id": "test/language/mvp/basic-pass.js#non-strict",
+      "relativePath": "test/language/mvp/basic-pass.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "pass",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "positive"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "passed",
+          "exitCode": 0,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/basic-pass.js",
+        "variant": "non-strict"
+      },
+      "linkageGroupIds": [
+        "fixture-basic-pass"
+      ]
+    },
+    {
+      "id": "test/language/mvp/basic-pass.js#strict",
+      "relativePath": "test/language/mvp/basic-pass.js",
+      "variant": "strict",
+      "expected": {
+        "category": "positive",
+        "phase": null,
+        "errorType": null,
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "pass",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "positive"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "passed",
+          "exitCode": 0,
+          "errorType": null,
+          "summary": null
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/basic-pass.js",
+        "variant": "strict"
+      },
+      "linkageGroupIds": [
+        "fixture-basic-pass"
+      ]
+    },
+    {
+      "id": "test/language/mvp/runtime-negative.js#non-strict",
+      "relativePath": "test/language/mvp/runtime-negative.js",
+      "variant": "non-strict",
+      "expected": {
+        "category": "negative",
+        "phase": "runtime",
+        "errorType": "TypeError",
+        "validatesErrorType": true
+      },
+      "classification": {
+        "kind": "runtime-rejection",
+        "verdict": "matched",
+        "phase": "runtime",
+        "detail": "matched negative(runtime:TypeError)"
+      },
+      "reasons": [],
+      "observed": {
+        "compile": {
+          "status": "succeeded",
+          "exitCode": null,
+          "errorType": null,
+          "summary": null
+        },
+        "runtime": {
+          "status": "rejected",
+          "exitCode": 1,
+          "errorType": "TypeError",
+          "summary": "TypeError: runtime boom"
+        }
+      },
+      "repro": {
+        "file": "test/language/mvp/runtime-negative.js",
+        "variant": "non-strict"
+      },
+      "linkageGroupIds": [
+        "fixture-runtime-negative"
+      ]
+    }
+  ],
+  "linkage": {
+    "sourceConfig": "<temp>/fixture.linkage.json",
+    "guidance": {
+      "updateDocsWhen": "Update the ECMA docs when the linked evidence changes the support claim.",
+      "attachToIssueWhen": "Attach to an existing issue when one already tracks the same feature.",
+      "createIssueWhen": "Create a new issue when no existing issue tracks the same feature."
+    },
+    "groups": [
+      {
+        "id": "fixture-basic-pass",
+        "title": "fixture basic pass",
+        "clauses": [
+          "15.3"
+        ],
+        "docSections": [
+          "docs/ECMA262/15/Section15_3.json"
+        ],
+        "supportEntries": [
+          {
+            "clause": "15.3",
+            "feature": "fixture basic pass"
+          }
+        ],
+        "backlogDocs": [
+          "docs/tracking-issues/ECMA262TopMissingBacklog.md"
+        ],
+        "existingIssues": [],
+        "filePaths": [
+          "test/language/mvp/basic-pass.js"
+        ]
+      },
+      {
+        "id": "fixture-runtime-negative",
+        "title": "fixture runtime negative",
+        "clauses": [
+          "10.4.4"
+        ],
+        "docSections": [
+          "docs/ECMA262/10/Section10_4.json"
+        ],
+        "supportEntries": [
+          {
+            "clause": "10.4.4",
+            "feature": "fixture runtime negative"
+          }
+        ],
+        "backlogDocs": [
+          "docs/tracking-issues/ECMA262TopMissingBacklog.md"
+        ],
+        "existingIssues": [
+          933
+        ],
+        "filePaths": [
+          "test/language/mvp/runtime-negative.js"
+        ]
+      }
+    ],
+    "groupCounts": [
+      {
+        "groupId": "fixture-basic-pass",
+        "verdictCounts": {
+          "matched": 2
+        },
+        "kindCounts": {
+          "pass": 2
+        }
+      },
+      {
+        "groupId": "fixture-runtime-negative",
+        "verdictCounts": {
+          "matched": 1
+        },
+        "kindCounts": {
+          "runtime-rejection": 1
+        }
+      }
+    ]
+  }
+}

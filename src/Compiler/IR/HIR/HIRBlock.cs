@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public class HIRBlock : HIRStatement
 {

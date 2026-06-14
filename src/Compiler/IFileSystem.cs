@@ -1,4 +1,4 @@
-namespace Js2IL;
+namespace Jroc;
 
 /// <summary>
 /// Abstraction for file system operations.

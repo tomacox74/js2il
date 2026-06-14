@@ -1,10 +1,10 @@
-using Js2IL.IL;
-using Js2IL.Services;
-using Js2IL.Services.TwoPhaseCompilation;
+using Jroc.IL;
+using Jroc.Services;
+using Jroc.Services.TwoPhaseCompilation;
 using System.Linq;
 using System.Reflection.Metadata;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Normalizes generic item access instructions into intrinsic-specific LIR instructions when provably safe.
@@ -397,7 +397,7 @@ internal static class LIRIntrinsicNormalization
             }
 
             var signature = callableReader.GetSignature(callableId);
-            if (signature?.ScopeAbiKind == Js2IL.Runtime.CallableScopeAbiKind.SingleScope)
+            if (signature?.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope)
             {
                 continue;
             }

@@ -1,6 +1,6 @@
 using Acornima.Ast;
 
-namespace Js2IL.Validation;
+namespace Jroc.Validation;
 
 public class ValidationResult
 {

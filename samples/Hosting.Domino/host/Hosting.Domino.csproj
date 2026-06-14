@@ -7,25 +7,25 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\js2il\domino</ModuleOutputDirectory>
+    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\jroc\domino</ModuleOutputDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Js2IL.SDK" Version="$(Js2ILSdkPackageVersion)" />
-    <PackageReference Include="Js2IL.Runtime" Version="$(Js2ILRuntimePackageVersion)" />
+    <PackageReference Include="Jroc.SDK" Version="$(JrocSdkPackageVersion)" />
+    <PackageReference Include="Jroc.Runtime" Version="$(JrocRuntimePackageVersion)" />
 
     <Content Include="sample.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
 
-    <Js2ILCompile Include="@mixmark-io/domino"
+    <JrocCompile Include="@mixmark-io/domino"
                   OutputDirectory="$(ModuleOutputDirectory)"
                   CopyToOutputDirectory="true" 
                   EmitPdb="true" />
   </ItemGroup>
 
   <Target Name="NpmRestore"
-          BeforeTargets="Js2ILCompile"
+          BeforeTargets="JrocCompile"
           Condition="'$(SkipNpmRestore)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm ci" />
   </Target>

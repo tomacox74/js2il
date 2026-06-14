@@ -1,4 +1,4 @@
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Information about a synchronous generator state machine, populated during HIR->LIR lowering.

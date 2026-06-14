@@ -1,8 +1,8 @@
-using Js2IL.IL;
-using Js2IL.Services;
+using Jroc.IL;
+using Jroc.Services;
 using System.Reflection.Metadata;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Normalizes generic member calls into explicit early-bound user-class member call instructions
@@ -42,7 +42,7 @@ internal static class LIRMemberCallNormalization
                     // result temp may be overwritten to an arbitrary value.
                     if (newUserClass.Result.Index >= 0
                         && classRegistry.TryGet(newUserClass.RegistryClassName, out var constructedTypeHandle)
-                        && !classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+                        && !classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__jroc_ctorReturn", out _))
                     {
                         knownUserClassReceiverTypeHandles[newUserClass.Result.Index] = constructedTypeHandle;
                     }

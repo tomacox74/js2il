@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     internal sealed class FunctionRegistry
     {

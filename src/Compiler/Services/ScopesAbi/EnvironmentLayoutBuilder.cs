@@ -1,9 +1,9 @@
-using Js2IL.IR;
-using Js2IL.Services.VariableBindings;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities;
+using Jroc.IR;
+using Jroc.Services.VariableBindings;
+using Jroc.SymbolTables;
+using Jroc.Utilities;
 
-namespace Js2IL.Services.ScopesAbi;
+namespace Jroc.Services.ScopesAbi;
 
 /// <summary>
 /// Callable kind for determining ABI shape.

@@ -5,7 +5,7 @@
 
 ## Context
 
-JS2IL currently supports dynamic property access primarily via runtime helpers (e.g. `JavaScriptRuntime.Object`), but does not model ECMAScript `[[Prototype]]`.
+JROC currently supports dynamic property access primarily via runtime helpers (e.g. `JavaScriptRuntime.Object`), but does not model ECMAScript `[[Prototype]]`.
 
 We want to add support for prototype chaining and inheritance, using [docs/compiler/PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md) as the long-term guide.
 
@@ -37,7 +37,7 @@ We defer introducing a full `IJsObject` / `JsOrdinaryObject` runtime object mode
 
 ### Why a side-table first
 
-- **Minimal disruption**: JS2IL already routes most dynamic member access through runtime helper methods; extending these helpers is a small, localized change.
+- **Minimal disruption**: JROC already routes most dynamic member access through runtime helper methods; extending these helpers is a small, localized change.
 - **Works with existing CLR-backed objects**: we can attach a prototype to objects represented today as `ExpandoObject`, runtime types, or other host objects without rewriting their representations.
 - **Low dependency cost**: `ConditionalWeakTable` is in the BCL; no new runtime package dependencies.
 - **Incremental correctness**: enables `__proto__` / `getPrototypeOf` / `setPrototypeOf` and inherited lookup (the core primitive needed for Domino-like prototype rewiring) without implementing the full descriptor model.
@@ -80,4 +80,4 @@ Rejected for the first increment due to the larger required surface area (descri
 
 ### 2) Store prototype directly in specific runtime types only
 
-Partially viable, but rejected because JS2IL currently uses multiple CLR representations for objects, and this approach would either miss cases or require many wrappers. The side-table approach provides uniform coverage.
+Partially viable, but rejected because JROC currently uses multiple CLR representations for objects, and this approach would either miss cases or require many wrappers. The side-table approach provides uniform coverage.

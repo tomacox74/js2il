@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 internal static class JsReturnConverter
 {

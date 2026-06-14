@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Acornima.Ast;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Services.ScopesAbi;
-using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Utilities;
-using Js2IL.SymbolTables;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Services.ScopesAbi;
+using TwoPhase = Jroc.Services.TwoPhaseCompilation;
+using Jroc.Utilities;
+using Jroc.SymbolTables;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
@@ -137,7 +137,7 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private Js2IL.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForClassStaticMethod(
+    private Jroc.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForClassStaticMethod(
         Symbol classSymbol,
         MethodDefinition methodDef,
         string methodName,
@@ -166,11 +166,11 @@ public sealed partial class HIRToLIRLowerer
             : $"{moduleName}/{declaringScope.GetQualifiedName()}";
 
         var callableName = JavaScriptCallableNaming.MakeClassMethodCallableName(classSymbol.Name, methodName);
-        var location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
+        var location = Jroc.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
 
-        return new Js2IL.Services.TwoPhaseCompilation.CallableId
+        return new Jroc.Services.TwoPhaseCompilation.CallableId
         {
-            Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
+            Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
             DeclaringScopeName = declaringScopeName,
             Name = callableName,
             Location = location,
@@ -179,7 +179,7 @@ public sealed partial class HIRToLIRLowerer
         };
     }
 
-    private Js2IL.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForCurrentClassStaticMethod(
+    private Jroc.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForCurrentClassStaticMethod(
         MethodDefinition methodDef,
         string methodName,
         int declaredParamCount)
@@ -213,11 +213,11 @@ public sealed partial class HIRToLIRLowerer
             : $"{moduleName}/{declaringScope.GetQualifiedName()}";
 
         var callableName = JavaScriptCallableNaming.MakeClassMethodCallableName(classScope.Name, methodName);
-        var location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
+        var location = Jroc.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
 
-        return new Js2IL.Services.TwoPhaseCompilation.CallableId
+        return new Jroc.Services.TwoPhaseCompilation.CallableId
         {
-            Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
+            Kind = Jroc.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
             DeclaringScopeName = declaringScopeName,
             Name = callableName,
             Location = location,

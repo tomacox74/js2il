@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-`System.Runtime.CompilerServices.CallSite` and related DLR services are **not** a drop-in replacement for JS2IL's current late-bound member-call pipeline.
+`System.Runtime.CompilerServices.CallSite` and related DLR services are **not** a drop-in replacement for JROC's current late-bound member-call pipeline.
 
 They **are** compelling for one narrower slice of the problem: steady-state late-bound invocation of ordinary CLR instance methods. A focused benchmark added during this investigation shows that C# `dynamic` / DLR call sites are dramatically faster than the current `Object.CallMember*` reflection fallback for representative CLR receivers.
 
@@ -20,11 +20,11 @@ There is real appeal in using platform features instead of maintaining hand-writ
 - it exposes binder hooks for custom rules,
 - and it is part of the platform's dynamic invocation story.
 
-However, JS2IL is not solving "late-bound CLR invocation" in the abstract. It is solving **JavaScript/Node-compatible member invocation**. That includes `this` binding, JavaScript primitive behavior, delegate-shaped function values, prototype-sensitive lookup, and Node/V8-style errors. The central question is therefore not "is the DLR faster?" but rather:
+However, JROC is not solving "late-bound CLR invocation" in the abstract. It is solving **JavaScript/Node-compatible member invocation**. That includes `this` binding, JavaScript primitive behavior, delegate-shaped function values, prototype-sensitive lookup, and Node/V8-style errors. The central question is therefore not "is the DLR faster?" but rather:
 
-> Is the DLR a better implementation vehicle for the parts of late-bound invocation that JS2IL actually needs?
+> Is the DLR a better implementation vehicle for the parts of late-bound invocation that JROC actually needs?
 
-## Current JS2IL late-bound invocation pipeline
+## Current JROC late-bound invocation pipeline
 
 ### Compiler side
 
@@ -55,7 +55,7 @@ This means the question is already narrowed: DLR would only compete with the **c
 `CallInstanceMethod` is where the current CLR fallback cost comes from:
 
 - it enumerates public instance methods by name;
-- it chooses a method using js2il-specific ABI rules (including hidden leading `object[] scopes` and `object newTarget` parameters);
+- it chooses a method using jroc-specific ABI rules (including hidden leading `object[] scopes` and `object newTarget` parameters);
 - it applies JS-flavored numeric coercion and argument trimming;
 - it sets `this` through `RuntimeServices`;
 - and then it invokes the selected `MethodInfo`.
@@ -70,7 +70,7 @@ The repository already uses DLR-facing APIs, but only at the hosting/interoperab
 - `JavaScriptRuntime.Hosting.JsDynamicExports` also implements `DynamicObject`, but is specialized for export access and invocation.
 - `JavaScriptRuntime.GlobalThis` implements `IDynamicMetaObjectProvider` by delegating to an internal `ExpandoObject` metaobject.
 
-This is an important signal: JS2IL already uses the DLR as a **host-facing convenience layer**, while preserving `CallMember` as the **JS semantics engine** underneath.
+This is an important signal: JROC already uses the DLR as a **host-facing convenience layer**, while preserving `CallMember` as the **JS semantics engine** underneath.
 
 ## What the DLR gives us
 
@@ -106,7 +106,7 @@ That is exactly the shape of work that `CallInstanceMethod` currently repeats.
 
 ### 2. Hosting ergonomics
 
-JS2IL already benefits from `DynamicObject` and `IDynamicMetaObjectProvider` on the hosting side. This is a sign that the platform's dynamic features are useful when the goal is:
+JROC already benefits from `DynamicObject` and `IDynamicMetaObjectProvider` on the hosting side. This is a sign that the platform's dynamic features are useful when the goal is:
 
 - pleasant C# interop,
 - dynamic member access from host code,
@@ -118,13 +118,13 @@ JS2IL already benefits from `DynamicObject` and `IDynamicMetaObjectProvider` on 
 
 `CallMember` explicitly sets `RuntimeServices.SetCurrentThis(receiver)` before invoking delegate-valued members. That is JS-specific behavior.
 
-The built-in C# dynamic binder does not automatically model JavaScript `this` binding. If JS2IL moved wholesale to DLR member invocation, that behavior would still need custom glue.
+The built-in C# dynamic binder does not automatically model JavaScript `this` binding. If JROC moved wholesale to DLR member invocation, that behavior would still need custom glue.
 
 ### 2. Delegate-valued members and function objects
 
-JS2IL represents many JavaScript function values as CLR delegates plus runtime helpers. `CallMember` knows that a delegate receiver needs special handling for `apply`, `call`, `bind`, and `toString`.
+JROC represents many JavaScript function values as CLR delegates plus runtime helpers. `CallMember` knows that a delegate receiver needs special handling for `apply`, `call`, `bind`, and `toString`.
 
-The C# dynamic binder does not know any of those JavaScript conventions. Replacing `CallMember` here would lose semantics unless JS2IL recreated them in custom binders or metaobjects.
+The C# dynamic binder does not know any of those JavaScript conventions. Replacing `CallMember` here would lose semantics unless JROC recreated them in custom binders or metaobjects.
 
 ### 3. Primitive and intrinsic special cases
 
@@ -144,29 +144,29 @@ The built-in DLR binder is a CLR member binder, not a JavaScript semantic dispat
 
 Existing design docs already point toward a JS-specific cache keyed by shape / prototype-version information.
 
-The DLR **can** support invalidation in principle: `CallSiteBinder.UpdateLabel` exists for rebinding when object "versions" change. But making that work for JS2IL would require custom binders or custom metaobjects that understand:
+The DLR **can** support invalidation in principle: `CallSiteBinder.UpdateLabel` exists for rebinding when object "versions" change. But making that work for JROC would require custom binders or custom metaobjects that understand:
 
 - prototype-chain lookup,
 - invalidation on prototype mutation,
 - own-property vs inherited-property resolution,
-- and the receiver kinds JS2IL currently uses.
+- and the receiver kinds JROC currently uses.
 
 At that point, the implementation would no longer be "use the built-in wheel." It would be "build a JS-specific dynamic object system on top of the DLR."
 
-### 5. js2il-specific ABI handling
+### 5. jroc-specific ABI handling
 
-`CallInstanceMethod` knows about js2il's hidden `scopes` and `newTarget` ABI details, and it performs JS-oriented coercion and argument trimming. The built-in CLR binder does not.
+`CallInstanceMethod` knows about jroc's hidden `scopes` and `newTarget` ABI details, and it performs JS-oriented coercion and argument trimming. The built-in CLR binder does not.
 
 A DLR replacement would need those rules reimplemented somewhere.
 
 ### 6. Dynamic-code/AOT considerations
 
-`DynamicObject` is marked `RequiresDynamicCode` in the .NET docs. That does not automatically disqualify DLR use in JS2IL, but it is a real trade-off:
+`DynamicObject` is marked `RequiresDynamicCode` in the .NET docs. That does not automatically disqualify DLR use in JROC, but it is a real trade-off:
 
 - it introduces pressure toward runtime code generation,
 - and it is a mismatch with any future deployment scenarios that care about ahead-of-time restrictions.
 
-Given that JS2IL is itself an AOT compiler, this is worth treating as a design cost, not a footnote.
+Given that JROC is itself an AOT compiler, this is worth treating as a design cost, not a footnote.
 
 ## Benchmark evidence gathered for this investigation
 
@@ -272,7 +272,7 @@ If this investigation turns into follow-up work, the next steps should be:
    - one custom call site whose binder takes `methodName` as a runtime argument, or
    - a site cache keyed by method name and arity.
 4. Add targeted tests that verify the fast path does not break:
-   - js2il ABI handling,
+   - jroc ABI handling,
    - JS numeric coercion expectations where relevant,
    - `this` handling for delegate-valued members,
    - and fallback behavior when the receiver is not an ordinary CLR method target.

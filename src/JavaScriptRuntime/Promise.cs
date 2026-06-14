@@ -267,7 +267,7 @@ public sealed class Promise
         }
 
         var eventLoop = GlobalThis.ServiceProvider?.Resolve<NodeEventLoopPump>()
-            ?? throw new InvalidOperationException("Top-level await requires an active JS2IL runtime event loop.");
+            ?? throw new InvalidOperationException("Top-level await requires an active JROC runtime event loop.");
 
         while (true)
         {
@@ -551,7 +551,7 @@ public sealed class Promise
         }
 
         // The first parameter is the scopes array.
-        // JS2IL's scopes ABI expects at least one slot (even when there are no captured scopes).
+        // JROC's scopes ABI expects at least one slot (even when there are no captured scopes).
         // Using an empty array can cause IndexOutOfRange when nested closures access parent scopes.
         var unusedContext = new object[1];
         var Resolve = new Func<object[]?, object?, object?>((_, value) =>

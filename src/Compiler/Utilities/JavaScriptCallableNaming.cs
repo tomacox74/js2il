@@ -1,4 +1,4 @@
-namespace Js2IL.Utilities;
+namespace Jroc.Utilities;
 
 internal static class JavaScriptCallableNaming
 {

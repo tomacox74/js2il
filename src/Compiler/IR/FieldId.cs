@@ -1,4 +1,4 @@
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// An opaque identifier for a field in the IR layer.

@@ -1,9 +1,9 @@
-using Js2IL.IR;
-using Js2IL.Services.ILGenerators;
+using Jroc.IR;
+using Jroc.Services.ILGenerators;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Js2IL.IL;
+namespace Jroc.IL;
 
 internal sealed partial class LIRToILCompiler
 {
@@ -86,7 +86,7 @@ internal sealed partial class LIRToILCompiler
             ilEncoder.Token(instruction.ReceiverTypeHandle);
         }
 
-        // Async class methods follow the js2il ABI and take a leading scopes array parameter.
+        // Async class methods follow the jroc ABI and take a leading scopes array parameter.
         if (instruction.HasScopesParameter)
         {
             EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);

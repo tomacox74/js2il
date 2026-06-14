@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 
-namespace Js2IL.Services;
+namespace Jroc.Services;
 
 /// <summary>
 /// Tracks TypeDefinitionHandles for module root types (Modules.&lt;ModuleName&gt;).

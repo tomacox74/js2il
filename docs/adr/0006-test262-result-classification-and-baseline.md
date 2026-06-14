@@ -7,7 +7,7 @@
 
 Issue #931 follows the pinned intake/bootstrap work (#928), metadata parser (#929), and first MVP runner (#930).
 
-The initial runner can execute the bounded plain-script slice, but it only emits ad hoc `PASS` / `FAIL` / `SKIP` text. That is not enough for conformance triage because JS2IL still needs to distinguish:
+The initial runner can execute the bounded plain-script slice, but it only emits ad hoc `PASS` / `FAIL` / `SKIP` text. That is not enough for conformance triage because JROC still needs to distinguish:
 
 - expected parse-phase rejection vs runtime-phase rejection
 - wrong-phase failures
@@ -19,7 +19,7 @@ We also want to keep the policy source of truth small and reviewable instead of 
 
 ## Decision
 
-JS2IL adopts a **result-kind + verdict** model for the test262 MVP runner and uses the runner's `summary.json` as the baseline artifact.
+JROC adopts a **result-kind + verdict** model for the test262 MVP runner and uses the runner's `summary.json` as the baseline artifact.
 
 ### Result model
 
@@ -67,7 +67,7 @@ Instead, the machine-readable policy is split across the existing sources that a
 
 ### Negative-test expectations
 
-- `negative.phase=parse` is currently validated at the **compile** phase only. JS2IL does not yet surface normalized parser error objects, so parse negatives are phase-classified but do not yet assert parse error kind.
+- `negative.phase=parse` is currently validated at the **compile** phase only. JROC does not yet surface normalized parser error objects, so parse negatives are phase-classified but do not yet assert parse error kind.
 - `negative.phase=runtime` is validated at the **runtime** phase and does check the observed runtime error kind.
 
 ### Baseline artifact

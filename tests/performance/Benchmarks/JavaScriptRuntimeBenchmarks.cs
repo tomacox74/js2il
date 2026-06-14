@@ -8,7 +8,7 @@ using Benchmarks.Runtimes;
 namespace Benchmarks;
 
 /// <summary>
-/// Cross-runtime JavaScript benchmark suite comparing hosted .NET JavaScript runtimes and js2il.
+/// Cross-runtime JavaScript benchmark suite comparing hosted .NET JavaScript runtimes and jroc.
 /// </summary>
 [MemoryDiagnoser]
 [Config(typeof(FullParamsConfig))]
@@ -23,7 +23,7 @@ public class JavaScriptRuntimeBenchmarks
     private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly JintRuntime _jintRuntime = new();
     private readonly ClearScriptRuntime _clearScriptRuntime = new();
-    private readonly Js2ILRuntime _js2ilRuntime = new();
+    private readonly JrocRuntime _jrocRuntime = new();
 
     [GlobalSetup]
     public void Setup()
@@ -81,15 +81,15 @@ public class JavaScriptRuntimeBenchmarks
         }
     }
 
-    [Benchmark(Description = "js2il (compile+execute)")]
-    public void Js2IL_Total()
+    [Benchmark(Description = "jroc (compile+execute)")]
+    public void Jroc_Total()
     {
         var script = _scripts[ScriptName];
-        var result = _js2ilRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
+        var result = _jrocRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
         
         if (!result.Success)
         {
-            throw new Exception($"js2il execution failed: {result.Error}");
+            throw new Exception($"jroc execution failed: {result.Error}");
         }
     }
 

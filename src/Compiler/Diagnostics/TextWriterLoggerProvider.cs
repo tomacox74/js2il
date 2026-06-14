@@ -1,6 +1,6 @@
 using Mel = Microsoft.Extensions.Logging;
 
-namespace Js2IL.Diagnostics;
+namespace Jroc.Diagnostics;
 
 internal sealed class TextWriterLoggerProvider : Mel.ILoggerProvider
 {

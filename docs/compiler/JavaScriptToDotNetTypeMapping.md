@@ -1,8 +1,8 @@
 # JavaScript → .NET Type Mapping (informational)
 
-This document describes how JS2IL maps JavaScript program structure to generated .NET types and methods.
+This document describes how JROC maps JavaScript program structure to generated .NET types and methods.
 
-It is intentionally **implementation-oriented** (what JS2IL emits today) and **not a specification**. The emitted shapes are free to change as the compiler evolves.
+It is intentionally **implementation-oriented** (what JROC emits today) and **not a specification**. The emitted shapes are free to change as the compiler evolves.
 
 It complements the deeper closure ABI design in:
 
@@ -56,7 +56,7 @@ It complements the deeper closure ABI design in:
 <a id="runtime-value-representation"></a>
 ## Runtime value representation (informational)
 
-JS2IL generally represents JavaScript values as boxed CLR values (`object`) at runtime. Two important sentinels used by the runtime today:
+JROC generally represents JavaScript values as boxed CLR values (`object`) at runtime. Two important sentinels used by the runtime today:
 
 - JavaScript `undefined` is represented as CLR `null`.
 - JavaScript `null` is represented as `JavaScriptRuntime.JsNull.Null` (a boxed enum value).
@@ -75,14 +75,14 @@ Primitive values are typically represented using CLR primitive types (boxed as `
 Notes:
 
 - Some runtime helpers (e.g., `JavaScriptRuntime.TypeUtilities.ToNumber(...)`, `ToBoolean(...)`, `Typeof(...)`) implement coercion and `typeof` based on these representations.
-- JS2IL may opportunistically store some variables/fields as `double`/`bool`/`string` when type inference marks them stable, but semantically values still flow as JavaScript values.
+- JROC may opportunistically store some variables/fields as `double`/`bool`/`string` when type inference marks them stable, but semantically values still flow as JavaScript values.
 
 ---
 
 <a id="module-id"></a>
 ## Module id (`<ModuleId>`)
 
-JS2IL uses a stable module id (derived from the compiled entry file / `ModuleDefinition.Name`) when naming the per-module root type.
+JROC uses a stable module id (derived from the compiled entry file / `ModuleDefinition.Name`) when naming the per-module root type.
 
 - The module id forms the type name `Modules.<ModuleId>`.
 - In multi-module builds, every module gets its own `Modules.<ModuleId>` root type, and nested types underneath it.
@@ -113,7 +113,7 @@ Key points:
 <a id="callable-mapping"></a>
 ## Callable mapping (functions, arrows, function expressions)
 
-JS2IL represents each callable as a nested “owner type” with a single callable entrypoint method.
+JROC represents each callable as a nested “owner type” with a single callable entrypoint method.
 
 Entrypoint method name (current convention):
 
@@ -163,7 +163,7 @@ Key semantic note:
 <a id="type-lowering-and-normalization"></a>
 ## Type lowering and normalization (informational)
 
-JS2IL has an internal IR pipeline for compiling executable bodies (module init bodies, functions, class methods, etc.).
+JROC has an internal IR pipeline for compiling executable bodies (module init bodies, functions, class methods, etc.).
 
 High-level shape (today):
 
@@ -174,7 +174,7 @@ Where:
 - **HIR** (high-level IR) is a structured representation built from the AST.
 - **LIR** (lowered IR) is a more explicit, IL-friendly representation (explicit temps, labels, and runtime calls).
 
-After HIR→LIR lowering, JS2IL runs conservative “normalization” passes that rewrite LIR into more explicit or more typed forms.
+After HIR→LIR lowering, JROC runs conservative “normalization” passes that rewrite LIR into more explicit or more typed forms.
 These passes are intentionally IL-agnostic: the goal is to keep the LIR→IL compiler focused on IL mechanics (stack/locals/metadata) rather than fragile late pattern matching.
 
 ### Intrinsic normalization
@@ -203,14 +203,14 @@ Where this fits in the codebase:
 - The orchestration is in [src/Compiler/JsMethodCompiler.cs](../../src/Compiler/JsMethodCompiler.cs) (`TryLowerASTToLIR`)
 - Intrinsic normalization: [src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs](../../src/Compiler/IR/LIR/LIRIntrinsicNormalization.cs)
 - Type normalization: [src/Compiler/IR/LIR/LIRTypeNormalization.cs](../../src/Compiler/IR/LIR/LIRTypeNormalization.cs)
-- Tests/examples of normalization behavior: [tests/Js2IL.Tests/LIRIntrinsicNormalizationTests.cs](../../tests/Js2IL.Tests/LIRIntrinsicNormalizationTests.cs)
+- Tests/examples of normalization behavior: [tests/Jroc.Tests/LIRIntrinsicNormalizationTests.cs](../../tests/Jroc.Tests/LIRIntrinsicNormalizationTests.cs)
 
 ---
 
 <a id="scope-mapping"></a>
 ## Scope mapping (nested `...+Scope+...` types)
 
-JS2IL uses a **scope-as-class** model:
+JROC uses a **scope-as-class** model:
 
 - Every JavaScript scope becomes a generated .NET **reference type** (“scope class”).
 - Scope types are emitted as **nested types**.
@@ -233,7 +233,7 @@ Nested scopes become nested types. Typical shapes you will see in IL:
 - Class scopes: `...+<ClassName>+Scope` (class lexical scope)
 - Class member scopes: nested under the runtime class type as siblings of the class scope (e.g., `...+<ClassName>+Scope_ctor`)
 
-The exact scope names come from the symbol table (see `tests/Js2IL.Tests/ScopeNamingTests.cs`). For example:
+The exact scope names come from the symbol table (see `tests/Jroc.Tests/ScopeNamingTests.cs`). For example:
 
 - Assigned arrow scope: `ArrowFunction_<varName>`
 - Assigned function-expression scope: `FunctionExpression_<varName>`
@@ -296,7 +296,7 @@ JavaScript classes are emitted as real .NET types:
 
 - JavaScript instance fields become .NET instance fields on the class type.
 - JavaScript static fields become .NET static fields on the class type.
-- Private fields are name-mangled (current convention: `__js2il_priv_<name>`).
+- Private fields are name-mangled (current convention: `__jroc_priv_<name>`).
 
 ### Methods and constructors
 
@@ -310,7 +310,7 @@ JavaScript classes are emitted as real .NET types:
 
 Classes can capture lexically enclosing variables (e.g., class declared inside a function).
 
-When a class needs parent scopes, JS2IL adds a private field:
+When a class needs parent scopes, JROC adds a private field:
 
 - `_scopes : object[]`
 
@@ -335,7 +335,7 @@ Scope types exist to model captured variables and closure semantics; class insta
 <a id="globalthis"></a>
 ## `globalThis` (informational)
 
-JS2IL provides a minimal `globalThis` surface via the runtime type `JavaScriptRuntime.GlobalThis`.
+JROC provides a minimal `globalThis` surface via the runtime type `JavaScriptRuntime.GlobalThis`.
 
 Current notable globals include:
 
@@ -352,7 +352,7 @@ Internally, `GlobalThis` is backed by a per-thread service container so tests an
 <a id="intrinsic-objects"></a>
 ## Intrinsic objects (informational)
 
-JS2IL’s runtime includes a set of “intrinsic objects” that model built-ins (e.g., `Array`, `Object`, `Math`, `JSON`, `Promise`).
+JROC’s runtime includes a set of “intrinsic objects” that model built-ins (e.g., `Array`, `Object`, `Math`, `JSON`, `Promise`).
 
 Implementation details:
 
@@ -374,7 +374,7 @@ Examples present in the runtime today include (non-exhaustive):
 <a id="node-compatible-modules"></a>
 ## Node-compatible modules (`require`) (informational)
 
-JS2IL supports a Node-like CommonJS `require(...)` model at runtime.
+JROC supports a Node-like CommonJS `require(...)` model at runtime.
 
 Two categories are handled:
 
@@ -391,7 +391,7 @@ Implementation details (current behavior):
 <a id="specifier-normalization-and-local-resolution"></a>
 ### Specifier normalization and local resolution
 
-JS2IL’s runtime `require(...)` performs a small amount of normalization and resolution that is useful to know when reasoning about module ids:
+JROC’s runtime `require(...)` performs a small amount of normalization and resolution that is useful to know when reasoning about module ids:
 
 - Backslashes are normalized to forward slashes (`\` → `/`).
 - A `node:` prefix is accepted for Node built-ins (e.g., `require("node:fs")`) and is stripped before lookup.
@@ -450,5 +450,5 @@ A typical shape of emitted artifacts:
 - Scope type generation: [src/Compiler/Services/TypeGenerator.cs](../../src/Compiler/Services/TypeGenerator.cs)
 - Class emission + `_scopes`: [src/Compiler/Services/ILGenerators/ClassesGenerator.cs](../../src/Compiler/Services/ILGenerators/ClassesGenerator.cs)
 - Value sentinels (`undefined` vs `null`): [src/JavaScriptRuntime/TypeUtilities.cs](../../src/JavaScriptRuntime/TypeUtilities.cs), [src/JavaScriptRuntime/JsNull.cs](../../src/JavaScriptRuntime/JsNull.cs)
-- Scope naming behavior: [tests/Js2IL.Tests/ScopeNamingTests.cs](../../tests/Js2IL.Tests/ScopeNamingTests.cs)
+- Scope naming behavior: [tests/Jroc.Tests/ScopeNamingTests.cs](../../tests/Jroc.Tests/ScopeNamingTests.cs)
 

@@ -1,4 +1,4 @@
-namespace Js2IL.Services.ScopesAbi;
+namespace Jroc.Services.ScopesAbi;
 
 /// <summary>
 /// Identifies the scopes array layout convention used by a compiled callable.

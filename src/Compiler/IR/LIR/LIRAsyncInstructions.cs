@@ -1,6 +1,6 @@
-using Js2IL.Services.ScopesAbi;
+using Jroc.Services.ScopesAbi;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 // ============================================================================
 // Async/Await State Machine Instructions

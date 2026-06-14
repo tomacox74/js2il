@@ -1,7 +1,7 @@
 # Plan: Portable PDB Emission (Debug Symbols)
 
 ## Goal
-Enable JS2IL to optionally emit **Portable PDB** debug symbols alongside generated .NET assemblies, so users can:
+Enable JROC to optionally emit **Portable PDB** debug symbols alongside generated .NET assemblies, so users can:
 - set breakpoints and step through generated code,
 - view source locations in stack traces,
 - inspect locals (where possible),
@@ -13,7 +13,7 @@ Non-goals (initially):
 - Source maps *from* transpiled JS (we’ll start with original JS files)
 
 ## Scope & Constraints
-- JS2IL emits IL via `System.Reflection.Metadata`. PDB emission should use the same low-level approach:
+- JROC emits IL via `System.Reflection.Metadata`. PDB emission should use the same low-level approach:
   - `System.Reflection.Metadata.Ecma335.MetadataBuilder`
   - `PortablePdbBuilder`
   - `MetadataRootBuilder`
@@ -77,7 +77,7 @@ Exit criteria:
 3. Update the output writer to write `.pdb` when enabled
 
 Exit criteria:
-- Running `js2il input.js outDir --pdb` produces `.dll` + `.pdb`
+- Running `jroc input.js outDir --pdb` produces `.dll` + `.pdb`
 
 ### Phase 2 — Documents
 1. Emit a `DocumentHandle` per input JS file
@@ -139,7 +139,7 @@ Exit criteria:
 
 ## Testing Plan
 ### Unit/Integration Tests
-Add tests under `Js2IL.Tests`:
+Add tests under `Jroc.Tests`:
 1. Compiler emits `.pdb` file when enabled
 2. PDB contains expected document name(s)
 3. PDB contains non-empty sequence points for a known sample
@@ -157,8 +157,8 @@ Suggested approach:
 - Inspect with ILSpy/ilspycmd
 
 ### Current validation status
-- Automated coverage now verifies source-mapped stack traces for both plain scripts and rewritten ES module `import`/`export` flows (`Js2IL.Tests.DebugSymbols.JavaScriptErrorStackTraceTests`).
-- Rewritten module sequence-point coverage also verifies original-source coordinates for both top-level statements and nested user-authored callables (`Js2IL.Tests.DebugSymbols.PortablePdbSequencePointTests`).
+- Automated coverage now verifies source-mapped stack traces for both plain scripts and rewritten ES module `import`/`export` flows (`Jroc.Tests.DebugSymbols.JavaScriptErrorStackTraceTests`).
+- Rewritten module sequence-point coverage also verifies original-source coordinates for both top-level statements and nested user-authored callables (`Jroc.Tests.DebugSymbols.PortablePdbSequencePointTests`).
 
 ### Current debugger limitations
 - Uncaptured locals emit Portable PDB `LocalVariable` entries, but captured closure / scope-class variables are still surfaced through generated scope objects plus `DebuggerDisplay` rather than ordinary debugger local slots.

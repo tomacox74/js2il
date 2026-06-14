@@ -19,4 +19,4 @@ Writes to stderr.
 
 ## Tests
 
-- `JavaScriptRuntime.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces` (`tests/Js2IL.Tests/ConsoleTests.cs`)
+- `JavaScriptRuntime.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces` (`tests/Jroc.Tests/ConsoleTests.cs`)

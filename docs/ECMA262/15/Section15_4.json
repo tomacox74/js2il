@@ -48,8 +48,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js",
-          "tests/Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
         ],
         "notes": "Supports method syntax in object literals and correct this binding when called as obj.m()."
       },
@@ -59,9 +59,9 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_AccessorDefinitions.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js",
-          "tests/Js2IL.Tests/ValidatorTests.cs"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_AccessorDefinitions.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_AccessorMethods_InstanceAndStatic.js",
+          "tests/Jroc.Tests/ValidatorTests.cs"
         ],
         "notes": "Object literal getters/setters now lower through descriptor-backed property definition helpers, preserving accessor/data replacement behavior across duplicate keys and spread overwrites. Identifier-named class instance/static accessors compile and dispatch through the existing runtime property/accessor surface with correct this binding for normal property reads/writes. Computed/private class accessors remain part of the broader unsupported computed/private class element gap."
       },
@@ -71,8 +71,8 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-definemethod",
         "testScripts": [
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
-          "tests/Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
         ],
         "notes": "Supports computed property keys and preserves evaluation order."
       },
@@ -82,10 +82,10 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
-          "tests/Js2IL.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
-          "tests/Js2IL.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_Inheritance_SuperMethodCall.js",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
         ],
         "notes": "Covers instance/static methods, super method calls, and function-valued method properties on constructors/prototypes. Limitations are tracked under Class Definitions (for example arbitrary runtime-computed method names and some private accessor cases remain limited)."
       },
@@ -95,7 +95,7 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
         "testScripts": [
-          "tests/Js2IL.Test262.Tests/language/expressions/class/JavaScript/gen-method-length-dflt.js"
+          "tests/Jroc.Test262.Tests/language/expressions/class/JavaScript/gen-method-length-dflt.js"
         ],
         "notes": "Class methods are exposed as JavaScript function-valued data properties on the prototype or constructor with non-enumerable configurable descriptors. Function.length is computed from the formal parameter list before the first default/rest parameter; broader function metadata limitations are tracked with function object support."
       },
@@ -105,8 +105,8 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-method-definitions",
         "testScripts": [
-          "tests/Js2IL.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
-          "tests/Js2IL.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js"
+          "tests/Jroc.Tests/Async/JavaScript/Async_ClassMethod_SimpleAwait.js",
+          "tests/Jroc.Tests/Generator/JavaScript/Generator_ClassMethod_SimpleYield.js"
         ],
         "notes": "Async and generator methods are supported as class elements; broader async/generator limitations are tracked under Async Function Definitions / Generator Function Definitions."
       }

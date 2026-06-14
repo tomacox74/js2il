@@ -9,14 +9,14 @@
 
     <ModuleName>HostedMathModule</ModuleName>
     <ModuleSource>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(MSBuildProjectDirectory)','..','compiler','JavaScript','HostedMathModule.js'))))</ModuleSource>
-    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\js2il\$(ModuleName)</ModuleOutputDirectory>
+    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\jroc\$(ModuleName)</ModuleOutputDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Js2IL.SDK" Version="$(Js2ILSdkPackageVersion)" />
-    <PackageReference Include="Js2IL.Runtime" Version="$(Js2ILRuntimePackageVersion)" />
+    <PackageReference Include="Jroc.SDK" Version="$(JrocSdkPackageVersion)" />
+    <PackageReference Include="Jroc.Runtime" Version="$(JrocRuntimePackageVersion)" />
 
-     <Js2ILCompile Include="$(ModuleSource)"
+     <JrocCompile Include="$(ModuleSource)"
                    OutputDirectory="$(ModuleOutputDirectory)"
                    RootModuleId="$(ModuleName)"
                    CopyToOutputDirectory="true"

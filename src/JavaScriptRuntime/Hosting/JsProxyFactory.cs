@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Js2IL.Runtime;
+namespace Jroc.Runtime;
 
 internal static class JsProxyFactory
 {

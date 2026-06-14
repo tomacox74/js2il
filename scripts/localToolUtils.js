@@ -7,7 +7,7 @@ const path = require("path");
 
 const repoRoot = path.resolve(__dirname, "..");
 const defaultPackDir = path.join(repoRoot, "out_publish");
-const globalToolStorePath = path.join(os.homedir(), ".dotnet", "tools", ".store", "js2il");
+const globalToolStorePath = path.join(os.homedir(), ".dotnet", "tools", ".store", "jroc");
 
 function run(command, opts = {}) {
   execSync(command, { stdio: "inherit", cwd: repoRoot, ...opts });
@@ -25,7 +25,7 @@ function resolveRepoPath(candidate) {
 }
 
 function getToolExecutableName() {
-  return process.platform === "win32" ? "js2il.exe" : "js2il";
+  return process.platform === "win32" ? "jroc.exe" : "jroc";
 }
 
 function getToolExecutablePath(toolPath) {
@@ -35,7 +35,7 @@ function getToolExecutablePath(toolPath) {
 function packToolPackage({ packDir = defaultPackDir } = {}) {
   const resolvedPackDir = resolveRepoPath(packDir);
   removeDir(resolvedPackDir);
-  console.log(`Packing js2il to ${resolvedPackDir} ...`);
+  console.log(`Packing jroc to ${resolvedPackDir} ...`);
   run(`dotnet pack src/Cli -c Release -o "${resolvedPackDir}"`);
   return resolvedPackDir;
 }
@@ -46,8 +46,8 @@ function installPackagedTool({ packDir = defaultPackDir, toolPath } = {}) {
   if (toolPath) {
     const resolvedToolPath = resolveRepoPath(toolPath);
     removeDir(resolvedToolPath);
-    console.log(`Installing js2il to local tool path ${resolvedToolPath} ...`);
-    run(`dotnet tool install --tool-path "${resolvedToolPath}" --add-source "${resolvedPackDir}" js2il`);
+    console.log(`Installing jroc to local tool path ${resolvedToolPath} ...`);
+    run(`dotnet tool install --tool-path "${resolvedToolPath}" --add-source "${resolvedPackDir}" jroc`);
 
     const executable = getToolExecutablePath(resolvedToolPath);
     if (!fs.existsSync(executable)) {
@@ -62,9 +62,9 @@ function installPackagedTool({ packDir = defaultPackDir, toolPath } = {}) {
     };
   }
 
-  console.log("Uninstalling existing global js2il (if any)...");
+  console.log("Uninstalling existing global jroc (if any)...");
   try {
-    run("dotnet tool uninstall js2il -g");
+    run("dotnet tool uninstall jroc -g");
   } catch {
     // Ignore failures when the tool is not installed.
   }
@@ -72,8 +72,8 @@ function installPackagedTool({ packDir = defaultPackDir, toolPath } = {}) {
   console.log("Clearing tool store cache...");
   removeDir(globalToolStorePath);
 
-  console.log("Installing js2il from local pack directory...");
-  run(`dotnet tool install --global --add-source "${resolvedPackDir}" js2il`);
+  console.log("Installing jroc from local pack directory...");
+  run(`dotnet tool install --global --add-source "${resolvedPackDir}" jroc`);
 
   return {
     scope: "global",

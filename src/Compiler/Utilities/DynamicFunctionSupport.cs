@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Acornima.Ast;
-using Js2IL.Services;
+using Jroc.Services;
 
-namespace Js2IL.Utilities;
+namespace Jroc.Utilities;
 
 internal static class DynamicFunctionSupport
 {

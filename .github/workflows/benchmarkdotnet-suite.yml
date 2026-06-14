@@ -12,8 +12,8 @@ on:
         description: 'Benchmark mode (default/phased/all)'
         required: false
         default: 'all'
-      js2il_package_version:
-        description: 'Published Js2IL package version to benchmark (for example 0.9.5)'
+      jroc_package_version:
+        description: 'Published Jroc package version to benchmark (for example 0.9.5)'
         required: false
         default: ''
   release:
@@ -41,10 +41,10 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       
-      - name: Determine js2il benchmark package mode
+      - name: Determine jroc benchmark package mode
         shell: bash
         env:
-          INPUT_JS2IL_PACKAGE_VERSION: ${{ github.event.inputs.js2il_package_version || '' }}
+          INPUT_JROC_PACKAGE_VERSION: ${{ github.event.inputs.jroc_package_version || '' }}
         run: |
           set -euo pipefail
 
@@ -52,8 +52,8 @@ jobs:
 
           if [ "${{ github.event_name }}" = "release" ]; then
             package_version="${{ github.event.release.tag_name }}"
-          elif [ -n "$INPUT_JS2IL_PACKAGE_VERSION" ]; then
-            package_version="$INPUT_JS2IL_PACKAGE_VERSION"
+          elif [ -n "$INPUT_JROC_PACKAGE_VERSION" ]; then
+            package_version="$INPUT_JROC_PACKAGE_VERSION"
           elif [ "${GITHUB_REF_TYPE:-}" = "tag" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
             package_version="${GITHUB_REF_NAME}"
           fi
@@ -61,16 +61,16 @@ jobs:
           package_version="${package_version#v}"
 
           if [ -n "$package_version" ]; then
-            echo "Using published Js2IL packages version: $package_version"
-            echo "USE_PUBLISHED_JS2IL_PACKAGES=true" >> "$GITHUB_ENV"
-            echo "JS2IL_PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
+            echo "Using published Jroc packages version: $package_version"
+            echo "USE_PUBLISHED_JROC_PACKAGES=true" >> "$GITHUB_ENV"
+            echo "JROC_PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
           else
-            echo "Using checked-out source tree projects for Js2IL benchmarks"
-            echo "USE_PUBLISHED_JS2IL_PACKAGES=false" >> "$GITHUB_ENV"
+            echo "Using checked-out source tree projects for Jroc benchmarks"
+            echo "USE_PUBLISHED_JROC_PACKAGES=false" >> "$GITHUB_ENV"
           fi
 
-      - name: Wait for published Js2IL packages
-        if: env.USE_PUBLISHED_JS2IL_PACKAGES == 'true' && github.event_name == 'release'
+      - name: Wait for published Jroc packages
+        if: env.USE_PUBLISHED_JROC_PACKAGES == 'true' && github.event_name == 'release'
         uses: actions/github-script@v8
         with:
           script: |
@@ -118,14 +118,14 @@ jobs:
             throw new Error(`Timed out waiting for ${workflowId} to publish packages for ${targetRef}.`);
 
       - name: Wait for NuGet package availability
-        if: env.USE_PUBLISHED_JS2IL_PACKAGES == 'true'
+        if: env.USE_PUBLISHED_JROC_PACKAGES == 'true'
         shell: bash
         run: |
           set -euo pipefail
           node scripts/waitForNuGetPackageVersions.js \
-            --version "${JS2IL_PACKAGE_VERSION}" \
-            --package Js2IL.Core \
-            --package Js2IL.Runtime
+            --version "${JROC_PACKAGE_VERSION}" \
+            --package Jroc.Core \
+            --package Jroc.Runtime
 
       - name: Restore benchmark project
         shell: bash
@@ -133,7 +133,7 @@ jobs:
           set -euo pipefail
           cd tests/performance/Benchmarks
 
-          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
+          if [ "${USE_PUBLISHED_JROC_PACKAGES}" = "true" ]; then
             tries=20
             delay=30
 
@@ -142,17 +142,17 @@ jobs:
 
               if dotnet restore Benchmarks.csproj \
                 --no-cache \
-                -p:UsePublishedJs2ILPackages=true \
-                -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}"; then
-                echo "Restored Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION}"
+                -p:UsePublishedJrocPackages=true \
+                -p:JrocPackageVersion="${JROC_PACKAGE_VERSION}"; then
+                echo "Restored Jroc benchmark packages ${JROC_PACKAGE_VERSION}"
                 exit 0
               fi
 
-              echo "Attempt $i/$tries: Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION} not available yet on NuGet; waiting ${delay}s..."
+              echo "Attempt $i/$tries: Jroc benchmark packages ${JROC_PACKAGE_VERSION} not available yet on NuGet; waiting ${delay}s..."
               sleep $delay
             done
 
-            echo "Failed to restore Js2IL benchmark packages ${JS2IL_PACKAGE_VERSION} from NuGet after $tries attempts" >&2
+            echo "Failed to restore Jroc benchmark packages ${JROC_PACKAGE_VERSION} from NuGet after $tries attempts" >&2
             exit 1
           fi
 
@@ -165,8 +165,8 @@ jobs:
           cd tests/performance/Benchmarks
 
           MSBUILD_ARGS=()
-          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
-            MSBUILD_ARGS+=(-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}")
+          if [ "${USE_PUBLISHED_JROC_PACKAGES}" = "true" ]; then
+            MSBUILD_ARGS+=(-p:UsePublishedJrocPackages=true -p:JrocPackageVersion="${JROC_PACKAGE_VERSION}")
           fi
 
           dotnet build Benchmarks.csproj -c Release --no-restore "${MSBUILD_ARGS[@]}"
@@ -200,8 +200,8 @@ jobs:
           DOTNET_ARGS+=(--filter "$BENCHMARK_FILTER" --exporters json)
 
           MSBUILD_ARGS=()
-          if [ "${USE_PUBLISHED_JS2IL_PACKAGES}" = "true" ]; then
-            MSBUILD_ARGS+=(-p:UsePublishedJs2ILPackages=true -p:Js2ILPackageVersion="${JS2IL_PACKAGE_VERSION}")
+          if [ "${USE_PUBLISHED_JROC_PACKAGES}" = "true" ]; then
+            MSBUILD_ARGS+=(-p:UsePublishedJrocPackages=true -p:JrocPackageVersion="${JROC_PACKAGE_VERSION}")
           fi
 
           dotnet run --project Benchmarks.csproj -c Release --no-build "${MSBUILD_ARGS[@]}" -- "${DOTNET_ARGS[@]}"

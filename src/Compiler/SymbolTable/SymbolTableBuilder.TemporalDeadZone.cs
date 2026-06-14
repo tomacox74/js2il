@@ -1,6 +1,6 @@
 using Acornima.Ast;
 
-namespace Js2IL.SymbolTables;
+namespace Jroc.SymbolTables;
 
 public partial class SymbolTableBuilder
 {

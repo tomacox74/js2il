@@ -1,4 +1,4 @@
-namespace Js2IL.DebugSymbols;
+namespace Jroc.DebugSymbols;
 
 /// <summary>
 /// A debug sequence point captured during IL emission.

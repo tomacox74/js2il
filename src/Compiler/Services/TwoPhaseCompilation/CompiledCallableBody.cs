@@ -1,9 +1,9 @@
 using System;
 using System.Reflection;
 using System.Reflection.Metadata;
-using Js2IL.DebugSymbols;
+using Jroc.DebugSymbols;
 
-namespace Js2IL.Services.TwoPhaseCompilation;
+namespace Jroc.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Output of Phase 2 body compilation for a single callable.
@@ -22,7 +22,7 @@ public sealed record CompiledCallableBody
 
     public required BlobHandle Signature { get; init; }
 
-    public Js2IL.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; } = Js2IL.Runtime.CallableScopeAbiKind.NoScopes;
+    public Jroc.Runtime.CallableScopeAbiKind ScopeAbiKind { get; init; } = Jroc.Runtime.CallableScopeAbiKind.NoScopes;
 
     public int SingleScopeTypeMetadataToken { get; init; }
 

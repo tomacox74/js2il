@@ -6,7 +6,7 @@
 
 > Last generated (UTC): 2026-05-29T14:16:08Z
 
-JS2IL provides a minimal BigInt callable implementation backed by System.Numerics.BigInteger, sufficient for basic BigInt(value) usage and typeof semantics. The broader BigInt constructor/prototype surface and full spec conversion rules are not yet implemented.
+JROC provides a minimal BigInt callable implementation backed by System.Numerics.BigInteger, sufficient for basic BigInt(value) usage and typeof semantics. The broader BigInt constructor/prototype surface and full spec conversion rules are not yet implemented.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -40,11 +40,11 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| BigInt primitive operator semantics (representative unary, bitwise, and shift cases) | Supported with Limitations | `tests/Js2IL.Test262.Tests/language/expressions/bigint/ExecutionTests.cs` | `test/language/expressions/unary-minus/bigint.js`<br>`test/language/expressions/bitwise-not/bigint.js`<br>`test/language/expressions/left-shift/bigint.js`<br>`test/language/expressions/unsigned-right-shift/bigint.js` | Checked-in coverage now includes representative primitive BigInt unary negation, bitwise NOT, left shift, and unsigned-right-shift TypeError behavior. The broader BigInt constructor/prototype surface remains incomplete. |
+| BigInt primitive operator semantics (representative unary, bitwise, and shift cases) | Supported with Limitations | `tests/Jroc.Test262.Tests/language/expressions/bigint/ExecutionTests.cs` | `test/language/expressions/unary-minus/bigint.js`<br>`test/language/expressions/bitwise-not/bigint.js`<br>`test/language/expressions/left-shift/bigint.js`<br>`test/language/expressions/unsigned-right-shift/bigint.js` | Checked-in coverage now includes representative primitive BigInt unary negation, bitwise NOT, left shift, and unsigned-right-shift TypeError behavior. The broader BigInt constructor/prototype surface remains incomplete. |
 
 ### 21.2.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-bigint-constructor-number-value))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| BigInt(value) callable (basic) | Supported with Limitations | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../tests/Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js)<br>`tests/Js2IL.Test262.Tests/built-ins/BigInt/ExecutionTests.cs` | `test/built-ins/BigInt/constructor-empty-string.js`<br>`test/built-ins/BigInt/constructor-from-binary-string.js`<br>`test/built-ins/BigInt/constructor-from-decimal-string.js`<br>`test/built-ins/BigInt/constructor-from-hex-string.js`<br>`test/built-ins/BigInt/constructor-from-octal-string.js`<br>`test/built-ins/BigInt/constructor-from-string-syntax-errors.js`<br>`test/built-ins/BigInt/constructor-trailing-leading-spaces.js` | Supports BigInt(value) with basic conversion from integral Numbers and from decimal, binary, octal, and hexadecimal strings, including empty/trimmed strings and representative string syntax errors; typeof === 'bigint'. The full BigInt constructor/prototype surface remains incomplete. |
+| BigInt(value) callable (basic) | Supported with Limitations | [`IntrinsicCallables_BigInt_Callable_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/BigInt/ExecutionTests.cs` | `test/built-ins/BigInt/constructor-empty-string.js`<br>`test/built-ins/BigInt/constructor-from-binary-string.js`<br>`test/built-ins/BigInt/constructor-from-decimal-string.js`<br>`test/built-ins/BigInt/constructor-from-hex-string.js`<br>`test/built-ins/BigInt/constructor-from-octal-string.js`<br>`test/built-ins/BigInt/constructor-from-string-syntax-errors.js`<br>`test/built-ins/BigInt/constructor-trailing-leading-spaces.js` | Supports BigInt(value) with basic conversion from integral Numbers and from decimal, binary, octal, and hexadecimal strings, including empty/trimmed strings and representative string syntax errors; typeof === 'bigint'. The full BigInt constructor/prototype surface remains incomplete. |
 

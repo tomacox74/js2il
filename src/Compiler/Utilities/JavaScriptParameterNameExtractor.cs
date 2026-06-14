@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Acornima.Ast;
 
-namespace Js2IL.Utilities;
+namespace Jroc.Utilities;
 
 internal static class JavaScriptParameterNameExtractor
 {

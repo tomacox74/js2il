@@ -1,14 +1,14 @@
 using Acornima.Ast;
-using Js2IL.DebugSymbols;
-using Js2IL.Services;
-using Js2IL.Utilities;
-using Js2IL.Validation;
+using Jroc.DebugSymbols;
+using Jroc.Services;
+using Jroc.Utilities;
+using Jroc.Validation;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Js2IL;
+namespace Jroc;
 
 /// <summary>
 /// The module loader reads JavaScript files and produces ModuleDefinition instances.
@@ -431,18 +431,18 @@ public class ModuleLoader
     }
 
     private static readonly string EsModuleInteropPrelude =
-@"function __js2il_esm_mark() {
+@"function __jroc_esm_mark() {
     if (!Object.prototype.hasOwnProperty.call(exports, ""__esModule"")) {
         Object.defineProperty(exports, ""__esModule"", { value: true, enumerable: false, configurable: true });
     }
 }
-function __js2il_esm_default(mod) {
+function __jroc_esm_default(mod) {
     return (mod != null && Object.prototype.hasOwnProperty.call(mod, ""default"")) ? mod.default : mod;
 }
-function __js2il_esm_get(mod, name) {
+function __jroc_esm_get(mod, name) {
     return mod[name];
 }
-function __js2il_esm_namespace(mod) {
+function __jroc_esm_namespace(mod) {
     if (mod != null && mod.__esModule === true) {
         return mod;
     }
@@ -451,8 +451,8 @@ function __js2il_esm_namespace(mod) {
         return { default: mod, ""module.exports"": mod };
     }
 
-    if (Object.prototype.hasOwnProperty.call(mod, ""__js2il_esm_namespace"")) {
-        return mod.__js2il_esm_namespace;
+    if (Object.prototype.hasOwnProperty.call(mod, ""__jroc_esm_namespace"")) {
+        return mod.__jroc_esm_namespace;
     }
 
     var ns = {};
@@ -463,7 +463,7 @@ function __js2il_esm_namespace(mod) {
         if (!Object.prototype.hasOwnProperty.call(mod, key)) {
             continue;
         }
-        if (key === ""default"" || key === ""module.exports"" || key === ""__esModule"" || key === ""__js2il_esm_namespace"") {
+        if (key === ""default"" || key === ""module.exports"" || key === ""__esModule"" || key === ""__jroc_esm_namespace"") {
             continue;
         }
         (function (k) {
@@ -472,15 +472,15 @@ function __js2il_esm_namespace(mod) {
     }
 
     try {
-        Object.defineProperty(mod, ""__js2il_esm_namespace"", { value: ns, enumerable: false, configurable: false, writable: false });
+        Object.defineProperty(mod, ""__jroc_esm_namespace"", { value: ns, enumerable: false, configurable: false, writable: false });
     } catch (e) {
         // ignore caching failures (non-extensible exports)
     }
 
     return ns;
 }
-function __js2il_esm_export(name, getter) {
-    __js2il_esm_mark();
+function __jroc_esm_export(name, getter) {
+    __jroc_esm_mark();
     Object.defineProperty(exports, name, { enumerable: true, configurable: true, get: getter });
 }";
 
@@ -614,7 +614,7 @@ function __js2il_esm_export(name, getter) {
 
     private static string CreateExportGetterLine(string exportName, string valueExpression)
     {
-        return $"__js2il_esm_export(\"{EscapeJsString(exportName)}\", function() {{ return {valueExpression}; }});";
+        return $"__jroc_esm_export(\"{EscapeJsString(exportName)}\", function() {{ return {valueExpression}; }});";
     }
 
     private static void AppendImportPrelude(
@@ -637,7 +637,7 @@ function __js2il_esm_export(name, getter) {
             return;
         }
 
-        var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+        var moduleTemp = $"__jroc_esm_mod_{tempCounter++}";
         importPrelude.Add(($"var {moduleTemp} = require({importSourceLiteral});", debugSpan));
 
         foreach (var specifier in importDeclaration.Specifiers)
@@ -649,7 +649,7 @@ function __js2il_esm_export(name, getter) {
                     {
                         throw new NotSupportedException("Default import local binding must be an identifier");
                     }
-                    importedBindings[defaultLocal.Name] = $"__js2il_esm_default({moduleTemp})";
+                    importedBindings[defaultLocal.Name] = $"__jroc_esm_default({moduleTemp})";
                     break;
 
                 case ImportNamespaceSpecifier namespaceSpecifier:
@@ -657,7 +657,7 @@ function __js2il_esm_export(name, getter) {
                     {
                         throw new NotSupportedException("Namespace import local binding must be an identifier");
                     }
-                    importPrelude.Add(($"var {namespaceLocal.Name} = __js2il_esm_namespace({moduleTemp});", debugSpan));
+                    importPrelude.Add(($"var {namespaceLocal.Name} = __jroc_esm_namespace({moduleTemp});", debugSpan));
                     break;
 
                 case ImportSpecifier importSpecifier:
@@ -666,7 +666,7 @@ function __js2il_esm_export(name, getter) {
                         throw new NotSupportedException("Named import local binding must be an identifier");
                     }
                     var importedName = GetExpressionName(importSpecifier.Imported);
-                    importedBindings[importLocal.Name] = $"__js2il_esm_get({moduleTemp}, \"{EscapeJsString(importedName)}\")";
+                    importedBindings[importLocal.Name] = $"__jroc_esm_get({moduleTemp}, \"{EscapeJsString(importedName)}\")";
                     break;
 
                 default:
@@ -1486,7 +1486,7 @@ function __js2il_esm_export(name, getter) {
             }
         }
 
-        if (!AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, "__js2il_esm_mark();", debugDocumentId, false, out error))
+        if (!AppendHiddenSnippetDebugSpans(topLevelDebugSpanOverrides, "__jroc_esm_mark();", debugDocumentId, false, out error))
         {
             return false;
         }
@@ -1608,7 +1608,7 @@ function __js2il_esm_export(name, getter) {
         {
             preludeBuilder.AppendLine(line);
         }
-        preludeBuilder.AppendLine("__js2il_esm_mark();");
+        preludeBuilder.AppendLine("__jroc_esm_mark();");
         foreach (var (line, _) in exportPrelude)
         {
             preludeBuilder.AppendLine(line);
@@ -1883,7 +1883,7 @@ function __js2il_esm_export(name, getter) {
             return $"require({importSourceLiteral});";
         }
 
-        var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+        var moduleTemp = $"__jroc_esm_mod_{tempCounter++}";
         var builder = new StringBuilder();
         builder.Append("var ").Append(moduleTemp).Append(" = require(").Append(importSourceLiteral).AppendLine(");");
 
@@ -1896,7 +1896,7 @@ function __js2il_esm_export(name, getter) {
                     {
                         throw new NotSupportedException("Default import local binding must be an identifier");
                     }
-                    builder.Append("var ").Append(defaultLocal.Name).Append(" = __js2il_esm_default(").Append(moduleTemp).AppendLine(");");
+                    builder.Append("var ").Append(defaultLocal.Name).Append(" = __jroc_esm_default(").Append(moduleTemp).AppendLine(");");
                     break;
 
                 case ImportNamespaceSpecifier namespaceSpecifier:
@@ -1904,7 +1904,7 @@ function __js2il_esm_export(name, getter) {
                     {
                         throw new NotSupportedException("Namespace import local binding must be an identifier");
                     }
-                    builder.Append("var ").Append(namespaceLocal.Name).Append(" = __js2il_esm_namespace(").Append(moduleTemp).AppendLine(");");
+                    builder.Append("var ").Append(namespaceLocal.Name).Append(" = __jroc_esm_namespace(").Append(moduleTemp).AppendLine(");");
                     break;
 
                 case ImportSpecifier importSpecifier:
@@ -1975,7 +1975,7 @@ function __js2il_esm_export(name, getter) {
 
         if (exportNamedDeclaration.Source != null)
         {
-            var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+            var moduleTemp = $"__jroc_esm_mod_{tempCounter++}";
             var exportSourceLiteral = GetNodeSource(source, exportNamedDeclaration.Source);
             builder.Append("var ").Append(moduleTemp).Append(" = require(").Append(exportSourceLiteral).AppendLine(");");
 
@@ -2021,7 +2021,7 @@ function __js2il_esm_export(name, getter) {
             throw new NotSupportedException("Unsupported export default declaration node");
         }
 
-        var defaultTemp = $"__js2il_esm_default_{tempCounter++}";
+        var defaultTemp = $"__jroc_esm_default_{tempCounter++}";
         builder.Append("var ").Append(defaultTemp).Append(" = ").Append(GetNodeSource(source, declarationNode)).AppendLine(";");
         AppendExportGetter(builder, "default", defaultTemp);
         return builder.ToString();
@@ -2034,7 +2034,7 @@ function __js2il_esm_export(name, getter) {
             throw new NotSupportedException("Export attributes are not yet supported");
         }
 
-        var moduleTemp = $"__js2il_esm_mod_{tempCounter++}";
+        var moduleTemp = $"__jroc_esm_mod_{tempCounter++}";
         var exportSourceLiteral = GetNodeSource(source, exportAllDeclaration.Source);
         var builder = new StringBuilder();
         builder.Append("var ").Append(moduleTemp).Append(" = require(").Append(exportSourceLiteral).AppendLine(");");
@@ -2042,11 +2042,11 @@ function __js2il_esm_export(name, getter) {
         if (exportAllDeclaration.Exported != null)
         {
             var exportName = GetExpressionName(exportAllDeclaration.Exported);
-            AppendExportGetter(builder, exportName, $"__js2il_esm_namespace({moduleTemp})");
+            AppendExportGetter(builder, exportName, $"__jroc_esm_namespace({moduleTemp})");
             return builder.ToString();
         }
 
-        var keyName = $"__js2il_esm_key_{tempCounter++}";
+        var keyName = $"__jroc_esm_key_{tempCounter++}";
         builder.Append("for (var ").Append(keyName).Append(" in ").Append(moduleTemp).AppendLine(") {");
         builder.Append("  if (!Object.prototype.hasOwnProperty.call(")
             .Append(moduleTemp)
@@ -2056,7 +2056,7 @@ function __js2il_esm_export(name, getter) {
         builder.Append("  if (")
             .Append(keyName)
             .AppendLine(" === \"default\" || " + keyName + " === \"__esModule\" || " + keyName + " === \"module.exports\") { continue; }");
-        builder.Append("  (function(__k) { __js2il_esm_export(__k, function() { return ")
+        builder.Append("  (function(__k) { __jroc_esm_export(__k, function() { return ")
             .Append(moduleTemp)
             .Append("[__k]; }); })(")
             .Append(keyName)
@@ -2067,7 +2067,7 @@ function __js2il_esm_export(name, getter) {
 
     private static void AppendExportGetter(StringBuilder builder, string exportName, string valueExpression)
     {
-        builder.Append("__js2il_esm_export(\"")
+        builder.Append("__jroc_esm_export(\"")
             .Append(EscapeJsString(exportName))
             .Append("\", function() { return ")
             .Append(valueExpression)

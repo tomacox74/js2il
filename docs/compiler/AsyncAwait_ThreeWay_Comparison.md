@@ -1,7 +1,7 @@
-# Async/Await Lowering: JS2IL vs C# Compiler vs TypeScript (ES5)
+# Async/Await Lowering: JROC vs C# Compiler vs TypeScript (ES5)
 
 This document provides a concise, side‑by‑side comparison of how async/await is lowered by:
-- **JS2IL** (JavaScript → .NET IL)
+- **JROC** (JavaScript → .NET IL)
 - **C# compiler** (C# → .NET IL)
 - **TypeScript compiler targeting ES5** (TypeScript → JavaScript)
 
@@ -9,7 +9,7 @@ The goal is to highlight **state machine structure**, **exception handling**, **
 
 ## 1) At-a-Glance Summary
 
-| Aspect | JS2IL | C# Compiler | TypeScript (ES5)
+| Aspect | JROC | C# Compiler | TypeScript (ES5)
 |---|---|---|---|
 | Output target | .NET IL + runtime helper methods | .NET IL + BCL runtime helpers | ES5 JavaScript + helper functions
 | State storage | Fields in a generated scope class + `_asyncState` | Fields in a struct/class state machine (`<>1__state`, etc.) | Local vars captured by generator state + `__awaiter`/`__generator`
@@ -18,7 +18,7 @@ The goal is to highlight **state machine structure**, **exception handling**, **
 | Await suspension | `LIRAwait` stores resume state, schedules continuation, returns (fulfillment stores result into `_awaited{awaitId}`) | `await` yields to builder, returns to caller | `yield` inside generator body
 | Resume | Switch on `_asyncState` → labels | Switch on state → labels | `switch` in generator `step` function
 
-## 2) JS2IL Lowering (JavaScript → .NET IL)
+## 2) JROC Lowering (JavaScript → .NET IL)
 
 **Conceptual pipeline** (simplified):
 1. Parse JS to AST.
@@ -42,10 +42,10 @@ The goal is to highlight **state machine structure**, **exception handling**, **
   - Return (async suspension)
 - Resume uses a **state switch** on `_asyncState`, branching to the appropriate label.
 
-Important: JS2IL intentionally keeps **await IDs** (result storage) separate from **resume state IDs** (control-flow dispatch). This allows additional synthetic resume states (e.g., async try/catch catch-resume) without shifting `_awaitedN` numbering.
+Important: JROC intentionally keeps **await IDs** (result storage) separate from **resume state IDs** (control-flow dispatch). This allows additional synthetic resume states (e.g., async try/catch catch-resume) without shifting `_awaitedN` numbering.
 
 **Try/catch with await**:
-- JS2IL uses **async-aware catch resumption**:
+- JROC uses **async-aware catch resumption**:
   - Await rejection sets `_pendingException` and resume state to a **catch label**.
   - Upon resume, catch loads `_pendingException` and executes catch body.
 - This avoids illegal branches into .NET `try` regions by resuming *outside* the protected region and routing control to catch explicitly.
@@ -117,37 +117,37 @@ function f() {
 ## 5) Behavioral Comparison
 
 ### 5.1 Suspension and Resume
-- **JS2IL**: Stores resume state in `_asyncState`; returns; fulfillment continuation stores the resolved value into `_awaited{awaitId}` then calls `_moveNext`.
+- **JROC**: Stores resume state in `_asyncState`; returns; fulfillment continuation stores the resolved value into `_awaited{awaitId}` then calls `_moveNext`.
 - **C#**: Stores awaiter in fields; schedules continuation via builder; resumes in `MoveNext()`.
 - **TypeScript**: `yield` in generator; resume via `next`/`throw` from `__awaiter`.
 
 ### 5.2 Exception Flow
-- **JS2IL**: Uses `_pendingException` for rejected awaits in try/catch; resume into catch label.
+- **JROC**: Uses `_pendingException` for rejected awaits in try/catch; resume into catch label.
 - **C#**: Handles exceptions through IL try/catch regions in `MoveNext()`.
 - **TypeScript**: Rejection calls `throw` on the generator, letting `try/catch` handle it.
 
 ### 5.3 State Encoding
-- **JS2IL**: `_asyncState` integer in scope class.
+- **JROC**: `_asyncState` integer in scope class.
 - **C#**: `<>1__state` integer in state machine.
 - **TypeScript**: `label` integer in `__generator`’s state object.
 
 ### 5.4 Helper Runtime
-- **JS2IL**: `JavaScriptRuntime.Promise` helpers.
+- **JROC**: `JavaScriptRuntime.Promise` helpers.
 - **C#**: `System.Runtime.CompilerServices` + `AsyncTaskMethodBuilder`.
 - **TypeScript**: `__awaiter` and `__generator` (either emitted or imported).
 
 ## 6) Practical Implications
 
-| Concern | JS2IL | C# Compiler | TypeScript (ES5)
+| Concern | JROC | C# Compiler | TypeScript (ES5)
 |---|---|---|---|
 | Performance overhead | Promise helpers + IL state switch | Optimized builders/awaiters | Generator + Promise overhead
 | Debuggability | IL / snapshots | IL / PDBs | Source maps
 | Semantics fidelity | Matches JS async promise behavior | Matches C# async semantics | Matches JS async semantics
 | Interop | JS runtime helpers in .NET | .NET async ecosystem | ES5 runtime only
 
-## 7) Notes for JS2IL Contributors
+## 7) Notes for JROC Contributors
 
-- JS2IL uses **scope-as-class** and fields for continuation state.
+- JROC uses **scope-as-class** and fields for continuation state.
 - Async lowering must respect .NET exception region rules; resumption points must avoid invalid branch targets.
 - Await in try/catch requires explicit reject‑resume handling and a pending exception slot.
 

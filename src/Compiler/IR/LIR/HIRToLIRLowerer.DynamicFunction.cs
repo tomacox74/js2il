@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Js2IL.HIR;
-using Js2IL.Services;
-using Js2IL.Utilities;
+using Jroc.HIR;
+using Jroc.Services;
+using Jroc.Utilities;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {

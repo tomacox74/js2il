@@ -5,7 +5,7 @@
 
 ## Context
 
-JS2IL lowers certain JavaScript constructs into **resumable** execution:
+JROC lowers certain JavaScript constructs into **resumable** execution:
 
 - `async function` / `await` (already implemented)
 - `function*` / `yield` / `yield*` (planned)
@@ -16,7 +16,7 @@ Resumable execution requires persisting state across suspension points:
 - spill slots for locals/temps that are live across suspension
 - bookkeeping for exceptional resume (`throw`) and forced completion (`return`)
 
-JS2IL’s core compilation model is **scope-as-class**:
+JROC’s core compilation model is **scope-as-class**:
 
 - Every JS scope becomes a .NET class.
 - Variables become fields on that scope instance.
@@ -24,7 +24,7 @@ JS2IL’s core compilation model is **scope-as-class**:
 
 Given this, we must choose where to store resumable state:
 
-1. Attach resumable state to the **leaf scope instance** (per invocation) that JS2IL already allocates.
+1. Attach resumable state to the **leaf scope instance** (per invocation) that JROC already allocates.
 2. Allocate a **separate state-machine object** (activation record) to hold resumable state.
 
 This ADR is about both async/await and synchronous generators because the tradeoffs are largely shared.
@@ -38,7 +38,7 @@ Prefer **scope-attached resumable state** as the default strategy:
   - async: the returned `Promise` / resolver handles
   - generators: a small generator object exposing `next/throw/return` that calls into a compiled step function
 
-This choice aligns with the existing JS2IL architecture and minimizes additional mandatory allocations.
+This choice aligns with the existing JROC architecture and minimizes additional mandatory allocations.
 
 ## Consequences
 
@@ -97,7 +97,7 @@ This choice aligns with the existing JS2IL architecture and minimizes additional
 
 **Description**: emit a struct/class similar to C# async/generator state machines.
 
-Rejected because JS2IL’s runtime model and ABI differs:
+Rejected because JROC’s runtime model and ABI differs:
 
 - Scope-as-class is already the closure mechanism.
 - JS semantics (dynamic types, `this`, `arguments`, `with`-like patterns, etc.) complicate using idiomatic C# patterns directly.

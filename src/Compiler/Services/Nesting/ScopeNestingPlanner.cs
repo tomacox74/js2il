@@ -1,11 +1,11 @@
 using System.Reflection.Metadata;
 using Acornima.Ast;
-using Js2IL.Services.VariableBindings;
-using Js2IL.SymbolTables;
-using Js2IL.Utilities;
+using Jroc.Services.VariableBindings;
+using Jroc.SymbolTables;
+using Jroc.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Js2IL.Services.Nesting;
+namespace Jroc.Services.Nesting;
 
 internal sealed class ScopeNestingPlanner
 {

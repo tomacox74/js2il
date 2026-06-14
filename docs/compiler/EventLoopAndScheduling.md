@@ -1,6 +1,6 @@
 # Event Loop and Scheduling
 
-JS2IL's runtime provides a small, deterministic event loop to support JavaScript semantics for:
+JROC's runtime provides a small, deterministic event loop to support JavaScript semantics for:
 
 - process.nextTick callbacks
 - Promise reactions ("microtasks")
@@ -23,7 +23,7 @@ ECMA-262 defines the concept of *Jobs* and describes host operations used to enq
 - Promise reaction processing is described by **TriggerPromiseReactions** (ECMA-262 §27.2.1.8), which enqueues a Job for each reaction and uses HostEnqueuePromiseJob: https://262.ecma-international.org/14.0/#sec-triggerpromisereactions
 - The spec also groups the relevant Job forms under “Promise Jobs” (ECMA-262 §27.2.2): https://262.ecma-international.org/14.0/#sec-promise-jobs
 
-In JS2IL, Promise reaction jobs map to a **microtask queue** and are drained during each event-loop iteration.
+In JROC, Promise reaction jobs map to a **microtask queue** and are drained during each event-loop iteration.
 
 ## Specification compliance
 
@@ -32,17 +32,17 @@ ECMA-262 intentionally does not define a single, universal “event loop”. Ins
 - what a **Job** is and that Jobs are scheduled and run by the **host** (ECMA-262 §9.5)
 - the **host hook** used by Promise machinery to enqueue promise reaction jobs (HostEnqueuePromiseJob, ECMA-262 §9.5.4)
 
-Given that, JS2IL’s goal is:
+Given that, JROC’s goal is:
 
 - to be compliant with the ECMAScript Job/Promise semantics, while
 - providing a small, deterministic, Node-like host loop for common APIs (timers/immediates).
 
-Concretely, JS2IL makes the following compatibility guarantees:
+Concretely, JROC makes the following compatibility guarantees:
 
 - **Promise reactions are enqueued as Jobs/microtasks.** When a Promise settles, its reactions are queued onto the microtask queue (see TriggerPromiseReactions, ECMA-262 §27.2.1.8).
-- **Microtask checkpoints are bounded to avoid starvation.** After each callback that JS2IL treats as a host “task” (e.g., a `setImmediate` callback or a due timer callback), the pump drains a bounded number of microtasks before continuing. This preserves forward progress for timers/macrotasks in long microtask chains.
+- **Microtask checkpoints are bounded to avoid starvation.** After each callback that JROC treats as a host “task” (e.g., a `setImmediate` callback or a due timer callback), the pump drains a bounded number of microtasks before continuing. This preserves forward progress for timers/macrotasks in long microtask chains.
 
-JS2IL also implements the JobCallback host abstractions used by the spec to carry host-defined context alongside scheduled Jobs:
+JROC also implements the JobCallback host abstractions used by the spec to carry host-defined context alongside scheduled Jobs:
 
 - **JobCallback Records** (ECMA-262 §9.5.1)
 - **HostMakeJobCallback** (ECMA-262 §9.5.2)
@@ -54,7 +54,7 @@ Note:
 
 - ECMA-262 does *not* standardize timers like `setTimeout`/`setInterval` or `setImmediate`.
 - Those APIs originate from host environments (browsers/HTML, Node.js).
-- JS2IL implements Node-like timers to support common JavaScript code.
+- JROC implements Node-like timers to support common JavaScript code.
 
 ## Architecture
 

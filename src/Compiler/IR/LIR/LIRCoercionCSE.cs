@@ -1,4 +1,4 @@
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 /// <summary>
 /// Common Subexpression Elimination (CSE) pass for repeated coercion instructions.

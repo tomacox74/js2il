@@ -49,7 +49,7 @@ public static class AsyncGeneratorFunction
         var length = JavaScriptRuntime.Function.ParseDynamicFunctionParameterNames(callArgs).Length;
 
         Func<object[], object?[]?, object?> functionValue = static (_, __) =>
-            throw new NotSupportedException("Dynamically constructed async generator functions are not invokable in js2il. Use statically declared async generator functions instead.");
+            throw new NotSupportedException("Dynamically constructed async generator functions are not invokable in jroc. Use statically declared async generator functions instead.");
         JavaScriptRuntime.AsyncFunction.InitializeFunctionInstance(functionValue, length, "anonymous", requiresInvocationContext: false);
         InitializeFunctionObject(functionValue);
         return functionValue;

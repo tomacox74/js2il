@@ -11,7 +11,7 @@ The end-state goal is to remove the legacy method-body emitters (e.g. `BinaryOpe
 
 ## Scope / Definitions
 - **New pipeline**: `JsMethodCompiler` + `HIRBuilder` + `HIRToLIRLowerer` + `LIRToILCompiler`.
-- **Legacy pipeline** (historical): the deleted AST→IL emitters under `Js2IL/Services/ILGenerators/*` (notably `ILExpressionGenerator`, `ILMethodGenerator`, `BinaryOperators`) plus legacy body compilers that previously handled unsupported IR cases.
+- **Legacy pipeline** (historical): the deleted AST→IL emitters under `Jroc/Services/ILGenerators/*` (notably `ILExpressionGenerator`, `ILMethodGenerator`, `BinaryOperators`) plus legacy body compilers that previously handled unsupported IR cases.
 - **“Migrated”** means the construct is parsed to HIR, lowered to LIR, and emitted to IL in the new pipeline (not merely “exists as an instruction type”).
 
 ## Current State (Audit Summary)
@@ -190,10 +190,10 @@ These are candidates to delete as IR reaches feature parity and remaining legacy
 > Note (Jan 2026): several of the high-confidence legacy deletion targets have already been removed to enforce IR-only compilation.
 
 **High confidence once IR is complete**
-- [x] PL7.1 `Js2IL/Services/ILGenerators/BinaryOperators.cs` (deleted)
-- [x] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs` (deleted)
-- [x] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs` (deleted)
-- [x] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs` (legacy compilation removed; stub throws)
+- [x] PL7.1 `Jroc/Services/ILGenerators/BinaryOperators.cs` (deleted)
+- [x] PL7.2 `Jroc/Services/ILGenerators/ILExpressionGenerator.cs` (deleted)
+- [x] PL7.3 `Jroc/Services/ILGenerators/ILMethodGenerator.cs` (deleted)
+- [x] PL7.4 `Jroc/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs` (legacy compilation removed; stub throws)
 - [x] PL7.5 Remove legacy class body compiler (IR-only class bodies)
 
 **Likely, but requires follow-up audit**
@@ -216,7 +216,7 @@ Notes on `Variables`/`Variable` deletion:
 6. Continue expanding IR coverage; legacy fallback has been removed.
 
 ## Validation Checklist (per feature)
-- Add/extend execution tests under `tests/Js2IL.Tests/*/ExecutionTests`.
+- Add/extend execution tests under `tests/Jroc.Tests/*/ExecutionTests`.
 - Update generator snapshots only after execution behavior matches legacy (if snapshots are used for the area).
 - Confirm `IRPipelineMetrics` has no new failure hotspots for common test suites.
 

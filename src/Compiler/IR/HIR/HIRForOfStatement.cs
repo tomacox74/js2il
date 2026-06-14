@@ -1,6 +1,6 @@
-using Js2IL.SymbolTables;
+using Jroc.SymbolTables;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 public sealed class HIRForOfStatement : HIRStatement
 {

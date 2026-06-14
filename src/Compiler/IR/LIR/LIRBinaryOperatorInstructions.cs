@@ -1,4 +1,4 @@
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 // ============================================================================
 // Arithmetic Binary Operators

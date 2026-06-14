@@ -1,6 +1,6 @@
-using Js2IL.Services.TwoPhaseCompilation;
+using Jroc.Services.TwoPhaseCompilation;
 
-namespace Js2IL.HIR;
+namespace Jroc.HIR;
 
 /// <summary>
 /// Stores a value into a known instance field on the current receiver ('this')

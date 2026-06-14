@@ -1,6 +1,6 @@
-using Js2IL.Services.TwoPhaseCompilation;
+using Jroc.Services.TwoPhaseCompilation;
 
-namespace Js2IL.IR;
+namespace Jroc.IR;
 
 public sealed class MethodBodyIR
 {

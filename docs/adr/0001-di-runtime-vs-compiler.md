@@ -8,7 +8,7 @@
 This repository contains two distinct components with different constraints:
 
 - **JavaScriptRuntime**: a runtime library that is shipped alongside generated assemblies and is loaded when executing compiled JavaScript.
-- **Js2IL (compiler)**: a compile-time toolchain that runs during compilation to generate .NET assemblies.
+- **Jroc (compiler)**: a compile-time toolchain that runs during compilation to generate .NET assemblies.
 
 We need a dependency injection (DI) mechanism for:
 
@@ -18,7 +18,7 @@ We need a dependency injection (DI) mechanism for:
 
 However, the runtime component has a strong requirement to avoid taking additional dependencies that would become part of the runtime surface area.
 
-More specifically, the goal is that any assembly produced by Js2IL has runtime dependencies on:
+More specifically, the goal is that any assembly produced by Jroc has runtime dependencies on:
 
 - **.NET / base class libraries**, and
 - **JavaScriptRuntime**
@@ -33,7 +33,7 @@ More specifically, the goal is that any assembly produced by Js2IL has runtime d
   - ability to replace instances for tests
   - automatic creation of dependencies on demand
 
-- **Js2IL (compiler) uses Microsoft.Extensions.DependencyInjection** for compile-time services.
+- **Jroc (compiler) uses Microsoft.Extensions.DependencyInjection** for compile-time services.
 
 This is an explicit split: the runtime optimizes for minimal dependency footprint; the compiler optimizes for maintainability and ecosystem compatibility.
 
@@ -42,7 +42,7 @@ This is an explicit split: the runtime optimizes for minimal dependency footprin
 ### Positive
 
 - **JavaScriptRuntime remains dependency-light**: compiled outputs only need JavaScriptRuntime + .NET at runtime, which keeps distribution/deployment simple and avoids dependency/version conflicts from extra transitive packages.
-- **Js2IL uses a well-supported DI ecosystem**: common patterns, predictable behavior, and reduced need to maintain custom container logic for compile-time services.
+- **Jroc uses a well-supported DI ecosystem**: common patterns, predictable behavior, and reduced need to maintain custom container logic for compile-time services.
 - **Testing remains straightforward** in both layers:
   - runtime: replace singletons in `ServiceContainer`
   - compiler: use the standard DI registration/override patterns
@@ -65,7 +65,7 @@ Rejected because it would add an external dependency to JavaScriptRuntime, which
 
 ### 2) Use the hand-rolled container everywhere
 
-Rejected because it would increase the maintenance burden in Js2IL (compile-time) without a corresponding benefit; the compiler has fewer constraints and benefits from using the Microsoft-supported container.
+Rejected because it would increase the maintenance burden in Jroc (compile-time) without a corresponding benefit; the compiler has fewer constraints and benefits from using the Microsoft-supported container.
 
 ### 3) Introduce a shared minimal abstraction (adapter)
 

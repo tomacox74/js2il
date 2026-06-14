@@ -1,8 +1,8 @@
-﻿using System.Reflection.Metadata;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using Js2IL.Utilities.Ecma335;
+using Jroc.Utilities.Ecma335;
 
-namespace Js2IL.Services
+namespace Jroc.Services
 {
     public class BaseClassLibraryReferences
     {
@@ -132,16 +132,16 @@ namespace Js2IL.Services
         public MemberReferenceHandle String_Concat_Ref => _memberRefRegistry.GetOrAddMethod(typeof(string), nameof(string.Concat), new[] { typeof(string), typeof(string) });
 
         public MemberReferenceHandle JsCompiledModuleAttribute_Ctor_Ref =>
-            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCompiledModuleAttribute), new[] { typeof(string) });
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsCompiledModuleAttribute), new[] { typeof(string) });
 
         public MemberReferenceHandle JsCompiledModuleTypeAttribute_Ctor_Ref =>
-            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCompiledModuleTypeAttribute), new[] { typeof(string), typeof(string), typeof(string) });
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsCompiledModuleTypeAttribute), new[] { typeof(string), typeof(string), typeof(string) });
 
         public MemberReferenceHandle JsModuleAttribute_Ctor_Ref =>
-            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsModuleAttribute), new[] { typeof(string) });
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsModuleAttribute), new[] { typeof(string) });
 
         public MemberReferenceHandle JsCallableScopeAbiAttribute_Ctor_Ref =>
-            _memberRefRegistry.GetOrAddConstructor(typeof(Js2IL.Runtime.JsCallableScopeAbiAttribute), new[] { typeof(Js2IL.Runtime.CallableScopeAbiKind) });
+            _memberRefRegistry.GetOrAddConstructor(typeof(Jroc.Runtime.JsCallableScopeAbiAttribute), new[] { typeof(Jroc.Runtime.CallableScopeAbiKind) });
 
         public MemberReferenceHandle DebuggableAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(System.Diagnostics.DebuggableAttribute), new[] { typeof(bool), typeof(bool) });

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully implemented a comprehensive BenchmarkDotNet-based performance benchmark suite for comparing JavaScript execution across ClearScript, Jint, and js2il runtimes.
+Successfully implemented a comprehensive BenchmarkDotNet-based performance benchmark suite for comparing JavaScript execution across ClearScript, Jint, and jroc runtimes.
 
 ## What Was Built
 
@@ -20,12 +20,12 @@ tests/performance/Benchmarks/
 │   ├── IJavaScriptRuntime.cs
 │   ├── ClearScriptRuntime.cs
 │   ├── JintRuntime.cs
-│   └── Js2ILRuntime.cs
+│   └── JrocRuntime.cs
 ├── Compliance/             # Licensing and provenance
 │   └── PROVENANCE.md
 ├── ValidationTest.cs       # Runtime adapter validation
 ├── JavaScriptRuntimeBenchmarks.cs  # Cross-runtime benchmarks
-├── Js2ILPhasedBenchmarks.cs        # Phased compile/execute benchmarks
+├── JrocPhasedBenchmarks.cs        # Phased compile/execute benchmarks
 ├── Program.cs              # Entry point with CLI
 ├── Benchmarks.csproj       # Project configuration
 ├── README.md               # Comprehensive documentation
@@ -38,7 +38,7 @@ Three default runtime adapters implementing `IJavaScriptRuntime`:
 
 - **ClearScriptRuntime**: Executes JavaScript through a .NET-hosted V8 engine
 - **JintRuntime**: In-process JavaScript interpreter
-- **Js2ILRuntime**: Compiles JavaScript to IL, separates compile/execute phases
+- **JrocRuntime**: Compiles JavaScript to IL, separates compile/execute phases
 
 ### 3. Benchmark Scenarios
 
@@ -50,23 +50,23 @@ The suite started with 5 scenarios ported from the Jint benchmark suite, and now
 4. **stopwatch.js** (1.2KB) - Constructor pattern, methods, loops
 5. **array-stress.js** (451 chars) - Array operations (push, pop, shift, unshift, splice)
 
-All scenarios include "use strict" directive for js2il compatibility.
+All scenarios include "use strict" directive for jroc compatibility.
 
 ### 4. Benchmark Classes
 
 - **JavaScriptRuntimeBenchmarks**: Cross-runtime comparison
-  - Benchmarks: ClearScript, Jint, js2il (compile+execute)
+  - Benchmarks: ClearScript, Jint, jroc (compile+execute)
   - Parameterized across the full checked-in root scenario catalog
   
-- **Js2ILPhasedBenchmarks**: Separate compile/execute phases
-  - Benchmarks: js2il compile, js2il execute (pre-compiled)
+- **JrocPhasedBenchmarks**: Separate compile/execute phases
+  - Benchmarks: jroc compile, jroc execute (pre-compiled)
   - Enables analysis of AOT compilation overhead
 
 ### 5. CLI Interface
 
 ```bash
 dotnet run -c Release               # Cross-runtime comparison (default)
-dotnet run -c Release --phased      # js2il phased benchmarks
+dotnet run -c Release --phased      # jroc phased benchmarks
 dotnet run -c Release --all         # All benchmarks
 dotnet run -c Release --validate    # Runtime adapter validation
 ```
@@ -119,7 +119,7 @@ Comprehensive validation test (`ValidationTest.cs`):
 **Validation Results**:
 - ✅ Jint: ~77ms execution
 - ✅ ClearScript: hosted V8 execution
-- ✅ js2il: ~280-360ms compile + ~42-65ms execution
+- ✅ jroc: ~280-360ms compile + ~42-65ms execution
 - ✅ Representative scenarios across the expanded root catalog are present and loadable
 - ✅ Build successful (0 warnings, 0 errors)
 
@@ -139,7 +139,7 @@ public interface IJavaScriptRuntime
 
 ### Compile/Execute Separation
 
-js2il adapter captures both phases:
+jroc adapter captures both phases:
 
 ```csharp
 result.CompileTime = compileStopwatch.Elapsed;  // AOT compilation
@@ -205,8 +205,8 @@ Both harnesses coexist for different use cases:
 All acceptance criteria met:
 
 - [x] Benchmark project builds and runs locally in Release
-- [x] At least 5 phase-1 scenarios execute successfully across Node, Jint, and js2il
-- [x] js2il compile and execution timings captured separately
+- [x] At least 5 phase-1 scenarios execute successfully across Node, Jint, and jroc
+- [x] jroc compile and execution timings captured separately
 - [x] Output includes normalized ratios and machine-readable artifacts
 - [x] Existing quick harness remains functional
 - [x] CI publishes informational benchmark artifacts without gating PRs
@@ -243,13 +243,13 @@ tests/performance/Benchmarks/.gitignore
 tests/performance/Benchmarks/Benchmarks.csproj
 tests/performance/Benchmarks/Compliance/PROVENANCE.md
 tests/performance/Benchmarks/JavaScriptRuntimeBenchmarks.cs
-tests/performance/Benchmarks/Js2ILPhasedBenchmarks.cs
+tests/performance/Benchmarks/JrocPhasedBenchmarks.cs
 tests/performance/Benchmarks/Program.cs
 tests/performance/Benchmarks/README.md
 tests/performance/Benchmarks/Runtimes/IJavaScriptRuntime.cs
 tests/performance/Benchmarks/Runtimes/ClearScriptRuntime.cs
 tests/performance/Benchmarks/Runtimes/JintRuntime.cs
-tests/performance/Benchmarks/Runtimes/Js2ILRuntime.cs
+tests/performance/Benchmarks/Runtimes/JrocRuntime.cs
 tests/performance/Benchmarks/Scenarios/array-stress.js
 tests/performance/Benchmarks/Scenarios/evaluation-modern.js
 tests/performance/Benchmarks/Scenarios/evaluation.js
@@ -278,8 +278,8 @@ tests/performance/README.md
 Successfully delivered a production-ready BenchmarkDotNet performance suite that:
 
 1. ✅ Provides rigorous statistical benchmarking
-2. ✅ Separates js2il compile and execute phases
-3. ✅ Supports multiple runtimes (ClearScript, Jint, js2il)
+2. ✅ Separates jroc compile and execute phases
+3. ✅ Supports multiple runtimes (ClearScript, Jint, jroc)
 4. ✅ Includes comprehensive documentation
 5. ✅ Integrates with CI (informational-only)
 6. ✅ Maintains licensing compliance
