@@ -8,6 +8,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 _Nothing yet._
 
+## v0.9.28 - 2026-06-14
+
+- repo/tooling/docs/tests: rename project identity from `js2il` to `jroc` across source, solution/tests/docs paths, and runtime-visible naming surfaces; keep `.config/dotnet-tools.json` on published `js2il` until the tool package rename is released.
 ## v0.9.27 - 2026-06-05
 
 - compiler/runtime/tests/perf: fix issue #1196 by restoring the mitata `string-width` benchmark under jroc, including awaited import-binding rewriting, verifier-safe async `for..of` lowering, destructuring/capture/runtime gaps uncovered by the port (`Intl`, `Number.isSafeInteger`, `node:process`), and a jroc-safe benchmark runner path with focused regression coverage.
