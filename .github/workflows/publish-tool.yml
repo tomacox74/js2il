@@ -15,6 +15,9 @@ on:
 jobs:
   build-and-publish:
     runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: read
     env:
       NUGET_SERVER: https://api.nuget.org/v3/index.json
     steps:
@@ -89,9 +92,13 @@ jobs:
             dotnet pack $project -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
           }
 
+      - name: NuGet login (trusted publishing)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Publish coordinated packages to NuGet
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         shell: pwsh
         run: |
           $packageNames = @(
@@ -109,5 +116,5 @@ jobs:
             }
 
             Write-Host "Pushing $packageName to $env:NUGET_SERVER"
-            dotnet nuget push --source "$env:NUGET_SERVER" --api-key "$env:NUGET_API_KEY" "$pkgPath" --skip-duplicate
+            dotnet nuget push --source "$env:NUGET_SERVER" --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}" "$pkgPath" --skip-duplicate
           }
