@@ -558,13 +558,23 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
+        ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
         {
             // Only propagate unboxed doubles for stable types. This matches the current
             // typed-scope-field support in TypeGenerator/VariableRegistry.
             if (b.IsStableType && b.ClrType == typeof(double))
             {
                 return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+            }
+
+            if (b.IsStableType && b.ClrType == typeof(bool))
+            {
+                return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+            }
+
+            if (CanUseStringLocalStorage(b))
+            {
+                return new ValueStorage(ValueStorageKind.Reference, typeof(string));
             }
 
             return new ValueStorage(ValueStorageKind.Reference, typeof(object));
@@ -674,6 +684,11 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, result));
             DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             _tempBindingOrigin[result] = binding;
+            return true;
+        }
+
+        if (TryMaterializeStringBuilderAccumulator(binding, out result))
+        {
             return true;
         }
 

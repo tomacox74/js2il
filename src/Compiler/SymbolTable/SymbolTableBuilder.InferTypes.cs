@@ -1038,15 +1038,6 @@ public partial class SymbolTableBuilder
                     break;
             }
 
-            if (node is FunctionDeclaration
-                || node is FunctionExpression
-                || node is ArrowFunctionExpression
-                || node is ClassDeclaration
-                || node is ClassExpression)
-            {
-                return changed;
-            }
-
             foreach (var child in node.ChildNodes)
             {
                 changed |= AnalyzeAssignmentLikeNode(child, currentScope);

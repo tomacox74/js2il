@@ -1005,6 +1005,10 @@ internal sealed class JsMethodCompiler
         // This keeps LIR->IL focused on IL mechanics rather than type-directed rewrites.
         LIRTypeNormalization.Normalize(lirMethod!, classRegistry);
 
+        // Some numeric coercions are introduced by type normalization. Fuse late member-call numeric
+        // patterns without rerunning the full intrinsic pass, which may have already removed temps.
+        LIRIntrinsicNormalization.NormalizeLateNumericMemberCalls(lirMethod!);
+
         // CSE: eliminate redundant coercions (ToNumber/ToBoolean/IsTruthy) within basic blocks
         // when the source is a known primitive. This avoids repeated helper calls in tight loops.
         LIRCoercionCSE.Optimize(lirMethod!);

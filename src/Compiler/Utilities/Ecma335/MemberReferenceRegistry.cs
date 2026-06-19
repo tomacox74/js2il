@@ -452,7 +452,12 @@ namespace Jroc.Utilities.Ecma335
             else if (type == typeof(object[])) encoder.SZArray().Object();
             else if (type == typeof(string[])) encoder.SZArray().String();
             // Common BCL types (should we just open it up for all types)
-            else if (type == typeof(Type) || type == typeof(Action) || type == typeof(System.Reflection.MethodBase) || type == typeof(Delegate) || type == typeof(MulticastDelegate))
+            else if (type == typeof(Type)
+                || type == typeof(Action)
+                || type == typeof(System.Text.StringBuilder)
+                || type == typeof(System.Reflection.MethodBase)
+                || type == typeof(Delegate)
+                || type == typeof(MulticastDelegate))
             {
                 var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
                 encoder.Type(bclTypeReference, isValueType: false);
@@ -469,7 +474,7 @@ namespace Jroc.Utilities.Ecma335
             {
                 throw new NotSupportedException(
                     $"Type '{type.FullName ?? type.Name}' from namespace '{type.Namespace}' is not supported in method signatures. " +
-                    $"Only JavaScriptRuntime types and primitive BCL types (object, string, double, bool, int, object[], Action, IntPtr) are supported.");
+                    $"Only JavaScriptRuntime types and primitive BCL types (object, string, double, bool, int, object[], Action, IntPtr, StringBuilder) are supported.");
             }
         }
     }

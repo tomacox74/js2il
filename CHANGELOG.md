@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/perf: optimize the `dromaeo-string-base64` scenario by fusing numeric `charCodeAt` calls and lowering eligible local string `+=` accumulators through an internal `StringBuilder`, with regression coverage for preserving plain assignment types after string accumulation.
 
 ## v0.9.29 - 2026-06-19
 

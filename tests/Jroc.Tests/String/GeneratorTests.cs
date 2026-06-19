@@ -28,6 +28,13 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_PlusEquals_PlainAssignmentKeepsAssignedType()
+        {
+            var testName = nameof(String_PlusEquals_PlainAssignmentKeepsAssignedType);
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task String_Replace_CallOnExpression()
         {
             var testName = nameof(String_Replace_CallOnExpression);

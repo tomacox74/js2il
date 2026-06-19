@@ -21,6 +21,11 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerUpdateExpression(updateExpr, out _, resultUsed: false);
         }
 
+        if (expression is HIRAssignmentExpression assignmentExpr)
+        {
+            return TryLowerAssignmentExpression(assignmentExpr, out _, resultUsed: false);
+        }
+
         if (expression is HIRSequenceExpression seqExpr)
         {
             for (int i = 0; i < seqExpr.Expressions.Count; i++)
@@ -458,7 +463,7 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
+                ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
                 {
                     if (IsSafeInjectedCommonJsRequireParameter(b))
                     {
@@ -481,6 +486,10 @@ public sealed partial class HIRToLIRLowerer
                         if (b.ClrType == typeof(bool))
                         {
                             return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+                        }
+                        if (b.ClrType == typeof(string) && CanUseStringLocalStorage(b))
+                        {
+                            return new ValueStorage(ValueStorageKind.Reference, typeof(string));
                         }
                         if (b.ClrType == typeof(JavaScriptRuntime.Array))
                         {
@@ -656,6 +665,11 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
                 
+                if (TryMaterializeStringBuilderAccumulator(binding, out resultTempVar))
+                {
+                    return true;
+                }
+
                 if (!_variableMap.TryGetValue(binding, out resultTempVar))
                 {
                     if (binding.RequiresTemporalDeadZoneChecks)

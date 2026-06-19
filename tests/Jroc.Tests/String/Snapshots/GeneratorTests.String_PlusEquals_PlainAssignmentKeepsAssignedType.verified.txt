@@ -1,9 +1,9 @@
-﻿// IL code: String_PlusEquals_Append
+// IL code: String_PlusEquals_PlainAssignmentKeepsAssignedType
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class private auto ansi beforefieldinit Modules.String_PlusEquals_Append
+.class private auto ansi beforefieldinit Modules.String_PlusEquals_PlainAssignmentKeepsAssignedType
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x208e
+			// Method begins at RVA 0x20a7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,36 +40,44 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 50 (0x32)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
-			[0] class Modules.String_PlusEquals_Append/Scope,
+			[0] class Modules.String_PlusEquals_PlainAssignmentKeepsAssignedType/Scope,
 			[1] class [System.Runtime]System.Text.StringBuilder,
-			[2] class [System.Runtime]System.Text.StringBuilder,
-			[3] string
+			[2] object,
+			[3] class [System.Runtime]System.Text.StringBuilder,
+			[4] object
 		)
 
-		IL_0000: newobj instance void Modules.String_PlusEquals_Append/Scope::.ctor()
+		IL_0000: newobj instance void Modules.String_PlusEquals_PlainAssignmentKeepsAssignedType/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "a"
 		IL_000b: call class [System.Runtime]System.Text.StringBuilder [JavaScriptRuntime]JavaScriptRuntime.String::CreateConcatBuilder(string)
-		IL_0010: stloc.2
-		IL_0011: ldloc.2
+		IL_0010: stloc.3
+		IL_0011: ldloc.3
 		IL_0012: stloc.1
 		IL_0013: ldloc.1
 		IL_0014: ldstr "b"
 		IL_0019: call void [JavaScriptRuntime]JavaScriptRuntime.String::AppendConcatBuilder(class [System.Runtime]System.Text.StringBuilder, string)
 		IL_001e: ldloc.1
 		IL_001f: call string [JavaScriptRuntime]JavaScriptRuntime.String::MaterializeConcatBuilder(class [System.Runtime]System.Text.StringBuilder)
-		IL_0024: stloc.3
-		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002a: ldloc.3
-		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0030: pop
-		IL_0031: ret
-	} // end of method String_PlusEquals_Append::__js_module_init__
+		IL_0024: pop
+		IL_0025: ldc.r8 3
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stloc.s 4
+		IL_0035: ldloc.s 4
+		IL_0037: stloc.2
+		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003d: ldloc.2
+		IL_003e: ldloc.2
+		IL_003f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0049: pop
+		IL_004a: ret
+	} // end of method String_PlusEquals_PlainAssignmentKeepsAssignedType::__js_module_init__
 
-} // end of class Modules.String_PlusEquals_Append
+} // end of class Modules.String_PlusEquals_PlainAssignmentKeepsAssignedType
 
 .class private auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -78,7 +86,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2097
+		// Method begins at RVA 0x20b0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -86,7 +94,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.String_PlusEquals_Append::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.String_PlusEquals_PlainAssignmentKeepsAssignedType::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
