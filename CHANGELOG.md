@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.29 - 2026-06-19
+
 - ci/workflows: switch NuGet publishing to trusted publishing (OIDC) and harden release-following benchmark/smoke workflow gating so reruns wait for a successful `publish-tool.yml` run by release version instead of failing on an earlier failed publish attempt.
 
 ## v0.9.28 - 2026-06-14
