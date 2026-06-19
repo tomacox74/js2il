@@ -8,6 +8,8 @@ Modern JavaScript dotnet compiler.
 
 JROC compiles JavaScript source code to native .NET assemblies. It includes runtime support for some Node.js core modules, enabling JavaScript applications and libraries to run on the .NET runtime.
 
+For release notes and unreleased changes, see `CHANGELOG.md`.
+
 ## Usage
 
 Prerequisite: .NET 10 SDK.
