@@ -1027,13 +1027,29 @@ namespace JavaScriptRuntime
             return input[(int)idx].ToString();
         }
 
+        public static StringBuilder CreateConcatBuilder(string initialValue)
+        {
+            initialValue ??= string.Empty;
+            return new StringBuilder(initialValue, global::System.Math.Max(initialValue.Length + 16, 256));
+        }
+
+        public static void AppendConcatBuilder(StringBuilder builder, string value)
+        {
+            builder.Append(value);
+        }
+
+        public static string MaterializeConcatBuilder(StringBuilder builder)
+        {
+            return builder.ToString();
+        }
+
         /// <summary>
         /// Implements String.prototype.charCodeAt([index]).
         /// Returns a UTF-16 code unit as a number, or NaN when out of range.
         /// </summary>
         public static double CharCodeAt(string input)
         {
-            return CharCodeAt(input, null);
+            return CharCodeAt(input, 0d);
         }
 
         /// <summary>
@@ -1041,18 +1057,25 @@ namespace JavaScriptRuntime
         /// </summary>
         public static double CharCodeAt(string input, object? index)
         {
-            input ??= string.Empty;
-
             // JS default index is 0 when omitted/undefined/null.
             var idx = index == null ? 0d : JavaScriptRuntime.TypeUtilities.ToNumber(index);
+            return CharCodeAt(input, idx);
+        }
 
-            if (double.IsNaN(idx) || double.IsInfinity(idx))
+        /// <summary>
+        /// Implements String.prototype.charCodeAt(index) for call sites that already have an unboxed numeric index.
+        /// </summary>
+        public static double CharCodeAt(string input, double index)
+        {
+            input ??= string.Empty;
+
+            if (double.IsNaN(index) || double.IsInfinity(index))
             {
                 return double.NaN;
             }
 
             // ToIntegerOrInfinity truncates toward zero.
-            idx = global::System.Math.Truncate(idx);
+            var idx = global::System.Math.Truncate(index);
 
             if (idx < 0 || idx >= input.Length)
             {
@@ -1060,6 +1083,28 @@ namespace JavaScriptRuntime
             }
 
             return (double)input[(int)idx];
+        }
+
+        public static double CharCodeAtAsNumber(object? receiver, double index)
+        {
+            if (receiver is string input)
+            {
+                return CharCodeAt(input, index);
+            }
+
+            return JavaScriptRuntime.TypeUtilities.ToNumber(
+                JavaScriptRuntime.Object.CallMember1(receiver!, "charCodeAt", index));
+        }
+
+        public static double CharCodeAtAsNumber(object? receiver, object? index)
+        {
+            if (receiver is string input)
+            {
+                return CharCodeAt(input, index);
+            }
+
+            return JavaScriptRuntime.TypeUtilities.ToNumber(
+                JavaScriptRuntime.Object.CallMember1(receiver!, "charCodeAt", index));
         }
 
         public static string ToLowerCase(string input)

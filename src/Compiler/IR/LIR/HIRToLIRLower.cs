@@ -29,6 +29,13 @@ public sealed partial class HIRToLIRLowerer
     // Keyed by BindingInfo reference to give each shadowed variable its own slot.
     private readonly Dictionary<BindingInfo, int> _variableSlots = new Dictionary<BindingInfo, int>();
 
+    // Internal StringBuilder accumulator per proven-stable local string binding.
+    // Ordinary JS reads materialize a string; += statements can append without repeated string copies.
+    private readonly Dictionary<BindingInfo, TempVariable> _stringBuilderAccumulators = new Dictionary<BindingInfo, TempVariable>();
+    private readonly Dictionary<BindingInfo, int> _stringBuilderAccumulatorSlots = new Dictionary<BindingInfo, int>();
+    private readonly HashSet<BindingInfo> _stringBuilderAccumulatorCandidates = new HashSet<BindingInfo>();
+    private readonly HashSet<BindingInfo> _stringBuilderAccumulatorDisqualifiedBindings = new HashSet<BindingInfo>();
+
     // Maps parameter bindings to their 0-based JS parameter index (not IL arg index)
     private readonly Dictionary<BindingInfo, int> _parameterIndexMap = new Dictionary<BindingInfo, int>();
 
@@ -110,6 +117,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, hirMethod.SuperClassExpression, isAsync, isGenerator, isDerivedConstructor);
+        lowerer.CollectStringBuilderAccumulatorCandidates(hirMethod.Body.Statements);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)

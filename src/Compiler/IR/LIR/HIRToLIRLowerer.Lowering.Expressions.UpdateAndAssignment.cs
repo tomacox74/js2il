@@ -572,6 +572,554 @@ public sealed partial class HIRToLIRLowerer
         return boolTempVar;
     }
 
+    private TempVariable EnsureString(TempVariable tempVar)
+    {
+        var storage = GetTempStorage(tempVar);
+
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        {
+            return tempVar;
+        }
+
+        var stringTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConvertToString(EnsureObject(tempVar), stringTempVar));
+        DefineTempStorage(stringTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        return stringTempVar;
+    }
+
+    private bool CanUseStringLocalStorage(BindingInfo binding)
+    {
+        return binding.IsStableType
+            && binding.ClrType == typeof(string)
+            && _stringBuilderAccumulators.ContainsKey(binding);
+    }
+
+    private void CollectStringBuilderAccumulatorCandidates(IEnumerable<HIRStatement> statements)
+    {
+        foreach (var statement in statements)
+        {
+            CollectStringBuilderAccumulatorCandidates(statement);
+        }
+    }
+
+    private void CollectStringBuilderAccumulatorCandidates(HIRStatement? statement)
+    {
+        switch (statement)
+        {
+            case null:
+                return;
+
+            case HIRBlock block:
+                CollectStringBuilderAccumulatorCandidates(block.Statements);
+                return;
+
+            case HIRVariableDeclaration variableDeclaration:
+                if (variableDeclaration.Initializer != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(variableDeclaration.Initializer);
+                }
+                return;
+
+            case HIRDestructuringVariableDeclaration destructuringVariableDeclaration:
+                CollectStringBuilderAccumulatorCandidates(destructuringVariableDeclaration.Initializer);
+                return;
+
+            case HIRExpressionStatement expressionStatement:
+                CollectStringBuilderAccumulatorCandidates(expressionStatement.Expression);
+                return;
+
+            case HIRReturnStatement returnStatement:
+                if (returnStatement.Expression != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(returnStatement.Expression);
+                }
+                return;
+
+            case HIRThrowStatement throwStatement:
+                CollectStringBuilderAccumulatorCandidates(throwStatement.Argument);
+                return;
+
+            case HIRIfStatement ifStatement:
+                CollectStringBuilderAccumulatorCandidates(ifStatement.Test);
+                CollectStringBuilderAccumulatorCandidates(ifStatement.Consequent);
+                CollectStringBuilderAccumulatorCandidates(ifStatement.Alternate);
+                return;
+
+            case HIRForStatement forStatement:
+                CollectStringBuilderAccumulatorCandidates(forStatement.Init);
+                if (forStatement.Test != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(forStatement.Test);
+                }
+                if (forStatement.Update != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(forStatement.Update);
+                }
+                CollectStringBuilderAccumulatorCandidates(forStatement.Body);
+                return;
+
+            case HIRWhileStatement whileStatement:
+                CollectStringBuilderAccumulatorCandidates(whileStatement.Test);
+                CollectStringBuilderAccumulatorCandidates(whileStatement.Body);
+                return;
+
+            case HIRDoWhileStatement doWhileStatement:
+                CollectStringBuilderAccumulatorCandidates(doWhileStatement.Body);
+                CollectStringBuilderAccumulatorCandidates(doWhileStatement.Test);
+                return;
+
+            case HIRForInStatement forInStatement:
+                CollectStringBuilderAccumulatorCandidates(forInStatement.Enumerable);
+                CollectStringBuilderAccumulatorCandidates(forInStatement.Body);
+                return;
+
+            case HIRForOfStatement forOfStatement:
+                CollectStringBuilderAccumulatorCandidates(forOfStatement.Iterable);
+                CollectStringBuilderAccumulatorCandidates(forOfStatement.Body);
+                return;
+
+            case HIRSwitchStatement switchStatement:
+                CollectStringBuilderAccumulatorCandidates(switchStatement.Discriminant);
+                foreach (var switchCase in switchStatement.Cases)
+                {
+                    if (switchCase.Test != null)
+                    {
+                        CollectStringBuilderAccumulatorCandidates(switchCase.Test);
+                    }
+                    CollectStringBuilderAccumulatorCandidates(switchCase.Consequent);
+                }
+                return;
+
+            case HIRTryStatement tryStatement:
+                CollectStringBuilderAccumulatorCandidates(tryStatement.TryBlock);
+                CollectStringBuilderAccumulatorCandidates(tryStatement.CatchBody);
+                CollectStringBuilderAccumulatorCandidates(tryStatement.FinallyBody);
+                return;
+
+            case HIRLabeledStatement labeledStatement:
+                CollectStringBuilderAccumulatorCandidates(labeledStatement.Body);
+                return;
+
+            case HIRWithStatement withStatement:
+                CollectStringBuilderAccumulatorCandidates(withStatement.Object);
+                CollectStringBuilderAccumulatorCandidates(withStatement.Body);
+                return;
+
+            case HIRStoreUserClassInstanceFieldStatement storeInstance:
+                CollectStringBuilderAccumulatorCandidates(storeInstance.Value);
+                return;
+
+            case HIRStoreUserClassStaticFieldStatement storeStatic:
+                CollectStringBuilderAccumulatorCandidates(storeStatic.Value);
+                return;
+
+            case HIRSequencePointStatement:
+            case HIRBreakStatement:
+            case HIRContinueStatement:
+                return;
+        }
+    }
+
+    private void CollectStringBuilderAccumulatorCandidates(HIRExpression expression)
+    {
+        switch (expression)
+        {
+            case HIRAssignmentExpression assignment:
+                if (assignment.Operator == Acornima.Operator.AdditionAssignment
+                    && CanUseStringBuilderAccumulator(assignment.Target.BindingInfo)
+                    && !ExpressionMayAssignBinding(assignment.Value, assignment.Target.BindingInfo))
+                {
+                    _stringBuilderAccumulatorCandidates.Add(assignment.Target.BindingInfo);
+                }
+                CollectStringBuilderAccumulatorCandidates(assignment.Value);
+                return;
+
+            case HIRBinaryExpression binary:
+                CollectStringBuilderAccumulatorCandidates(binary.Left);
+                CollectStringBuilderAccumulatorCandidates(binary.Right);
+                return;
+
+            case HIRUnaryExpression unary:
+                CollectStringBuilderAccumulatorCandidates(unary.Argument);
+                return;
+
+            case HIRUpdateExpression update:
+                if (update.Argument is HIRVariableExpression updateVariable)
+                {
+                    _stringBuilderAccumulatorDisqualifiedBindings.Add(updateVariable.Name.BindingInfo);
+                }
+                CollectStringBuilderAccumulatorCandidates(update.Argument);
+                return;
+
+            case HIRCallExpression call:
+                CollectStringBuilderAccumulatorCandidates(call.Callee);
+                foreach (var arg in call.Arguments)
+                {
+                    CollectStringBuilderAccumulatorCandidates(arg);
+                }
+                return;
+
+            case HIROptionalCallExpression optionalCall:
+                CollectStringBuilderAccumulatorCandidates(optionalCall.Callee);
+                foreach (var arg in optionalCall.Arguments)
+                {
+                    CollectStringBuilderAccumulatorCandidates(arg);
+                }
+                return;
+
+            case HIRIndexAccessExpression index:
+                CollectStringBuilderAccumulatorCandidates(index.Object);
+                CollectStringBuilderAccumulatorCandidates(index.Index);
+                return;
+
+            case HIROptionalIndexAccessExpression optionalIndex:
+                CollectStringBuilderAccumulatorCandidates(optionalIndex.Object);
+                CollectStringBuilderAccumulatorCandidates(optionalIndex.Index);
+                return;
+
+            case HIRPropertyAccessExpression property:
+                CollectStringBuilderAccumulatorCandidates(property.Object);
+                return;
+
+            case HIROptionalPropertyAccessExpression optionalProperty:
+                CollectStringBuilderAccumulatorCandidates(optionalProperty.Object);
+                return;
+
+            case HIRConditionalExpression conditional:
+                CollectStringBuilderAccumulatorCandidates(conditional.Test);
+                CollectStringBuilderAccumulatorCandidates(conditional.Consequent);
+                CollectStringBuilderAccumulatorCandidates(conditional.Alternate);
+                return;
+
+            case HIRSequenceExpression sequence:
+                foreach (var expr in sequence.Expressions)
+                {
+                    CollectStringBuilderAccumulatorCandidates(expr);
+                }
+                return;
+
+            case HIRTemplateLiteralExpression template:
+                foreach (var expr in template.Expressions)
+                {
+                    CollectStringBuilderAccumulatorCandidates(expr);
+                }
+                return;
+
+            case HIRNewExpression newExpression:
+                CollectStringBuilderAccumulatorCandidates(newExpression.Callee);
+                foreach (var arg in newExpression.Arguments)
+                {
+                    CollectStringBuilderAccumulatorCandidates(arg);
+                }
+                return;
+
+            case HIRSpreadElement spread:
+                CollectStringBuilderAccumulatorCandidates(spread.Argument);
+                return;
+
+            case HIRAwaitExpression awaitExpression:
+                CollectStringBuilderAccumulatorCandidates(awaitExpression.Argument);
+                return;
+
+            case HIRYieldExpression yieldExpression:
+                if (yieldExpression.Argument != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(yieldExpression.Argument);
+                }
+                return;
+
+            case HIRIndexAssignmentExpression indexAssignment:
+                CollectStringBuilderAccumulatorCandidates(indexAssignment.Object);
+                CollectStringBuilderAccumulatorCandidates(indexAssignment.Index);
+                CollectStringBuilderAccumulatorCandidates(indexAssignment.Value);
+                return;
+
+            case HIRPropertyAssignmentExpression propertyAssignment:
+                CollectStringBuilderAccumulatorCandidates(propertyAssignment.Object);
+                CollectStringBuilderAccumulatorCandidates(propertyAssignment.Value);
+                return;
+
+            case HIRDestructuringAssignmentExpression destructuringAssignment:
+                CollectStringBuilderAccumulatorCandidates(destructuringAssignment.Value);
+                return;
+
+            case HIRDefineClassDataPropertyExpression dataProperty:
+                CollectStringBuilderAccumulatorCandidates(dataProperty.Target);
+                CollectStringBuilderAccumulatorCandidates(dataProperty.Key);
+                CollectStringBuilderAccumulatorCandidates(dataProperty.Value);
+                return;
+
+            case HIRDefineClassAccessorPropertyExpression accessorProperty:
+                CollectStringBuilderAccumulatorCandidates(accessorProperty.Target);
+                CollectStringBuilderAccumulatorCandidates(accessorProperty.Key);
+                if (accessorProperty.Getter != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(accessorProperty.Getter);
+                }
+                if (accessorProperty.Setter != null)
+                {
+                    CollectStringBuilderAccumulatorCandidates(accessorProperty.Setter);
+                }
+                return;
+        }
+    }
+
+    private bool CanUseStringBuilderAccumulator(BindingInfo binding)
+    {
+        if (_isAsync || _isGenerator)
+        {
+            return false;
+        }
+
+        if (binding.Kind is BindingKind.Const or BindingKind.Global)
+        {
+            return false;
+        }
+
+        if (binding.IsCaptured)
+        {
+            return false;
+        }
+
+        if (_stringBuilderAccumulatorDisqualifiedBindings.Contains(binding))
+        {
+            return false;
+        }
+
+        if (_parameterIndexMap.ContainsKey(binding))
+        {
+            return false;
+        }
+
+        if (_environmentLayout != null)
+        {
+            var storage = _environmentLayout.GetStorage(binding);
+            if (storage != null && storage.Kind != BindingStorageKind.IlLocal)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private TempVariable CreateStringBuilderAccumulator(BindingInfo binding, string displayName, TempVariable initialValue)
+    {
+        var initialString = EnsureString(initialValue);
+        var builder = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            "String",
+            nameof(JavaScriptRuntime.String.CreateConcatBuilder),
+            new[] { initialString },
+            builder));
+        var builderStorage = new ValueStorage(ValueStorageKind.Reference, typeof(System.Text.StringBuilder));
+        DefineTempStorage(builder, builderStorage);
+
+        if (!_stringBuilderAccumulatorSlots.TryGetValue(binding, out var slot))
+        {
+            slot = CreateAnonymousVariableSlot($"${displayName}_stringBuilder", builderStorage);
+            _stringBuilderAccumulatorSlots[binding] = slot;
+        }
+
+        builder = EnsureTempMappedToSlot(slot, builder);
+        _stringBuilderAccumulators[binding] = builder;
+        _variableMap[binding] = builder;
+        return builder;
+    }
+
+    private bool TryInitializeStringBuilderAccumulator(BindingInfo binding, string displayName, HIRExpression? initializer, TempVariable initialValue)
+    {
+        if (initializer == null
+            || !_stringBuilderAccumulatorCandidates.Contains(binding)
+            || !CanUseStringBuilderAccumulator(binding))
+        {
+            return false;
+        }
+
+        var initialStorage = GetTempStorage(initialValue);
+        if (initialStorage.Kind != ValueStorageKind.Reference || initialStorage.ClrType != typeof(string))
+        {
+            return false;
+        }
+
+        CreateStringBuilderAccumulator(binding, displayName, initialValue);
+        return true;
+    }
+
+    private bool TryMaterializeStringBuilderAccumulator(BindingInfo binding, out TempVariable result)
+    {
+        result = default;
+
+        if (!_stringBuilderAccumulators.TryGetValue(binding, out var builder))
+        {
+            return false;
+        }
+
+        result = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            "String",
+            nameof(JavaScriptRuntime.String.MaterializeConcatBuilder),
+            new[] { builder },
+            result));
+        DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        _tempBindingOrigin[result] = binding;
+        return true;
+    }
+
+    private void InvalidateStringBuilderAccumulator(BindingInfo binding)
+    {
+        _stringBuilderAccumulators.Remove(binding);
+        _stringBuilderAccumulatorSlots.Remove(binding);
+    }
+
+    private bool TryPrepareStringBuilderAccumulatorForGenericAssignment(BindingInfo binding)
+    {
+        if (!TryMaterializeStringBuilderAccumulator(binding, out var materialized))
+        {
+            return true;
+        }
+
+        _variableMap[binding] = materialized;
+        InvalidateStringBuilderAccumulator(binding);
+        return true;
+    }
+
+    private bool TryLowerStringBuilderAccumulatorAssignment(
+        HIRAssignmentExpression assignExpr,
+        BindingInfo binding,
+        bool resultUsed,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!_stringBuilderAccumulatorCandidates.Contains(binding)
+            || !CanUseStringBuilderAccumulator(binding))
+        {
+            return false;
+        }
+
+        if (assignExpr.Operator != Acornima.Operator.AdditionAssignment)
+        {
+            return false;
+        }
+
+        if (ExpressionMayAssignBinding(assignExpr.Value, binding))
+        {
+            return false;
+        }
+
+        if (!_stringBuilderAccumulators.TryGetValue(binding, out var accumulatorBuilder))
+        {
+            return false;
+        }
+
+        if (!TryLowerExpression(assignExpr.Value, out var rhsValue))
+        {
+            return false;
+        }
+
+        var rhsString = EnsureString(rhsValue);
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+            "String",
+            nameof(JavaScriptRuntime.String.AppendConcatBuilder),
+            new[] { accumulatorBuilder, rhsString }));
+
+        _variableMap[binding] = accumulatorBuilder;
+        _numericRefinements.Remove(binding);
+
+        if (resultUsed)
+        {
+            return TryMaterializeStringBuilderAccumulator(binding, out resultTempVar);
+        }
+
+        resultTempVar = accumulatorBuilder;
+        return true;
+    }
+
+    private static bool ExpressionMayAssignBinding(HIRExpression expression, BindingInfo binding)
+    {
+        switch (expression)
+        {
+            case HIRAssignmentExpression assignment:
+                return ReferenceEquals(assignment.Target.BindingInfo, binding)
+                    || ExpressionMayAssignBinding(assignment.Value, binding);
+
+            case HIRUpdateExpression update:
+                return update.Argument is HIRVariableExpression variable
+                    && ReferenceEquals(variable.Name.BindingInfo, binding);
+
+            case HIRBinaryExpression binary:
+                return ExpressionMayAssignBinding(binary.Left, binding)
+                    || ExpressionMayAssignBinding(binary.Right, binding);
+
+            case HIRUnaryExpression unary:
+                return ExpressionMayAssignBinding(unary.Argument, binding);
+
+            case HIRCallExpression call:
+                return ExpressionMayAssignBinding(call.Callee, binding)
+                    || call.Arguments.Any(arg => ExpressionMayAssignBinding(arg, binding));
+
+            case HIRIndexAccessExpression index:
+                return ExpressionMayAssignBinding(index.Object, binding)
+                    || ExpressionMayAssignBinding(index.Index, binding);
+
+            case HIRPropertyAccessExpression property:
+                return ExpressionMayAssignBinding(property.Object, binding);
+
+            case HIRConditionalExpression conditional:
+                return ExpressionMayAssignBinding(conditional.Test, binding)
+                    || ExpressionMayAssignBinding(conditional.Consequent, binding)
+                    || ExpressionMayAssignBinding(conditional.Alternate, binding);
+
+            case HIRSequenceExpression sequence:
+                return sequence.Expressions.Any(expr => ExpressionMayAssignBinding(expr, binding));
+
+            case HIRTemplateLiteralExpression template:
+                return template.Expressions.Any(expr => ExpressionMayAssignBinding(expr, binding));
+
+            case HIROptionalPropertyAccessExpression optionalProperty:
+                return ExpressionMayAssignBinding(optionalProperty.Object, binding);
+
+            case HIROptionalIndexAccessExpression optionalIndex:
+                return ExpressionMayAssignBinding(optionalIndex.Object, binding)
+                    || ExpressionMayAssignBinding(optionalIndex.Index, binding);
+
+            case HIROptionalCallExpression optionalCall:
+                return ExpressionMayAssignBinding(optionalCall.Callee, binding)
+                    || optionalCall.Arguments.Any(arg => ExpressionMayAssignBinding(arg, binding));
+
+            case HIRNewExpression newExpression:
+                return ExpressionMayAssignBinding(newExpression.Callee, binding)
+                    || newExpression.Arguments.Any(arg => ExpressionMayAssignBinding(arg, binding));
+
+            case HIRSpreadElement spread:
+                return ExpressionMayAssignBinding(spread.Argument, binding);
+
+            case HIRAwaitExpression awaitExpression:
+                return ExpressionMayAssignBinding(awaitExpression.Argument, binding);
+
+            case HIRYieldExpression yieldExpression:
+                return yieldExpression.Argument != null
+                    && ExpressionMayAssignBinding(yieldExpression.Argument, binding);
+
+            case HIRVariableExpression:
+            case HIRLiteralExpression:
+            case HIRThisExpression:
+            case HIRSuperExpression:
+            case HIRFunctionExpression:
+            case HIRArrowFunctionExpression:
+            case HIRUserClassTypeExpression:
+            case HIRInitializedUserClassTypeExpression:
+            case HIRScopesArrayExpression:
+            case HIRImportMetaExpression:
+            case HIRNewTargetExpression:
+                return false;
+
+            default:
+                return true;
+        }
+    }
+
     private TempVariable CoerceToVariableSlotStorage(int slot, TempVariable value)
     {
         if (slot < 0 || slot >= _methodBodyIR.VariableStorages.Count)
@@ -716,6 +1264,11 @@ public sealed partial class HIRToLIRLowerer
         {
             slotValue = EnsureBoolean(valueToStore);
             slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+        }
+        else if (CanUseStringLocalStorage(binding))
+        {
+            slotValue = EnsureString(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.Reference, typeof(string));
         }
         else
         {
@@ -893,7 +1446,7 @@ public sealed partial class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRCopyTemp(newScopeTemp, scopeInstanceTemp));
     }
 
-    private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar)
+    private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
 
@@ -918,6 +1471,21 @@ public sealed partial class HIRToLIRLowerer
             }
 
             return TryLowerExpression(assignExpr.Value, out resultTempVar);
+        }
+
+        if (assignExpr.Operator == Acornima.Operator.AdditionAssignment
+            && _stringBuilderAccumulators.ContainsKey(binding)
+            && ExpressionMayAssignBinding(assignExpr.Value, binding))
+        {
+            TryPrepareStringBuilderAccumulatorForGenericAssignment(binding);
+        }
+        else if (TryLowerStringBuilderAccumulatorAssignment(assignExpr, binding, resultUsed, out resultTempVar))
+        {
+            return true;
+        }
+        else if (_stringBuilderAccumulators.ContainsKey(binding))
+        {
+            TryPrepareStringBuilderAccumulatorForGenericAssignment(binding);
         }
 
         // For compound assignment (+=, -=, etc.), we need to load the current value first
@@ -1054,6 +1622,11 @@ public sealed partial class HIRToLIRLowerer
         {
             slotValue = EnsureBoolean(valueToStore);
             slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+        }
+        else if (CanUseStringLocalStorage(binding))
+        {
+            slotValue = EnsureString(valueToStore);
+            slotStorage = new ValueStorage(ValueStorageKind.Reference, typeof(string));
         }
         else
         {

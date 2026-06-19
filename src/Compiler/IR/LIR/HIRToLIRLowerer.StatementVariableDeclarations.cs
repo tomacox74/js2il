@@ -129,7 +129,11 @@ public sealed partial class HIRToLIRLowerer
                 // Most scope fields are object-typed, but stable inferred primitive fields can be typed.
                 // For typed bool fields, do NOT box (stfld bool cannot consume object).
                 var fieldValue = value;
-                if (!(binding.IsStableType && binding.ClrType == typeof(bool)))
+                if (binding.IsStableType && binding.ClrType == typeof(bool))
+                {
+                    fieldValue = EnsureBoolean(value);
+                }
+                else
                 {
                     fieldValue = EnsureObject(value);
                 }
@@ -139,6 +143,11 @@ public sealed partial class HIRToLIRLowerer
                 _variableMap[binding] = value;
                 return true;
             }
+        }
+
+        if (TryInitializeStringBuilderAccumulator(binding, exprStmt.Name.Name, exprStmt.Initializer, value))
+        {
+            return true;
         }
 
         // Non-captured variable - store into a stable local slot.

@@ -368,7 +368,13 @@ internal static class LIRIntrinsicNormalization
             }
         }
 
+        FuseCharCodeAtWithConvertToNumber(methodBody);
         FuseGetItemWithConvertToNumber(methodBody);
+    }
+
+    public static void NormalizeLateNumericMemberCalls(MethodBodyIR methodBody)
+    {
+        FuseCharCodeAtWithConvertToNumber(methodBody);
     }
 
     private static void NormalizeDirectDeclaredFunctionCalls(MethodBodyIR methodBody, ICallableDeclarationReader? callableReader)
@@ -551,6 +557,90 @@ internal static class LIRIntrinsicNormalization
         methodBody.Instructions.AddRange(newInstructions);
     }
 
+    private static void FuseCharCodeAtWithConvertToNumber(MethodBodyIR methodBody)
+    {
+        var singleConvertToNumberConsumerByTempIndex = new Dictionary<int, int>();
+        var ineligibleTempIndices = new HashSet<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is LIRConvertToNumber conv && conv.Source.Index >= 0)
+            {
+                var srcIdx = conv.Source.Index;
+                if (!ineligibleTempIndices.Contains(srcIdx))
+                {
+                    if (singleConvertToNumberConsumerByTempIndex.TryGetValue(srcIdx, out _))
+                    {
+                        ineligibleTempIndices.Add(srcIdx);
+                        singleConvertToNumberConsumerByTempIndex.Remove(srcIdx);
+                    }
+                    else
+                    {
+                        singleConvertToNumberConsumerByTempIndex[srcIdx] = i;
+                    }
+                }
+            }
+        }
+
+        var indicesToRemove = new HashSet<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRCallMember1 callMember
+                || !string.Equals(callMember.MethodName, "charCodeAt", StringComparison.Ordinal)
+                || callMember.Result.Index < 0)
+            {
+                continue;
+            }
+
+            if (!singleConvertToNumberConsumerByTempIndex.TryGetValue(callMember.Result.Index, out var convIdx))
+            {
+                continue;
+            }
+
+            var canMove = convIdx > i && CanMoveNumberCoercionAcrossInterveningInstructions(methodBody, i + 1, convIdx);
+            if (!canMove)
+            {
+                continue;
+            }
+
+            if (IsTempUsedOutside(methodBody, callMember.Result, new HashSet<int> { i, convIdx }))
+            {
+                continue;
+            }
+
+            var conv = (LIRConvertToNumber)methodBody.Instructions[convIdx];
+            methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
+                IntrinsicName: "String",
+                MethodName: nameof(JavaScriptRuntime.String.CharCodeAtAsNumber),
+                Arguments: new[] { callMember.Receiver, callMember.A0 },
+                Result: conv.Result);
+            indicesToRemove.Add(convIdx);
+
+            if (conv.Result.Index >= 0 && conv.Result.Index < methodBody.TempStorages.Count)
+            {
+                methodBody.TempStorages[conv.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+            }
+        }
+
+        if (indicesToRemove.Count == 0)
+        {
+            return;
+        }
+
+        var newInstructions = new List<LIRInstruction>(methodBody.Instructions.Count - indicesToRemove.Count);
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (!indicesToRemove.Contains(i))
+            {
+                newInstructions.Add(methodBody.Instructions[i]);
+            }
+        }
+
+        methodBody.Instructions.Clear();
+        methodBody.Instructions.AddRange(newInstructions);
+    }
+
     private static bool TryResolveSafeStringIntrinsicReturnClrType(string methodName, int argCount, out Type returnClrType)
     {
         returnClrType = null!;
@@ -606,8 +696,8 @@ internal static class LIRIntrinsicNormalization
     {
         return argCount switch
         {
-            0 => methodName is "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
-            1 => methodName is "substring" or "split" or "match" or "search",
+            0 => methodName is "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
+            1 => methodName is "charCodeAt" or "substring" or "split" or "match" or "search",
             2 => methodName is "substring" or "replace" or "split",
             _ => false
         };
@@ -979,6 +1069,27 @@ internal static class LIRIntrinsicNormalization
 
         return false;
     }
+
+    private static bool CanMoveNumberCoercionAcrossInterveningInstructions(MethodBodyIR methodBody, int startInclusive, int endExclusive)
+    {
+        for (int i = startInclusive; i < endExclusive; i++)
+        {
+            if (!IsPureInterveningInstruction(methodBody.Instructions[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsPureInterveningInstruction(LIRInstruction instruction)
+        => instruction is LIRCopyTemp
+            or LIRConstNumber
+            or LIRConstString
+            or LIRConstBoolean
+            or LIRConstUndefined
+            or LIRConstNull;
 
     private static bool IsRequireDelegateTemp(MethodBodyIR methodBody, TempVariable callee)
     {
