@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.31 - 2026-06-20
+
 - compiler/runtime/perf: reduce `dromaeo-object-string` execution allocations below Jint while keeping jroc faster by expanding direct string intrinsic lowering, caching single-code-unit string results, avoiding intermediate `Array.join` string lists, presizing literal string split results, and reusing repeated substring/slice/substr outputs through a bounded runtime cache.
 
 ## v0.9.30 - 2026-06-19
