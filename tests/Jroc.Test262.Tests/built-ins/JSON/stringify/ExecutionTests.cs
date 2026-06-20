@@ -146,4 +146,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task replacer_function_object_circular()
         => ExecutionTestFromFile("replacer-function-object-circular");
 
+    [Fact(DisplayName = "replacer-function-result")]
+    public Task replacer_function_result()
+        => ExecutionTestFromFile("replacer-function-result");
+
+    [Fact(DisplayName = "space-string")]
+    public Task space_string()
+        => ExecutionTestFromFile("space-string");
+
+    [Fact(DisplayName = "value-tojson-result")]
+    public Task value_tojson_result()
+        => ExecutionTestFromFile("value-tojson-result");
+
 }
