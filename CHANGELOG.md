@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.9.32 - 2026-06-20
+
 - runtime/tests/docs: add `Promise.try` support, including constructor-aware capability creation, callback invocation with forwarded arguments, and Promise resolve/reject wiring; enable the new non-`eval` test262 `Promise.try` metadata ports and refresh ECMA-262 Promise docs.
 - runtime/tests/docs/test262: improve `JSON.stringify` support for string `space` gap formatting plus replacer/toJSON return-value serialization, enabling the newly ported non-`eval` JSON.stringify test262 cases and refreshing ECMA-262 JSON docs.
 
