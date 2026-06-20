@@ -58,6 +58,7 @@ function formatDurationNs(ns) {
 }
 
 async function simpleRun() {
+  const runtimeLabel = process?.env?.BENCHMARK_RUNTIME || "jroc";
   const now = globalThis.performance?.now
     ? () => globalThis.performance.now() * 1e6
     : () => Date.now() * 1e6;
@@ -96,7 +97,7 @@ async function simpleRun() {
 
   if (process?.env?.BENCHMARK_RUNNER) {
     console.log(JSON.stringify({
-      runtime: "jroc",
+      runtime: runtimeLabel,
       iterations: runsPerBenchmark,
       benchmarks: results.map(result => ({
         ...result,

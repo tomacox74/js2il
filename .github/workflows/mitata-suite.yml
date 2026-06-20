@@ -1,0 +1,176 @@
+name: Mitata Performance Suite
+run-name: Mitata suite (${{ github.event.release.tag_name || github.ref_name }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark:
+        description: 'Mitata benchmark suffix (for example string-width)'
+        required: false
+        default: 'string-width'
+      jroc_package_version:
+        description: 'Published jroc package version to benchmark (for example 0.9.31)'
+        required: false
+        default: ''
+  release:
+    types: [published]
+
+jobs:
+  mitata-suite:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Determine jroc benchmark package mode
+        shell: bash
+        env:
+          INPUT_JROC_PACKAGE_VERSION: ${{ github.event.inputs.jroc_package_version || '' }}
+        run: |
+          set -euo pipefail
+
+          package_version=""
+
+          if [ "${{ github.event_name }}" = "release" ]; then
+            package_version="${{ github.event.release.tag_name }}"
+          elif [ -n "$INPUT_JROC_PACKAGE_VERSION" ]; then
+            package_version="$INPUT_JROC_PACKAGE_VERSION"
+          elif [ "${GITHUB_REF_TYPE:-}" = "tag" ] && [[ "${GITHUB_REF_NAME}" == v* ]]; then
+            package_version="${GITHUB_REF_NAME}"
+          fi
+
+          package_version="${package_version#v}"
+
+          if [ -n "$package_version" ]; then
+            echo "Using published jroc tool version: $package_version"
+            echo "USE_PUBLISHED_JROC_TOOL=true" >> "$GITHUB_ENV"
+            echo "JROC_PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
+          else
+            echo "Using checked-out source tree for jroc compilation path"
+            echo "USE_PUBLISHED_JROC_TOOL=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Wait for published jroc packages
+        if: env.USE_PUBLISHED_JROC_TOOL == 'true' && github.event_name == 'release'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const workflowId = 'publish-tool.yml';
+            const targetVersion = process.env.JROC_PACKAGE_VERSION;
+            const targetTag = `v${targetVersion}`;
+            const deadlineMs = 20 * 60 * 1000;
+            const pollMs = 15 * 1000;
+            const startedAt = Date.now();
+
+            while (Date.now() - startedAt < deadlineMs) {
+              const response = await github.request('GET /repos/{owner}/{repo}/actions/runs', {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 50
+              });
+
+              const matchingRuns = response.data.workflow_runs.filter(candidate =>
+                candidate.path === '.github/workflows/publish-tool.yml' &&
+                (candidate.display_title ?? '').includes(targetTag)
+              );
+
+              if (matchingRuns.length === 0) {
+                core.info(`Waiting for ${workflowId} run for ${targetTag} to appear...`);
+                await new Promise(resolve => setTimeout(resolve, pollMs));
+                continue;
+              }
+
+              const successfulRun = matchingRuns.find(candidate =>
+                candidate.status === 'completed' && candidate.conclusion === 'success');
+              if (successfulRun) {
+                core.info(`Found successful ${workflowId} run ${successfulRun.id}; proceeding to package restore.`);
+                return;
+              }
+
+              const inProgressRun = matchingRuns.find(candidate => candidate.status !== 'completed');
+              if (inProgressRun) {
+                core.info(`Waiting for ${workflowId} run ${inProgressRun.id} to complete for ${targetTag}...`);
+                await new Promise(resolve => setTimeout(resolve, pollMs));
+                continue;
+              }
+
+              const latestCompleted = matchingRuns[0];
+              core.info(`No successful ${workflowId} run yet for ${targetTag}. Latest completed run ${latestCompleted.id} concluded ${latestCompleted.conclusion ?? 'n/a'}. Retrying...`);
+              await new Promise(resolve => setTimeout(resolve, pollMs));
+            }
+
+            throw new Error(`Timed out waiting for a successful ${workflowId} run for ${targetTag}.`);
+
+      - name: Wait for NuGet package availability
+        if: env.USE_PUBLISHED_JROC_TOOL == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/waitForNuGetPackageVersions.js \
+            --version "${JROC_PACKAGE_VERSION}" \
+            --package jroc
+
+      - name: Install mitata dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd tests/performance/mitata
+          npm ci
+
+      - name: Install jroc tool (release mode)
+        if: env.USE_PUBLISHED_JROC_TOOL == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+          if dotnet tool list --global | awk '{print $1}' | grep -qx "jroc"; then
+            dotnet tool update --global jroc --version "${JROC_PACKAGE_VERSION}"
+          else
+            dotnet tool install --global jroc --version "${JROC_PACKAGE_VERSION}"
+          fi
+
+      - name: Run mitata benchmark suite
+        shell: bash
+        env:
+          BENCHMARK_NAME: ${{ github.event.inputs.benchmark || 'string-width' }}
+        run: |
+          set -euo pipefail
+          cd tests/performance/mitata
+          node scripts/run-release-suite.mjs --bench "${BENCHMARK_NAME}" --output results.json
+          if [ ! -f "results.json" ]; then
+            echo "Mitata runner produced no results.json output; failing workflow."
+            exit 1
+          fi
+
+      - name: Ingest Mitata results to Supabase
+        if: always()
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node tests/performance/ingestPerfToSupabase.js --source mitata --input tests/performance/mitata/results.json
+
+      - name: Upload Mitata artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mitata-results
+          path: |
+            tests/performance/mitata/results.json
+            tests/performance/mitata/.jroc/**/*
+          retention-days: 90
