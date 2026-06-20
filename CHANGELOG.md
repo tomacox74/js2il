@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs: add `Promise.try` support, including constructor-aware capability creation, callback invocation with forwarded arguments, and Promise resolve/reject wiring; enable the new non-`eval` test262 `Promise.try` metadata ports and refresh ECMA-262 Promise docs.
 
 ## v0.9.31 - 2026-06-20
 

@@ -42,7 +42,7 @@
 | 27.2.4.6 | Promise.reject ( r ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.reject) |
 | 27.2.4.7 | Promise.resolve ( x ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.resolve) |
 | 27.2.4.7.1 | PromiseResolve ( C , x ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-promise-resolve) |
-| 27.2.4.8 | Promise.try ( callback , ... args ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.try) |
+| 27.2.4.8 | Promise.try ( callback , ... args ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.try) |
 | 27.2.4.9 | Promise.withResolvers ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-promise.withResolvers) |
 | 27.2.4.10 | get Promise [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-promise-%symbol.species%) |
 | 27.2.5 | Properties of the Promise Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-promise-prototype-object) |
@@ -69,6 +69,12 @@ Feature-level support tracking with test script references.
 | Feature name | Status | Test scripts | Notes |
 |---|---|---|---|
 | Promise.all / allSettled / any / race | Supported | [`Promise_All_AllResolved.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_All_AllResolved.js)<br>[`Promise_All_OneRejected.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_All_OneRejected.js)<br>[`Promise_All_EmptyArray.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_All_EmptyArray.js)<br>[`Promise_AllSettled_MixedResults.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_AllSettled_MixedResults.js)<br>[`Promise_AllSettled_AllResolved.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_AllSettled_AllResolved.js)<br>[`Promise_AllSettled_AllRejected.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_AllSettled_AllRejected.js)<br>[`Promise_Any_FirstResolved.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_Any_FirstResolved.js)<br>[`Promise_Any_AllRejected.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_Any_AllRejected.js)<br>[`Promise_Race_FirstResolved.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_Race_FirstResolved.js)<br>[`Promise_Race_FirstRejected.js`](../../../tests/Jroc.Tests/Promise/JavaScript/Promise_Race_FirstRejected.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/all/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/all/JavaScript/name.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/all/JavaScript/prop-desc.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/name.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/race/JavaScript/prop-desc.js) |  |
+
+### 27.2.4.8 ([tc39.es](https://tc39.es/ecma262/#sec-promise.try))
+
+| Feature name | Status | Test scripts | Notes |
+|---|---|---|---|
+| Promise.try(callback, ...args) | Supported | `tests/Jroc.Test262.Tests/built-ins/Promise/try/ExecutionTests.cs`<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/try/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/try/JavaScript/name.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/Promise/try/JavaScript/prop-desc.js) | Adds Promise.try as a constructor-aware static helper that creates a new capability, invokes the callback with forwarded arguments, and resolves or rejects based on the callback completion. |
 
 ### 27.2.4.9 ([tc39.es](https://tc39.es/ecma262/#sec-promise.withResolvers))
 

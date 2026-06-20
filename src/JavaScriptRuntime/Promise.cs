@@ -190,6 +190,51 @@ public sealed class Promise
         return promise;
     }
 
+    internal static object? TryForConstructor(object? constructor, object? callback, object?[]? args)
+    {
+        if (constructor is null || constructor is JsNull || !Object.IsConstructibleValue(constructor))
+        {
+            throw new TypeError("Promise.try requires a constructor receiver");
+        }
+
+        object? capabilityResolve = null;
+        object? capabilityReject = null;
+        Func<object[], object?, object?, object?> executor = (scopes, resolveArg, rejectArg) =>
+        {
+            if (capabilityResolve is not null || capabilityReject is not null)
+            {
+                throw new TypeError("Promise capability executor already initialized");
+            }
+
+            capabilityResolve = resolveArg;
+            capabilityReject = rejectArg;
+            return null;
+        };
+
+        Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
+
+        var promise = Object.ConstructValue(constructor, new object[] { executor });
+        if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate rejectFunction)
+        {
+            throw new TypeError("Promise constructor did not supply resolving functions");
+        }
+
+        try
+        {
+            var callbackResult = Closure.InvokeFunctionCallWithArgs(
+                callback!,
+                RuntimeServices.EmptyScopes,
+                args ?? System.Array.Empty<object?>());
+            Closure.InvokeWithArgs(resolveFunction, RuntimeServices.EmptyScopes, callbackResult);
+        }
+        catch (Exception ex)
+        {
+            Closure.InvokeWithArgs(rejectFunction, RuntimeServices.EmptyScopes, ex.InnerException ?? ex);
+        }
+
+        return promise;
+    }
+
     /// <summary>
     /// Returns an object containing a new promise and its associated resolve/reject functions.
     /// Equivalent to the TC39 Promise.withResolvers() proposal (now part of ECMA-262).
