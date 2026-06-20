@@ -41,9 +41,53 @@ namespace JavaScriptRuntime
         {
             var propertyList = CreatePropertyList(replacer);
             var replacerFunction = replacer as Delegate;
+            var gap = CreateGap(space);
             var holder = Object.CreateOrdinaryObject();
             ObjectRuntime.SetItem(holder, string.Empty, value);
-            return SerializeProperty(holder, string.Empty, propertyList, replacerFunction, new HashSet<object>(ReferenceEqualityComparer.Instance));
+            return SerializeProperty(holder, string.Empty, propertyList, replacerFunction, new HashSet<object>(ReferenceEqualityComparer.Instance), gap, string.Empty);
+        }
+
+        private static string CreateGap(object? space)
+        {
+            if (space is null || space is JsNull)
+            {
+                return string.Empty;
+            }
+
+            double numericSpace;
+            if (Number.TryGetWrappedNumberValue(space, out var wrappedNumber))
+            {
+                numericSpace = wrappedNumber;
+            }
+            else if (space is double or float or int or long or short or byte or sbyte or uint or ulong or ushort)
+            {
+                numericSpace = TypeUtilities.ToNumber(space);
+            }
+            else
+            {
+                string? stringSpace = null;
+                if (space is string s)
+                {
+                    stringSpace = s;
+                }
+                else if (PropertyDescriptorStore.TryGetOwn(space, String.StringDataPropertyName, out var stringData)
+                    && stringData.Kind == JsPropertyDescriptorKind.Data)
+                {
+                    stringSpace = DotNet2JSConversions.ToString(stringData.Value);
+                }
+
+                return stringSpace is null
+                    ? string.Empty
+                    : stringSpace[..global::System.Math.Min(10, stringSpace.Length)];
+            }
+
+            if (!double.IsFinite(numericSpace) || numericSpace <= 0)
+            {
+                return string.Empty;
+            }
+
+            var spaceCount = (int)global::System.Math.Min(10d, global::System.Math.Floor(numericSpace));
+            return new string(' ', spaceCount);
         }
 
         private static List<string>? CreatePropertyList(object? replacer)
@@ -199,15 +243,28 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static string? SerializeProperty(object holder, string key, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
+        private static string? SerializeProperty(
+            object holder,
+            string key,
+            List<string>? propertyList,
+            Delegate? replacerFunction,
+            HashSet<object> stack,
+            string gap,
+            string indent)
         {
             var value = ObjectRuntime.GetItem(holder, key);
             value = InvokeToJsonIfPresent(value, key);
             value = ApplyReplacer(replacerFunction, holder, key, value);
-            return SerializeValue(value, propertyList, replacerFunction, stack);
+            return SerializeValue(value, propertyList, replacerFunction, stack, gap, indent);
         }
 
-        private static string? SerializeValue(object? value, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
+        private static string? SerializeValue(
+            object? value,
+            List<string>? propertyList,
+            Delegate? replacerFunction,
+            HashSet<object> stack,
+            string gap,
+            string indent)
         {
             switch (value)
             {
@@ -247,10 +304,10 @@ namespace JavaScriptRuntime
 
             if (value is Array array)
             {
-                return SerializeArray(array, propertyList, replacerFunction, stack);
+                return SerializeArray(array, propertyList, replacerFunction, stack, gap, indent);
             }
 
-            return SerializeObject(value!, propertyList, replacerFunction, stack);
+            return SerializeObject(value!, propertyList, replacerFunction, stack, gap, indent);
         }
 
         private static string SerializeNumber(double value)
@@ -283,17 +340,25 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(value);
         }
 
-        private static string SerializeArray(Array array, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
+        private static string SerializeArray(
+            Array array,
+            List<string>? propertyList,
+            Delegate? replacerFunction,
+            HashSet<object> stack,
+            string gap,
+            string indent)
         {
             PushToStackOrThrowIfCircular(stack, array);
 
             var length = (int)array.length;
             var items = new List<string>(length);
+            var stepBack = indent;
+            indent += gap;
             try
             {
                 for (var i = 0; i < length; i++)
                 {
-                    items.Add(SerializeProperty(array, i.ToString(CultureInfo.InvariantCulture), propertyList, replacerFunction, stack) ?? "null");
+                    items.Add(SerializeProperty(array, i.ToString(CultureInfo.InvariantCulture), propertyList, replacerFunction, stack, gap, indent) ?? "null");
                 }
             }
             finally
@@ -301,15 +366,33 @@ namespace JavaScriptRuntime
                 stack.Remove(array);
             }
 
+            if (items.Count == 0)
+            {
+                return "[]";
+            }
+
+            if (gap.Length > 0)
+            {
+                return "[\n" + indent + string.Join(",\n" + indent, items) + "\n" + stepBack + "]";
+            }
+
             return "[" + string.Join(",", items) + "]";
         }
 
-        private static string SerializeObject(object value, List<string>? propertyList, Delegate? replacerFunction, HashSet<object> stack)
+        private static string SerializeObject(
+            object value,
+            List<string>? propertyList,
+            Delegate? replacerFunction,
+            HashSet<object> stack,
+            string gap,
+            string indent)
         {
             PushToStackOrThrowIfCircular(stack, value);
 
             var keys = propertyList ?? Object.GetOwnEnumerableKeysInOrder(value);
             var parts = new List<string>();
+            var stepBack = indent;
+            indent += gap;
             try
             {
                 foreach (var key in keys)
@@ -319,18 +402,29 @@ namespace JavaScriptRuntime
                         continue;
                     }
 
-                    var serialized = SerializeProperty(value, key, propertyList, replacerFunction, stack);
+                    var serialized = SerializeProperty(value, key, propertyList, replacerFunction, stack, gap, indent);
                     if (serialized is null)
                     {
                         continue;
                     }
 
-                    parts.Add(Quote(key) + ":" + serialized);
+                    var separator = gap.Length > 0 ? ": " : ":";
+                    parts.Add(Quote(key) + separator + serialized);
                 }
             }
             finally
             {
                 stack.Remove(value);
+            }
+
+            if (parts.Count == 0)
+            {
+                return "{}";
+            }
+
+            if (gap.Length > 0)
+            {
+                return "{\n" + indent + string.Join(",\n" + indent, parts) + "\n" + stepBack + "}";
             }
 
             return "{" + string.Join(",", parts) + "}";
