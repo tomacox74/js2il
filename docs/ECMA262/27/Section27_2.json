@@ -191,7 +191,7 @@
                        {
                            "clause":  "27.2.4.8",
                            "title":  "Promise.try ( callback , ... args )",
-                           "status":  "Not Yet Supported",
+                           "status":  "Supported",
                            "specUrl":  "https://tc39.es/ecma262/#sec-promise.try"
                        },
                        {
@@ -279,6 +279,19 @@
                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/reject/JavaScript/prop-desc.js"
                                                         ],
                                         "notes":  "Constructor accepts an executor delegate and supports resolving/rejecting, including thenable assimilation in Promise.resolve. The checked-in test262 coverage now also verifies Promise.resolve and Promise.reject name/length/property-descriptor metadata."
+                                    },
+                                    {
+                                        "clause":  "27.2.4.8",
+                                        "feature":  "Promise.try(callback, ...args)",
+                                        "status":  "Supported",
+                                        "specUrl":  "https://tc39.es/ecma262/#sec-promise.try",
+                                        "testScripts":  [
+                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/try/ExecutionTests.cs",
+                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/try/JavaScript/length.js",
+                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/try/JavaScript/name.js",
+                                                            "tests/Jroc.Test262.Tests/built-ins/Promise/try/JavaScript/prop-desc.js"
+                                                        ],
+                                        "notes":  "Adds Promise.try as a constructor-aware static helper that creates a new capability, invokes the callback with forwarded arguments, and resolves or rejects based on the callback completion."
                                     },
                                     {
                                         "clause":  "27.2.4.9",

@@ -135,6 +135,26 @@ namespace JavaScriptRuntime
             global::JavaScriptRuntime.Promise.race(iterable);
         private static readonly Func<object[], object?, object?> _promiseRejectValue = static (_, reason) =>
             global::JavaScriptRuntime.Promise.reject(reason);
+        private static readonly Func<object[], object?[]?, object?> _promiseTryValue = static (_, args) =>
+        {
+            args ??= global::System.Array.Empty<object?>();
+            var callback = args.Length > 0 ? args[0] : null;
+            object?[] callbackArgs;
+            if (args.Length <= 1)
+            {
+                callbackArgs = global::System.Array.Empty<object?>();
+            }
+            else
+            {
+                callbackArgs = new object?[args.Length - 1];
+                global::System.Array.Copy(args, 1, callbackArgs, 0, callbackArgs.Length);
+            }
+
+            return global::JavaScriptRuntime.Promise.TryForConstructor(
+                RuntimeServices.GetCurrentThis(),
+                callback,
+                callbackArgs);
+        };
 
         private static readonly JsFuncNoScopes2 _proxyConstructorValue = static (newTarget, target, handler) =>
         {
@@ -387,6 +407,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "all", _promiseAllValue, 1d);
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "race", _promiseRaceValue, 1d);
             DefineBuiltinFunctionProperty(_promiseConstructorValue, "reject", _promiseRejectValue, 1d);
+            DefineBuiltinFunctionProperty(_promiseConstructorValue, "try", _promiseTryValue, 1d);
             PropertyDescriptorStore.DefineOrUpdate(_booleanFunctionValue, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
