@@ -1942,13 +1942,20 @@ namespace JavaScriptRuntime
                 separator = DotNet2JSConversions.ToString(args[0]);
             }
             if (this.Count == 0) return string.Empty;
-            var parts = new System.Collections.Generic.List<string>(this.Count);
+
+            var builder = new StringBuilder();
             for (int i = 0; i < this.Count; i++)
             {
+                if (i > 0)
+                {
+                    builder.Append(separator);
+                }
+
                 var v = this[i];
-                parts.Add(DotNet2JSConversions.ToString(v));
+                builder.Append(DotNet2JSConversions.ToString(v));
             }
-            return string.Join(separator, parts);
+
+            return builder.ToString();
         }
 
         /// <summary>

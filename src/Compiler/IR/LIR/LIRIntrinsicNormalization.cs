@@ -288,7 +288,7 @@ internal static class LIRIntrinsicNormalization
             {
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
-                    || !TryResolveSafeStringIntrinsicReturnClrType(callMember0.MethodName, argCount: 0, out var returnClrType))
+                    || !TryResolveSafeStringIntrinsicReturnClrType(methodBody, callMember0.MethodName, Array.Empty<TempVariable>(), out var returnClrType))
                 {
                     continue;
                 }
@@ -311,7 +311,7 @@ internal static class LIRIntrinsicNormalization
             {
                 if (knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var stringReceiverType)
                     && stringReceiverType == typeof(string)
-                    && TryResolveSafeStringIntrinsicReturnClrType(callMember1.MethodName, argCount: 1, out var stringReturnClrType))
+                    && TryResolveSafeStringIntrinsicReturnClrType(methodBody, callMember1.MethodName, new[] { callMember1.A0 }, out var stringReturnClrType))
                 {
                     methodBody.Instructions[i] = new LIRCallIntrinsicStatic(
                         IntrinsicName: "String",
@@ -348,7 +348,7 @@ internal static class LIRIntrinsicNormalization
             {
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember2.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
-                    || !TryResolveSafeStringIntrinsicReturnClrType(callMember2.MethodName, argCount: 2, out var returnClrType))
+                    || !TryResolveSafeStringIntrinsicReturnClrType(methodBody, callMember2.MethodName, new[] { callMember2.A0, callMember2.A1 }, out var returnClrType))
                 {
                     continue;
                 }
@@ -641,19 +641,23 @@ internal static class LIRIntrinsicNormalization
         methodBody.Instructions.AddRange(newInstructions);
     }
 
-    private static bool TryResolveSafeStringIntrinsicReturnClrType(string methodName, int argCount, out Type returnClrType)
+    private static bool TryResolveSafeStringIntrinsicReturnClrType(
+        MethodBodyIR methodBody,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        out Type returnClrType)
     {
         returnClrType = null!;
+        var argCount = arguments.Count;
 
         if (!IsStringMethodEligibleForEarlyBind(methodName, argCount))
         {
             return false;
         }
 
-        // We only early-bind signatures where:
-        // - receiver is the first `string` parameter, and
-        // - all JS arguments are accepted as `object`.
-        // This preserves runtime coercion semantics handled in JavaScriptRuntime.String.
+        // Early-bind signatures where the receiver is the first `string` parameter and
+        // each JS argument either keeps runtime coercion (`object`) or is already proven
+        // to be a string at compile time.
         var safe = typeof(JavaScriptRuntime.String)
             .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
             .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
@@ -672,7 +676,31 @@ internal static class LIRIntrinsicNormalization
 
                 for (int i = 1; i < ps.Length; i++)
                 {
-                    if (ps[i].ParameterType != typeof(object))
+                    var parameterType = ps[i].ParameterType;
+                    if (parameterType == typeof(object))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType == typeof(string)
+                        && IsTempStringReference(methodBody, arguments[i - 1]))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType == typeof(bool)
+                        && IsUnboxedBool(methodBody, arguments[i - 1]))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType == typeof(double)
+                        && IsUnboxedDouble(methodBody, arguments[i - 1]))
+                    {
+                        continue;
+                    }
+
+                    if (parameterType != typeof(object))
                     {
                         return false;
                     }
@@ -696,9 +724,9 @@ internal static class LIRIntrinsicNormalization
     {
         return argCount switch
         {
-            0 => methodName is "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
-            1 => methodName is "charCodeAt" or "substring" or "split" or "match" or "search",
-            2 => methodName is "substring" or "replace" or "split",
+            0 => methodName is "charAt" or "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
+            1 => methodName is "charAt" or "charCodeAt" or "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes" or "split" or "match" or "search",
+            2 => methodName is "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes" or "replace" or "split",
             _ => false
         };
     }
@@ -762,6 +790,17 @@ internal static class LIRIntrinsicNormalization
 
         var storage = methodBody.TempStorages[temp.Index];
         return storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string);
+    }
+
+    private static bool IsUnboxedBool(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index < 0 || temp.Index >= methodBody.TempStorages.Count)
+        {
+            return false;
+        }
+
+        var storage = methodBody.TempStorages[temp.Index];
+        return storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool);
     }
 
     /// <summary>

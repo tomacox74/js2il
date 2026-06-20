@@ -23,8 +23,30 @@ namespace JavaScriptRuntime
         private static readonly string IteratorSymbolPropertyKey = Symbol.iterator.DebugId;
         private static readonly string ToStringTagSymbolPropertyKey = Symbol.toStringTag.DebugId;
         private static readonly string[] Latin1CharStrings = CreateLatin1CharStrings();
+        private const int SubstringCacheSize = 32;
+        private const int MaxCachedSubstringLength = 262_144;
+        [ThreadStatic]
+        private static SubstringCacheEntry[]? substringCache;
+        [ThreadStatic]
+        private static int substringCacheNextIndex;
         internal static readonly ExpandoObject Prototype = CreatePrototype();
         internal static readonly ExpandoObject StringIteratorPrototype = CreateStringIteratorPrototype();
+
+        private readonly struct SubstringCacheEntry
+        {
+            public SubstringCacheEntry(string input, int start, int count, string result)
+            {
+                Input = input;
+                Start = start;
+                Count = count;
+                Result = result;
+            }
+
+            public string? Input { get; }
+            public int Start { get; }
+            public int Count { get; }
+            public string? Result { get; }
+        }
 
         private static ExpandoObject CreatePrototype()
         {
@@ -148,9 +170,50 @@ namespace JavaScriptRuntime
             return chars;
         }
 
-        private static string CharToStringFast(char ch)
+        internal static string CharToStringFast(char ch)
         {
             return ch <= '\u00FF' ? Latin1CharStrings[ch] : ch.ToString();
+        }
+
+        private static string SubstringFast(string input, int start, int count)
+        {
+            if (count <= 0)
+            {
+                return string.Empty;
+            }
+
+            if (start == 0 && count == input.Length)
+            {
+                return input;
+            }
+
+            if (count == 1)
+            {
+                return CharToStringFast(input[start]);
+            }
+
+            if (count > MaxCachedSubstringLength)
+            {
+                return input.Substring(start, count);
+            }
+
+            var cache = substringCache ??= new SubstringCacheEntry[SubstringCacheSize];
+            for (int i = 0; i < cache.Length; i++)
+            {
+                var entry = cache[i];
+                if (entry.Result != null
+                    && ReferenceEquals(entry.Input, input)
+                    && entry.Start == start
+                    && entry.Count == count)
+                {
+                    return entry.Result;
+                }
+            }
+
+            var result = input.Substring(start, count);
+            cache[substringCacheNextIndex] = new SubstringCacheEntry(input, start, count, result);
+            substringCacheNextIndex = (substringCacheNextIndex + 1) & (SubstringCacheSize - 1);
+            return result;
         }
 
         private static bool IsEcmaWhitespaceOrLineTerminator(char ch)
@@ -650,7 +713,7 @@ namespace JavaScriptRuntime
                 return string.Empty;
             }
 
-            return input.Substring(startIndex, count);
+            return SubstringFast(input, startIndex, count);
         }
 
         /// <summary>
@@ -709,7 +772,7 @@ namespace JavaScriptRuntime
             }
 
             if (count > maxCount) count = maxCount;
-            return input.Substring(startIndex, count);
+            return SubstringFast(input, startIndex, count);
         }
 
         /// <summary>
@@ -744,7 +807,7 @@ namespace JavaScriptRuntime
             int startIndex = ToSliceIndex(start, len, defaultValue: 0);
             int endIndex = ToSliceIndex(end, len, defaultValue: len);
             if (endIndex < startIndex) return string.Empty;
-            return input.Substring(startIndex, endIndex - startIndex);
+            return SubstringFast(input, startIndex, endIndex - startIndex);
         }
 
         /// <summary>
@@ -1024,7 +1087,7 @@ namespace JavaScriptRuntime
                 return string.Empty;
             }
 
-            return input[(int)idx].ToString();
+            return CharToStringFast(input[(int)idx]);
         }
 
         public static StringBuilder CreateConcatBuilder(string initialValue)
@@ -1124,7 +1187,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static string FromCharCode(object? codeUnit)
         {
-            return ToCharCodeUnit(codeUnit).ToString();
+            return CharToStringFast(ToCharCodeUnit(codeUnit));
         }
 
         /// <summary>
@@ -2102,7 +2165,7 @@ namespace JavaScriptRuntime
 
         private static JavaScriptRuntime.Array SplitWithLiteralSeparator(string input, string separator, int maxCount)
         {
-            var result = new JavaScriptRuntime.Array();
+            var result = new JavaScriptRuntime.Array(EstimateLiteralSplitCount(input, separator, maxCount));
             int start = 0;
             while (true)
             {
@@ -2125,6 +2188,34 @@ namespace JavaScriptRuntime
             }
 
             return result;
+        }
+
+        private static int EstimateLiteralSplitCount(string input, string separator, int maxCount)
+        {
+            if (maxCount <= 0)
+            {
+                return 0;
+            }
+
+            int count = 1;
+            int start = 0;
+            while (count < maxCount)
+            {
+                int idx = input.IndexOf(separator, start, StringComparison.Ordinal);
+                if (idx < 0)
+                {
+                    break;
+                }
+
+                count++;
+                start = idx + separator.Length;
+                if (start == input.Length)
+                {
+                    break;
+                }
+            }
+
+            return count;
         }
 
         /// <summary>
