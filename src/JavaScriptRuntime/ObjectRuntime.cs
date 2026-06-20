@@ -557,7 +557,7 @@ namespace JavaScriptRuntime
                 {
                     return null!; // undefined
                 }
-                return str[intIndex].ToString();
+                return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
@@ -633,7 +633,7 @@ namespace JavaScriptRuntime
                 {
                     return null!; // undefined
                 }
-                return str[intIndex].ToString();
+                return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
@@ -723,7 +723,7 @@ namespace JavaScriptRuntime
                 {
                     return null!; // undefined
                 }
-                return str[intIndex].ToString();
+                return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
             // ExpandoObject (object literal): key is already a string property
