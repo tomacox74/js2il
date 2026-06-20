@@ -358,6 +358,85 @@ function parsePrimeResults(inputPath, base, hostMetadata) {
     return rows;
 }
 
+function parseMitataResults(inputPath, base, hostMetadata) {
+    if (!fs.existsSync(inputPath)) {
+        console.log(`Mitata results file not found: ${inputPath}`);
+        return [];
+    }
+
+    let payload;
+    try {
+        payload = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
+    } catch (error) {
+        console.log(`Skipping invalid mitata JSON file: ${inputPath} (${error.message})`);
+        return [];
+    }
+
+    const rows = [];
+    const hostColumns = buildHostColumns(hostMetadata);
+    const runAt = payload.timestamp ?? new Date().toISOString();
+    const benchmark = payload.benchmark ?? null;
+    const runs = Array.isArray(payload.runs) ? payload.runs : [];
+
+    for (const run of runs) {
+        if (!run || typeof run !== 'object') {
+            continue;
+        }
+
+        const runtime = run.runtime ?? 'unknown';
+        const runIterations = getNumber(run.iterations);
+        const script = run.script ?? null;
+        const benchmarks = Array.isArray(run.benchmarks) ? run.benchmarks : [];
+
+        for (const entry of benchmarks) {
+            if (!entry || typeof entry !== 'object') {
+                continue;
+            }
+
+            const scenario = entry.name ?? 'unknown';
+            const avgNs = getNumber(entry.avgNs ?? entry.avg_ns);
+            const totalNs = getNumber(entry.totalNs ?? entry.total_ns);
+            const benchmarkIterations = getNumber(entry.iterations) ?? runIterations;
+            const errorMessage = typeof entry.error === 'string'
+                ? entry.error
+                : (entry.error && typeof entry.error === 'object' ? entry.error.message ?? null : null);
+
+            const meta = {
+                benchmark,
+                script,
+                runner_iterations: runIterations,
+                host: hostMetadata
+            };
+
+            if (avgNs !== null) {
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'avg_ns', avgNs, 'ns', runAt, meta, hostColumns));
+            }
+            if (totalNs !== null) {
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'total_ns', totalNs, 'ns', runAt, meta, hostColumns));
+            }
+            if (benchmarkIterations !== null) {
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'iterations', benchmarkIterations, 'count', runAt, meta, hostColumns));
+            }
+            if (errorMessage) {
+                rows.push(createRow(
+                    base,
+                    'mitata',
+                    scenario,
+                    runtime,
+                    'error',
+                    1,
+                    'flag',
+                    runAt,
+                    { ...meta, error: errorMessage },
+                    hostColumns
+                ));
+            }
+        }
+    }
+
+    return rows;
+}
+
 function extractBenchmarksFromJson(data) {
     if (!data) return [];
     if (Array.isArray(data)) {
@@ -710,6 +789,8 @@ async function main() {
         rows = parseBenchmarkDotNetResults(input || path.join('tests', 'performance', 'Benchmarks', 'BenchmarkDotNet.Artifacts', 'results'), base, hostMetadata);
     } else if (source === 'prime-script') {
         rows = parsePrimeResults(input || path.join('tests', 'performance', 'results.json'), base, hostMetadata);
+    } else if (source === 'mitata') {
+        rows = parseMitataResults(input || path.join('tests', 'performance', 'mitata', 'results.json'), base, hostMetadata);
     } else {
         console.error(`Unsupported source: ${source}`);
         process.exit(1);
