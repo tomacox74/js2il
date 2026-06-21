@@ -1271,6 +1271,80 @@ public sealed partial class HIRToLIRLowerer
         }
     }
 
+    private bool TryCreateCallableIdForConstInitializedArrow(
+        Symbol symbol,
+        out TwoPhase.CallableId callableId,
+        out Scope bodyScope)
+    {
+        callableId = null!;
+        bodyScope = null!;
+
+        if (_scope == null
+            || symbol.BindingInfo.Kind != BindingKind.Const
+            || symbol.BindingInfo.RequiresRuntimeTemporalDeadZoneChecks
+            || symbol.BindingInfo.DeclarationNode is not VariableDeclarator { Init: ArrowFunctionExpression arrowExpr })
+        {
+            return false;
+        }
+
+        if (ArrowRequiresRuntimeClosureInvocation(arrowExpr))
+        {
+            return false;
+        }
+
+        var root = _scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var arrowScope = FindScopeByDeclarationNode(arrowExpr, root);
+        if (arrowScope == null || arrowScope.Parent == null)
+        {
+            return false;
+        }
+
+        var declaringScope = arrowScope.Parent;
+        var moduleName = root.Name;
+        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
+            ? moduleName
+            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
+
+        bodyScope = arrowScope;
+        callableId = new TwoPhase.CallableId
+        {
+            Kind = TwoPhase.CallableKind.Arrow,
+            DeclaringScopeName = declaringScopeName,
+            Name = null,
+            Location = TwoPhase.SourceLocation.FromNode(arrowExpr),
+            JsParamCount = CountNonRestParameters(arrowExpr.Params),
+            NeedsArgumentsObject = false,
+            HasRestParameters = arrowScope.HasRestParameters,
+            UsesMappedArgumentsObject = false,
+            ArgumentsParameterNames = Array.Empty<string>(),
+            IncludeCalleeInArgumentsObject = false,
+            HasRestrictedFunctionProperties = true,
+            AstNode = arrowExpr
+        };
+        return true;
+    }
+
+    private static bool ArrowRequiresRuntimeClosureInvocation(ArrowFunctionExpression arrowExpr)
+    {
+        var requiresRuntimeClosure = false;
+        var walker = new AstWalker();
+        walker.Visit(arrowExpr.Body, node =>
+        {
+            if (node is ThisExpression
+                || node is MetaProperty
+                || node is Identifier { Name: "arguments" })
+            {
+                requiresRuntimeClosure = true;
+            }
+        });
+        return requiresRuntimeClosure;
+    }
+
     private Scope? FindDeclaringScope(BindingInfo binding)
     {
         if (binding.DeclaringScope != null)

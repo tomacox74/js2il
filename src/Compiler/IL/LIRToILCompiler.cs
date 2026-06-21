@@ -171,7 +171,8 @@ internal sealed partial class LIRToILCompiler
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor,
-        CallableSignature signature)
+        CallableSignature signature,
+        StackifyResult? stackifyResult = null)
     {
         if (signature.ScopeAbiKind != Jroc.Runtime.CallableScopeAbiKind.SingleScope)
         {
@@ -183,11 +184,45 @@ internal sealed partial class LIRToILCompiler
             throw new InvalidOperationException("SingleScope callable signature is missing its scope type identity.");
         }
 
+        if (TryEmitSingleScopeProducerDirect(scopesArray, ilEncoder, allocation, methodDescriptor, signature, stackifyResult))
+        {
+            return;
+        }
+
         EmitLoadTemp(scopesArray, ilEncoder, allocation, methodDescriptor);
         ilEncoder.LoadConstantI4(0);
         ilEncoder.OpCode(ILOpCode.Ldelem_ref);
         ilEncoder.OpCode(ILOpCode.Castclass);
         ilEncoder.Token(_scopeMetadataRegistry.GetScopeTypeHandle(signature.SingleScopeScopeName));
+    }
+
+    private bool TryEmitSingleScopeProducerDirect(
+        TempVariable scopesArray,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor,
+        CallableSignature signature,
+        StackifyResult? stackifyResult)
+    {
+        if (stackifyResult is not { } result || !result.IsStackable(scopesArray))
+        {
+            return false;
+        }
+
+        foreach (var instruction in MethodBody.Instructions)
+        {
+            if (instruction is LIRBuildScopesArray buildScopes
+                && buildScopes.Result.Equals(scopesArray)
+                && buildScopes.Slots.Count == 1)
+            {
+                EmitLoadScopeInstance(ilEncoder, buildScopes.Slots[0], methodDescriptor, allocation);
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(_scopeMetadataRegistry.GetScopeTypeHandle(signature.SingleScopeScopeName!));
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)

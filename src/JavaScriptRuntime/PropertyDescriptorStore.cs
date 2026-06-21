@@ -74,6 +74,14 @@ internal static class PropertyDescriptorStore
         return false;
     }
 
+    public static bool HasAny(object target)
+    {
+        if (target == null) throw new ArgumentNullException(nameof(target));
+
+        return _slots.TryGetValue(target, out var slot)
+            && slot.Descriptors.Count != 0;
+    }
+
     public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
     {
         if (target == null) throw new ArgumentNullException(nameof(target));

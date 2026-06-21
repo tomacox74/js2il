@@ -1,4 +1,4 @@
-// IL code: ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+﻿// IL code: ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -204,14 +204,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 144 (0x90)
+		// Code size: 141 (0x8d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] object[]
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope::.ctor()
@@ -252,21 +251,20 @@
 		IL_0060: stloc.3
 		IL_0061: ldloc.3
 		IL_0062: stloc.1
-		IL_0063: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0068: stloc.s 4
-		IL_006a: ldloc.1
-		IL_006b: ldloc.s 4
-		IL_006d: ldc.r8 123
-		IL_0076: box [System.Runtime]System.Double
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0080: stloc.3
-		IL_0081: ldloc.3
-		IL_0082: stloc.2
-		IL_0083: ldloc.2
-		IL_0084: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_008e: pop
-		IL_008f: ret
+		IL_0063: ldloc.0
+		IL_0064: castclass Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope
+		IL_0069: ldnull
+		IL_006a: ldc.r8 123
+		IL_0073: box [System.Runtime]System.Double
+		IL_0078: call object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_L5C15::__js_call__(class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/Scope, object, object)
+		IL_007d: stloc.3
+		IL_007e: ldloc.3
+		IL_007f: stloc.2
+		IL_0080: ldloc.2
+		IL_0081: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_008b: pop
+		IL_008c: ret
 	} // end of method ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal

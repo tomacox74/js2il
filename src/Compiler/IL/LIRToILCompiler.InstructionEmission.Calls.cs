@@ -174,7 +174,8 @@ internal sealed partial class LIRToILCompiler
                                 ilEncoder,
                                 allocation,
                                 methodDescriptor,
-                                callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                                callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."),
+                                stackifyResult);
                         }
                         else
                         {
@@ -230,20 +231,11 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder,
                             allocation,
                             methodDescriptor,
-                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."),
+                            stackifyResult);
                     }
-                    else
+                    else if (requiresScopes)
                     {
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                    }
-                    ilEncoder.OpCode(ILOpCode.Ldftn);
-                    ilEncoder.Token(methodHandle);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
-
-                    if (delegateRequiresScopeArray)
-                    {
-                        // Load scopes array only when required by callee ABI.
                         EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     }
 
@@ -253,7 +245,10 @@ internal sealed partial class LIRToILCompiler
                     // Load all arguments
                     for (int i = 0; i < argsToPass; i++)
                     {
-                        EmitLoadTemp(callFunc.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                        var parameterClrType = callableSignature?.ParameterClrTypes != null && i < callableSignature.ParameterClrTypes.Count
+                            ? callableSignature.ParameterClrTypes[i]
+                            : null;
+                        EmitLoadTempAsParameterType(callFunc.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
                     }
 
                     // Pad missing parameters with null (supports default parameter initialization).
@@ -262,9 +257,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
-                    // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
-                    ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount, delegateRequiresScopeArray));
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(methodHandle);
 
                     if (IsMaterialized(callFunc.Result, allocation))
                     {
@@ -309,7 +303,8 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder,
                             allocation,
                             methodDescriptor,
-                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {tailCall.CallableId.DisplayName}."));
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {tailCall.CallableId.DisplayName}."),
+                            stackifyResult);
                     }
                     else
                     {
@@ -380,7 +375,8 @@ internal sealed partial class LIRToILCompiler
                             ilEncoder,
                             allocation,
                             methodDescriptor,
-                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."));
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."),
+                            stackifyResult);
                     }
                     else
                     {
