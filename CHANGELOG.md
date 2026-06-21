@@ -8,6 +8,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 _Nothing yet._
 
+## v0.10.0 - 2026-06-21
+
+
+
+
 ## v0.9.32 - 2026-06-20
 
 - runtime/tests/docs: add `Promise.try` support, including constructor-aware capability creation, callback invocation with forwarded arguments, and Promise resolve/reject wiring; enable the new non-`eval` test262 `Promise.try` metadata ports and refresh ECMA-262 Promise docs.
