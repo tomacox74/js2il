@@ -137,11 +137,21 @@ jobs:
         run: |
           set -euo pipefail
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
-          if dotnet tool list --global | awk '{print $1}' | grep -qx "jroc"; then
-            dotnet tool update --global jroc --version "${JROC_PACKAGE_VERSION}"
-          else
-            dotnet tool install --global jroc --version "${JROC_PACKAGE_VERSION}"
-          fi
+          tries=20
+          delay=30
+          for i in $(seq 1 $tries); do
+            dotnet nuget locals http-cache --clear || true
+            if dotnet tool install --global jroc --version "${JROC_PACKAGE_VERSION}"; then
+              echo "Installed jroc ${JROC_PACKAGE_VERSION}"
+              exit 0
+            fi
+
+            echo "Attempt $i/$tries: jroc ${JROC_PACKAGE_VERSION} not available yet on NuGet; waiting ${delay}s..."
+            sleep $delay
+          done
+
+          echo "Failed to install jroc ${JROC_PACKAGE_VERSION} from NuGet after $tries attempts" >&2
+          exit 1
 
       - name: Run mitata benchmark suite
         shell: bash
