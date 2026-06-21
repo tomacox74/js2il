@@ -686,16 +686,19 @@ namespace JavaScriptRuntime
             return InvokeWithArgsCore(target, scopes, newTarget, args);
         }
 
-        private static object InvokeAsFunctionCall(object target, Func<object> invoke)
+        private static object? ResolveFunctionCallThis(object target)
         {
-            object? thisValue = target is Delegate del && UsesEcmaScriptThisBinding(del)
+            return target is Delegate del && UsesEcmaScriptThisBinding(del)
                 ? GlobalThis.globalThis
                 : null;
+        }
 
-            var previousThis = RuntimeServices.SetCurrentThis(thisValue);
+        public static object InvokeFunctionCallWithArgs(object target, object[] scopes, params object?[] args)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
             try
             {
-                return invoke();
+                return InvokeWithArgsCore(target, scopes, newTarget: null, args);
             }
             finally
             {
@@ -703,29 +706,56 @@ namespace JavaScriptRuntime
             }
         }
 
-        public static object InvokeFunctionCallWithArgs(object target, object[] scopes, params object?[] args)
-        {
-            return InvokeAsFunctionCall(target, () => InvokeWithArgsCore(target, scopes, newTarget: null, args));
-        }
-
         public static object InvokeFunctionCallWithArgs0(object target, object[] scopes)
         {
-            return InvokeAsFunctionCall(target, () => InvokeWithArgs0(target, scopes));
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
+            try
+            {
+                return InvokeWithArgs0(target, scopes);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
 
         public static object InvokeFunctionCallWithArgs1(object target, object[] scopes, object? a0)
         {
-            return InvokeAsFunctionCall(target, () => InvokeWithArgs1(target, scopes, a0));
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
+            try
+            {
+                return InvokeWithArgs1(target, scopes, a0);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
 
         public static object InvokeFunctionCallWithArgs2(object target, object[] scopes, object? a0, object? a1)
         {
-            return InvokeAsFunctionCall(target, () => InvokeWithArgs2(target, scopes, a0, a1));
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
+            try
+            {
+                return InvokeWithArgs2(target, scopes, a0, a1);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
 
         public static object InvokeFunctionCallWithArgs3(object target, object[] scopes, object? a0, object? a1, object? a2)
         {
-            return InvokeAsFunctionCall(target, () => InvokeWithArgs3(target, scopes, a0, a1, a2));
+            var previousThis = RuntimeServices.SetCurrentThis(ResolveFunctionCallThis(target));
+            try
+            {
+                return InvokeWithArgs3(target, scopes, a0, a1, a2);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
 
         private static bool TryInvokeProxyCallFastPath(object target, object[] scopes, object?[] args, out object result)

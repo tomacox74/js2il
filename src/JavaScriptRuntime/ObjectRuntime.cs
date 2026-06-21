@@ -645,6 +645,21 @@ namespace JavaScriptRuntime
 
             if (obj is Array array)
             {
+                if (!double.IsNaN(index)
+                    && !double.IsInfinity(index)
+                    && index % 1.0 == 0.0
+                    && index >= 0
+                    && index <= int.MaxValue
+                    && !PropertyDescriptorStore.HasAny(array))
+                {
+                    if (intIndex >= array.Count)
+                    {
+                        return null!; // undefined
+                    }
+
+                    return array[intIndex]!;
+                }
+
                 var propName = Object.ToPropertyKeyString(index);
                 if (PropertyDescriptorStore.TryGetOwn(array, propName, out _))
                 {
@@ -1093,7 +1108,6 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
             }
 
-            var indexKey = DotNet2JSConversions.ToString(index);
             var isCanonicalArrayIndex = !double.IsNaN(index)
                 && !double.IsInfinity(index)
                 && index % 1.0 == 0.0
@@ -1112,11 +1126,19 @@ namespace JavaScriptRuntime
             {
                 if (!isCanonicalArrayIndex)
                 {
-                    return SetProperty(array, indexKey, value, throwOnError) ?? value;
+                    var nonCanonicalIndexKey = DotNet2JSConversions.ToString(index);
+                    return SetProperty(array, nonCanonicalIndexKey, value, throwOnError) ?? value;
                 }
 
+                if (!PropertyDescriptorStore.HasAny(array) && array.HasOwnIndex(intIndex))
+                {
+                    array[intIndex] = value;
+                    return value;
+                }
+
+                var canonicalIndexKey = DotNet2JSConversions.ToString(index);
                 if (!array.HasOwnIndex(intIndex)
-                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, indexKey, value, throwOnError))
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, canonicalIndexKey, value, throwOnError))
                 {
                     return value;
                 }

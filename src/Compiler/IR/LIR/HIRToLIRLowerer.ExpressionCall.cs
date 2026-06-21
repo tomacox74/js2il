@@ -498,6 +498,31 @@ public sealed partial class HIRToLIRLowerer
                 }
             }
 
+            if (!hasSpreadArgs
+                && TryCreateCallableIdForConstInitializedArrow(symbol, out var constArrowCallableId, out var constArrowScope))
+            {
+                var constArrowArguments = new List<TempVariable>(callExpr.Arguments.Length);
+                foreach (var arg in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(arg, out var argTemp))
+                    {
+                        return false;
+                    }
+                    constArrowArguments.Add(EnsureObject(argTemp));
+                }
+
+                var constArrowScopesTemp = CreateTempVariable();
+                if (!TryBuildScopesArrayForClosureBinding(constArrowScope, constArrowScopesTemp))
+                {
+                    return false;
+                }
+                DefineTempStorage(constArrowScopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, constArrowScopesTemp, constArrowArguments, resultTempVar, constArrowCallableId));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
+
             // If the callee is not a direct function binding (e.g., it's a local/const holding a closure),
             // invoke via runtime dispatch (Closure.InvokeWithArgs).
             if (symbol.Kind != BindingKind.Function)
