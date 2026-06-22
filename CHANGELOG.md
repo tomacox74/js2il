@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - runtime/tests/docs/test262: unskip the remaining non-`eval` global-object/value-property ports, mirroring top-level `var` bindings onto `globalThis` and enforcing strict assignment errors for `NaN`/`undefined`.
+- runtime/tests/docs/test262: implement `Number.MAX_SAFE_INTEGER` and `Number.MIN_SAFE_INTEGER` constructor properties and unskip the new non-`eval` Number constructor/value-property ports (`S15.7.1.1_A1`, `MAX_SAFE_INTEGER`, `MIN_SAFE_INTEGER`).
 
 ## v0.10.0 - 2026-06-21
 

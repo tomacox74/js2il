@@ -22,6 +22,14 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task EPSILON()
         => ExecutionTestFromFile("EPSILON");
 
+    [Fact(DisplayName = "MAX_SAFE_INTEGER")]
+    public Task MAX_SAFE_INTEGER()
+        => ExecutionTestFromFile("MAX_SAFE_INTEGER");
+
+    [Fact(DisplayName = "MIN_SAFE_INTEGER")]
+    public Task MIN_SAFE_INTEGER()
+        => ExecutionTestFromFile("MIN_SAFE_INTEGER");
+
     [Fact(DisplayName = "NaN")]
     public Task NaN()
         => ExecutionTestFromFile("NaN");
@@ -77,5 +85,9 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "MAX_VALUE/S15.7.3.2_A2")]
     public Task MAX_VALUE_S15_7_3_2_A2()
         => ExecutionTestFromFile("MAX_VALUE/S15.7.3.2_A2");
+
+    [Fact(DisplayName = "S15.7.1.1_A1")]
+    public Task S15_7_1_1_A1()
+        => ExecutionTestFromFile("S15.7.1.1_A1");
 
 }

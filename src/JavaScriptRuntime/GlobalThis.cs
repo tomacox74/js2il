@@ -495,6 +495,8 @@ namespace JavaScriptRuntime
             });
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MAX_VALUE", double.MaxValue);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MIN_VALUE", double.Epsilon);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MAX_SAFE_INTEGER", 9007199254740991d);
+            DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MIN_SAFE_INTEGER", -9007199254740991d);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "NaN", double.NaN);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "NEGATIVE_INFINITY", double.NegativeInfinity);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "POSITIVE_INFINITY", double.PositiveInfinity);
