@@ -156,6 +156,13 @@ public class Scope
     public bool HasRestParameters { get; set; }
 
     /// <summary>
+    /// True when source code in this module referenced the ECMAScript globalThis binding.
+    /// Used to gate global-var mirroring onto the global object so we only emit the extra
+    /// global-object write when user code actually observes the global object.
+    /// </summary>
+    public bool UsesGlobalThisValue { get; set; }
+
+    /// <summary>
     /// Indicates whether this is an async function scope.
     /// Set during symbol table construction for function scopes.
     /// Used by TypeGenerator to add async state fields (_asyncState, _deferred).
@@ -213,10 +220,18 @@ public class Scope
             // this actually can occur.. for example "console" or "require"
             var globalBinding = new BindingInfo(name, BindingKind.Global, this, AstNode);
             Bindings[name] = globalBinding;
+            if (Kind == ScopeKind.Global && string.Equals(name, "globalThis", StringComparison.Ordinal))
+            {
+                UsesGlobalThisValue = true;
+            }
             return new Symbol(globalBinding);
         }
-        
+
         var bindingInfo = Bindings[name];
+        if (Kind == ScopeKind.Global && string.Equals(name, "globalThis", StringComparison.Ordinal))
+        {
+            UsesGlobalThisValue = true;
+        }
         return new Symbol(bindingInfo);
     }
 

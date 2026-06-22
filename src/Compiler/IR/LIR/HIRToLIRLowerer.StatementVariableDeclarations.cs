@@ -216,6 +216,17 @@ public sealed partial class HIRToLIRLowerer
             return;
         }
 
+        var scope = binding.DeclaringScope;
+        while (scope.Parent != null)
+        {
+            scope = scope.Parent;
+        }
+
+        if (!scope.UsesGlobalThisValue)
+        {
+            return;
+        }
+
         var globalThisTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             nameof(JavaScriptRuntime.GlobalThis),
