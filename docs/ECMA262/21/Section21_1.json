@@ -60,7 +60,7 @@
     {
       "clause": "21.1.2.6",
       "title": "Number.MAX_SAFE_INTEGER",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.max_safe_integer"
     },
     {
@@ -72,7 +72,7 @@
     {
       "clause": "21.1.2.8",
       "title": "Number.MIN_SAFE_INTEGER",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.min_safe_integer"
     },
     {
@@ -186,6 +186,7 @@
         "status": "Supported with Limitations",
         "test262Paths": [
           "built-ins/Number/return-abrupt-tonumber-value.js",
+          "built-ins/Number/S15.7.1.1_A1.js",
           "built-ins/Number/S9.3_A1_T1.js",
           "built-ins/Number/S9.3.1_A17.js",
           "built-ins/Number/S9.3_A2_T1.js",
@@ -194,7 +195,7 @@
           "built-ins/Number/S9.3.1_A1.js",
           "built-ins/Number/S9.3.1_A7.js"
         ],
-        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, and hexadecimal-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+        "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, and non-canonical infinity-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
       },
       {
         "clause": "21.1.2.1",
@@ -256,6 +257,24 @@
           "test/built-ins/Number/isNaN/prop-desc.js"
         ],
         "notes": "Number.isNaN is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, and returns true only for Number NaN values."
+      },
+      {
+        "clause": "21.1.2.6",
+        "feature": "Number.MAX_SAFE_INTEGER",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/MAX_SAFE_INTEGER.js"
+        ],
+        "notes": "Exposed on the Number constructor as a non-writable, non-enumerable, non-configurable data property with value 9007199254740991."
+      },
+      {
+        "clause": "21.1.2.8",
+        "feature": "Number.MIN_SAFE_INTEGER",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/MIN_SAFE_INTEGER.js"
+        ],
+        "notes": "Exposed on the Number constructor as a non-writable, non-enumerable, non-configurable data property with value -9007199254740991."
       },
       {
         "clause": "21.1.2.12",

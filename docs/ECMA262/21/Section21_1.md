@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-29T14:16:08Z
+> Last generated (UTC): 2026-06-22T16:27:37Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,9 +22,9 @@
 | 21.1.2.3 | Number.isInteger ( number ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-number.isinteger) |
 | 21.1.2.4 | Number.isNaN ( number ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.isnan) |
 | 21.1.2.5 | Number.isSafeInteger ( number ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.issafeinteger) |
-| 21.1.2.6 | Number.MAX_SAFE_INTEGER | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.max_safe_integer) |
+| 21.1.2.6 | Number.MAX_SAFE_INTEGER | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.max_safe_integer) |
 | 21.1.2.7 | Number.MAX_VALUE | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.max_value) |
-| 21.1.2.8 | Number.MIN_SAFE_INTEGER | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.min_safe_integer) |
+| 21.1.2.8 | Number.MIN_SAFE_INTEGER | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.min_safe_integer) |
 | 21.1.2.9 | Number.MIN_VALUE | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.min_value) |
 | 21.1.2.10 | Number.NaN | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-number.nan) |
 | 21.1.2.11 | Number.NEGATIVE_INFINITY | Supported | [tc39.es](https://tc39.es/ecma262/#sec-number.negative_infinity) |
@@ -51,7 +51,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Number ( value ) | Supported with Limitations |  | `built-ins/Number/return-abrupt-tonumber-value.js`<br>`built-ins/Number/S9.3_A1_T1.js`<br>`built-ins/Number/S9.3.1_A17.js`<br>`built-ins/Number/S9.3_A2_T1.js`<br>`built-ins/Number/S9.3_A3_T1.js`<br>`built-ins/Number/S9.3_A4.1_T1.js`<br>`built-ins/Number/S9.3.1_A1.js`<br>`built-ins/Number/S9.3.1_A7.js` | Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, and hexadecimal-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete. |
+| Number ( value ) | Supported with Limitations |  | `built-ins/Number/return-abrupt-tonumber-value.js`<br>`built-ins/Number/S15.7.1.1_A1.js`<br>`built-ins/Number/S9.3_A1_T1.js`<br>`built-ins/Number/S9.3.1_A17.js`<br>`built-ins/Number/S9.3_A2_T1.js`<br>`built-ins/Number/S9.3_A3_T1.js`<br>`built-ins/Number/S9.3_A4.1_T1.js`<br>`built-ins/Number/S9.3.1_A1.js`<br>`built-ins/Number/S9.3.1_A7.js` | Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, and non-canonical infinity-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete. |
 
 ### 21.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-number.epsilon))
 
@@ -76,6 +76,18 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Number.isNaN(number) | Supported | `tests/Jroc.Test262.Tests/built-ins/Number/isNaN/ExecutionTests.cs` | `test/built-ins/Number/isNaN/arg-is-not-number.js`<br>`test/built-ins/Number/isNaN/length.js`<br>`test/built-ins/Number/isNaN/name.js`<br>`test/built-ins/Number/isNaN/nan.js`<br>`test/built-ins/Number/isNaN/not-a-constructor.js`<br>`test/built-ins/Number/isNaN/not-nan.js`<br>`test/built-ins/Number/isNaN/prop-desc.js` | Number.isNaN is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, and returns true only for Number NaN values. |
+
+### 21.1.2.6 ([tc39.es](https://tc39.es/ecma262/#sec-number.max_safe_integer))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Number.MAX_SAFE_INTEGER | Supported |  | `built-ins/Number/MAX_SAFE_INTEGER.js` | Exposed on the Number constructor as a non-writable, non-enumerable, non-configurable data property with value 9007199254740991. |
+
+### 21.1.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-number.min_safe_integer))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Number.MIN_SAFE_INTEGER | Supported |  | `built-ins/Number/MIN_SAFE_INTEGER.js` | Exposed on the Number constructor as a non-writable, non-enumerable, non-configurable data property with value -9007199254740991. |
 
 ### 21.1.2.11 ([tc39.es](https://tc39.es/ecma262/#sec-number.negative_infinity))
 
