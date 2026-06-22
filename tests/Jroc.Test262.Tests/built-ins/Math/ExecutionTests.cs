@@ -41,13 +41,25 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task E_value()
         => ExecutionTestFromFile("E/value");
 
+    [Fact(DisplayName = "E/prop-desc")]
+    public Task E_prop_desc()
+        => ExecutionTestFromFile("E/prop-desc");
+
     [Fact(DisplayName = "LN10/value")]
     public Task LN10_value()
         => ExecutionTestFromFile("LN10/value");
 
+    [Fact(DisplayName = "LN10/prop-desc")]
+    public Task LN10_prop_desc()
+        => ExecutionTestFromFile("LN10/prop-desc");
+
     [Fact(DisplayName = "LN2/value")]
     public Task LN2_value()
         => ExecutionTestFromFile("LN2/value");
+
+    [Fact(DisplayName = "LN2/prop-desc")]
+    public Task LN2_prop_desc()
+        => ExecutionTestFromFile("LN2/prop-desc");
 
     [Fact(DisplayName = "LOG10E/value")]
     public Task LOG10E_value()

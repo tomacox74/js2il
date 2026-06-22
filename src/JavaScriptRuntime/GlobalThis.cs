@@ -279,6 +279,14 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.RestrictedPropertiesPrototype, JavaScriptRuntime.Function.Prototype);
             DefineIntrinsicDataProperty(Math, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Math");
+            DefineIntrinsicConstantDataProperty(Math, "E", JavaScriptRuntime.Math.E);
+            DefineIntrinsicConstantDataProperty(Math, "LN10", JavaScriptRuntime.Math.LN10);
+            DefineIntrinsicConstantDataProperty(Math, "LN2", JavaScriptRuntime.Math.LN2);
+            DefineIntrinsicConstantDataProperty(Math, "LOG10E", JavaScriptRuntime.Math.LOG10E);
+            DefineIntrinsicConstantDataProperty(Math, "LOG2E", JavaScriptRuntime.Math.LOG2E);
+            DefineIntrinsicConstantDataProperty(Math, "PI", JavaScriptRuntime.Math.PI);
+            DefineIntrinsicConstantDataProperty(Math, "SQRT1_2", JavaScriptRuntime.Math.SQRT1_2);
+            DefineIntrinsicConstantDataProperty(Math, "SQRT2", JavaScriptRuntime.Math.SQRT2);
             DefineIntrinsicDataProperty(JSON, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "JSON");
             DefineIntrinsicDataProperty(Reflect, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Reflect");
             DefineIntrinsicDataProperty(_intlValue, global::JavaScriptRuntime.Symbol.toStringTag.DebugId, "Intl");

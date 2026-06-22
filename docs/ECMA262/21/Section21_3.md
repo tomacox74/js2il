@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-29T14:16:08Z
+> Last generated (UTC): 2026-06-22T20:21:29Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -14,7 +14,7 @@
 
 | Clause | Title | Status | Spec |
 |---:|---|---|---|
-| 21.3.1 | Value Properties of the Math Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object) |
+| 21.3.1 | Value Properties of the Math Object | Supported | [tc39.es](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object) |
 | 21.3.1.1 | Math.E | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.e) |
 | 21.3.1.2 | Math.LN10 | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.ln10) |
 | 21.3.1.3 | Math.LN2 | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.ln2) |
@@ -71,7 +71,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Math numeric value properties | Supported | `tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/E/value.js`<br>`test/built-ins/Math/LN10/value.js`<br>`test/built-ins/Math/LN2/value.js`<br>`test/built-ins/Math/LOG10E/value.js`<br>`test/built-ins/Math/LOG2E/value.js`<br>`test/built-ins/Math/PI/value.js`<br>`test/built-ins/Math/SQRT2/value.js` | Checked-in coverage now includes representative value checks for the exposed numeric Math constants E, LN10, LN2, LOG10E, LOG2E, PI, and SQRT2. |
+| Math numeric value properties | Supported | `tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/E/value.js`<br>`test/built-ins/Math/E/prop-desc.js`<br>`test/built-ins/Math/LN10/value.js`<br>`test/built-ins/Math/LN10/prop-desc.js`<br>`test/built-ins/Math/LN2/value.js`<br>`test/built-ins/Math/LN2/prop-desc.js`<br>`test/built-ins/Math/LOG10E/value.js`<br>`test/built-ins/Math/LOG2E/value.js`<br>`test/built-ins/Math/PI/value.js`<br>`test/built-ins/Math/SQRT2/value.js` | Checked-in coverage now includes representative value checks for the exposed numeric Math constants E, LN10, LN2, LOG10E, LOG2E, PI, and SQRT2, plus descriptor-attribute checks for E/LN10/LN2 (`writable: false`, `enumerable: false`, `configurable: false`). |
 
 ### 21.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object))
 
