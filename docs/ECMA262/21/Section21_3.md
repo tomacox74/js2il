@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-22T20:21:29Z
+> Last generated (UTC): 2026-06-22T20:50:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,7 +23,7 @@
 | 21.3.1.6 | Math.PI | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.pi) |
 | 21.3.1.7 | Math.SQRT1_2 | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt1_2) |
 | 21.3.1.8 | Math.SQRT2 | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math.sqrt2) |
-| 21.3.1.9 | Math [ %Symbol.toStringTag% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math-%symbol.tostringtag%) |
+| 21.3.1.9 | Math [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-math-%symbol.tostringtag%) |
 | 21.3.2 | Function Properties of the Math Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object) |
 | 21.3.2.1 | Math.abs ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.abs) |
 | 21.3.2.2 | Math.acos ( x ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-math.acos) |
@@ -72,6 +72,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Math numeric value properties | Supported | `tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/E/value.js`<br>`test/built-ins/Math/E/prop-desc.js`<br>`test/built-ins/Math/LN10/value.js`<br>`test/built-ins/Math/LN10/prop-desc.js`<br>`test/built-ins/Math/LN2/value.js`<br>`test/built-ins/Math/LN2/prop-desc.js`<br>`test/built-ins/Math/LOG10E/value.js`<br>`test/built-ins/Math/LOG2E/value.js`<br>`test/built-ins/Math/PI/value.js`<br>`test/built-ins/Math/SQRT2/value.js` | Checked-in coverage now includes representative value checks for the exposed numeric Math constants E, LN10, LN2, LOG10E, LOG2E, PI, and SQRT2, plus descriptor-attribute checks for E/LN10/LN2 (`writable: false`, `enumerable: false`, `configurable: false`). |
+
+### 21.3.1.9 ([tc39.es](https://tc39.es/ecma262/#sec-math-%symbol.tostringtag%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Math[@@toStringTag] descriptor | Supported | `tests/Jroc.Test262.Tests/built-ins/Math/ExecutionTests.cs` | `test/built-ins/Math/Symbol.toStringTag.js` | Checked-in coverage now includes Math @@toStringTag value and descriptor attributes (`value: "Math"`, `writable: false`, `enumerable: false`, `configurable: true`). |
 
 ### 21.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object))
 

@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-20T15:28:45Z
+> Last generated (UTC): 2026-06-22T20:50:08Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -24,7 +24,7 @@
 | 25.5.2.4 | UnicodeEscape ( C ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-unicodeescape) |
 | 25.5.2.5 | SerializeJSONObject ( state , value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-serializejsonobject) |
 | 25.5.2.6 | SerializeJSONArray ( state , value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-serializejsonarray) |
-| 25.5.3 | JSON [ %Symbol.toStringTag% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%) |
+| 25.5.3 | JSON [ %Symbol.toStringTag% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%) |
 
 ## Support
 
@@ -41,4 +41,10 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | JSON.stringify | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/JSON/stringify/ExecutionTests.cs` | `test/built-ins/JSON/stringify/builtin.js`<br>`test/built-ins/JSON/stringify/length.js`<br>`test/built-ins/JSON/stringify/name.js`<br>`test/built-ins/JSON/stringify/property-order.js`<br>`test/built-ins/JSON/stringify/prop-desc.js`<br>`test/built-ins/JSON/stringify/replacer-array-abrupt.js`<br>`test/built-ins/JSON/stringify/replacer-array-duplicates.js`<br>`test/built-ins/JSON/stringify/replacer-array-empty.js`<br>`test/built-ins/JSON/stringify/replacer-array-number.js`<br>`test/built-ins/JSON/stringify/replacer-array-number-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-order.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked.js`<br>`test/built-ins/JSON/stringify/replacer-array-proxy-revoked-realm.js`<br>`test/built-ins/JSON/stringify/replacer-array-string-object.js`<br>`test/built-ins/JSON/stringify/replacer-array-undefined.js`<br>`test/built-ins/JSON/stringify/replacer-function-result.js`<br>`test/built-ins/JSON/stringify/space-string.js`<br>`test/built-ins/JSON/stringify/value-tojson-result.js` | JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata), ordinary property-order serialization, array-replacer ordering/filtering/deduplication, boxed string/number replacer entries, ignored undefined/sparse replacer entries, proxy/revoked-proxy abrupt completion, replacer function return-value serialization, selected toJSON return-value serialization, and string space/gap formatting. Broader cyclic, exotic, BigInt, and cross-realm behavior remains limited. |
+
+### 25.5.3 ([tc39.es](https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| JSON[@@toStringTag] descriptor | Supported | `tests/Jroc.Test262.Tests/built-ins/JSON/ExecutionTests.cs` | `test/built-ins/JSON/Symbol.toStringTag.js` | Checked-in coverage now includes JSON @@toStringTag value and descriptor attributes (`value: "JSON"`, `writable: false`, `enumerable: false`, `configurable: true`). |
 

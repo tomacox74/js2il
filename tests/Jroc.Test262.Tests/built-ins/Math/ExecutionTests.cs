@@ -93,4 +93,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task SQRT1_2_value()
         => ExecutionTestFromFile("SQRT1_2/value");
 
+    [Fact(DisplayName = "Symbol.toStringTag")]
+    public Task Symbol_toStringTag()
+        => ExecutionTestFromFile("Symbol.toStringTag");
+
 }

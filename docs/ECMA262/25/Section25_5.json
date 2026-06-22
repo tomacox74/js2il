@@ -72,7 +72,7 @@
     {
       "clause": "25.5.3",
       "title": "JSON [ %Symbol.toStringTag% ]",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%"
     }
   ],
@@ -127,6 +127,19 @@
           "test/built-ins/JSON/stringify/value-tojson-result.js"
         ],
         "notes": "JSON.stringify is implemented for ordinary objects and arrays. Current bounded test262 coverage exercises the builtin function object surface (`JSON.stringify`, `.length`, `.name`, and property descriptor metadata), ordinary property-order serialization, array-replacer ordering/filtering/deduplication, boxed string/number replacer entries, ignored undefined/sparse replacer entries, proxy/revoked-proxy abrupt completion, replacer function return-value serialization, selected toJSON return-value serialization, and string space/gap formatting. Broader cyclic, exotic, BigInt, and cross-realm behavior remains limited."
+      },
+      {
+        "clause": "25.5.3",
+        "feature": "JSON[@@toStringTag] descriptor",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-json-%symbol.tostringtag%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/JSON/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/JSON/Symbol.toStringTag.js"
+        ],
+        "notes": "Checked-in coverage now includes JSON @@toStringTag value and descriptor attributes (`value: \"JSON\"`, `writable: false`, `enumerable: false`, `configurable: true`)."
       }
     ]
   }
