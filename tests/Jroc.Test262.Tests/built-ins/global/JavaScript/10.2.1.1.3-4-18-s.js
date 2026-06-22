@@ -9,6 +9,8 @@ description: >
 flags: [onlyStrict]
 ---*/
 
+"use strict";
+
 function Test262Error(message) {
     this.name = 'Test262Error';
     this.message = message || '';

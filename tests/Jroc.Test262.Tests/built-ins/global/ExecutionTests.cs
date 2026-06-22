@@ -6,11 +6,11 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.global") { }
 
-    [Fact(DisplayName = "10.2.1.1.3-4-16-s", Skip = "Blocked: strict assignment to global NaN does not throw yet.")]
+    [Fact(DisplayName = "10.2.1.1.3-4-16-s")]
     public Task _10_2_1_1_3_4_16_s()
         => ExecutionTestFromFile("10.2.1.1.3-4-16-s");
 
-    [Fact(DisplayName = "10.2.1.1.3-4-18-s", Skip = "Blocked: strict assignment to global undefined does not throw yet.")]
+    [Fact(DisplayName = "10.2.1.1.3-4-18-s")]
     public Task _10_2_1_1_3_4_18_s()
         => ExecutionTestFromFile("10.2.1.1.3-4-18-s");
 
@@ -114,7 +114,7 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_1_A2_T1()
         => ExecutionTestFromFile("S15.1_A2_T1");
 
-    [Fact(DisplayName = "global-object", Skip = "Blocked: global object built-in identity coverage is incomplete.")]
+    [Fact(DisplayName = "global-object")]
     public Task global_object()
         => ExecutionTestFromFile("global-object");
 
