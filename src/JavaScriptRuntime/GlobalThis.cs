@@ -11,6 +11,7 @@ namespace JavaScriptRuntime
     /// Holds global intrinsic variables for the current program (Node-like today, extensible later).
     /// Minimal surface for jroc codegen: __dirname, __filename, and process.exitCode.
     /// </summary>
+    [IntrinsicObject("GlobalThis")]
     public class GlobalThis : IDynamicMetaObjectProvider, IDictionary<string, object?>
     {
         private static readonly ThreadLocal<ServiceContainer?> _serviceProvider = new(() => null);
@@ -784,6 +785,11 @@ namespace JavaScriptRuntime
         /// This allows libraries to read/write properties via globalThis (e.g., globalThis.window = ...).
         /// </remarks>
         public static object globalThis => GetOrCreateGlobalObject();
+
+        /// <summary>
+        /// Returns the current global object for codegen helpers.
+        /// </summary>
+        public static object GetGlobalThis() => globalThis;
 
         private static GlobalThis GetOrCreateGlobalObject()
         {

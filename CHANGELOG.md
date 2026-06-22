@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/test262: unskip the remaining non-`eval` global-object/value-property ports, mirroring top-level `var` bindings onto `globalThis` and enforcing strict assignment errors for `NaN`/`undefined`.
 
 ## v0.10.0 - 2026-06-21
 

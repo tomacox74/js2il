@@ -112,6 +112,7 @@ public sealed partial class HIRToLIRLowerer
 
             _methodBodyIR.Instructions.Add(new LIRStoreScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, fieldValue));
             _variableMap[binding] = fieldValue;
+            TryMirrorGlobalVarBinding(binding, fieldValue);
             return true;
         }
 
@@ -141,12 +142,14 @@ public sealed partial class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, fieldValue));
                 // Also map in SSA for subsequent reads (though they'll use field load)
                 _variableMap[binding] = value;
+                TryMirrorGlobalVarBinding(binding, fieldValue);
                 return true;
             }
         }
 
         if (TryInitializeStringBuilderAccumulator(binding, exprStmt.Name.Name, exprStmt.Initializer, value))
         {
+            TryMirrorGlobalVarBinding(binding, value);
             return true;
         }
 
@@ -180,6 +183,7 @@ public sealed partial class HIRToLIRLowerer
         // const variables are always single-assignment by definition.
         // let/var variables are single-assignment if never reassigned after initialization.
         _methodBodyIR.SingleAssignmentSlots.Add(slot);
+        TryMirrorGlobalVarBinding(binding, slotValue);
         return true;
     }
 
@@ -203,5 +207,37 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return true;
+    }
+
+    private void TryMirrorGlobalVarBinding(BindingInfo binding, TempVariable value)
+    {
+        if (binding.Kind != BindingKind.Var || binding.DeclaringScope.Kind != ScopeKind.Global)
+        {
+            return;
+        }
+
+        var globalThisTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.GlobalThis),
+            nameof(JavaScriptRuntime.GlobalThis.GetGlobalThis),
+            global::System.Array.Empty<TempVariable>(),
+            globalThisTemp));
+        DefineTempStorage(globalThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var nameTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, nameTemp));
+        DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+        var throwOnErrorTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, throwOnErrorTemp));
+        DefineTempStorage(throwOnErrorTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        var resultTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+            nameof(JavaScriptRuntime.ObjectRuntime),
+            nameof(JavaScriptRuntime.ObjectRuntime.SetProperty),
+            new[] { EnsureObject(globalThisTemp), EnsureObject(nameTemp), EnsureObject(value), throwOnErrorTemp },
+            resultTemp));
+        DefineTempStorage(resultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
     }
 }
