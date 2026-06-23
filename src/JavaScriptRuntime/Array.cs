@@ -31,6 +31,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "every", (Func<object[], object?[]?, object?>)PrototypeEvery, 1);
             DefinePrototypeMethod(exp, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
             DefinePrototypeMethod(exp, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
+            DefinePrototypeMethod(exp, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
             PropertyDescriptorStore.DefineOrUpdate(exp, "entries", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -534,6 +535,66 @@ namespace JavaScriptRuntime
             }
 
             return result;
+        }
+
+        private static object? PrototypeAt(object[] scopes, object?[]? args)
+        {
+            var receiver = RuntimeServices.GetCurrentThis();
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new TypeError("Array.prototype.at called on null or undefined");
+            }
+
+            // Fast path for real JS array
+            if (receiver is JavaScriptRuntime.Array jsArray)
+            {
+                if (args == null || args.Length == 0)
+                {
+                    return jsArray.at();
+                }
+
+                var converted = new object[args.Length];
+                for (int i = 0; i < args.Length; i++)
+                {
+                    converted[i] = args[i]!;
+                }
+
+                return jsArray.at(converted);
+            }
+
+            // Generic array-like at
+            double relativeIndex = 0;
+            if (args != null && args.Length > 0)
+            {
+                try { relativeIndex = TypeUtilities.ToNumber(args[0]); }
+                catch { relativeIndex = double.NaN; }
+                if (double.IsNaN(relativeIndex))
+                {
+                    relativeIndex = 0;
+                }
+                else
+                {
+                    relativeIndex = global::System.Math.Truncate(relativeIndex);
+                }
+            }
+
+            int length = ToArrayLikeLength(receiver);
+            int index;
+            if (relativeIndex >= 0)
+            {
+                index = (int)relativeIndex;
+            }
+            else
+            {
+                index = length + (int)relativeIndex;
+            }
+
+            if (index < 0 || index >= length)
+            {
+                return null; // undefined
+            }
+
+            return JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)index);
         }
 
         private static object RequireArrayLikeReceiver(string methodName)
