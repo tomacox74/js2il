@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-29T12:01:08Z
+> Last generated (UTC): 2026-06-23T22:13:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -112,6 +112,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array.of | Supported | [`Array_Static_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Static_Basic.js)<br>[`creates-a-new-array-from-arguments.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/of/JavaScript/creates-a-new-array-from-arguments.js) | `test/built-ins/Array/of/creates-a-new-array-from-arguments.js` | Creates arrays from argument lists with expected element ordering. Current checked-in test262 coverage covers ordinary argument-list construction; broader custom-constructor and abrupt-completion edge cases remain limited. |
+
+### 23.1.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.at))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array.prototype.at | Supported | [`returns-item.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/returns-item.js)<br>[`returns-item-relative-index.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/returns-item-relative-index.js)<br>[`index-argument-tointeger.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/index-argument-tointeger.js)<br>[`index-non-numeric-argument-tointeger.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/index-non-numeric-argument-tointeger.js)<br>[`index-non-numeric-argument-tointeger-invalid.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/index-non-numeric-argument-tointeger-invalid.js)<br>[`length.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/length.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/name.js)<br>[`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/prop-desc.js)<br>[`return-abrupt-from-this.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/return-abrupt-from-this.js)<br>[`returns-undefined-for-holes-in-sparse-arrays.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/returns-undefined-for-holes-in-sparse-arrays.js)<br>[`returns-undefined-for-out-of-range-index.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/at/JavaScript/returns-undefined-for-out-of-range-index.js) | `test/built-ins/Array/prototype/at/returns-item.js`<br>`test/built-ins/Array/prototype/at/returns-item-relative-index.js`<br>`test/built-ins/Array/prototype/at/index-argument-tointeger.js`<br>`test/built-ins/Array/prototype/at/index-non-numeric-argument-tointeger.js`<br>`test/built-ins/Array/prototype/at/index-non-numeric-argument-tointeger-invalid.js`<br>`test/built-ins/Array/prototype/at/length.js`<br>`test/built-ins/Array/prototype/at/name.js`<br>`test/built-ins/Array/prototype/at/prop-desc.js`<br>`test/built-ins/Array/prototype/at/return-abrupt-from-this.js`<br>`test/built-ins/Array/prototype/at/returns-undefined-for-holes-in-sparse-arrays.js`<br>`test/built-ins/Array/prototype/at/returns-undefined-for-out-of-range-index.js` | Implements Array.prototype.at method for accessing array elements by index with support for negative indices. Supports standard index coercion, null/undefined rejection, and out-of-bounds return of undefined. |
 
 ### 23.1.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype.concat))
 

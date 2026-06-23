@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/test262: implement `Array.prototype.at` method for accessing array elements by index with support for negative indices, and add 10 new non-`eval` test262 ports covering basic usage, negative indices, parameter coercion, descriptor validation, and error handling.
 - runtime/tests/docs/test262: unskip the remaining non-`eval` global-object/value-property ports, mirroring top-level `var` bindings onto `globalThis` and enforcing strict assignment errors for `NaN`/`undefined`.
 - runtime/tests/docs/test262: implement `Number.MAX_SAFE_INTEGER` and `Number.MIN_SAFE_INTEGER` constructor properties and unskip the new non-`eval` Number constructor/value-property ports (`S15.7.1.1_A1`, `MAX_SAFE_INTEGER`, `MIN_SAFE_INTEGER`).
 - runtime/tests/docs/test262: align Math value-property descriptors by exposing constant data properties (`E`, `LN10`, `LN2`, `LOG10E`, `LOG2E`, `PI`, `SQRT1_2`, `SQRT2`) and add the new non-`eval` `prop-desc` ports for `E`, `LN10`, and `LN2`.
