@@ -1337,16 +1337,16 @@ namespace JavaScriptRuntime
             // Get iterator for the iterable
             var iterator = GetIterator(iterable);
 
-            try
+            while (true)
             {
-                while (true)
+                var iterResult = IteratorNext(iterator);
+                if (IteratorResultDone(iterResult))
                 {
-                    var iterResult = IteratorNext(iterator);
-                    if (IteratorResultDone(iterResult))
-                    {
-                        break;
-                    }
+                    break;
+                }
 
+                try
+                {
                     var entry = IteratorResultValue(iterResult);
                     if (entry is null || entry is JsNull)
                     {
@@ -1386,10 +1386,11 @@ namespace JavaScriptRuntime
                     var keyStr = ToPropertyKeyString(key);
                     dict[keyStr] = value;
                 }
-            }
-            finally
-            {
-                IteratorClose(iterator);
+                catch
+                {
+                    IteratorCloseForThrowCompletion(iterator);
+                    throw;
+                }
             }
 
             return result;
