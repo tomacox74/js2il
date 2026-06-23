@@ -20,6 +20,7 @@ Identify failing test262 test cases that:
    - Check if test file is already ported by looking at `tests/Jroc.Test262.Tests/<area>/JavaScript/`
    - Use the test262 relative path as the lookup key (e.g., `test/built-ins/Array/prototype/at/returns-item.js`)
    - Exclude tests that require fully unsupported features (check comments in test file)
+   - Cross-check `docs/ECMA262/` for nearby clauses still marked unsupported or partial support; those gaps often point to missing runtime/compiler behavior behind failing test262 cases
 
 3. **Filter for scope**:
    - Prefer tests that require small fixes: missing methods, property descriptors, small implementations
@@ -49,6 +50,7 @@ node scripts/test262/runMvp.js --filter "built-ins/Array/prototype" --limit 60
 - Avoid tests with `Symbol` in the name unless a Symbol feature was just added
 - Read the test file header (after `/*---`) to see what features it requires
 - Check the error message in RUNTIME-MISMATCH to understand the gap
+- Use `docs/ECMA262/` as a second discovery source: unsupported or partially supported spec entries can help you predict which test262 areas are likely still broken
 
 ## Repo Context
 
@@ -56,4 +58,4 @@ node scripts/test262/runMvp.js --filter "built-ins/Array/prototype" --limit 60
 - Ported tests: `tests/Jroc.Test262.Tests/<category>/<feature>/JavaScript/`
 - Execution tests: `tests/Jroc.Test262.Tests/<category>/<feature>/ExecutionTests.cs`
 - Running test262 MVP: `node scripts/test262/runMvp.js` (fastest way to discover failing tests)
-
+- Spec support docs: `docs/ECMA262/` (use clause status and support notes to spot missing functionality)

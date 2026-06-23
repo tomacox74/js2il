@@ -2114,22 +2114,23 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Implements the JavaScript Object() callable semantics: returns a new empty object.
+        /// Implements the JavaScript Object() callable semantics: returns a new ordinary object
+        /// whose prototype is Object.prototype.
         /// </summary>
         public static object Construct()
         {
-            return new JavaScriptRuntime.Object();
+            return CreateOrdinaryObject();
         }
 
         /// <summary>
-        /// Implements the JavaScript Object(value) callable semantics: returns a new empty object
+        /// Implements the JavaScript Object(value) callable semantics: returns a new ordinary object
         /// for null/undefined, boxes primitives, and returns object values unchanged.
         /// </summary>
         public static object Construct(object? value)
         {
             if (value is null || value is JsNull)
             {
-                return new JavaScriptRuntime.Object();
+                return CreateOrdinaryObject();
             }
 
             if (value is string or char[] or System.Text.StringBuilder)
