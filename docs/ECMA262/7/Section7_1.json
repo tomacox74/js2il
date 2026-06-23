@@ -286,9 +286,15 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-toobject",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs"
         ],
-        "notes": "Object(value) callable behavior is implemented minimally; full wrapper object/internal slot fidelity is incomplete."
+        "test262Paths": [
+          "test/built-ins/Object/S15.2.1.1_A1_T1.js",
+          "test/built-ins/Object/S15.2.1.1_A1_T2.js",
+          "test/built-ins/Object/S15.2.1.1_A1_T3.js"
+        ],
+        "notes": "The Object(value) callable path now covers the ordinary-object cases for no-argument, null, and undefined inputs and preserves primitive wrapper coercions for the covered scalar types. Full wrapper object/internal slot fidelity is still incomplete outside the documented coverage."
       },
       {
         "clause": "7.1.19",

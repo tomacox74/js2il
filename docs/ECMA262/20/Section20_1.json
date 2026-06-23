@@ -294,9 +294,15 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object-value",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs"
         ],
-        "notes": "Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). Null/undefined return a new empty object; non-null values are returned unchanged (no ToObject boxing/wrapping of primitives)."
+        "test262Paths": [
+          "test/built-ins/Object/S15.2.1.1_A1_T1.js",
+          "test/built-ins/Object/S15.2.1.1_A1_T2.js",
+          "test/built-ins/Object/S15.2.1.1_A1_T3.js"
+        ],
+        "notes": "Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). No-argument, null, and undefined calls now create ordinary objects with `Object.prototype`; primitive strings, numbers, booleans, symbols, and bigints are wrapped; object values are returned unchanged. Full wrapper/internal-slot fidelity remains partial outside the covered cases."
       },
       {
         "clause": "20.1.2.1",

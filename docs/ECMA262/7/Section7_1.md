@@ -4,7 +4,7 @@
 
 [Back to Section7](Section7.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:56:25Z
+> Last generated (UTC): 2026-06-23T22:43:30Z
 
 Type conversion in JROC is implemented on an as-needed basis for supported language features and intrinsics. Some conversions are partial/minimal implementations intended to support specific call sites (e.g., BigInt(value)).
 
@@ -108,7 +108,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| ToObject coercion (Object(value) callable path) | Supported with Limitations | [`IntrinsicCallables_Object_Callable_ReturnsObject.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js) |  | Object(value) callable behavior is implemented minimally; full wrapper object/internal slot fidelity is incomplete. |
+| ToObject coercion (Object(value) callable path) | Supported with Limitations | [`IntrinsicCallables_Object_Callable_ReturnsObject.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs` | `test/built-ins/Object/S15.2.1.1_A1_T1.js`<br>`test/built-ins/Object/S15.2.1.1_A1_T2.js`<br>`test/built-ins/Object/S15.2.1.1_A1_T3.js` | The Object(value) callable path now covers the ordinary-object cases for no-argument, null, and undefined inputs and preserves primitive wrapper coercions for the covered scalar types. Full wrapper object/internal slot fidelity is still incomplete outside the documented coverage. |
 
 ### 7.1.19 ([tc39.es](https://tc39.es/ecma262/#sec-topropertykey))
 
