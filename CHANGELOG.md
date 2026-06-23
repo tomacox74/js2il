@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - runtime/tests/docs/test262: implement `Array.prototype.at` method for accessing array elements by index with support for negative indices, and add 10 new non-`eval` test262 ports covering basic usage, negative indices, parameter coercion, descriptor validation, and error handling.
+- runtime/tests/docs/test262: harden `Object.fromEntries` iterator-closing semantics so abrupt entry/key/value failures close iterators correctly without overwriting the original throw completion, and add 5 new non-`eval` Object.fromEntries iterator-edge test262 ports.
 - runtime/tests/docs/test262: align `Object()` / `Object(null)` / `Object(undefined)` callable semantics with ordinary-object creation so the new built-ins/Object constructor ports inherit `Object.prototype` methods and match `new Object(...)`.
 - runtime/tests/docs/test262: unskip the remaining non-`eval` global-object/value-property ports, mirroring top-level `var` bindings onto `globalThis` and enforcing strict assignment errors for `NaN`/`undefined`.
 - runtime/tests/docs/test262: implement `Number.MAX_SAFE_INTEGER` and `Number.MIN_SAFE_INTEGER` constructor properties and unskip the new non-`eval` Number constructor/value-property ports (`S15.7.1.1_A1`, `MAX_SAFE_INTEGER`, `MIN_SAFE_INTEGER`).

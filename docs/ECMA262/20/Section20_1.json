@@ -414,9 +414,17 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.fromentries",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/fromEntries/ExecutionTests.cs"
         ],
-        "notes": "Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator. Supports array-like entries. Symbol keys and full iterator protocol edge cases are not implemented."
+        "test262Paths": [
+          "test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-accessor.js",
+          "test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-tostring.js",
+          "test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-value-accessor.js",
+          "test/built-ins/Object/fromEntries/iterator-not-closed-for-next-returning-non-object.js",
+          "test/built-ins/Object/fromEntries/iterator-not-closed-for-throwing-done-accessor.js"
+        ],
+        "notes": "Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator, now preserving the original abrupt completion while still closing the iterator for entry/key/value extraction failures and avoiding IteratorClose on IteratorStep failures where the spec forbids it. Supports array-like entries. Symbol keys and broader iterator/proxy edge cases are still partial."
       },
       {
         "clause": "20.1.2.8",

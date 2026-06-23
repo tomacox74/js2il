@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-23T22:43:30Z
+> Last generated (UTC): 2026-06-23T23:18:17Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -117,7 +117,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.fromEntries | Supported with Limitations | [`Object_FromEntries_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js) |  | Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator. Supports array-like entries. Symbol keys and full iterator protocol edge cases are not implemented. |
+| Object.fromEntries | Supported with Limitations | [`Object_FromEntries_Basic.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/fromEntries/ExecutionTests.cs` | `test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-accessor.js`<br>`test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-key-tostring.js`<br>`test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-value-accessor.js`<br>`test/built-ins/Object/fromEntries/iterator-not-closed-for-next-returning-non-object.js`<br>`test/built-ins/Object/fromEntries/iterator-not-closed-for-throwing-done-accessor.js` | Implemented in JavaScriptRuntime.Object.fromEntries. Creates an object from an iterable of [key, value] pairs using GetIterator, now preserving the original abrupt completion while still closing the iterator for entry/key/value extraction failures and avoiding IteratorClose on IteratorStep failures where the spec forbids it. Supports array-like entries. Symbol keys and broader iterator/proxy edge cases are still partial. |
 
 ### 20.1.2.8 ([tc39.es](https://tc39.es/ecma262/#sec-object.getownpropertydescriptor))
 
