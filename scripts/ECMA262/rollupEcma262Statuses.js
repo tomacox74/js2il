@@ -221,6 +221,50 @@ function upsertGeneratedTimestampBeforeSummary(lines, generatedAt) {
   lines.splice(insertIndex, 0, buildGeneratedTimestampLine(generatedAt), '');
 }
 
+function updateSummary(lines, sectionStatusByNumber) {
+  const summaryIndex = findLineIndex(lines, '## Summary');
+  if (summaryIndex < 0) return;
+
+  let nextHeadingIndex = lines.length;
+  for (let i = summaryIndex + 1; i < lines.length; i++) {
+    if (lines[i].startsWith('## ') && lines[i] !== '## Summary') {
+      nextHeadingIndex = i;
+      break;
+    }
+  }
+
+  const statuses = Object.values(sectionStatusByNumber).map(normalizeLegacyStatus);
+  const countByStatus = new Map();
+  for (const status of statuses) {
+    countByStatus.set(status, (countByStatus.get(status) ?? 0) + 1);
+  }
+
+  const orderedStatuses = [
+    'Supported',
+    'Supported with Limitations',
+    'Incomplete',
+    'Not Yet Supported',
+    'N/A (informational)',
+    'Untracked',
+  ];
+  const breakdown = orderedStatuses
+    .filter((status) => countByStatus.has(status))
+    .map((status) => `${status}: **${countByStatus.get(status)}**`)
+    .join(', ');
+
+  const trackedCount = statuses.filter((status) => status !== 'Untracked').length;
+  const replacement = [
+    '## Summary',
+    `- Total top-level sections indexed: **${statuses.length}**`,
+    `- Top-level sections with tracked status: **${trackedCount}**`,
+    `- Status breakdown: ${breakdown || 'none'}`,
+    `- Untracked top-level sections: **${countByStatus.get('Untracked') ?? 0}**`,
+    '',
+  ];
+
+  lines.splice(summaryIndex, nextHeadingIndex - summaryIndex, ...replacement);
+}
+
 function isNumericDirent(d) {
   return d && d.isDirectory && d.isDirectory() && /^\d+$/.test(d.name);
 }
@@ -367,6 +411,7 @@ function updateIndexMarkdown(rootDir, sectionStatusByNumber, generatedAt) {
   }
 
   upsertGeneratedTimestampBeforeSummary(indexLines, generatedAt);
+  updateSummary(indexLines, sectionStatusByNumber);
   return writeLinesPreserveEol(indexPath, indexLines);
 }
 

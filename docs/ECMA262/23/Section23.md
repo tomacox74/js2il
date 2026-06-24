@@ -5,7 +5,7 @@ The current ECMA-262 draft organizes this section into three top-level subsectio
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-09T07:34:42Z
+> Last generated (UTC): 2026-06-24T17:01:02Z
 
 _This section is split into subsection documents for readability._
 
@@ -21,4 +21,4 @@ _This section is split into subsection documents for readability._
 |---:|---|---|---|---|
 | 23.1 | Array Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array-objects) | [Section23_1.md](Section23_1.md) |
 | 23.2 | TypedArray Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-typedarray-objects) | [Section23_2.md](Section23_2.md) |
-| 23.3 | Uint8Array Objects | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-uint8array) | [Section23_3.md](Section23_3.md) |
+| 23.3 | Uint8Array Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-uint8array) | [Section23_3.md](Section23_3.md) |

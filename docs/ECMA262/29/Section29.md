@@ -4,7 +4,7 @@ Defines the ECMAScript memory model, including SharedArrayBuffer and atomic oper
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-15T19:43:49Z
+> Last generated (UTC): 2026-06-24T17:01:02Z
 
 _This section is split into subsection documents for readability._
 
@@ -28,4 +28,4 @@ _This section is split into subsection documents for readability._
 | 29.8 | Races | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-races) | [Section29_8.md](Section29_8.md) |
 | 29.9 | Data Races | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-data-races) | [Section29_9.md](Section29_9.md) |
 | 29.10 | Data Race Freedom | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-data-race-freedom) | [Section29_10.md](Section29_10.md) |
-| 29.11 | Shared Memory Guidelines | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-shared-memory-guidelines) | [Section29_11.md](Section29_11.md) |
+| 29.11 | Shared Memory Guidelines | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-shared-memory-guidelines) | [Section29_11.md](Section29_11.md) |
