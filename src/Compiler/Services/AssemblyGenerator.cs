@@ -62,6 +62,12 @@ namespace Jroc.Services
         /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
         public void Generate(Modules modules, string assemblyName, string outputPath)
         {
+            var artifact = GenerateArtifact(modules, assemblyName);
+            PersistArtifact(artifact, outputPath);
+        }
+
+        public JrocCompiledAssemblyArtifact GenerateArtifact(Modules modules, string assemblyName)
+        {
             createAssemblyMetadata(assemblyName);
 
             EmitDebuggableAttributeIfEnabled();
@@ -258,7 +264,7 @@ namespace Jroc.Services
             // This must happen after all TypeDefs have been created.
             _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>().EmitAllSorted(_metadataBuilder);
 
-            this.CreateAssembly(assemblyName, outputPath);
+            return CreateCompiledAssemblyArtifact(assemblyName, CollectPublishedModuleIds(modules));
         }
 
         private void EmitDebuggableAttributeIfEnabled()
@@ -645,86 +651,19 @@ namespace Jroc.Services
             throw new ArgumentOutOfRangeException(nameof(value), "Value too large for compressed integer encoding.");
         }
 
-        private void CreateAssembly(string name, string outputPath)
+        internal void PersistArtifact(JrocCompiledAssemblyArtifact artifact, string outputPath)
         {
-            var options = _serviceProvider.GetRequiredService<CompilerOptions>();
+            ArgumentNullException.ThrowIfNull(artifact);
+            ArgumentNullException.ThrowIfNull(outputPath);
 
-            DebugDirectoryBuilder? debugDirectoryBuilder = null;
-            if (options.EmitPdb)
+            var name = artifact.AssemblyName;
+            string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
+            WriteBytesAtomicallyWithRetry(assemblyDll, artifact.PeBytes);
+
+            if (artifact.PdbBytes is { Length: > 0 } pdbBytes)
             {
                 var pdbPath = Path.Combine(outputPath, $"{name}.pdb");
-
-                var debugRegistry = _serviceProvider.GetRequiredService<DebugSymbolRegistry>();
-                var fileSystem = _serviceProvider.GetRequiredService<IFileSystem>();
-                var (pdbContentId, portablePdbVersion) = PortablePdbEmitter.Emit(_metadataBuilder, debugRegistry, fileSystem, pdbPath, this._entryPoint);
-
-                debugDirectoryBuilder = new DebugDirectoryBuilder();
-                debugDirectoryBuilder.AddCodeViewEntry(Path.GetFileName(pdbPath), pdbContentId, portablePdbVersion);
-            }
-
-            var pe = new ManagedPEBuilder(
-                PEHeaderBuilder.CreateLibraryHeader(),
-                new MetadataRootBuilder(_metadataBuilder),
-                _ilBuilder,
-                mappedFieldData: null,
-                entryPoint: this._entryPoint,
-                flags: CorFlags.ILOnly,
-                debugDirectoryBuilder: debugDirectoryBuilder);
-
-            var peImage = new BlobBuilder();
-            pe.Serialize(peImage);
-
-            string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
-
-            // In test runs (and on some machines with aggressive file scanning), the just-produced
-            // assembly can briefly be locked by another process. Retry a few times to avoid flaky
-            // failures while still surfacing a persistent lock.
-            var peBytes = peImage.ToArray();
-
-            // Fail-fast: validate metadata invariants that would otherwise surface later as
-            // BadImageFormatException during Assembly.Load.
-            ClrMetadataConsistencyValidator.ValidateOrThrow(peBytes, label: name);
-            // Windows can keep the output DLL briefly locked (AV/indexing/build hosts). Writing the final
-            // file repeatedly can prolong the lock (each write can re-trigger scanning), so we write to a
-            // unique temp file first and then retry only the final replace.
-            string tempDll = assemblyDll + ".tmp_" + Guid.NewGuid().ToString("N");
-            File.WriteAllBytes(tempDll, peBytes);
-
-            try
-            {
-                const int maxReplaceWaitMs = 60_000;
-                long startTick = Environment.TickCount64;
-                int attempt = 0;
-                while (true)
-                {
-                    attempt++;
-                    try
-                    {
-                        File.Move(tempDll, assemblyDll, overwrite: true);
-                        break;
-                    }
-                    catch (IOException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
-                    {
-                        int delayMs = Math.Min(1000, 50 * attempt);
-                        Thread.Sleep(delayMs);
-                    }
-                    catch (UnauthorizedAccessException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
-                    {
-                        int delayMs = Math.Min(1000, 50 * attempt);
-                        Thread.Sleep(delayMs);
-                    }
-                }
-            }
-            finally
-            {
-                try
-                {
-                    if (File.Exists(tempDll)) File.Delete(tempDll);
-                }
-                catch (IOException)
-                {
-                    // Best-effort cleanup; temp files are safe to leave behind.
-                }
+                WriteBytesAtomicallyWithRetry(pdbPath, pdbBytes);
             }
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
@@ -782,6 +721,113 @@ namespace Jroc.Services
                             throw;
                         }
                     }
+                }
+            }
+        }
+
+        private JrocCompiledAssemblyArtifact CreateCompiledAssemblyArtifact(string name, IReadOnlyList<string> moduleIds)
+        {
+            var options = _serviceProvider.GetRequiredService<CompilerOptions>();
+
+            DebugDirectoryBuilder? debugDirectoryBuilder = null;
+            byte[]? pdbBytes = null;
+            if (options.EmitPdb)
+            {
+                var debugRegistry = _serviceProvider.GetRequiredService<DebugSymbolRegistry>();
+                var fileSystem = _serviceProvider.GetRequiredService<IFileSystem>();
+                var emittedPdb = PortablePdbEmitter.EmitToBytes(_metadataBuilder, debugRegistry, fileSystem, this._entryPoint);
+                pdbBytes = emittedPdb.pdbBytes;
+
+                debugDirectoryBuilder = new DebugDirectoryBuilder();
+                debugDirectoryBuilder.AddCodeViewEntry($"{name}.pdb", emittedPdb.pdbContentId, emittedPdb.portablePdbVersion);
+            }
+
+            var pe = new ManagedPEBuilder(
+                PEHeaderBuilder.CreateLibraryHeader(),
+                new MetadataRootBuilder(_metadataBuilder),
+                _ilBuilder,
+                mappedFieldData: null,
+                entryPoint: this._entryPoint,
+                flags: CorFlags.ILOnly,
+                debugDirectoryBuilder: debugDirectoryBuilder);
+
+            var peImage = new BlobBuilder();
+            pe.Serialize(peImage);
+            var peBytes = peImage.ToArray();
+
+            // Fail-fast: validate metadata invariants that would otherwise surface later as
+            // BadImageFormatException during Assembly.Load.
+            ClrMetadataConsistencyValidator.ValidateOrThrow(peBytes, label: name);
+
+            return new JrocCompiledAssemblyArtifact(name, peBytes, pdbBytes, moduleIds);
+        }
+
+        private static IReadOnlyList<string> CollectPublishedModuleIds(Modules modules)
+        {
+            var publishedIds = new List<string>();
+            foreach (var module in modules._modules.Values)
+            {
+                if (!publishedIds.Contains(module.ModuleId, StringComparer.OrdinalIgnoreCase))
+                {
+                    publishedIds.Add(module.ModuleId);
+                }
+
+                foreach (var alias in module.AliasModuleIds)
+                {
+                    if (!publishedIds.Contains(alias, StringComparer.OrdinalIgnoreCase))
+                    {
+                        publishedIds.Add(alias);
+                    }
+                }
+            }
+
+            return publishedIds;
+        }
+
+        private static void WriteBytesAtomicallyWithRetry(string destinationPath, byte[] bytes)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath) ?? ".");
+
+            // Windows can keep the output file briefly locked (AV/indexing/build hosts). Writing the final
+            // file repeatedly can prolong the lock (each write can re-trigger scanning), so we write to a
+            // unique temp file first and then retry only the final replace.
+            string tempPath = destinationPath + ".tmp_" + Guid.NewGuid().ToString("N");
+            File.WriteAllBytes(tempPath, bytes);
+
+            try
+            {
+                const int maxReplaceWaitMs = 60_000;
+                long startTick = Environment.TickCount64;
+                int attempt = 0;
+                while (true)
+                {
+                    attempt++;
+                    try
+                    {
+                        File.Move(tempPath, destinationPath, overwrite: true);
+                        break;
+                    }
+                    catch (IOException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
+                    {
+                        int delayMs = Math.Min(1000, 50 * attempt);
+                        Thread.Sleep(delayMs);
+                    }
+                    catch (UnauthorizedAccessException) when ((Environment.TickCount64 - startTick) < maxReplaceWaitMs)
+                    {
+                        int delayMs = Math.Min(1000, 50 * attempt);
+                        Thread.Sleep(delayMs);
+                    }
+                }
+            }
+            finally
+            {
+                try
+                {
+                    if (File.Exists(tempPath)) File.Delete(tempPath);
+                }
+                catch (IOException)
+                {
+                    // Best-effort cleanup; temp files are safe to leave behind.
                 }
             }
         }
