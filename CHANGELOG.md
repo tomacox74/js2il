@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/tests: extract a reusable compiled-assembly artifact for in-memory PE/PDB emission, keep file-backed output as a consumer of that artifact, and add regression coverage for artifact-only compilation without writing generated output files.
 
 ## v0.10.1 - 2026-06-23
 

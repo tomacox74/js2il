@@ -36,6 +36,28 @@ public class Compiler
 
     public bool Compile(string inputFile, string? rootModuleIdOverride = null)
     {
+        var artifact = CompileToArtifact(inputFile, rootModuleIdOverride);
+        if (artifact is null)
+        {
+            return false;
+        }
+
+        // Resolve and validate output directory; create if missing
+        if (!EnsureOutputPathExists(inputFile, this.outputDirectory, out var outputPath))
+        {
+            return false;
+        }
+
+        var assemblyGenerator = _serviceProvider.GetRequiredService<AssemblyGenerator>();
+        assemblyGenerator.PersistArtifact(artifact, outputPath);
+
+        _ux.WriteLine($"Compilation succeeded. Output written to {outputPath}");
+
+        return true;
+    }
+
+    internal JrocCompiledAssemblyArtifact? CompileToArtifact(string inputFile, string? rootModuleIdOverride = null)
+    {
         // When diagnostics are enabled, capture IR pipeline failure reasons to aid debugging.
         if (this.diagnosticsEnabled)
         {
@@ -46,17 +68,17 @@ public class Compiler
         var modules = this._moduleLoader.LoadModules(inputFile, rootModuleIdOverride);
         if (modules == null)
         {
-            return false;
+            return null;
         }
 
         if (!this._moduleLoader.LinkModules(modules, _ux))
         {
-            return false;
+            return null;
         }
 
         if (!this._moduleLoader.PlanModuleEvaluation(modules, _ux))
         {
-            return false;
+            return null;
         }
 
         // Analyze unused code (if requested)
@@ -93,20 +115,8 @@ public class Compiler
             _diagnosticLogger.LogInformation("Generating dotnet assembly...");
         }
         var assemblyGenerator = _serviceProvider.GetRequiredService<AssemblyGenerator>();
-
-        // Resolve and validate output directory; create if missing
-        if (!EnsureOutputPathExists(inputFile, this.outputDirectory, out var outputPath))
-        {
-            return false;
-        }
-
         var assemblyName = Path.GetFileNameWithoutExtension(inputFile);
-
-        assemblyGenerator.Generate(modules, assemblyName, outputPath);
-
-        _ux.WriteLine($"Compilation succeeded. Output written to {outputPath}");
-
-        return true;
+        return assemblyGenerator.GenerateArtifact(modules, assemblyName);
     }
 
     private bool EnsureOutputPathExists(string inputFile, string? outputDirectory, out string outputPath)

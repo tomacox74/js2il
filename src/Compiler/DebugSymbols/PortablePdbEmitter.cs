@@ -13,17 +13,15 @@ namespace Jroc.DebugSymbols;
 
 internal static class PortablePdbEmitter
 {
-    public static (BlobContentId pdbContentId, ushort portablePdbVersion) Emit(
+    public static (byte[] pdbBytes, BlobContentId pdbContentId, ushort portablePdbVersion) EmitToBytes(
         MetadataBuilder assemblyMetadata,
         DebugSymbolRegistry debugRegistry,
         IFileSystem fileSystem,
-        string pdbPath,
         MethodDefinitionHandle entryPoint)
     {
         ArgumentNullException.ThrowIfNull(assemblyMetadata);
         ArgumentNullException.ThrowIfNull(debugRegistry);
         ArgumentNullException.ThrowIfNull(fileSystem);
-        ArgumentNullException.ThrowIfNull(pdbPath);
 
         var pdbMetadata = new MetadataBuilder();
 
@@ -289,8 +287,24 @@ internal static class PortablePdbEmitter
         var pdbBlob = new BlobBuilder();
         BlobContentId pdbContentId = pdbBuilder.Serialize(pdbBlob);
 
+        return (pdbBlob.ToArray(), pdbContentId, pdbBuilder.FormatVersion);
+    }
+
+    public static (BlobContentId pdbContentId, ushort portablePdbVersion) Emit(
+        MetadataBuilder assemblyMetadata,
+        DebugSymbolRegistry debugRegistry,
+        IFileSystem fileSystem,
+        string pdbPath,
+        MethodDefinitionHandle entryPoint)
+    {
+        ArgumentNullException.ThrowIfNull(pdbPath);
+        var (pdbBytes, pdbContentId, portablePdbVersion) = EmitToBytes(
+            assemblyMetadata,
+            debugRegistry,
+            fileSystem,
+            entryPoint);
+
         Directory.CreateDirectory(Path.GetDirectoryName(pdbPath) ?? ".");
-        var pdbBytes = pdbBlob.ToArray();
         const int maxAttempts = 20;
         for (int attempt = 1; attempt <= maxAttempts; attempt++)
         {
@@ -305,6 +319,6 @@ internal static class PortablePdbEmitter
             }
         }
 
-        return (pdbContentId, pdbBuilder.FormatVersion);
+        return (pdbContentId, portablePdbVersion);
     }
 }
