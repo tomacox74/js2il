@@ -4,7 +4,7 @@ Covers keyed collections, including Map/Set and their weak variants.
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-29T04:36:42Z
+> Last generated (UTC): 2026-06-24T17:01:02Z
 
 _This section is split into subsection documents for readability._
 

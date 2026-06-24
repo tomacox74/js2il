@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "13.9",
   "title": "Bitwise Shift Operators",
-  "status": "Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-bitwise-shift-operators",
   "parent": {
     "clause": "13"
@@ -12,38 +12,53 @@
     {
       "clause": "13.9.1",
       "title": "The Left Shift Operator ( << )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-left-shift-operator"
     },
     {
       "clause": "13.9.1.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-left-shift-operator-runtime-semantics-evaluation"
     },
     {
       "clause": "13.9.2",
       "title": "The Signed Right Shift Operator ( >> )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-signed-right-shift-operator"
     },
     {
       "clause": "13.9.2.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-signed-right-shift-operator-runtime-semantics-evaluation"
     },
     {
       "clause": "13.9.3",
       "title": "The Unsigned Right Shift Operator ( >>> )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-unsigned-right-shift-operator"
     },
     {
       "clause": "13.9.3.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-unsigned-right-shift-operator-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.9",
+        "feature": "Bitwise shift operators",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-bitwise-shift-operators",
+        "testScripts": [
+          "tests/Jroc.Tests/BinaryOperator/ExecutionTests.cs",
+          "tests/Jroc.Tests/CompoundAssignment/ExecutionTests.cs"
+        ],
+        "notes": "Left shift, signed right shift, and unsigned right shift are lowered through LIR/native IL paths for numeric operands with runtime dynamic fallback. Coverage includes direct binary operators and compound shift assignments."
+      }
+    ]
+  }
 }

@@ -1,11 +1,12 @@
-<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+<!-- AUTO-GENERATED: generateEcma262SectionMarkdown.js -->
 
 # Section 12.2: White Space
 
 [Back to Section12](Section12.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-06-24T17:00:13Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 12.2 | White Space | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-white-space) |
+| 12.2 | White Space | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-white-space) |
+

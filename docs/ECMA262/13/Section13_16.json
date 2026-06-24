@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "13.16",
   "title": "Comma Operator ( , )",
-  "status": "Untracked",
+  "status": "Supported",
   "specUrl": "https://tc39.es/ecma262/#sec-comma-operator",
   "parent": {
     "clause": "13"
@@ -12,8 +12,22 @@
     {
       "clause": "13.16.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-comma-operator-runtime-semantics-evaluation"
     }
-  ]
+  ],
+  "support": {
+    "entries": [
+      {
+        "clause": "13.16.1",
+        "feature": "Comma operator / sequence expression evaluation",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-comma-operator-runtime-semantics-evaluation",
+        "testScripts": [
+          "tests/Jroc.Tests/ControlFlow/ExecutionTests.cs"
+        ],
+        "notes": "SequenceExpression is represented in HIR/LIR and covered by a for-loop update expression execution test."
+      }
+    ]
+  }
 }

@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "13.1",
   "title": "Identifiers",
-  "status": "Untracked",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-identifiers",
   "parent": {
     "clause": "13"
@@ -12,19 +12,19 @@
     {
       "clause": "13.1.1",
       "title": "Static Semantics: Early Errors",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-identifiers-static-semantics-early-errors"
     },
     {
       "clause": "13.1.2",
       "title": "Static Semantics: StringValue",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-stringvalue"
     },
     {
       "clause": "13.1.3",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-identifiers-runtime-semantics-evaluation"
     }
   ],
@@ -32,77 +32,35 @@
     "entries": [
       {
         "clause": "13.1.1",
-        "feature": "Numeric literals (integer and decimal)",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-numeric-literals",
+        "feature": "Identifier early errors and reserved-word rejection",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-identifiers-static-semantics-early-errors",
         "testScripts": [
-          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js",
-          "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js"
+          "tests/Jroc.Test262.Tests/language/identifiers/ExecutionTests.cs"
         ],
-        "notes": "Numbers are represented as double and used pervasively across arithmetic, comparison, and control-flow tests."
+        "notes": "Identifier syntax and reserved-word forms are parser-backed by Acornima and covered by imported language/identifiers cases. This remains limited because the documentation has not been audited against the full Unicode identifier matrix."
       },
       {
         "clause": "13.1.2",
-        "feature": "String literals (single/double quotes; escapes)",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-string-literals",
+        "feature": "Identifier StringValue",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-stringvalue",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_StartsWith_Basic.js",
-          "tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js"
+          "tests/Jroc.Test262.Tests/language/identifiers/ExecutionTests.cs"
         ],
-        "notes": "Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation."
+        "notes": "Identifier names are carried through Acornima AST nodes into symbol-table and variable-resolution names. The status remains limited until escaped/Unicode identifier-name coverage is exhaustively mapped."
       },
       {
         "clause": "13.1.3",
-        "feature": "Boolean literals (true/false)",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-boolean-literals",
+        "feature": "Identifier reference evaluation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-identifiers-runtime-semantics-evaluation",
         "testScripts": [
-          "tests/Jroc.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js",
-          "tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_VarDeclaration.js",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
         ],
-        "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: tests/Jroc.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
-      },
-      {
-        "clause": "13.1.4",
-        "feature": "Template literals (basic interpolation)",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-template-literals",
-        "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_TemplateLiteral_Basic.js"
-        ],
-        "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
-      },
-      {
-        "clause": "13.1.5",
-        "feature": "null literal",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-null-literals",
-        "testScripts": [
-          "tests/Jroc.Tests/Literals/JavaScript/Literals_NullAndUndefined.js",
-          "tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
-        ],
-        "notes": "null emission validated in literals and variable tests; see execution snapshot tests/Jroc.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
-      },
-      {
-        "clause": "13.1.6",
-        "feature": "undefined identifier usage",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-undefined",
-        "testScripts": [
-          "tests/Jroc.Tests/Literals/JavaScript/Literals_NullAndUndefined.js"
-        ],
-        "notes": "Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot tests/Jroc.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
-      },
-      {
-        "clause": "13.1.7",
-        "feature": "this binding in non-arrow functions",
-        "status": "Supported",
-        "specUrl": "https://tc39.es/ecma262/#sec-this-keyword",
-        "testScripts": [
-          "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
-        ],
-        "notes": "Member calls bind the receiver as runtime this."
+        "notes": "Variable and function identifier references are resolved through symbol-table bindings and generated scope storage. The status remains limited because TDZ and some binding-edge cases are documented elsewhere as incomplete."
       }
     ]
   }

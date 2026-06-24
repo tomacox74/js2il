@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "13.2",
   "title": "Primary Expression",
-  "status": "Supported",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-primary-expression",
   "parent": {
     "clause": "13"
@@ -12,13 +12,13 @@
     {
       "clause": "13.2.1",
       "title": "The this Keyword",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-this-keyword"
     },
     {
       "clause": "13.2.1.1",
       "title": "Runtime Semantics: Evaluation",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-this-keyword-runtime-semantics-evaluation"
     },
     {
@@ -186,6 +186,17 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "13.2.1",
+        "feature": "The this keyword",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-this-keyword",
+        "testScripts": [
+          "tests/Jroc.Tests/ValidatorTests.cs",
+          "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js"
+        ],
+        "notes": "The validator accepts ThisExpression, HIR/LIR lower it, and object-literal method/member-call coverage verifies receiver binding. The status remains limited while broader strict/sloppy/global this test262 coverage is still incomplete."
+      },
       {
         "clause": "13.2.1",
         "feature": "Const reassignment throws TypeError",
