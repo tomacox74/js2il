@@ -992,7 +992,7 @@ public class RuntimeServices
 
         _requireByModuleId[moduleId] = require;
         if (GlobalThis.ServiceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true
-            && runtimeContext?.IsHosted == true)
+            && runtimeContext != null)
         {
             runtimeContext.TrackModuleRequire(moduleId, require);
         }

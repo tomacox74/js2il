@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Array.prototype.slice;
 
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("Array.prototype.slice") { }
 

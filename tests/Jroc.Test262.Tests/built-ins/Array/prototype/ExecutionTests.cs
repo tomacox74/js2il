@@ -1,8 +1,8 @@
-using Jroc.Tests;
+using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Array.prototype;
 
-public class ExecutionTests : ExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Array.prototype") { }
 

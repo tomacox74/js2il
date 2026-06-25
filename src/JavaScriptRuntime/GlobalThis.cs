@@ -319,9 +319,9 @@ namespace JavaScriptRuntime
                 Enumerable = false,
                 Configurable = true,
                 Writable = true,
-                Value = JavaScriptRuntime.Array.Prototype
+                Value = JavaScriptRuntime.Array.ImmutablePrototype
             });
-            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Array.Prototype, "constructor", new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(JavaScriptRuntime.Array.ImmutablePrototype, "constructor", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -440,7 +440,7 @@ namespace JavaScriptRuntime
 
             // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
-            PrototypeChain.SetPrototype(JavaScriptRuntime.Array.Prototype, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(JavaScriptRuntime.Array.ImmutablePrototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_numberPrototypeValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_booleanPrototypeValue, _objectPrototypeValue);
@@ -1172,6 +1172,9 @@ namespace JavaScriptRuntime
         /// Invoking it will throw until Array constructor semantics are implemented.
         /// </summary>
         public static Func<object[], object?[], object?> Array => _arrayConstructorValue;
+
+        internal static bool IsArrayConstructorValue(object? value)
+            => ReferenceEquals(value, _arrayConstructorValue);
 
         public static Type Date => typeof(JavaScriptRuntime.Date);
 
