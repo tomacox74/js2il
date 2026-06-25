@@ -264,7 +264,7 @@ This directory contains comprehensive analysis and prioritization of ECMA-262 fe
 - [Prototype Chain Support](../compiler/PrototypeChainSupport.md)
 - [Type Mapping](../compiler/JavaScriptToDotNetTypeMapping.md)
 - [NPM Package Imports](../compiler/NpmPackageImports.md)
-- [.NET hosting (library mode)](../hosting/Index.md) (design: [DotNetLibraryHosting.md](../runtime/DotNetLibraryHosting.md))
+- [JROC SDK (.NET library mode)](../sdk/Index.md) (design: [DotNetLibraryHosting.md](../runtime/DotNetLibraryHosting.md))
 - [Node.js Support](../nodejs/NodeSupport.md)
 
 ### External References

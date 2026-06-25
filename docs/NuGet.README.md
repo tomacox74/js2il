@@ -113,6 +113,6 @@ See:
 
 ## Links
 
-- Hosting (.NET library mode): https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md
+- SDK (.NET library mode): https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
 - Source, issues, docs: https://github.com/tomacox74/jroc
 - License: Apache-2.0

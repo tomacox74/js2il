@@ -51,7 +51,7 @@ public class JrocSdkPackageTests
                 package,
                 expectedId: "Jroc.SDK",
                 expectedDescription: "MSBuild SDK package for compiling JavaScript sources into .NET assemblies during dotnet build.",
-                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md",
+                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
                     "compiler",
@@ -155,7 +155,7 @@ public class JrocSdkPackageTests
                 package,
                 expectedId: "Jroc.Core",
                 expectedDescription: "Reusable jroc compiler library for embedding JavaScript-to-.NET compilation in custom .NET tools and hosts.",
-                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md",
+                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
                     "compiler",
@@ -201,7 +201,7 @@ public class JrocSdkPackageTests
                 package,
                 expectedId: "Jroc.Runtime",
                 expectedDescription: "Runtime support library for executing and hosting JROC-compiled assemblies from .NET.",
-                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md",
+                expectedProjectUrl: "https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md",
                 requiredTags:
                 [
                     "runtime",

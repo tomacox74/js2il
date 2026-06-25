@@ -125,6 +125,6 @@ If you are validating a locally packed prerelease feed instead of NuGet.org, pac
 
 ## Links
 
-- Hosting docs: https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md
+- SDK docs: https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
 - Source, issues, docs: https://github.com/tomacox74/jroc
 - License: Apache-2.0

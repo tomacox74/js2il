@@ -35,12 +35,12 @@ Official releases publish `Jroc.Runtime`, `jroc`, `Jroc.Core`, and `Jroc.SDK` to
 
 If you want to load a compiled module from C#, start with the hosting docs:
 
-- https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md
+- https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
 
 The main entry point is `Jroc.Runtime.JsEngine`, which can discover module ids and load typed or dynamic exports from compiled assemblies.
 
 ## Links
 
-- Hosting docs: https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md
+- SDK docs: https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
 - Source, issues, docs: https://github.com/tomacox74/jroc
 - License: Apache-2.0

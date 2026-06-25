@@ -10,5 +10,5 @@ This directory contains the .NET hosting surface for running JROC-compiled JavaS
 
 ## Documentation
 
-- User guide: [`docs/hosting/Index.md`](../../docs/hosting/Index.md)
-- Design doc (implementation reference): [`docs/runtime/DotNetLibraryHosting.md`](../../docs/runtime/DotNetLibraryHosting.md)
+- User guide: [`docs/sdk/Index.md`](../../../docs/sdk/Index.md)
+- Design doc (implementation reference): [`docs/runtime/DotNetLibraryHosting.md`](../../../docs/runtime/DotNetLibraryHosting.md)
