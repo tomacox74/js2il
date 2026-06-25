@@ -14,11 +14,5 @@ es5id: 15.12-0-4
 description: JSON object's properties must be non enumerable
 ---*/
 
-var o = JSON;
-var i = 0;
-for (var p in o) {
-  i++;
-}
-
-
-console.log(Object.is(i, 0));
+var enumerableOwnKeys = Object.keys(JSON);
+console.log(Object.is(enumerableOwnKeys.length, 0));
