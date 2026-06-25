@@ -13,6 +13,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - hosting/tests: define the path-dependent in-memory hosting contract by keeping `Assembly.Location` empty, documenting that pure in-memory hosting never writes files implicitly, and covering the explicit `child_process.fork` configuration error when no launchable compiled assembly path is supplied.
 - hosting/tests: expand in-memory coverage to include an `EmitPdb=true` compile-and-load path so the first-cut optional PDB behavior stays covered end-to-end.
 - runtime/hosting/tests: unregister hosted module require delegates during runtime shutdown so full in-memory compile-and-load modules can release their collectible load contexts after disposal.
+- docs/sdk: rename the user-facing Hosting documentation to SDK documentation, keep the API/tutorial structure, and add coverage for the `JrocCompile` MSBuild task plus the in-memory compile-and-run APIs.
 
 ## v0.10.1 - 2026-06-23
 

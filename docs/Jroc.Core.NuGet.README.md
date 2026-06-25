@@ -82,6 +82,6 @@ Given an input like `C:\code\sample.js`, JROC emits the following into the outpu
 
 ## Links
 
-- Hosting docs: https://github.com/tomacox74/jroc/blob/master/docs/hosting/Index.md
+- SDK docs: https://github.com/tomacox74/jroc/blob/master/docs/sdk/Index.md
 - Source, issues, docs: https://github.com/tomacox74/jroc
 - License: Apache-2.0

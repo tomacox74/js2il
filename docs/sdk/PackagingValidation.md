@@ -1,4 +1,4 @@
-# Hosting/NuGet package validation
+# SDK/NuGet package validation
 
 This document is the audit trail for the coordinated package migration tracked by issues `#850` and `#439`.
 
@@ -88,4 +88,4 @@ The umbrella packaging migration is complete because the dependent slices are no
 - `#850`
   - restore/build/post-publish validation is covered by the release gate and smoke workflows above
 
-With these checks in place, the coordinated Hosting/NuGet migration tracked by issue `#439` is satisfied.
+With these checks in place, the coordinated SDK/NuGet migration tracked by issue `#439` is satisfied.

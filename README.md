@@ -75,7 +75,7 @@ x is  3
 - Not all JavaScript features are supported; `eval` is not supported.
 - Two-phase compilation pipeline is always enabled. See `docs/compiler/TwoPhaseCompilationPipeline.md`.
 - Prototype-chain support design: see `docs/compiler/PrototypeChainSupport.md`.
-- See [.NET hosting (library mode)](docs/hosting/Index.md) for consuming compiled modules from C#.
+- See [JROC SDK](docs/sdk/Index.md) for consuming compiled modules from C#.
 - See [ECMA-262 coverage index](docs/ECMA262/Index.md) for a spec-clause breakdown (with per-subsection support notes).
 - See [Node.js Feature Coverage](docs/nodejs/NodeSupport.md) for details on supported Node.js modules, APIs, and globals.
 
@@ -209,7 +209,7 @@ This command currently does two things:
 
 After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `jroc` tool from NuGet and build/run the `Hosting.Domino`, `Hosting.Basic`, and `Hosting.Typed` samples against the matching `Jroc.SDK` / `Jroc.Runtime` version.
 
-For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/hosting/PackagingValidation.md](docs/hosting/PackagingValidation.md).
+For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/sdk/PackagingValidation.md](docs/sdk/PackagingValidation.md).
 
 #### 4. Commit Version Bump
 

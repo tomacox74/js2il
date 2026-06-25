@@ -1,6 +1,6 @@
 # Hosting Compiled JavaScript as a .NET Library (design)
 
-> **Looking for the user guide?** Start here: [`docs/hosting/Index.md`](../hosting/Index.md)
+> **Looking for the user guide?** Start here: [`docs/sdk/Index.md`](../sdk/Index.md)
 >
 > This document is kept as an implementation-oriented design/reference.
 
