@@ -6,6 +6,16 @@ namespace Jroc;
 
 public static class JrocInMemoryCompiler
 {
+    /// <summary>
+    /// Compiles JavaScript in memory, loads the generated assembly into a collectible load context,
+    /// evaluates the target module, and returns typed exports for host interaction.
+    /// </summary>
+    /// <remarks>
+    /// This API does not write the generated assembly to disk and does not infer a launchable path from
+    /// <see cref="Assembly.Location"/>. When hosted code may call <c>child_process.fork(...)</c>, pass
+    /// <see cref="JsModuleLoadOptions.CompiledAssemblyPath"/> explicitly so the child process knows which
+    /// compiled assembly to launch.
+    /// </remarks>
     public static JrocInMemoryModule<TExports> CompileAndLoadModule<TExports>(
         JrocInMemoryCompileRequest request,
         string? moduleId = null,
@@ -28,6 +38,16 @@ public static class JrocInMemoryCompiler
         }
     }
 
+    /// <summary>
+    /// Compiles JavaScript in memory, loads the generated assembly into a collectible load context,
+    /// evaluates the target module, and returns a dynamic/reflection-friendly exports proxy.
+    /// </summary>
+    /// <remarks>
+    /// This API does not write the generated assembly to disk and does not infer a launchable path from
+    /// <see cref="Assembly.Location"/>. When hosted code may call <c>child_process.fork(...)</c>, pass
+    /// <see cref="JsModuleLoadOptions.CompiledAssemblyPath"/> explicitly so the child process knows which
+    /// compiled assembly to launch.
+    /// </remarks>
     public static JrocInMemoryModule CompileAndLoadModule(
         JrocInMemoryCompileRequest request,
         string? moduleId = null,

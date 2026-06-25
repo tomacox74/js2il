@@ -10,6 +10,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - compiler/tests: add a public `Jroc.Core` compile-to-memory API that creates a fresh compiler service provider per request, supports source-text or file-backed input, and returns `JrocCompiledAssemblyArtifact` with focused success/failure coverage.
 - hosting/tests: add a collectible in-memory assembly loader for compiled artifacts, loading PE/PDB bytes through `AssemblyLoadContext.LoadFromStream(...)`, sharing the already-loaded runtime assembly, and covering deterministic unload boundaries.
 - hosting/tests: add `CompileAndLoadModule(...)` in-memory hosting APIs for typed and dynamic exports, returning disposable module handles that own both the hosted runtime proxy and the collectible assembly-load boundary.
+- hosting/tests: define the path-dependent in-memory hosting contract by keeping `Assembly.Location` empty, documenting that pure in-memory hosting never writes files implicitly, and covering the explicit `child_process.fork` configuration error when no launchable compiled assembly path is supplied.
 
 ## v0.10.1 - 2026-06-23
 
