@@ -19,6 +19,9 @@ public class JrocInMemoryModule : IDisposable
 
     public object Exports => _exports ?? throw new ObjectDisposedException(nameof(JrocInMemoryModule));
 
+    /// <summary>
+    /// The generated assembly loaded from memory. Its <see cref="Assembly.Location"/> is typically empty.
+    /// </summary>
     public Assembly Assembly => LoadedAssembly.Assembly;
 
     public string AssemblyName => Assembly.GetName().Name ?? string.Empty;
