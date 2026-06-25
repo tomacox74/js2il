@@ -21,6 +21,34 @@ public sealed class JrocInMemoryCompileAndLoadTests
     }
 
     [Fact]
+    public void CompileAndLoadModule_WithTypedExportsAndEmitPdb_LoadsExportsWithoutDiskAssembly()
+    {
+        var tempRoot = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "InMemoryCompileAndLoadPdb", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            var entryPath = Path.Combine(tempRoot, "typed-inmemory-module.js");
+
+            using var module = JrocInMemoryCompiler.CompileAndLoadModule<ICalculatorExports>(
+                new JrocInMemoryCompileRequest(entryPath)
+                {
+                    SourceText = "\"use strict\";\nexports.add = (left, right) => left + right;\n",
+                    EmitPdb = true
+                });
+
+            Assert.Equal(11d, module.Exports.add(5, 6));
+            Assert.Equal("typed-inmemory-module", module.AssemblyName);
+            Assert.Equal(string.Empty, module.Assembly.Location);
+            Assert.Empty(Directory.EnumerateFileSystemEntries(tempRoot));
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { }
+        }
+    }
+
+    [Fact]
     public void CompileAndLoadModule_WithDynamicExports_UsesInferredModuleId()
     {
         var entryPath = Path.Combine(Path.GetTempPath(), "dynamic-inmemory-module.js");
