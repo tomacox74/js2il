@@ -991,6 +991,19 @@ public class RuntimeServices
         }
 
         _requireByModuleId[moduleId] = require;
+        if (GlobalThis.ServiceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true
+            && runtimeContext?.IsHosted == true)
+        {
+            runtimeContext.TrackModuleRequire(moduleId, require);
+        }
+    }
+
+    internal static void UnregisterModuleRequires(IEnumerable<KeyValuePair<string, CommonJS.RequireDelegate>> moduleRequires)
+    {
+        foreach (var moduleRequire in moduleRequires)
+        {
+            ((ICollection<KeyValuePair<string, CommonJS.RequireDelegate>>)_requireByModuleId).Remove(moduleRequire);
+        }
     }
 
     /// <summary>

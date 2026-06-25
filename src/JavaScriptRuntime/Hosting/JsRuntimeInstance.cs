@@ -287,6 +287,11 @@ internal sealed class JsRuntimeInstance : IDisposable
         }
         finally
         {
+            if (_serviceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true && runtimeContext != null)
+            {
+                RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
+            }
+
             // Clear ambient global provider to avoid leaking thread-local state after thread exits.
             GlobalThis.ServiceProvider = null;
 
