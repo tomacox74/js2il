@@ -9,6 +9,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - compiler/tests: extract a reusable compiled-assembly artifact for in-memory PE/PDB emission, keep file-backed output as a consumer of that artifact, and add regression coverage for artifact-only compilation without writing generated output files.
 - compiler/tests: add a public `Jroc.Core` compile-to-memory API that creates a fresh compiler service provider per request, supports source-text or file-backed input, and returns `JrocCompiledAssemblyArtifact` with focused success/failure coverage.
 - hosting/tests: add a collectible in-memory assembly loader for compiled artifacts, loading PE/PDB bytes through `AssemblyLoadContext.LoadFromStream(...)`, sharing the already-loaded runtime assembly, and covering deterministic unload boundaries.
+- hosting/tests: add `CompileAndLoadModule(...)` in-memory hosting APIs for typed and dynamic exports, returning disposable module handles that own both the hosted runtime proxy and the collectible assembly-load boundary.
 
 ## v0.10.1 - 2026-06-23
 

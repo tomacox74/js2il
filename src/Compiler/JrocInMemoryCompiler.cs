@@ -1,10 +1,56 @@
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Jroc.Runtime;
 
 namespace Jroc;
 
 public static class JrocInMemoryCompiler
 {
+    public static JrocInMemoryModule<TExports> CompileAndLoadModule<TExports>(
+        JrocInMemoryCompileRequest request,
+        string? moduleId = null,
+        JsModuleLoadOptions? options = null)
+        where TExports : class
+    {
+        var artifact = Compile(request);
+        var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
+
+        try
+        {
+            var resolvedModuleId = ResolveTypedModuleId<TExports>(request, artifact, moduleId);
+            var exports = JsEngine.LoadModule<TExports>(loadedAssembly.Assembly, resolvedModuleId, options);
+            return new JrocInMemoryModule<TExports>(loadedAssembly, exports);
+        }
+        catch
+        {
+            loadedAssembly.Dispose();
+            throw;
+        }
+    }
+
+    public static JrocInMemoryModule CompileAndLoadModule(
+        JrocInMemoryCompileRequest request,
+        string? moduleId = null,
+        JsModuleLoadOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var artifact = Compile(request);
+        var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
+
+        try
+        {
+            var resolvedModuleId = ResolveModuleId(request, artifact, moduleId);
+            var exports = JsEngine.LoadModule(loadedAssembly.Assembly, resolvedModuleId, options);
+            return new JrocInMemoryModule(loadedAssembly, exports, exports);
+        }
+        catch
+        {
+            loadedAssembly.Dispose();
+            throw;
+        }
+    }
+
     public static JrocCompiledAssemblyArtifact Compile(
         JrocInMemoryCompileRequest request,
         ICompilerOutput? compilerOutput = null)
@@ -77,6 +123,95 @@ public static class JrocInMemoryCompiler
         }
 
         return message.ToString();
+    }
+
+    private static string ResolveTypedModuleId<TExports>(
+        JrocInMemoryCompileRequest request,
+        JrocCompiledAssemblyArtifact artifact,
+        string? explicitModuleId)
+        where TExports : class
+    {
+        var matchedExplicitModuleId = MatchPublishedModuleId(artifact, explicitModuleId);
+        if (!string.IsNullOrWhiteSpace(matchedExplicitModuleId))
+        {
+            return matchedExplicitModuleId;
+        }
+
+        var contractType = typeof(TExports);
+        var moduleAttribute = contractType.GetCustomAttributes(typeof(JsModuleAttribute), inherit: false)
+            .OfType<JsModuleAttribute>()
+            .FirstOrDefault();
+        var matchedAttributeModuleId = MatchPublishedModuleId(artifact, moduleAttribute?.ModuleId);
+        if (!string.IsNullOrWhiteSpace(matchedAttributeModuleId))
+        {
+            return matchedAttributeModuleId;
+        }
+
+        return ResolveModuleId(request, artifact, explicitModuleId: null);
+    }
+
+    private static string ResolveModuleId(
+        JrocInMemoryCompileRequest request,
+        JrocCompiledAssemblyArtifact artifact,
+        string? explicitModuleId)
+    {
+        var matchedExplicitModuleId = MatchPublishedModuleId(artifact, explicitModuleId);
+        if (!string.IsNullOrWhiteSpace(matchedExplicitModuleId))
+        {
+            return matchedExplicitModuleId;
+        }
+
+        if (artifact.ModuleIds.Count == 1)
+        {
+            return artifact.ModuleIds[0];
+        }
+
+        var matchedRootOverrideModuleId = MatchPublishedModuleId(artifact, request.RootModuleIdOverride);
+        if (!string.IsNullOrWhiteSpace(matchedRootOverrideModuleId))
+        {
+            return matchedRootOverrideModuleId;
+        }
+
+        throw new InvalidOperationException(
+            "Unable to infer the module id for compile-and-load. " +
+            "Pass moduleId explicitly, set RootModuleIdOverride on the compile request, " +
+            $"or compile an artifact with a single module id. Available module ids: {string.Join(", ", artifact.ModuleIds)}");
+    }
+
+    private static string? MatchPublishedModuleId(JrocCompiledAssemblyArtifact artifact, string? candidate)
+    {
+        if (string.IsNullOrWhiteSpace(candidate))
+        {
+            return null;
+        }
+
+        var normalizedCandidate = NormalizeModuleId(candidate);
+        return artifact.ModuleIds.FirstOrDefault(moduleId =>
+            string.Equals(NormalizeModuleId(moduleId), normalizedCandidate, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string NormalizeModuleId(string moduleId)
+    {
+        var normalized = moduleId.Trim().Replace('\\', '/');
+        if (normalized.StartsWith("./", StringComparison.Ordinal))
+        {
+            normalized = normalized[2..];
+        }
+
+        if (normalized.StartsWith("/", StringComparison.Ordinal))
+        {
+            normalized = normalized[1..];
+        }
+
+        if (normalized.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            || normalized.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
+            || normalized.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase))
+        {
+            normalized = Path.ChangeExtension(normalized.Replace('/', Path.DirectorySeparatorChar), null) ?? normalized;
+            normalized = normalized.Replace('\\', '/');
+        }
+
+        return normalized;
     }
 
     private sealed class CapturingCompilerOutput(ICompilerOutput? inner) : ICompilerOutput
