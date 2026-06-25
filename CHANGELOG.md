@@ -11,6 +11,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - hosting/tests: add a collectible in-memory assembly loader for compiled artifacts, loading PE/PDB bytes through `AssemblyLoadContext.LoadFromStream(...)`, sharing the already-loaded runtime assembly, and covering deterministic unload boundaries.
 - hosting/tests: add `CompileAndLoadModule(...)` in-memory hosting APIs for typed and dynamic exports, returning disposable module handles that own both the hosted runtime proxy and the collectible assembly-load boundary.
 - hosting/tests: define the path-dependent in-memory hosting contract by keeping `Assembly.Location` empty, documenting that pure in-memory hosting never writes files implicitly, and covering the explicit `child_process.fork` configuration error when no launchable compiled assembly path is supplied.
+- hosting/tests: expand in-memory coverage to include an `EmitPdb=true` compile-and-load path so the first-cut optional PDB behavior stays covered end-to-end.
 
 ## v0.10.1 - 2026-06-23
 
