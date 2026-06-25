@@ -1,4 +1,5 @@
 using Jroc.Runtime;
+using System.Runtime.CompilerServices;
 
 namespace Jroc.Tests;
 
@@ -81,6 +82,42 @@ public sealed class JrocInMemoryCompileAndLoadTests
 
         Assert.Throws<ObjectDisposedException>(() => _ = module.Exports);
         Assert.Throws<ObjectDisposedException>(() => _ = module.Assembly);
+    }
+
+    [Fact]
+    public void CompileAndLoadModule_Dispose_AllowsCollectibleLoadContextToUnload()
+    {
+        var weakReference = LoadAndDisposeHostedModule();
+
+        for (int i = 0; weakReference.IsAlive && i < 10; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        Assert.False(weakReference.IsAlive);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference LoadAndDisposeHostedModule()
+    {
+        var entryPath = Path.Combine(Path.GetTempPath(), "typed-inmemory-hosted-unload.js");
+        var module = JrocInMemoryCompiler.CompileAndLoadModule<ICalculatorExports>(
+            new JrocInMemoryCompileRequest(entryPath)
+            {
+                SourceText = "\"use strict\";\nexports.add = (left, right) => left + right;\n"
+            });
+
+        try
+        {
+            Assert.Equal(17d, module.Exports.add(8, 9));
+            return module.LoadContextWeakReference;
+        }
+        finally
+        {
+            module.Dispose();
+        }
     }
 
     [JsModule("typed-inmemory-module")]
