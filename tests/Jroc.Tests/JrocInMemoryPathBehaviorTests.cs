@@ -7,15 +7,26 @@ public sealed class JrocInMemoryPathBehaviorTests
     [Fact]
     public void CompileAndLoadModule_DoesNotMaterializeAssemblyToDiskImplicitly()
     {
-        var entryPath = Path.Combine(Path.GetTempPath(), "inmemory-location-check.js");
+        var tempRoot = Path.Combine(Path.GetTempPath(), "Jroc.Tests", "InMemoryPathBehavior", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
 
-        using var module = JrocInMemoryCompiler.CompileAndLoadModule(
-            new JrocInMemoryCompileRequest(entryPath)
-            {
-                SourceText = "\"use strict\";\nexports.value = 123;\n"
-            });
+        try
+        {
+            var entryPath = Path.Combine(tempRoot, "inmemory-location-check.js");
 
-        Assert.Equal(string.Empty, module.Assembly.Location);
+            using var module = JrocInMemoryCompiler.CompileAndLoadModule(
+                new JrocInMemoryCompileRequest(entryPath)
+                {
+                    SourceText = "\"use strict\";\nexports.value = 123;\n"
+                });
+
+            Assert.Equal(string.Empty, module.Assembly.Location);
+            Assert.Empty(Directory.EnumerateFileSystemEntries(tempRoot));
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, recursive: true); } catch { }
+        }
     }
 
     [Fact]
