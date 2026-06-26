@@ -23,6 +23,36 @@ namespace Jroc.Tests
 
         protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
+            if (IsTest262ExecutionTest())
+            {
+                if (postTestProcessingAction != null)
+                {
+                    throw new NotSupportedException("Post-test console processing is not supported for in-memory test262 execution.");
+                }
+
+                var result = InMemoryTestCompiler.CompileAndExecute(
+                    testName,
+                    _testCategory,
+                    name => GetJavaScriptAndSourcePath(name, sourceFilePath),
+                    additionalScripts: additionalScripts,
+                    enableIRMetrics: true,
+                    allowUnhandledException: allowUnhandledException,
+                    addMocks: addMocks);
+
+                var inMemorySettings = new VerifySettings(_verifySettings);
+                var inMemoryDirectory = Path.GetDirectoryName(sourceFilePath);
+                if (!string.IsNullOrEmpty(inMemoryDirectory))
+                {
+                    var snapshotsDirectory = Path.Combine(inMemoryDirectory, "Snapshots");
+                    Directory.CreateDirectory(snapshotsDirectory);
+                    inMemorySettings.UseDirectory(snapshotsDirectory);
+                }
+
+                configureSettings?.Invoke(inMemorySettings);
+                await Verify(result.Output, inMemorySettings);
+                return;
+            }
+
             // Use shared compilation to avoid compiling the same JS twice for ExecutionTests and GeneratorTests
             var compiled = SharedTestCompilation.GetOrCompile(
                 _testCategory,
@@ -59,6 +89,9 @@ namespace Jroc.Tests
             configureSettings?.Invoke(settings);
             await Verify(il, settings);
         }
+
+        private bool IsTest262ExecutionTest()
+            => string.Equals(GetType().Assembly.GetName().Name, "Jroc.Test262.Tests", StringComparison.Ordinal);
 
         private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException, string? testName = null, int timeoutMs = 30000)
         {

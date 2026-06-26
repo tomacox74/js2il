@@ -5,9 +5,14 @@ using Jroc.Tests.Integration;
 
 namespace Jroc.Test262.Tests.Integration;
 
-public class ExecutionTests : ExecutionTestsBase
+public class ExecutionTests
 {
-    public ExecutionTests() : base("Integration") { }
+    private readonly VerifySettings _verifySettings = new();
+
+    public ExecutionTests()
+    {
+        _verifySettings.DisableDiff();
+    }
 
     [Fact]
     public Task Compile_Scripts_Test262MetadataParser()
@@ -83,5 +88,69 @@ public class ExecutionTests : ExecutionTestsBase
                     "--describe",
                     "--pin",
                     pinPath)));
+    }
+
+    private async Task ExecutionTest(
+        string testName,
+        string[]? additionalScripts = null,
+        Action<ServiceContainer>? addMocks = null,
+        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
+    {
+        var result = InMemoryTestCompiler.CompileAndExecute(
+            testName,
+            "Integration",
+            GetJavaScriptAndSourcePath,
+            additionalScripts: additionalScripts,
+            enableIRMetrics: true,
+            addMocks: addMocks);
+
+        var settings = new VerifySettings(_verifySettings);
+        var directory = Path.GetDirectoryName(sourceFilePath)
+            ?? throw new InvalidOperationException("Could not resolve source directory.");
+        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
+        Directory.CreateDirectory(snapshotsDirectory);
+        settings.UseDirectory(snapshotsDirectory);
+        await Verify(result.Output, settings);
+    }
+
+    private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName)
+    {
+        var repoRoot = FindRepositoryRoot();
+        var path = testName switch
+        {
+            nameof(Compile_Scripts_Test262MetadataParser) => Path.Combine(
+                repoRoot,
+                "tests",
+                "Jroc.Test262.Tests",
+                "Integration",
+                "JavaScript",
+                "test262MetadataParser_testHarness.js"),
+            nameof(Compile_Scripts_Test262Bootstrap) => Path.Combine(repoRoot, "scripts", "test262", "bootstrap.js"),
+            "test262/metadataParser" => Path.Combine(repoRoot, "scripts", "test262", "metadataParser.js"),
+            _ => throw new ArgumentOutOfRangeException(nameof(testName), testName, "Unknown integration test script.")
+        };
+
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"JavaScript fixture not found at '{path}'.", path);
+        }
+
+        return (File.ReadAllText(path), testName == "test262/metadataParser" ? null : path);
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        var directory = AppContext.BaseDirectory;
+        while (!string.IsNullOrWhiteSpace(directory))
+        {
+            if (File.Exists(Path.Combine(directory, "jroc.sln")))
+            {
+                return directory;
+            }
+
+            directory = Directory.GetParent(directory)?.FullName;
+        }
+
+        throw new InvalidOperationException("Unable to locate repository root.");
     }
 }
