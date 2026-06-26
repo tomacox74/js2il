@@ -16,6 +16,8 @@ namespace JavaScriptRuntime
 
         private static ExpandoObject CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var exp = new ExpandoObject();
             DefinePrototypeMethod(exp, "set", PrototypeSet);
             DefinePrototypeMethod(exp, "get", PrototypeGet);

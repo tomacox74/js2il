@@ -282,11 +282,11 @@ namespace JavaScriptRuntime
                 return Object.defineProperty(target, key, CreateDataPropertyDescriptor(value, enumerable));
             }
 
-            if (target is JsObject jsObject)
+            if (target is JsObject jsObject && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 setJsObjectValue(jsObject, key, value);
             }
-            else if (target is IDictionary<string, object?> dict)
+            else if (target is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 dict[key] = value;
             }
@@ -398,38 +398,50 @@ namespace JavaScriptRuntime
             if (receiver is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                dict.Remove(key);
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(receiver))
+                {
+                    dict.Remove(key);
+                }
+
                 PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
 
             if (receiver is System.Collections.Generic.IDictionary<string, object?> dictGeneric)
             {
-                dictGeneric.Remove(key);
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(receiver))
+                {
+                    dictGeneric.Remove(key);
+                }
+
                 PropertyDescriptorStore.Delete(receiver, key);
                 return true;
             }
 
             if (receiver is System.Collections.IDictionary dictObj)
             {
-                if (dictObj.Contains(key))
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(receiver) && dictObj.Contains(key))
                 {
                     dictObj.Remove(key);
                     return true;
                 }
 
                 object? match = null;
-                foreach (var k in dictObj.Keys)
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(receiver))
                 {
-                    if (string.Equals(DotNet2JSConversions.ToString(k), key, StringComparison.Ordinal))
+                    foreach (var k in dictObj.Keys)
                     {
-                        match = k;
-                        break;
+                        if (string.Equals(DotNet2JSConversions.ToString(k), key, StringComparison.Ordinal))
+                        {
+                            match = k;
+                            break;
+                        }
                     }
-                }
-                if (match != null)
-                {
-                    dictObj.Remove(match);
+
+                    if (match != null)
+                    {
+                        dictObj.Remove(match);
+                    }
                 }
 
                 PropertyDescriptorStore.Delete(receiver, key);

@@ -37,6 +37,8 @@ namespace JavaScriptRuntime
 
         private static ExpandoObject CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var exp = new ExpandoObject();
             ConfigurePrototype(exp);
             return exp;
@@ -49,6 +51,8 @@ namespace JavaScriptRuntime
 
         private static ExpandoObject CreateThreadPrototypeOverride()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new ExpandoObject();
             PropertyDescriptorStore.CopyOwnProperties(ImmutablePrototype, prototype);
 

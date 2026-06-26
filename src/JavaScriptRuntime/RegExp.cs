@@ -253,6 +253,8 @@ namespace JavaScriptRuntime
 
         private static ExpandoObject CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new ExpandoObject();
             DefineSymbolMethod(prototype, MatchSymbolPropertyKey, MatchSymbolDelegate);
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);

@@ -114,6 +114,8 @@ namespace JavaScriptRuntime
 
         private static object CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "add", PrototypeAdd);
             DefinePrototypeMethod(prototype, "delete", PrototypeDelete);

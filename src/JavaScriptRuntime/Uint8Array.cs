@@ -10,6 +10,8 @@ namespace JavaScriptRuntime
 
         static Uint8Array()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
 
             PropertyDescriptorStore.DefineOrUpdate(typeof(Uint8Array), "prototype", new JsPropertyDescriptor
@@ -165,7 +167,11 @@ namespace JavaScriptRuntime
             => new Uint8Array(buffer, byteOffset, length);
 
         private static JsObject CreatePrototype()
-            => new();
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            return new JsObject();
+        }
 
         private void InitializeIntrinsicSurface()
             => PrototypeChain.SetPrototype(this, Prototype);

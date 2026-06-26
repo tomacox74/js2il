@@ -9,6 +9,8 @@ public static class AsyncGeneratorFunction
 
     static AsyncGeneratorFunction()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         JavaScriptRuntime.Function.InitializeFunctionInstance(_constructor, 1d, "AsyncGeneratorFunction", requiresInvocationContext: false);
         PrototypeChain.SetPrototype(_constructor, GlobalThis.Function);
         PropertyDescriptorStore.DefineOrUpdate(_constructor, "prototype", new JsPropertyDescriptor
@@ -30,6 +32,8 @@ public static class AsyncGeneratorFunction
 
     private static JsObject CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var prototype = new JsObject();
         PrototypeChain.SetPrototype(prototype, JavaScriptRuntime.Function.Prototype);
         PropertyDescriptorStore.DefineOrUpdate(prototype, "constructor", new JsPropertyDescriptor

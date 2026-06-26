@@ -50,6 +50,8 @@ namespace JavaScriptRuntime
 
         private static ExpandoObject CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new ExpandoObject();
 
             DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
@@ -91,6 +93,8 @@ namespace JavaScriptRuntime
 
         private static ExpandoObject CreateStringIteratorPrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new ExpandoObject();
             DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext, 0);
             DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0);
@@ -124,6 +128,8 @@ namespace JavaScriptRuntime
 
         public static void ConfigureIntrinsicSurface(object stringConstructorValue)
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             PrototypeChain.SetPrototype(Prototype, GlobalThis.ObjectPrototypeValue);
             PrototypeChain.SetPrototype(StringIteratorPrototype, GlobalThis.ObjectPrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(stringConstructorValue, "prototype", new JsPropertyDescriptor

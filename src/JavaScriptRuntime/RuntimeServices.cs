@@ -21,7 +21,6 @@ public class RuntimeServices
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
-    private static readonly ConditionalWeakTable<object, DeletedLazyClassMethodSlot> _deletedLazyClassMethodProperties = new();
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -36,11 +35,6 @@ public class RuntimeServices
     private sealed class LazyClassMetadataSlot
     {
         public readonly List<LazyClassMethodDataProperty> Methods = new();
-    }
-
-    private sealed class DeletedLazyClassMethodSlot
-    {
-        public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
     }
 
     private sealed record LazyClassMethodDataProperty(
@@ -481,7 +475,7 @@ public class RuntimeServices
         out JsPropertyDescriptor descriptor)
     {
         descriptor = null!;
-        if (IsLazyClassMethodPropertyDeleted(target, propName)
+        if (PropertyDescriptorStore.IsDeleted(target, propName)
             || !TryResolveLazyClassMethodTarget(target, out var ownerType, out var ownerValue, out var isStatic)
             || !_lazyClassMetadata.TryGetValue(ownerType, out var slot))
         {
@@ -529,7 +523,7 @@ public class RuntimeServices
         {
             return slot.Methods
                 .Where(method => method.IsStatic == isStatic
-                    && !IsLazyClassMethodPropertyDeleted(target, method.PropertyKey)
+                    && !PropertyDescriptorStore.IsDeleted(target, method.PropertyKey)
                     && !PropertyDescriptorStore.TryGetOwn(target, method.PropertyKey, out _))
                 .Select(method => method.PropertyKey)
                 .ToArray();
@@ -554,24 +548,7 @@ public class RuntimeServices
             }
         }
 
-        var deletedSlot = _deletedLazyClassMethodProperties.GetOrCreateValue(target);
-        lock (deletedSlot)
-        {
-            deletedSlot.Keys.Add(propName);
-        }
-    }
-
-    private static bool IsLazyClassMethodPropertyDeleted(object target, string propName)
-    {
-        if (!_deletedLazyClassMethodProperties.TryGetValue(target, out var deletedSlot))
-        {
-            return false;
-        }
-
-        lock (deletedSlot)
-        {
-            return deletedSlot.Keys.Contains(propName);
-        }
+        PropertyDescriptorStore.Delete(target, propName);
     }
 
     private static bool TryResolveLazyClassMethodTarget(
@@ -1095,6 +1072,7 @@ public class RuntimeServices
         container.Register<EngineCore.IFinalizationRegistryHost, EngineCore.FinalizationRegistryHost>();
         container.Register<CommonJS.Require>();
         container.Register<LocalModulesAssembly>();
+        container.RegisterInstance<IPropertyDescriptorStore>(new PropertyDescriptorStore());
         container.Register<IEnvironment, DefaultEnvironment>();
         container.Register<Node.IChildProcessLauncher, Node.DefaultChildProcessLauncher>();
         
