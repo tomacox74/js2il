@@ -11,6 +11,8 @@ public static class Iterator
 
     internal static void ConfigureIntrinsicSurface(object iteratorConstructorValue)
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         DefineDataProperty(iteratorConstructorValue, "prototype", Prototype);
         DefineDataProperty(iteratorConstructorValue, "from", (Func<object[], object?[]?, object?>)ConstructorFrom);
 
@@ -70,11 +72,15 @@ public static class Iterator
 
     private static object CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         return new JsObject();
     }
 
     private static object CreateHelperPrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var prototype = new JsObject();
         PrototypeChain.SetPrototype(prototype, Prototype);
         return prototype;

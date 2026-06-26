@@ -52,6 +52,8 @@ public sealed class Promise
 
     private static object CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var prototype = new JsObject();
         Function.InitializeFunctionInstance(PrototypeThenValue, 2d, "then");
         Function.MarkUndefinedPrototype(PrototypeThenValue);

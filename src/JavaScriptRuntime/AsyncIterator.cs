@@ -8,6 +8,8 @@ public static class AsyncIterator
 
     internal static void ConfigureIntrinsicSurface(object asyncIteratorConstructorValue)
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         DefineDataProperty(asyncIteratorConstructorValue, "prototype", Prototype);
         DefineDataProperty(Prototype, "constructor", asyncIteratorConstructorValue);
         DefineDataProperty(Prototype, "next", (Func<object[], object?[]?, object?>)PrototypeNext);
@@ -26,6 +28,8 @@ public static class AsyncIterator
 
     private static object CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         return new JsObject();
     }
 

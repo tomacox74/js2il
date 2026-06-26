@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace JavaScriptRuntime;
 
@@ -27,22 +29,357 @@ internal sealed class JsPropertyDescriptor
     public object? Set { get; set; }
 }
 
-internal static class PropertyDescriptorStore
+internal interface IPropertyDescriptorStore
 {
-    private sealed class Slot
+    bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor);
+    bool HasAny(object target);
+    void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor);
+    IEnumerable<string> GetOwnKeys(object target);
+    bool Delete(object target, string key);
+    void Clear(object target);
+    bool IsEnumerableOrDefaultTrue(object target, string key);
+}
+
+internal enum PropertyDescriptorOverrideKind
+{
+    Add,
+    Modify,
+    Delete
+}
+
+internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
+{
+    private sealed class DescriptorSlot
     {
+        public readonly object SyncRoot = new();
         public readonly Dictionary<string, JsPropertyDescriptor> Descriptors = new(StringComparer.Ordinal);
         public readonly List<string> KeyOrder = new();
     }
 
-    private static readonly ConditionalWeakTable<object, Slot> _slots = new();
+    private sealed class OverrideSlot
+    {
+        public readonly object SyncRoot = new();
+        public readonly Dictionary<string, PropertyDescriptorOverride> Overrides = new(StringComparer.Ordinal);
+        public readonly List<string> KeyOrder = new();
+    }
 
-    private static bool TryGetMirroredRawClassPrototype(object target, out object mirroredTarget)
+    private sealed class PropertyDescriptorOverride
+    {
+        public required PropertyDescriptorOverrideKind Kind { get; init; }
+        public JsPropertyDescriptor? Descriptor { get; init; }
+    }
+
+    private sealed class IntrinsicPropertyDescriptorStore : IPropertyDescriptorStore
+    {
+        private readonly ConditionalWeakTable<object, DescriptorSlot> _slots = new();
+
+        public bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
+        {
+            ValidateTargetAndKey(target, key);
+
+            if (_slots.TryGetValue(target, out var slot))
+            {
+                lock (slot.SyncRoot)
+                {
+                    if (slot.Descriptors.TryGetValue(key, out var stored))
+                    {
+                        descriptor = CloneDescriptor(stored);
+                        return true;
+                    }
+                }
+            }
+
+            descriptor = null!;
+            return false;
+        }
+
+        public bool HasAny(object target)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+
+            if (!_slots.TryGetValue(target, out var slot))
+            {
+                return false;
+            }
+
+            lock (slot.SyncRoot)
+            {
+                return slot.Descriptors.Count != 0;
+            }
+        }
+
+        public void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
+        {
+            ValidateTargetAndKey(target, key);
+            ArgumentNullException.ThrowIfNull(descriptor);
+
+            DefineOrUpdateCore(target, key, descriptor);
+
+            if (TryGetMirroredRawClassPrototype(target, TryGetOwn, out var mirroredTarget))
+            {
+                DefineOrUpdateCore(mirroredTarget, key, descriptor);
+            }
+        }
+
+        public IEnumerable<string> GetOwnKeys(object target)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+
+            if (_slots.TryGetValue(target, out var slot))
+            {
+                lock (slot.SyncRoot)
+                {
+                    return slot.KeyOrder.ToArray();
+                }
+            }
+
+            return System.Array.Empty<string>();
+        }
+
+        public bool Delete(object target, string key)
+        {
+            ValidateTargetAndKey(target, key);
+
+            var removed = DeleteCore(target, key);
+            if (removed
+                && TryGetMirroredRawClassPrototype(target, TryGetOwn, out var mirroredTarget))
+            {
+                _ = DeleteCore(mirroredTarget, key);
+            }
+
+            return removed;
+        }
+
+        public void Clear(object target)
+        {
+            ArgumentNullException.ThrowIfNull(target);
+            _slots.Remove(target);
+        }
+
+        public bool IsEnumerableOrDefaultTrue(object target, string key)
+            => !TryGetOwn(target, key, out var desc) || desc.Enumerable;
+
+        private void DefineOrUpdateCore(object target, string key, JsPropertyDescriptor descriptor)
+        {
+            if (target is Delegate del)
+            {
+                Function.ClearDeletedMetadataProperty(del, key);
+            }
+
+            var slot = _slots.GetOrCreateValue(target);
+            lock (slot.SyncRoot)
+            {
+                if (!slot.Descriptors.ContainsKey(key))
+                {
+                    slot.KeyOrder.Add(key);
+                }
+
+                slot.Descriptors[key] = CloneDescriptor(descriptor);
+            }
+        }
+
+        private bool DeleteCore(object target, string key)
+        {
+            if (!_slots.TryGetValue(target, out var slot))
+            {
+                return false;
+            }
+
+            lock (slot.SyncRoot)
+            {
+                var removed = slot.Descriptors.Remove(key);
+                if (removed)
+                {
+                    slot.KeyOrder.Remove(key);
+                }
+
+                return removed;
+            }
+        }
+    }
+
+    private static readonly IntrinsicPropertyDescriptorStore _intrinsicStore = new();
+    private static readonly ThreadLocal<IPropertyDescriptorStore?> _currentRuntimeStore = new(() => null);
+    private static readonly ThreadLocal<int> _intrinsicInitializationDepth = new(() => 0);
+
+    private readonly ConditionalWeakTable<object, OverrideSlot> _overrideSlots = new();
+
+    public PropertyDescriptorStore()
+    {
+    }
+
+    internal static void SetCurrentRuntimeStore(IPropertyDescriptorStore? store)
+        => _currentRuntimeStore.Value = store;
+
+    internal static IDisposable BeginIntrinsicInitialization()
+    {
+        _intrinsicInitializationDepth.Value++;
+        return new IntrinsicInitializationScope();
+    }
+
+    internal static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        return new JsPropertyDescriptor
+        {
+            Kind = descriptor.Kind,
+            Enumerable = descriptor.Enumerable,
+            Configurable = descriptor.Configurable,
+            Value = descriptor.Value,
+            Writable = descriptor.Writable,
+            Get = descriptor.Get,
+            Set = descriptor.Set
+        };
+    }
+
+    public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
+        => CurrentStore.TryGetOwn(target, key, out descriptor);
+
+    public static bool HasAny(object target)
+        => CurrentStore.HasAny(target);
+
+    internal static bool HasIntrinsicProperties(object target)
+        => _intrinsicStore.HasAny(target);
+
+    internal static bool IsDeleted(object target, string key)
+    {
+        ValidateTargetAndKey(target, key);
+        return CurrentStore is PropertyDescriptorStore runtimeStore
+            && runtimeStore.HasDeletedOverride(target, key);
+    }
+
+    public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
+        => CurrentStore.DefineOrUpdate(target, key, descriptor);
+
+    internal static void CopyOwnProperties(object source, object target)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(target);
+
+        foreach (var key in GetOwnKeys(source))
+        {
+            if (TryGetOwn(source, key, out var descriptor))
+            {
+                DefineOrUpdate(target, key, descriptor);
+            }
+        }
+    }
+
+    public static IEnumerable<string> GetOwnKeys(object target)
+        => CurrentStore.GetOwnKeys(target);
+
+    public static bool Delete(object target, string key)
+        => CurrentStore.Delete(target, key);
+
+    internal static void Clear(object target)
+        => CurrentStore.Clear(target);
+
+    public static bool IsEnumerableOrDefaultTrue(object target, string key)
+        => CurrentStore.IsEnumerableOrDefaultTrue(target, key);
+
+    bool IPropertyDescriptorStore.TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
+    {
+        ValidateTargetAndKey(target, key);
+
+        if (TryGetOverride(target, key, out var entry))
+        {
+            if (entry.Kind == PropertyDescriptorOverrideKind.Delete)
+            {
+                descriptor = null!;
+                return false;
+            }
+
+            descriptor = CloneDescriptor(entry.Descriptor!);
+            return true;
+        }
+
+        return _intrinsicStore.TryGetOwn(target, key, out descriptor);
+    }
+
+    bool IPropertyDescriptorStore.HasAny(object target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        return GetOwnKeysForRuntimeStore(target).Any();
+    }
+
+    void IPropertyDescriptorStore.DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
+    {
+        ValidateTargetAndKey(target, key);
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        DefineOrUpdateOverride(target, key, descriptor);
+
+        if (TryGetMirroredRawClassPrototype(target, ((IPropertyDescriptorStore)this).TryGetOwn, out var mirroredTarget))
+        {
+            DefineOrUpdateOverride(mirroredTarget, key, descriptor);
+        }
+    }
+
+    IEnumerable<string> IPropertyDescriptorStore.GetOwnKeys(object target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        return GetOwnKeysForRuntimeStore(target);
+    }
+
+    bool IPropertyDescriptorStore.Delete(object target, string key)
+    {
+        ValidateTargetAndKey(target, key);
+
+        var removed = DeleteOverride(target, key);
+        if (removed
+            && TryGetMirroredRawClassPrototype(target, ((IPropertyDescriptorStore)this).TryGetOwn, out var mirroredTarget))
+        {
+            _ = DeleteOverride(mirroredTarget, key);
+        }
+
+        return removed;
+    }
+
+    void IPropertyDescriptorStore.Clear(object target)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        _overrideSlots.Remove(target);
+    }
+
+    bool IPropertyDescriptorStore.IsEnumerableOrDefaultTrue(object target, string key)
+        => !((IPropertyDescriptorStore)this).TryGetOwn(target, key, out var desc) || desc.Enumerable;
+
+    private static IPropertyDescriptorStore CurrentStore
+        => _intrinsicInitializationDepth.Value > 0
+            ? _intrinsicStore
+            : _currentRuntimeStore.Value ?? _intrinsicStore;
+
+    private sealed class IntrinsicInitializationScope : IDisposable
+    {
+        private bool _disposed;
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _intrinsicInitializationDepth.Value--;
+        }
+    }
+
+    private static void ValidateTargetAndKey(object target, string key)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(key);
+    }
+
+    private static bool TryGetMirroredRawClassPrototype(
+        object target,
+        TryGetOwnDescriptor tryGetOwn,
+        out object mirroredTarget)
     {
         mirroredTarget = null!;
 
-        if (!_slots.TryGetValue(target, out var slot)
-            || !slot.Descriptors.TryGetValue("constructor", out var constructorDescriptor)
+        if (!tryGetOwn(target, "constructor", out var constructorDescriptor)
             || constructorDescriptor.Kind != JsPropertyDescriptorKind.Data
             || constructorDescriptor.Value is not ClassConstructorValue classConstructorValue)
         {
@@ -60,146 +397,138 @@ internal static class PropertyDescriptorStore
         return true;
     }
 
-    internal static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
+    private delegate bool TryGetOwnDescriptor(object target, string key, out JsPropertyDescriptor descriptor);
+
+    private bool TryGetOverride(object target, string key, out PropertyDescriptorOverride entry)
     {
-        if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
-
-        return new JsPropertyDescriptor
+        if (_overrideSlots.TryGetValue(target, out var slot))
         {
-            Kind = descriptor.Kind,
-            Enumerable = descriptor.Enumerable,
-            Configurable = descriptor.Configurable,
-            Value = descriptor.Value,
-            Writable = descriptor.Writable,
-            Get = descriptor.Get,
-            Set = descriptor.Set
-        };
-    }
-
-    public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
-    {
-        if (target == null) throw new ArgumentNullException(nameof(target));
-        if (key == null) throw new ArgumentNullException(nameof(key));
-
-        if (_slots.TryGetValue(target, out var slot))
-        {
-            return slot.Descriptors.TryGetValue(key, out descriptor!);
+            lock (slot.SyncRoot)
+            {
+                return slot.Overrides.TryGetValue(key, out entry!);
+            }
         }
 
-        descriptor = null!;
+        entry = null!;
         return false;
     }
 
-    public static bool HasAny(object target)
+    private void DefineOrUpdateOverride(object target, string key, JsPropertyDescriptor descriptor)
     {
-        if (target == null) throw new ArgumentNullException(nameof(target));
-
-        return _slots.TryGetValue(target, out var slot)
-            && slot.Descriptors.Count != 0;
-    }
-
-    public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
-    {
-        if (target == null) throw new ArgumentNullException(nameof(target));
-        if (key == null) throw new ArgumentNullException(nameof(key));
-        if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
-
         if (target is Delegate del)
         {
             Function.ClearDeletedMetadataProperty(del, key);
         }
 
-        var slot = _slots.GetOrCreateValue(target);
-        if (!slot.Descriptors.ContainsKey(key))
-        {
-            slot.KeyOrder.Add(key);
-        }
-        slot.Descriptors[key] = descriptor;
+        var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
+        var slot = _overrideSlots.GetOrCreateValue(target);
 
-        if (TryGetMirroredRawClassPrototype(target, out var mirroredTarget))
+        lock (slot.SyncRoot)
         {
-            var mirroredSlot = _slots.GetOrCreateValue(mirroredTarget);
-            if (!mirroredSlot.Descriptors.ContainsKey(key))
+            var hadDeleteOverride = slot.Overrides.TryGetValue(key, out var existing)
+                && existing.Kind == PropertyDescriptorOverrideKind.Delete;
+            var shouldTrackOrder = (!hasIntrinsic || hadDeleteOverride)
+                && (!slot.KeyOrder.Contains(key));
+
+            if (shouldTrackOrder)
             {
-                mirroredSlot.KeyOrder.Add(key);
+                slot.KeyOrder.Add(key);
             }
 
-            mirroredSlot.Descriptors[key] = new JsPropertyDescriptor
+            slot.Overrides[key] = new PropertyDescriptorOverride
             {
-                Kind = descriptor.Kind,
-                Enumerable = descriptor.Enumerable,
-                Configurable = descriptor.Configurable,
-                Value = descriptor.Value,
-                Writable = descriptor.Writable,
-                Get = descriptor.Get,
-                Set = descriptor.Set
+                Kind = hasIntrinsic && !hadDeleteOverride
+                    ? PropertyDescriptorOverrideKind.Modify
+                    : PropertyDescriptorOverrideKind.Add,
+                Descriptor = CloneDescriptor(descriptor)
             };
         }
     }
 
-    internal static void CopyOwnProperties(object source, object target)
+    private bool DeleteOverride(object target, string key)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
-        if (target == null) throw new ArgumentNullException(nameof(target));
+        var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
+        var slot = _overrideSlots.GetOrCreateValue(target);
 
-        foreach (var key in GetOwnKeys(source))
+        lock (slot.SyncRoot)
         {
-            if (TryGetOwn(source, key, out var descriptor))
-            {
-                DefineOrUpdate(target, key, CloneDescriptor(descriptor));
-            }
-        }
-    }
+            var hasOverride = slot.Overrides.TryGetValue(key, out var existing)
+                && existing.Kind != PropertyDescriptorOverrideKind.Delete;
 
-    public static IEnumerable<string> GetOwnKeys(object target)
-    {
-        if (target == null) throw new ArgumentNullException(nameof(target));
-
-        if (_slots.TryGetValue(target, out var slot))
-        {
-            var keys = slot.KeyOrder.ToArray();
-            return keys;
-        }
-
-        return System.Array.Empty<string>();
-    }
-
-    public static bool Delete(object target, string key)
-    {
-        if (target == null) throw new ArgumentNullException(nameof(target));
-        if (key == null) throw new ArgumentNullException(nameof(key));
-
-        if (_slots.TryGetValue(target, out var slot))
-        {
-            var removed = slot.Descriptors.Remove(key);
-            if (removed)
+            if (!hasIntrinsic && !hasOverride)
             {
                 slot.KeyOrder.Remove(key);
-            }
-
-            if (removed && TryGetMirroredRawClassPrototype(target, out var mirroredTarget) && _slots.TryGetValue(mirroredTarget, out var mirroredSlot))
-            {
-                if (mirroredSlot.Descriptors.Remove(key))
+                slot.Overrides[key] = new PropertyDescriptorOverride
                 {
-                    mirroredSlot.KeyOrder.Remove(key);
-                }
+                    Kind = PropertyDescriptorOverrideKind.Delete
+                };
+                return false;
             }
 
-            return removed;
+            if (hasIntrinsic)
+            {
+                slot.KeyOrder.Remove(key);
+                slot.Overrides[key] = new PropertyDescriptorOverride
+                {
+                    Kind = PropertyDescriptorOverrideKind.Delete
+                };
+                return true;
+            }
+
+            slot.KeyOrder.Remove(key);
+            slot.Overrides[key] = new PropertyDescriptorOverride
+            {
+                Kind = PropertyDescriptorOverrideKind.Delete
+            };
+            return true;
+        }
+    }
+
+    private IEnumerable<string> GetOwnKeysForRuntimeStore(object target)
+    {
+        var keys = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var key in _intrinsicStore.GetOwnKeys(target))
+        {
+            if (!IsIntrinsicKeySuppressedByOverride(target, key) && seen.Add(key))
+            {
+                keys.Add(key);
+            }
         }
 
-        return false;
+        if (_overrideSlots.TryGetValue(target, out var slot))
+        {
+            lock (slot.SyncRoot)
+            {
+                foreach (var key in slot.KeyOrder.ToArray())
+                {
+                    if (!slot.Overrides.TryGetValue(key, out var entry)
+                        || entry.Kind == PropertyDescriptorOverrideKind.Delete)
+                    {
+                        continue;
+                    }
+
+                    if (seen.Add(key))
+                    {
+                        keys.Add(key);
+                    }
+                }
+            }
+        }
+
+        return keys;
     }
 
-    internal static void Clear(object target)
-    {
-        if (target == null) throw new ArgumentNullException(nameof(target));
+    private bool IsDeletedOverride(object target, string key)
+        => TryGetOverride(target, key, out var entry)
+            && entry.Kind == PropertyDescriptorOverrideKind.Delete;
 
-        _slots.Remove(target);
-    }
+    private bool HasDeletedOverride(object target, string key)
+        => IsDeletedOverride(target, key);
 
-    public static bool IsEnumerableOrDefaultTrue(object target, string key)
-    {
-        return !TryGetOwn(target, key, out var desc) || desc.Enumerable;
-    }
+    private bool IsIntrinsicKeySuppressedByOverride(object target, string key)
+        => TryGetOverride(target, key, out var entry)
+            && (entry.Kind == PropertyDescriptorOverrideKind.Delete
+                || entry.Kind == PropertyDescriptorOverrideKind.Add);
 }

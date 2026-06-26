@@ -276,6 +276,8 @@ namespace JavaScriptRuntime
 
         static GlobalThis()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.Prototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Function.RestrictedPropertiesPrototype, JavaScriptRuntime.Function.Prototype);
             DefineIntrinsicToStringTagProperty(Math, "Math");
@@ -736,6 +738,15 @@ namespace JavaScriptRuntime
             set
             {
                 _serviceProvider.Value = value;
+                if (value?.TryResolve<IPropertyDescriptorStore>(out var propertyDescriptorStore) == true
+                    && propertyDescriptorStore != null)
+                {
+                    PropertyDescriptorStore.SetCurrentRuntimeStore(propertyDescriptorStore);
+                }
+                else
+                {
+                    PropertyDescriptorStore.SetCurrentRuntimeStore(null);
+                }
 
                 // Each configured runtime corresponds to a new execution context/realm.
                 // Ensure we don't leak a prior global object across Engine.Execute calls on the same thread.

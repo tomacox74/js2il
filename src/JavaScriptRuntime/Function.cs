@@ -17,11 +17,6 @@ namespace JavaScriptRuntime
     /// </summary>
 public static class Function
 {
-    private sealed class DeletedMetadataSlot
-    {
-        public readonly HashSet<string> Keys = new(StringComparer.Ordinal);
-    }
-
     private sealed class InvocationMetadataSlot
     {
         public bool RequiresInvocationContext;
@@ -31,7 +26,6 @@ public static class Function
     {
     }
 
-    private static readonly ConditionalWeakTable<Delegate, DeletedMetadataSlot> _deletedMetadataProperties = new();
     private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
     private static readonly ConditionalWeakTable<Delegate, UndefinedPrototypeSlot> _undefinedPrototypeFunctions = new();
 
@@ -40,6 +34,8 @@ public static class Function
 
     private static ExpandoObject CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var exp = new ExpandoObject();
         DefinePrototypeMethod(exp, "apply", (Func<object[], object?[]?, object?>)PrototypeApply, 2);
         DefinePrototypeMethod(exp, "call", (Func<object[], object?[]?, object?>)PrototypeCall, 1);
@@ -54,7 +50,6 @@ public static class Function
     {
         var value = CreateBuiltinPrototypeFunction(method, length);
         PrototypeChain.SetPrototype(value, prototype);
-        ((IDictionary<string, object?>)prototype)[name] = value;
         PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
         {
             Kind = JsPropertyDescriptorKind.Data,
@@ -67,7 +62,15 @@ public static class Function
 
     internal static bool TryGetPrototypeValue(string name, out object? value)
     {
-        return ((IDictionary<string, object?>)Prototype).TryGetValue(name, out value);
+        if (PropertyDescriptorStore.TryGetOwn(Prototype, name, out var descriptor)
+            && descriptor.Kind == JsPropertyDescriptorKind.Data)
+        {
+            value = descriptor.Value;
+            return true;
+        }
+
+        value = null;
+        return false;
     }
 
     private static Func<object[], object?[]?, object?> CreateBuiltinPrototypeFunction(Func<object[], object?[]?, object?> method, double length)
@@ -94,6 +97,8 @@ public static class Function
 
     private static ExpandoObject CreateRestrictedPropertiesPrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var exp = new ExpandoObject();
         DefineRestrictedProperty(exp, "caller");
         DefineRestrictedProperty(exp, "arguments");
@@ -676,7 +681,7 @@ public static class Function
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
 
-            if (IsDeletedMetadataProperty(target, propName))
+            if (IsMetadataPropertyName(propName) && PropertyDescriptorStore.IsDeleted(target, propName))
             {
                 descriptor = null!;
                 return false;
@@ -725,22 +730,12 @@ public static class Function
 
             PropertyDescriptorStore.Delete(target, propName);
 
-            if (IsMetadataPropertyName(propName))
-            {
-                _deletedMetadataProperties.GetOrCreateValue(target).Keys.Add(propName);
-            }
-
             return true;
         }
 
         internal static void ClearDeletedMetadataProperty(Delegate target, string propName)
         {
             if (target is null) throw new ArgumentNullException(nameof(target));
-
-            if (_deletedMetadataProperties.TryGetValue(target, out var deleted))
-            {
-                deleted.Keys.Remove(propName);
-            }
         }
 
         private static bool IsSyntheticDynamicFunctionDeclaringTypeName(string? declaringTypeName)
@@ -789,10 +784,6 @@ public static class Function
             var scopeType = declaringType?.GetNestedType("Scope", BindingFlags.Public | BindingFlags.NonPublic);
             return scopeType != null && typeof(GeneratorScope).IsAssignableFrom(scopeType);
         }
-
-        private static bool IsDeletedMetadataProperty(Delegate target, string propName)
-            => _deletedMetadataProperties.TryGetValue(target, out var deleted)
-                && deleted.Keys.Contains(propName);
 
         private static bool IsMetadataPropertyName(string propName)
             => string.Equals(propName, "length", StringComparison.Ordinal)

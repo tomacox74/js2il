@@ -14,6 +14,8 @@ namespace JavaScriptRuntime.Node
 
         static Url()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             ConfigureConstructorSurface(URLConstructorValue, global::JavaScriptRuntime.Node.URL.Prototype);
             ConfigureConstructorSurface(URLSearchParamsConstructorValue, global::JavaScriptRuntime.Node.URLSearchParams.Prototype);
         }
@@ -293,6 +295,8 @@ namespace JavaScriptRuntime.Node
 
         private static object CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "toJSON", PrototypeToJson);
             DefinePrototypeMethod(prototype, "toString", PrototypeToString);
@@ -645,6 +649,8 @@ namespace JavaScriptRuntime.Node
 
         private static object CreatePrototype()
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "append", PrototypeAppend);
             DefinePrototypeMethod(prototype, "delete", PrototypeDelete);

@@ -887,6 +887,8 @@ namespace JavaScriptRuntime
 
         public static void ConfigureIntrinsicSurface(object objectConstructorValue, object objectPrototypeValue)
         {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
             DefineBuiltinDataProperty(objectConstructorValue, "prototype", objectPrototypeValue, enumerable: false, configurable: true, writable: true);
 
             DefineBuiltinDataProperty(objectConstructorValue, "assign", _objectAssignValue);
@@ -1449,7 +1451,7 @@ namespace JavaScriptRuntime
                 array.length = (double)arrayIndex + 1;
             }
 
-            if (obj is IDictionary<string, object?> dict)
+            if (obj is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
             {
                 if (appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
                 {
@@ -1992,7 +1994,9 @@ namespace JavaScriptRuntime
                 Set = setter
             });
 
-            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
+            if (target is IDictionary<string, object?> dict
+                && !PropertyDescriptorStore.HasIntrinsicProperties(target)
+                && !dict.ContainsKey(key))
             {
                 dict[key] = null;
             }
@@ -2034,7 +2038,9 @@ namespace JavaScriptRuntime
                 Set = setter
             });
 
-            if (target is IDictionary<string, object?> dict && !dict.ContainsKey(key))
+            if (target is IDictionary<string, object?> dict
+                && !PropertyDescriptorStore.HasIntrinsicProperties(target)
+                && !dict.ContainsKey(key))
             {
                 dict[key] = null;
             }
@@ -5001,7 +5007,7 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            if (target is IDictionary<string, object?> dict)
+            if (target is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 dict[key] = value;
                 return;
@@ -5037,31 +5043,22 @@ namespace JavaScriptRuntime
             // ExpandoObject: copy all enumerable own properties.
             if (source is System.Dynamic.ExpandoObject exp)
             {
-                var src = (IDictionary<string, object?>)exp;
-                foreach (var kvp in src)
+                var srcSeen = new HashSet<string>(StringComparer.Ordinal);
+                EnumerateOwnEnumerableProperties(exp, srcSeen, (key, value) =>
                 {
-                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, kvp.Key))
-                    {
-                        continue;
-                    }
-
-                    setOwnProperty(kvp.Key, kvp.Value);
-                }
+                    setOwnProperty(key, value);
+                }, includeEncodedSymbolKeys: true);
                 return target;
             }
 
             // IDictionary<string, object?>: treat keys as enumerable properties.
             if (source is IDictionary<string, object?> dict)
             {
-                foreach (var kvp in dict)
+                var srcSeen = new HashSet<string>(StringComparer.Ordinal);
+                EnumerateOwnEnumerableProperties(dict, srcSeen, (key, value) =>
                 {
-                    if (!PropertyDescriptorStore.IsEnumerableOrDefaultTrue(source, kvp.Key))
-                    {
-                        continue;
-                    }
-
-                    setOwnProperty(kvp.Key, kvp.Value);
-                }
+                    setOwnProperty(key, value);
+                }, includeEncodedSymbolKeys: true);
                 return target;
             }
 
@@ -5272,21 +5269,12 @@ namespace JavaScriptRuntime
             // ExpandoObject (object literal)
             if (obj is System.Dynamic.ExpandoObject exp)
             {
-                var dict = (IDictionary<string, object?>)exp;
-                var keys = new JavaScriptRuntime.Array(
-                    dict.Keys
-                        .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(exp, k))
-                        .Cast<object?>());
-                return keys;
+                return new JavaScriptRuntime.Array(GetOwnEnumerableKeysInOrder(exp).Cast<object?>());
             }
 
             if (obj is IDictionary<string, object?> dictGeneric)
             {
-                var keys = new JavaScriptRuntime.Array(
-                    dictGeneric.Keys
-                        .Where(k => PropertyDescriptorStore.IsEnumerableOrDefaultTrue(obj, k))
-                        .Cast<object?>());
-                return keys;
+                return new JavaScriptRuntime.Array(GetOwnEnumerableKeysInOrder(dictGeneric).Cast<object?>());
             }
 
             // JS Array: enumerate indices
@@ -5600,12 +5588,12 @@ namespace JavaScriptRuntime
 
                 desc.Value = value;
                 PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
-                if (obj is System.Dynamic.ExpandoObject expDesc)
+                if (obj is System.Dynamic.ExpandoObject expDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
                 {
                     var dict = (IDictionary<string, object?>)expDesc;
                     dict[name] = value;
                 }
-                else if (obj is IDictionary<string, object?> dictDesc)
+                else if (obj is IDictionary<string, object?> dictDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
                 {
                     dictDesc[name] = value;
                 }
@@ -5624,7 +5612,10 @@ namespace JavaScriptRuntime
                     return value;
                 }
 
-                dict[name] = value;
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(obj))
+                {
+                    dict[name] = value;
+                }
                 PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,
@@ -5649,7 +5640,10 @@ namespace JavaScriptRuntime
                     return value;
                 }
 
-                dictGeneric[name] = value;
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(obj))
+                {
+                    dictGeneric[name] = value;
+                }
                 PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,

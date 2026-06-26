@@ -10,6 +10,8 @@ public static class AsyncFunction
 
     static AsyncFunction()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         Function.InitializeFunctionInstance(ConstructorValue);
         PrototypeChain.SetPrototype(ConstructorValue, GlobalThis.Function);
         PrototypeChain.SetPrototype(Prototype, Function.Prototype);
@@ -83,6 +85,8 @@ public static class AsyncFunction
 
     private static object CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         return new JsObject();
     }
 

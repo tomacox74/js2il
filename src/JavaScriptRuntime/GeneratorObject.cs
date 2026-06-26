@@ -44,6 +44,8 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
     static GeneratorObject()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         Function.InitializeFunctionInstance(_generatorFunctionConstructor, 1d, "GeneratorFunction", requiresInvocationContext: false);
         PrototypeChain.SetPrototype(_generatorFunctionConstructor, GlobalThis.Function);
         PropertyDescriptorStore.DefineOrUpdate(_generatorFunctionConstructor, "prototype", new JsPropertyDescriptor
@@ -58,6 +60,8 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
     private static object CreatePrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var prototype = new JsObject();
         PrototypeChain.SetPrototype(prototype, Iterator.Prototype);
         DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
@@ -70,6 +74,8 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
     private static object CreateGeneratorFunctionPrototype()
     {
+        using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
         var prototype = new JsObject();
         PrototypeChain.SetPrototype(prototype, Function.Prototype);
         DefineDataProperty(prototype, "constructor", _generatorFunctionConstructor);
