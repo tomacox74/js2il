@@ -342,7 +342,7 @@
     {
       "clause": "23.1.3.41",
       "title": "Array.prototype [ %Symbol.unscopables% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-array.prototype-%symbol.unscopables%"
     },
     {
@@ -782,6 +782,25 @@
           "tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js"
         ],
         "notes": "Returns a copied array with one replaced index; error and coercion behavior is a pragmatic subset."
+      },
+      {
+        "clause": "23.1.3.41",
+        "feature": "Array.prototype [ %Symbol.unscopables% ]",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-array.prototype-%symbol.unscopables%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/prop-desc.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/value.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/array-find-from-last.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/change-array-by-copy.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Array/prototype/Symbol.unscopables/prop-desc.js",
+          "test/built-ins/Array/prototype/Symbol.unscopables/value.js",
+          "test/built-ins/Array/prototype/Symbol.unscopables/array-find-from-last.js",
+          "test/built-ins/Array/prototype/Symbol.unscopables/change-array-by-copy.js"
+        ],
+        "notes": "Exposes Array.prototype[Symbol.unscopables] with the covered baseline, findLast/findLastIndex, and change-array-by-copy entries. The checked-in test262 slice currently excludes `with` from this object."
       },
       {
         "clause": "23.1.4.1",
