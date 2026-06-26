@@ -66,7 +66,8 @@ namespace JavaScriptRuntime
 
         private static void ConfigurePrototype(ExpandoObject exp)
         {
-            var dict = (IDictionary<string, object?>)exp;
+            var prototypeEntries = (Func<object[], object?[]?, object?>)PrototypeEntries;
+            var prototypeKeys = (Func<object[], object?[]?, object?>)PrototypeKeys;
             var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
             DefinePrototypeMethod(exp, "join", (Func<object[], object?[]?, object?>)PrototypeJoin, 1);
             DefinePrototypeMethod(exp, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
@@ -78,30 +79,9 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
             DefinePrototypeMethod(exp, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
             DefinePrototypeMethod(exp, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
-            PropertyDescriptorStore.DefineOrUpdate(exp, "entries", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (Func<object[], object?[]?, object?>)PrototypeEntries
-            });
-            PropertyDescriptorStore.DefineOrUpdate(exp, "keys", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (Func<object[], object?[]?, object?>)PrototypeKeys
-            });
-            PropertyDescriptorStore.DefineOrUpdate(exp, "values", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = prototypeValues
-            });
+            DefinePrototypeMethod(exp, "entries", prototypeEntries, 0);
+            DefinePrototypeMethod(exp, "keys", prototypeKeys, 0);
+            DefinePrototypeMethod(exp, "values", prototypeValues, 0);
             PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -109,6 +89,51 @@ namespace JavaScriptRuntime
                 Configurable = true,
                 Writable = true,
                 Value = prototypeValues
+            });
+            PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.unscopables.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = CreateArrayPrototypeUnscopables()
+            });
+        }
+
+        private static ExpandoObject CreateArrayPrototypeUnscopables()
+        {
+            using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
+
+            var unscopables = new ExpandoObject();
+            PrototypeChain.SetPrototype(unscopables, JsNull.Null);
+            DefineUnscopable(unscopables, "copyWithin");
+            DefineUnscopable(unscopables, "entries");
+            DefineUnscopable(unscopables, "fill");
+            DefineUnscopable(unscopables, "find");
+            DefineUnscopable(unscopables, "findIndex");
+            DefineUnscopable(unscopables, "findLast");
+            DefineUnscopable(unscopables, "findLastIndex");
+            DefineUnscopable(unscopables, "flat");
+            DefineUnscopable(unscopables, "flatMap");
+            DefineUnscopable(unscopables, "includes");
+            DefineUnscopable(unscopables, "keys");
+            DefineUnscopable(unscopables, "values");
+            DefineUnscopable(unscopables, "at");
+            DefineUnscopable(unscopables, "toReversed");
+            DefineUnscopable(unscopables, "toSorted");
+            DefineUnscopable(unscopables, "toSpliced");
+            return unscopables;
+        }
+
+        private static void DefineUnscopable(ExpandoObject unscopables, string propertyName)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(unscopables, propertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = true,
+                Configurable = true,
+                Writable = true,
+                Value = true
             });
         }
 

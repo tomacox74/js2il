@@ -4,7 +4,7 @@
 
 [Back to Section23](Section23.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-23T22:13:15Z
+> Last generated (UTC): 2026-06-26T22:18:25Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -69,7 +69,7 @@
 | 23.1.3.38 | Array.prototype.values ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.values) |
 | 23.1.3.39 | Array.prototype.with ( index , value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype.with) |
 | 23.1.3.40 | Array.prototype [ %Symbol.iterator% ] ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.iterator%) |
-| 23.1.3.41 | Array.prototype [ %Symbol.unscopables% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.unscopables%) |
+| 23.1.3.41 | Array.prototype [ %Symbol.unscopables% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.unscopables%) |
 | 23.1.4 | Properties of Array Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-array-instances) |
 | 23.1.4.1 | length | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-array-instances-length) |
 | 23.1.5 | Array Iterator Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-array-iterator-objects) |
@@ -214,6 +214,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array.prototype.with | Supported with Limitations | [`Array_NonMutatingOps_Basic.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_NonMutatingOps_Basic.js) |  | Returns a copied array with one replaced index; error and coercion behavior is a pragmatic subset. |
+
+### 23.1.3.41 ([tc39.es](https://tc39.es/ecma262/#sec-array.prototype-%symbol.unscopables%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Array.prototype [ %Symbol.unscopables% ] | Supported with Limitations | [`prop-desc.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/prop-desc.js)<br>[`value.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/value.js)<br>[`array-find-from-last.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/array-find-from-last.js)<br>[`change-array-by-copy.js`](../../../tests/Jroc.Test262.Tests/built-ins/Array/prototype/Symbol.unscopables/JavaScript/change-array-by-copy.js) | `test/built-ins/Array/prototype/Symbol.unscopables/prop-desc.js`<br>`test/built-ins/Array/prototype/Symbol.unscopables/value.js`<br>`test/built-ins/Array/prototype/Symbol.unscopables/array-find-from-last.js`<br>`test/built-ins/Array/prototype/Symbol.unscopables/change-array-by-copy.js` | Exposes Array.prototype[Symbol.unscopables] with the covered baseline, findLast/findLastIndex, and change-array-by-copy entries. The checked-in test262 slice currently excludes `with` from this object. |
 
 ### 23.1.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-array-instances-length))
 

@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/test262: implement `Array.prototype[Symbol.unscopables]` with the covered baseline plus `findLast`/`findLastIndex` and change-array-by-copy entries, mark `Array.prototype[Symbol.iterator]` as non-constructible, and port 5 new built-ins/Array prototype test262 cases.
 
 ## v0.11.0 - 2026-06-26
 
