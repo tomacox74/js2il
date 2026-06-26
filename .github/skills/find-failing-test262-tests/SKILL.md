@@ -1,3 +1,10 @@
+---
+name: find-failing-test262-tests
+description: Discover which test262 tests are failing and not yet ported into tests/Jroc.Test262.Tests, identifying good candidates for future porting cycles.
+tier: standard
+applyTo: 'tests/Jroc.Test262.Tests/**,scripts/test262/**,docs/ECMA262/**'
+---
+
 # Find Failing Test262 Tests
 
 Use this skill when you need to discover which test262 tests are failing but haven't yet been ported into this repo's test suite.
