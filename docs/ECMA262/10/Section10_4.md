@@ -4,7 +4,7 @@
 
 [Back to Section10](Section10.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-08T17:35:30Z
+> Last generated (UTC): 2026-06-26T08:27:15Z
 
 JROC implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.
 
@@ -26,11 +26,11 @@ JROC implements a pragmatic subset of spec-defined exotic-object behavior for th
 | 10.4.2.3 | ArraySpeciesCreate ( originalArray , length ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-arrayspeciescreate) |
 | 10.4.2.4 | ArraySetLength ( A , Desc ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arraysetlength) |
 | 10.4.3 | String Exotic Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-string-exotic-objects) |
-| 10.4.3.1 | [[GetOwnProperty]] ( P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string-exotic-objects-getownproperty-p) |
+| 10.4.3.1 | [[GetOwnProperty]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-string-exotic-objects-getownproperty-p) |
 | 10.4.3.2 | [[DefineOwnProperty]] ( P , Desc ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-string-exotic-objects-defineownproperty-p-desc) |
 | 10.4.3.3 | [[OwnPropertyKeys]] ( ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-string-exotic-objects-ownpropertykeys) |
 | 10.4.3.4 | StringCreate ( value , prototype ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringcreate) |
-| 10.4.3.5 | StringGetOwnProperty ( S , P ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-stringgetownproperty) |
+| 10.4.3.5 | StringGetOwnProperty ( S , P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-stringgetownproperty) |
 | 10.4.4 | Arguments Exotic Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects) |
 | 10.4.4.1 | [[GetOwnProperty]] ( P ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-getownproperty-p) |
 | 10.4.4.2 | [[DefineOwnProperty]] ( P , Desc ) | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc) |
@@ -93,6 +93,12 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Array exotic indexing and length behavior | Supported with Limitations | [`Array_New_Length.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_Length.js)<br>[`Array_New_MultipleArgs.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js)<br>[`Array_Length_Set_Fractional_ThrowsRangeError.js`](../../../tests/Jroc.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js) |  | Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled. |
+
+### 10.4.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-stringgetownproperty))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| String indexed property lookup | Supported with Limitations | [`15.5.5.5.2-3-6.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/JavaScript/15.5.5.5.2-3-6.js) | `test/built-ins/String/15.5.5.5.2-3-6.js` | String primitive indexed access returns code-unit substrings for canonical integer indexes and falls back to ordinary property lookup for non-canonical numeric keys such as NaN. Full String exotic object creation, property descriptors, and own-key ordering remain incomplete. |
 
 ### 10.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-arguments-exotic-objects))
 

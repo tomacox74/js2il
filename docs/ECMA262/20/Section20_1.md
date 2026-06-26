@@ -4,7 +4,7 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-23T23:18:17Z
+> Last generated (UTC): 2026-06-26T08:27:13Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -69,7 +69,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object(value) (callable semantics) | Supported with Limitations | [`IntrinsicCallables_Object_Callable_ReturnsObject.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs` | `test/built-ins/Object/S15.2.1.1_A1_T1.js`<br>`test/built-ins/Object/S15.2.1.1_A1_T2.js`<br>`test/built-ins/Object/S15.2.1.1_A1_T3.js` | Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). No-argument, null, and undefined calls now create ordinary objects with `Object.prototype`; primitive strings, numbers, booleans, symbols, and bigints are wrapped; object values are returned unchanged. Full wrapper/internal-slot fidelity remains partial outside the covered cases. |
+| Object(value) (callable semantics) | Supported with Limitations | [`IntrinsicCallables_Object_Callable_ReturnsObject.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_Object_Callable_ReturnsObject.js)<br>`tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs` | `test/built-ins/Object/S15.2.1.1_A1_T1.js`<br>`test/built-ins/Object/S15.2.1.1_A1_T2.js`<br>`test/built-ins/Object/S15.2.1.1_A1_T3.js`<br>`test/built-ins/Object/S15.2.2.1_A2_T5.js` | Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). No-argument, null, and undefined calls now create ordinary objects with `Object.prototype`; primitive strings, numbers, booleans, symbols, and bigints are wrapped; object values are returned unchanged, including the covered Date object constructor case. Full wrapper/internal-slot fidelity remains partial outside the covered cases. |
 
 ### 20.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-object.assign))
 
@@ -243,7 +243,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Object.prototype.isPrototypeOf | Supported with Limitations | [`Object_Prototype_Constructor_IsPrototypeOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js) |  | Implemented by walking the opt-in PrototypeChain side-table. Behavior depends on prototype-feature enablement for a given compilation unit. |
+| Object.prototype.isPrototypeOf | Supported with Limitations | [`Object_Prototype_Constructor_IsPrototypeOf.js`](../../../tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js)<br>[`S15.2.3_A2.js`](../../../tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.3_A2.js) | `test/built-ins/Object/S15.2.3_A2.js` | Implemented by walking the PrototypeChain side-table and enabling prototype-chain lookup before the walk. Current coverage includes Function.prototype as the Object constructor's [[Prototype]]. |
 
 ### 20.1.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable))
 

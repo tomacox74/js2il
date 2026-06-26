@@ -441,6 +441,7 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.AsyncIterator.ConfigureIntrinsicSurface(_asyncIteratorConstructorValue);
 
             // Centralized Object constructor/prototype wiring lives on JavaScriptRuntime.Object.
+            ConfigureBuiltinFunctionObject(_objectConstructorValue);
             JavaScriptRuntime.Object.ConfigureIntrinsicSurface(_objectConstructorValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(JavaScriptRuntime.Array.ImmutablePrototype, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_jsonValue, _objectPrototypeValue);

@@ -641,6 +641,11 @@ namespace JavaScriptRuntime
             // String: return character at index as a 1-length string
             if (obj is string str)
             {
+                if (double.IsNaN(index) || double.IsInfinity(index) || index < 0 || index > int.MaxValue || index % 1.0 != 0.0)
+                {
+                    return GetProperty(obj, Object.ToPropertyKeyString(index))!;
+                }
+
                 if (intIndex < 0 || intIndex >= str.Length)
                 {
                     return null!; // undefined

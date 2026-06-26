@@ -276,7 +276,7 @@
     {
       "clause": "21.4.4",
       "title": "Properties of the Date Prototype Object",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-date-prototype-object"
     },
     {
@@ -300,7 +300,7 @@
     {
       "clause": "21.4.4.4",
       "title": "Date.prototype.getFullYear ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.getfullyear"
     },
     {
@@ -324,7 +324,7 @@
     {
       "clause": "21.4.4.8",
       "title": "Date.prototype.getMonth ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.getmonth"
     },
     {
@@ -336,7 +336,7 @@
     {
       "clause": "21.4.4.10",
       "title": "Date.prototype.getTime ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.gettime"
     },
     {
@@ -492,7 +492,7 @@
     {
       "clause": "21.4.4.36",
       "title": "Date.prototype.toISOString ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.toisostring"
     },
     {
@@ -564,7 +564,7 @@
     {
       "clause": "21.4.4.44",
       "title": "Date.prototype.valueOf ( )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.valueof"
     },
     {
@@ -609,7 +609,7 @@
         "notes": "Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date."
       },
       {
-        "clause": "21.4.2.1",
+        "clause": "21.4.3.1",
         "feature": "Date.now()",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.now",
@@ -619,7 +619,7 @@
         "notes": "Returns current time in milliseconds since Unix epoch as a number (boxed double)."
       },
       {
-        "clause": "21.4.2.2",
+        "clause": "21.4.3.2",
         "feature": "Date.parse(string)",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.parse",
@@ -630,7 +630,7 @@
         "notes": "Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double)."
       },
       {
-        "clause": "21.4.3.5",
+        "clause": "21.4.4.10",
         "feature": "Date.prototype.getTime",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.gettime",
@@ -640,7 +640,7 @@
         "notes": "Returns milliseconds since Unix epoch as a number (boxed double)."
       },
       {
-        "clause": "21.4.3.27",
+        "clause": "21.4.4.36",
         "feature": "Date.prototype.toISOString",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.toisostring",
@@ -668,6 +668,32 @@
           "test/built-ins/Date/TimeClip_negative_zero.js"
         ],
         "notes": "Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited."
+      },
+      {
+        "clause": "21.4.4.4",
+        "feature": "Date.prototype.getFullYear",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.getfullyear",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.2.1_A2_T5.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Object/S15.2.2.1_A2_T5.js"
+        ],
+        "notes": "Implemented as a Date instance method returning the UTC calendar year from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited."
+      },
+      {
+        "clause": "21.4.4.8",
+        "feature": "Date.prototype.getMonth",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.getmonth",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.2.1_A2_T5.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Object/S15.2.2.1_A2_T5.js"
+        ],
+        "notes": "Implemented as a Date instance method returning the UTC zero-based month from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited."
       }
     ]
   }

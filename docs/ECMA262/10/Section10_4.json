@@ -73,7 +73,7 @@
     {
       "clause": "10.4.3.1",
       "title": "[[GetOwnProperty]] ( P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-string-exotic-objects-getownproperty-p"
     },
     {
@@ -97,7 +97,7 @@
     {
       "clause": "10.4.3.5",
       "title": "StringGetOwnProperty ( S , P )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-stringgetownproperty"
     },
     {
@@ -417,6 +417,19 @@
           "tests/Jroc.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
         ],
         "notes": "Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled."
+      },
+      {
+        "clause": "10.4.3.5",
+        "feature": "String indexed property lookup",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-stringgetownproperty",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/String/JavaScript/15.5.5.5.2-3-6.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/15.5.5.5.2-3-6.js"
+        ],
+        "notes": "String primitive indexed access returns code-unit substrings for canonical integer indexes and falls back to ordinary property lookup for non-canonical numeric keys such as NaN. Full String exotic object creation, property descriptors, and own-key ordering remain incomplete."
       },
       {
         "clause": "10.4.4",

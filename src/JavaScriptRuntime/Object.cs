@@ -1845,6 +1845,8 @@ namespace JavaScriptRuntime
             var prototypeCandidate = GetCurrentThisObjectOrThrow();
             var value = args != null && args.Length > 0 ? args[0] : null;
 
+            PrototypeChain.Enable();
+
             if (value is null || value is JsNull || !IsObjectLikeForPrototype(value))
             {
                 return false;
