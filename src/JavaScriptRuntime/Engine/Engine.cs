@@ -53,6 +53,12 @@ public class Engine
         }
         finally
         {
+            if (GlobalThis.ServiceProvider?.TryResolve<RuntimeExecutionContext>(out var runtimeContext) == true
+                && runtimeContext != null)
+            {
+                RuntimeServices.UnregisterModuleRequires(runtimeContext.RegisteredModuleRequires);
+            }
+
             // Cleanup global/thread-local state so repeated Engine.Execute calls (and tests) do not leak state.
             // TODO: change globalthis to be a instance
             GlobalThis.ServiceProvider = null;

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Globalization;
 
@@ -12,14 +13,55 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : IEnumerable<object?>
     {
-        internal static readonly ExpandoObject Prototype = CreatePrototype();
+        internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
+        private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
         private static readonly object Hole = new();
         private readonly List<object?> _items;
         private int _logicalLength;
 
+        internal static ExpandoObject Prototype
+        {
+            get
+            {
+                var prototype = _threadPrototypeOverrides.Value;
+                if (prototype != null)
+                {
+                    return prototype;
+                }
+
+                prototype = CreateThreadPrototypeOverride();
+                _threadPrototypeOverrides.Value = prototype;
+                return prototype;
+            }
+        }
+
         private static ExpandoObject CreatePrototype()
         {
             var exp = new ExpandoObject();
+            ConfigurePrototype(exp);
+            return exp;
+        }
+
+        internal static void ResetPrototypeForTests()
+        {
+            _threadPrototypeOverrides.Value = null;
+        }
+
+        private static ExpandoObject CreateThreadPrototypeOverride()
+        {
+            var prototype = new ExpandoObject();
+            PropertyDescriptorStore.CopyOwnProperties(ImmutablePrototype, prototype);
+
+            if (PrototypeChain.TryGetPrototype(ImmutablePrototype, out var parentPrototype))
+            {
+                PrototypeChain.SetPrototype(prototype, parentPrototype);
+            }
+
+            return prototype;
+        }
+
+        private static void ConfigurePrototype(ExpandoObject exp)
+        {
             var dict = (IDictionary<string, object?>)exp;
             var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
             DefinePrototypeMethod(exp, "join", (Func<object[], object?[]?, object?>)PrototypeJoin, 1);
@@ -64,7 +106,6 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = prototypeValues
             });
-            return exp;
         }
 
         private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method, double length)

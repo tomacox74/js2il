@@ -12,8 +12,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - hosting/tests: add `CompileAndLoadModule(...)` in-memory hosting APIs for typed and dynamic exports, returning disposable module handles that own both the hosted runtime proxy and the collectible assembly-load boundary.
 - hosting/tests: define the path-dependent in-memory hosting contract by keeping `Assembly.Location` empty, documenting that pure in-memory hosting never writes files implicitly, and covering the explicit `child_process.fork` configuration error when no launchable compiled assembly path is supplied.
 - hosting/tests: expand in-memory coverage to include an `EmitPdb=true` compile-and-load path so the first-cut optional PDB behavior stays covered end-to-end.
-- runtime/hosting/tests: unregister hosted module require delegates during runtime shutdown so full in-memory compile-and-load modules can release their collectible load contexts after disposal.
+- runtime/hosting/tests: unregister module require delegates during runtime shutdown so in-memory generated assemblies and full compile-and-load modules can release their collectible load contexts after disposal.
+- runtime/tests: keep the Array prototype built-ins on an immutable singleton template while using per-thread prototype overrides for engine mutations, with regression coverage for parallel engine-thread isolation and serial in-memory descriptor isolation.
 - docs/sdk: rename the user-facing Hosting documentation to SDK documentation, keep the API/tutorial structure, and add coverage for the `JrocCompile` MSBuild task plus the in-memory compile-and-run APIs.
+- test262/tests: switch the built-ins Array test slice to in-memory compilation/execution, including a collectible load-context unload regression for representative Array fixtures.
 
 ## v0.10.1 - 2026-06-23
 

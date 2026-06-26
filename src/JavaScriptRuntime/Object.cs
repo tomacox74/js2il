@@ -3586,6 +3586,15 @@ namespace JavaScriptRuntime
                 target = proxyTarget;
             }
 
+            if (GlobalThis.IsArrayConstructorValue(target)
+                && string.Equals(propName, "prototype", StringComparison.Ordinal)
+                && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
+            {
+                descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                descriptor.Value = JavaScriptRuntime.Array.Prototype;
+                return true;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
             {
                 return true;
@@ -3946,6 +3955,13 @@ namespace JavaScriptRuntime
 
         private static bool TryGetOwnPropertyValue(object target, string propName, object receiverForAccessors, out object? value)
         {
+            if (GlobalThis.IsArrayConstructorValue(target)
+                && string.Equals(propName, "prototype", StringComparison.Ordinal))
+            {
+                value = JavaScriptRuntime.Array.Prototype;
+                return true;
+            }
+
             // Descriptor-defined properties (data/accessor)
             if (PropertyDescriptorStore.TryGetOwn(target, propName, out var desc))
             {

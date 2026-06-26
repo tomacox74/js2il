@@ -12,7 +12,7 @@ public class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "15.12-0-4")]
     public Task _15_12_0_4()
-        => ExecutionTest("15.12-0-4");
+        => ExecutionTest("15.12-0-4", preferOutOfProc: true);
 
     [Fact(DisplayName = "Symbol.toStringTag")]
     public Task Symbol_toStringTag()

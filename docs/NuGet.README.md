@@ -1,4 +1,4 @@
-# jroc – JavaScript to .NET IL (consumer guide)
+# jroc – JavaScript .NET compiler (consumer guide)
 
 jroc is a JavaScript to .NET compiler, available as a .NET global tool. It compiles JavaScript source code to native .NET assemblies you can run on .NET.
 

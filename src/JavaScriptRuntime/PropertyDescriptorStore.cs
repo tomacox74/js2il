@@ -60,6 +60,22 @@ internal static class PropertyDescriptorStore
         return true;
     }
 
+    internal static JsPropertyDescriptor CloneDescriptor(JsPropertyDescriptor descriptor)
+    {
+        if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
+
+        return new JsPropertyDescriptor
+        {
+            Kind = descriptor.Kind,
+            Enumerable = descriptor.Enumerable,
+            Configurable = descriptor.Configurable,
+            Value = descriptor.Value,
+            Writable = descriptor.Writable,
+            Get = descriptor.Get,
+            Set = descriptor.Set
+        };
+    }
+
     public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
     {
         if (target == null) throw new ArgumentNullException(nameof(target));
@@ -121,6 +137,20 @@ internal static class PropertyDescriptorStore
         }
     }
 
+    internal static void CopyOwnProperties(object source, object target)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (target == null) throw new ArgumentNullException(nameof(target));
+
+        foreach (var key in GetOwnKeys(source))
+        {
+            if (TryGetOwn(source, key, out var descriptor))
+            {
+                DefineOrUpdate(target, key, CloneDescriptor(descriptor));
+            }
+        }
+    }
+
     public static IEnumerable<string> GetOwnKeys(object target)
     {
         if (target == null) throw new ArgumentNullException(nameof(target));
@@ -159,6 +189,13 @@ internal static class PropertyDescriptorStore
         }
 
         return false;
+    }
+
+    internal static void Clear(object target)
+    {
+        if (target == null) throw new ArgumentNullException(nameof(target));
+
+        _slots.Remove(target);
     }
 
     public static bool IsEnumerableOrDefaultTrue(object target, string key)

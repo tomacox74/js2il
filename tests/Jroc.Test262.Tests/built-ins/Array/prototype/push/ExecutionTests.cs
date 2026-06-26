@@ -2,7 +2,7 @@ using Jroc.Test262.Tests.built_ins;
 
 namespace Jroc.Test262.Tests.built_ins.Array.prototype.push;
 
-public class ExecutionTests : DiskExecutionTestsBase
+public class ExecutionTests : InMemoryExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Array.prototype.push") { }
 
