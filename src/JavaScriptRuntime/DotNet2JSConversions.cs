@@ -31,27 +31,12 @@ namespace JavaScriptRuntime
                 return boolValue ? "true" : "false";
             }
 
-            // Handle Array (List<object?>) - should join elements with comma
             if (value is Array jsArray)
             {
-                // Arrays convert to string using join(',')
-                var items = new List<string>();
-                foreach (var item in jsArray)
+                if (TypeUtilities.TryCoerceObjectToPrimitive(jsArray, "string", out var arrayPrimitive))
                 {
-                    if (item == null)
-                    {
-                        items.Add("");  // undefined becomes empty string in join
-                    }
-                    else if (item is JsNull)
-                    {
-                        items.Add("");  // null becomes empty string in join
-                    }
-                    else
-                    {
-                        items.Add(ToString(item));
-                    }
+                    return ToString(arrayPrimitive);
                 }
-                return string.Join(",", items);
             }
 
             if (JavaScriptRuntime.Number.TryGetWrappedNumberValue(value, out var wrappedNumber))
@@ -86,7 +71,7 @@ namespace JavaScriptRuntime
                 if (float.IsNaN(ff)) return "NaN";
                 if (float.IsPositiveInfinity(ff)) return "Infinity";
                 if (float.IsNegativeInfinity(ff)) return "-Infinity";
-                if (ff == 0f && global::System.Math.CopySign(1f, ff) < 0f) return "-0";
+                if (ff == 0f && global::System.Math.CopySign(1f, ff) < 0f) return "0";
                 // Stabilize near-integer formatting for floats too (but don't snap to zero)
                 if (!float.IsNaN(ff) && !float.IsInfinity(ff))
                 {
@@ -121,7 +106,7 @@ namespace JavaScriptRuntime
             if (double.IsNaN(value)) return "NaN";
             if (double.IsPositiveInfinity(value)) return "Infinity";
             if (double.IsNegativeInfinity(value)) return "-Infinity";
-            if (value == 0.0) return double.IsNegative(value) ? "-0" : "0";
+            if (value == 0.0) return "0";
 
             var abs = global::System.Math.Abs(value);
             if (double.IsInteger(value))

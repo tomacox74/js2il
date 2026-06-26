@@ -174,6 +174,16 @@ namespace JavaScriptRuntime
             return (double)_msSinceEpoch;
         }
 
+        public object getFullYear()
+        {
+            return (double)System.DateTimeOffset.FromUnixTimeMilliseconds(_msSinceEpoch).UtcDateTime.Year;
+        }
+
+        public object getMonth()
+        {
+            return (double)(System.DateTimeOffset.FromUnixTimeMilliseconds(_msSinceEpoch).UtcDateTime.Month - 1);
+        }
+
         public object valueOf()
         {
             return (double)_msSinceEpoch;
