@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-23T13:57:48Z
+> Last generated (UTC): 2026-06-26T08:27:15Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -79,13 +79,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String constructor (call/new) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js) | `test/built-ins/String/S15.5.1.1_A1_T1.js`<br>`test/built-ins/String/S15.5.1.1_A1_T2.js`<br>`test/built-ins/String/S15.5.1.1_A1_T15.js`<br>`test/built-ins/String/S15.5.1.1_A1_T16.js` | new String(x) and String(x) are treated as sugar for DotNet2JSConversions.ToString without creating wrapper String objects; primitive string is returned and no [[StringData]]/boxed behaviors are exposed. Current bounded test262 coverage now also includes four ES5 constructor/coercion cases for the call/new surface. |
+| String constructor (call/new) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js) |  | new String(x) and String(x) are treated as sugar for DotNet2JSConversions.ToString without creating wrapper String objects; primitive string is returned and no [[StringData]]/boxed behaviors are exposed. |
 
 ### 22.1.1.1 ([tc39.es](https://tc39.es/ecma262/#sec-string-constructor-string-value))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String ( value ) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js) | `test/built-ins/String/S15.5.1.1_A1_T1.js`<br>`test/built-ins/String/S15.5.1.1_A1_T2.js`<br>`test/built-ins/String/S15.5.1.1_A1_T15.js`<br>`test/built-ins/String/S15.5.1.1_A1_T16.js` | Runtime coercion follows DotNet2JSConversions.ToString and always returns a primitive string; wrapper object semantics (property attributes, prototype chain) are not implemented. Current bounded test262 coverage now also includes four ES5 constructor-coercion cases for primitive results. |
+| String ( value ) | Supported with Limitations | [`String_New_Sugar.js`](../../../tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js)<br>[`S15.5.1.1_A1_T14.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/JavaScript/S15.5.1.1_A1_T14.js)<br>[`S15.5.1.1_A1_T8.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/JavaScript/S15.5.1.1_A1_T8.js) | `test/built-ins/String/S15.5.1.1_A1_T14.js`<br>`test/built-ins/String/S15.5.1.1_A1_T8.js` | Runtime coercion follows DotNet2JSConversions.ToString and always returns a primitive string. It now honors ordinary object-to-primitive coercion for arrays so overridden Array.prototype.toString can participate, and numeric -0 stringifies as "0". Wrapper object semantics (property attributes, prototype chain) are not implemented. |
 
 ### 22.1.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-string.fromcharcode))
 
@@ -121,13 +121,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.charAt | Supported with Limitations | [`String_CharAt_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_CharAt_Basic.js) | `test/built-ins/String/prototype/charAt/S15.5.4.4_A11.js`<br>`test/built-ins/String/prototype/charAt/S15.5.4.4_A1_T1.js`<br>`test/built-ins/String/prototype/charAt/S15.5.4.4_A1_T2.js`<br>`test/built-ins/String/prototype/charAt/S15.5.4.4_A1_T4.js`<br>`test/built-ins/String/prototype/charAt/S15.5.4.4_A1_T10.js` | Implemented via JavaScriptRuntime.String.CharAt and exposed on the shared String.prototype surface while retaining direct string fast paths. jroc still skips boxed String wrapper semantics and full exotic-property observability. Current bounded test262 coverage now also exercises representative charAt index/result cases across plain and boxed receivers. |
+| String.prototype.charAt | Supported with Limitations | [`String_CharAt_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_CharAt_Basic.js) |  | Implemented via JavaScriptRuntime.String.CharAt and exposed on the shared String.prototype surface while retaining direct string fast paths. jroc still skips boxed String wrapper semantics and full exotic-property observability. |
 
 ### 22.1.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.charcodeat))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.charCodeAt | Supported with Limitations | [`String_CharCodeAt_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_CharCodeAt_Basic.js) | `test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A11.js`<br>`test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A1_T1.js`<br>`test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A1_T2.js`<br>`test/built-ins/String/prototype/charCodeAt/S15.5.4.5_A1_T10.js` | Implemented in JavaScriptRuntime.String.CharCodeAt and exposed on the shared String.prototype surface. Returns a boxed number and preserves jroc's current undefined/null modeling rather than full boxed-wrapper semantics. Current bounded test262 coverage now also exercises representative charCodeAt index handling across plain and boxed receivers. |
+| String.prototype.charCodeAt | Supported with Limitations | [`String_CharCodeAt_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_CharCodeAt_Basic.js) |  | Implemented in JavaScriptRuntime.String.CharCodeAt and exposed on the shared String.prototype surface. Returns a boxed number and preserves jroc's current undefined/null modeling rather than full boxed-wrapper semantics. |
 
 ### 22.1.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.codepointat))
 
@@ -241,7 +241,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.replace (regex literal, string replacement) | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js) | `test/built-ins/String/prototype/replace/S15.5.4.11_A12.js`<br>`test/built-ins/String/prototype/replace/S15.5.4.11_A2_T2.js`<br>`test/built-ins/String/prototype/replace/S15.5.4.11_A2_T4.js`<br>`test/built-ins/String/prototype/replace/S15.5.4.11_A2_T5.js` | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. Current bounded test262 coverage now also includes four ES5 built-in RegExp replacement cases. |
+| String.prototype.replace (regex literal, string replacement) | Supported with Limitations | [`String_Replace_Regex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Replace_Regex_Global.js) |  | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. |
 
 ### 22.1.3.19.1 ([tc39.es](https://tc39.es/ecma262/#sec-getsubstitution))
 
@@ -259,7 +259,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.search | Supported with Limitations | [`String_Search_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Search_Basic.js) | `test/built-ins/String/prototype/search/S15.5.4.12_A11.js`<br>`test/built-ins/String/prototype/search/S15.5.4.12_A1_T10.js`<br>`test/built-ins/String/prototype/search/S15.5.4.12_A2_T2.js`<br>`test/built-ins/String/prototype/search/S15.5.4.12_A2_T4.js` | Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Symbol.search customization and full RegExp @@search protocol hooks are not implemented. Current bounded test262 coverage now also includes four ES5 RegExp search cases with representative receiver coercion. |
+| String.prototype.search | Supported with Limitations | [`String_Search_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Search_Basic.js) |  | Implemented via JavaScriptRuntime.String.Search for string and RegExp inputs and routed through string member-call fast paths when receiver typing is stable. Symbol.search customization and full RegExp @@search protocol hooks are not implemented. |
 
 ### 22.1.3.22 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.slice))
 
@@ -398,3 +398,4 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | %StringIteratorPrototype% [ %Symbol.toStringTag% ] | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | The shared %StringIteratorPrototype% now exposes Symbol.toStringTag as "String Iterator". |
+

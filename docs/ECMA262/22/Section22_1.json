@@ -364,9 +364,15 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string-constructor-string-value",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js"
+          "tests/Jroc.Tests/String/JavaScript/String_New_Sugar.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/JavaScript/S15.5.1.1_A1_T14.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/JavaScript/S15.5.1.1_A1_T8.js"
         ],
-        "notes": "Runtime coercion follows DotNet2JSConversions.ToString and always returns a primitive string; wrapper object semantics (property attributes, prototype chain) are not implemented."
+        "test262Paths": [
+          "test/built-ins/String/S15.5.1.1_A1_T14.js",
+          "test/built-ins/String/S15.5.1.1_A1_T8.js"
+        ],
+        "notes": "Runtime coercion follows DotNet2JSConversions.ToString and always returns a primitive string. It now honors ordinary object-to-primitive coercion for arrays so overridden Array.prototype.toString can participate, and numeric -0 stringifies as \"0\". Wrapper object semantics (property attributes, prototype chain) are not implemented."
       },
       {
         "clause": "22.1.2.1",

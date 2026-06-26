@@ -300,9 +300,10 @@
         "test262Paths": [
           "test/built-ins/Object/S15.2.1.1_A1_T1.js",
           "test/built-ins/Object/S15.2.1.1_A1_T2.js",
-          "test/built-ins/Object/S15.2.1.1_A1_T3.js"
+          "test/built-ins/Object/S15.2.1.1_A1_T3.js",
+          "test/built-ins/Object/S15.2.2.1_A2_T5.js"
         ],
-        "notes": "Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). No-argument, null, and undefined calls now create ordinary objects with `Object.prototype`; primitive strings, numbers, booleans, symbols, and bigints are wrapped; object values are returned unchanged. Full wrapper/internal-slot fidelity remains partial outside the covered cases."
+        "notes": "Calls to Object(...) are lowered to JavaScriptRuntime.Object.Construct(...). No-argument, null, and undefined calls now create ordinary objects with `Object.prototype`; primitive strings, numbers, booleans, symbols, and bigints are wrapped; object values are returned unchanged, including the covered Date object constructor case. Full wrapper/internal-slot fidelity remains partial outside the covered cases."
       },
       {
         "clause": "20.1.2.1",
@@ -655,9 +656,13 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-object.prototype.isprototypeof",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js"
+          "tests/Jroc.Tests/Object/JavaScript/Object_Prototype_Constructor_IsPrototypeOf.js",
+          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.3_A2.js"
         ],
-        "notes": "Implemented by walking the opt-in PrototypeChain side-table. Behavior depends on prototype-feature enablement for a given compilation unit."
+        "test262Paths": [
+          "test/built-ins/Object/S15.2.3_A2.js"
+        ],
+        "notes": "Implemented by walking the PrototypeChain side-table and enabling prototype-chain lookup before the walk. Current coverage includes Function.prototype as the Object constructor's [[Prototype]]."
       },
       {
         "clause": "20.1.3.4",

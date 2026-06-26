@@ -16,6 +16,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - runtime/tests: keep the Array prototype built-ins on an immutable singleton template while using per-thread prototype overrides for engine mutations, with regression coverage for parallel engine-thread isolation and serial in-memory descriptor isolation.
 - docs/sdk: rename the user-facing Hosting documentation to SDK documentation, keep the API/tutorial structure, and add coverage for the `JrocCompile` MSBuild task plus the in-memory compile-and-run APIs.
 - test262/tests: switch the built-ins Array test slice to in-memory compilation/execution, including a collectible load-context unload regression for representative Array fixtures.
+- runtime/tests/docs/test262: fix Object/String/Date compatibility gaps for Object constructor prototype relationships, Date `getFullYear`/`getMonth`, String coercion of arrays and `-0`, and string `NaN` index reads; add 5 new built-ins/Object and built-ins/String test262 ports.
 
 ## v0.10.1 - 2026-06-23
 
