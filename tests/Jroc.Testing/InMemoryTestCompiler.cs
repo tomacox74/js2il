@@ -16,6 +16,7 @@ public static class InMemoryTestCompiler
         string[]? additionalScripts = null,
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
+        Action<ServiceContainer>? addMocks = null,
         int timeoutMs = 30000)
     {
         var (script, sourcePath) = getJavaScriptAndSourcePath(testName);
@@ -69,7 +70,7 @@ public static class InMemoryTestCompiler
         }
 
         using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
-        var output = ExecuteLoadedAssembly(loadedAssembly.Assembly, testName, allowUnhandledException, timeoutMs);
+        var output = ExecuteLoadedAssembly(loadedAssembly.Assembly, testName, allowUnhandledException, addMocks, timeoutMs);
         return new InMemoryTestExecutionResult(output, loadedAssembly.LoadContextWeakReference);
     }
 
@@ -77,6 +78,7 @@ public static class InMemoryTestCompiler
         Assembly assembly,
         string testName,
         bool allowUnhandledException,
+        Action<ServiceContainer>? addMocks,
         int timeoutMs)
     {
         var output = new InMemoryConsoleOutput();
@@ -87,6 +89,7 @@ public static class InMemoryTestCompiler
             ErrorOutput = output
         });
         serviceProvider.RegisterInstance<IEnvironment>(new CapturingEnvironment());
+        addMocks?.Invoke(serviceProvider);
 
         ExceptionDispatchInfo? threadException = null;
         var executionThread = new Thread(() =>
