@@ -156,6 +156,7 @@ namespace JavaScriptRuntime
                 callback,
                 callbackArgs);
         };
+        private static readonly Func<object[], object?[]?, object?> _speciesGetterValue = SpeciesGetter;
 
         private static readonly JsFuncNoScopes2 _proxyConstructorValue = static (newTarget, target, handler) =>
         {
@@ -1562,13 +1563,7 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = prototypeValue
             });
-            PropertyDescriptorStore.DefineOrUpdate(constructorValue, global::JavaScriptRuntime.Symbol.species.DebugId, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Accessor,
-                Enumerable = false,
-                Configurable = true,
-                Get = (Func<object[], object?[]?, object?>)SpeciesGetter
-            });
+            DefineSpeciesAccessorProperty(constructorValue);
             PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -1580,7 +1575,23 @@ namespace JavaScriptRuntime
         }
 
         private static void ConfigureCollectionIntrinsicSurface(object constructorValue, object prototypeValue)
-            => ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
+        {
+            ConfigureConstructorPrototypeSurface(constructorValue, prototypeValue);
+            DefineSpeciesAccessorProperty(constructorValue);
+        }
+
+        private static void DefineSpeciesAccessorProperty(object constructorValue)
+        {
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_speciesGetterValue, 0d, "get [Symbol.species]");
+            DefineUndefinedPrototypeProperty(_speciesGetterValue);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, global::JavaScriptRuntime.Symbol.species.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Accessor,
+                Enumerable = false,
+                Configurable = true,
+                Get = _speciesGetterValue
+            });
+        }
 
         private static void ConfigureConstructorPrototypeSurface(object constructorValue, object prototypeValue)
         {

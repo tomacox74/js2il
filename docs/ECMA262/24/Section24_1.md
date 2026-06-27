@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:28Z
+> Last generated (UTC): 2026-06-27T19:37:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -20,7 +20,7 @@
 | 24.1.2 | Properties of the Map Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-constructor) |
 | 24.1.2.1 | Map.groupBy ( items , callback ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.groupby) |
 | 24.1.2.2 | Map.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype) |
-| 24.1.2.3 | get Map [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-map-%symbol.species%) |
+| 24.1.2.3 | get Map [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-map-%symbol.species%) |
 | 24.1.3 | Properties of the Map Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-prototype-object) |
 | 24.1.3.1 | Map.prototype.clear ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.clear) |
 | 24.1.3.2 | Map.prototype.constructor | Supported | [tc39.es](https://tc39.es/ecma262/#sec-map.prototype.constructor) |
@@ -59,7 +59,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) | `test/built-ins/Map/prototype-of-map.js` | JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete. |
+| Map constructor value and Map.prototype surface | Supported with Limitations | [`Map_Constructor_Prototype_Surface.js`](../../../tests/Jroc.Tests/Map/JavaScript/Map_Constructor_Prototype_Surface.js) | `test/built-ins/Map/prototype-of-map.js` | JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; full MapIteratorPrototype metadata remains incomplete. |
+
+### 24.1.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-map-%symbol.species%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Map[Symbol.species] accessor | Supported | `tests/Jroc.Test262.Tests/built-ins/Map/Symbol.species/ExecutionTests.cs` | `test/built-ins/Map/Symbol.species/length.js`<br>`test/built-ins/Map/Symbol.species/return-value.js`<br>`test/built-ins/Map/Symbol.species/symbol-species-name.js`<br>`test/built-ins/Map/Symbol.species/symbol-species.js` | Map now exposes @@species as a configurable, non-enumerable accessor with no setter. The getter returns the this value and has covered function metadata (name "get [Symbol.species]", length 0). |
 
 ### 24.1.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-map-prototype-object))
 
