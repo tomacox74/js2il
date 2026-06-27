@@ -86,7 +86,23 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(prototype, "trimRight", (Func<object[], object?[]?, object?>)PrototypeTrimEnd, 0);
             DefinePrototypeMethod(prototype, "trimStart", (Func<object[], object?[]?, object?>)PrototypeTrimStart, 0);
             DefinePrototypeMethod(prototype, "valueOf", (Func<object[], object?[]?, object?>)PrototypeValueOf, 0);
-            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator, 0);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)PrototypeIterator, 0, "[Symbol.iterator]");
+            PropertyDescriptorStore.DefineOrUpdate(prototype, StringDataPropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = string.Empty
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "String"
+            });
 
             return prototype;
         }
@@ -97,7 +113,7 @@ namespace JavaScriptRuntime
 
             var prototype = new ExpandoObject();
             DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext, 0);
-            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0);
+            DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0, "[Symbol.iterator]");
             PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -109,11 +125,22 @@ namespace JavaScriptRuntime
             return prototype;
         }
 
-        private static void DefinePrototypeMethod(object target, string key, object? value, double length)
+        private static void DefinePrototypeMethod(object target, string key, object? value, double length, string? functionNameOverride = null)
         {
             if (value is Delegate)
             {
-                JavaScriptRuntime.Function.InitializeFunctionInstance(value, length, key);
+                var functionName = functionNameOverride ?? (key.StartsWith("Symbol.", StringComparison.Ordinal)
+                    ? $"[{key}]"
+                    : key);
+                JavaScriptRuntime.Function.InitializeFunctionInstance(value, length, functionName);
+                PropertyDescriptorStore.DefineOrUpdate(value, "prototype", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = false,
+                    Writable = false,
+                    Value = null
+                });
             }
 
             PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
