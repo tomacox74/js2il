@@ -55,6 +55,22 @@ namespace JavaScriptRuntime
 
         private static readonly Func<object[], object?, double> _numberFunctionValue = static (_, value) =>
             JavaScriptRuntime.TypeUtilities.ToNumber(value);
+        private static readonly Func<object[], object?, object> _bigIntFunctionValue = static (_, value) =>
+            global::JavaScriptRuntime.BigInt.Call(value);
+        private static readonly Func<object[], object?[]?, object?> _bigIntAsIntNValue = static (_, args) =>
+        {
+            args ??= global::System.Array.Empty<object?>();
+            var bits = args.Length > 0 ? args[0] : null;
+            var bigint = args.Length > 1 ? args[1] : null;
+            return global::JavaScriptRuntime.BigInt.AsIntN(bits, bigint);
+        };
+        private static readonly Func<object[], object?[]?, object?> _bigIntAsUintNValue = static (_, args) =>
+        {
+            args ??= global::System.Array.Empty<object?>();
+            var bits = args.Length > 0 ? args[0] : null;
+            var bigint = args.Length > 1 ? args[1] : null;
+            return global::JavaScriptRuntime.BigInt.AsUintN(bits, bigint);
+        };
 
         private static readonly Func<object[], object?[]?, object?> _numberPrototypeToStringValue = static (_, __) =>
         {
@@ -515,6 +531,10 @@ namespace JavaScriptRuntime
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "EPSILON", 2.220446049250313e-16);
             DefineIntrinsicDataProperty(_numberFunctionValue, "parseFloat", _parseFloatValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "parseInt", _parseIntValue);
+            JavaScriptRuntime.Function.InitializeFunctionInstance(_bigIntFunctionValue, 1d, "BigInt");
+            DefineUndefinedPrototypeProperty(_bigIntFunctionValue);
+            DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asIntN", _bigIntAsIntNValue, 2d);
+            DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asUintN", _bigIntAsUintNValue, 2d);
             DefineDateConstructorMetadata();
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
@@ -966,6 +986,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.Number), Number);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Number), dict[nameof(GlobalThis.Number)]);
 
+            dict.TryAdd(nameof(GlobalThis.BigInt), BigInt);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.BigInt), dict[nameof(GlobalThis.BigInt)]);
+
             dict.TryAdd(nameof(GlobalThis.Function), Function);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Function), dict[nameof(GlobalThis.Function)]);
 
@@ -1171,6 +1194,11 @@ namespace JavaScriptRuntime
         /// This enables patterns like <c>array.map(Number)</c> and type-marker comparisons (e.g., <c>x === Number</c>).
         /// </summary>
         public static Func<object[], object?, double> Number => _numberFunctionValue;
+
+        /// <summary>
+        /// ECMAScript global BigInt conversion function value.
+        /// </summary>
+        public static Func<object[], object?, object> BigInt => _bigIntFunctionValue;
 
         /// <summary>
         /// ECMAScript global Function constructor value (placeholder).

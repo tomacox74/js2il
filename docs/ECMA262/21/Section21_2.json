@@ -31,19 +31,19 @@
     {
       "clause": "21.2.2",
       "title": "Properties of the BigInt Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-bigint-constructor"
     },
     {
       "clause": "21.2.2.1",
       "title": "BigInt.asIntN ( bits , bigint )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-bigint.asintn"
     },
     {
       "clause": "21.2.2.2",
       "title": "BigInt.asUintN ( bits , bigint )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-bigint.asuintn"
     },
     {
@@ -122,6 +122,40 @@
           "test/built-ins/BigInt/constructor-trailing-leading-spaces.js"
         ],
         "notes": "Supports BigInt(value) with basic conversion from integral Numbers and from decimal, binary, octal, and hexadecimal strings, including empty/trimmed strings and representative string syntax errors; typeof === 'bigint'. The full BigInt constructor/prototype surface remains incomplete."
+      },
+      {
+        "clause": "21.2.2.1",
+        "feature": "BigInt.asIntN(bits, bigint)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-bigint.asintn",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/asIntN/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/BigInt/asIntN/arithmetic.js",
+          "test/built-ins/BigInt/asIntN/asIntN.js",
+          "test/built-ins/BigInt/asIntN/length.js",
+          "test/built-ins/BigInt/asIntN/name.js",
+          "test/built-ins/BigInt/asIntN/not-a-constructor.js"
+        ],
+        "notes": "Supports `BigInt.asIntN` arithmetic truncation and callable metadata (name/length, non-constructible) for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported."
+      },
+      {
+        "clause": "21.2.2.2",
+        "feature": "BigInt.asUintN(bits, bigint)",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-bigint.asuintn",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/asUintN/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/BigInt/asUintN/arithmetic.js",
+          "test/built-ins/BigInt/asUintN/asUintN.js",
+          "test/built-ins/BigInt/asUintN/length.js",
+          "test/built-ins/BigInt/asUintN/name.js",
+          "test/built-ins/BigInt/asUintN/not-a-constructor.js"
+        ],
+        "notes": "Supports `BigInt.asUintN` modulo truncation and callable metadata (name/length, non-constructible) for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported."
       },
       {
         "clause": "21.2",
