@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - runtime/tests/docs/test262: implement `Array.prototype[Symbol.unscopables]` with the covered baseline plus `findLast`/`findLastIndex` and change-array-by-copy entries, mark `Array.prototype[Symbol.iterator]` as non-constructible, and port 5 new built-ins/Array prototype test262 cases.
+- runtime/tests/docs/test262: align `String.prototype` legacy-object behavior and `String.prototype[Symbol.iterator]` callable metadata (`name` + non-constructibility), and port 5 new built-ins/String prototype test262 cases (`S15.5.4_A1`, `S15.5.4_A2`, `S15.5.4_A3`, `Symbol.iterator/name`, `Symbol.iterator/not-a-constructor`).
 
 ## v0.11.0 - 2026-06-26
 

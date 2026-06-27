@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-26T08:27:15Z
+> Last generated (UTC): 2026-06-27T01:36:52Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -103,7 +103,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype object | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | GlobalThis.String.prototype is now exposed as a shared runtime object. Primitive string property reads consult that prototype surface for methods like constructor, toString, valueOf, at, and @@iterator, but jroc still does not create observable boxed String wrapper objects. |
+| String.prototype object | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js)<br>[`S15.5.4_A1.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/JavaScript/S15.5.4_A1.js)<br>[`S15.5.4_A2.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/JavaScript/S15.5.4_A2.js)<br>[`S15.5.4_A3.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/JavaScript/S15.5.4_A3.js) | `test/built-ins/String/prototype/S15.5.4_A1.js`<br>`test/built-ins/String/prototype/S15.5.4_A2.js`<br>`test/built-ins/String/prototype/S15.5.4_A3.js` | GlobalThis.String.prototype is exposed as a shared runtime object with [[StringData]]="" behavior and String toStringTag metadata so legacy prototype-object checks align with the covered spec slice. Primitive string property reads consult that prototype surface for methods like constructor, toString, valueOf, at, and @@iterator; full boxed-string exotic behavior remains limited. |
 
 ### 22.1.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-string.raw))
 
@@ -361,7 +361,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype[@@iterator] | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js) |  | String.prototype[@@iterator] is now exposed and returns public string iterator objects that iterate Unicode code points (surrogate pairs stay intact). The runtime still models strings as primitives without full wrapper-object/property-attribute fidelity. |
+| String.prototype[@@iterator] | Supported with Limitations | [`String_Prototype_Iterator_Surface.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js)<br>[`name.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/Symbol.iterator/JavaScript/name.js)<br>[`not-a-constructor.js`](../../../tests/Jroc.Test262.Tests/built-ins/String/prototype/Symbol.iterator/JavaScript/not-a-constructor.js) | `test/built-ins/String/prototype/Symbol.iterator/name.js`<br>`test/built-ins/String/prototype/Symbol.iterator/not-a-constructor.js` | String.prototype[@@iterator] is exposed as a non-constructible built-in and returns public string iterator objects that iterate Unicode code points (surrogate pairs stay intact). Name/descriptor metadata for the method is now aligned with [Symbol.iterator] expectations in the covered test262 slice. |
 
 ### 22.1.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-string-instances))
 

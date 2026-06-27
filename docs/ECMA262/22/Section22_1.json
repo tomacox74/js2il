@@ -400,9 +400,17 @@
         "feature": "String.prototype object",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype",
-        "notes": "GlobalThis.String.prototype is now exposed as a shared runtime object. Primitive string property reads consult that prototype surface for methods like constructor, toString, valueOf, at, and @@iterator, but jroc still does not create observable boxed String wrapper objects.",
+        "notes": "GlobalThis.String.prototype is exposed as a shared runtime object with [[StringData]]=\"\" behavior and String toStringTag metadata so legacy prototype-object checks align with the covered spec slice. Primitive string property reads consult that prototype surface for methods like constructor, toString, valueOf, at, and @@iterator; full boxed-string exotic behavior remains limited.",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js"
+          "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/JavaScript/S15.5.4_A1.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/JavaScript/S15.5.4_A2.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/JavaScript/S15.5.4_A3.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/S15.5.4_A1.js",
+          "test/built-ins/String/prototype/S15.5.4_A2.js",
+          "test/built-ins/String/prototype/S15.5.4_A3.js"
         ]
       },
       {
@@ -855,9 +863,15 @@
         "feature": "String.prototype[@@iterator]",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-string.prototype-%symbol.iterator%",
-        "notes": "String.prototype[@@iterator] is now exposed and returns public string iterator objects that iterate Unicode code points (surrogate pairs stay intact). The runtime still models strings as primitives without full wrapper-object/property-attribute fidelity.",
+        "notes": "String.prototype[@@iterator] is exposed as a non-constructible built-in and returns public string iterator objects that iterate Unicode code points (surrogate pairs stay intact). Name/descriptor metadata for the method is now aligned with [Symbol.iterator] expectations in the covered test262 slice.",
         "testScripts": [
-          "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js"
+          "tests/Jroc.Tests/String/JavaScript/String_Prototype_Iterator_Surface.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/Symbol.iterator/JavaScript/name.js",
+          "tests/Jroc.Test262.Tests/built-ins/String/prototype/Symbol.iterator/JavaScript/not-a-constructor.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/String/prototype/Symbol.iterator/name.js",
+          "test/built-ins/String/prototype/Symbol.iterator/not-a-constructor.js"
         ]
       },
       {
