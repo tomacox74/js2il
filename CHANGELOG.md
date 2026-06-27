@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.2 - 2026-06-27
+
 - compiler/tests: reduce redundant object materialization when typed numeric temps flow into user-class method calls, trimming boxing in prime/class-method generator snapshots.
 
 ## v0.11.1 - 2026-06-27
