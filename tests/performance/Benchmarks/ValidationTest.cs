@@ -88,6 +88,24 @@ public static class ValidationTest
             Console.WriteLine($"   Exception: {ex.Message}");
         }
 
+        // Test Okojo
+        Console.WriteLine("\n4. Testing Okojo...");
+        try
+        {
+            var okojoRuntime = new OkojoRuntime();
+            var okojoResult = okojoRuntime.Execute(script, "minimal.js");
+            Console.WriteLine($"   Success: {okojoResult.Success}");
+            Console.WriteLine($"   Execution Time: {okojoResult.ExecutionTime.TotalMilliseconds}ms");
+            if (!okojoResult.Success)
+            {
+                Console.WriteLine($"   Error: {okojoResult.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"   Exception: {ex.Message}");
+        }
+
         Console.WriteLine("\nAll runtime adapters tested!");
     }
 }
