@@ -2007,6 +2007,37 @@ internal sealed partial class LIRToILCompiler
         return allocation.IsMaterialized(temp);
     }
 
+    private bool IsTempUsedByAnyInstructionOperand(TempVariable temp, LIRInstruction ignoredInstruction)
+    {
+        foreach (var instruction in MethodBody.Instructions)
+        {
+            if (ReferenceEquals(instruction, ignoredInstruction))
+            {
+                continue;
+            }
+
+            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction))
+            {
+                if (used.Index == temp.Index)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private int GetTempVariableSlot(TempVariable temp)
+    {
+        if (temp.Index >= 0 && temp.Index < MethodBody.TempVariableSlots.Count)
+        {
+            return MethodBody.TempVariableSlots[temp.Index];
+        }
+
+        return -1;
+    }
+
     private void EmitStoreTemp(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation)
     {
         if (!IsMaterialized(temp, allocation))

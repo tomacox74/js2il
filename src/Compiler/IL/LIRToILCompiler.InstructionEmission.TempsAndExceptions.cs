@@ -22,6 +22,12 @@ internal sealed partial class LIRToILCompiler
         {
             // Copy temp variable
             case LIRCopyTemp copyTemp:
+                if (GetTempVariableSlot(copyTemp.Destination) < 0
+                    && !IsTempUsedByAnyInstructionOperand(copyTemp.Destination, copyTemp))
+                {
+                    return true;
+                }
+
                 if (TryGetSameILLocalSlot(copyTemp.Source, copyTemp.Destination, allocation, out _))
                 {
                     return true;

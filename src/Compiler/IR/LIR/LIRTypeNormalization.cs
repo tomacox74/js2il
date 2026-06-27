@@ -1,3 +1,4 @@
+using Jroc.IL;
 using Jroc.Services;
 using System.Reflection;
 
@@ -171,6 +172,9 @@ internal static class LIRTypeNormalization
                 i--; // account for removed instruction
             }
         }
+
+        ForwardBoxedArgumentsForDirectUserClassCalls(methodBody, classRegistry);
+        RemoveDeadObjectMaterializations(methodBody);
 
         // After rewrites, some anonymous variable slots (e.g., `$forOf_iter`) may become unused
         // if we coalesce temps onto existing slots. Compact variable slots to avoid emitting
@@ -438,6 +442,67 @@ internal static class LIRTypeNormalization
         return false;
     }
 
+    private static void RemoveDeadObjectMaterializations(MethodBodyIR methodBody)
+    {
+        var indicesToRemove = new HashSet<int>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRConvertToObject convertToObject)
+            {
+                continue;
+            }
+
+            if (GetTempVariableSlot(methodBody, convertToObject.Result) >= 0)
+            {
+                continue;
+            }
+
+            if (!IsTempUsedOutsideByInstructionOperands(methodBody, convertToObject.Result, i))
+            {
+                indicesToRemove.Add(i);
+            }
+        }
+
+        if (indicesToRemove.Count == 0)
+        {
+            return;
+        }
+
+        var newInstructions = new List<LIRInstruction>(methodBody.Instructions.Count - indicesToRemove.Count);
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (!indicesToRemove.Contains(i))
+            {
+                newInstructions.Add(methodBody.Instructions[i]);
+            }
+        }
+
+        methodBody.Instructions.Clear();
+        methodBody.Instructions.AddRange(newInstructions);
+    }
+
+    private static bool IsTempUsedOutsideByInstructionOperands(MethodBodyIR methodBody, TempVariable temp, int ignoreInstructionIndex)
+    {
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (i == ignoreInstructionIndex)
+            {
+                continue;
+            }
+
+            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i]))
+            {
+                if (used.Index == temp.Index)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static bool TryMatchTypeofFunctionComparison(
         TempVariable left,
         TempVariable right,
@@ -545,6 +610,137 @@ internal static class LIRTypeNormalization
         return temp;
     }
 
+    private static void ForwardBoxedArgumentsForDirectUserClassCalls(MethodBodyIR methodBody, ClassRegistry classRegistry)
+    {
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            if (methodBody.Instructions[i] is not LIRCallUserClassInstanceMethod callUserClass)
+            {
+                continue;
+            }
+
+            if (!classRegistry.TryGetMethodParameterClrTypes(
+                    callUserClass.RegistryClassName,
+                    callUserClass.MethodName,
+                    out var parameterClrTypes))
+            {
+                continue;
+            }
+
+            var argsToPass = Math.Min(callUserClass.Arguments.Count, callUserClass.MaxParamCount);
+            TempVariable[]? rewrittenArguments = null;
+
+            for (int argIndex = 0; argIndex < argsToPass; argIndex++)
+            {
+                if (argIndex >= parameterClrTypes.Count)
+                {
+                    continue;
+                }
+
+                var parameterClrType = parameterClrTypes[argIndex];
+                if (parameterClrType == null || parameterClrType == typeof(object))
+                {
+                    continue;
+                }
+
+                var argument = callUserClass.Arguments[argIndex];
+                if (!TryFindConvertToObjectDefinition(methodBody, argument, out var convertToObject, out var convertInstructionIndex)
+                    || !CanForwardConvertToObjectSourceToParameter(methodBody, convertToObject, parameterClrType, convertInstructionIndex, i))
+                {
+                    continue;
+                }
+
+                rewrittenArguments ??= callUserClass.Arguments.ToArray();
+                rewrittenArguments[argIndex] = convertToObject.Source;
+            }
+
+            if (rewrittenArguments != null)
+            {
+                methodBody.Instructions[i] = callUserClass with { Arguments = rewrittenArguments };
+            }
+        }
+    }
+
+    private static bool TryFindConvertToObjectDefinition(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        out LIRConvertToObject convertToObject,
+        out int instructionIndex)
+    {
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            var instruction = methodBody.Instructions[i];
+            if (instruction is LIRConvertToObject candidate && candidate.Result.Index == temp.Index)
+            {
+                convertToObject = candidate;
+                instructionIndex = i;
+                return true;
+            }
+        }
+
+        convertToObject = default!;
+        instructionIndex = -1;
+        return false;
+    }
+
+    private static bool CanForwardConvertToObjectSourceToParameter(
+        MethodBodyIR methodBody,
+        LIRConvertToObject convertToObject,
+        Type parameterClrType,
+        int convertInstructionIndex,
+        int callInstructionIndex)
+    {
+        var sourceStorage = GetTempStorage(methodBody, convertToObject.Source);
+        var targetStorage = parameterClrType.IsValueType
+            ? new ValueStorage(ValueStorageKind.UnboxedValue, parameterClrType)
+            : new ValueStorage(ValueStorageKind.Reference, parameterClrType);
+
+        return ValueStorageFacts.CanFlowTo(sourceStorage, targetStorage)
+            && IsStableAlreadyEvaluatedTemp(methodBody, convertToObject.Source, convertInstructionIndex, callInstructionIndex);
+    }
+
+    private static bool IsStableAlreadyEvaluatedTemp(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int snapshotInstructionIndex,
+        int useInstructionIndex)
+    {
+        var variableSlot = GetTempVariableSlot(methodBody, temp);
+        if (variableSlot >= 0)
+        {
+            return methodBody.SingleAssignmentSlots.Contains(variableSlot)
+                || !IsVariableSlotWrittenBetween(methodBody, variableSlot, snapshotInstructionIndex, useInstructionIndex);
+        }
+
+        return TryFindInstructionDefiningTemp(methodBody, temp, out var definitionIndex)
+            && methodBody.Instructions[definitionIndex] switch
+            {
+                LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull => true,
+                LIRLoadParameter or LIRLoadThis => true,
+                LIRCopyTemp copyTemp => IsStableAlreadyEvaluatedTemp(methodBody, copyTemp.Source, snapshotInstructionIndex, useInstructionIndex),
+                _ => false
+            };
+    }
+
+    private static bool IsVariableSlotWrittenBetween(MethodBodyIR methodBody, int variableSlot, int startInstructionIndex, int endInstructionIndex)
+    {
+        if (startInstructionIndex >= endInstructionIndex)
+        {
+            return true;
+        }
+
+        for (int i = startInstructionIndex + 1; i < endInstructionIndex; i++)
+        {
+            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var defined)
+                && GetTempVariableSlot(methodBody, defined) == variableSlot)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static void RemoveDeadDefinitionChain(MethodBodyIR methodBody, TempVariable temp)
     {
         while (TryFindInstructionDefiningTemp(methodBody, temp, out var definitionIndex))
@@ -592,6 +788,12 @@ internal static class LIRTypeNormalization
             {
                 case LIRTypeof typeofInstruction when typeofInstruction.Result.Index == temp.Index:
                 case LIRConstString constString when constString.Result.Index == temp.Index:
+                case LIRConstNumber constNumber when constNumber.Result.Index == temp.Index:
+                case LIRConstBoolean constBoolean when constBoolean.Result.Index == temp.Index:
+                case LIRConstUndefined constUndefined when constUndefined.Result.Index == temp.Index:
+                case LIRConstNull constNull when constNull.Result.Index == temp.Index:
+                case LIRLoadParameter loadParameter when loadParameter.Result.Index == temp.Index:
+                case LIRLoadThis loadThis when loadThis.Result.Index == temp.Index:
                 case LIRCopyTemp copyTemp when copyTemp.Destination.Index == temp.Index:
                     definitionIndex = i;
                     return true;
