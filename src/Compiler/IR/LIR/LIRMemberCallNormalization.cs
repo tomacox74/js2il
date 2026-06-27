@@ -21,11 +21,18 @@ internal static class LIRMemberCallNormalization
 
         // Map: argsArrayTempIndex -> (defInstructionIndex, elements)
         var buildArrays = new Dictionary<int, (int DefIndex, IReadOnlyList<TempVariable> Elements)>();
+        var convertToObjectDefs = new Dictionary<int, int>();
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
-            if (methodBody.Instructions[i] is LIRBuildArray buildArray && buildArray.Result.Index >= 0)
+            switch (methodBody.Instructions[i])
             {
-                buildArrays[buildArray.Result.Index] = (i, buildArray.Elements);
+                case LIRBuildArray buildArray when buildArray.Result.Index >= 0:
+                    buildArrays[buildArray.Result.Index] = (i, buildArray.Elements);
+                    break;
+
+                case LIRConvertToObject convertToObject when convertToObject.Result.Index >= 0:
+                    convertToObjectDefs[convertToObject.Result.Index] = i;
+                    break;
             }
         }
 
@@ -112,6 +119,15 @@ internal static class LIRMemberCallNormalization
             // This enables early-binding for chained calls without runtime type tests.
             var resolvedReceiverEntityHandle = (EntityHandle)receiverTypeHandle;
             bool resultIsReceiverType = !returnTypeHandle.IsNil && returnTypeHandle.Equals(resolvedReceiverEntityHandle);
+            var normalizedArguments = ForwardBoxedArgumentsToTypedSources(
+                methodBody,
+                arguments,
+                parameterClrTypes,
+                maxParamCount,
+                convertToObjectDefs,
+                buildArrayDefIndex,
+                i,
+                indicesToRemove);
 
             // Receiver-proven typed case: emit direct early-bound call without runtime-dispatch fallback.
             if (receiver.Index >= 0
@@ -126,7 +142,7 @@ internal static class LIRMemberCallNormalization
                     returnClrType,
                     maxParamCount,
                     parameterClrTypes,
-                    arguments,
+                    normalizedArguments,
                     result);
 
                 if (result.Index >= 0)
@@ -160,7 +176,7 @@ internal static class LIRMemberCallNormalization
                 returnClrType,
                 maxParamCount,
                 parameterClrTypes,
-                arguments,
+                normalizedArguments,
                 result);
 
             if (buildArrayDefIndex >= 0)
@@ -329,24 +345,7 @@ internal static class LIRMemberCallNormalization
     }
 
     private static bool AreCompatiblePinnedSlotStorages(ValueStorage slotStorage, ValueStorage desiredStorage)
-    {
-        if (slotStorage.Kind != desiredStorage.Kind)
-        {
-            return false;
-        }
-
-        if (slotStorage.ClrType != desiredStorage.ClrType)
-        {
-            return false;
-        }
-
-        if (!slotStorage.TypeHandle.IsNil || !desiredStorage.TypeHandle.IsNil)
-        {
-            return slotStorage.TypeHandle.Equals(desiredStorage.TypeHandle);
-        }
-
-        return string.Equals(slotStorage.ScopeName, desiredStorage.ScopeName, StringComparison.Ordinal);
-    }
+        => ValueStorageFacts.IsSameRuntimeRepresentation(slotStorage, desiredStorage);
 
     private static int GetTempVariableSlot(MethodBodyIR methodBody, TempVariable temp)
     {
@@ -356,6 +355,179 @@ internal static class LIRMemberCallNormalization
         }
 
         return -1;
+    }
+
+    private static IReadOnlyList<TempVariable> ForwardBoxedArgumentsToTypedSources(
+        MethodBodyIR methodBody,
+        IReadOnlyList<TempVariable> arguments,
+        IReadOnlyList<Type?> parameterClrTypes,
+        int maxParamCount,
+        IReadOnlyDictionary<int, int> convertToObjectDefs,
+        int buildArrayDefIndex,
+        int callInstructionIndex,
+        HashSet<int> indicesToRemove)
+    {
+        if (arguments.Count == 0 || convertToObjectDefs.Count == 0)
+        {
+            return arguments;
+        }
+
+        TempVariable[]? rewritten = null;
+
+        for (int argIndex = 0; argIndex < arguments.Count; argIndex++)
+        {
+            if (argIndex >= maxParamCount || argIndex >= parameterClrTypes.Count)
+            {
+                continue;
+            }
+
+            var parameterClrType = parameterClrTypes[argIndex];
+            if (parameterClrType == null || parameterClrType == typeof(object))
+            {
+                continue;
+            }
+
+            var argument = arguments[argIndex];
+            if (argument.Index < 0
+                || !convertToObjectDefs.TryGetValue(argument.Index, out var convertDefIndex)
+                || methodBody.Instructions[convertDefIndex] is not LIRConvertToObject convertToObject
+                || !CanForwardConvertToObjectSource(methodBody, convertToObject, parameterClrType, convertDefIndex, callInstructionIndex))
+            {
+                continue;
+            }
+
+            rewritten ??= arguments.ToArray();
+            rewritten[argIndex] = convertToObject.Source;
+
+            if (GetTempVariableSlot(methodBody, convertToObject.Result) >= 0)
+            {
+                continue;
+            }
+
+            var ignoredInstructions = new HashSet<int> { convertDefIndex, callInstructionIndex };
+            if (buildArrayDefIndex >= 0)
+            {
+                ignoredInstructions.Add(buildArrayDefIndex);
+            }
+
+            if (!IsTempUsedOutside(methodBody, convertToObject.Result, ignoredInstructions))
+            {
+                indicesToRemove.Add(convertDefIndex);
+            }
+        }
+
+        return rewritten ?? arguments;
+    }
+
+    private static bool CanForwardConvertToObjectSource(
+        MethodBodyIR methodBody,
+        LIRConvertToObject convertToObject,
+        Type parameterClrType,
+        int convertInstructionIndex,
+        int callInstructionIndex)
+    {
+        var sourceStorage = GetTempStorage(methodBody, convertToObject.Source);
+        var targetStorage = parameterClrType.IsValueType
+            ? new ValueStorage(ValueStorageKind.UnboxedValue, parameterClrType)
+            : new ValueStorage(ValueStorageKind.Reference, parameterClrType);
+
+        if (!ValueStorageFacts.CanFlowTo(sourceStorage, targetStorage))
+        {
+            return false;
+        }
+
+        // Keep this rewrite to stable, already-evaluated values. The old LIRBuildArray
+        // materialized arguments before dispatch; forwarding an effectful source could
+        // otherwise move evaluation into the direct/fallback call branches.
+        return IsStableAlreadyEvaluatedTemp(methodBody, convertToObject.Source, convertInstructionIndex, callInstructionIndex);
+    }
+
+    private static bool IsStableAlreadyEvaluatedTemp(
+        MethodBodyIR methodBody,
+        TempVariable temp,
+        int snapshotInstructionIndex,
+        int useInstructionIndex)
+    {
+        var variableSlot = GetTempVariableSlot(methodBody, temp);
+        if (variableSlot >= 0)
+        {
+            return methodBody.SingleAssignmentSlots.Contains(variableSlot)
+                || !IsVariableSlotWrittenBetween(methodBody, variableSlot, snapshotInstructionIndex, useInstructionIndex);
+        }
+
+        return TryFindDefInstruction(methodBody, temp) switch
+        {
+            LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull => true,
+            LIRLoadParameter or LIRLoadThis => true,
+            LIRCopyTemp copyTemp => IsStableAlreadyEvaluatedTemp(methodBody, copyTemp.Source, snapshotInstructionIndex, useInstructionIndex),
+            _ => false
+        };
+    }
+
+    private static bool IsVariableSlotWrittenBetween(MethodBodyIR methodBody, int variableSlot, int startInstructionIndex, int endInstructionIndex)
+    {
+        if (startInstructionIndex >= endInstructionIndex)
+        {
+            return true;
+        }
+
+        for (int i = startInstructionIndex + 1; i < endInstructionIndex; i++)
+        {
+            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var defined)
+                && GetTempVariableSlot(methodBody, defined) == variableSlot)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static LIRInstruction? TryFindDefInstruction(MethodBodyIR methodBody, TempVariable temp)
+    {
+        foreach (var instruction in methodBody.Instructions)
+        {
+            if (TryGetDefinedTemp(instruction, out var defined) && defined.Index == temp.Index)
+            {
+                return instruction;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool TryGetDefinedTemp(LIRInstruction instruction, out TempVariable defined)
+    {
+        switch (instruction)
+        {
+            case LIRConstNumber x: defined = x.Result; return true;
+            case LIRConstString x: defined = x.Result; return true;
+            case LIRConstBoolean x: defined = x.Result; return true;
+            case LIRConstUndefined x: defined = x.Result; return true;
+            case LIRConstNull x: defined = x.Result; return true;
+            case LIRLoadParameter x: defined = x.Result; return true;
+            case LIRLoadThis x: defined = x.Result; return true;
+            case LIRCopyTemp x: defined = x.Destination; return true;
+            default:
+                defined = default;
+                return false;
+        }
+    }
+
+    private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
+    {
+        var variableSlot = GetTempVariableSlot(methodBody, temp);
+        if (variableSlot >= 0 && variableSlot < methodBody.VariableStorages.Count)
+        {
+            return methodBody.VariableStorages[variableSlot];
+        }
+
+        if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
+        {
+            return methodBody.TempStorages[temp.Index];
+        }
+
+        return new ValueStorage(ValueStorageKind.Unknown);
     }
 
     private static bool IsTempUsedOutside(MethodBodyIR methodBody, TempVariable temp, HashSet<int> ignoreInstructionIndices)

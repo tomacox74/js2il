@@ -131,6 +131,12 @@ internal sealed partial class LIRToILCompiler
                 break;
 
             case LIRConvertToObject convertToObject:
+                if (GetTempVariableSlot(convertToObject.Result) < 0
+                    && !IsTempUsedByAnyInstructionOperand(convertToObject.Result, convertToObject))
+                {
+                    break;
+                }
+
                 if (!IsMaterialized(convertToObject.Result, allocation))
                 {
                     break;
