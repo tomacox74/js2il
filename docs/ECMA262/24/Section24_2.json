@@ -72,7 +72,7 @@
     {
       "clause": "24.2.3.2",
       "title": "get Set [ %Symbol.species% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-get-set-%symbol.species%"
     },
     {
@@ -270,7 +270,20 @@
         "test262Paths": [
           "test/built-ins/Set/prototype-of-set.js"
         ],
-        "notes": "JROC exposes globalThis.Set as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete."
+        "notes": "JROC exposes globalThis.Set as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; full SetIteratorPrototype metadata and the spec's broader set-like-object protocol remain incomplete."
+      },
+      {
+        "clause": "24.2.3.2",
+        "feature": "Set[Symbol.species] accessor",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-set-%symbol.species%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Set/Symbol.species/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Set/Symbol.species/return-value.js"
+        ],
+        "notes": "Set now exposes @@species as a configurable, non-enumerable accessor with no setter. The getter returns the this value and shares the same covered metadata surface as the Map/Promise species getter."
       },
       {
         "clause": "24.2.4",

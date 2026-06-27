@@ -4,7 +4,7 @@
 
 [Back to Section24](Section24.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-27T12:25:28Z
+> Last generated (UTC): 2026-06-27T19:37:14Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -24,7 +24,7 @@
 | 24.2.2.1 | Set ( [ iterable ] ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set-iterable) |
 | 24.2.3 | Properties of the Set Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-constructor) |
 | 24.2.3.1 | Set.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype) |
-| 24.2.3.2 | get Set [ %Symbol.species% ] | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-set-%symbol.species%) |
+| 24.2.3.2 | get Set [ %Symbol.species% ] | Supported | [tc39.es](https://tc39.es/ecma262/#sec-get-set-%symbol.species%) |
 | 24.2.4 | Properties of the Set Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object) |
 | 24.2.4.1 | Set.prototype.add ( value ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.add) |
 | 24.2.4.2 | Set.prototype.clear ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-set.prototype.clear) |
@@ -67,7 +67,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) | `test/built-ins/Set/prototype-of-set.js` | JROC exposes globalThis.Set as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; Symbol.species, full SetIteratorPrototype metadata, and the spec's broader set-like-object protocol remain incomplete. |
+| Set constructor value and Set.prototype surface | Supported with Limitations | [`Set_Constructor_Prototype_Surface.js`](../../../tests/Jroc.Tests/Set/JavaScript/Set_Constructor_Prototype_Surface.js) | `test/built-ins/Set/prototype-of-set.js` | JROC exposes globalThis.Set as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Set.prototype and Set.prototype.constructor, attaches the public prototype to new Set instances, and supports reflective checks such as Object.getPrototypeOf(set) === Set.prototype and set instanceof Set. Iterable construction and the core prototype surface are implemented; full SetIteratorPrototype metadata and the spec's broader set-like-object protocol remain incomplete. |
+
+### 24.2.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-get-set-%symbol.species%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Set[Symbol.species] accessor | Supported | `tests/Jroc.Test262.Tests/built-ins/Set/Symbol.species/ExecutionTests.cs` | `test/built-ins/Set/Symbol.species/return-value.js` | Set now exposes @@species as a configurable, non-enumerable accessor with no setter. The getter returns the this value and shares the same covered metadata surface as the Map/Promise species getter. |
 
 ### 24.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-set-prototype-object))
 

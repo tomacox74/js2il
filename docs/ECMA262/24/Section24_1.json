@@ -48,7 +48,7 @@
     {
       "clause": "24.1.2.3",
       "title": "get Map [ %Symbol.species% ]",
-      "status": "Not Yet Supported",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-get-map-%symbol.species%"
     },
     {
@@ -220,7 +220,23 @@
         "test262Paths": [
           "test/built-ins/Map/prototype-of-map.js"
         ],
-        "notes": "JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; Symbol.species and full MapIteratorPrototype metadata remain incomplete."
+        "notes": "JROC exposes globalThis.Map as a constructor value with test262-covered name/length/constructibility/global descriptor metadata, wires Map.prototype and Map.prototype.constructor, stamps new Map instances with that prototype, and supports reflective checks such as Object.getPrototypeOf(map) === Map.prototype and map instanceof Map. Iterable construction, forEach, and @@iterator are implemented; full MapIteratorPrototype metadata remains incomplete."
+      },
+      {
+        "clause": "24.1.2.3",
+        "feature": "Map[Symbol.species] accessor",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-get-map-%symbol.species%",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Map/Symbol.species/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Map/Symbol.species/length.js",
+          "test/built-ins/Map/Symbol.species/return-value.js",
+          "test/built-ins/Map/Symbol.species/symbol-species-name.js",
+          "test/built-ins/Map/Symbol.species/symbol-species.js"
+        ],
+        "notes": "Map now exposes @@species as a configurable, non-enumerable accessor with no setter. The getter returns the this value and has covered function metadata (name \"get [Symbol.species]\", length 0)."
       },
       {
         "clause": "24.1.3",

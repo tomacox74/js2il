@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/test262: add `Map[Symbol.species]` and `Set[Symbol.species]` accessor support with spec-shaped getter metadata (`name`/`length` + configurable/non-enumerable descriptor), and port 5 new test262 cases under `built-ins/Map/Symbol.species` and `built-ins/Set/Symbol.species`.
 
 ## v0.11.2 - 2026-06-27
 
