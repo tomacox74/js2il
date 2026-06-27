@@ -4,6 +4,7 @@ This directory contains a comprehensive BenchmarkDotNet-based performance benchm
 
 - **ClearScript** - .NET-hosted V8 runtime
 - **Jint** - .NET JavaScript interpreter
+- **Okojo** - fully managed .NET JavaScript runtime
 - **jroc** - JavaScript-to-IL AOT compiler
 
 ## Purpose
@@ -31,6 +32,7 @@ Benchmarks/
 │   ├── IJavaScriptRuntime.cs
 │   ├── ClearScriptRuntime.cs
 │   ├── JintRuntime.cs
+│   ├── OkojoRuntime.cs
 │   └── JrocRuntime.cs
 ├── Compliance/          # Licensing and provenance tracking
 │   └── PROVENANCE.md
@@ -188,6 +190,7 @@ Intel Core i7-9700K CPU 3.60GHz (Coffee Lake), 1 CPU, 8 logical and 8 physical c
 
 - **ClearScript**: New hosted V8 engine instance per iteration
 - **Jint**: New engine instance per iteration
+- **Okojo**: New runtime instance per iteration
 - **jroc**: Pre-compiled or compile+execute per iteration
 
 Direct Node.js process-per-iteration measurements are intentionally excluded from the default cross-runtime suite because they include temp-file creation, process startup, stdout/stderr capture, and process teardown. Those numbers are useful as a CLI cold-start metric, but they are not a fair comparison to in-process .NET runtimes. ClearScript is used instead as the .NET-hosted V8 comparison point.

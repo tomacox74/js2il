@@ -22,6 +22,7 @@ public class JavaScriptRuntimeBenchmarks
     private readonly Dictionary<string, string> _scripts = new();
     private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly JintRuntime _jintRuntime = new();
+    private readonly OkojoRuntime _okojoRuntime = new();
     private readonly ClearScriptRuntime _clearScriptRuntime = new();
     private readonly JrocRuntime _jrocRuntime = new();
 
@@ -78,6 +79,18 @@ public class JavaScriptRuntimeBenchmarks
         if (!result.Success)
         {
             throw new Exception($"Jint execution failed: {result.Error}");
+        }
+    }
+
+    [Benchmark(Description = "Okojo")]
+    public void Okojo()
+    {
+        var script = _scripts[ScriptName];
+        var result = _okojoRuntime.Execute(script, $"{ResolveScriptName(ScriptName)}.js");
+        
+        if (!result.Success)
+        {
+            throw new Exception($"Okojo execution failed: {result.Error}");
         }
     }
 
