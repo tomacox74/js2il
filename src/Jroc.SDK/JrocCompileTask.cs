@@ -43,10 +43,10 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
         List<ITaskItem> generatedOutputs)
     {
         var sourceSpecifier = source.ItemSpec;
-        var originalSourceSpecifier = source.GetMetadata("OriginalItemSpec");
         var sourcePath = GetMetadataOrFallback(source, "ResolvedSourcePath", () => Path.GetFullPath(source.ItemSpec));
         var moduleResolutionBaseDirectory = GetMetadataOrFallback(source, "ResolvedModuleResolutionBaseDirectory", () => Environment.CurrentDirectory);
         var rootModuleId = source.GetMetadata("RootModuleId");
+        var resolvedFromModuleId = false;
 
         if (!File.Exists(sourcePath))
         {
@@ -64,6 +64,7 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
             }
 
             sourcePath = resolvedSourcePath;
+            resolvedFromModuleId = true;
             if (string.IsNullOrWhiteSpace(rootModuleId))
             {
                 rootModuleId = sourceSpecifier;
@@ -137,10 +138,9 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        var moduleIdForAssemblyName = GetModuleIdSpecifierForAssemblyName(rootModuleId, originalSourceSpecifier, sourceSpecifier);
-        var assemblyName = moduleIdForAssemblyName is null
-            ? emittedAssemblyName
-            : DeriveAssemblyNameFromModuleId(moduleIdForAssemblyName);
+        var assemblyName = resolvedFromModuleId
+            ? DeriveAssemblyNameFromModuleId(sourceSpecifier)
+            : emittedAssemblyName;
         if (!string.Equals(assemblyName, emittedAssemblyName, StringComparison.Ordinal))
         {
             var desiredAssemblyPath = Path.Combine(outputDirectory, assemblyName + ".dll");
@@ -292,26 +292,6 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
 
         var derived = builder.ToString().Trim('.');
         return string.IsNullOrWhiteSpace(derived) ? "module" : derived;
-    }
-
-    private static string? GetModuleIdSpecifierForAssemblyName(string? rootModuleId, string? originalSourceSpecifier, string sourceSpecifier)
-    {
-        if (!string.IsNullOrWhiteSpace(rootModuleId) && LooksLikeModuleIdSpecifier(rootModuleId))
-        {
-            return rootModuleId;
-        }
-
-        if (!string.IsNullOrWhiteSpace(originalSourceSpecifier) && LooksLikeModuleIdSpecifier(originalSourceSpecifier))
-        {
-            return originalSourceSpecifier;
-        }
-
-        if (LooksLikeModuleIdSpecifier(sourceSpecifier))
-        {
-            return sourceSpecifier;
-        }
-
-        return null;
     }
 
     private static bool LooksLikeModuleIdSpecifier(string specifier)
