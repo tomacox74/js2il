@@ -41,6 +41,8 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(JavaScriptRuntime.RegExp), "new RegExp('a', 'g')")]
     [InlineData(null, "")]
     [InlineData(typeof(double), "1 + 2")]
+    [InlineData(typeof(double), "2 ** 3")]
+    [InlineData(typeof(double), "5 % 2")]
     [InlineData(typeof(string), "'1' + '2'")]
     [InlineData(typeof(string), "'1' + 2")]
     [InlineData(typeof(string), "1 + '2'")]
@@ -71,6 +73,8 @@ public class SymbolTableTypeInferenceTests
 
     [Theory]
     [InlineData(typeof(double), "42", "testVar = 100")]
+    [InlineData(typeof(double), "42", "testVar = testVar ** 3")]
+    [InlineData(typeof(double), "42", "testVar = testVar % 5")]
     [InlineData(null, "'hello'", "testVar = 123")]  // conflicting assignment removes inferred type
     [InlineData(typeof(bool), "true", "testVar = false")]
     [InlineData(null, "null", "testVar = 'now a string'")] // conflicting assignment removes inferred type
@@ -132,6 +136,36 @@ public class SymbolTableTypeInferenceTests
         var binding = symbolTable.GetBindingInfo(variableName!);
         Assert.NotNull(binding);
         Assert.Equal(expectedType, binding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ArithBenchmarkLocals_StayStableDoubles()
+    {
+        var code = @"
+                function arith() {
+                    var s = 0;
+                    for (var i = 0; i < 20; i++) {
+                        var temp = 0;
+                        temp += 1;
+                        temp = temp ** 3;
+                        temp *= 7;
+                        temp -= 11;
+                        temp /= 2;
+                        s = s + temp;
+                    }
+                    return s;
+                }
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+
+        foreach (var variableName in new[] { "arith/s", "arith/i", "arith/temp" })
+        {
+            var binding = symbolTable.GetBindingInfo(variableName);
+            Assert.NotNull(binding);
+            Assert.True(binding.IsStableType, $"Expected {variableName} to be stable.");
+            Assert.Equal(typeof(double), binding.ClrType);
+        }
     }
 
     [Fact]

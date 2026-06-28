@@ -1968,6 +1968,8 @@ public partial class SymbolTableBuilder
                         case Operator.Subtraction:
                         case Operator.Multiplication:
                         case Operator.Division:
+                        case Operator.Remainder:
+                        case Operator.Exponentiation:
                         {
                             bool leftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == typeof(JavaScriptRuntime.JsNull);
                             bool rightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == typeof(JavaScriptRuntime.JsNull);
@@ -2533,6 +2535,8 @@ public partial class SymbolTableBuilder
                     case Operator.Subtraction:
                     case Operator.Multiplication:
                     case Operator.Division:
+                    case Operator.Remainder:
+                    case Operator.Exponentiation:
                         return InferNumericBinaryOperatorType(binExpr, scope, proposedTypes);
                     case Operator.BitwiseAnd:
                     case Operator.BitwiseOr:
