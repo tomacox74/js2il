@@ -13,8 +13,15 @@ namespace Jroc.Services
         // With scopes: (object[] scopes, object? newTarget, object? a1..aN) -> object?
         // Without scopes: (object? newTarget, object? a1..aN) -> object?
         // Always use custom JsFunc delegates so the ABI is explicit and stable.
-        internal static Type GetFunctionDelegateType(int jsParamCount, bool requiresScopes = true)
+        internal static Type GetFunctionDelegateType(int jsParamCount, bool requiresScopes = true, Type? returnClrType = null)
         {
+            if (returnClrType == typeof(double) && jsParamCount == 0)
+            {
+                return requiresScopes
+                    ? typeof(JavaScriptRuntime.JsDoubleFunc0)
+                    : typeof(JavaScriptRuntime.JsDoubleFuncNoScopes0);
+            }
+
             if (!requiresScopes)
             {
                 // No-scopes optimized delegates
@@ -149,15 +156,15 @@ namespace Jroc.Services
         public MemberReferenceHandle DebuggerDisplayAttribute_Ctor_Ref =>
             _memberRefRegistry.GetOrAddConstructor(typeof(System.Diagnostics.DebuggerDisplayAttribute), new[] { typeof(string) });
 
-        public MemberReferenceHandle GetFuncCtorRef(int jsParamCount, bool requiresScopes = true)
+        public MemberReferenceHandle GetFuncCtorRef(int jsParamCount, bool requiresScopes = true, Type? returnClrType = null)
         {
-            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes);
+            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes, returnClrType);
             return _memberRefRegistry.GetOrAddConstructor(delegateType);
         }
 
-        public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount, bool requiresScopes = true)
+        public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount, bool requiresScopes = true, Type? returnClrType = null)
         {
-            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes);
+            var delegateType = GetFunctionDelegateType(jsParamCount, requiresScopes, returnClrType);
             return _memberRefRegistry.GetOrAddMethod(delegateType, "Invoke");
         }
 

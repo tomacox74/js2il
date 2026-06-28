@@ -280,6 +280,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
             && left.SingleScopeScopeName == right.SingleScopeScopeName
             && left.InvokeShape == right.InvokeShape
             && left.IsInstanceMethod == right.IsInstanceMethod
+            && left.ReturnClrType == right.ReturnClrType
             && left.SignatureBlob == right.SignatureBlob
             && left.ParameterClrTypes.SequenceEqual(right.ParameterClrTypes);
     }

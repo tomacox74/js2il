@@ -448,10 +448,20 @@ internal static class LIRIntrinsicNormalization
 
             if (callFunction.Result.Index >= 0 && callFunction.Result.Index < methodBody.TempStorages.Count)
             {
-                methodBody.TempStorages[callFunction.Result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                methodBody.TempStorages[callFunction.Result.Index] = GetDeclaredCallResultStorage(signature?.ReturnClrType);
             }
         }
     }
+
+    private static ValueStorage GetDeclaredCallResultStorage(Type? returnClrType)
+        => returnClrType switch
+        {
+            Type type when type == typeof(double) => new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)),
+            Type type when type == typeof(bool) => new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)),
+            Type type when type == typeof(string) => new ValueStorage(ValueStorageKind.Reference, typeof(string)),
+            Type type when type == typeof(JavaScriptRuntime.Array) => new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)),
+            _ => new ValueStorage(ValueStorageKind.Reference, typeof(object))
+        };
 
     /// <summary>
     /// Peephole pass: fuses LIRGetItem(obj, index, result) immediately followed by

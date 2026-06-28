@@ -480,6 +480,10 @@ internal sealed class JsMethodCompiler
                 // returns so generated signatures can expose specialized return types where proven.
                 inferredReturnClrType = scope.StableReturnClrType;
             }
+            else if (SupportsNoScopesZeroArgDoubleReturn(callable, effectiveScopeAbiKind, scope.StableReturnClrType))
+            {
+                inferredReturnClrType = scope.StableReturnClrType;
+            }
         }
 
         var methodDescriptor = new MethodDescriptor(ilMethodName, dummyType, parameters)
@@ -639,6 +643,17 @@ internal sealed class JsMethodCompiler
 
         return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
+
+    private static bool SupportsNoScopesZeroArgDoubleReturn(
+        CallableId callable,
+        Jroc.Runtime.CallableScopeAbiKind scopeAbiKind,
+        Type? returnClrType)
+        => returnClrType == typeof(double)
+            && scopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.NoScopes
+            && callable.JsParamCount == 0
+            && callable.Kind is CallableKind.FunctionDeclaration
+                or CallableKind.FunctionExpression
+                or CallableKind.Arrow;
 
     public MethodDefinitionHandle TryCompileArrowFunction(string typeName, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
