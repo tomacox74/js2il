@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using Jroc;
+using Jroc.IR;
 using Jroc.Tests;
 
 namespace Jroc.Test262.Tests.built_ins;
@@ -31,7 +33,53 @@ public abstract class InMemoryExecutionTestsBase
         await VerifyWithSnapshot(result.Output, sourceFilePath);
     }
 
-    private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
+    protected async Task CompilationFailureTest(
+        string testName,
+        string? expectedFailureText = null,
+        [CallerFilePath] string sourceFilePath = "")
+    {
+        var (script, sourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
+        Exception? failure = null;
+
+        var previousMetricsEnabled = IRPipelineMetrics.Enabled;
+        IRPipelineMetrics.Enabled = true;
+        IRPipelineMetrics.Reset();
+        try
+        {
+            var fileSystem = new MockFileSystem();
+            fileSystem.AddFile(sourcePath, script, sourcePath);
+            JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(sourcePath)
+            {
+                SourceText = script,
+                FileSystem = fileSystem,
+                EmitPdb = true
+            });
+        }
+        catch (Exception ex)
+        {
+            failure = ex;
+        }
+        finally
+        {
+            IRPipelineMetrics.Enabled = previousMetricsEnabled;
+        }
+
+        if (failure == null)
+        {
+            throw new InvalidOperationException($"Expected compilation to fail for test {testName}.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(expectedFailureText)
+            && !failure.ToString().Contains(expectedFailureText, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Compilation failed for test {testName}, but the failure did not contain '{expectedFailureText}'.\nActual failure:\n{failure}");
+        }
+
+        await VerifyWithSnapshot("true" + Environment.NewLine, sourceFilePath);
+    }
+
+    private static (string Script, string SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
     {
         var relativePath = testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js";
         var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath)

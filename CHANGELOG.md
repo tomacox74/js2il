@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- tests/docs/test262: port 10 RegExp `regexp-v-flag` negative parse cases under `built-ins/RegExp/prototype/unicodeSets`, wiring them as compilation-failure tests so `$DONOTEVALUATE()` is never evaluated, and document the current UnicodeSets limitation.
 - compiler/tests: keep stable no-scope zero-arg numeric function returns unboxed (including `NumericInference_ExponentiationLoop_NoBoxing`), threading callable return-type metadata through direct-call lowering and only boxing at object call boundaries.
 
 ## v0.11.3 - 2026-06-28
