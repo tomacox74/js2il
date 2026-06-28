@@ -2,7 +2,7 @@
 
 This sample demonstrates compiling and hosting a real npm package: `@mixmark-io/domino`.
 
-The sample is self-contained under `host/`, which includes the C# console app plus the npm manifest/lock file used during build.
+The sample is self-contained directly in `samples/Hosting.Domino`, which includes the C# console app plus the npm manifest/lock file used during build.
 
 ## Prerequisites
 
@@ -11,11 +11,11 @@ The sample is self-contained under `host/`, which includes the C# console app pl
 
 ## Package entry resolution
 
-This sample restores domino into `host\node_modules`, declares `@mixmark-io/domino` directly in `JrocCompile`, and relies on the SDK's default module-resolution base (`$(MSBuildProjectDirectory)`), so no extra module-resolution metadata is required.
+This sample restores domino into `node_modules`, declares `@mixmark-io/domino` directly in `JrocCompile`, and relies on the SDK's default module-resolution base (`$(MSBuildProjectDirectory)`), so no extra module-resolution metadata is required.
 
 ## Running the sample
 
-From `samples/Hosting.Domino/host`:
+From `samples/Hosting.Domino`:
 
 - `dotnet run -c Release`
 

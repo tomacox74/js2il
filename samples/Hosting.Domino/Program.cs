@@ -13,7 +13,12 @@ internal static class Program
             var htmlPath = Path.Combine(AppContext.BaseDirectory, "sample.html");
             var html = File.ReadAllText(htmlPath);
 
-            var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
+            var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "mixmark-io.domino.dll");
+            if (!File.Exists(compiledModulePath))
+            {
+                // Back-compat for older SDK package versions that still emit index.dll for module-id entrypoints.
+                compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
+            }
             var asm = Assembly.LoadFrom(compiledModulePath);
 
             if (Environment.GetEnvironmentVariable("JROC_DOMINO_LISTMODULES") == "1")

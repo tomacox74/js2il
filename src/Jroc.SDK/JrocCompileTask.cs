@@ -2,6 +2,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Jroc.Services;
+using System.Text;
 
 namespace Jroc.SDK.BuildTasks;
 
@@ -42,6 +43,7 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
         List<ITaskItem> generatedOutputs)
     {
         var sourceSpecifier = source.ItemSpec;
+        var originalSourceSpecifier = source.GetMetadata("OriginalItemSpec");
         var sourcePath = GetMetadataOrFallback(source, "ResolvedSourcePath", () => Path.GetFullPath(source.ItemSpec));
         var moduleResolutionBaseDirectory = GetMetadataOrFallback(source, "ResolvedModuleResolutionBaseDirectory", () => Environment.CurrentDirectory);
         var rootModuleId = source.GetMetadata("RootModuleId");
@@ -110,10 +112,10 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        var assemblyName = Path.GetFileNameWithoutExtension(sourcePath);
-        var assemblyPath = Path.Combine(outputDirectory, assemblyName + ".dll");
-        var assemblyPdbPath = Path.Combine(outputDirectory, assemblyName + ".pdb");
-        var runtimeConfigPath = Path.Combine(outputDirectory, assemblyName + ".runtimeconfig.json");
+        var emittedAssemblyName = Path.GetFileNameWithoutExtension(sourcePath);
+        var assemblyPath = Path.Combine(outputDirectory, emittedAssemblyName + ".dll");
+        var assemblyPdbPath = Path.Combine(outputDirectory, emittedAssemblyName + ".pdb");
+        var runtimeConfigPath = Path.Combine(outputDirectory, emittedAssemblyName + ".runtimeconfig.json");
         var runtimeAssemblyPath = Path.Combine(outputDirectory, "JavaScriptRuntime.dll");
         var runtimePdbPath = Path.Combine(outputDirectory, "JavaScriptRuntime.pdb");
 
@@ -133,6 +135,56 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
         {
             Log.LogError($"Jroc did not produce the expected runtime support assembly '{runtimeAssemblyPath}' for source '{sourcePath}'.");
             return false;
+        }
+
+        var moduleIdForAssemblyName = GetModuleIdSpecifierForAssemblyName(rootModuleId, originalSourceSpecifier, sourceSpecifier);
+        var assemblyName = moduleIdForAssemblyName is null
+            ? emittedAssemblyName
+            : DeriveAssemblyNameFromModuleId(moduleIdForAssemblyName);
+        if (!string.Equals(assemblyName, emittedAssemblyName, StringComparison.Ordinal))
+        {
+            var desiredAssemblyPath = Path.Combine(outputDirectory, assemblyName + ".dll");
+            var desiredAssemblyPdbPath = Path.Combine(outputDirectory, assemblyName + ".pdb");
+            var desiredRuntimeConfigPath = Path.Combine(outputDirectory, assemblyName + ".runtimeconfig.json");
+
+            try
+            {
+                if (File.Exists(desiredAssemblyPath))
+                {
+                    File.Delete(desiredAssemblyPath);
+                }
+
+                File.Move(assemblyPath, desiredAssemblyPath);
+                assemblyPath = desiredAssemblyPath;
+
+                if (File.Exists(assemblyPdbPath))
+                {
+                    if (File.Exists(desiredAssemblyPdbPath))
+                    {
+                        File.Delete(desiredAssemblyPdbPath);
+                    }
+
+                    File.Move(assemblyPdbPath, desiredAssemblyPdbPath);
+                    assemblyPdbPath = desiredAssemblyPdbPath;
+                }
+                else
+                {
+                    assemblyPdbPath = desiredAssemblyPdbPath;
+                }
+
+                if (File.Exists(desiredRuntimeConfigPath))
+                {
+                    File.Delete(desiredRuntimeConfigPath);
+                }
+
+                File.Move(runtimeConfigPath, desiredRuntimeConfigPath);
+                runtimeConfigPath = desiredRuntimeConfigPath;
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"Jroc failed to rename generated module artifacts from '{emittedAssemblyName}' to '{assemblyName}': {ex.Message}");
+                return false;
+            }
         }
 
         var assemblyItem = new TaskItem(assemblyPath);
@@ -202,6 +254,64 @@ public sealed class JrocCompileTask : Microsoft.Build.Utilities.Task
         }
 
         return true;
+    }
+
+    private static string DeriveAssemblyNameFromModuleId(string? moduleId)
+    {
+        if (string.IsNullOrWhiteSpace(moduleId))
+        {
+            return "module";
+        }
+
+        var normalized = moduleId.Trim()
+            .TrimStart('@')
+            .Replace('\\', '/')
+            .Trim('/');
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            return "module";
+        }
+
+        var builder = new StringBuilder(normalized.Length);
+        foreach (var c in normalized)
+        {
+            if (c == '/')
+            {
+                builder.Append('.');
+                continue;
+            }
+
+            if (char.IsLetterOrDigit(c) || c is '.' or '-' or '_')
+            {
+                builder.Append(char.ToLowerInvariant(c));
+                continue;
+            }
+
+            builder.Append('-');
+        }
+
+        var derived = builder.ToString().Trim('.');
+        return string.IsNullOrWhiteSpace(derived) ? "module" : derived;
+    }
+
+    private static string? GetModuleIdSpecifierForAssemblyName(string? rootModuleId, string? originalSourceSpecifier, string sourceSpecifier)
+    {
+        if (!string.IsNullOrWhiteSpace(rootModuleId) && LooksLikeModuleIdSpecifier(rootModuleId))
+        {
+            return rootModuleId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(originalSourceSpecifier) && LooksLikeModuleIdSpecifier(originalSourceSpecifier))
+        {
+            return originalSourceSpecifier;
+        }
+
+        if (LooksLikeModuleIdSpecifier(sourceSpecifier))
+        {
+            return sourceSpecifier;
+        }
+
+        return null;
     }
 
     private static bool LooksLikeModuleIdSpecifier(string specifier)
