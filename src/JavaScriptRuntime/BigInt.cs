@@ -16,6 +16,7 @@ namespace JavaScriptRuntime;
 public static class BigInt
 {
     private const string Digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+    private const double MaxSafeInteger = 9007199254740991d;
 
     public static object Call()
     {
@@ -26,6 +27,53 @@ public static class BigInt
     public static object Call(object? value)
     {
         return ToBigInteger(value);
+    }
+
+    public static object AsIntN(object? bits, object? bigint)
+    {
+        var bitCount = ToIndex(bits);
+        var value = ToBigInteger(bigint);
+
+        if (bitCount == 0)
+        {
+            return BigInteger.Zero;
+        }
+
+        if (bitCount > int.MaxValue)
+        {
+            throw new RangeError("BigInt bit width is out of range");
+        }
+
+        var bitWidth = (int)bitCount;
+        var modulus = BigInteger.One << bitWidth;
+        var modulo = value % modulus;
+        if (modulo.Sign < 0)
+        {
+            modulo += modulus;
+        }
+
+        var signedThreshold = BigInteger.One << (bitWidth - 1);
+        return modulo >= signedThreshold ? modulo - modulus : modulo;
+    }
+
+    public static object AsUintN(object? bits, object? bigint)
+    {
+        var bitCount = ToIndex(bits);
+        var value = ToBigInteger(bigint);
+
+        if (bitCount == 0)
+        {
+            return BigInteger.Zero;
+        }
+
+        if (bitCount > int.MaxValue)
+        {
+            throw new RangeError("BigInt bit width is out of range");
+        }
+
+        var modulus = BigInteger.One << (int)bitCount;
+        var modulo = value % modulus;
+        return modulo.Sign < 0 ? modulo + modulus : modulo;
     }
 
     public static string ToString(object? value)
@@ -202,6 +250,38 @@ public static class BigInt
         }
 
         throw new SyntaxError("Cannot convert string to a BigInt");
+    }
+
+    private static long ToIndex(object? bits)
+    {
+        if (bits is null)
+        {
+            return 0;
+        }
+
+        var number = TypeUtilities.ToNumber(bits);
+        if (double.IsNaN(number) || number == 0d)
+        {
+            return 0;
+        }
+
+        if (double.IsInfinity(number))
+        {
+            throw new RangeError("Invalid BigInt bit width");
+        }
+
+        var integer = global::System.Math.Truncate(number);
+        if (integer < 0d)
+        {
+            throw new RangeError("Invalid BigInt bit width");
+        }
+
+        if (integer > MaxSafeInteger)
+        {
+            throw new RangeError("Invalid BigInt bit width");
+        }
+
+        return (long)integer;
     }
 
     private static bool TryParseNonDecimal(string trimmed, out BigInteger value)
