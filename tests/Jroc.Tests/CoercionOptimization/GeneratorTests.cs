@@ -18,5 +18,11 @@ namespace Jroc.Tests.CoercionOptimization
         {
             return GenerateTest(nameof(CoercionCSE_ObjectValueOf));
         }
+
+        [Fact]
+        public Task NumericInference_ExponentiationLoop_NoBoxing()
+        {
+            return GenerateTest(nameof(NumericInference_ExponentiationLoop_NoBoxing));
+        }
     }
 }
