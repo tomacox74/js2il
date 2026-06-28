@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.3 - 2026-06-28
+
 - runtime/tests/docs/test262: add `Map[Symbol.species]` and `Set[Symbol.species]` accessor support with spec-shaped getter metadata (`name`/`length` + configurable/non-enumerable descriptor), and port 5 new test262 cases under `built-ins/Map/Symbol.species` and `built-ins/Set/Symbol.species`.
 - runtime/tests/docs/test262: add BigInt constructor static methods `BigInt.asIntN` / `BigInt.asUintN` (including global exposure and callable metadata), and port 10 new `built-ins/BigInt/asIntN` + `built-ins/BigInt/asUintN` test262 cases.
 
