@@ -571,6 +571,25 @@
   "support": {
     "entries": [
       {
+        "clause": "22.2.1.1",
+        "feature": "RegExp pattern early errors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-patterns-static-semantics-early-errors",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-01.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-02.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-03.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-04.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-05.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-06.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-07.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-08.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-09.js",
+          "tests/Jroc.Test262.Tests/built-ins/RegExp/prototype/unicodeSets/JavaScript/breaking-change-from-u-to-v-10.js"
+        ],
+        "notes": "RegExp literals with unsupported v-flag UnicodeSets syntax are rejected during parse/compilation before runtime execution, matching these negative test262 parse tests so $DONOTEVALUATE() is never evaluated. Full regexp-v-flag and UnicodeSets semantics are still not implemented."
+      },
+      {
         "clause": "22.2.4.1",
         "feature": "RegExp ( pattern , flags )",
         "status": "Supported with Limitations",
