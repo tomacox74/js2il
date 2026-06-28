@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/tests: keep stable no-scope zero-arg numeric function returns unboxed (including `NumericInference_ExponentiationLoop_NoBoxing`), threading callable return-type metadata through direct-call lowering and only boxing at object call boundaries.
 
 ## v0.11.3 - 2026-06-28
 
