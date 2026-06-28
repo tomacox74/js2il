@@ -16,6 +16,8 @@ public sealed partial class HIRToLIRLowerer
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
     private readonly Jroc.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
+    private readonly TwoPhase.CallableRegistry? _callableRegistry;
+    private readonly bool _preserveNonClassDoubleReturn;
     private readonly HIRExpression? _superClassExpression;
     private readonly bool _isAsync;
     private readonly bool _isDerivedConstructor;
@@ -73,17 +75,19 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, bool preserveNonClassDoubleReturn = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
         _classRegistry = classRegistry;
         _callableKind = callableKind;
+        _callableRegistry = callableRegistry;
         _superClassExpression = superClassExpression;
         _isAsync = isAsync;
         _isGenerator = isGenerator;
         _isDerivedConstructor = isDerivedConstructor;
+        _preserveNonClassDoubleReturn = preserveNonClassDoubleReturn;
         InitializeParameters(parameters);
     }
 
@@ -116,7 +120,12 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, hirMethod.SuperClassExpression, isAsync, isGenerator, isDerivedConstructor);
+        var preserveNonClassDoubleReturn = scope?.StableReturnClrType == typeof(double)
+            && callableKind == Jroc.Services.ScopesAbi.CallableKind.Function
+            && !hasScopesParameter
+            && callableId?.JsParamCount == 0;
+
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, hirMethod.SuperClassExpression, isAsync, isGenerator, isDerivedConstructor, callableRegistry, preserveNonClassDoubleReturn);
         lowerer.CollectStringBuilderAccumulatorCandidates(hirMethod.Body.Statements);
 
         // If default parameter initialization failed, fall back to legacy emitter

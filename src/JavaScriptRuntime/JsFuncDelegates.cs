@@ -23,6 +23,9 @@ internal static class JsFuncDelegates
                 _registeredDelegateTypes.Add(noScopesDelegateType);
             }
         }
+
+        _registeredDelegateTypes.Add(typeof(JsDoubleFunc0));
+        _registeredDelegateTypes.Add(typeof(JsDoubleFuncNoScopes0));
     }
 
     internal static bool IsJsFuncDelegateType(Type type)
@@ -34,6 +37,7 @@ internal static class JsFuncDelegates
 // Custom delegate types used by jroc to bypass System.Func<> arity limits.
 // Signature convention: (object[] scopes, object? newTarget, object? a1..aN) -> object?
 public delegate object? JsFunc0(object[] scopes, object? newTarget);
+public delegate double JsDoubleFunc0(object[] scopes, object? newTarget);
 public delegate object? JsFunc1(object[] scopes, object? newTarget, object? a1);
 public delegate object? JsFunc2(object[] scopes, object? newTarget, object? a1, object? a2);
 public delegate object? JsFunc3(object[] scopes, object? newTarget, object? a1, object? a2, object? a3);
@@ -71,6 +75,7 @@ public delegate object? JsFunc32(object[] scopes, object? newTarget, object? a1,
 // Signature convention: (object? newTarget, object? a1..aN) -> object?
 // newTarget is retained for proper `new` vs call semantics.
 public delegate object? JsFuncNoScopes0(object? newTarget);
+public delegate double JsDoubleFuncNoScopes0(object? newTarget);
 public delegate object? JsFuncNoScopes1(object? newTarget, object? a1);
 public delegate object? JsFuncNoScopes2(object? newTarget, object? a1, object? a2);
 public delegate object? JsFuncNoScopes3(object? newTarget, object? a1, object? a2, object? a3);

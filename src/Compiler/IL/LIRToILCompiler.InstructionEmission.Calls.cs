@@ -3,6 +3,7 @@ using Jroc.IR;
 using Jroc.Services;
 using Jroc.Services.ILGenerators;
 using Jroc.Services.TwoPhaseCompilation;
+using Jroc.SymbolTables;
 using Jroc.Utilities;
 using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
@@ -184,7 +185,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Ldftn);
                         ilEncoder.Token(methodHandle);
                         ilEncoder.OpCode(ILOpCode.Newobj);
-                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount, delegateRequiresScopeArray));
+                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(callableId.JsParamCount, delegateRequiresScopeArray, callableSignature?.ReturnClrType));
 
                         if (delegateRequiresScopeArray)
                         {
@@ -209,6 +210,7 @@ internal sealed partial class LIRToILCompiler
 
                         if (IsMaterialized(callFunc.Result, allocation))
                         {
+                            EmitBoxCallResultForObjectTarget(GetDirectFunctionReturnClrType(callableSignature, callFunc.FunctionSymbol.BindingInfo, callableId), callFunc.Result, ilEncoder);
                             EmitStoreTemp(callFunc.Result, ilEncoder, allocation);
                         }
                         else
@@ -262,6 +264,7 @@ internal sealed partial class LIRToILCompiler
 
                     if (IsMaterialized(callFunc.Result, allocation))
                     {
+                        EmitBoxCallResultForObjectTarget(GetDirectFunctionReturnClrType(callableSignature, callFunc.FunctionSymbol.BindingInfo, callableId), callFunc.Result, ilEncoder);
                         EmitStoreTemp(callFunc.Result, ilEncoder, allocation);
                     }
                     else
@@ -385,7 +388,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray, callableSignature?.ReturnClrType));
 
                     // Load scopes array
                     EmitLoadTemp(callFuncArray.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -1001,6 +1004,7 @@ internal sealed partial class LIRToILCompiler
 
                     if (IsMaterialized(callDeclared.Result, allocation))
                     {
+                        EmitBoxCallResultForObjectTarget(signature?.ReturnClrType, callDeclared.Result, ilEncoder);
                         EmitStoreTemp(callDeclared.Result, ilEncoder, allocation);
                     }
                     else
@@ -1058,7 +1062,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray, signature?.ReturnClrType));
 
                     // Bind delegate to scopes array AND lexical 'this': Closure.BindArrow(object, object[], object)
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -1142,7 +1146,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false, signature?.ReturnClrType));
                     EmitInitializeFunctionInstance(createFunc.CallableId, createFunc.IsAsync, ilEncoder);
                     EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
 
@@ -1230,5 +1234,75 @@ internal sealed partial class LIRToILCompiler
         }
 
         return true;
+    }
+
+    private void EmitBoxCallResultForObjectTarget(Type? returnClrType, TempVariable result, InstructionEncoder ilEncoder)
+    {
+        if (returnClrType == null)
+        {
+            return;
+        }
+
+        var resultStorage = GetTempStorage(result);
+        if (resultStorage.Kind is not (ValueStorageKind.Reference or ValueStorageKind.BoxedValue)
+            || resultStorage.ClrType != typeof(object))
+        {
+            return;
+        }
+
+        if (returnClrType == typeof(double))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.DoubleType);
+        }
+        else if (returnClrType == typeof(bool))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.BooleanType);
+        }
+    }
+
+    private static Type? GetDirectFunctionReturnClrType(CallableSignature? signature, BindingInfo symbol, CallableId callableId)
+        => signature?.ReturnClrType ?? GetStableDirectFunctionReturnClrType(symbol, callableId);
+
+    private static Type? GetStableDirectFunctionReturnClrType(BindingInfo symbol, CallableId callableId)
+    {
+        if (symbol.Kind != BindingKind.Function || callableId.JsParamCount != 0)
+        {
+            return null;
+        }
+
+        var functionScope = FindFunctionScope(symbol.DeclaringScope, symbol);
+        if (functionScope == null || functionScope.ReferencesParentScopeVariables)
+        {
+            return null;
+        }
+
+        return functionScope.StableReturnClrType == typeof(double)
+            ? typeof(double)
+            : null;
+    }
+
+    private static Scope? FindFunctionScope(Scope root, BindingInfo symbol)
+    {
+        foreach (var child in root.Children)
+        {
+            if (child.Kind == ScopeKind.Function
+                && (ReferenceEquals(child.AstNode, symbol.DeclarationNode)
+                    || string.Equals(child.Name, symbol.Name, StringComparison.Ordinal)
+                    || (child.AstNode is FunctionDeclaration functionDeclaration
+                        && functionDeclaration.Id?.Name == symbol.Name)))
+            {
+                return child;
+            }
+
+            var descendant = FindFunctionScope(child, symbol);
+            if (descendant != null)
+            {
+                return descendant;
+            }
+        }
+
+        return null;
     }
 }

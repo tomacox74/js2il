@@ -69,6 +69,12 @@ public sealed record CallableSignature
     /// Null entries keep the default object-typed JavaScript value ABI.
     /// </summary>
     public IReadOnlyList<Type?> ParameterClrTypes { get; init; } = Array.Empty<Type?>();
+
+    /// <summary>
+    /// Optional stable CLR return type for callables whose ABI can expose a typed return.
+    /// Null keeps the default object-typed JavaScript value ABI.
+    /// </summary>
+    public Type? ReturnClrType { get; init; }
     
     /// <summary>
     /// The invoke shape (delegate type) for this callable.

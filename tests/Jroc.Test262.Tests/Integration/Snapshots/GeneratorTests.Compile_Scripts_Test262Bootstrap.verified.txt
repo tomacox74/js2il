@@ -4805,7 +4805,8 @@
 				[6] bool,
 				[7] object,
 				[8] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[9] string
+				[9] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[10] string
 			)
 
 			IL_0000: ldarg.s force
@@ -4977,20 +4978,20 @@
 			IL_01e6: ldnull
 			IL_01e7: ldarg.3
 			IL_01e8: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Scripts_Test262Bootstrap/buildSparsePatterns::__js_call__(class Modules.Compile_Scripts_Test262Bootstrap/Scope, object, object)
-			IL_01ed: stloc.s 7
+			IL_01ed: stloc.s 9
 			IL_01ef: ldloc.s 8
 			IL_01f1: ldc.i4.1
 			IL_01f2: newarr [System.Runtime]System.Object
 			IL_01f7: dup
 			IL_01f8: ldc.i4.0
-			IL_01f9: ldloc.s 7
+			IL_01f9: ldloc.s 9
 			IL_01fb: stelem.ref
 			IL_01fc: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::concat(object[])
-			IL_0201: stloc.s 8
+			IL_0201: stloc.s 9
 			IL_0203: ldarg.0
 			IL_0204: castclass Modules.Compile_Scripts_Test262Bootstrap/Scope
 			IL_0209: ldnull
-			IL_020a: ldloc.s 8
+			IL_020a: ldloc.s 9
 			IL_020c: ldarg.2
 			IL_020d: call object Modules.Compile_Scripts_Test262Bootstrap/runGit::__js_call__(class Modules.Compile_Scripts_Test262Bootstrap/Scope, object, object, object)
 			IL_0212: pop
@@ -5015,11 +5016,11 @@
 			IL_0251: ldstr "commit"
 			IL_0256: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_025b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0260: stloc.s 8
+			IL_0260: stloc.s 9
 			IL_0262: ldarg.0
 			IL_0263: castclass Modules.Compile_Scripts_Test262Bootstrap/Scope
 			IL_0268: ldnull
-			IL_0269: ldloc.s 8
+			IL_0269: ldloc.s 9
 			IL_026b: ldarg.2
 			IL_026c: call object Modules.Compile_Scripts_Test262Bootstrap/runGit::__js_call__(class Modules.Compile_Scripts_Test262Bootstrap/Scope, object, object, object)
 			IL_0271: pop
@@ -5034,11 +5035,11 @@
 			IL_028e: dup
 			IL_028f: ldstr "FETCH_HEAD"
 			IL_0294: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-			IL_0299: stloc.s 8
+			IL_0299: stloc.s 9
 			IL_029b: ldarg.0
 			IL_029c: castclass Modules.Compile_Scripts_Test262Bootstrap/Scope
 			IL_02a1: ldnull
-			IL_02a2: ldloc.s 8
+			IL_02a2: ldloc.s 9
 			IL_02a4: ldarg.2
 			IL_02a5: call object Modules.Compile_Scripts_Test262Bootstrap/runGit::__js_call__(class Modules.Compile_Scripts_Test262Bootstrap/Scope, object, object, object)
 			IL_02aa: pop
@@ -5067,12 +5068,12 @@
 			IL_02e2: ldstr "message"
 			IL_02e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_02ec: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_02f1: stloc.s 9
+			IL_02f1: stloc.s 10
 			IL_02f3: ldstr "Pinned test262 checkout is incomplete after bootstrap: "
-			IL_02f8: ldloc.s 9
+			IL_02f8: ldloc.s 10
 			IL_02fa: call string [System.Runtime]System.String::Concat(string, string)
-			IL_02ff: stloc.s 9
-			IL_0301: ldloc.s 9
+			IL_02ff: stloc.s 10
+			IL_0301: ldloc.s 10
 			IL_0303: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 			IL_0308: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
 			IL_030d: stloc.s 7

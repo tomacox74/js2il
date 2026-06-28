@@ -1648,6 +1648,7 @@ public sealed class TwoPhaseCompilationCoordinator
         {
             var (scopeAbiKind, singleScopeScopeName) = ComputeCallableScopeAbi(callable, symbolTable);
             var parameterClrTypes = GetCallableParameterClrTypes(callable, symbolTable);
+            var returnClrType = GetCallableReturnClrType(callable, symbolTable, scopeAbiKind);
 
             // Build CallableSignature from CallableId
             // Placeholder owner type handle (is set during token allocation)
@@ -1658,6 +1659,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 SingleScopeScopeName = singleScopeScopeName,
                 JsParamCount = callable.JsParamCount,
                 ParameterClrTypes = parameterClrTypes,
+                ReturnClrType = returnClrType,
                 InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
                 IsInstanceMethod = callable.Kind == CallableKind.ClassMethod,
                 ILMethodName = GetILMethodName(callable)
@@ -1779,6 +1781,53 @@ public sealed class TwoPhaseCompilationCoordinator
 
     private static bool IsSupportedStableParameterClrType(Type? type)
         => type == typeof(double) || type == typeof(bool) || type == typeof(string);
+
+    private static Type? GetCallableReturnClrType(
+        CallableId callable,
+        SymbolTable symbolTable,
+        Jroc.Runtime.CallableScopeAbiKind scopeAbiKind)
+    {
+        var scope = callable.AstNode != null
+            ? symbolTable.FindScopeByAstNode(callable.AstNode)
+            : null;
+
+        if (scope == null && callable.AstNode is Acornima.Ast.MethodDefinition methodDefinition)
+        {
+            scope = symbolTable.FindScopeByAstNode(methodDefinition.Value);
+        }
+
+        if (scope == null || scope.Kind != ScopeKind.Function)
+        {
+            return null;
+        }
+
+        if (callable.Kind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
+        {
+            return scope.StableReturnClrType;
+        }
+
+        if (scope.StableReturnClrType == typeof(JavaScriptRuntime.Array)
+            || scope.StableReturnClrType == typeof(string))
+        {
+            return scope.StableReturnClrType;
+        }
+
+        if (SupportsNoScopesZeroArgDoubleReturn(callable, scopeAbiKind, scope.StableReturnClrType))
+        {
+            return typeof(double);
+        }
+
+        return null;
+    }
+
+    private static bool SupportsNoScopesZeroArgDoubleReturn(
+        CallableId callable,
+        Jroc.Runtime.CallableScopeAbiKind scopeAbiKind,
+        Type? returnClrType)
+        => returnClrType == typeof(double)
+            && scopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.NoScopes
+            && callable.JsParamCount == 0
+            && callable.Kind is CallableKind.FunctionDeclaration or CallableKind.FunctionExpression or CallableKind.Arrow;
 
     private static bool IsResumableCallable(CallableId callable)
     {

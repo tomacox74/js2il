@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x218f
+					// Method begins at RVA 0x2187
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2186
+				// Method begins at RVA 0x217e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -64,7 +64,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x2108
 			// Header size: 12
 			// Code size: 97 (0x61)
 			.maxstack 8
@@ -130,7 +130,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217d
+			// Method begins at RVA 0x2175
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -156,14 +156,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 177 (0xb1)
+		// Code size: 172 (0xac)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionWithArrayIteration/Scope,
 			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] object,
-			[4] object
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[6] string
 		)
 
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration/Scope::.ctor()
@@ -202,22 +204,23 @@
 		IL_007c: ldnull
 		IL_007d: ldloc.2
 		IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_GlobalFunctionWithArrayIteration/processArray::__js_call__(object, object)
-		IL_0083: stloc.s 4
-		IL_0085: ldloc.s 4
+		IL_0083: stloc.s 5
+		IL_0085: ldloc.s 5
 		IL_0087: stloc.3
 		IL_0088: ldloc.3
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008e: stloc.s 4
-		IL_0090: ldloc.s 4
-		IL_0092: ldstr "join"
-		IL_0097: ldstr ","
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a1: stloc.s 4
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: ldloc.s 4
-		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00af: pop
-		IL_00b0: ret
+		IL_0089: ldc.i4.1
+		IL_008a: newarr [System.Runtime]System.Object
+		IL_008f: dup
+		IL_0090: ldc.i4.0
+		IL_0091: ldstr ","
+		IL_0096: stelem.ref
+		IL_0097: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_009c: stloc.s 6
+		IL_009e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a3: ldloc.s 6
+		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00aa: pop
+		IL_00ab: ret
 	} // end of method Function_GlobalFunctionWithArrayIteration::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithArrayIteration
@@ -229,7 +232,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x2190
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

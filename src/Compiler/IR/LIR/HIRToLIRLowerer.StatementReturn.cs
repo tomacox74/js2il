@@ -84,7 +84,8 @@ public sealed partial class HIRToLIRLowerer
                 {
                     stableReturnClrType = functionScope.StableReturnClrType;
                 }
-                else if (functionScope.StableReturnClrType == typeof(string))
+                else if (functionScope.StableReturnClrType == typeof(string)
+                    || (functionScope.StableReturnClrType == typeof(double) && _preserveNonClassDoubleReturn))
                 {
                     stableReturnClrType = functionScope.StableReturnClrType;
                 }
@@ -399,7 +400,8 @@ public sealed partial class HIRToLIRLowerer
             {
                 stableReturnClrType = functionScope.StableReturnClrType;
             }
-            else if (functionScope.StableReturnClrType == typeof(string))
+            else if (functionScope.StableReturnClrType == typeof(string)
+                || (functionScope.StableReturnClrType == typeof(double) && _preserveNonClassDoubleReturn))
             {
                 stableReturnClrType = functionScope.StableReturnClrType;
             }

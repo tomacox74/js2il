@@ -519,7 +519,7 @@ public sealed partial class HIRToLIRLowerer
                 DefineTempStorage(constArrowScopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
                 _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, constArrowScopesTemp, constArrowArguments, resultTempVar, constArrowCallableId));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                DefineDirectCallResultStorage(resultTempVar, constArrowCallableId, symbol.BindingInfo);
                 return true;
             }
 
@@ -627,7 +627,7 @@ public sealed partial class HIRToLIRLowerer
             // Emit the function call with arguments
             var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
             _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar, callableId));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            DefineDirectCallResultStorage(resultTempVar, callableId, symbol.BindingInfo);
 
             return true;
         }
@@ -1287,6 +1287,82 @@ public sealed partial class HIRToLIRLowerer
 
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         return true;
+    }
+
+    private void DefineDirectCallResultStorage(TempVariable resultTempVar, TwoPhase.CallableId? callableId, BindingInfo? symbol)
+    {
+        Type? returnClrType = null;
+        if (callableId != null && _callableRegistry != null)
+        {
+            returnClrType = _callableRegistry.GetSignature(callableId)?.ReturnClrType;
+        }
+
+        returnClrType ??= GetStableDirectFunctionReturnClrType(symbol, callableId);
+
+        if (returnClrType == typeof(double))
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        }
+        else if (returnClrType == typeof(bool))
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        }
+        else if (returnClrType == typeof(string))
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        }
+        else if (returnClrType == typeof(JavaScriptRuntime.Array))
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+        }
+        else
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+    }
+
+    private static Type? GetStableDirectFunctionReturnClrType(BindingInfo? symbol, TwoPhase.CallableId? callableId)
+    {
+        if (symbol?.Kind != BindingKind.Function
+            || callableId?.JsParamCount != 0)
+        {
+            return null;
+        }
+
+        var functionScope = FindFunctionScope(symbol.DeclaringScope, symbol);
+
+        if (functionScope == null
+            || functionScope.ReferencesParentScopeVariables)
+        {
+            return null;
+        }
+
+        return functionScope.StableReturnClrType == typeof(double)
+            ? typeof(double)
+            : null;
+    }
+
+    private static Scope? FindFunctionScope(Scope root, BindingInfo symbol)
+    {
+        foreach (var child in root.Children)
+        {
+            if (child.Kind == ScopeKind.Function
+                && (ReferenceEquals(child.AstNode, symbol.DeclarationNode)
+                    || string.Equals(child.Name, symbol.Name, StringComparison.Ordinal)
+                    || (child.AstNode is FunctionDeclaration functionDeclaration
+                        && functionDeclaration.Id?.Name == symbol.Name)))
+            {
+                return child;
+            }
+
+            var descendant = FindFunctionScope(child, symbol);
+            if (descendant != null)
+            {
+                return descendant;
+            }
+        }
+
+        return null;
     }
 
     private static Type ResolveTypedInstanceCallReturnClrType(Type receiverType, string methodName, int argCount)
