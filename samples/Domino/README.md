@@ -1,8 +1,8 @@
-# Hosting.Domino
+# Domino
 
 This sample demonstrates compiling and hosting a real npm package: `@mixmark-io/domino`.
 
-The sample is self-contained directly in `samples/Hosting.Domino`, which includes the C# console app plus the npm manifest/lock file used during build.
+The sample is self-contained directly in `samples/Domino`, which includes the C# console app plus the npm manifest/lock file used during build.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ This sample restores domino into `node_modules`, declares `@mixmark-io/domino` d
 
 ## Running the sample
 
-From `samples/Hosting.Domino`:
+From `samples/Domino`:
 
 - `dotnet run -c Release`
 

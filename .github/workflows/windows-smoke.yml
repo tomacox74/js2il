@@ -193,11 +193,11 @@ jobs:
           node tests/performance/ingestPerfToSupabase.js --source prime-script --input tests/performance/results.json
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
-      - name: Build and run Hosting.Domino sample
+      - name: Build and run Domino sample
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Domino/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Domino/Domino.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
@@ -205,11 +205,11 @@ jobs:
           if ($outputText -notmatch 'title=JROC Domino Sample') { throw 'Expected output containing title=JROC Domino Sample' }
           if ($outputText -notmatch 'links=2') { throw 'Expected output containing links=2' }
 
-      - name: Build and run Hosting.Picocolors sample
+      - name: Build and run Picocolors sample
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Picocolors/Hosting.Picocolors.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Picocolors/Picocolors.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
@@ -218,11 +218,11 @@ jobs:
           if ($outputText -notmatch 'green=') { throw 'Expected output containing green=' }
           if ($outputText -notmatch 'done') { throw 'Expected output containing done' }
 
-      - name: Build and run Hosting.Basic sample
+      - name: Build and run Basic sample
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Basic/host/Basic.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
@@ -230,11 +230,11 @@ jobs:
           if ($outputText -notmatch 'version=') { throw 'Expected output containing version=' }
           if ($outputText -notmatch '1\+2=') { throw 'Expected output containing 1+2=' }
 
-      - name: Build and run Hosting.Typed sample
+      - name: Build and run Typed sample
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Typed/host/Typed.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output

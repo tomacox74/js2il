@@ -1,7 +1,7 @@
 using Jroc.Runtime;
 using Jroc.HostedMathModule;
 
-namespace Hosting.Basic;
+namespace Basic;
 
 internal static class Program
 {

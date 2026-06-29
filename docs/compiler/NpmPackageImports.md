@@ -4,7 +4,7 @@
 Enable JROC to compile and execute code that imports npm packages in two ways:
 
 1. **CLI entry by npm module id**
-   - Example (Hosting.Domino):
+   - Example (Domino):
      - Today: `jroc node_modules/@mixmark-io/domino/lib/index.js`
      - Target: `jroc --moduleid @mixmark-io/domino`
      - `@mixmark-io/domino` resolves to the package’s `.js` entry (e.g. `lib/index.js`).
@@ -228,7 +228,7 @@ Behavior:
 - Compile the resolved file as the root module.
 
 ## Samples
-### Hosting.Domino
+### Domino
 Update the sample guidance:
 - compile via `--moduleid @mixmark-io/domino`
 - host can load by module id
@@ -284,7 +284,7 @@ These fixtures are good candidates for future end-to-end tests like:
    - else resolve via mapping (with minimal id-level probing)
 7. Add CLI `--moduleid`.
 8. Update hosting `LoadModule` normalization for package IDs.
-9. Add tests + update Hosting.Domino docs.
+9. Add tests + update Domino docs.
 
 ## Open Questions
 - How strict should `exports` handling be initially (full conditional exports vs minimal subset)?

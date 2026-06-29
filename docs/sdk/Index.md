@@ -107,9 +107,10 @@ Console.WriteLine((double)exports.add(1, 2));
 
 The repo includes runnable `Jroc.SDK`-based samples:
 
-- `samples/Hosting.Basic`
-- `samples/Hosting.Typed`
-- `samples/Hosting.Domino`
+- `samples/Basic`
+- `samples/Typed`
+- `samples/Domino`
+- `samples/Picocolors`
 
 ## Validation and release smoke
 

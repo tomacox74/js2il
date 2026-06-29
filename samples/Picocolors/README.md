@@ -1,4 +1,4 @@
-# Hosting.Picocolors
+# Picocolors
 
 This sample demonstrates compiling and hosting a real npm package: `picocolors`.
 
@@ -11,7 +11,7 @@ This sample demonstrates compiling and hosting a real npm package: `picocolors`.
 
 ## Running the sample
 
-From `samples/Hosting.Picocolors`:
+From `samples/Picocolors`:
 
 ```
 dotnet run -c Release

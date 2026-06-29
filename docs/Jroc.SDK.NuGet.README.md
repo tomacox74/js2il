@@ -110,18 +110,20 @@ Copy-Item "Jroc.SDK.$version.nupkg" "Jroc.SDK.$version.zip" -Force
 Expand-Archive -Path "Jroc.SDK.$version.zip" -DestinationPath "jroc_sdk_pkg" -Force
 
 # Build + run a sample
-dotnet build .\jroc_sdk_pkg\samples\Hosting.Basic\host
-dotnet run --project .\jroc_sdk_pkg\samples\Hosting.Basic\host
+dotnet build .\jroc_sdk_pkg\samples\Basic\host
+dotnet run --project .\jroc_sdk_pkg\samples\Basic\host
 ```
 
 If you are validating a locally packed prerelease feed instead of NuGet.org, pack `Jroc.Runtime`, `Jroc.Core`, and `Jroc.SDK` into the same feed, then override `JrocPackageVersion` (or the individual `JrocSdkPackageVersion` / `JrocRuntimePackageVersion` properties) when building the sample. The legacy `JavaScriptRuntimePackageVersion` property is still accepted as an alias.
 
 ## Repo hosting sample pattern
 
-- `samples\Hosting.Basic` and `samples\Hosting.Typed`
+- `samples\Basic` and `samples\Typed`
   - The host project references `Jroc.SDK` directly and declares a `JrocCompile` item that points at `compiler\JavaScript\*.js`.
-- `samples\Hosting.Domino`
+- `samples\Domino`
   - The host project keeps `package.json` / `package-lock.json` next to the `.csproj`, runs `npm ci` in place, and compiles `@mixmark-io/domino` directly using the default module-resolution base.
+- `samples\Picocolors`
+  - Same flat layout as `Domino` but compiles the `picocolors` package and calls color/style functions from C#.
 
 ## Links
 

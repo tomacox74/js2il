@@ -1,7 +1,7 @@
 using Jroc.Runtime;
 using System.Reflection;
 
-namespace Hosting.Picocolors;
+namespace Picocolors;
 
 internal static class Program
 {

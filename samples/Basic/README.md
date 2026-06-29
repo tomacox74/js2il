@@ -1,4 +1,4 @@
-# Hosting.Basic
+# Basic
 
 Minimal end-to-end hosting sample:
 - compile a JS module to a .NET assembly during `dotnet build` via `Jroc.SDK`

@@ -2,7 +2,7 @@ using Jroc.Runtime;
 using System.Reflection;
 using System.Linq;
 
-namespace Hosting.Domino;
+namespace Domino;
 
 internal static class Program
 {
@@ -62,7 +62,7 @@ internal static class Program
 
     private static void DumpDiagnostic(Exception ex)
     {
-        Console.WriteLine("[diag] Hosting.Domino failure");
+        Console.WriteLine("[diag] Domino failure");
         Console.WriteLine(ex);
 
         var current = ex;
