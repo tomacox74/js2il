@@ -76,6 +76,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "reduceRight", (Func<object[], object?[]?, object?>)PrototypeReduceRight, 1);
             DefinePrototypeMethod(exp, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
             DefinePrototypeMethod(exp, "every", (Func<object[], object?[]?, object?>)PrototypeEvery, 1);
+            DefinePrototypeMethod(exp, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
             DefinePrototypeMethod(exp, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
             DefinePrototypeMethod(exp, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
             DefinePrototypeMethod(exp, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
@@ -578,6 +579,33 @@ namespace JavaScriptRuntime
             }
 
             return result;
+        }
+
+        private static object? PrototypeSome(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("some");
+            var iterationReceiver = GetArrayMethodIterationReceiver(receiver);
+            var callbackReceiver = GetArrayMethodCallbackReceiver(receiver);
+            var callback = RequireCallback(args, "some");
+            var thisArg = args != null && args.Length > 1 ? args[1] : null;
+            int length = ToArrayLikeLength(iterationReceiver);
+
+            for (int i = 0; i < length; i++)
+            {
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn((double)i, iterationReceiver))
+                {
+                    continue;
+                }
+
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(iterationReceiver, (double)i);
+                var result = JavaScriptRuntime.Function.Call(callback, thisArg, new object?[] { value, (double)i, callbackReceiver });
+                if (JavaScriptRuntime.Operators.IsTruthy(result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static object? PrototypeMap(object[] scopes, object?[]? args)
@@ -1784,6 +1812,25 @@ namespace JavaScriptRuntime
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// JavaScript Array.some(callback[, thisArg])
+        /// </summary>
+        public bool some(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            ArrayCallbackInvoker? invoke = null;
+            for (int i = 0; i < this.Count; i++)
+            {
+                invoke ??= CreateArrayCallbackInvoker(cb, 3, "some");
+                var ok = invoke(this[i], (double)i, this, null);
+                if (Operators.IsTruthy(ok))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
