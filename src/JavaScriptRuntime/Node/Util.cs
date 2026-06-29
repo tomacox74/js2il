@@ -105,12 +105,12 @@ namespace JavaScriptRuntime.Node
 
         public object? inherits(object constructor, object superConstructor)
         {
-            if (constructor is not Delegate)
+            if (constructor is not Delegate && constructor is not Type)
             {
                 throw new TypeError("The \"constructor\" argument must be of type function");
             }
 
-            if (superConstructor is not Delegate)
+            if (superConstructor is not Delegate && superConstructor is not Type)
             {
                 throw new TypeError("The \"superConstructor\" argument must be of type function");
             }
