@@ -38,10 +38,10 @@ It currently runs:
   - verifies `.props` / `.targets`, task assets, bundled samples, and the `Jroc.Core` dependency
 - `Build_WithLocalJrocSdkPackage_CompilesAndRunsHostedModule`
   - restores the package from a local feed, builds a consumer project, and runs the generated module
-- `Build_ExtractedHostingBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns`
-  - extracts `Jroc.SDK` from the packed `.nupkg`, then builds/runs `samples\Hosting.Basic`
-- `Build_ExtractedHostingTypedSample_WithLocalJrocSdkPackage_CompilesAndRuns`
-  - extracts `Jroc.SDK` from the packed `.nupkg`, then builds/runs `samples\Hosting.Typed`
+- `Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns`
+  - extracts `Jroc.SDK` from the packed `.nupkg`, then builds/runs `samples\Basic`
+- `Build_ExtractedTypedSample_WithLocalJrocSdkPackage_CompilesAndRuns`
+  - extracts `Jroc.SDK` from the packed `.nupkg`, then builds/runs `samples\Typed`
 
 ### Package boundary and discoverability checks
 
@@ -65,9 +65,9 @@ These workflows:
 - install the tagged `jroc` tool from NuGet
 - compile and run `tests\simple.js`
 - build and run the hosted sample apps:
-  - `samples\Hosting.Domino`
-  - `samples\Hosting.Basic`
-  - `samples\Hosting.Typed`
+  - `samples\Domino`
+  - `samples\Basic`
+  - `samples\Typed`
 
 Each hosted sample restores `Jroc.SDK` and `Jroc.Runtime` at the tagged version, so the release smoke validates the actual end-user NuGet flow rather than a source-only shortcut.
 

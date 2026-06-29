@@ -34,17 +34,17 @@ public class JrocSdkPackageTests
             Assert.Contains("README.md", entryNames);
             Assert.Contains("icon.jpg", entryNames);
             Assert.Contains("samples/Directory.Build.props", entryNames);
-            Assert.Contains("samples/Hosting.Basic/host/Hosting.Basic.csproj", entryNames);
-            Assert.Contains("samples/Hosting.Basic/compiler/JavaScript/HostedMathModule.js", entryNames);
-            Assert.DoesNotContain("samples/Hosting.Basic/compiler/HostedMathModule.proj", entryNames);
-            Assert.Contains("samples/Hosting.Typed/host/Hosting.Typed.csproj", entryNames);
-            Assert.Contains("samples/Hosting.Typed/compiler/JavaScript/HostedCounterModule.js", entryNames);
-            Assert.DoesNotContain("samples/Hosting.Typed/compiler/HostedCounterModule.proj", entryNames);
-            Assert.Contains("samples/Hosting.Domino/Hosting.Domino.csproj", entryNames);
-            Assert.Contains("samples/Hosting.Domino/package.json", entryNames);
-            Assert.Contains("samples/Hosting.Domino/package-lock.json", entryNames);
-            Assert.DoesNotContain("samples/Hosting.Domino/compiler/package.json", entryNames);
-            Assert.DoesNotContain("samples/Hosting.Domino/compiler/package-lock.json", entryNames);
+            Assert.Contains("samples/Basic/host/Basic.csproj", entryNames);
+            Assert.Contains("samples/Basic/compiler/JavaScript/HostedMathModule.js", entryNames);
+            Assert.DoesNotContain("samples/Basic/compiler/HostedMathModule.proj", entryNames);
+            Assert.Contains("samples/Typed/host/Typed.csproj", entryNames);
+            Assert.Contains("samples/Typed/compiler/JavaScript/HostedCounterModule.js", entryNames);
+            Assert.DoesNotContain("samples/Typed/compiler/HostedCounterModule.proj", entryNames);
+            Assert.Contains("samples/Domino/Domino.csproj", entryNames);
+            Assert.Contains("samples/Domino/package.json", entryNames);
+            Assert.Contains("samples/Domino/package-lock.json", entryNames);
+            Assert.DoesNotContain("samples/Domino/compiler/package.json", entryNames);
+            Assert.DoesNotContain("samples/Domino/compiler/package-lock.json", entryNames);
             Assert.DoesNotContain(entryNames, name => name.Contains("/jroc/", StringComparison.OrdinalIgnoreCase));
 
             AssertPackagePageMetadata(
@@ -83,7 +83,7 @@ public class JrocSdkPackageTests
             Assert.Contains("ReferenceOutputAssembly", targetsText, StringComparison.Ordinal);
             Assert.Contains("RootModuleId", targetsText, StringComparison.Ordinal);
 
-            var dominoSampleEntry = archive.GetEntry("samples/Hosting.Domino/Hosting.Domino.csproj");
+            var dominoSampleEntry = archive.GetEntry("samples/Domino/Domino.csproj");
             Assert.NotNull(dominoSampleEntry);
             using var dominoSampleReader = new StreamReader(dominoSampleEntry!.Open());
             var dominoSampleText = dominoSampleReader.ReadToEnd();
@@ -336,7 +336,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
-    public void Build_ExtractedHostingBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns()
+    public void Build_ExtractedBasicSample_WithLocalJrocSdkPackage_CompilesAndRuns()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempRoot);
@@ -355,10 +355,10 @@ public class JrocSdkPackageTests
             ZipFile.ExtractToDirectory(sdkPackagePath, extractDir);
             WriteNuGetConfig(extractDir, feedDir);
 
-            var hostDir = Path.Combine(extractDir, "samples", "Hosting.Basic", "host");
+            var hostDir = Path.Combine(extractDir, "samples", "Basic", "host");
             var build = RunProcess(
                 fileName: "dotnet",
-                arguments: $"build Hosting.Basic.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
+                arguments: $"build Basic.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
                 workingDirectory: hostDir,
                 timeoutSeconds: 180);
 
@@ -372,7 +372,7 @@ public class JrocSdkPackageTests
 
             var run = RunProcess(
                 fileName: "dotnet",
-                arguments: $"run --project Hosting.Basic.csproj -c Release --no-build --nologo -p:JrocPackageVersion={packageVersion}",
+                arguments: $"run --project Basic.csproj -c Release --no-build --nologo -p:JrocPackageVersion={packageVersion}",
                 workingDirectory: hostDir,
                 timeoutSeconds: 180);
 
@@ -391,7 +391,7 @@ public class JrocSdkPackageTests
     }
 
     [Fact]
-    public void Build_ExtractedHostingTypedSample_WithLocalJrocSdkPackage_CompilesAndRuns()
+    public void Build_ExtractedTypedSample_WithLocalJrocSdkPackage_CompilesAndRuns()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "jroc-sdk-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempRoot);
@@ -410,10 +410,10 @@ public class JrocSdkPackageTests
             ZipFile.ExtractToDirectory(sdkPackagePath, extractDir);
             WriteNuGetConfig(extractDir, feedDir);
 
-            var hostDir = Path.Combine(extractDir, "samples", "Hosting.Typed", "host");
+            var hostDir = Path.Combine(extractDir, "samples", "Typed", "host");
             var build = RunProcess(
                 fileName: "dotnet",
-                arguments: $"build Hosting.Typed.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
+                arguments: $"build Typed.csproj -c Release --nologo --ignore-failed-sources -p:JrocPackageVersion={packageVersion}",
                 workingDirectory: hostDir,
                 timeoutSeconds: 180);
 
@@ -426,7 +426,7 @@ public class JrocSdkPackageTests
 
             var run = RunProcess(
                 fileName: "dotnet",
-                arguments: $"run --project Hosting.Typed.csproj -c Release --no-build --nologo -p:JrocPackageVersion={packageVersion}",
+                arguments: $"run --project Typed.csproj -c Release --no-build --nologo -p:JrocPackageVersion={packageVersion}",
                 workingDirectory: hostDir,
                 timeoutSeconds: 180);
 

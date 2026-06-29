@@ -1,4 +1,4 @@
-# Hosting.Typed
+# Typed
 
 Typed hosting sample demonstrating:
 - typed `module.exports` projection

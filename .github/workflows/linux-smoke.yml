@@ -167,38 +167,38 @@ jobs:
         run: |
           node tests/performance/ingestPerfToSupabase.js --source prime-script --input tests/performance/results.json
 
-      - name: Build and run Hosting.Domino sample
+      - name: Build and run Domino sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Domino/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Domino/Domino.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep -i "title=JROC Domino Sample"
           echo "$output" | grep -i "links=2"
 
-      - name: Build and run Hosting.Picocolors sample
+      - name: Build and run Picocolors sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Picocolors/Hosting.Picocolors.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Picocolors/Picocolors.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "red="
           echo "$output" | grep "green="
           echo "$output" | grep "done"
 
-      - name: Build and run Hosting.Basic sample
+      - name: Build and run Basic sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Basic/host/Hosting.Basic.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Basic/host/Basic.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "version="
           echo "$output" | grep "1+2="
 
-      - name: Build and run Hosting.Typed sample
+      - name: Build and run Typed sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Typed/host/Hosting.Typed.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Typed/host/Typed.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep "version="

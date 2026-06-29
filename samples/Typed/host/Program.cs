@@ -2,7 +2,7 @@ using Jroc.Runtime;
 using Jroc.HostedCounterModule;
 using System.Threading.Tasks;
 
-namespace Hosting.Typed;
+namespace Typed;
 
 internal static class Program
 {

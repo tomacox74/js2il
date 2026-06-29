@@ -207,7 +207,7 @@ This command currently does two things:
 - runs the PR canary suite against a freshly packed local `jroc` tool
 - runs the focused `JrocSdkPackageTests` suite, which packs `Jroc.Runtime`, `Jroc.Core`, and `Jroc.SDK` into a local feed and verifies the SDK consumption path
 
-After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `jroc` tool from NuGet and build/run the `Hosting.Domino`, `Hosting.Basic`, and `Hosting.Typed` samples against the matching `Jroc.SDK` / `Jroc.Runtime` version.
+After the GitHub release is published, the `windows-smoke` and `linux-smoke` workflows install the tagged `jroc` tool from NuGet and build/run the `Domino`, `Picocolors`, `Basic`, and `Typed` samples against the matching `Jroc.SDK` / `Jroc.Runtime` version.
 
 For the full restore/build/post-publish validation matrix used to close issues `#850` and `#439`, see [docs/sdk/PackagingValidation.md](docs/sdk/PackagingValidation.md).
 
