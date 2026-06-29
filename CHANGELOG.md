@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/nodejs: add `child_process.execFileSync(file[, args][, options])` support — runs a file directly without a shell, returns stdout as a string, and throws a `ChildProcessError` (with `status`/`code`/`stdout`/`stderr` properties) on non-zero exit; update Node docs.
 - runtime/tests/docs/nodejs: add `string_decoder` support with utf8/utf-8 decoding, `node:` prefix resolution, and a stream-style decoder test; update the node support docs/index for the new module.
 - sdk/samples/ci: add `NpmRunAll2` sample — compiles `npm-run-all2` and its transitive dependencies into a .NET assembly via `Jroc.SDK`, then calls `createHeader` (task-header formatting) and a `filterTasks` glob helper from C#; add smoke-test steps to `windows-smoke.yml` and `linux-smoke.yml`.
 - sdk/samples/ci: add `Picocolors` sample — compiles the `picocolors` npm package to a .NET assembly via `Jroc.SDK` and calls color/style functions from C#; add smoke-test steps to `windows-smoke.yml` and `linux-smoke.yml`.

@@ -117,6 +117,23 @@
       "docs": "https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options"
     },
     {
+      "name": "execFileSync(file[, args][, options])",
+      "kind": "function",
+      "status": "supported",
+      "notes": "Runs a file directly without an implicit shell, waits for exit, and returns stdout as a string. Throws a ChildProcessError (with status/code/stdout/stderr properties) on non-zero exit. Supports cwd, encoding, and stdio ('pipe'/'inherit'/'ignore'). Node returns a Buffer when no encoding is provided; the current implementation always returns a string.",
+      "docs": "https://nodejs.org/api/child_process.html#child_processexecfilesyncfile-args-options",
+      "tests": [
+        {
+          "name": "Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFileSync_Basic",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs"
+        },
+        {
+          "name": "Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFileSync_Basic",
+          "file": "tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
       "name": "execSync(command, options)",
       "kind": "function",
       "status": "supported",

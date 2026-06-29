@@ -43,5 +43,9 @@ namespace Jroc.Tests.Node.ChildProcess
         [Fact]
         public Task Require_ChildProcess_Fork_Unsupported_Options()
             => ExecutionTest(nameof(Require_ChildProcess_Fork_Unsupported_Options));
+
+        [Fact]
+        public Task Require_ChildProcess_ExecFileSync_Basic()
+            => ExecutionTest(nameof(Require_ChildProcess_ExecFileSync_Basic));
     }
 }
