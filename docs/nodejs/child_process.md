@@ -26,6 +26,7 @@ Provides synchronous process execution, async spawn/exec/execFile, and a documen
 | execFile(file[, args][, options][, callback]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexecfilefile-args-options-callback) |
 | fork(modulePath[, args][, options]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processforkmodulepath-args-options) |
 | spawnSync(command, args, options) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options) |
+| execFileSync(file[, args][, options]) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexecfilesyncfile-args-options) |
 | execSync(command, options) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexecsynccommand-options) |
 
 ## API Details
@@ -73,6 +74,14 @@ Launches another compiled JROC child from the current assembly, resolves `module
 ### spawnSync(command, args, options)
 
 Supports cwd, shell, environment overrides, and stdio ('pipe'/'inherit'/'ignore' for the first three slots). Returns { status, stdout, stderr }.
+
+### execFileSync(file[, args][, options])
+
+Runs a file directly without an implicit shell, waits for exit, and returns stdout as a string. Throws a ChildProcessError (with status/code/stdout/stderr properties) on non-zero exit. Supports cwd, encoding, and stdio ('pipe'/'inherit'/'ignore'). Node returns a Buffer when no encoding is provided; the current implementation always returns a string.
+
+**Tests:**
+- `Jroc.Tests.Node.ChildProcess.ExecutionTests.Require_ChildProcess_ExecFileSync_Basic` (`tests/Jroc.Tests/Node/ChildProcess/ExecutionTests.cs`)
+- `Jroc.Tests.Node.ChildProcess.GeneratorTests.Require_ChildProcess_ExecFileSync_Basic` (`tests/Jroc.Tests/Node/ChildProcess/GeneratorTests.cs`)
 
 ### execSync(command, options)
 

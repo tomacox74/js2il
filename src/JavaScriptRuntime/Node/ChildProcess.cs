@@ -180,6 +180,68 @@ namespace JavaScriptRuntime.Node
             return stdout;
         }
 
+        public object execFileSync(object[] args)
+        {
+            var srcArgs = args ?? System.Array.Empty<object>();
+            if (srcArgs.Length == 0)
+            {
+                throw new TypeError("The \"file\" argument must be a non-empty string");
+            }
+
+            var file = srcArgs[0];
+            object? fileArgs = null;
+            object? options = null;
+
+            if (srcArgs.Length > 1)
+            {
+                if (IsArgumentList(srcArgs[1]))
+                {
+                    fileArgs = srcArgs[1];
+                }
+                else
+                {
+                    options = srcArgs[1];
+                }
+            }
+
+            if (srcArgs.Length > 2)
+            {
+                options = srcArgs[2];
+            }
+
+            return execFileSync(file, fileArgs, options);
+        }
+
+        public object execFileSync(object file, object? args = null, object? options = null)
+        {
+            var fileText = file?.ToString() ?? string.Empty;
+            var argList = CoerceArgs(args);
+            var cwd = TryGetStringOption(options, "cwd");
+            var encoding = TryGetStringOption(options, "encoding");
+            var stdio = ParseStdioConfiguration(TryGetOption(options, "stdio"), StdioConfiguration.SyncDefault, allowIpc: false, apiName: "child_process.execFileSync");
+
+            var psi = BuildStartInfo(fileText, argList, cwd, shell: false, stdio);
+
+            using var p = DiagnosticsProcess.Start(psi) ?? throw new Error("Failed to start process.");
+            if (stdio.StdinMode == StdioMode.Ignore)
+            {
+                p.StandardInput.Close();
+            }
+
+            var completion = WaitForProcessCompletionSync(p, stdio);
+            var stdout = completion.Stdout;
+            var stderr = completion.Stderr;
+
+            if (completion.ExitCode != 0)
+            {
+                throw new ChildProcessError(fileText, completion.ExitCode, stdout, stderr);
+            }
+
+            // For now we only support string output; Node returns Buffer when no encoding is provided.
+            _ = encoding;
+            return stdout;
+        }
+
         public object exec(object[] args)
         {
             var srcArgs = args ?? System.Array.Empty<object>();
