@@ -176,6 +176,16 @@ jobs:
           echo "$output" | grep -i "title=JROC Domino Sample"
           echo "$output" | grep -i "links=2"
 
+      - name: Build and run Hosting.Picocolors sample
+        run: |
+          set -euo pipefail
+          output=$(dotnet run --project samples/Hosting.Picocolors/Hosting.Picocolors.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          echo "Program output:"
+          echo "$output"
+          echo "$output" | grep "red="
+          echo "$output" | grep "green="
+          echo "$output" | grep "done"
+
       - name: Build and run Hosting.Basic sample
         run: |
           set -euo pipefail

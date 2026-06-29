@@ -205,6 +205,19 @@ jobs:
           if ($outputText -notmatch 'title=JROC Domino Sample') { throw 'Expected output containing title=JROC Domino Sample' }
           if ($outputText -notmatch 'links=2') { throw 'Expected output containing links=2' }
 
+      - name: Build and run Hosting.Picocolors sample
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet run --project samples/Hosting.Picocolors/Hosting.Picocolors.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          if ($LASTEXITCODE -ne 0) { $output; exit 1 }
+          "Program output:" | Write-Output
+          $output | Write-Output
+          $outputText = ($output -join "`n")
+          if ($outputText -notmatch 'red=') { throw 'Expected output containing red=' }
+          if ($outputText -notmatch 'green=') { throw 'Expected output containing green=' }
+          if ($outputText -notmatch 'done') { throw 'Expected output containing done' }
+
       - name: Build and run Hosting.Basic sample
         shell: pwsh
         run: |
