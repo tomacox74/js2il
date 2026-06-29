@@ -40,9 +40,9 @@ public class JrocSdkPackageTests
             Assert.Contains("samples/Hosting.Typed/host/Hosting.Typed.csproj", entryNames);
             Assert.Contains("samples/Hosting.Typed/compiler/JavaScript/HostedCounterModule.js", entryNames);
             Assert.DoesNotContain("samples/Hosting.Typed/compiler/HostedCounterModule.proj", entryNames);
-            Assert.Contains("samples/Hosting.Domino/host/Hosting.Domino.csproj", entryNames);
-            Assert.Contains("samples/Hosting.Domino/host/package.json", entryNames);
-            Assert.Contains("samples/Hosting.Domino/host/package-lock.json", entryNames);
+            Assert.Contains("samples/Hosting.Domino/Hosting.Domino.csproj", entryNames);
+            Assert.Contains("samples/Hosting.Domino/package.json", entryNames);
+            Assert.Contains("samples/Hosting.Domino/package-lock.json", entryNames);
             Assert.DoesNotContain("samples/Hosting.Domino/compiler/package.json", entryNames);
             Assert.DoesNotContain("samples/Hosting.Domino/compiler/package-lock.json", entryNames);
             Assert.DoesNotContain(entryNames, name => name.Contains("/jroc/", StringComparison.OrdinalIgnoreCase));
@@ -83,7 +83,7 @@ public class JrocSdkPackageTests
             Assert.Contains("ReferenceOutputAssembly", targetsText, StringComparison.Ordinal);
             Assert.Contains("RootModuleId", targetsText, StringComparison.Ordinal);
 
-            var dominoSampleEntry = archive.GetEntry("samples/Hosting.Domino/host/Hosting.Domino.csproj");
+            var dominoSampleEntry = archive.GetEntry("samples/Hosting.Domino/Hosting.Domino.csproj");
             Assert.NotNull(dominoSampleEntry);
             using var dominoSampleReader = new StreamReader(dominoSampleEntry!.Open());
             var dominoSampleText = dominoSampleReader.ReadToEnd();
@@ -308,11 +308,11 @@ public class JrocSdkPackageTests
                 $"dotnet build failed.{Environment.NewLine}STDOUT:{Environment.NewLine}{build.StdOut}{Environment.NewLine}STDERR:{Environment.NewLine}{build.StdErr}");
 
             var generatedDir = Path.Combine(projectDir, "obj", "jroc-custom", "pkg");
-            Assert.True(File.Exists(Path.Combine(generatedDir, "index.dll")), $"Missing generated package module dll in '{generatedDir}'.");
-            Assert.True(File.Exists(Path.Combine(generatedDir, "index.runtimeconfig.json")), $"Missing generated package runtimeconfig in '{generatedDir}'.");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "scope.pkg.dll")), $"Missing generated package module dll in '{generatedDir}'.");
+            Assert.True(File.Exists(Path.Combine(generatedDir, "scope.pkg.runtimeconfig.json")), $"Missing generated package runtimeconfig in '{generatedDir}'.");
 
             var targetDir = Path.Combine(projectDir, "bin", "Debug", "net10.0");
-            Assert.True(File.Exists(Path.Combine(targetDir, "index.dll")), $"Missing copied package module dll in '{targetDir}'.");
+            Assert.True(File.Exists(Path.Combine(targetDir, "scope.pkg.dll")), $"Missing copied package module dll in '{targetDir}'.");
 
             var run = RunProcess(
                 fileName: "dotnet",
@@ -560,7 +560,7 @@ public class JrocSdkPackageTests
             using System.Reflection;
             using Jroc.Runtime;
 
-            var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "index.dll");
+            var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "scope.pkg.dll");
             var asm = Assembly.LoadFrom(compiledModulePath);
             var moduleIds = JsEngine.GetModuleIds(asm);
             Console.WriteLine($"hasModuleId={moduleIds.Contains("@scope/pkg")}");

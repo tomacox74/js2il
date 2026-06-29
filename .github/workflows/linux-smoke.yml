@@ -170,7 +170,7 @@ jobs:
       - name: Build and run Hosting.Domino sample
         run: |
           set -euo pipefail
-          output=$(dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          output=$(dotnet run --project samples/Hosting.Domino/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
           echo "Program output:"
           echo "$output"
           echo "$output" | grep -i "title=JROC Domino Sample"

@@ -197,7 +197,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $output = dotnet run --project samples/Hosting.Domino/host/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          $output = dotnet run --project samples/Hosting.Domino/Hosting.Domino.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
           if ($LASTEXITCODE -ne 0) { $output; exit 1 }
           "Program output:" | Write-Output
           $output | Write-Output
