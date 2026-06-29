@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/test262: implement `Array.prototype.some` using the existing array-like callback method pipeline, and port 10 failing `built-ins/Array/prototype/some` test262 cases covering primitive wrappers, built-in objects, and arguments-object receivers.
 
 ## v0.11.4 - 2026-06-29
 
