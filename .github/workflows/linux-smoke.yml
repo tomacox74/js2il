@@ -207,3 +207,14 @@ jobs:
           echo "$output" | grep "counter.value="
           echo "$output" | grep "addAsync(1,2)="
           echo "$output" | grep "created.add(1)="
+
+      - name: Build and run NpmRunAll2 sample
+        run: |
+          set -euo pipefail
+          output=$(dotnet run --project samples/NpmRunAll2/NpmRunAll2.csproj -c Release -p:JrocRuntimePackageVersion="$TOOL_VERSION" 2>&1) || { echo "$output"; exit 1; }
+          echo "Program output:"
+          echo "$output"
+          echo "$output" | grep "task headers"
+          echo "$output" | grep "> build"
+          echo "$output" | grep "pattern matching"
+          echo "$output" | grep "done"

@@ -245,3 +245,17 @@ jobs:
           if ($outputText -notmatch 'counter\.value=') { throw 'Expected output containing counter.value=' }
           if ($outputText -notmatch 'addAsync\(1,2\)=') { throw 'Expected output containing addAsync(1,2)=' }
           if ($outputText -notmatch 'created\.add\(1\)=') { throw 'Expected output containing created.add(1)=' }
+
+      - name: Build and run NpmRunAll2 sample
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet run --project samples/NpmRunAll2/NpmRunAll2.csproj -c Release -p:JrocRuntimePackageVersion="$env:TOOL_VERSION" 2>&1
+          if ($LASTEXITCODE -ne 0) { $output; exit 1 }
+          "Program output:" | Write-Output
+          $output | Write-Output
+          $outputText = ($output -join "`n")
+          if ($outputText -notmatch 'task headers') { throw 'Expected output containing task headers' }
+          if ($outputText -notmatch '> build') { throw 'Expected output containing > build' }
+          if ($outputText -notmatch 'pattern matching') { throw 'Expected output containing pattern matching' }
+          if ($outputText -notmatch 'done') { throw 'Expected output containing done' }
