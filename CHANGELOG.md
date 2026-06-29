@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.4 - 2026-06-29
+
 - sdk/samples/tests/ci: flatten `samples/Hosting.Domino` by moving host assets out of the nested `host/` folder, update smoke/package validation paths, and derive module-id compile outputs using normalized module names (for example `@mixmark-io/domino` -> `mixmark-io.domino.dll`).
 - tests/docs/test262: port 10 RegExp `regexp-v-flag` negative parse cases under `built-ins/RegExp/prototype/unicodeSets`, wiring them as compilation-failure tests so `$DONOTEVALUATE()` is never evaluated, and document the current UnicodeSets limitation.
 - compiler/tests: keep stable no-scope zero-arg numeric function returns unboxed (including `NumericInference_ExponentiationLoop_NoBoxing`), threading callable return-type metadata through direct-call lowering and only boxing at object call boundaries.
