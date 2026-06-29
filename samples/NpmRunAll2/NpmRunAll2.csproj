@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <ModuleOutputDirectory>obj\$(Configuration)\$(TargetFramework)\jroc\npm-run-all2</ModuleOutputDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Jroc.SDK" Version="$(JrocSdkPackageVersion)" />
+    <PackageReference Include="Jroc.Runtime" Version="$(JrocRuntimePackageVersion)" />
+
+    <JrocCompile Include="$(MSBuildProjectDirectory)\index.js"
+                  OutputDirectory="$(ModuleOutputDirectory)"
+                  RootModuleId="npm-run-all2-match"
+                  CopyToOutputDirectory="true" />
+  </ItemGroup>
+
+  <Target Name="NpmRestore"
+          BeforeTargets="JrocCompile"
+          Condition="'$(SkipNpmRestore)' != 'true'">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm ci" />
+  </Target>
+
+</Project>
