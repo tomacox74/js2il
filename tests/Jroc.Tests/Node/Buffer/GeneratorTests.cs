@@ -29,5 +29,9 @@ namespace Jroc.Tests.Node.Buffer
         [Fact]
         public Task Buffer_Advanced_CoreApis() => GenerateTest(
             nameof(Buffer_Advanced_CoreApis));
+
+        [Fact]
+        public Task Buffer_Constructor_Legacy() => GenerateTest(
+            nameof(Buffer_Constructor_Legacy));
     }
 }

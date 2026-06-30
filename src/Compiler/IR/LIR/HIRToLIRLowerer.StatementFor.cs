@@ -23,7 +23,8 @@ public sealed partial class HIRToLIRLowerer
         //   goto loop_start
         // end:
 
-        var perIterationBindings = GetPerIterationLexicalBindingsForForInit(forStmt.Init);
+        var loopHeadLexicalBindings = GetLoopHeadLexicalBindingsForForInit(forStmt.Init);
+        var perIterationBindings = loopHeadLexicalBindings.Where(b => b.IsCaptured).ToList();
 
         int loopStartLabel = CreateLabel();
         int loopUpdateLabel = CreateLabel();
@@ -38,13 +39,14 @@ public sealed partial class HIRToLIRLowerer
         ScopeId loopScopeId = default;
         string? loopScopeName = null;
 
-        if (perIterationBindings.Count > 0
+        if (loopHeadLexicalBindings.Count > 0
             && !_methodBodyIR.IsGenerator)
         {
-            var declaringScope = perIterationBindings[0].DeclaringScope;
+            var declaringScope = loopHeadLexicalBindings[0].DeclaringScope;
             if (declaringScope != null
                 && declaringScope.Kind == ScopeKind.Block
-                && perIterationBindings.All(b => b.DeclaringScope == declaringScope))
+                && loopHeadLexicalBindings.All(b => b.DeclaringScope == declaringScope)
+                && (perIterationBindings.Count > 0 || declaringScope.HasDescendantCallableReferencingParentScopeVariables))
             {
                 useTempPerIterationScope = true;
                 loopScopeName = ScopeNaming.GetRegistryScopeName(declaringScope);

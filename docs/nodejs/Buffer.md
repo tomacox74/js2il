@@ -15,7 +15,7 @@
 
 ## Notes
 
-Core Buffer APIs are implemented for binary workflows: Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, instance methods (slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes/toString/length), array-like indexing (buffer[i]), and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/base64/hex encoding support.
+Core Buffer APIs are implemented for binary workflows: legacy Buffer constructor forms (`new Buffer(value[, encoding])` and `new Buffer(size)`), Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, instance methods (slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes/toString/length), array-like indexing (buffer[i]), and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/base64/hex encoding support.
 
 ## Tests
 
@@ -25,9 +25,11 @@ Core Buffer APIs are implemented for binary workflows: Buffer.from/isBuffer/allo
 - `Jroc.Tests.Node.Buffer.ExecutionTests.Buffer_AllocUnsafe_Compare` (`tests/Jroc.Tests/Node/Buffer/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Buffer.ExecutionTests.Buffer_ReadWrite_Methods` (`tests/Jroc.Tests/Node/Buffer/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Buffer.ExecutionTests.Buffer_Advanced_CoreApis` (`tests/Jroc.Tests/Node/Buffer/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Buffer.ExecutionTests.Buffer_Constructor_Legacy` (`tests/Jroc.Tests/Node/Buffer/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_From_And_IsBuffer` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_Alloc_ByteLength_Concat` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_Slice_Copy_IndexAccess` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_AllocUnsafe_Compare` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_ReadWrite_Methods` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)
 - `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_Advanced_CoreApis` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)
+- `Jroc.Tests.Node.Buffer.GeneratorTests.Buffer_Constructor_Legacy` (`tests/Jroc.Tests/Node/Buffer/GeneratorTests.cs`)

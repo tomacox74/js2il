@@ -1302,7 +1302,7 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
-    private List<BindingInfo> GetPerIterationLexicalBindingsForForInit(HIRStatement? init)
+    private List<BindingInfo> GetLoopHeadLexicalBindingsForForInit(HIRStatement? init)
     {
         var result = new List<BindingInfo>();
 
@@ -1316,7 +1316,7 @@ public sealed partial class HIRToLIRLowerer
             if (st is HIRVariableDeclaration vd)
             {
                 var binding = vd.Name.BindingInfo;
-                if (binding.Kind is BindingKind.Let or BindingKind.Const && binding.IsCaptured)
+                if (binding.Kind is BindingKind.Let or BindingKind.Const)
                 {
                     result.Add(binding);
                 }

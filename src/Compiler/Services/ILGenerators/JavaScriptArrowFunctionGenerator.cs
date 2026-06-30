@@ -100,7 +100,9 @@ namespace Jroc.Services.ILGenerators
                 IR.IRPipelineMetrics.RecordArrowFunctionAttempt(compiledBody != null);
                 if (compiledBody == null)
                 {
-                    throw new NotSupportedException($"IR pipeline could not compile arrow function '{ilMethodName}' in scope '{arrowScope.GetQualifiedName()}'.");
+                    var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+                    var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" IR failure: {lastFailure}";
+                    throw new NotSupportedException($"IR pipeline could not compile arrow function '{ilMethodName}' in scope '{arrowScope.GetQualifiedName()}'.{extra}");
                 }
 
                 var irTb = new TypeBuilder(_metadataBuilder, string.Empty, arrowTypeName);
@@ -116,7 +118,9 @@ namespace Jroc.Services.ILGenerators
             IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!mdh.IsNil);
             if (mdh.IsNil)
             {
-                throw new NotSupportedException($"IR pipeline could not compile arrow function '{arrowTypeName}' in scope '{arrowScope.GetQualifiedName()}'.");
+                var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+                var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" IR failure: {lastFailure}";
+                throw new NotSupportedException($"IR pipeline could not compile arrow function '{arrowTypeName}' in scope '{arrowScope.GetQualifiedName()}'.{extra}");
             }
 
             _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, mdh);

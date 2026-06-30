@@ -96,5 +96,11 @@ namespace Jroc.Tests.ArrowFunction
         [Fact]
         public Task ArrowFunction_RestParameters_WithNamedParams() { var testName = nameof(ArrowFunction_RestParameters_WithNamedParams); return GenerateTest(testName); }
 
+        [Fact]
+        public Task ArrowFunction_ForLetBodyBlockClosure() { var testName = nameof(ArrowFunction_ForLetBodyBlockClosure); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ArrowFunction_ForOfIterableArrowCallback() { var testName = nameof(ArrowFunction_ForOfIterableArrowCallback); return GenerateTest(testName); }
+
     }
 }

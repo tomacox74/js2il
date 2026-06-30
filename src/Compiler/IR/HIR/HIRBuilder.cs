@@ -2353,6 +2353,8 @@ class HIRMethodBuilder
                     _currentScope = forScope ?? previousForOfScope;
                     if (!TryParseExpression(forOfStmt.Right, out var iterableExpr))
                     {
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            $"HIR parse failed for for-of iterable expression {forOfStmt.Right.Type}");
                         _currentScope = previousForOfScope;
                         return false;
                     }
@@ -2367,12 +2369,16 @@ class HIRMethodBuilder
                     {
                         if (declIdNode == null)
                         {
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                "HIR parse failed for for-of declaration without an id");
                             _currentScope = previousForOfScope;
                             return false;
                         }
 
                         if (!TryParsePattern(declIdNode, out targetPattern))
                         {
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                $"HIR parse failed for for-of declaration pattern {declIdNode.Type}");
                             _currentScope = previousForOfScope;
                             return false;
                         }
@@ -2384,6 +2390,8 @@ class HIRMethodBuilder
                         var symbol = _currentScope.FindSymbol(id.Name);
                         if (symbol == null)
                         {
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                $"HIR parse failed to resolve for-of target identifier {id.Name}");
                             _currentScope = previousForOfScope;
                             return false;
                         }
@@ -2393,18 +2401,24 @@ class HIRMethodBuilder
                     {
                         if (!TryParsePattern(forOfStmt.Left, out targetPattern))
                         {
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                $"HIR parse failed for for-of target pattern {forOfStmt.Left.Type}");
                             _currentScope = previousForOfScope;
                             return false;
                         }
                     }
                     else
                     {
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            $"HIR parse rejected unsupported for-of target {forOfStmt.Left.Type}");
                         _currentScope = previousForOfScope;
                         return false;
                     }
 
                     if (!TryParseNestedStatement(forOfStmt.Body, out var bodyStmt))
                     {
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            $"HIR parse failed for for-of body statement {forOfStmt.Body.Type}");
                         _currentScope = previousForOfScope;
                         return false;
                     }
@@ -3223,6 +3237,8 @@ class HIRMethodBuilder
 
                 if (!TryParseExpression(callExpr.Callee, out calleeExpr))
                 {
+                    Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                        $"HIR parse failed for call callee expression {callExpr.Callee.Type}");
                     return false;
                 }
 
@@ -3233,6 +3249,8 @@ class HIRMethodBuilder
                     {
                         if (!TryParseExpression(spread.Argument, out var spreadArg) || spreadArg == null)
                         {
+                            Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                                $"HIR parse failed for call spread argument {spread.Argument.Type}");
                             return false;
                         }
                         argExprs.Add(new HIRSpreadElement(spreadArg));
@@ -3241,6 +3259,8 @@ class HIRMethodBuilder
 
                     if (!TryParseExpression(arg, out var argHirExpr) || argHirExpr == null)
                     {
+                        Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
+                            $"HIR parse failed for call argument {arg.Type}");
                         return false;
                     }
                     argExprs.Add(argHirExpr);
@@ -3689,7 +3709,8 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                var arrowScope = FindChildScopeForAstNode(arrowExpr);
+                var arrowScope = FindChildScopeForAstNode(arrowExpr)
+                    ?? FindDescendantArrowScopeForAstNode(arrowExpr);
                 if (arrowScope == null)
                 {
                     return false;
@@ -3702,15 +3723,16 @@ class HIRMethodBuilder
                     assignmentTarget = arrowScope.Name.Substring("ArrowFunction_".Length);
                 }
 
-                var root = _currentScope;
+                var declaringScope = arrowScope.Parent ?? _currentScope;
+                var root = declaringScope;
                 while (root.Parent != null)
                 {
                     root = root.Parent;
                 }
                 var moduleName = root.Name;
-                var declaringScopeName = _currentScope.Kind == ScopeKind.Global
+                var declaringScopeName = declaringScope.Kind == ScopeKind.Global
                     ? moduleName
-                    : $"{moduleName}/{_currentScope.GetQualifiedName()}";
+                    : $"{moduleName}/{declaringScope.GetQualifiedName()}";
 
                 var arrowCallableId = new CallableId
                 {
@@ -4169,5 +4191,37 @@ class HIRMethodBuilder
         }
 
         return null;
+    }
+
+    private Scope? FindDescendantArrowScopeForAstNode(ArrowFunctionExpression arrow)
+    {
+        var arrowName = $"ArrowFunction_L{arrow.Location.Start.Line}C{arrow.Location.Start.Column + 1}";
+        var root = _currentScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        static Scope? Search(Scope scope, ArrowFunctionExpression arrow, string arrowName)
+        {
+            foreach (var child in scope.Children)
+            {
+                if (child.Kind == ScopeKind.Function
+                    && (ReferenceEquals(child.AstNode, arrow) || child.Name == arrowName))
+                {
+                    return child;
+                }
+
+                var nested = Search(child, arrow, arrowName);
+                if (nested != null)
+                {
+                    return nested;
+                }
+            }
+
+            return null;
+        }
+
+        return Search(root, arrow, arrowName);
     }
 }
