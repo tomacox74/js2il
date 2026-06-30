@@ -19,6 +19,16 @@ namespace JavaScriptRuntime.Node
         {
         }
 
+        public Buffer(object? value)
+            : this(CreateLegacyConstructorBytes(value, null))
+        {
+        }
+
+        public Buffer(object? value, object? encoding)
+            : this(CreateLegacyConstructorBytes(value, encoding))
+        {
+        }
+
         private Buffer(byte[] bytes, int offset, int length)
         {
             _bytes = bytes ?? System.Array.Empty<byte>();
@@ -924,6 +934,16 @@ namespace JavaScriptRuntime.Node
             var result = new byte[_length];
             System.Buffer.BlockCopy(_bytes, _offset, result, 0, _length);
             return result;
+        }
+
+        private static byte[] CreateLegacyConstructorBytes(object? value, object? encoding)
+        {
+            if (value is sbyte or byte or short or ushort or int or uint or long or ulong or float or double or decimal)
+            {
+                return GC.AllocateUninitializedArray<byte>(ToLength(value));
+            }
+
+            return from(value, encoding).ToByteArray();
         }
 
         private static byte ToUint8(object? value)
