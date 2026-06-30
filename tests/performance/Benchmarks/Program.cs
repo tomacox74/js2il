@@ -25,7 +25,7 @@ else
 
         if (programArgs.Length > 0 && programArgs[0] == "--phased")
         {
-            // Run phased benchmarks (jroc compile/execute plus Jint prepare/prepared execution)
+            // Run phased benchmarks (jroc compile/execute, Jint prepared execution, Okojo execution)
             switcher = BenchmarkSwitcher.FromTypes([typeof(JrocPhasedBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
@@ -51,7 +51,7 @@ Console.WriteLine("Results are saved in BenchmarkDotNet.Artifacts/");
 Console.WriteLine("\nFor more options:");
 Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparison");
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
-Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared comparison");
+Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
 
