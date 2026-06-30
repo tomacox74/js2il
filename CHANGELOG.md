@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/benchmarks: add Okojo execution-only coverage to phased BenchmarkDotNet runs with a dedicated `okojo-execute` counter.
 
 ## v0.11.6 - 2026-06-30
 

@@ -11,12 +11,17 @@ using Benchmarks.Runtimes;
 using Jint;
 using Acornima.Ast;
 using Microsoft.Extensions.DependencyInjection;
+using Okojo.Bytecode;
+using Okojo.Compiler;
+using Okojo.Parsing;
+using Okojo.Runtime;
 
 namespace Benchmarks;
 
 /// <summary>
 /// jroc-specific benchmark that separates compile and execute phases.
-/// This provides detailed timing for AOT compilation vs execution.
+/// This provides detailed timing for AOT compilation vs execution, alongside
+/// execution-only counters for interpreted runtimes.
 /// </summary>
 [MemoryDiagnoser]
 [Config(typeof(FullParamsConfig))]
@@ -29,6 +34,9 @@ public class JrocPhasedBenchmarks
     private readonly Dictionary<string, string> _scripts = new();
     private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Prepared<Script>> _jintPreparedScripts = new();
+    private readonly Dictionary<string, JsRuntime> _okojoPreparedRuntimes = new();
+    private readonly Dictionary<string, JsScript> _okojoPreparedScripts = new();
+    private readonly Dictionary<string, string> _okojoCompileFailures = new();
     private readonly Dictionary<string, AssemblyLoadContext> _compiledLoadContexts = new();
     private readonly Dictionary<string, Assembly> _compiledAssemblies = new();
     private readonly Dictionary<string, string> _compiledModuleIds = new();
@@ -52,6 +60,24 @@ public class JrocPhasedBenchmarks
             _scripts[scenarioKey] = scriptContent;
             _scenarioKeyToScriptName[scenarioKey] = scriptName;
             _jintPreparedScripts[scenarioKey] = Engine.PrepareScript(scriptContent, scriptFile);
+
+            JsRuntime? runtime = null;
+            try
+            {
+                runtime = JsRuntime.CreateBuilder().Build();
+                var program = JavaScriptParser.ParseScript(scriptContent);
+                _okojoPreparedScripts[scenarioKey] = JsCompiler.Compile(runtime.MainRealm, program);
+                _okojoPreparedRuntimes[scenarioKey] = runtime;
+                runtime = null;
+            }
+            catch (Exception ex)
+            {
+                _okojoCompileFailures[scenarioKey] = $"Okojo compilation failed: {ex.Message}";
+            }
+            finally
+            {
+                runtime?.Dispose();
+            }
         }
 
         // Create temp directory for compiled outputs
@@ -116,12 +142,20 @@ public class JrocPhasedBenchmarks
             loadContext.Unload();
         }
 
+        foreach (var runtime in _okojoPreparedRuntimes.Values)
+        {
+            runtime.Dispose();
+        }
+
         _compiledLoadContexts.Clear();
         _compiledAssemblies.Clear();
         _compiledModuleIds.Clear();
         _jrocCompileFailures.Clear();
         _scenarioKeyToScriptName.Clear();
         _jintPreparedScripts.Clear();
+        _okojoPreparedRuntimes.Clear();
+        _okojoPreparedScripts.Clear();
+        _okojoCompileFailures.Clear();
 
         GC.Collect();
         GC.WaitForPendingFinalizers();
@@ -221,6 +255,19 @@ public class JrocPhasedBenchmarks
     {
         var engine = new Engine(options => options.Strict());
         engine.Execute(_jintPreparedScripts[ScriptName]);
+    }
+
+    [Benchmark(Description = "okojo-execute")]
+    public void Okojo_ExecuteOnly()
+    {
+        if (_okojoCompileFailures.TryGetValue(ScriptName, out var failure))
+        {
+            throw new InvalidOperationException(
+                $"Okojo phased setup failed for scenario '{ResolveScriptName(ScriptName)}': {failure}");
+        }
+
+        var runtime = _okojoPreparedRuntimes[ScriptName];
+        runtime.MainRealm.Execute(_okojoPreparedScripts[ScriptName]);
     }
 
     private string ResolveScriptName(string scenarioKey)
