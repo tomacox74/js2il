@@ -21,6 +21,8 @@
 | API | Kind | Status | Docs |
 | --- | ---- | ------ | ---- |
 | argv | property | supported | [docs](https://nodejs.org/api/process.html#processargv) |
+| stdout | property | supported | [docs](https://nodejs.org/api/process.html#processstdout) |
+| stderr | property | supported | [docs](https://nodejs.org/api/process.html#processstderr) |
 | exit() | function | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
 | exit(code) | function | supported | [docs](https://nodejs.org/api/process.html#process_exit_code) |
 | exitCode | property | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
@@ -44,6 +46,22 @@ argv[0] normalized to current script filename; extra host args trimmed in tests.
 **Tests:**
 - `Jroc.Tests.Node.Process.ExecutionTests.Environment_EnumerateProcessArgV` (`tests/Jroc.Tests/Node/Process/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Process.GeneratorTests.Environment_EnumerateProcessArgV` (`tests/Jroc.Tests/Node/Process/GeneratorTests.cs`)
+
+### stdout
+
+Writable stream compatible with `process.stdout.write(...)` for CLI-style output.
+
+**Tests:**
+- `Jroc.Tests.Node.Process.ExecutionTests.Process_Stdout_Stderr_Write` (`tests/Jroc.Tests/Node/Process/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Process.GeneratorTests.Process_Stdout_Stderr_Write` (`tests/Jroc.Tests/Node/Process/GeneratorTests.cs`)
+
+### stderr
+
+Writable stream compatible with `process.stderr.write(...)` for CLI-style error reporting.
+
+**Tests:**
+- `Jroc.Tests.Node.Process.ExecutionTests.Process_Stdout_Stderr_Write` (`tests/Jroc.Tests/Node/Process/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Process.GeneratorTests.Process_Stdout_Stderr_Write` (`tests/Jroc.Tests/Node/Process/GeneratorTests.cs`)
 
 ### exit()
 

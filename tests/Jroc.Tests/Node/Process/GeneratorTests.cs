@@ -11,6 +11,10 @@ namespace Jroc.Tests.Node.Process
             nameof(Environment_EnumerateProcessArgV));
 
         [Fact]
+        public Task Process_Stdout_Stderr_Write() => GenerateTest(
+            nameof(Process_Stdout_Stderr_Write));
+
+        [Fact]
         public Task Process_Exit_NoArg_GeneratesCall() => GenerateTest(
             nameof(Process_Exit_NoArg_GeneratesCall));
 

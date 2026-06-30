@@ -18,12 +18,16 @@ namespace JavaScriptRuntime.Node
         IEnvironment _environment;
         private readonly Lazy<object> _versions;
         private readonly Lazy<object> _env;
+        private readonly Lazy<Writable> _stdout;
+        private readonly Lazy<Writable> _stderr;
 
-        public Process(IEnvironment environment)
+        public Process(IEnvironment environment, ConsoleOutputSinks consoleOutputSinks)
         {
             _environment = environment;
             _versions = new Lazy<object>(CreateVersions);
             _env = new Lazy<object>(CreateEnvSnapshot);
+            _stdout = new Lazy<Writable>(() => new ProcessStdioStream(consoleOutputSinks.Output ?? new DefaultConsoleOutput()));
+            _stderr = new Lazy<Writable>(() => new ProcessStdioStream(consoleOutputSinks.ErrorOutput ?? new DefaultErrorConsoleOutput()));
 
             if (GlobalThis.ServiceProvider != null
                 && GlobalThis.ServiceProvider.TryResolve<ChildProcessIpcChannel>(out var ipcChannel)
@@ -33,6 +37,11 @@ namespace JavaScriptRuntime.Node
                 ipcChannel.Disconnected += () => emit("disconnect");
                 ipcChannel.Error += ex => emit("error", ex as Error ?? new Error(ex.Message, ex));
             }
+        }
+
+        public Process(IEnvironment environment)
+            : this(environment, new ConsoleOutputSinks())
+        {
         }
 
         /// <summary>
@@ -116,6 +125,10 @@ namespace JavaScriptRuntime.Node
                 return new JavaScriptRuntime.Array(new object[] { "dotnet", JavaScriptRuntime.CommonJS.ModuleContext.CreateModuleContext().__filename });
             }
         }
+
+        public Writable stdout => _stdout.Value;
+
+        public Writable stderr => _stderr.Value;
 
         public string cwd()
         {
@@ -330,6 +343,21 @@ namespace JavaScriptRuntime.Node
             }
 
             return null;
+        }
+
+        private sealed class ProcessStdioStream : Writable
+        {
+            private readonly IConsoleOutput _output;
+
+            public ProcessStdioStream(IConsoleOutput output)
+            {
+                _output = output;
+            }
+
+            protected override void InvokeWrite(object? chunk)
+            {
+                _output.Write(DotNet2JSConversions.ToString(chunk));
+            }
         }
     }
 }

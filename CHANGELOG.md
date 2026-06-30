@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - compiler/runtime/tests/docs/nodejs: fix npm-run-all2 module-id compilation by materializing regular `for (let/const ...)` loop-head scopes for nested closures, resolving nested arrow callable IDs from loop-body scopes, and adding legacy `new Buffer(...)` constructor support required by transitive dependencies such as `memorystream`; update Buffer docs.
+- runtime/tests/docs/nodejs: add `process.stdout` and `process.stderr` writable stream support (including `write(...)`) so CLI-style scripts can report errors through process stdio; add Node Process regressions and update process docs.
 
 ## v0.11.5 - 2026-06-29
 
