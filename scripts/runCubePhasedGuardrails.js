@@ -21,6 +21,12 @@ const SMELL_PATTERNS = [
   { key: "getItem", label: "ObjectRuntime::GetItem(", regex: /ObjectRuntime::GetItem\(/g },
 ];
 
+function normalizeScenarioName(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return "";
+  return path.basename(trimmed).replace(/\.js$/i, "");
+}
+
 function printUsage() {
   console.log("Usage: node scripts/runCubePhasedGuardrails.js [options]");
   console.log("");
@@ -32,12 +38,14 @@ function printUsage() {
   console.log("  --no-run                 Skip running benchmarks and only parse existing results.");
   console.log("  --il-smells              Also compile/decompile both cube scenarios and count IL smells.");
   console.log("  --keep-il-artifacts      Keep temporary IL artifacts produced by --il-smells.");
+  console.log("  --scenario <name>        Limit run/output to specific scenario(s). Repeatable.");
   console.log("  --results-file <path>    Override BenchmarkDotNet full-compressed JSON path.");
   console.log("  --output-json <path>     Write machine-readable summary JSON.");
   console.log("  -h, --help               Show this help.");
   console.log("");
   console.log("Examples:");
   console.log("  node scripts/runCubePhasedGuardrails.js --dry");
+  console.log("  node scripts/runCubePhasedGuardrails.js --dry --scenario dromaeo-3d-cube");
   console.log("  node scripts/runCubePhasedGuardrails.js --dry --il-smells");
   console.log("  node scripts/runCubePhasedGuardrails.js --no-run --results-file tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/Benchmarks.JrocPhasedBenchmarks-report-full-compressed.json");
 }
@@ -48,6 +56,7 @@ function parseArgs(argv) {
     noRun: false,
     ilSmells: false,
     keepIlArtifacts: false,
+    scenarios: [],
     resultsFile: "",
     outputJson: "",
   };
@@ -66,6 +75,16 @@ function parseArgs(argv) {
         break;
       case "--keep-il-artifacts":
         args.keepIlArtifacts = true;
+        break;
+      case "--scenario":
+        i += 1;
+        {
+          const scenario = normalizeScenarioName(argv[i] || "");
+          if (!scenario) {
+            throw new Error("Missing value for --scenario");
+          }
+          args.scenarios.push(scenario);
+        }
         break;
       case "--results-file":
         i += 1;
@@ -177,7 +196,18 @@ function pad(value, width) {
   return `${text}${" ".repeat(width - text.length)}`;
 }
 
-function parsePhasedRows(reportPath) {
+function resolveScenarios(argsScenarios) {
+  const chosen = (argsScenarios && argsScenarios.length > 0) ? argsScenarios : TARGET_SCENARIOS;
+  const unique = [];
+  for (const scenario of chosen) {
+    if (!unique.includes(scenario)) {
+      unique.push(scenario);
+    }
+  }
+  return unique;
+}
+
+function parsePhasedRows(reportPath, targetScenarios) {
   if (!fs.existsSync(reportPath)) {
     throw new Error(`Benchmark report not found: ${reportPath}`);
   }
@@ -194,7 +224,7 @@ function parsePhasedRows(reportPath) {
     if (!runtime) continue;
 
     const scenario = parseScenarioName(bench);
-    if (!TARGET_SCENARIOS.includes(scenario)) continue;
+    if (!targetScenarios.includes(scenario)) continue;
 
     const meanNs = toNumber(bench?.Statistics?.Mean);
     const allocatedBytes = toNumber(bench?.Memory?.BytesAllocatedPerOperation);
@@ -213,7 +243,7 @@ function parsePhasedRows(reportPath) {
   }
 
   const rows = [];
-  for (const scenario of TARGET_SCENARIOS) {
+  for (const scenario of targetScenarios) {
     for (const runtime of ["jroc-execute", "jint-execute-prepared", "okojo-execute"]) {
       const key = `${scenario}|${runtime}`;
       if (!byKey.has(key)) {
@@ -243,9 +273,9 @@ function printPhasedSummary(rows) {
   }
 }
 
-function computeRatios(rows) {
+function computeRatios(rows, scenarios) {
   const ratios = [];
-  for (const scenario of TARGET_SCENARIOS) {
+  for (const scenario of scenarios) {
     const scenarioRows = rows.filter((r) => r.scenario === scenario);
     const jroc = scenarioRows.find((r) => r.runtime === "jroc-execute");
     const jint = scenarioRows.find((r) => r.runtime === "jint-execute-prepared");
@@ -281,14 +311,14 @@ function countMatches(text, regex) {
   return matches ? matches.length : 0;
 }
 
-function runIlSmellScan(repoRoot, keepArtifacts) {
+function runIlSmellScan(repoRoot, keepArtifacts, scenarios) {
   runChecked("ilspycmd", ["--version"], { cwd: repoRoot, stdio: "pipe" });
 
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "jroc-cube-il-smells-"));
   const scanResults = [];
 
   try {
-    for (const scenario of TARGET_SCENARIOS) {
+    for (const scenario of scenarios) {
       const scenarioPath = path.join(repoRoot, "tests", "performance", "Benchmarks", "Scenarios", `${scenario}.js`);
       const outDir = path.join(tempRoot, scenario);
       fs.mkdirSync(outDir, { recursive: true });
@@ -358,6 +388,7 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   const repoRoot = findRepoRoot(__dirname);
   const benchmarksDir = path.join(repoRoot, "tests", "performance", "Benchmarks");
+  const targetScenarios = resolveScenarios(args.scenarios);
   const reportPath = args.resultsFile
     ? path.resolve(repoRoot, args.resultsFile)
     : path.join(
@@ -370,36 +401,56 @@ function main() {
         "Benchmarks.JrocPhasedBenchmarks-report-full-compressed.json"
       );
 
+  let rows = [];
   if (!args.noRun) {
-    const dotnetArgs = [
-      "run",
-      "-c",
-      "Release",
-      "--project",
-      path.join(repoRoot, "tests", "performance", "Benchmarks", "Benchmarks.csproj"),
-      "--",
-      "--phased",
-      "--filter",
-      "*dromaeo-3d-cube*",
-    ];
+    const byKey = new Map();
+    for (const scenario of targetScenarios) {
+      const dotnetArgs = [
+        "run",
+        "-c",
+        "Release",
+        "--project",
+        path.join(repoRoot, "tests", "performance", "Benchmarks", "Benchmarks.csproj"),
+        "--",
+        "--phased",
+        "--filter",
+        "*JrocPhasedBenchmarks*",
+        "--scenario",
+        scenario,
+      ];
 
-    if (args.dry) {
-      dotnetArgs.push("--job", "Dry", "--launchCount", "1", "--iterationCount", "1", "--warmupCount", "1");
+      if (args.dry) {
+        dotnetArgs.push("--job", "Dry", "--launchCount", "1", "--iterationCount", "1", "--warmupCount", "1");
+      }
+
+      runChecked("dotnet", dotnetArgs, { cwd: benchmarksDir });
+      const scenarioRows = parsePhasedRows(reportPath, [scenario]);
+      for (const row of scenarioRows) {
+        byKey.set(`${row.scenario}|${row.runtime}`, row);
+      }
     }
 
-    runChecked("dotnet", dotnetArgs, { cwd: benchmarksDir });
+    for (const scenario of targetScenarios) {
+      for (const runtime of ["jroc-execute", "jint-execute-prepared", "okojo-execute"]) {
+        const key = `${scenario}|${runtime}`;
+        if (!byKey.has(key)) {
+          throw new Error(`Missing benchmark row for ${key} after benchmark run`);
+        }
+        rows.push(byKey.get(key));
+      }
+    }
   } else {
     console.log("Skipping benchmark execution (--no-run).");
+    rows = parsePhasedRows(reportPath, targetScenarios);
   }
 
-  const rows = parsePhasedRows(reportPath);
-  const ratios = computeRatios(rows);
+  const ratios = computeRatios(rows, targetScenarios);
   printPhasedSummary(rows);
   printRatios(ratios);
 
   let ilSmells = [];
   if (args.ilSmells) {
-    ilSmells = runIlSmellScan(repoRoot, args.keepIlArtifacts);
+    ilSmells = runIlSmellScan(repoRoot, args.keepIlArtifacts, targetScenarios);
     printIlSmellSummary(ilSmells);
   }
 
@@ -408,6 +459,7 @@ function main() {
     reportPath,
     dry: args.dry,
     noRun: args.noRun,
+    scenarios: targetScenarios,
     rows,
     ratios,
     ilSmells,

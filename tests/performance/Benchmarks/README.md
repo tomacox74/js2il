@@ -99,6 +99,12 @@ Benchmarks jroc compile and execute phases separately, alongside Jint prepare/pr
 dotnet run -c Release -- --phased
 ```
 
+Use `--scenario` to run only one scenario (accepts scenario key, script name, or `<script>.js`):
+
+```powershell
+dotnet run -c Release -- --phased --scenario dromaeo-3d-cube
+```
+
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
 
 #### Cube-focused guardrail workflow
@@ -152,6 +158,9 @@ dotnet run -c Release -- --filter *Jint*
 
 # Run the late-bound dispatch benchmark class only
 dotnet run -c Release -- --dispatch --filter *LateBoundDispatch*
+
+# Run only one phased scenario
+dotnet run -c Release -- --phased --scenario dromaeo-3d-cube
 
 # Export results to JSON
 dotnet run -c Release -- --exporters json
