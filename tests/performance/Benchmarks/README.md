@@ -92,14 +92,37 @@ Compares the hosted .NET runtimes across all scenarios:
 dotnet run -c Release
 ```
 
-#### Phased Comparison (jroc + Jint prepared)
-Benchmarks jroc compile and execute phases separately, alongside Jint prepare and prepared execution for direct comparison:
+#### Phased Comparison (jroc + Jint prepared + Okojo execute)
+Benchmarks jroc compile and execute phases separately, alongside Jint prepare/prepared execution and Okojo execute-only counters:
 
 ```powershell
 dotnet run -c Release -- --phased
 ```
 
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
+
+#### Cube-focused guardrail workflow
+Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:
+
+```powershell
+npm run perf:phased:cube:dry
+```
+
+Optional IL/codegen smell counters (advisory only):
+
+```powershell
+npm run perf:phased:cube:dry:il-smells
+```
+
+The helper script is `scripts/runCubePhasedGuardrails.js`. It reports:
+
+- `jroc-execute`, `jint-execute-prepared`, `okojo-execute` mean/alloc counters for:
+  - `dromaeo-3d-cube`
+  - `dromaeo-3d-cube-modern`
+- relative ratios (`jroc / jint`, `jroc / okojo`) for both time and allocation
+- optional generated-IL smell counts (`newarr System.Object`, `box`, `Closure.InvokeWithArgs*`, `TypeUtilities.ToNumber`, `ObjectRuntime.GetItem`)
+
+For PRs that optimize cube performance, include the before/after benchmark output and the CI run id / Supabase run id used for comparison.
 
 #### Late-Bound Dispatch Comparison
 Runs a research-only microbenchmark that compares `JavaScriptRuntime.Object.CallMember*` against CLR-focused DLR call sites produced by C# `dynamic` and by a custom runtime-name `CallSiteBinder`:
@@ -153,6 +176,7 @@ dotnet run -c Release -- --exporters html,json,markdown
 - **jroc execute (pre-compiled)**: Execution time of pre-compiled assembly
 - **Jint prepare**: Script preparation/parsing phase via `Engine.PrepareScript`
 - **Jint execute (prepared)**: Execution phase using a previously prepared script
+- **Okojo execute**: Execution phase using setup-prepared Okojo bytecode
 
 ### Interpreting Ratios
 
