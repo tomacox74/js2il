@@ -334,6 +334,7 @@ namespace Jroc.Tests
         private sealed class CapturingConsoleOutput : IConsoleOutput
         {
             private readonly StringBuilder _sb = new();
+            public void Write(string text) => _sb.Append(text);
             public void WriteLine(string line) => _sb.AppendLine(line);
             public string GetOutput() => _sb.ToString();
         }

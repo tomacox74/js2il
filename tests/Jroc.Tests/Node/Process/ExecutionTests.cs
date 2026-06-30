@@ -35,6 +35,10 @@ namespace Jroc.Tests.Node.Process
                 });
 
         [Fact]
+        public Task Process_Stdout_Stderr_Write()
+            => ExecutionTest(nameof(Process_Stdout_Stderr_Write));
+
+        [Fact]
         public Task Process_Exit_Code_Sets_ExitCode()
             => ExecutionTest(
                 nameof(Process_Exit_Code_Sets_ExitCode),

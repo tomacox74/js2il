@@ -178,6 +178,8 @@ public class JavaScriptErrorStackTraceTests
     {
         private readonly List<string> _lines = new();
 
+        public void Write(string text) => _lines.Add(text ?? string.Empty);
+
         public void WriteLine(string line) => _lines.Add(line ?? string.Empty);
 
         public string GetOutput()

@@ -11,6 +11,11 @@ namespace JavaScriptRuntime.Tests
         private class TestConsoleOutput : IConsoleOutput
         {
             public List<string> Output = new List<string>();
+            public void Write(string text)
+            {
+                Output.Add(text);
+            }
+
             public void WriteLine(string line)
             {
                 Output.Add(line);
@@ -23,6 +28,11 @@ namespace JavaScriptRuntime.Tests
             public List<string> StdErr = new();
             private readonly bool _isErr;
             public DualTestConsoleOutput(bool isErr) { _isErr = isErr; }
+            public void Write(string text)
+            {
+                if (_isErr) StdErr.Add(text); else StdOut.Add(text);
+            }
+
             public void WriteLine(string line)
             {
                 if (_isErr) StdErr.Add(line); else StdOut.Add(line);

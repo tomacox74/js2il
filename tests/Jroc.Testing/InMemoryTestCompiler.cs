@@ -154,6 +154,9 @@ public sealed class InMemoryConsoleOutput : IConsoleOutput
 {
     private readonly System.Text.StringBuilder _builder = new();
 
+    public void Write(string text)
+        => _builder.Append(text);
+
     public void WriteLine(string line)
         => _builder.AppendLine(line);
 

@@ -1059,6 +1059,7 @@ public class RuntimeServices
     {
         var container = new ServiceContainer();
         container.RegisterInstance(new GlobalThisOptions());
+        container.RegisterInstance(new ConsoleOutputSinks());
         
         // Register default engine dependencies
         container.Register<EngineCore.ITickSource, EngineCore.TickSource>();
