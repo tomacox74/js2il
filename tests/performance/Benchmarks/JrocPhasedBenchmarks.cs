@@ -31,6 +31,8 @@ namespace Benchmarks;
 [JsonExporterAttribute.FullCompressed]
 public class JrocPhasedBenchmarks
 {
+    public static string? ScenarioFilter { get; set; }
+
     private readonly Dictionary<string, string> _scripts = new();
     private readonly Dictionary<string, string> _scenarioKeyToScriptName = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Prepared<Script>> _jintPreparedScripts = new();
@@ -43,12 +45,32 @@ public class JrocPhasedBenchmarks
     private readonly Dictionary<string, string> _jrocCompileFailures = new();
     private string _tempDir = "";
 
+    private static bool MatchesScenarioFilter(BenchmarkScenario scenario)
+    {
+        if (string.IsNullOrWhiteSpace(ScenarioFilter))
+        {
+            return true;
+        }
+
+        return string.Equals(scenario.Key, ScenarioFilter, StringComparison.Ordinal)
+            || string.Equals(scenario.ScriptName, ScenarioFilter, StringComparison.Ordinal)
+            || string.Equals(scenario.ScriptName + ".js", ScenarioFilter, StringComparison.Ordinal);
+    }
+
     [GlobalSetup]
     public void Setup()
     {
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
 
-        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir);
+        var scenarios = BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
+            .Where(MatchesScenarioFilter)
+            .ToList();
+
+        if (scenarios.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"No benchmark scenario matched '{ScenarioFilter}'.");
+        }
 
         for (int i = 0; i < scenarios.Count; i++)
         {
@@ -179,13 +201,10 @@ public class JrocPhasedBenchmarks
 
     public IEnumerable<string> ScriptNames()
     {
-        if (_scripts.Count > 0)
-        {
-            return _scripts.Keys.OrderBy(name => name, StringComparer.Ordinal);
-        }
-
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios");
+
         return BenchmarkScenarioCatalog.LoadScenarios(scriptsDir)
+            .Where(MatchesScenarioFilter)
             .Select(scenario => scenario.Key)
             .Where(name => !string.IsNullOrWhiteSpace(name))
             .OrderBy(name => name, StringComparer.Ordinal);

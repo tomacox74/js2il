@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/benchmarks/tooling: add `scripts/runCubePhasedGuardrails.js` plus npm scripts (`perf:phased:cube*`) to run only the Dromaeo cube phased scenarios and report `jroc-execute` vs `jint-execute-prepared` vs `okojo-execute` time/allocation counters, with optional generated-IL smell counting for allocation/codegen guardrails; add phased benchmark `--scenario` filtering so script selection happens in benchmark setup instead of via BenchmarkDotNet `--filter`.
 
 ## v0.11.7 - 2026-06-30
 

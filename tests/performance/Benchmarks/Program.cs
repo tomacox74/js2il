@@ -41,6 +41,16 @@ else
             switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks)]);
         }
 
+        var scenarioFilter = TakeOption(ref benchmarkArgs, "--scenario");
+        if (!string.IsNullOrWhiteSpace(scenarioFilter))
+        {
+            JrocPhasedBenchmarks.ScenarioFilter = scenarioFilter;
+        }
+        else
+        {
+            JrocPhasedBenchmarks.ScenarioFilter = null;
+        }
+
         var summaries = switcher.Run(benchmarkArgs);
         SetExitCodeFromSummaries(summaries);
     }
@@ -90,4 +100,42 @@ static void SetExitCodeFromSummaries(IEnumerable<Summary> summaries)
     }
 
     Environment.ExitCode = 1;
+}
+
+static string? TakeOption(ref string[] args, string name)
+{
+    for (var i = 0; i < args.Length; i++)
+    {
+        var arg = args[i];
+
+        if (arg.Equals(name, StringComparison.OrdinalIgnoreCase))
+        {
+            if (i + 1 >= args.Length)
+            {
+                throw new ArgumentException($"{name} requires a value.");
+            }
+
+            var value = args[i + 1];
+
+            args = args
+                .Where((_, index) => index != i && index != i + 1)
+                .ToArray();
+
+            return value;
+        }
+
+        var prefix = name + "=";
+        if (arg.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            var value = arg.Substring(prefix.Length);
+
+            args = args
+                .Where((_, index) => index != i)
+                .ToArray();
+
+            return value;
+        }
+    }
+
+    return null;
 }
