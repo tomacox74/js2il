@@ -29,7 +29,87 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 
-const ROOT = path.resolve(__dirname, '..');
+function maybeRunCompiledWithJroc() {
+  if (process.env.JROC_RELEASE_BOOTSTRAPPED === '1') {
+    return;
+  }
+
+  const argv0 = path.basename((process.argv[0] || '').toLowerCase());
+  const runningViaNode = argv0 === 'node' || argv0 === 'node.exe';
+  if (!runningViaNode) {
+    return;
+  }
+
+  const scriptPath = __filename;
+  const outDir = path.join(__dirname, 'out', 'release');
+  const dllPath = path.join(outDir, 'release.dll');
+
+  try {
+    fs.rmSync(outDir, { recursive: true, force: true });
+  } catch {
+    // ignore cleanup errors before compile
+  }
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const compile = cp.spawnSync('jroc', [scriptPath, outDir], {
+    stdio: 'inherit',
+    cwd: path.resolve(__dirname, '..'),
+  });
+  if (compile.error) {
+    throw compile.error;
+  }
+  if (compile.status !== 0) {
+    process.exit(compile.status ?? 1);
+  }
+
+  if (!fs.existsSync(dllPath)) {
+    throw new Error(`Compiled release assembly not found: ${dllPath}`);
+  }
+
+  const forwardedArgs = process.argv.slice(2);
+  const runCompiled = cp.spawnSync('dotnet', [dllPath, ...forwardedArgs], {
+    stdio: 'inherit',
+    cwd: path.resolve(__dirname, '..'),
+    env: { ...process.env, JROC_RELEASE_BOOTSTRAPPED: '1' },
+  });
+  if (runCompiled.error) {
+    throw runCompiled.error;
+  }
+  process.exit(runCompiled.status ?? 1);
+}
+
+maybeRunCompiledWithJroc();
+
+function isRepoRoot(dir) {
+  return (
+    fs.existsSync(path.join(dir, 'CHANGELOG.md')) &&
+    fs.existsSync(path.join(dir, 'scripts', 'release.js')) &&
+    fs.existsSync(path.join(dir, 'src', 'Cli', 'Jroc.csproj'))
+  );
+}
+
+function findRepoRoot() {
+  const starts = [process.cwd(), __dirname, path.resolve(__dirname, '..')];
+  for (const start of starts) {
+    let current = path.resolve(start);
+    while (true) {
+      if (isRepoRoot(current)) {
+        return current;
+      }
+
+      const parent = path.dirname(current);
+      if (parent === current) {
+        break;
+      }
+      current = parent;
+    }
+  }
+
+  // Fallback to original behavior if markers are unavailable.
+  return path.resolve(__dirname, '..');
+}
+
+const ROOT = findRepoRoot();
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 const CSPROJ_PATH = path.join(ROOT, 'src', 'Cli', 'Jroc.csproj');
 const CORE_CSPROJ_PATH = path.join(ROOT, 'src', 'Jroc.Core', 'Jroc.Core.csproj');
@@ -42,6 +122,20 @@ function sleep(ms) {
   const sab = new SharedArrayBuffer(4);
   const i32 = new Int32Array(sab);
   Atomics.wait(i32, 0, 0, ms);
+}
+
+function writeStdout(text) {
+  if (process.stdout && typeof process.stdout.write === 'function') {
+    process.stdout.write(text);
+    return;
+  }
+
+  if (text.endsWith('\n')) {
+    console.log(text.slice(0, -1));
+    return;
+  }
+
+  console.log(text);
 }
 
 function usageAndExit(code = 1) {
@@ -62,6 +156,9 @@ function parseArgs(argv) {
 
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
+    if (typeof a !== 'string') {
+      continue;
+    }
     if (!args.kind && !a.startsWith('--')) {
       args.kind = a;
       continue;
@@ -81,9 +178,17 @@ function parseArgs(argv) {
         break;
       case '--repo':
         args.repo = argv[++i];
+        if (typeof args.repo !== 'string' || !args.repo.trim()) {
+          console.error('Missing --repo value.');
+          usageAndExit(1);
+        }
         break;
       case '--base':
         args.base = argv[++i];
+        if (typeof args.base !== 'string' || !args.base.trim()) {
+          console.error('Missing --base value.');
+          usageAndExit(1);
+        }
         break;
       case '--help':
       case '-h':
@@ -134,7 +239,7 @@ function getEffectiveArgv(processArgv) {
 
 function run(command, { dryRun = false, verbose = false, allowFailure = false } = {}) {
   if (verbose || dryRun) {
-    process.stdout.write(`> ${command}\n`);
+    writeStdout(`> ${command}\n`);
   }
   if (dryRun) return '';
 
@@ -404,9 +509,9 @@ function main() {
   const prLink = urlMatch ? urlMatch[0].trim() : prUrl.trim();
 
   if (!args.merge) {
-    process.stdout.write(`\nCreated PR: ${prLink}\n`);
-    process.stdout.write(`\nNext: merge the PR, then create the GitHub release/tag with:\n`);
-    process.stdout.write(`  node scripts/release.js ${args.kind} --merge\n`);
+    writeStdout(`\nCreated PR: ${prLink}\n`);
+    writeStdout(`\nNext: merge the PR, then create the GitHub release/tag with:\n`);
+    writeStdout(`  node scripts/release.js ${args.kind} --merge\n`);
     return;
   }
 
@@ -418,7 +523,7 @@ function main() {
   // Treat that as a warning and rely on GitHub auto-merge to wait for checks.
   const checksOut = run(`gh pr checks ${prNumber} --repo ${repo} --watch`, { ...args, allowFailure: true });
   if (checksOut && /no checks reported/i.test(checksOut)) {
-    process.stdout.write(`\nNote: no CI checks reported for ${releaseBranch}; waiting for required checks to appear.\n`);
+    writeStdout(`\nNote: no CI checks reported for ${releaseBranch}; waiting for required checks to appear.\n`);
   }
 
   // Some repos require checks to have been reported and passed before merge.
@@ -444,7 +549,7 @@ function main() {
   // Cleanup local release branch
   run(`git branch -D ${releaseBranch}`, { ...args, allowFailure: true });
 
-  process.stdout.write(`\nRelease v${nextVersion} created successfully.\n`);
+  writeStdout(`\nRelease v${nextVersion} created successfully.\n`);
 }
 
 try {
