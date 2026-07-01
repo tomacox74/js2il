@@ -16,6 +16,7 @@ public sealed partial class HIRToLIRLowerer
     private static readonly HashSet<string> NumericMathUnaryFastPathMethods = new(StringComparer.Ordinal)
     {
         "abs",
+        "ceil",
         "round",
         "sqrt",
         "sin",

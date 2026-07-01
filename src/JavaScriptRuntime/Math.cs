@@ -24,14 +24,15 @@ namespace JavaScriptRuntime
         /// Math.ceil(x): returns the smallest integer greater than or equal to x.
         /// For NaN returns NaN; for +/-Infinity returns the same infinity.
         /// </summary>
-        public static double ceil(object? x)
+        public static double ceil(double d)
         {
-            double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
             if (double.IsPositiveInfinity(d)) return double.PositiveInfinity;
             if (double.IsNegativeInfinity(d)) return double.NegativeInfinity;
             return System.Math.Ceiling(d);
         }
+
+        public static double ceil(object? x) => ceil(ToNumber(x));
 
         /// <summary>
         /// Math.sqrt(x): returns the square root of x. If x is negative or NaN, returns NaN. Infinity maps to Infinity.
