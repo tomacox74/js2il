@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler/runtime: avoid materializing boxed property/index assignment results when expression-statement assignments discard the value, emitting void item-store helpers for numeric array/object hot paths while preserving normal assignment-expression values.
 
 ## v0.11.25 - 2026-07-14
 

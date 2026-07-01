@@ -551,6 +551,9 @@ internal sealed partial class LIRToILCompiler
                     var valueStorage = GetTempStorage(setItem.Value);
 
                     bool isResultMaterialized = IsMaterialized(setItem.Result, allocation);
+                    var setItemMethodName = isResultMaterialized
+                        ? nameof(JavaScriptRuntime.ObjectRuntime.SetItem)
+                        : nameof(JavaScriptRuntime.ObjectRuntime.SetItemNoResult);
 
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
                         valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
@@ -562,7 +565,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            setItemMethodName,
                             parameterTypes: new[] { typeof(object), typeof(double), typeof(double), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
@@ -577,7 +580,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            setItemMethodName,
                             parameterTypes: new[] { typeof(object), typeof(string), typeof(double), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
@@ -591,7 +594,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            setItemMethodName,
                             parameterTypes: new[] { typeof(object), typeof(string), typeof(object), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
@@ -605,7 +608,7 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadConstantI4(setItem.ThrowOnError ? 1 : 0);
                         var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.SetItem),
+                            setItemMethodName,
                             parameterTypes: new[] { typeof(object), typeof(object), typeof(object), typeof(bool) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(setItemMethod);
@@ -614,10 +617,6 @@ internal sealed partial class LIRToILCompiler
                     if (isResultMaterialized)
                     {
                         EmitStoreTemp(setItem.Result, ilEncoder, allocation);
-                    }
-                    else
-                    {
-                        ilEncoder.OpCode(ILOpCode.Pop);
                     }
                     break;
                 }
