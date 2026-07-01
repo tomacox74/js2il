@@ -26,6 +26,16 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerAssignmentExpression(assignmentExpr, out _, resultUsed: false);
         }
 
+        if (expression is HIRPropertyAssignmentExpression propertyAssignmentExpr)
+        {
+            return TryLowerPropertyAssignmentExpression(propertyAssignmentExpr, out _, resultUsed: false);
+        }
+
+        if (expression is HIRIndexAssignmentExpression indexAssignmentExpr)
+        {
+            return TryLowerIndexAssignmentExpression(indexAssignmentExpr, out _, resultUsed: false);
+        }
+
         if (expression is HIRSequenceExpression seqExpr)
         {
             for (int i = 0; i < seqExpr.Expressions.Count; i++)

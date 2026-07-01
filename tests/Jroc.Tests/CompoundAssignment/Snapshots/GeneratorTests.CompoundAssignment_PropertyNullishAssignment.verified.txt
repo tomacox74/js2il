@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2169
+			// Method begins at RVA 0x2166
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 269 (0x10d)
+		// Code size: 266 (0x10a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CompoundAssignment_PropertyNullishAssignment/Scope,
@@ -72,75 +72,72 @@
 		IL_0040: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_0045: brtrue IL_004f
 
-		IL_004a: br IL_0062
+		IL_004a: br IL_0061
 
 		IL_004f: ldloc.1
 		IL_0050: ldstr "throw"
 		IL_0055: ldc.i4.0
 		IL_0056: box [System.Runtime]System.Boolean
 		IL_005b: ldc.i4.0
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0061: stloc.2
+		IL_005c: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNoResult(object, string, object, bool)
 
-		IL_0062: ldloc.1
-		IL_0063: ldstr "filter"
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_006d: stloc.2
-		IL_006e: ldloc.2
-		IL_006f: brfalse IL_0084
+		IL_0061: ldloc.1
+		IL_0062: ldstr "filter"
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_006c: stloc.2
+		IL_006d: ldloc.2
+		IL_006e: brfalse IL_0083
 
-		IL_0074: ldloc.2
-		IL_0075: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_007a: brtrue IL_0084
+		IL_0073: ldloc.2
+		IL_0074: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0079: brtrue IL_0083
 
-		IL_007f: br IL_0096
+		IL_007e: br IL_0094
 
-		IL_0084: ldloc.1
-		IL_0085: ldstr "filter"
-		IL_008a: ldstr "all"
-		IL_008f: ldc.i4.0
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0095: stloc.2
+		IL_0083: ldloc.1
+		IL_0084: ldstr "filter"
+		IL_0089: ldstr "all"
+		IL_008e: ldc.i4.0
+		IL_008f: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNoResult(object, string, object, bool)
 
-		IL_0096: ldloc.1
-		IL_0097: ldstr "format"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a1: stloc.2
-		IL_00a2: ldloc.2
-		IL_00a3: brfalse IL_00b8
+		IL_0094: ldloc.1
+		IL_0095: ldstr "format"
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_009f: stloc.2
+		IL_00a0: ldloc.2
+		IL_00a1: brfalse IL_00b6
 
-		IL_00a8: ldloc.2
-		IL_00a9: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_00ae: brtrue IL_00b8
+		IL_00a6: ldloc.2
+		IL_00a7: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_00ac: brtrue IL_00b6
 
-		IL_00b3: br IL_00ca
+		IL_00b1: br IL_00c7
 
-		IL_00b8: ldloc.1
-		IL_00b9: ldstr "format"
-		IL_00be: ldstr "other"
-		IL_00c3: ldc.i4.0
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_00c9: stloc.2
+		IL_00b6: ldloc.1
+		IL_00b7: ldstr "format"
+		IL_00bc: ldstr "other"
+		IL_00c1: ldc.i4.0
+		IL_00c2: call void [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItemNoResult(object, string, object, bool)
 
-		IL_00ca: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cf: ldloc.1
-		IL_00d0: ldstr "throw"
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00df: pop
-		IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e5: ldloc.1
-		IL_00e6: ldstr "filter"
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00f0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f5: pop
-		IL_00f6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00fb: ldloc.1
-		IL_00fc: ldstr "format"
-		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0106: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_010b: pop
-		IL_010c: ret
+		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cc: ldloc.1
+		IL_00cd: ldstr "throw"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00dc: pop
+		IL_00dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e2: ldloc.1
+		IL_00e3: ldstr "filter"
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f2: pop
+		IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f8: ldloc.1
+		IL_00f9: ldstr "format"
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0103: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0108: pop
+		IL_0109: ret
 	} // end of method CompoundAssignment_PropertyNullishAssignment::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_PropertyNullishAssignment
@@ -152,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2172
+		// Method begins at RVA 0x216f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

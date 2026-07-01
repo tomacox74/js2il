@@ -13,7 +13,7 @@ public sealed partial class HIRToLIRLowerer
     private bool UsesStrictAssignmentSemantics()
         => _scope == null || Jroc.Utilities.ArgumentsObjectSemantics.IsStrictScope(_scope);
 
-    private bool TryLowerPropertyAssignmentTarget(HIRExpression objectExpr, string propertyName, TempVariable valueToStore, out TempVariable resultTempVar)
+    private bool TryLowerPropertyAssignmentTarget(HIRExpression objectExpr, string propertyName, TempVariable valueToStore, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
 
@@ -30,7 +30,7 @@ public sealed partial class HIRToLIRLowerer
                 IsPrivateField: false,
                 fieldValueToStore));
 
-            resultTempVar = fieldValueToStore;
+            resultTempVar = resultUsed ? fieldValueToStore : default;
             return true;
         }
 
@@ -56,11 +56,11 @@ public sealed partial class HIRToLIRLowerer
         var setResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        resultTempVar = setResult;
+        resultTempVar = resultUsed ? setResult : default;
         return true;
     }
 
-    private bool TryLowerIndexAssignmentTarget(HIRExpression objectExpr, HIRExpression indexExpr, TempVariable valueToStore, out TempVariable resultTempVar)
+    private bool TryLowerIndexAssignmentTarget(HIRExpression objectExpr, HIRExpression indexExpr, TempVariable valueToStore, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
 
@@ -80,7 +80,7 @@ public sealed partial class HIRToLIRLowerer
                 IsPrivateField: false,
                 fieldValueToStore));
 
-            resultTempVar = fieldValueToStore;
+            resultTempVar = resultUsed ? fieldValueToStore : default;
             return true;
         }
 
@@ -113,11 +113,11 @@ public sealed partial class HIRToLIRLowerer
         var setResult = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        resultTempVar = setResult;
+        resultTempVar = resultUsed ? setResult : default;
         return true;
     }
 
-    private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
+    private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
 
@@ -136,7 +136,6 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedKey, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-            resultTempVar = CreateTempVariable();
             var evalRightLabel = CreateLabel();
             var endLabel = CreateLabel();
 
@@ -148,8 +147,16 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
 
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
-            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            if (resultUsed)
+            {
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+                _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
             ClearNumericRefinementsAtLabel();
@@ -163,11 +170,17 @@ public sealed partial class HIRToLIRLowerer
             var setResult = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, rhsValue, setResult, UsesStrictAssignmentSemantics()));
             DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
+            if (resultUsed)
+            {
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
             ClearNumericRefinementsAtLabel();
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            if (resultUsed)
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
             return true;
         }
 
@@ -206,10 +219,10 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        return TryLowerPropertyAssignmentTarget(assignExpr.Object, assignExpr.PropertyName, valueToStore, out resultTempVar);
+        return TryLowerPropertyAssignmentTarget(assignExpr.Object, assignExpr.PropertyName, valueToStore, out resultTempVar, resultUsed);
     }
 
-    private bool TryLowerIndexAssignmentExpression(HIRIndexAssignmentExpression assignExpr, out TempVariable resultTempVar)
+    private bool TryLowerIndexAssignmentExpression(HIRIndexAssignmentExpression assignExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
 
@@ -243,7 +256,6 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-            resultTempVar = CreateTempVariable();
             var evalRightLabel = CreateLabel();
             var endLabel = CreateLabel();
 
@@ -255,8 +267,16 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
 
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
-            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            if (resultUsed)
+            {
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+                _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
             ClearNumericRefinementsAtLabel();
@@ -276,11 +296,17 @@ public sealed partial class HIRToLIRLowerer
             var setResult = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, rhsValue, setResult, UsesStrictAssignmentSemantics()));
             DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
+            if (resultUsed)
+            {
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(setResult, resultTempVar));
+            }
 
             _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
             ClearNumericRefinementsAtLabel();
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            if (resultUsed)
+            {
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
             return true;
         }
 
@@ -334,7 +360,7 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        return TryLowerIndexAssignmentTarget(assignExpr.Object, assignExpr.Index, valueToStore, out resultTempVar);
+        return TryLowerIndexAssignmentTarget(assignExpr.Object, assignExpr.Index, valueToStore, out resultTempVar, resultUsed);
     }
 
     private bool TryLowerDestructuringAssignmentExpression(HIRDestructuringAssignmentExpression assignExpr, out TempVariable resultTempVar)
