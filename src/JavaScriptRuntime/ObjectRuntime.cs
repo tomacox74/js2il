@@ -928,6 +928,9 @@ namespace JavaScriptRuntime
             return SetProperty(obj, propName, value, throwOnError);
         }
 
+        public static void SetItemNoResult(object? obj, object index, object? value, bool throwOnError)
+            => SetItem(obj, index, value, throwOnError);
+
         /// <summary>
         /// Fast-path overload for string key writes.
         /// Avoids boxing at the call site when the compiler has proven the key is a string.
@@ -1013,6 +1016,9 @@ namespace JavaScriptRuntime
             // Generic object: treat as property assignment
             return SetProperty(obj, key, value, throwOnError);
         }
+
+        public static void SetItemNoResult(object? obj, string key, object? value, bool throwOnError)
+            => SetItem(obj, key, value, throwOnError);
 
         /// <summary>
         /// Fast-path overload for string key writes with numeric values.
@@ -1103,6 +1109,87 @@ namespace JavaScriptRuntime
 
             // Generic object: treat as property assignment
             return SetProperty(obj, key, value, throwOnError);
+        }
+
+        public static void SetItemNoResult(object? obj, string key, double value, bool throwOnError)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            if (obj is JavaScriptRuntime.Proxy)
+            {
+                SetProperty(obj, key, value, throwOnError);
+                return;
+            }
+
+            if (obj is string)
+            {
+                return;
+            }
+
+            bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
+
+            if (obj is System.Dynamic.ExpandoObject)
+            {
+                SetProperty(obj, key, value, throwOnError);
+                return;
+            }
+
+            if (obj is Array array)
+            {
+                if (!isIndex)
+                {
+                    if (string.Equals(key, "length", StringComparison.Ordinal))
+                    {
+                        array.length = value;
+                        return;
+                    }
+
+                    SetProperty(array, key, value, throwOnError);
+                    return;
+                }
+
+                if (!array.HasOwnIndex(intIndex)
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, key, value, throwOnError))
+                {
+                    return;
+                }
+
+                array[intIndex] = value;
+                return;
+            }
+
+            if (obj is TypedArrayBase typedArray)
+            {
+                if (!isIndex)
+                {
+                    SetProperty(typedArray, key, value, throwOnError);
+                    return;
+                }
+
+                typedArray[(double)intIndex] = value;
+                return;
+            }
+
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!isIndex)
+                {
+                    SetProperty(buffer, key, value, throwOnError);
+                    return;
+                }
+                buffer[(double)intIndex] = value;
+                return;
+            }
+
+            SetProperty(obj, key, value, throwOnError);
         }
 
         /// <summary>
@@ -1203,6 +1290,84 @@ namespace JavaScriptRuntime
 
             // Fallback: treat numeric index as a property key string.
             return SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError) ?? value;
+        }
+
+        public static void SetItemNoResult(object? obj, double index, double value, bool throwOnError)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            var isCanonicalArrayIndex = !double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue;
+            var intIndex = isCanonicalArrayIndex ? (int)index : 0;
+
+            if (obj is string)
+            {
+                return;
+            }
+
+            if (obj is Array array)
+            {
+                if (!isCanonicalArrayIndex)
+                {
+                    var nonCanonicalIndexKey = DotNet2JSConversions.ToString(index);
+                    SetProperty(array, nonCanonicalIndexKey, value, throwOnError);
+                    return;
+                }
+
+                if (!PropertyDescriptorStore.HasAny(array) && array.HasOwnIndex(intIndex))
+                {
+                    array[intIndex] = value;
+                    return;
+                }
+
+                var canonicalIndexKey = DotNet2JSConversions.ToString(index);
+                if (!array.HasOwnIndex(intIndex)
+                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, canonicalIndexKey, value, throwOnError))
+                {
+                    return;
+                }
+
+                array[intIndex] = value;
+                return;
+            }
+
+            if (obj is TypedArrayBase typedArray)
+            {
+                if (isCanonicalArrayIndex && intIndex < (int)typedArray.length)
+                {
+                    typedArray.SetFromDouble(intIndex, value);
+                }
+                return;
+            }
+
+            if (obj is JavaScriptRuntime.Node.Buffer buffer)
+            {
+                if (!double.IsNaN(index) && !double.IsInfinity(index) && (index % 1.0 == 0.0))
+                {
+                    if (index >= 0 && index <= int.MaxValue)
+                    {
+                        int bufferIndex = (int)index;
+                        if (bufferIndex < (int)buffer.length)
+                        {
+                            buffer[(double)bufferIndex] = value;
+                        }
+                    }
+                }
+                return;
+            }
+
+            SetProperty(obj, DotNet2JSConversions.ToString(index), value, throwOnError);
         }
 
         /// <summary>
