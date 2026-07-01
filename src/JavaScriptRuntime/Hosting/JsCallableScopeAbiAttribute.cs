@@ -90,6 +90,26 @@ internal static class JsCallableScopeAbiResolver
             && string.Equals(parameters[newTargetIndex].Name, "newTarget", StringComparison.Ordinal);
     }
 
+    public static bool HasNewTargetParameter(Delegate del, ParameterInfo[] parameters, CallableScopeAbiKind kind)
+    {
+        ArgumentNullException.ThrowIfNull(del);
+        ArgumentNullException.ThrowIfNull(parameters);
+
+        if (HasNewTargetParameter(parameters, kind))
+        {
+            return true;
+        }
+
+        int newTargetIndex = kind == CallableScopeAbiKind.NoScopes ? 0 : 1;
+        if (parameters.Length <= newTargetIndex || parameters[newTargetIndex].ParameterType != typeof(object))
+        {
+            return false;
+        }
+
+        var abiSource = GetAbiSourceDelegate(del);
+        return TryResolveFromAttribute(abiSource.Method, out _);
+    }
+
     public static object? GetSingleScopeArgument(object[] scopes, Type? singleScopeType)
     {
         ArgumentNullException.ThrowIfNull(scopes);
