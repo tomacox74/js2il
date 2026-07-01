@@ -54,10 +54,14 @@ namespace Jroc.SymbolTables
         private static void MarkWritten(Scope scope, string name)
         {
             var binding = TryResolveBinding(scope, name);
-            if (binding != null)
+            if (binding == null)
             {
-                binding.HasWrite = true;
+                // Ensure unresolved assignment/update targets are materialized as global bindings
+                // before recording write metadata.
+                binding = scope.FindSymbol(name).BindingInfo;
             }
+
+            binding.HasWrite = true;
         }
 
         private bool TryBuildDirectEvalLiteralScope(Scope globalScope, Scope currentScope, CallExpression callExpr)
@@ -1300,6 +1304,14 @@ namespace Jroc.SymbolTables
                     {
                         MarkWritten(currentScope, assignId.Name);
                     }
+                    else if (assignExpr.Left is MemberExpression { Object: Identifier memberObjectId }
+                        && string.Equals(memberObjectId.Name, "Math", StringComparison.Ordinal))
+                    {
+                        // Math.* writes can replace built-in methods (e.g., Math.abs = fn).
+                        // Mark Math as written so intrinsic fast-paths can conservatively fall back
+                        // to normal dynamic property/call semantics.
+                        MarkWritten(currentScope, memberObjectId.Name);
+                    }
                     BuildScopeRecursive(globalScope, assignExpr.Right, currentScope);
                     BuildScopeRecursive(globalScope, assignExpr.Left, currentScope);
                     break;
@@ -1307,6 +1319,11 @@ namespace Jroc.SymbolTables
                     if (updateExpr.Argument is Identifier updateId)
                     {
                         MarkWritten(currentScope, updateId.Name);
+                    }
+                    else if (updateExpr.Argument is MemberExpression { Object: Identifier memberObjectId }
+                        && string.Equals(memberObjectId.Name, "Math", StringComparison.Ordinal))
+                    {
+                        MarkWritten(currentScope, memberObjectId.Name);
                     }
                     BuildScopeRecursive(globalScope, updateExpr.Argument, currentScope);
                     break;

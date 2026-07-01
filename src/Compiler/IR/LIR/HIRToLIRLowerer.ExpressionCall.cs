@@ -760,10 +760,12 @@ public sealed partial class HIRToLIRLowerer
         {
             var intrinsicName = calleeGlobalVar.Name.Name;
             var methodName = calleePropAccess.PropertyName;
+            var canUseIntrinsicStatic = !string.Equals(intrinsicName, "Math", StringComparison.Ordinal)
+                || IsStableGlobalMathBinding(calleeGlobalVar.Name);
 
             // Try to resolve the intrinsic type via IntrinsicObjectRegistry
             var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(intrinsicName);
-            if (intrinsicType != null)
+            if (intrinsicType != null && canUseIntrinsicStatic)
             {
                 // Check if there's a matching static method
                 var staticMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
@@ -794,6 +796,27 @@ public sealed partial class HIRToLIRLowerer
                     // fall back to generic member-dispatch below.
                     if (chosen != null)
                     {
+                        if (!hasSpreadArgs
+                            && string.Equals(intrinsicName, "Math", StringComparison.Ordinal)
+                            && callExpr.Arguments.Length == 1
+                            && IsNumericMathUnaryFastPathMethod(methodName))
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[0], out var mathArgTemp))
+                            {
+                                return false;
+                            }
+
+                            var mathArgStorage = GetTempStorage(mathArgTemp);
+                            var mathArg = (mathArgStorage.Kind == ValueStorageKind.UnboxedValue
+                                           && mathArgStorage.ClrType == typeof(double))
+                                ? mathArgTemp
+                                : EnsureObject(mathArgTemp);
+
+                            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, new[] { mathArg }, resultTempVar));
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                            return true;
+                        }
+
                         if (hasSpreadArgs)
                         {
                             // Spread call-sites must route through an args array.

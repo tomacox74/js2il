@@ -35,5 +35,11 @@ namespace Jroc.Tests.Math
 
         [Fact]
         public Task Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes() { var testName = nameof(Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Math_ShadowedAndReplaced_Dispatch() { var testName = nameof(Math_ShadowedAndReplaced_Dispatch); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Math_UnboxedUnaryFastPathAndPiFold() { var testName = nameof(Math_UnboxedUnaryFastPathAndPiFold); return GenerateTest(testName); }
     }
 }

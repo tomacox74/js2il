@@ -14,6 +14,12 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        if (binaryExpr.Operator == Acornima.Operator.Division
+            && TryFoldStableMathPiOver180(binaryExpr, resultTempVar))
+        {
+            return true;
+        }
+
         // IMPORTANT: logical operators must short-circuit; do not lower RHS eagerly.
         if (!TryLowerExpression(binaryExpr.Left, out var leftTempVar))
         {
@@ -798,6 +804,42 @@ public sealed partial class HIRToLIRLowerer
             default:
                 return false;
         }
+    }
+
+    private bool TryFoldStableMathPiOver180(HIRBinaryExpression binaryExpr, TempVariable resultTempVar)
+    {
+        if (binaryExpr.Left is not HIRPropertyAccessExpression
+            {
+                PropertyName: "PI",
+                Object: HIRVariableExpression mathVar
+            }
+            || !IsStableGlobalMathBinding(mathVar.Name))
+        {
+            return false;
+        }
+
+        if (binaryExpr.Right is not HIRLiteralExpression { Kind: JavascriptType.Number } rightLiteral)
+        {
+            return false;
+        }
+
+        var rightValue = rightLiteral.Value switch
+        {
+            double d => d,
+            float f => f,
+            int i => i,
+            long l => l,
+            _ => double.NaN
+        };
+
+        if (rightValue != 180.0)
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(global::System.Math.PI / 180.0, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        return true;
     }
 
     private TempVariable EmitConstString(string value)
