@@ -1,0 +1,290 @@
+﻿// IL code: ArrowFunction_ConstArrowSelfRecursion_DirectCall
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit ArrowFunction_L3C14
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Scope
+			extends [System.Runtime]System.Object
+		{
+			.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+				01 00 0b 53 63 6f 70 65 20 6e 3d 7b 6e 7d 00 00
+			)
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L4C16
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x21d1
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L4C16::.ctor
+
+			} // end of class Block_L4C16
+
+
+			// Fields
+			.field public object n
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x21c8
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Scope::.ctor
+
+		} // end of class Scope
+
+
+		// Methods
+		.method public hidebysig static 
+			object __js_call__ (
+				class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope scope,
+				object newTarget,
+				object n
+			) cil managed 
+		{
+			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
+				01 00 01 00 00 00 01 00 54 08 1c 53 69 6e 67 6c
+				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
+				74 61 54 6f 6b 65 6e 04 00 00 02
+			)
+			// Method begins at RVA 0x2128
+			// Header size: 12
+			// Code size: 128 (0x80)
+			.maxstack 8
+			.locals init (
+				[0] class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/ArrowFunction_L3C14/Scope/Block_L4C16,
+				[1] object,
+				[2] float64,
+				[3] object,
+				[4] object
+			)
+
+			IL_0000: ldarg.2
+			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0006: ldc.r8 0.0
+			IL_000f: cgt
+			IL_0011: ldc.i4.0
+			IL_0012: ceq
+			IL_0014: brfalse IL_002e
+
+			IL_0019: newobj instance void Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/ArrowFunction_L3C14/Scope/Block_L4C16::.ctor()
+			IL_001e: stloc.0
+			IL_001f: ldc.r8 0.0
+			IL_0028: box [System.Runtime]System.Double
+			IL_002d: ret
+
+			IL_002e: ldarg.0
+			IL_002f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::values
+			IL_0034: ldarg.2
+			IL_0035: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_003a: pop
+			IL_003b: ldarg.0
+			IL_003c: ldfld object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::loop
+			IL_0041: ldstr "Cannot access 'loop' before initialization"
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_004b: stloc.1
+			IL_004c: ldloc.1
+			IL_004d: pop
+			IL_004e: ldarg.2
+			IL_004f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0054: stloc.2
+			IL_0055: ldloc.2
+			IL_0056: ldc.r8 1
+			IL_005f: sub
+			IL_0060: box [System.Runtime]System.Double
+			IL_0065: stloc.3
+			IL_0066: ldarg.0
+			IL_0067: castclass Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope
+			IL_006c: ldnull
+			IL_006d: ldloc.3
+			IL_006e: call object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/ArrowFunction_L3C14::__js_call__(class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope, object, object)
+			IL_0073: stloc.1
+			IL_0074: ldloc.1
+			IL_0075: ldloc.2
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_007b: stloc.s 4
+			IL_007d: ldloc.s 4
+			IL_007f: ret
+		} // end of method ArrowFunction_L3C14::__js_call__
+
+	} // end of class ArrowFunction_L3C14
+
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		.custom instance void [System.Runtime]System.Diagnostics.DebuggerDisplayAttribute::.ctor(string) = (
+			01 00 22 53 63 6f 70 65 20 76 61 6c 75 65 73 3d
+			7b 76 61 6c 75 65 73 7d 2c 20 6c 6f 6f 70 3d 7b
+			6c 6f 6f 70 7d 00 00
+		)
+		// Fields
+		.field public class [JavaScriptRuntime]JavaScriptRuntime.Array values
+		.field public object loop
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x21b4
+			// Header size: 1
+			// Code size: 19 (0x13)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: ldarg.0
+			IL_0007: ldsfld object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::TemporalDeadZoneSentinel
+			IL_000c: stfld object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::loop
+			IL_0011: nop
+			IL_0012: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 202 (0xca)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope,
+			[1] object,
+			[2] string
+		)
+
+		IL_0000: newobj instance void Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.0
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::values
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: ldc.i4.0
+		IL_001d: ldelem.ref
+		IL_001e: castclass Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope
+		IL_0023: ldftn object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/ArrowFunction_L3C14::__js_call__(class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope, object, object)
+		IL_0029: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0042: ldc.i4.1
+		IL_0043: conv.r8
+		IL_0044: ldstr ""
+		IL_0049: ldc.i4.0
+		IL_004a: ldc.i4.1
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0055: stloc.1
+		IL_0056: ldloc.1
+		IL_0057: ldstr "loop"
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0061: stloc.1
+		IL_0062: ldloc.0
+		IL_0063: ldloc.1
+		IL_0064: stfld object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::loop
+		IL_0069: ldloc.0
+		IL_006a: ldfld object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::loop
+		IL_006f: ldstr "Cannot access 'loop' before initialization"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_0079: stloc.1
+		IL_007a: ldloc.1
+		IL_007b: pop
+		IL_007c: ldloc.0
+		IL_007d: castclass Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope
+		IL_0082: ldnull
+		IL_0083: ldc.r8 3
+		IL_008c: box [System.Runtime]System.Double
+		IL_0091: call object Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/ArrowFunction_L3C14::__js_call__(class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope, object, object)
+		IL_0096: stloc.1
+		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009c: ldloc.1
+		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00a2: pop
+		IL_00a3: ldloc.0
+		IL_00a4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall/Scope::values
+		IL_00a9: ldc.i4.1
+		IL_00aa: newarr [System.Runtime]System.Object
+		IL_00af: dup
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldstr ","
+		IL_00b6: stelem.ref
+		IL_00b7: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00bc: stloc.2
+		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00c2: ldloc.2
+		IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00c8: pop
+		IL_00c9: ret
+	} // end of method ArrowFunction_ConstArrowSelfRecursion_DirectCall::__js_module_init__
+
+} // end of class Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21da
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.ArrowFunction_ConstArrowSelfRecursion_DirectCall::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

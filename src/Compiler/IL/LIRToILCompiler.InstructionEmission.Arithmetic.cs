@@ -169,6 +169,11 @@ internal sealed partial class LIRToILCompiler
                 }
                 break;
 
+            case LIRDiscardTemp discardTemp:
+                EmitLoadTemp(discardTemp.Source, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Pop);
+                break;
+
             case LIRConvertToBoolean convertToBoolean:
                 if (!IsMaterialized(convertToBoolean.Result, allocation))
                 {

@@ -185,6 +185,11 @@ public class AstWalker
                 VisitNodes(arrPattern.Elements, visitor);
                 break;
 
+            case AssignmentPattern assignmentPattern:
+                Visit(assignmentPattern.Left, visitor);
+                Visit(assignmentPattern.Right, visitor);
+                break;
+
             case RestElement restElem:
                 Visit(restElem.Argument, visitor);
                 break;

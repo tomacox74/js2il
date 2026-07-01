@@ -501,6 +501,11 @@ public sealed partial class HIRToLIRLowerer
             if (!hasSpreadArgs
                 && TryCreateCallableIdForConstInitializedArrow(symbol, out var constArrowCallableId, out var constArrowScope))
             {
+                if (!TryEmitDirectCallCalleeReadIfRequired(funcVarExpr, symbol))
+                {
+                    return false;
+                }
+
                 var constArrowArguments = new List<TempVariable>(callExpr.Arguments.Length);
                 foreach (var arg in callExpr.Arguments)
                 {
@@ -629,6 +634,27 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar, callableId));
             DefineDirectCallResultStorage(resultTempVar, callableId, symbol.BindingInfo);
 
+            return true;
+        }
+
+        bool TryEmitDirectCallCalleeReadIfRequired(HIRVariableExpression callee, Symbol calleeSymbol)
+        {
+            var binding = calleeSymbol.BindingInfo;
+            var requiresCalleeRead = binding.RequiresRuntimeTemporalDeadZoneChecks
+                || (binding.RequiresTemporalDeadZoneChecks
+                    && !binding.IsCaptured
+                    && !_variableMap.ContainsKey(binding));
+            if (!requiresCalleeRead)
+            {
+                return true;
+            }
+
+            if (!TryLowerExpression(callee, out var calleeValue))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRDiscardTemp(calleeValue));
             return true;
         }
 

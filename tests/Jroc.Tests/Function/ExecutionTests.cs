@@ -129,6 +129,24 @@ namespace Jroc.Tests.Function
         public Task Function_CallViaVariable_Arity4() { var testName = nameof(Function_CallViaVariable_Arity4); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Function_ConstFunctionExpression_ArgumentsCallee_Dispatches() { var testName = nameof(Function_ConstFunctionExpression_ArgumentsCallee_Dispatches); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstFunctionExpression_CalleeThis_Dispatches() { var testName = nameof(Function_ConstFunctionExpression_CalleeThis_Dispatches); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstFunctionExpression_DirectEvalThis_Dispatches() { var testName = nameof(Function_ConstFunctionExpression_DirectEvalThis_Dispatches); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstFunctionExpression_DefaultThis_Dispatches() { var testName = nameof(Function_ConstFunctionExpression_DefaultThis_Dispatches); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstNamedFunctionExpression_SelfBinding_Dispatches() { var testName = nameof(Function_ConstNamedFunctionExpression_SelfBinding_Dispatches); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ConstFunctionExpression_TdzBeforeArguments() { var testName = nameof(Function_ConstFunctionExpression_TdzBeforeArguments); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return ExecutionTest(testName); }
 
         [Fact]
@@ -236,6 +254,18 @@ namespace Jroc.Tests.Function
 
         [Fact]
         public Task Function_NewExpression_CapturesOuterCtor() { var testName = nameof(Function_NewExpression_CapturesOuterCtor); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_DirectKnownFunctionConstructors() { var testName = nameof(Function_NewExpression_DirectKnownFunctionConstructors); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_DestructuringReassignedDeclaration_DispatchesReplacement() { var testName = nameof(Function_NewExpression_DestructuringReassignedDeclaration_DispatchesReplacement); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_ForOfReassignedDeclaration_DispatchesReplacement() { var testName = nameof(Function_NewExpression_ForOfReassignedDeclaration_DispatchesReplacement); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NewExpression_ReassignedDeclaration_DispatchesReplacement() { var testName = nameof(Function_NewExpression_ReassignedDeclaration_DispatchesReplacement); return ExecutionTest(testName); }
 
         [Fact]
         public Task Function_NewExpression_MemberCallee_Compiles() { var testName = nameof(Function_NewExpression_MemberCallee_Compiles); return ExecutionTest(testName); }

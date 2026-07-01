@@ -86,6 +86,11 @@ public class BindingInfo
     public bool HasWrite { get; set; }
 
     /// <summary>
+    /// True when this binding is the target of an assignment/update after declaration initialization.
+    /// </summary>
+    public bool HasExplicitWrite { get; set; }
+
+    /// <summary>
     /// True when accesses to this binding must respect the temporal dead zone.
     /// This applies to lexical declarations (<c>let</c>, <c>const</c>, and class bindings modeled as <c>let</c>)
     /// but not to parameters injected into the scope.

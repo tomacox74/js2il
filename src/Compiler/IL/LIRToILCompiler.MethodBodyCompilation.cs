@@ -624,6 +624,7 @@ internal sealed partial class LIRToILCompiler
                 //   scopes + newTarget + declared JS params (including ldnull padding)
                 // Peak stack before callvirt: delegate + scopes + newTarget + jsParamCount
                 LIRCallFunction callFunction => 3 + (callFunction.CallableId?.JsParamCount ?? callFunction.Arguments.Count),
+                LIRCallFunctionWithNewTarget callFunctionWithNewTarget => 2 + callFunctionWithNewTarget.CallableId.JsParamCount,
 
                 // Direct user-defined function call with args array (e.g. spread calls):
                 //   delegate + scopes + argsArray (argsArray may be inlined)
@@ -689,6 +690,7 @@ internal sealed partial class LIRToILCompiler
                 // New user class: optional scopes + declared ctor param count.
                 // Use the declared max arg count since emission pads missing args.
                 LIRNewUserClass newUserClass => (newUserClass.NeedsScopes ? 1 : 0) + newUserClass.MaxArgCount,
+                LIRDiscardTemp discardTemp => EstimateTempLoadPeak(discardTemp.Source),
 
                 _ => 0
             };

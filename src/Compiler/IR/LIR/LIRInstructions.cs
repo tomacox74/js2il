@@ -90,6 +90,11 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
+/// Calls a user-defined function with an explicit new.target value.
+/// </summary>
+public record LIRCallFunctionWithNewTarget(Symbol FunctionSymbol, TempVariable ScopesArray, TempVariable NewTarget, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId CallableId) : LIRInstruction;
+
+/// <summary>
 /// Tail-calls a user-defined function and immediately returns its result.
 /// </summary>
 public record LIRTailCallFunctionReturn(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, CallableId CallableId) : LIRInstruction;
@@ -367,6 +372,11 @@ public record LIRConvertToNumber(TempVariable Source, TempVariable Result) : LIR
 /// Performs ToNumber for its observable coercion effects when the converted value is discarded.
 /// </summary>
 public record LIRConvertToNumberDiscard(TempVariable Source) : LIRInstruction;
+
+/// <summary>
+/// Evaluates a temp for its observable load effects and discards the value.
+/// </summary>
+public record LIRDiscardTemp(TempVariable Source) : LIRInstruction;
 
 /// <summary>
 /// Converts a value (typically an object) to a JavaScript boolean (truthiness) using runtime coercion.

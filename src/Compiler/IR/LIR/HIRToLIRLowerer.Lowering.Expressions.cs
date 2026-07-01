@@ -1282,7 +1282,6 @@ public sealed partial class HIRToLIRLowerer
 
         if (_scope == null
             || symbol.BindingInfo.Kind != BindingKind.Const
-            || symbol.BindingInfo.RequiresRuntimeTemporalDeadZoneChecks
             || symbol.BindingInfo.DeclarationNode is not VariableDeclarator { Init: ArrowFunctionExpression arrowExpr })
         {
             return false;
@@ -1330,6 +1329,72 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryCreateCallableIdForConstInitializedFunctionExpression(
+        Symbol symbol,
+        bool allowThisBinding,
+        out TwoPhase.CallableId callableId,
+        out Scope bodyScope)
+    {
+        callableId = null!;
+        bodyScope = null!;
+
+        if (_scope == null
+            || symbol.BindingInfo.Kind != BindingKind.Const
+            || symbol.BindingInfo.DeclarationNode is not VariableDeclarator { Init: FunctionExpression funcExpr }
+            || funcExpr.Id != null
+            || funcExpr.Async
+            || funcExpr.Generator)
+        {
+            return false;
+        }
+
+        if (!allowThisBinding && FunctionExpressionRequiresRuntimeThisBinding(funcExpr))
+        {
+            return false;
+        }
+
+        var root = _scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var functionScope = FindScopeByDeclarationNode(funcExpr, root);
+        if (functionScope == null || functionScope.Parent == null)
+        {
+            return false;
+        }
+
+        var declaringScope = functionScope.Parent;
+        var moduleName = root.Name;
+        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
+            ? moduleName
+            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
+        var isStrictScope = ArgumentsObjectSemantics.IsStrictScope(functionScope);
+        if (functionScope.NeedsArgumentsObject && !isStrictScope)
+        {
+            return false;
+        }
+
+        bodyScope = functionScope;
+        callableId = new TwoPhase.CallableId
+        {
+            Kind = TwoPhase.CallableKind.FunctionExpression,
+            DeclaringScopeName = declaringScopeName,
+            Name = (funcExpr.Id as Identifier)?.Name,
+            Location = TwoPhase.SourceLocation.FromNode(funcExpr),
+            JsParamCount = CountNonRestParameters(funcExpr.Params),
+            NeedsArgumentsObject = functionScope.NeedsArgumentsObject,
+            HasRestParameters = functionScope.HasRestParameters,
+            UsesMappedArgumentsObject = ArgumentsObjectSemantics.UsesMappedArgumentsObject(functionScope),
+            ArgumentsParameterNames = ArgumentsObjectSemantics.GetMappedParameterNames(functionScope),
+            IncludeCalleeInArgumentsObject = functionScope.NeedsArgumentsObject && !isStrictScope,
+            HasRestrictedFunctionProperties = isStrictScope,
+            AstNode = funcExpr
+        };
+        return true;
+    }
+
     private static bool ArrowRequiresRuntimeClosureInvocation(ArrowFunctionExpression arrowExpr)
     {
         var requiresRuntimeClosure = false;
@@ -1344,6 +1409,38 @@ public sealed partial class HIRToLIRLowerer
             }
         });
         return requiresRuntimeClosure;
+    }
+
+    private static bool FunctionExpressionRequiresRuntimeThisBinding(FunctionExpression funcExpr)
+    {
+        var requiresRuntimeThis = false;
+        var walker = new AstWalker();
+        foreach (var parameter in funcExpr.Params)
+        {
+            walker.Visit(parameter, Visit);
+        }
+
+        walker.Visit(funcExpr.Body, Visit);
+        return requiresRuntimeThis;
+
+        void Visit(Node node)
+        {
+            if (node is ThisExpression
+                || node is MetaProperty
+                || IsDirectEvalLiteralThisObserver(node))
+            {
+                requiresRuntimeThis = true;
+            }
+        }
+    }
+
+    private static bool IsDirectEvalLiteralThisObserver(Node node)
+    {
+        return node is CallExpression callExpression
+            && callExpression.Callee is Identifier { Name: "eval" }
+            && callExpression.Arguments.Count == 1
+            && callExpression.Arguments[0] is StringLiteral stringLiteral
+            && stringLiteral.Value.Contains("this", StringComparison.Ordinal);
     }
 
     private Scope? FindDeclaringScope(BindingInfo binding)
