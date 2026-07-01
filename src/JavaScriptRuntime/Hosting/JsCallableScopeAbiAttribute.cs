@@ -47,22 +47,15 @@ internal static class JsCallableScopeAbiResolver
 
         if (TryResolveFromAttribute(abiSource.Method, out var descriptor))
         {
-            if (descriptor.Kind == CallableScopeAbiKind.SingleScope)
+            if (descriptor.HasExplicitScopePayload)
             {
-                var sourceParameters = abiSource.Method.GetParameters();
-                bool firstParameterAlreadyBound = abiSource.Target != null
-                    && abiSource.Method.IsStatic
-                    && invokeParameters.Length == Math.Max(0, sourceParameters.Length - 1);
-
-                if (!firstParameterAlreadyBound)
+                if (IsFirstScopeParameterAlreadyBound(abiSource, invokeParameters))
                 {
-                    return descriptor;
+                    return InferFromParameters(invokeParameters);
                 }
             }
-            else
-            {
-                return descriptor;
-            }
+
+            return descriptor;
         }
 
         return InferFromParameters(invokeParameters);
@@ -168,6 +161,17 @@ internal static class JsCallableScopeAbiResolver
 
         descriptor = new JsCallableScopeAbiDescriptor(attribute.Kind, singleScopeType, IsFromAttribute: true);
         return true;
+    }
+
+    private static bool IsFirstScopeParameterAlreadyBound(Delegate abiSource, ParameterInfo[] invokeParameters)
+    {
+        if (abiSource.Target == null || !abiSource.Method.IsStatic)
+        {
+            return false;
+        }
+
+        var sourceParameters = abiSource.Method.GetParameters();
+        return invokeParameters.Length == Math.Max(0, sourceParameters.Length - 1);
     }
 
     private static JsCallableScopeAbiDescriptor InferFromParameters(ParameterInfo[] parameters)
