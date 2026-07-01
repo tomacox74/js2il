@@ -13,8 +13,26 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private static readonly HashSet<string> NumericMathUnaryFastPathMethods = new(StringComparer.Ordinal)
+    {
+        "abs",
+        "ceil",
+        "round",
+        "sqrt",
+        "sin",
+        "cos",
+    };
+
     private static bool HasSpreadArguments(IReadOnlyList<HIRExpression> arguments)
         => arguments.Any(a => a is HIRSpreadElement);
+
+    private static bool IsStableGlobalMathBinding(Symbol symbol)
+        => symbol.Kind == BindingKind.Global
+           && string.Equals(symbol.Name, "Math", StringComparison.Ordinal)
+           && !symbol.BindingInfo.HasWrite;
+
+    private static bool IsNumericMathUnaryFastPathMethod(string methodName)
+        => NumericMathUnaryFastPathMethods.Contains(methodName);
 
     private TempVariable RequireObjectCoercible(TempVariable receiverTemp)
     {

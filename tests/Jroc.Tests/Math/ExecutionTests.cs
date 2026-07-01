@@ -66,5 +66,35 @@ namespace Jroc.Tests.Math
         {
             return ExecutionTest(nameof(Math_PrimeJavaScript_SieveSize1000_OnePass_LogsPrimes));
         }
+
+        [Fact]
+        public Task Math_AliasReplacement_Dispatch()
+        {
+            return ExecutionTest(nameof(Math_AliasReplacement_Dispatch));
+        }
+
+        [Fact]
+        public Task Math_DefinePropertyReplacement_Dispatch()
+        {
+            return ExecutionTest(nameof(Math_DefinePropertyReplacement_Dispatch));
+        }
+
+        [Fact]
+        public Task Math_GlobalThisReplacement_Dispatch()
+        {
+            return ExecutionTest(nameof(Math_GlobalThisReplacement_Dispatch));
+        }
+
+        [Fact]
+        public Task Math_ShadowedAndReplaced_Dispatch()
+        {
+            return ExecutionTest(nameof(Math_ShadowedAndReplaced_Dispatch));
+        }
+
+        [Fact]
+        public Task Math_UnboxedUnaryFastPathAndPiFold()
+        {
+            return ExecutionTest(nameof(Math_UnboxedUnaryFastPathAndPiFold));
+        }
     }
 }

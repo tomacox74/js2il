@@ -844,7 +844,7 @@ public sealed partial class HIRToLIRLowerer
         scopeId = default;
         fieldId = default;
 
-        if (!binding.IsCaptured)
+        if (!binding.IsCaptured || binding.Kind == BindingKind.Global)
         {
             return false;
         }

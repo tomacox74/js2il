@@ -24,32 +24,32 @@ namespace JavaScriptRuntime
         /// Math.ceil(x): returns the smallest integer greater than or equal to x.
         /// For NaN returns NaN; for +/-Infinity returns the same infinity.
         /// </summary>
-        public static double ceil(object? x)
+        public static double ceil(double d)
         {
-            double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
             if (double.IsPositiveInfinity(d)) return double.PositiveInfinity;
             if (double.IsNegativeInfinity(d)) return double.NegativeInfinity;
             return System.Math.Ceiling(d);
         }
 
+        public static double ceil(object? x) => ceil(ToNumber(x));
+
         /// <summary>
         /// Math.sqrt(x): returns the square root of x. If x is negative or NaN, returns NaN. Infinity maps to Infinity.
         /// </summary>
-        public static double sqrt(object? x)
+        public static double sqrt(double d)
         {
-            double d = ToNumber(x);
             if (double.IsNaN(d)) return double.NaN;
             if (double.IsNegativeInfinity(d)) return double.NaN; // per JS: sqrt(-Infinity) => NaN
             if (d < 0) return double.NaN;
             return System.Math.Sqrt(d);
         }
 
-        public static double abs(object? x)
-        {
-            double d = ToNumber(x);
-            return double.IsNaN(d) ? double.NaN : System.Math.Abs(d);
-        }
+        public static double sqrt(object? x) => sqrt(ToNumber(x));
+
+        public static double abs(double d) => double.IsNaN(d) ? double.NaN : System.Math.Abs(d);
+
+        public static double abs(object? x) => abs(ToNumber(x));
 
         public static double floor(object? x)
         {
@@ -60,9 +60,8 @@ namespace JavaScriptRuntime
             return System.Math.Floor(d);
         }
 
-        public static double round(object? x)
+        public static double round(double d)
         {
-            double d = ToNumber(x);
             if (double.IsNaN(d) || double.IsPositiveInfinity(d) || double.IsNegativeInfinity(d)) return d;
             if (d == 0) return d; // preserve +0/-0 when the argument already equals zero
 
@@ -76,6 +75,8 @@ namespace JavaScriptRuntime
             
             return r;
         }
+
+        public static double round(object? x) => round(ToNumber(x));
 
         public static double trunc(object? x)
         {
@@ -100,8 +101,10 @@ namespace JavaScriptRuntime
             return d > 0 ? 1.0 : -1.0;
         }
 
-        public static double sin(object? x) => System.Math.Sin(ToNumber(x));
-        public static double cos(object? x) => System.Math.Cos(ToNumber(x));
+        public static double sin(double d) => System.Math.Sin(d);
+        public static double sin(object? x) => sin(ToNumber(x));
+        public static double cos(double d) => System.Math.Cos(d);
+        public static double cos(object? x) => cos(ToNumber(x));
         public static double tan(object? x) => System.Math.Tan(ToNumber(x));
         public static double asin(object? x) => System.Math.Asin(ToNumber(x));
         public static double acos(object? x) => System.Math.Acos(ToNumber(x));

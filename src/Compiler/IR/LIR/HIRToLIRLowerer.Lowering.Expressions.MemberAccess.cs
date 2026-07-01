@@ -43,6 +43,15 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (string.Equals(propAccessExpr.PropertyName, "PI", StringComparison.Ordinal)
+            && propAccessExpr.Object is HIRVariableExpression mathVar
+            && IsStableGlobalMathBinding(mathVar.Name))
+        {
+            _methodBodyIR.Instructions.Add(new LIRConstNumber(global::System.Math.PI, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
         // User-defined class instance field access (e.g., this.wordArray).
         // If the receiver is `this` and we know the generated CLR type has a field with this name,
         // lower directly to an instance field load (ldfld) instead of dynamic property access.
