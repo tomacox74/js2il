@@ -73,9 +73,16 @@ public sealed partial class HIRToLIRLowerer
         // - Parameters live in IL arguments
         // Do not rely on the temp storage kind here, since other lowering steps may propagate
         // stable unboxed types for captured fields.
-        var isActiveScopeStored = TryGetActiveScopeFieldStorage(updateBinding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId);
-        var updateStorage = isActiveScopeStored ? null : _environmentLayout?.GetStorage(updateBinding);
-        var isEnvironmentStored = isActiveScopeStored || (updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal);
+        TempVariable activeScopeTemp = default;
+        ScopeId activeScopeId = default;
+        FieldId activeFieldId = default;
+        var isActiveScopeStored = updateBinding.Kind != BindingKind.Global
+            && TryGetActiveScopeFieldStorage(updateBinding, out activeScopeTemp, out activeScopeId, out activeFieldId);
+        var updateStorage = isActiveScopeStored || updateBinding.Kind == BindingKind.Global
+            ? null
+            : _environmentLayout?.GetStorage(updateBinding);
+        var isEnvironmentStored = updateBinding.Kind != BindingKind.Global
+            && (isActiveScopeStored || (updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal));
 
         // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
         // the boxed updated value back to the appropriate storage location.
@@ -173,7 +180,9 @@ public sealed partial class HIRToLIRLowerer
         // Only use the unboxed-double fast path for bindings inferred as stable double.
         // Otherwise, even if the current value temp is unboxed double (due to propagation), we must
         // treat the variable as object-typed and store the boxed result back to its slot.
-        var isStableDoubleBinding = updateBinding.IsStableType && updateBinding.ClrType == typeof(double);
+        var isStableDoubleBinding = updateBinding.Kind != BindingKind.Global
+            && updateBinding.IsStableType
+            && updateBinding.ClrType == typeof(double);
 
         if (!isStableDoubleBinding)
         {

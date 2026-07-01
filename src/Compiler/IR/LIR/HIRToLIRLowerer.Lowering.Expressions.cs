@@ -532,7 +532,8 @@ public sealed partial class HIRToLIRLowerer
 
                 // Per-iteration environments: if this binding lives in an active materialized scope instance
                 // (e.g., `for (let/const ...)` loop-head scope), load directly from that scope field.
-                if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
+                if (binding.Kind != BindingKind.Global
+                    && TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
                 {
                     resultTempVar = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRLoadScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, resultTempVar));
@@ -552,7 +553,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 
                 // Check if this binding is stored in a scope field (captured variable)
-                if (_environmentLayout != null)
+                if (binding.Kind != BindingKind.Global && _environmentLayout != null)
                 {
                     var storage = _environmentLayout.GetStorage(binding);
                     if (storage == null
