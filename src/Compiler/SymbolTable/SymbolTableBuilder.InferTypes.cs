@@ -244,6 +244,7 @@ public partial class SymbolTableBuilder
             BooleanLiteral => typeof(bool),
             ArrayExpression => typeof(JavaScriptRuntime.Array),
             Identifier id => InferStableIdentifierArgumentClrType(callScope, id.Name),
+            MemberExpression memberExpression => InferStableMemberArgumentClrType(memberExpression, callScope),
             NewExpression newExpression => InferStableNewArgumentClrType(newExpression, callScope),
             CallExpression callExpression => InferStableCallArgumentClrType(callExpression, callScope),
             _ => null
@@ -257,6 +258,21 @@ public partial class SymbolTableBuilder
         var binding = TryResolveBinding(callScope, name);
         return binding?.IsStableType == true && IsSupportedStableParameterType(binding.ClrType)
             ? binding.ClrType
+            : null;
+    }
+
+    private static Type? InferStableMemberArgumentClrType(MemberExpression memberExpression, Scope callScope)
+    {
+        if (memberExpression.Computed
+            || memberExpression.Object is not ThisExpression
+            || memberExpression.Property is not Identifier fieldId)
+        {
+            return null;
+        }
+
+        var classScope = FindEnclosingClassScope(callScope);
+        return classScope?.StableInstanceFieldClrTypes.TryGetValue(fieldId.Name, out var fieldClrType) == true
+            ? fieldClrType
             : null;
     }
 
