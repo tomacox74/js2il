@@ -815,7 +815,8 @@ namespace Jroc.Services.ILGenerators
                     returnsVoid: false,
                     returnClrType: returnClrType,
                     returnTypeHandle: returnTypeHandle,
-                    jsParameterClrTypes: parameterClrTypes);
+                    jsParameterClrTypes: parameterClrTypes,
+                    typeReferenceRegistry: _bcl.TypeReferenceRegistry);
 
                 _classRegistry.RegisterMethod(
                     registryClassName,
@@ -849,7 +850,10 @@ namespace Jroc.Services.ILGenerators
             foreach (var (index, type) in methodScope.StableParameterClrTypes)
             {
                 if (index >= 0 && index < result.Length
-                    && (type == typeof(double) || type == typeof(bool) || type == typeof(string)))
+                    && (type == typeof(double)
+                        || type == typeof(bool)
+                        || type == typeof(string)
+                        || type == typeof(JavaScriptRuntime.Array)))
                 {
                     result[index] = type;
                 }

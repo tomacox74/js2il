@@ -232,6 +232,12 @@ namespace Jroc.SymbolTables
             // (e.g., stable array<string> returns) to propagate after late variable discoveries.
             InferCallableReturnClrTypes(globalScope);
             InferVariableClrTypes(globalScope);
+
+            // Re-run parameter inference after return-aware variable inference so direct callsites
+            // can use only proven-stable argument bindings, not initializer guesses.
+            InferCallableParameterClrTypes(globalScope);
+            InferVariableClrTypes(globalScope);
+            InferCallableReturnClrTypes(globalScope);
             module.SymbolTable = new SymbolTable(globalScope);
         }
 

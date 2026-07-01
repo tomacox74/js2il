@@ -5,6 +5,10 @@ using Jroc.Services.TwoPhaseCompilation;
 using Jroc.Services.VariableBindings;
 using Jroc.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -155,6 +159,52 @@ internal sealed partial class LIRToILCompiler
 
     private static bool UsesSingleScopeAbi(CallableSignature? signature)
         => signature?.ScopeAbiKind == Jroc.Runtime.CallableScopeAbiKind.SingleScope;
+
+    private static bool HasTypedJsParameters(CallableSignature? signature)
+        => signature?.ParameterClrTypes.Any(type => type != null && type != typeof(object)) == true;
+
+    private static Type BuildMaterializedCallableDelegateType(int jsParamCount, bool requiresScopes, CallableSignature? signature)
+    {
+        if (!HasTypedJsParameters(signature))
+        {
+            return BaseClassLibraryReferences.GetFunctionDelegateType(jsParamCount, requiresScopes, signature?.ReturnClrType);
+        }
+
+        // System.Func supports up to 16 generic arguments. The callable ABI uses an optional
+        // scopes payload, a newTarget argument, JS arguments, and the return type.
+        var maxTypedJsParamCount = requiresScopes ? 13 : 14;
+        if (jsParamCount > maxTypedJsParamCount)
+        {
+            throw new NotSupportedException(
+                $"Typed materialized callable delegates support at most {maxTypedJsParamCount} JavaScript parameters for this ABI.");
+        }
+
+        var parameterTypes = new List<Type>(jsParamCount + 3);
+        if (requiresScopes)
+        {
+            parameterTypes.Add(typeof(object[]));
+        }
+
+        parameterTypes.Add(typeof(object));
+
+        var jsParameterTypes = signature?.ParameterClrTypes ?? Array.Empty<Type?>();
+        for (var i = 0; i < jsParamCount; i++)
+        {
+            parameterTypes.Add(i < jsParameterTypes.Count ? jsParameterTypes[i] ?? typeof(object) : typeof(object));
+        }
+
+        parameterTypes.Add(signature?.ReturnClrType ?? typeof(object));
+        return Expression.GetFuncType(parameterTypes.ToArray());
+    }
+
+    private MemberReferenceHandle GetMaterializedCallableDelegateCtorRef(
+        int jsParamCount,
+        bool requiresScopes,
+        CallableSignature? signature)
+    {
+        var delegateType = BuildMaterializedCallableDelegateType(jsParamCount, requiresScopes, signature);
+        return _memberRefRegistry.GetOrAddConstructor(delegateType, new[] { typeof(object), typeof(IntPtr) });
+    }
 
     private void EmitLoadSingleScopePayload(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
     {

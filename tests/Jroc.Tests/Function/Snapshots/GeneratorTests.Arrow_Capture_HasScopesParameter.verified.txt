@@ -18,13 +18,13 @@
 				01 00 0b 53 63 6f 70 65 20 78 3d 7b 78 7d 00 00
 			)
 			// Fields
-			.field public object x
+			.field public float64 x
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2121
+				// Method begins at RVA 0x2108
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			object __js_call__ (
 				class Modules.Arrow_Capture_HasScopesParameter/Scope scope,
 				object newTarget,
-				object x
+				float64 x
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
@@ -51,27 +51,18 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20f0
-			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Method begins at RVA 0x20eb
+			// Header size: 1
+			// Code size: 19 (0x13)
 			.maxstack 8
-			.locals init (
-				[0] object,
-				[1] float64
-			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Arrow_Capture_HasScopesParameter/Scope::factor
-			IL_0006: stloc.0
-			IL_0007: ldarg.2
-			IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000d: stloc.1
-			IL_000e: ldloc.1
-			IL_000f: ldloc.0
-			IL_0010: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0015: mul
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: ret
+			IL_0000: ldarg.2
+			IL_0001: ldarg.0
+			IL_0002: ldfld object Modules.Arrow_Capture_HasScopesParameter/Scope::factor
+			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000c: mul
+			IL_000d: box [System.Runtime]System.Double
+			IL_0012: ret
 		} // end of method ArrowFunction_L6C15::__js_call__
 
 	} // end of class ArrowFunction_L6C15
@@ -90,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x20ff
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -116,7 +107,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 148 (0x94)
+		// Code size: 143 (0x8f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Arrow_Capture_HasScopesParameter/Scope,
@@ -139,8 +130,8 @@
 		IL_0024: ldc.i4.0
 		IL_0025: ldelem.ref
 		IL_0026: castclass Modules.Arrow_Capture_HasScopesParameter/Scope
-		IL_002b: ldftn object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, object)
-		IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_002b: ldftn object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, float64)
+		IL_0031: newobj instance void class [System.Runtime]System.Func`3<object, float64, object>::.ctor(object, native int)
 		IL_0036: ldc.i4.1
 		IL_0037: newarr [System.Runtime]System.Object
 		IL_003c: dup
@@ -167,14 +158,13 @@
 		IL_006d: castclass Modules.Arrow_Capture_HasScopesParameter/Scope
 		IL_0072: ldnull
 		IL_0073: ldc.r8 5
-		IL_007c: box [System.Runtime]System.Double
-		IL_0081: call object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, object)
-		IL_0086: stloc.2
-		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008c: ldloc.2
-		IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0092: pop
-		IL_0093: ret
+		IL_007c: call object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, float64)
+		IL_0081: stloc.2
+		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0087: ldloc.2
+		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_008d: pop
+		IL_008e: ret
 	} // end of method Arrow_Capture_HasScopesParameter::__js_module_init__
 
 } // end of class Modules.Arrow_Capture_HasScopesParameter
@@ -186,7 +176,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212a
+		// Method begins at RVA 0x2111
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1010,7 +1010,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
+                    ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, delegateRequiresScopeArray, signature));
 
                     if (delegateRequiresScopeArray)
                     {
@@ -1427,7 +1427,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, delegateRequiresScopeArray));
+                    ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, delegateRequiresScopeArray, signature));
 
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
@@ -1484,7 +1484,7 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount, requiresScopes: false));
+                    ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, requiresScopes: false, signature));
                     EmitInitializeFunctionInstance(createFunc.CallableId, createFunc.IsAsync, ilEncoder);
                     EmitInitializeGeneratorFunctionSurfaceIfNeeded(callableId, ilEncoder);
 

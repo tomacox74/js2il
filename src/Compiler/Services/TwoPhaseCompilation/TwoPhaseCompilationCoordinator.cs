@@ -1780,7 +1780,10 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     private static bool IsSupportedStableParameterClrType(Type? type)
-        => type == typeof(double) || type == typeof(bool) || type == typeof(string);
+        => type == typeof(double)
+            || type == typeof(bool)
+            || type == typeof(string)
+            || type == typeof(JavaScriptRuntime.Array);
 
     private static Type? GetCallableReturnClrType(
         CallableId callable,
