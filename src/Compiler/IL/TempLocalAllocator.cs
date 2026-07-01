@@ -300,6 +300,9 @@ internal static class TempLocalAllocator
             case LIRConvertToNumberDiscard convNumDiscard:
                 yield return convNumDiscard.Source;
                 break;
+            case LIRDiscardTemp discardTemp:
+                yield return discardTemp.Source;
+                break;
             case LIRConvertToBoolean convBool:
                 yield return convBool.Source;
                 break;
@@ -448,6 +451,14 @@ internal static class TempLocalAllocator
             case LIRCallFunction callFunc:
                 yield return callFunc.ScopesArray;
                 foreach (var arg in callFunc.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+            case LIRCallFunctionWithNewTarget callFuncWithNewTarget:
+                yield return callFuncWithNewTarget.ScopesArray;
+                yield return callFuncWithNewTarget.NewTarget;
+                foreach (var arg in callFuncWithNewTarget.Arguments)
                 {
                     yield return arg;
                 }
@@ -902,6 +913,7 @@ internal static class TempLocalAllocator
             case LIRAsyncStateSwitch:
             case LIRAsyncStoreAwaitedResult:
             case LIRConvertToNumberDiscard:
+            case LIRDiscardTemp:
                 defined = default;
                 return false;
             case LIRConvertToObject conv:
@@ -1023,6 +1035,10 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallFunction callFunc:
                 defined = callFunc.Result;
+                return true;
+
+            case LIRCallFunctionWithNewTarget callFuncWithNewTarget:
+                defined = callFuncWithNewTarget.Result;
                 return true;
 
             case LIRCallFunctionWithArgsArray callWithArgsArray:

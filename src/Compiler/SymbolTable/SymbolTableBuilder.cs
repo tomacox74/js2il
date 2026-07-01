@@ -62,6 +62,46 @@ namespace Jroc.SymbolTables
             }
 
             binding.HasWrite = true;
+            binding.HasExplicitWrite = true;
+        }
+
+        private static void MarkAssignmentTargetWritten(Scope scope, Node? target)
+        {
+            switch (target)
+            {
+                case Identifier identifier:
+                    MarkWritten(scope, identifier.Name);
+                    return;
+
+                case AssignmentPattern assignmentPattern:
+                    MarkAssignmentTargetWritten(scope, assignmentPattern.Left);
+                    return;
+
+                case RestElement restElement:
+                    MarkAssignmentTargetWritten(scope, restElement.Argument);
+                    return;
+
+                case ObjectPattern objectPattern:
+                    foreach (var propertyNode in objectPattern.Properties)
+                    {
+                        if (propertyNode is Property property)
+                        {
+                            MarkAssignmentTargetWritten(scope, property.Value);
+                        }
+                        else if (propertyNode is RestElement rest)
+                        {
+                            MarkAssignmentTargetWritten(scope, rest.Argument);
+                        }
+                    }
+                    return;
+
+                case ArrayPattern arrayPattern:
+                    foreach (var element in arrayPattern.Elements)
+                    {
+                        MarkAssignmentTargetWritten(scope, element);
+                    }
+                    return;
+            }
         }
 
         private static bool IsIdentifierNamed(Node? node, string name)
@@ -1427,11 +1467,8 @@ namespace Jroc.SymbolTables
                     BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
                     break;
                 case AssignmentExpression assignExpr:
-                    if (assignExpr.Left is Identifier assignId)
-                    {
-                        MarkWritten(currentScope, assignId.Name);
-                    }
-                    else if (IsGlobalMathMutationTarget(assignExpr.Left))
+                    MarkAssignmentTargetWritten(currentScope, assignExpr.Left);
+                    if (IsGlobalMathMutationTarget(assignExpr.Left))
                     {
                         // Math.* writes can replace built-in methods (e.g., Math.abs = fn).
                         // Mark Math as written so intrinsic fast-paths can conservatively fall back
@@ -1757,6 +1794,10 @@ namespace Jroc.SymbolTables
                             BindPatternBindings(decl.Id, kind, targetScope, decl);
                         }
                     }
+                    else
+                    {
+                        MarkAssignmentTargetWritten(currentScope, forOf.Left);
+                    }
 
                     // Visit the iterable expression in the outer scope (matches current runtime semantics).
                     BuildScopeRecursive(globalScope, forOf.Right, currentScope);
@@ -1798,6 +1839,10 @@ namespace Jroc.SymbolTables
                         {
                             BindPatternBindings(decl.Id, kind, targetScope, decl);
                         }
+                    }
+                    else
+                    {
+                        MarkAssignmentTargetWritten(currentScope, forIn.Left);
                     }
 
                     // Visit the object expression in the outer scope (matches current runtime semantics).

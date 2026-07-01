@@ -494,6 +494,28 @@ public static class Function
             return Construct(constructor, args, constructor);
         }
 
+        public static object CreateConstructorInstance(object constructor)
+        {
+            if (!JavaScriptRuntime.Object.IsConstructibleValue(constructor))
+            {
+                throw new TypeError("Value is not a constructor");
+            }
+
+            var instance = new System.Dynamic.ExpandoObject();
+            var proto = JavaScriptRuntime.ObjectRuntime.GetItem(constructor, "prototype");
+            if (proto is JsNull || TypeUtilities.IsConstructorReturnOverride(proto))
+            {
+                PrototypeChain.SetPrototype(instance, proto);
+            }
+
+            return instance;
+        }
+
+        public static object? ResolveConstructorResult(object receiver, object? result)
+        {
+            return TypeUtilities.IsConstructorReturnOverride(result) ? result : receiver;
+        }
+
         internal static object? Construct(Delegate constructor, object?[]? args, object? newTarget)
         {
             if (constructor is null) throw new ArgumentNullException(nameof(constructor));

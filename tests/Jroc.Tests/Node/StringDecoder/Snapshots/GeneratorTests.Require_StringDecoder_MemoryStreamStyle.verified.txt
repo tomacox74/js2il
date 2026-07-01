@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2255
+				// Method begins at RVA 0x22b5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2181
+			// Method begins at RVA 0x21e0
 			// Header size: 1
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -70,7 +70,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x225e
+				// Method begins at RVA 0x22be
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x21fc
 			// Header size: 12
 			// Code size: 164 (0xa4)
 			.maxstack 8
@@ -210,7 +210,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x224c
+			// Method begins at RVA 0x22ac
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -236,16 +236,20 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 293 (0x125)
+		// Code size: 370 (0x172)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_StringDecoder_MemoryStreamStyle/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] bool,
+			[4] object[],
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer
+			[6] object,
+			[7] object,
+			[8] bool,
+			[9] object,
+			[10] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer
 		)
 
 		IL_0000: newobj instance void Modules.Require_StringDecoder_MemoryStreamStyle/Scope::.ctor()
@@ -299,56 +303,93 @@
 		IL_007e: ldc.i4.1
 		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_0084: pop
-		IL_0085: ldloc.1
-		IL_0086: ldc.i4.0
-		IL_0087: newarr [System.Runtime]System.Object
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_0091: stloc.3
-		IL_0092: ldloc.3
-		IL_0093: stloc.2
-		IL_0094: ldloc.2
-		IL_0095: stloc.3
-		IL_0096: ldloc.3
-		IL_0097: ldloc.1
-		IL_0098: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
-		IL_009d: stloc.s 4
-		IL_009f: ldloc.s 4
-		IL_00a1: box [System.Runtime]System.Boolean
-		IL_00a6: stloc.s 5
-		IL_00a8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ad: ldloc.s 5
-		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b4: pop
-		IL_00b5: ldloc.2
-		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00bb: stloc.3
-		IL_00bc: ldc.i4.3
-		IL_00bd: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00c2: dup
-		IL_00c3: ldc.r8 226
-		IL_00cc: box [System.Runtime]System.Double
-		IL_00d1: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00d6: dup
-		IL_00d7: ldc.r8 130
-		IL_00e0: box [System.Runtime]System.Double
-		IL_00e5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00ea: dup
-		IL_00eb: ldc.r8 172
-		IL_00f4: box [System.Runtime]System.Double
-		IL_00f9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_0103: stloc.s 6
-		IL_0105: ldloc.3
-		IL_0106: ldstr "decode"
-		IL_010b: ldloc.s 6
-		IL_010d: ldstr "utf8"
-		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0117: stloc.3
-		IL_0118: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011d: ldloc.3
-		IL_011e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0123: pop
-		IL_0124: ret
+		IL_0085: ldc.i4.1
+		IL_0086: newarr [System.Runtime]System.Object
+		IL_008b: dup
+		IL_008c: ldc.i4.0
+		IL_008d: ldloc.0
+		IL_008e: stelem.ref
+		IL_008f: stloc.s 4
+		IL_0091: ldloc.1
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateFunctionConstructorInstance(object)
+		IL_0097: stloc.3
+		IL_0098: ldloc.3
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentThis(object)
+		IL_009e: stloc.s 5
+		IL_00a0: ldloc.1
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentNewTarget(object)
+		IL_00a6: stloc.s 6
+		.try
+		{
+			IL_00a8: ldloc.1
+			IL_00a9: call object Modules.Require_StringDecoder_MemoryStreamStyle/MemoryWritableStream::__js_call__(object)
+			IL_00ae: stloc.s 7
+			IL_00b0: ldloc.3
+			IL_00b1: ldloc.s 7
+			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveFunctionConstructorResult(object, object)
+			IL_00b8: stloc.s 7
+			IL_00ba: leave IL_00d8
+		} // end .try
+		finally
+		{
+			IL_00bf: ldloc.s 6
+			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentNewTarget(object)
+			IL_00c6: stloc.s 6
+			IL_00c8: ldloc.s 6
+			IL_00ca: pop
+			IL_00cb: ldloc.s 5
+			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetCurrentThis(object)
+			IL_00d2: stloc.s 5
+			IL_00d4: ldloc.s 5
+			IL_00d6: pop
+			IL_00d7: endfinally
+		} // end handler
+
+		IL_00d8: ldloc.s 7
+		IL_00da: stloc.2
+		IL_00db: ldloc.2
+		IL_00dc: stloc.s 7
+		IL_00de: ldloc.s 7
+		IL_00e0: ldloc.1
+		IL_00e1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::InstanceOf(object, object)
+		IL_00e6: stloc.s 8
+		IL_00e8: ldloc.s 8
+		IL_00ea: box [System.Runtime]System.Boolean
+		IL_00ef: stloc.s 9
+		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f6: ldloc.s 9
+		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00fd: pop
+		IL_00fe: ldloc.2
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0104: stloc.s 7
+		IL_0106: ldc.i4.3
+		IL_0107: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_010c: dup
+		IL_010d: ldc.r8 226
+		IL_0116: box [System.Runtime]System.Double
+		IL_011b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0120: dup
+		IL_0121: ldc.r8 130
+		IL_012a: box [System.Runtime]System.Double
+		IL_012f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0134: dup
+		IL_0135: ldc.r8 172
+		IL_013e: box [System.Runtime]System.Double
+		IL_0143: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0148: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_014d: stloc.s 10
+		IL_014f: ldloc.s 7
+		IL_0151: ldstr "decode"
+		IL_0156: ldloc.s 10
+		IL_0158: ldstr "utf8"
+		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0162: stloc.s 7
+		IL_0164: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0169: ldloc.s 7
+		IL_016b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0170: pop
+		IL_0171: ret
 	} // end of method Require_StringDecoder_MemoryStreamStyle::__js_module_init__
 
 } // end of class Modules.Require_StringDecoder_MemoryStreamStyle
@@ -360,7 +401,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2267
+		// Method begins at RVA 0x22c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

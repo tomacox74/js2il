@@ -552,6 +552,7 @@ internal static class Stackify
 
             // LIRCallFunction calls a user-defined function.
             case LIRCallFunction:
+            case LIRCallFunctionWithNewTarget:
             case LIRTailCallFunctionReturn:
                 return false;
 
@@ -598,6 +599,9 @@ internal static class Stackify
             // LIRCallDeclaredCallable performs a direct call to a declared method.
             // Like other calls, it must never be inlined/re-emitted by Stackify.
             case LIRCallDeclaredCallable:
+                return false;
+
+            case LIRDiscardTemp:
                 return false;
 
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
@@ -855,6 +859,9 @@ internal static class Stackify
 
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
+
+            case LIRCallFunctionWithNewTarget callWithNewTarget:
+                return (2 + callWithNewTarget.Arguments.Count, 1);
 
             case LIRTailCallFunctionReturn tailCall:
                 return (1 + tailCall.Arguments.Count, 0);

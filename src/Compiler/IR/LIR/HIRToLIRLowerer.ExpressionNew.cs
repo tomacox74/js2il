@@ -30,6 +30,11 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerNewUserDefinedClass(declaredClass, newExpr.Arguments, out resultTempVar);
         }
 
+        if (calleeVar != null && TryLowerNewDirectFunctionConstructor(calleeVar, newExpr.Arguments, out resultTempVar))
+        {
+            return true;
+        }
+
         var ctorName = calleeVar?.Name.Name;
 
         if (ctorName == null)
@@ -181,6 +186,153 @@ public sealed partial class HIRToLIRLowerer
         //   const C = require('./lib'); new C(...)
         // and, in general, new expressions where the constructor is not statically known.
         return TryLowerDynamicNewExpression(newExpr, out resultTempVar);
+    }
+
+    private bool TryLowerNewDirectFunctionConstructor(
+        HIRVariableExpression calleeVar,
+        IReadOnlyList<HIRExpression> args,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (args.Any(static arg => arg is HIRSpreadElement))
+        {
+            return false;
+        }
+
+        var symbol = calleeVar.Name;
+        if (symbol.BindingInfo.HasExplicitWrite)
+        {
+            return false;
+        }
+
+        if (symbol.BindingInfo.DeclarationNode is FunctionDeclaration { Async: true } or FunctionDeclaration { Generator: true })
+        {
+            return false;
+        }
+
+        TwoPhase.CallableId? callableId = symbol.Kind == BindingKind.Function
+            ? TryCreateCallableIdForFunctionDeclaration(symbol)
+            : null;
+        Scope? bodyScope = null;
+
+        if (callableId == null
+            && !TryCreateCallableIdForConstInitializedFunctionExpression(symbol, allowThisBinding: true, out callableId, out bodyScope))
+        {
+            return false;
+        }
+
+        if (callableId == null
+            || callableId.NeedsArgumentsObject
+            || callableId.HasRestParameters)
+        {
+            return false;
+        }
+
+        if (!TryLowerExpression(calleeVar, out var constructorValueTemp))
+        {
+            return false;
+        }
+        constructorValueTemp = EnsureObject(constructorValueTemp);
+
+        var argTemps = new List<TempVariable>(args.Count);
+        foreach (var arg in args)
+        {
+            if (!TryLowerExpression(arg, out var argTemp))
+            {
+                return false;
+            }
+
+            argTemps.Add(EnsureObject(argTemp));
+        }
+
+        var scopesTemp = CreateTempVariable();
+        var scopesBuilt = bodyScope != null
+            ? TryBuildScopesArrayForClosureBinding(bodyScope, scopesTemp)
+            : TryBuildScopesArrayForCallee(symbol, scopesTemp);
+        if (!scopesBuilt)
+        {
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        var receiverTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.CreateFunctionConstructorInstance),
+            new[] { constructorValueTemp },
+            receiverTemp));
+        DefineTempStorage(receiverTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var previousThisTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+            new[] { receiverTemp },
+            previousThisTemp));
+        DefineTempStorage(previousThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var previousNewTargetTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetCurrentNewTarget),
+            new[] { constructorValueTemp },
+            previousNewTargetTemp));
+        DefineTempStorage(previousNewTargetTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        var tryStart = CreateLabel();
+        var tryEnd = CreateLabel();
+        var finallyStart = CreateLabel();
+        var finallyEnd = CreateLabel();
+        var end = CreateLabel();
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(tryStart));
+
+        var callResultTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallFunctionWithNewTarget(
+            symbol,
+            scopesTemp,
+            constructorValueTemp,
+            argTemps,
+            callResultTemp,
+            callableId));
+        DefineDirectCallResultStorage(callResultTemp, callableId, symbol.BindingInfo);
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.ResolveFunctionConstructorResult),
+            new[] { receiverTemp, EnsureObject(callResultTemp) },
+            resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        _methodBodyIR.Instructions.Add(new LIRLeave(end));
+        _methodBodyIR.Instructions.Add(new LIRLabel(tryEnd));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(finallyStart));
+        var restoreNewTargetTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetCurrentNewTarget),
+            new[] { previousNewTargetTemp },
+            restoreNewTargetTemp));
+        DefineTempStorage(restoreNewTargetTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRDiscardTemp(restoreNewTargetTemp));
+
+        var restoreThisTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+            nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+            new[] { previousThisTemp },
+            restoreThisTemp));
+        DefineTempStorage(restoreThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRDiscardTemp(restoreThisTemp));
+        _methodBodyIR.Instructions.Add(new LIREndFinally());
+        _methodBodyIR.Instructions.Add(new LIRLabel(finallyEnd));
+        _methodBodyIR.Instructions.Add(new LIRLabel(end));
+
+        _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+            ExceptionRegionKind.Finally,
+            TryStartLabelId: tryStart,
+            TryEndLabelId: tryEnd,
+            HandlerStartLabelId: finallyStart,
+            HandlerEndLabelId: finallyEnd));
+
+        return true;
     }
 
     private bool TryLowerNewInitializedUserClass(

@@ -863,6 +863,16 @@ public class RuntimeServices
         return value;
     }
 
+    public static object CreateFunctionConstructorInstance(object constructor)
+    {
+        return JavaScriptRuntime.Function.CreateConstructorInstance(constructor);
+    }
+
+    public static object? ResolveFunctionConstructorResult(object receiver, object? result)
+    {
+        return JavaScriptRuntime.Function.ResolveConstructorResult(receiver, result);
+    }
+
     public static object GetImportMeta(object? moduleIdOrPath)
     {
         var url = GetImportMetaUrl(moduleIdOrPath);

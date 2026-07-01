@@ -102,5 +102,8 @@ namespace Jroc.Tests.ArrowFunction
         [Fact]
         public Task ArrowFunction_ForOfIterableArrowCallback() { var testName = nameof(ArrowFunction_ForOfIterableArrowCallback); return GenerateTest(testName); }
 
+        [Fact]
+        public Task ArrowFunction_ConstArrowSelfRecursion_DirectCall() { var testName = nameof(ArrowFunction_ConstArrowSelfRecursion_DirectCall); return GenerateTest(testName); }
+
     }
 }

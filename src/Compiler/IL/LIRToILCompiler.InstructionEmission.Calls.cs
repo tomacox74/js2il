@@ -340,6 +340,78 @@ internal sealed partial class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallFunctionWithNewTarget callFuncWithNewTarget:
+                {
+                    var callableId = callFuncWithNewTarget.CallableId;
+                    if (callableId.NeedsArgumentsObject || callableId.HasRestParameters)
+                    {
+                        return false;
+                    }
+
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false;
+                    }
+
+                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false;
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+                    var callableSignature = reader.GetSignature(callableId);
+                    bool requiresScopes = callableSignature?.RequiresScopesParameter ?? true;
+                    bool usesSingleScope = UsesSingleScopeAbi(callableSignature);
+
+                    int jsParamCount = callableId.JsParamCount;
+                    int argsToPass = Math.Min(callFuncWithNewTarget.Arguments.Count, jsParamCount);
+
+                    if (usesSingleScope)
+                    {
+                        EmitLoadSingleScopeFromScopesArray(
+                            callFuncWithNewTarget.ScopesArray,
+                            ilEncoder,
+                            allocation,
+                            methodDescriptor,
+                            callableSignature ?? throw new InvalidOperationException($"Missing SingleScope signature metadata for callable {callableId.DisplayName}."),
+                            stackifyResult);
+                    }
+                    else if (requiresScopes)
+                    {
+                        EmitLoadTemp(callFuncWithNewTarget.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    EmitLoadTempAsObject(callFuncWithNewTarget.NewTarget, ilEncoder, allocation, methodDescriptor);
+
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        var parameterClrType = callableSignature?.ParameterClrTypes != null && i < callableSignature.ParameterClrTypes.Count
+                            ? callableSignature.ParameterClrTypes[i]
+                            : null;
+                        EmitLoadTempAsParameterType(callFuncWithNewTarget.Arguments[i], parameterClrType, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(methodHandle);
+
+                    if (IsMaterialized(callFuncWithNewTarget.Result, allocation))
+                    {
+                        EmitBoxCallResultForObjectTarget(GetDirectFunctionReturnClrType(callableSignature, callFuncWithNewTarget.FunctionSymbol.BindingInfo, callableId), callFuncWithNewTarget.Result, ilEncoder);
+                        EmitStoreTemp(callFuncWithNewTarget.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRCallFunctionWithArgsArray callFuncArray:
                 {
                     if (callFuncArray.CallableId is not { } callableId)
