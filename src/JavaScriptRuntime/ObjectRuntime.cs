@@ -204,9 +204,18 @@ namespace JavaScriptRuntime
         public static object DefineClassFieldDataProperty(object target, object? prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
+            var key = Object.ToPropertyKeyString(prop);
+            if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
+                || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
+                && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
+                && !existingDescriptor.Writable))
+            {
+                throw new TypeError($"Cannot redefine property: {key}");
+            }
+
             return DefineDataPropertyCore(
                 target,
-                Object.ToPropertyKeyString(prop),
+                key,
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: true);

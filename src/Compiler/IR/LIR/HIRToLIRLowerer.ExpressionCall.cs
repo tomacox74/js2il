@@ -1075,8 +1075,27 @@ public sealed partial class HIRToLIRLowerer
                     callArgTemps.Add(undefTemp);
                 }
 
+                if (!TryLowerExpression(calleePropAccess.Object, out var staticReceiverTemp))
+                {
+                    return false;
+                }
+
+                var previousThisTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+                    new[] { EnsureObject(staticReceiverTemp) },
+                    previousThisTemp));
+                DefineTempStorage(previousThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
                 _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                var restoreThisTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+                    new[] { EnsureObject(previousThisTemp) },
+                    restoreThisTemp));
+                DefineTempStorage(restoreThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
         }
