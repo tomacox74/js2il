@@ -1,5 +1,5 @@
 /*
-Runs generator tests and updates tests/Jroc.Tests/TestResults/failed-tests.txt based on TRX output.
+Runs generator tests and updates per-project failed-tests.txt files based on TRX output.
 
 Usage:
   node scripts/runGeneratorTestsAndUpdateFailures.js
@@ -7,13 +7,13 @@ Usage:
 Options:
   --configuration Debug|Release   (default: Debug)
   --filter <trx filter>           (default: FullyQualifiedName~.GeneratorTests.)
-  --project <path>               (default: tests/Jroc.Tests/Jroc.Tests.csproj)
-  --results <dir>                (default: tests/Jroc.Tests/TestResults)
+  --project <path>               (default: runs both Jroc.Tests and Jroc.Test262.Tests)
+  --results <dir>                (default: sibling TestResults directory for the selected project)
   --trx <filename>               (default: generator.trx)
 
 Exit code:
-  - Mirrors `dotnet test` exit code when possible.
-  - Still writes failed-tests.txt even if tests fail.
+  - Mirrors the first non-zero `dotnet test` exit code when possible.
+  - Still writes failed-tests.txt for each project even if tests fail.
 */
 
 const childProcess = require('node:child_process');
@@ -67,6 +67,35 @@ function parseArgs(argv) {
 
 function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
+}
+
+function getDefaultProjectConfigs(repoRoot, trxFileName) {
+  return [
+    {
+      projectPath: path.resolve(repoRoot, path.join('tests', 'Jroc.Tests', 'Jroc.Tests.csproj')),
+      resultsDir: path.resolve(repoRoot, path.join('tests', 'Jroc.Tests', 'TestResults')),
+      trxFileName,
+    },
+    {
+      projectPath: path.resolve(repoRoot, path.join('tests', 'Jroc.Test262.Tests', 'Jroc.Test262.Tests.csproj')),
+      resultsDir: path.resolve(repoRoot, path.join('tests', 'Jroc.Test262.Tests', 'TestResults')),
+      trxFileName,
+    },
+  ];
+}
+
+function getProjectConfigs(repoRoot, args) {
+  if (!args.project && !args.results) {
+    return getDefaultProjectConfigs(repoRoot, args.trx);
+  }
+
+  const projectPath = path.resolve(repoRoot, args.project ?? path.join('tests', 'Jroc.Tests', 'Jroc.Tests.csproj'));
+  const resultsDir = path.resolve(
+    repoRoot,
+    args.results ?? path.join(path.dirname(path.relative(repoRoot, projectPath)), 'TestResults')
+  );
+
+  return [{ projectPath, resultsDir, trxFileName: args.trx }];
 }
 
 function findTrxFile(resultsDir, preferredName) {
@@ -133,53 +162,57 @@ function main() {
     process.exit(0);
   }
 
-  const projectPath = path.resolve(repoRoot, args.project ?? path.join('tests', 'Jroc.Tests', 'Jroc.Tests.csproj'));
-  const resultsDir = path.resolve(repoRoot, args.results ?? path.join('tests', 'Jroc.Tests', 'TestResults'));
-  const trxFileName = args.trx;
+  const projectConfigs = getProjectConfigs(repoRoot, args);
+  let exitCode = 0;
 
-  ensureDir(resultsDir);
+  for (const config of projectConfigs) {
+    ensureDir(config.resultsDir);
 
-  const dotnetArgs = [
-    'test',
-    projectPath,
-    '-c',
-    args.configuration,
-    '--filter',
-    args.filter,
-    '--logger',
-    `trx;LogFileName=${trxFileName}`,
-    '--results-directory',
-    resultsDir,
-  ];
+    const dotnetArgs = [
+      'test',
+      config.projectPath,
+      '-c',
+      args.configuration,
+      '--filter',
+      args.filter,
+      '--logger',
+      `trx;LogFileName=${config.trxFileName}`,
+      '--results-directory',
+      config.resultsDir,
+    ];
 
-  console.log('Running:', 'dotnet ' + dotnetArgs.map((a) => (a.includes(' ') ? `"${a}"` : a)).join(' '));
+    console.log('Running:', 'dotnet ' + dotnetArgs.map((a) => (a.includes(' ') ? `"${a}"` : a)).join(' '));
 
-  const result = childProcess.spawnSync('dotnet', dotnetArgs, {
-    cwd: repoRoot,
-    // Suppress dotnet test output to avoid overwhelming the console (and hanging chat sessions).
-    // We rely on TRX parsing below to report failures.
-    stdio: ['ignore', 'ignore', 'ignore'],
-    shell: false,
-  });
+    const result = childProcess.spawnSync('dotnet', dotnetArgs, {
+      cwd: repoRoot,
+      // Suppress dotnet test output to avoid overwhelming the console (and hanging chat sessions).
+      // We rely on TRX parsing below to report failures.
+      stdio: ['ignore', 'ignore', 'ignore'],
+      shell: false,
+    });
 
-  const trxPath = findTrxFile(resultsDir, trxFileName);
-  if (!trxPath) {
-    console.error('Could not find TRX results under:', resultsDir);
-    process.exit(result.status ?? 1);
+    const trxPath = findTrxFile(config.resultsDir, config.trxFileName);
+    if (!trxPath) {
+      console.error('Could not find TRX results under:', config.resultsDir);
+      process.exit(result.status ?? 1);
+    }
+
+    const trxXml = fs.readFileSync(trxPath, 'utf8');
+    const failedTests = parseFailedTestsFromTrx(trxXml);
+
+    const failedTestsPath = path.join(config.resultsDir, 'failed-tests.txt');
+    writeFailedTestsFile(failedTestsPath, failedTests);
+
+    console.log(`Wrote ${failedTests.length} failing test(s) to: ${failedTestsPath}`);
+    if (result.status !== 0) {
+      console.log(`dotnet test exited with code: ${result.status}`);
+      if (exitCode === 0) {
+        exitCode = result.status ?? 1;
+      }
+    }
   }
 
-  const trxXml = fs.readFileSync(trxPath, 'utf8');
-  const failedTests = parseFailedTestsFromTrx(trxXml);
-
-  const failedTestsPath = path.join(resultsDir, 'failed-tests.txt');
-  writeFailedTestsFile(failedTestsPath, failedTests);
-
-  console.log(`Wrote ${failedTests.length} failing test(s) to: ${failedTestsPath}`);
-  if (result.status !== 0) {
-    console.log(`dotnet test exited with code: ${result.status}`);
-  }
-
-  process.exit(result.status ?? 0);
+  process.exit(exitCode);
 }
 
 main();
