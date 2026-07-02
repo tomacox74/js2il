@@ -653,6 +653,28 @@ internal sealed partial class LIRToILCompiler
                     // Receiver is implicit 'this'
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
+                    if (callUserClass.RequiresPrivateBrandCheck
+                        && _serviceProvider.GetService<ClassRegistry>() is { } privateMethodClassRegistry
+                        && privateMethodClassRegistry.TryGet(callUserClass.RegistryClassName, out var privateMethodOwnerTypeHandle))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.OpCode(ILOpCode.Ldtoken);
+                        ilEncoder.Token(privateMethodOwnerTypeHandle);
+                        var getTypeFromHandle = _memberRefRegistry.GetOrAddMethod(
+                            typeof(Type),
+                            nameof(Type.GetTypeFromHandle),
+                            parameterTypes: new[] { typeof(RuntimeTypeHandle) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getTypeFromHandle);
+                        var validateReceiver = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.ValidateDirectClassPrivateMethodReceiver),
+                            parameterTypes: new[] { typeof(object), typeof(Type) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(validateReceiver);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+
                     // Async class methods use the standard jroc calling convention and expect a leading scopes array.
                     if (callUserClass.HasScopesParameter)
                     {

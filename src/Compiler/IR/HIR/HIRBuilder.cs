@@ -1473,7 +1473,7 @@ class HIRMethodBuilder
                             && ClassElementNames.TryGetPropertyName(propertyDefinition.Key, computed: true, out computedStaticFieldName)
                             && !string.IsNullOrWhiteSpace(computedStaticFieldName);
 
-                        if (propertyDefinition.Computed && (!hasResolvedStaticFieldName || string.Equals(computedStaticFieldName, "prototype", StringComparison.Ordinal)))
+                        if (propertyDefinition.Computed)
                         {
                             HIRExpression hirKey;
                             if (hasResolvedStaticFieldName)
@@ -1493,7 +1493,11 @@ class HIRMethodBuilder
                             }
 
                             statements.Add(new HIRExpressionStatement(
-                                new HIRIndexAssignmentExpression(classTypeExpr, hirKey, Acornima.Operator.Assignment, hirValue!)));
+                                new HIRDefineClassDataPropertyExpression(
+                                    classTypeExpr,
+                                    hirKey,
+                                    hirValue!,
+                                    isField: true)));
                             break;
                         }
 
@@ -3589,14 +3593,14 @@ class HIRMethodBuilder
                         if (getterMethodName != null)
                         {
                             hirExpr = new HIRCallExpression(
-                                new HIRPropertyAccessExpression(new HIRThisExpression(_staticThisRegistryClassName), getterMethodName),
+                                new HIRPropertyAccessExpression(new HIRThisExpression(), getterMethodName),
                                 Array.Empty<HIRExpression>());
                             return true;
                         }
 
                         if (privateMethodName != null)
                         {
-                            hirExpr = new HIRPropertyAccessExpression(new HIRThisExpression(_staticThisRegistryClassName), privateMethodName);
+                            hirExpr = new HIRPropertyAccessExpression(new HIRThisExpression(), privateMethodName);
                             return true;
                         }
 

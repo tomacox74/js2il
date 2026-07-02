@@ -121,6 +121,9 @@ namespace JavaScriptRuntime
         public static object? ValidateClassHeritage(object? heritage)
             => RuntimeServices.ValidateClassHeritage(heritage);
 
+        public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType)
+            => RuntimeServices.ValidateDirectClassPrivateMethodReceiver(receiver, ownerType);
+
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
             => DefineAccessorProperty(target, prop, getter, setter, enumerable: true, createDictionarySlot: true);
 

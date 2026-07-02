@@ -971,6 +971,28 @@ public sealed partial class HIRToLIRLowerer
                         callArgTemps.Add(undefTemp);
                     }
 
+                    if (_callableKind == CallableKind.ClassStaticMethod
+                        && calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: null }
+                        && member.Key is PrivateIdentifier)
+                    {
+                        var receiverTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRLoadThis(receiverTemp));
+                        DefineTempStorage(receiverTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                        var ownerTypeTemp = CreateTempVariable();
+                        var registryClassName = $"{(classScope!.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
+                        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, ownerTypeTemp));
+                        DefineTempStorage(ownerTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+                        var validationTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.ValidateDirectClassPrivateMethodReceiver),
+                            Arguments: new[] { EnsureObject(receiverTemp), EnsureObject(ownerTypeTemp) },
+                            Result: validationTemp));
+                        DefineTempStorage(validationTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+
                     _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     return true;
@@ -1238,6 +1260,7 @@ public sealed partial class HIRToLIRLowerer
                     calleePropAccess.PropertyName,
                     methodHandle,
                     hasScopesParam,
+                    calleePropAccess.PropertyName.StartsWith("__jroc_priv_method_", StringComparison.Ordinal),
                     maxParamCount,
                     argTemps,
                     resultTempVar));

@@ -253,6 +253,7 @@ public record LIRCallUserClassInstanceMethod(
     string MethodName,
     MethodDefinitionHandle MethodHandle,
     bool HasScopesParameter,
+    bool RequiresPrivateBrandCheck,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;

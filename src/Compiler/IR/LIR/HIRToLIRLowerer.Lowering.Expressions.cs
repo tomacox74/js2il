@@ -401,6 +401,7 @@ public sealed partial class HIRToLIRLowerer
                     privateAccessorAssignExpr.SetterMethodName,
                     setterHandle,
                     hasSetterScopesParam,
+                    RequiresPrivateBrandCheck: false,
                     setterMaxParamCount,
                     new[] { EnsureObject(privateAccessorValueTemp) },
                     privateSetterResultTemp));
