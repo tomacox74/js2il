@@ -1,90 +1,90 @@
-using Jroc.Tests;
-
-namespace Jroc.Test262.Tests.language.expressions.function;
-
-public class ExecutionTests : ExecutionTestsBase
-{
-    public ExecutionTests() : base("language.expressions.function") { }
-
-    [Fact(DisplayName = "arguments-with-arguments-fn")]
-    public Task arguments_with_arguments_fn()
-        => ExecutionTest("arguments-with-arguments-fn");
-
-    [Fact(DisplayName = "arguments-with-arguments-lex")]
-    public Task arguments_with_arguments_lex()
-        => ExecutionTest("arguments-with-arguments-lex");
-
-    [Fact(DisplayName = "param-dflt-yield-non-strict")]
-    public Task param_dflt_yield_non_strict()
-        => ExecutionTest("param-dflt-yield-non-strict");
-
-    [Fact(DisplayName = "param-eval-non-strict-is-correct-value")]
-    public Task param_eval_non_strict_is_correct_value()
-        => ExecutionTest("param-eval-non-strict-is-correct-value");
-
-    [Fact(DisplayName = "S10.1.1_A1_T2")]
-    public Task S10_1_1_A1_T2()
-        => ExecutionTest("S10.1.1_A1_T2");
-
+using Jroc.Test262.Tests.language;
+
+namespace Jroc.Test262.Tests.language.expressions.function;
+
+public class ExecutionTests : DiskExecutionTestsBase
+{
+    public ExecutionTests() : base("language.expressions.function") { }
+
+    [Fact(DisplayName = "arguments-with-arguments-fn")]
+    public Task arguments_with_arguments_fn()
+        => ExecutionTest("arguments-with-arguments-fn");
+
+    [Fact(DisplayName = "arguments-with-arguments-lex")]
+    public Task arguments_with_arguments_lex()
+        => ExecutionTest("arguments-with-arguments-lex");
+
+    [Fact(DisplayName = "param-dflt-yield-non-strict")]
+    public Task param_dflt_yield_non_strict()
+        => ExecutionTest("param-dflt-yield-non-strict");
+
+    [Fact(DisplayName = "param-eval-non-strict-is-correct-value")]
+    public Task param_eval_non_strict_is_correct_value()
+        => ExecutionTest("param-eval-non-strict-is-correct-value");
+
+    [Fact(DisplayName = "S10.1.1_A1_T2")]
+    public Task S10_1_1_A1_T2()
+        => ExecutionTest("S10.1.1_A1_T2");
+
     [Fact(DisplayName = "length-dflt")]
-    public Task length_dflt()
-        => ExecutionTest("length-dflt");
-
-    [Fact(DisplayName = "name-arguments-non-strict")]
-    public Task name_arguments_non_strict()
-        => ExecutionTest("name-arguments-non-strict");
-
-    [Fact(DisplayName = "name-eval-non-strict")]
-    public Task name_eval_non_strict()
-        => ExecutionTest("name-eval-non-strict");
-
+    public Task length_dflt()
+        => ExecutionTest("length-dflt");
+
+    [Fact(DisplayName = "name-arguments-non-strict")]
+    public Task name_arguments_non_strict()
+        => ExecutionTest("name-arguments-non-strict");
+
+    [Fact(DisplayName = "name-eval-non-strict")]
+    public Task name_eval_non_strict()
+        => ExecutionTest("name-eval-non-strict");
+
     [Fact(DisplayName = "name-eval-stricteval", Skip = "Blocked: eval is not supported yet.")]
-    public Task name_eval_stricteval()
-        => ExecutionTest("name-eval-stricteval");
-
+    public Task name_eval_stricteval()
+        => ExecutionTest("name-eval-stricteval");
+
     [Fact(DisplayName = "name")]
-    public Task name()
-        => ExecutionTest("name");
-
-    [Fact(DisplayName = "param-arguments-non-strict")]
-    public Task param_arguments_non_strict()
-        => ExecutionTest("param-arguments-non-strict");
-
-    [Fact(DisplayName = "param-duplicated-non-strict")]
-    public Task param_duplicated_non_strict()
-        => ExecutionTest("param-duplicated-non-strict");
-
+    public Task name()
+        => ExecutionTest("name");
+
+    [Fact(DisplayName = "param-arguments-non-strict")]
+    public Task param_arguments_non_strict()
+        => ExecutionTest("param-arguments-non-strict");
+
+    [Fact(DisplayName = "param-duplicated-non-strict")]
+    public Task param_duplicated_non_strict()
+        => ExecutionTest("param-duplicated-non-strict");
+
     [Fact(DisplayName = "param-eval-non-strict")]
-    public Task param_eval_non_strict()
-        => ExecutionTest("param-eval-non-strict");
-
+    public Task param_eval_non_strict()
+        => ExecutionTest("param-eval-non-strict");
+
     [Fact(DisplayName = "param-eval-stricteval", Skip = "Blocked: eval is not supported yet.")]
-    public Task param_eval_stricteval()
-        => ExecutionTest("param-eval-stricteval");
-
+    public Task param_eval_stricteval()
+        => ExecutionTest("param-eval-stricteval");
+
     [Fact(DisplayName = "params-dflt-args-unmapped")]
-    public Task params_dflt_args_unmapped()
-        => ExecutionTest("params-dflt-args-unmapped");
-
+    public Task params_dflt_args_unmapped()
+        => ExecutionTest("params-dflt-args-unmapped");
+
     [Fact(DisplayName = "params-dflt-ref-arguments")]
-    public Task params_dflt_ref_arguments()
-        => ExecutionTest("params-dflt-ref-arguments");
-
+    public Task params_dflt_ref_arguments()
+        => ExecutionTest("params-dflt-ref-arguments");
+
     [Fact(DisplayName = "scope-body-lex-distinct", Skip = "Blocked: eval is not supported yet.")]
-    public Task scope_body_lex_distinct()
-        => ExecutionTest("scope-body-lex-distinct");
-
+    public Task scope_body_lex_distinct()
+        => ExecutionTest("scope-body-lex-distinct");
+
     [Fact(DisplayName = "scope-name-var-close")]
-    public Task scope_name_var_close()
-        => ExecutionTest("scope-name-var-close");
-
+    public Task scope_name_var_close()
+        => ExecutionTest("scope-name-var-close");
+
     [Fact(DisplayName = "scope-name-var-open-non-strict")]
-    public Task scope_name_var_open_non_strict()
-        => ExecutionTest("scope-name-var-open-non-strict");
-
+    public Task scope_name_var_open_non_strict()
+        => ExecutionTest("scope-name-var-open-non-strict");
+
     [Fact(DisplayName = "scope-name-var-open-strict")]
-    public Task scope_name_var_open_strict()
-        => ExecutionTest("scope-name-var-open-strict");
+    public Task scope_name_var_open_strict()
+        => ExecutionTest("scope-name-var-open-strict");
 
     [Fact(DisplayName = "dflt-params-abrupt")]
     public Task dflt_params_abrupt()
@@ -114,22 +114,6 @@ public class ExecutionTests : ExecutionTestsBase
     public Task dflt_params_trailing_comma()
         => ExecutionTest("dflt-params-trailing-comma");
 
-    [Fact(DisplayName = "named-no-strict-reassign-fn-name-in-body")]
-    public Task named_no_strict_reassign_fn_name_in_body()
-        => ExecutionTest("named-no-strict-reassign-fn-name-in-body");
-
-    [Fact(DisplayName = "named-no-strict-reassign-fn-name-in-body-in-arrow")]
-    public Task named_no_strict_reassign_fn_name_in_body_in_arrow()
-        => ExecutionTest("named-no-strict-reassign-fn-name-in-body-in-arrow");
-
-    [Fact(DisplayName = "named-strict-error-reassign-fn-name-in-body")]
-    public Task named_strict_error_reassign_fn_name_in_body()
-        => ExecutionTest("named-strict-error-reassign-fn-name-in-body");
-
-    [Fact(DisplayName = "named-strict-error-reassign-fn-name-in-body-in-arrow")]
-    public Task named_strict_error_reassign_fn_name_in_body_in_arrow()
-        => ExecutionTest("named-strict-error-reassign-fn-name-in-body-in-arrow");
-
     [Fact(DisplayName = "params-trailing-comma-multiple")]
     public Task params_trailing_comma_multiple()
         => ExecutionTest("params-trailing-comma-multiple");
@@ -137,6 +121,34 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "params-trailing-comma-single")]
     public Task params_trailing_comma_single()
         => ExecutionTest("params-trailing-comma-single");
+
+    [Fact(DisplayName = "named-no-strict-reassign-fn-name-in-body")]
+    public Task named_no_strict_reassign_fn_name_in_body()
+        => ExecutionTest("named-no-strict-reassign-fn-name-in-body");
+
+    [Fact(DisplayName = "named-strict-error-reassign-fn-name-in-body")]
+    public Task named_strict_error_reassign_fn_name_in_body()
+        => ExecutionTest("named-strict-error-reassign-fn-name-in-body");
+
+    [Fact(DisplayName = "ary-name-iter-val")]
+    public Task dstr_ary_name_iter_val()
+        => ExecutionTest("dstr/ary-name-iter-val");
+
+    [Fact(DisplayName = "ary-ptrn-rest-id")]
+    public Task dstr_ary_ptrn_rest_id()
+        => ExecutionTest("dstr/ary-ptrn-rest-id");
+
+    [Fact(DisplayName = "ary-ptrn-empty")]
+    public Task dstr_ary_ptrn_empty()
+        => ExecutionTest("dstr/ary-ptrn-empty");
+
+    [Fact(DisplayName = "named-no-strict-reassign-fn-name-in-body-in-arrow")]
+    public Task named_no_strict_reassign_fn_name_in_body_in_arrow()
+        => ExecutionTest("named-no-strict-reassign-fn-name-in-body-in-arrow");
+
+    [Fact(DisplayName = "named-strict-error-reassign-fn-name-in-body-in-arrow")]
+    public Task named_strict_error_reassign_fn_name_in_body_in_arrow()
+        => ExecutionTest("named-strict-error-reassign-fn-name-in-body-in-arrow");
 
     [Fact(DisplayName = "scope-param-elem-var-close")]
     public Task scope_param_elem_var_close()
@@ -161,4 +173,84 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "scope-paramsbody-var-open")]
     public Task scope_paramsbody_var_open()
         => ExecutionTest("scope-paramsbody-var-open");
+
+    [Fact(DisplayName = "ary-ptrn-elem-ary-elem-init")]
+    public Task dstr_ary_ptrn_elem_ary_elem_init()
+        => ExecutionTest("dstr/ary-ptrn-elem-ary-elem-init");
+
+    [Fact(DisplayName = "ary-ptrn-elem-ary-elem-iter")]
+    public Task dstr_ary_ptrn_elem_ary_elem_iter()
+        => ExecutionTest("dstr/ary-ptrn-elem-ary-elem-iter");
+
+    [Fact(DisplayName = "ary-ptrn-elem-ary-empty-iter")]
+    public Task dstr_ary_ptrn_elem_ary_empty_iter()
+        => ExecutionTest("dstr/ary-ptrn-elem-ary-empty-iter");
+
+    [Fact(DisplayName = "ary-ptrn-elem-ary-rest-init")]
+    public Task dstr_ary_ptrn_elem_ary_rest_init()
+        => ExecutionTest("dstr/ary-ptrn-elem-ary-rest-init");
+
+    [Fact(DisplayName = "ary-ptrn-elem-ary-rest-iter")]
+    public Task dstr_ary_ptrn_elem_ary_rest_iter()
+        => ExecutionTest("dstr/ary-ptrn-elem-ary-rest-iter");
+
+    [Fact(DisplayName = "ary-ptrn-elem-ary-val-null")]
+    public Task dstr_ary_ptrn_elem_ary_val_null()
+        => ExecutionTest("dstr/ary-ptrn-elem-ary-val-null");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-exhausted")]
+    public Task dstr_ary_ptrn_elem_id_init_exhausted()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-exhausted");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-fn-name-arrow")]
+    public Task dstr_ary_ptrn_elem_id_init_fn_name_arrow()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-fn-name-arrow");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-fn-name-cover")]
+    public Task dstr_ary_ptrn_elem_id_init_fn_name_cover()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-fn-name-cover");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-fn-name-fn")]
+    public Task dstr_ary_ptrn_elem_id_init_fn_name_fn()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-fn-name-fn");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-hole")]
+    public Task dstr_ary_ptrn_elem_id_init_hole()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-hole");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-skipped")]
+    public Task dstr_ary_ptrn_elem_id_init_skipped()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-skipped");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-throws")]
+    public Task dstr_ary_ptrn_elem_id_init_throws()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-throws");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-undef")]
+    public Task dstr_ary_ptrn_elem_id_init_undef()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-undef");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-init-unresolvable")]
+    public Task dstr_ary_ptrn_elem_id_init_unresolvable()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-init-unresolvable");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-iter-complete")]
+    public Task dstr_ary_ptrn_elem_id_iter_complete()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-iter-complete");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-iter-done")]
+    public Task dstr_ary_ptrn_elem_id_iter_done()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-iter-done");
+
+    [Fact(DisplayName = "ary-ptrn-elem-id-iter-val")]
+    public Task dstr_ary_ptrn_elem_id_iter_val()
+        => ExecutionTest("dstr/ary-ptrn-elem-id-iter-val");
+
+    [Fact(DisplayName = "ary-ptrn-elem-obj-id-init")]
+    public Task dstr_ary_ptrn_elem_obj_id_init()
+        => ExecutionTest("dstr/ary-ptrn-elem-obj-id-init");
+
+    [Fact(DisplayName = "ary-ptrn-elem-obj-id")]
+    public Task dstr_ary_ptrn_elem_obj_id()
+        => ExecutionTest("dstr/ary-ptrn-elem-obj-id");
 }
