@@ -812,8 +812,7 @@ namespace JavaScriptRuntime.Node
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     psi.FileName = "cmd.exe";
-                    psi.ArgumentList.Add("/c");
-                    psi.ArgumentList.Add(full);
+                    psi.Arguments = "/d /s /c " + full;
                 }
                 else
                 {
@@ -836,22 +835,29 @@ namespace JavaScriptRuntime.Node
 
         private static string BuildShellCommand(string command, IReadOnlyList<string> args)
         {
+            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             var sb = new StringBuilder();
             sb.Append(command);
             for (int i = 0; i < args.Count; i++)
             {
                 sb.Append(' ');
-                sb.Append(QuoteArg(args[i] ?? string.Empty));
+                sb.Append(QuoteArg(args[i] ?? string.Empty, isWindows));
             }
             return sb.ToString();
         }
 
-        private static string QuoteArg(string arg)
+        private static string QuoteArg(string arg, bool isWindows)
         {
             if (arg.Length == 0) return "\"\"";
             if (arg.IndexOfAny(new[] { ' ', '\t', '"' }) < 0) return arg;
+            if (isWindows)
+            {
+                return "\"" + arg.Replace("\"", "\"\"") + "\"";
+            }
+
             return "\"" + arg.Replace("\"", "\\\"") + "\"";
         }
+
 
         private static List<string> CoerceArgs(object? args)
         {

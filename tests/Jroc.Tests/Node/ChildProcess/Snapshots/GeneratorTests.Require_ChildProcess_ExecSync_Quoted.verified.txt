@@ -1,0 +1,116 @@
+﻿// IL code: Require_ChildProcess_ExecSync_Quoted
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class private auto ansi beforefieldinit Modules.Require_ChildProcess_ExecSync_Quoted
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Scope
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x20c8
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Scope::.ctor
+
+	} // end of class Scope
+
+
+	// Methods
+	.method public hidebysig static 
+		void __js_module_init__ (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 108 (0x6c)
+		.maxstack 8
+		.locals init (
+			[0] class Modules.Require_ChildProcess_ExecSync_Quoted/Scope,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] bool,
+			[5] object
+		)
+
+		IL_0000: newobj instance void Modules.Require_ChildProcess_ExecSync_Quoted/Scope::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldarg.1
+		IL_0007: ldstr "child_process"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: stloc.3
+		IL_0012: ldloc.3
+		IL_0013: stloc.1
+		IL_0014: ldloc.1
+		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_001a: stloc.3
+		IL_001b: ldloc.3
+		IL_001c: ldstr "execSync"
+		IL_0021: ldstr "node -e \"process.stdout.write('quoted-ok')\""
+		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_002b: dup
+		IL_002c: ldstr "encoding"
+		IL_0031: ldstr "utf8"
+		IL_0036: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0040: stloc.3
+		IL_0041: ldloc.3
+		IL_0042: stloc.2
+		IL_0043: ldloc.2
+		IL_0044: ldstr "quoted-ok"
+		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.s 4
+		IL_0052: box [System.Runtime]System.Boolean
+		IL_0057: stloc.s 5
+		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005e: ldstr "quoted output ok:"
+		IL_0063: ldloc.s 5
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_006a: pop
+		IL_006b: ret
+	} // end of method Require_ChildProcess_ExecSync_Quoted::__js_module_init__
+
+} // end of class Modules.Require_ChildProcess_ExecSync_Quoted
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20d1
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Modules.Require_ChildProcess_ExecSync_Quoted::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -33,6 +33,9 @@ function maybeRunCompiledWithJroc() {
   if (process.env.JROC_RELEASE_BOOTSTRAPPED === '1') {
     return;
   }
+  if (process.env.JROC_RELEASE_NODE_ONLY === '1' || process.argv.includes('--node-only')) {
+    return;
+  }
 
   const argv0 = path.basename((process.argv[0] || '').toLowerCase());
   const runningViaNode = argv0 === 'node' || argv0 === 'node.exe';
@@ -139,7 +142,7 @@ function writeStdout(text) {
 }
 
 function usageAndExit(code = 1) {
-  console.error(`\nUsage: node scripts/release.js <patch|minor|major> [--merge] [--skip-empty] [--dry-run] [--repo owner/name] [--base master]\n`);
+  console.error(`\nUsage: node scripts/release.js <patch|minor|major> [--merge] [--skip-empty] [--dry-run] [--repo owner/name] [--base master] [--node-only]\n`);
   process.exit(code);
 }
 
@@ -193,6 +196,9 @@ function parseArgs(argv) {
       case '--help':
       case '-h':
         usageAndExit(0);
+        break;
+      case '--node-only':
+        // Consumed by maybeRunCompiledWithJroc as an escape hatch.
         break;
       default:
         console.error(`Unknown arg: ${a}`);
