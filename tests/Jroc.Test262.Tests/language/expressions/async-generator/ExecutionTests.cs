@@ -65,4 +65,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "yield-star-async-next")]
     public Task yield_star_async_next()
         => ExecutionTest("yield-star-async-next");
+
+    [Fact(DisplayName = "dstr/named-dflt-obj-ptrn-prop-obj-value-undef")]
+    public Task dstr_named_dflt_obj_ptrn_prop_obj_value_undef()
+        => ExecutionTest("dstr/named-dflt-obj-ptrn-prop-obj-value-undef", allowUnhandledException: true);
 }

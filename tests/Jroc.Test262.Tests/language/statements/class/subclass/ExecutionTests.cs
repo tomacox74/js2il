@@ -21,4 +21,8 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "default-constructor")]
     public Task default_constructor()
         => ExecutionTest("default-constructor");
+
+    [Fact(DisplayName = "derived-class-return-override-with-number")]
+    public Task derived_class_return_override_with_number()
+        => ExecutionTest("derived-class-return-override-with-number", allowUnhandledException: true);
 }

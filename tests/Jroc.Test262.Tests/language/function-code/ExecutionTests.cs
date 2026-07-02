@@ -78,4 +78,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "10.4.3-1-30-s")]
     public Task _10_4_3_1_30_s()
         => ExecutionTest("10.4.3-1-30-s");
+
+    [Fact(DisplayName = "10.4.3-1-35-s")]
+    public Task _10_4_3_1_35_s()
+        => ExecutionTest("10.4.3-1-35-s", allowUnhandledException: true);
+
+    [Fact(DisplayName = "10.4.3-1-97-s")]
+    public Task _10_4_3_1_97_s()
+        => ExecutionTest("10.4.3-1-97-s", allowUnhandledException: true);
 }
