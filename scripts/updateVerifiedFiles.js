@@ -13,7 +13,8 @@
   - Creates target directories as needed
 
   Defaults:
-  - By default, only GeneratorTests.* received files are updated (GeneratorTests-only mode).
+  - By default, only GeneratorTests.* received files from the generator snapshot projects are updated
+    (GeneratorTests-only mode).
   - Use --all to update all received files across the tree.
 */
 
@@ -44,6 +45,21 @@ function parseArgs(argv) {
         args.root = a;
       }
     }
+
+    function isGeneratorSnapshot(fullPath) {
+      const baseName = path.basename(fullPath).toLowerCase();
+      if (!baseName.startsWith('generatortests.')) {
+        return false;
+      }
+
+      const normalizedPath = fullPath.split(path.sep).join('/');
+      if (!normalizedPath.includes('/tests/')) {
+        return true;
+      }
+
+      return normalizedPath.includes('/tests/Jroc.Tests/')
+        || normalizedPath.includes('/tests/Jroc.Test262.Tests/');
+    }
   }
   return args;
 }
@@ -55,7 +71,8 @@ Options:
   --root, -r <dir>         Root directory to search (default: CWD)
   --verifyRoot <dir>       Alias for --root
   --all, -a                Update all received files (override default GeneratorTests-only)
-  --generator-only, --gen  Update only GeneratorTests.* (default behavior)
+  --generator-only, --gen  Update only GeneratorTests.* under Jroc.Tests / Jroc.Test262.Tests
+                           (default behavior)
   --quiet, -q              Minimal output
   --help, -h               Show help
 `;
@@ -85,6 +102,21 @@ async function* walk(dir) {
       yield fullPath;
     }
   }
+}
+
+function isGeneratorSnapshot(fullPath) {
+  const baseName = path.basename(fullPath).toLowerCase();
+  if (!baseName.startsWith('generatortests.')) {
+    return false;
+  }
+
+  const normalizedPath = fullPath.split(path.sep).join('/');
+  if (!normalizedPath.includes('/tests/')) {
+    return true;
+  }
+
+  return normalizedPath.includes('/tests/Jroc.Tests/')
+    || normalizedPath.includes('/tests/Jroc.Test262.Tests/');
 }
 
 function toVerifiedPath(fullPath) {
@@ -129,11 +161,7 @@ async function main() {
   // Default filter: only GeneratorTests.* snapshots unless --all specified
   let filtered = receivedFiles;
   if (args.generatorOnly) {
-    filtered = receivedFiles.filter((f) => {
-      const bn = path.basename(f).toLowerCase();
-      // Example: GeneratorTests.PerfHooks_PerformanceNow_Basic.received.txt
-      return bn.startsWith('generatortests.');
-    });
+    filtered = receivedFiles.filter((f) => isGeneratorSnapshot(f));
     if (!args.quiet) {
       console.log(`GeneratorTests-only mode: ${filtered.length} of ${receivedFiles.length} received files will be updated.`);
     }
