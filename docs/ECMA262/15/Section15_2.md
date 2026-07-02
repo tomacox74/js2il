@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-02T19:23:04Z
+> Last generated (UTC): 2026-07-02T22:55:30Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -37,5 +37,5 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| directive prologue / strict mode ("use strict") semantics | Supported with Limitations | [`10.4.3-1-35-s.js`](../../../tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-35-s.js) | `test/language/function-code/10.4.3-1-35-s.js` | JROC parses directive prologues and preserves strict function `this` for bare calls in the covered function-code case. This clause remains limited because full strict-mode semantics and early errors across the language still need a broader dedicated test matrix. |
+| directive prologue / strict mode ("use strict") semantics | Supported with Limitations | [`10.4.3-1-27-s.js`](../../../tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-27-s.js)<br>[`10.4.3-1-28-s.js`](../../../tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-28-s.js)<br>[`10.4.3-1-29-s.js`](../../../tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-29-s.js)<br>[`10.4.3-1-35-s.js`](../../../tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-35-s.js) | `test/language/function-code/10.4.3-1-27-s.js`<br>`test/language/function-code/10.4.3-1-28-s.js`<br>`test/language/function-code/10.4.3-1-29-s.js`<br>`test/language/function-code/10.4.3-1-35-s.js` | JROC parses directive prologues and preserves strict function `this` for bare calls, including nested function declarations and function expressions reached through direct-call lowering. This clause remains limited because full strict-mode semantics and early errors across the language still need a broader dedicated test matrix. |
 
