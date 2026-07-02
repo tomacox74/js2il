@@ -1,4 +1,4 @@
-// IL code: Classes_AccessorMethods_InstanceAndStatic
+﻿// IL code: Classes_AccessorMethods_InstanceAndStatic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -253,26 +253,26 @@
 			// Code size: 57 (0x39)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object,
+				[1] float64
 			)
 
-			IL_0000: ldarg.2
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 2
-			IL_000f: mul
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldc.i4.0
-			IL_0013: ldelem.ref
-			IL_0014: castclass Modules.Classes_AccessorMethods_InstanceAndStatic/Scope
-			IL_0019: ldfld object Modules.Classes_AccessorMethods_InstanceAndStatic/Scope::Counter
-			IL_001e: ldstr "Cannot access 'Counter' before initialization"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Classes_AccessorMethods_InstanceAndStatic/Scope
+			IL_0008: ldfld object Modules.Classes_AccessorMethods_InstanceAndStatic/Scope::Counter
+			IL_000d: ldstr "Cannot access 'Counter' before initialization"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0017: stloc.0
+			IL_0018: ldarg.2
+			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001e: ldc.r8 2
+			IL_0027: mul
 			IL_0028: stloc.1
-			IL_0029: ldloc.1
+			IL_0029: ldloc.0
 			IL_002a: ldstr "_total"
-			IL_002f: ldloc.0
+			IL_002f: ldloc.1
 			IL_0030: ldc.i4.1
 			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
 			IL_0036: pop
