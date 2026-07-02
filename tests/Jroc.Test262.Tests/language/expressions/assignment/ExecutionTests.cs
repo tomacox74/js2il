@@ -1,8 +1,8 @@
-using Jroc.Tests;
+using Jroc.Test262.Tests.language;
 
 namespace Jroc.Test262.Tests.language.expressions.assignment;
 
-public class ExecutionTests : ExecutionTestsBase
+public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("language.expressions.assignment") { }
 
