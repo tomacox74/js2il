@@ -198,12 +198,12 @@ namespace JavaScriptRuntime
                 args[11]);
         }
 
-        public static object DefineClassFieldDataProperty(object target, string prop, object? value)
+        public static object DefineClassFieldDataProperty(object target, object? prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
             return DefineDataPropertyCore(
                 target,
-                prop,
+                Object.ToPropertyKeyString(prop),
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: true);
@@ -316,22 +316,7 @@ namespace JavaScriptRuntime
 
         private static void ConfigureFunctionNameFromPropertyKey(object? propertyKey, object? value)
         {
-            if (value is not Delegate del)
-            {
-                return;
-            }
-
-            if (Function.TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
-                && nameDescriptor.Value is string existingName
-                && !string.IsNullOrEmpty(existingName))
-            {
-                return;
-            }
-
-            var functionName = propertyKey is Symbol sym
-                ? sym.Description is null ? string.Empty : $"[{sym.Description}]"
-                : Object.ToPropertyKeyString(propertyKey);
-            Function.DefineMetadataProperty(del, "name", functionName);
+            Function.SetInferredNameIfAnonymous(value, propertyKey);
         }
 
         private static bool HasGlobalBinding(string name)

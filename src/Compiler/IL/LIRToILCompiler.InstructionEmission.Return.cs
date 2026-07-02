@@ -17,6 +17,14 @@ internal sealed partial class LIRToILCompiler
     {
         switch (instruction)
         {
+            case LIRReturnUndefinedImmediate:
+                if (!methodDescriptor.ReturnsVoid)
+                {
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                }
+                ilEncoder.OpCode(ILOpCode.Ret);
+                return true;
+
             case LIRReturn lirReturn:
                 // Constructors are void-returning - don't load any value before ret
                 if (!methodDescriptor.ReturnsVoid)

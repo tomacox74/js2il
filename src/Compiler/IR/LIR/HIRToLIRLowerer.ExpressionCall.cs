@@ -890,7 +890,8 @@ public sealed partial class HIRToLIRLowerer
         // Case 2b.2: User-defined class static method call (e.g., Greeter.helloWorld()).
         // If the receiver is a class identifier (ClassDeclaration binding) and the member is a static method,
         // emit a direct call to the declared method token via CallableRegistry.
-        if (calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: not null }
+        if ((calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: not null }
+                || (_callableKind == CallableKind.ClassStaticMethod && calleePropAccess.Object is HIRThisExpression))
             && _scope != null)
         {
             var classScope = _scope;

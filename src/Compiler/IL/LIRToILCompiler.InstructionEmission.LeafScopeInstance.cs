@@ -267,6 +267,34 @@ internal sealed partial class LIRToILCompiler
 
                         EmitStoreFieldByName(ilEncoder, scopeName, "_moveNext");
 
+                        // Async generator parameter binding happens when the generator function is called.
+                        // Run the step method in parameter-initialization-only mode so destructuring/default
+                        // parameter errors are thrown synchronously without executing the generator body.
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_parameterInitializationOnly");
+
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
+                        ilEncoder.LoadArgument(scopesArgIndex);
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+                        var invokeForParametersRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(invokeForParametersRef);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(0);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_parameterInitializationOnly");
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(0);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_started");
+
                         // Return new AsyncGeneratorObject(scopes)
                         ilEncoder.LoadArgument(scopesArgIndex);
                         var asyncGenObjCtor = _memberRefRegistry.GetOrAddConstructor(
@@ -549,6 +577,9 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
+
+                        EmitInitModuleParameterFieldsIfNeeded(ilEncoder, methodDescriptor, scopeName: createScope.Scope.Name);
+                        EmitInitArgumentsObjectIfNeeded(ilEncoder, createScope.Scope.Name, methodDescriptor);
 
                         // Build modified scopes array with leaf at [0]
                         ilEncoder.LoadLocal(0); // leafScope

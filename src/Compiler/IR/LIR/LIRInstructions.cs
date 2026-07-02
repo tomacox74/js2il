@@ -356,6 +356,8 @@ public record LIRStoreScopeField(TempVariable ScopeInstance, BindingInfo Binding
 
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 
+public record LIRReturnUndefinedImmediate : LIRInstruction;
+
 public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVariable Result) : LIRInstruction;
 
 /// <summary>

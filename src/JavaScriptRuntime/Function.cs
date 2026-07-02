@@ -15,6 +15,7 @@ namespace JavaScriptRuntime
     /// JROC models JavaScript functions as CLR delegates; these helpers provide a small subset
     /// of Function.prototype behavior (apply/bind) for those values.
     /// </summary>
+[IntrinsicObject("Function")]
 public static class Function
 {
     private sealed class InvocationMetadataSlot
@@ -373,7 +374,8 @@ public static class Function
                     ? runtimeArgs
                     : boundArgs.Concat(runtimeArgs).ToArray();
 
-                var prevThis = RuntimeServices.SetCurrentThis(thisArg);
+                var effectiveThis = GetEffectiveThisArg(target, thisArg);
+                var prevThis = RuntimeServices.SetCurrentThis(effectiveThis);
                 try
                 {
                     return Closure.InvokeWithArgs(target, scopes ?? System.Array.Empty<object>(), finalArgs);
@@ -473,6 +475,30 @@ public static class Function
             return string.Join(",", args.Take(args.Length - 1).Select(DotNet2JSConversions.ToString))
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         }
+
+        public static object? SetInferredNameIfAnonymous(object? functionValue, object? propertyKey)
+        {
+            if (functionValue is not Delegate del)
+            {
+                return functionValue;
+            }
+
+            if (TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
+                && nameDescriptor.Value is string existingName
+                && !string.IsNullOrEmpty(existingName))
+            {
+                return functionValue;
+            }
+
+            var functionName = propertyKey is Symbol sym
+                ? sym.Description is null ? string.Empty : $"[{sym.Description}]"
+                : Object.ToPropertyKeyString(propertyKey);
+            DefineMetadataProperty(del, "name", functionName);
+            return functionValue;
+        }
+
+        public static bool IsConstructorReturnOverride(object? value)
+            => TypeUtilities.IsConstructorReturnOverride(value);
 
         internal static void DefineMetadataProperty(Delegate target, string propName, object? value)
         {

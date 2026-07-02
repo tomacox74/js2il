@@ -163,9 +163,9 @@ public sealed partial class HIRToLIRLowerer
 
         var afterInitLabel = CreateLabel();
 
-        // if (_started) goto afterInit;
+        // if (_parametersInitialized) goto afterInit;
         var startedTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._started), startedTemp));
+        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._parametersInitialized), startedTemp));
         DefineTempStorage(startedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
         SetTempVariableSlot(startedTemp, CreateAnonymousVariableSlot("$gen_started", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
         _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(startedTemp, afterInitLabel));
@@ -195,11 +195,20 @@ public sealed partial class HIRToLIRLowerer
             }
         }
 
-        // _started = true
+        // _parametersInitialized = true
         var trueTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
         DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._parametersInitialized), trueTemp));
         _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._started), trueTemp));
+
+        var parameterInitializationOnlyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, nameof(JavaScriptRuntime.GeneratorScope._parameterInitializationOnly), parameterInitializationOnlyTemp));
+        DefineTempStorage(parameterInitializationOnlyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        var continueToBodyLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(parameterInitializationOnlyTemp, continueToBodyLabel));
+        _methodBodyIR.Instructions.Add(new LIRReturnUndefinedImmediate());
+        _methodBodyIR.Instructions.Add(new LIRLabel(continueToBodyLabel));
 
         _methodBodyIR.Instructions.Add(new LIRLabel(afterInitLabel));
         return true;

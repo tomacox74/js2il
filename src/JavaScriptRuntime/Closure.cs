@@ -688,8 +688,8 @@ namespace JavaScriptRuntime
 
         private static object? ResolveFunctionCallThis(object target)
         {
-            return target is Delegate del && UsesEcmaScriptThisBinding(del)
-                ? GlobalThis.globalThis
+            return target is Delegate del
+                ? Function.GetEffectiveThisArg(del, null)
                 : null;
         }
 

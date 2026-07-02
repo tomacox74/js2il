@@ -345,18 +345,20 @@ public static class HIRBuilder
                                     }
 
                                     ctorStatements.Add(new HIRExpressionStatement(
-                                        new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, initExpr!)));
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            computedKeyExpr,
+                                            initExpr!,
+                                            isField: true)));
                                 }
-                                else if (hasResolvedInstanceFieldName)
+                                else if (propertyDefinition.Computed)
                                 {
-                                    ctorStatements.Add(new HIRStoreUserClassInstanceFieldStatement
-                                    {
-                                        RegistryClassName = registryClassName,
-                                        FieldName = computedInstanceFieldName!,
-                                        IsPrivateField = false,
-                                        Value = initExpr!,
-                                        Location = SourceLocation.FromNode(propertyDefinition)
-                                    });
+                                    ctorStatements.Add(new HIRExpressionStatement(
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            new HIRLiteralExpression(JavascriptType.String, computedInstanceFieldName!),
+                                            initExpr!,
+                                            isField: true)));
                                 }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {
@@ -512,18 +514,20 @@ public static class HIRBuilder
                                     }
 
                                     initStatements.Add(new HIRExpressionStatement(
-                                        new HIRIndexAssignmentExpression(new HIRThisExpression(), computedKeyExpr, Acornima.Operator.Assignment, initExpr!)));
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            computedKeyExpr,
+                                            initExpr!,
+                                            isField: true)));
                                 }
-                                else if (hasResolvedInstanceFieldName)
+                                else if (propertyDefinition.Computed)
                                 {
-                                    initStatements.Add(new HIRStoreUserClassInstanceFieldStatement
-                                    {
-                                        RegistryClassName = registryClassName,
-                                        FieldName = computedInstanceFieldName!,
-                                        IsPrivateField = false,
-                                        Value = initExpr!,
-                                        Location = SourceLocation.FromNode(propertyDefinition)
-                                    });
+                                    initStatements.Add(new HIRExpressionStatement(
+                                        new HIRDefineClassDataPropertyExpression(
+                                            new HIRThisExpression(),
+                                            new HIRLiteralExpression(JavascriptType.String, computedInstanceFieldName!),
+                                            initExpr!,
+                                            isField: true)));
                                 }
                                 else if (propertyDefinition.Key is PrivateIdentifier priv)
                                 {

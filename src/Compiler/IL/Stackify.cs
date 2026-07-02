@@ -915,6 +915,8 @@ internal static class Stackify
             // Return: consumes return value
             case LIRReturn:
                 return (1, 0);
+            case LIRReturnUndefinedImmediate:
+                return (0, 0);
 
             // StoreParameter: consumes value
             case LIRStoreParameter:
