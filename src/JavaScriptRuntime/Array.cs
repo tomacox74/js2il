@@ -140,15 +140,7 @@ namespace JavaScriptRuntime
 
         private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
         {
-            JavaScriptRuntime.Function.ConfigureCallableObject(method, hasRestrictedProperties: false);
-            PropertyDescriptorStore.DefineOrUpdate(method, "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = length
-            });
+            JavaScriptRuntime.Function.InitializeFunctionInstance(method, length, name);
             PropertyDescriptorStore.DefineOrUpdate(method, "prototype", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -651,30 +643,13 @@ namespace JavaScriptRuntime
                     return jsArray.at();
                 }
 
-                var converted = new object[args.Length];
-                for (int i = 0; i < args.Length; i++)
-                {
-                    converted[i] = args[i]!;
-                }
-
-                return jsArray.at(converted);
+                return jsArray.at(args[0]);
             }
 
             // Generic array-like at
-            double relativeIndex = 0;
-            if (args != null && args.Length > 0)
-            {
-                try { relativeIndex = TypeUtilities.ToNumber(args[0]); }
-                catch { relativeIndex = double.NaN; }
-                if (double.IsNaN(relativeIndex))
-                {
-                    relativeIndex = 0;
-                }
-                else
-                {
-                    relativeIndex = global::System.Math.Truncate(relativeIndex);
-                }
-            }
+            double relativeIndex = args != null && args.Length > 0
+                ? ToIntegerOrInfinityForAt(args[0])
+                : 0d;
 
             int length = ToArrayLikeLength(receiver);
             int index;
@@ -2093,18 +2068,46 @@ namespace JavaScriptRuntime
         /// <summary>
         /// JavaScript Array.at(index)
         /// </summary>
-        public object? at(object index)
+        public object? at(object? index)
         {
             int len = this.Count;
-            int i = ToInt(index, 0);
-            if (i < 0) i = len + i;
-            if (i < 0 || i >= len) return null;
-            return this[i];
+            var relativeIndex = ToIntegerOrInfinityForAt(index);
+            var actualIndex = relativeIndex >= 0
+                ? relativeIndex
+                : len + relativeIndex;
+
+            if (actualIndex < 0 || actualIndex >= len)
+            {
+                return null;
+            }
+
+            return this[(int)actualIndex];
         }
 
         public object? at()
         {
             return null;
+        }
+
+        private static double ToIntegerOrInfinityForAt(object? value)
+        {
+            if (value == null)
+            {
+                return 0d;
+            }
+
+            var number = TypeUtilities.ToNumber(value);
+            if (double.IsNaN(number))
+            {
+                return 0d;
+            }
+
+            if (double.IsInfinity(number))
+            {
+                return number;
+            }
+
+            return global::System.Math.Truncate(number);
         }
 
         /// <summary>
