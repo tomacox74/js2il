@@ -16,9 +16,9 @@ public class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "new-sc-line-method-rs-static-method-privatename-identifier-alt")]
     public Task new_sc_line_method_rs_static_method_privatename_identifier_alt()
-        => ExecutionTest("new-sc-line-method-rs-static-method-privatename-identifier-alt", allowUnhandledException: true);
+        => ExecutionTest("new-sc-line-method-rs-static-method-privatename-identifier-alt");
 
     [Fact(DisplayName = "after-same-line-static-gen-computed-names")]
     public Task after_same_line_static_gen_computed_names()
-        => ExecutionTest("after-same-line-static-gen-computed-names", allowUnhandledException: true);
+        => ExecutionTest("after-same-line-static-gen-computed-names");
 }

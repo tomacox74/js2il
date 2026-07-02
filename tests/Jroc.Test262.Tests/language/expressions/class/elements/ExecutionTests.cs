@@ -40,5 +40,5 @@ public class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "new-sc-line-method-computed-symbol-names")]
     public Task new_sc_line_method_computed_symbol_names()
-        => ExecutionTest("new-sc-line-method-computed-symbol-names", allowUnhandledException: true);
+        => ExecutionTest("new-sc-line-method-computed-symbol-names");
 }

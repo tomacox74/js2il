@@ -128,5 +128,5 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "arguments-with-arguments-lex")]
     public Task arguments_with_arguments_lex()
-        => ExecutionTest("arguments-with-arguments-lex", allowUnhandledException: true);
+        => ExecutionTest("arguments-with-arguments-lex");
 }

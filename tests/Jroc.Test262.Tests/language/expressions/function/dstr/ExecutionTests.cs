@@ -8,5 +8,5 @@ public class ExecutionTests : DiskExecutionTestsBase
 
     [Fact(DisplayName = "obj-ptrn-id-init-fn-name-gen")]
     public Task obj_ptrn_id_init_fn_name_gen()
-        => ExecutionTest("obj-ptrn-id-init-fn-name-gen", allowUnhandledException: true);
+        => ExecutionTest("obj-ptrn-id-init-fn-name-gen");
 }

@@ -24,5 +24,5 @@ public class ExecutionTests : ExecutionTestsBase
 
     [Fact(DisplayName = "derived-class-return-override-with-number")]
     public Task derived_class_return_override_with_number()
-        => ExecutionTest("derived-class-return-override-with-number", allowUnhandledException: true);
+        => ExecutionTest("derived-class-return-override-with-number");
 }
