@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212f
+				// Method begins at RVA 0x213d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,9 +44,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20dd
+			// Method begins at RVA 0x20dc
 			// Header size: 1
-			// Code size: 39 (0x27)
+			// Code size: 54 (0x36)
 			.maxstack 8
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -55,11 +55,18 @@
 			IL_0013: box [System.Runtime]System.Double
 			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
 			IL_001d: pop
-			IL_001e: ldnull
-			IL_001f: call object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorld::__js_call__(object)
-			IL_0024: pop
-			IL_0025: ldnull
-			IL_0026: ret
+			IL_001e: ldarg.0
+			IL_001f: ldfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
+			IL_0024: ldc.i4.1
+			IL_0025: newarr [System.Runtime]System.Object
+			IL_002a: dup
+			IL_002b: ldc.i4.0
+			IL_002c: ldarg.0
+			IL_002d: stelem.ref
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_0033: pop
+			IL_0034: ldnull
+			IL_0035: ret
 		} // end of method helloWorldProxy::__js_call__
 
 	} // end of class helloWorldProxy
@@ -75,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2138
+				// Method begins at RVA 0x2146
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +105,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2105
+			// Method begins at RVA 0x2113
 			// Header size: 1
 			// Code size: 32 (0x20)
 			.maxstack 8
@@ -133,7 +140,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2126
+			// Method begins at RVA 0x2134
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -159,7 +166,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 129 (0x81)
+		// Code size: 128 (0x80)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope,
@@ -202,18 +209,17 @@
 		IL_004e: ldloc.0
 		IL_004f: ldloc.2
 		IL_0050: stfld object Modules.Function_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
-		IL_0055: ldloc.0
-		IL_0056: castclass Modules.Function_GlobalFunctionCallsGlobalFunction/Scope
-		IL_005b: ldnull
-		IL_005c: call object Modules.Function_GlobalFunctionCallsGlobalFunction/helloWorldProxy::__js_call__(class Modules.Function_GlobalFunctionCallsGlobalFunction/Scope, object)
-		IL_0061: pop
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldstr "finally is now"
-		IL_006c: ldc.r8 3
-		IL_0075: box [System.Runtime]System.Double
-		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_007f: pop
-		IL_0080: ret
+		IL_0055: ldloc.1
+		IL_0056: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0060: pop
+		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0066: ldstr "finally is now"
+		IL_006b: ldc.r8 3
+		IL_0074: box [System.Runtime]System.Double
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_007e: pop
+		IL_007f: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionCallsGlobalFunction
@@ -225,7 +231,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2141
+		// Method begins at RVA 0x214f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

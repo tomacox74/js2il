@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224c
+				// Method begins at RVA 0x225c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x225e
+					// Method begins at RVA 0x226e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2255
+				// Method begins at RVA 0x2265
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -93,7 +93,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 130 (0x82)
 			.maxstack 8
@@ -163,7 +163,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2267
+				// Method begins at RVA 0x2277
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -187,7 +187,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21d8
+			// Method begins at RVA 0x21e8
 			// Header size: 12
 			// Code size: 31 (0x1f)
 			.maxstack 8
@@ -221,7 +221,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2270
+				// Method begins at RVA 0x2280
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -244,7 +244,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2203
+			// Method begins at RVA 0x2213
 			// Header size: 1
 			// Code size: 63 (0x3f)
 			.maxstack 8
@@ -286,7 +286,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2243
+			// Method begins at RVA 0x2253
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -312,7 +312,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 236 (0xec)
+		// Code size: 252 (0xfc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Call_Spread_EvaluationOrder/Scope,
@@ -320,9 +320,9 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[7] object[]
+			[5] object[],
+			[6] object[],
+			[7] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
 		IL_0000: newobj instance void Modules.Function_Call_Spread_EvaluationOrder/Scope::.ctor()
@@ -371,46 +371,49 @@
 		IL_006e: stloc.s 4
 		IL_0070: ldloc.s 4
 		IL_0072: stloc.3
-		IL_0073: ldnull
-		IL_0074: ldc.r8 1
-		IL_007d: call object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, float64)
-		IL_0082: stloc.s 4
-		IL_0084: ldc.i4.1
-		IL_0085: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_008a: dup
-		IL_008b: ldloc.s 4
-		IL_008d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0092: stloc.s 5
-		IL_0094: ldnull
-		IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Function_Call_Spread_EvaluationOrder/spread::__js_call__(object)
-		IL_009a: stloc.s 6
-		IL_009c: ldloc.s 5
-		IL_009e: ldloc.s 6
-		IL_00a0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_00a5: ldnull
-		IL_00a6: ldc.r8 4
-		IL_00af: call object Modules.Function_Call_Spread_EvaluationOrder/arg::__js_call__(object, float64)
+		IL_0073: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0078: stloc.s 5
+		IL_007a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007f: stloc.s 6
+		IL_0081: ldloc.2
+		IL_0082: ldloc.s 6
+		IL_0084: ldc.r8 1
+		IL_008d: box [System.Runtime]System.Double
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0097: stloc.s 4
+		IL_0099: ldc.i4.1
+		IL_009a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_009f: dup
+		IL_00a0: ldloc.s 4
+		IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00a7: stloc.s 7
+		IL_00a9: ldloc.3
+		IL_00aa: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
 		IL_00b4: stloc.s 4
-		IL_00b6: ldloc.s 5
+		IL_00b6: ldloc.s 7
 		IL_00b8: ldloc.s 4
-		IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00bf: ldloc.s 5
-		IL_00c1: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
-		IL_00c6: stloc.s 7
-		IL_00c8: ldloc.0
-		IL_00c9: castclass Modules.Function_Call_Spread_EvaluationOrder/Scope
-		IL_00ce: ldftn object Modules.Function_Call_Spread_EvaluationOrder/dump::__js_call__(class Modules.Function_Call_Spread_EvaluationOrder/Scope, object)
-		IL_00d4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00d9: ldc.i4.1
-		IL_00da: newarr [System.Runtime]System.Object
-		IL_00df: dup
-		IL_00e0: ldc.i4.0
-		IL_00e1: ldloc.0
-		IL_00e2: stelem.ref
-		IL_00e3: ldloc.s 7
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_00ea: pop
-		IL_00eb: ret
+		IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_00bf: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00c4: stloc.s 6
+		IL_00c6: ldloc.2
+		IL_00c7: ldloc.s 6
+		IL_00c9: ldc.r8 4
+		IL_00d2: box [System.Runtime]System.Double
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00dc: stloc.s 4
+		IL_00de: ldloc.s 7
+		IL_00e0: ldloc.s 4
+		IL_00e2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00e7: ldloc.s 7
+		IL_00e9: callvirt instance object[] [JavaScriptRuntime]JavaScriptRuntime.Array::ToArray()
+		IL_00ee: stloc.s 6
+		IL_00f0: ldloc.1
+		IL_00f1: ldloc.s 5
+		IL_00f3: ldloc.s 6
+		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_00fa: pop
+		IL_00fb: ret
 	} // end of method Function_Call_Spread_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.Function_Call_Spread_EvaluationOrder
@@ -422,7 +425,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2279
+		// Method begins at RVA 0x2289
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

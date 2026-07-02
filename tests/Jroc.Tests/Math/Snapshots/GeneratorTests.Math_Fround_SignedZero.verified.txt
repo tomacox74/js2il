@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216b
+				// Method begins at RVA 0x2177
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 106 (0x6a)
 			.maxstack 8
@@ -112,7 +112,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2162
+			// Method begins at RVA 0x216e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -138,7 +138,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 143 (0x8f)
+		// Code size: 153 (0x99)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Fround_SignedZero/Scope,
@@ -148,7 +148,8 @@
 			[4] object,
 			[5] float64,
 			[6] object,
-			[7] object
+			[7] object[],
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Fround_SignedZero/Scope::.ctor()
@@ -186,18 +187,21 @@
 		IL_0068: ldloc.s 6
 		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_006f: pop
-		IL_0070: ldloc.3
-		IL_0071: box [System.Runtime]System.Double
-		IL_0076: stloc.s 7
-		IL_0078: ldnull
-		IL_0079: ldloc.3
-		IL_007a: call object Modules.Math_Fround_SignedZero/toStr::__js_call__(object, float64)
-		IL_007f: stloc.s 4
-		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0086: ldloc.s 4
-		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008d: pop
-		IL_008e: ret
+		IL_0070: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0075: stloc.s 7
+		IL_0077: ldloc.3
+		IL_0078: box [System.Runtime]System.Double
+		IL_007d: stloc.s 8
+		IL_007f: ldloc.1
+		IL_0080: ldloc.s 7
+		IL_0082: ldloc.s 8
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0089: stloc.s 4
+		IL_008b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0090: ldloc.s 4
+		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0097: pop
+		IL_0098: ret
 	} // end of method Math_Fround_SignedZero::__js_module_init__
 
 } // end of class Modules.Math_Fround_SignedZero
@@ -209,7 +213,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2174
+		// Method begins at RVA 0x2180
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
