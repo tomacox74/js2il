@@ -10,6 +10,8 @@ info: |
 
 ---*/
 
+"use strict";
+
 // increment callCount in case "body"
 
 function assert(value) {

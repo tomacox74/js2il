@@ -14,6 +14,16 @@ using Jroc.SymbolTables;
 namespace Jroc.HIR;
 public static class HIRBuilder
 {
+    private static Scope GetCallableBodyScope(Scope scope, BlockStatement bodyBlock)
+    {
+        var blockName = $"Block_L{bodyBlock.Location.Start.Line}C{bodyBlock.Location.Start.Column}";
+        return scope.Children.FirstOrDefault(child =>
+                   child.Kind == ScopeKind.Block
+                   && (ReferenceEquals(child.AstNode, bodyBlock)
+                       || string.Equals(child.Name, blockName, StringComparison.Ordinal)))
+               ?? scope;
+    }
+
     /// <summary>
     /// Attempts to parse a method from the AST node.
     /// Failure is not an error, just falls back to an older legacy IL emitter.
@@ -563,7 +573,7 @@ public static class HIRBuilder
                         }
                     }
 
-                    if (!methodBuilder.TryParseStatementsToList(methodBlock.Body, out var bodyStatements))
+                    if (!new HIRMethodBuilder(GetCallableBodyScope(scope, methodBlock)).TryParseStatementsToList(methodBlock.Body, out var bodyStatements))
                     {
                         Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed while parsing explicit constructor body statements");
@@ -594,13 +604,14 @@ public static class HIRBuilder
                     {
                         Parameters = methodParams,
                         SuperClassExpression = superClassExpression,
-                        Body = new HIRBlock(bodyStatements)
+                        Body = new HIRMethodBuilder(GetCallableBodyScope(scope, methodBlock)).CreateMethodBodyBlock(bodyStatements)
                     };
 
                     return true;
                 }
 
-                return methodBuilder.TryParseStatements(methodBlock.Body, methodParams, out method);
+                return new HIRMethodBuilder(GetCallableBodyScope(scope, methodBlock))
+                    .TryParseStatements(methodBlock.Body, methodParams, out method);
             case Acornima.Ast.ArrowFunctionExpression arrowFunc:
                 // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
                 if (!ParamsSupportedForIR(arrowFunc.Params))
@@ -618,7 +629,8 @@ public static class HIRBuilder
                 // PL3.7a: concise-body arrows wrap implicit return
                 if (arrowFunc.Body is BlockStatement arrowBlock)
                 {
-                    return arrowBuilder.TryParseStatements(arrowBlock.Body, arrowParams, out method);
+                    return new HIRMethodBuilder(GetCallableBodyScope(scope, arrowBlock))
+                        .TryParseStatements(arrowBlock.Body, arrowParams, out method);
                 }
 
                 if (arrowFunc.Body is Expression conciseExpr)
@@ -777,7 +789,7 @@ public static class HIRBuilder
                         }
                     }
 
-                    if (!funcExprBuilder.TryParseStatementsToList(funcBlock.Body, out var bodyStatements))
+                    if (!new HIRMethodBuilder(GetCallableBodyScope(scope, funcBlock)).TryParseStatementsToList(funcBlock.Body, out var bodyStatements))
                     {
                         Jroc.IR.IRPipelineMetrics.RecordFailureIfUnset(
                             "HIR parse failed while parsing function-expression constructor body statements");
@@ -812,13 +824,14 @@ public static class HIRBuilder
                     {
                         Parameters = funcParams,
                         SuperClassExpression = superClassExpression,
-                        Body = new HIRBlock(bodyStatements)
+                        Body = new HIRMethodBuilder(GetCallableBodyScope(scope, funcBlock)).CreateMethodBodyBlock(bodyStatements)
                     };
 
                     return true;
                 }
 
-                return funcExprBuilder.TryParseStatements(funcBlock.Body, funcParams, out method);
+                return new HIRMethodBuilder(GetCallableBodyScope(scope, funcBlock))
+                    .TryParseStatements(funcBlock.Body, funcParams, out method);
 
             case Acornima.Ast.FunctionDeclaration funcDecl:
                 // IR pipeline supports identifier params, simple defaults, destructuring patterns, and rest parameters.
@@ -838,7 +851,8 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
-                return funcDeclBuilder.TryParseStatements(declBlock.Body, declParams, out method);
+                return new HIRMethodBuilder(GetCallableBodyScope(scope, declBlock))
+                    .TryParseStatements(declBlock.Body, declParams, out method);
             // Handle other node types as needed
             default:
                 method = null!;
@@ -2002,7 +2016,7 @@ class HIRMethodBuilder
         method = new HIRMethod
         {
             Parameters = parameters,
-            Body = new HIRBlock(hirStatements)
+            Body = CreateMethodBodyBlock(hirStatements)
         };
 
         return true;
@@ -2024,6 +2038,14 @@ class HIRMethodBuilder
         };
 
         return true;
+    }
+
+    internal HIRBlock CreateMethodBodyBlock(List<HIRStatement> statements)
+    {
+        var scopeName = _currentScope.Kind == ScopeKind.Block
+            ? ScopeNaming.GetRegistryScopeName(_currentScope)
+            : null;
+        return new HIRBlock(statements, scopeName);
     }
 
     public bool TryParseParameters(in NodeList<Node> parameters, [NotNullWhen(true)] out IReadOnlyList<HIRPattern>? hirParameters)
@@ -3080,13 +3102,17 @@ class HIRMethodBuilder
                 // Support 'this' in function scopes, including arrow functions.
                 // Non-arrow functions get their dynamic 'this' from the runtime call sites.
                 // Arrow functions get lexical 'this' via binding at closure creation time.
-                var allowsThis = _staticThisRegistryClassName != null
-                    || _rootScope.Kind == ScopeKind.Global
-                    || _rootScope.Kind == ScopeKind.Class
-                    || _rootScope.Parent?.Kind == ScopeKind.Class
-                    || _rootScope.AstNode is FunctionExpression
-                    || _rootScope.AstNode is FunctionDeclaration
-                    || _rootScope.AstNode is ArrowFunctionExpression;
+                var allowsThis = _staticThisRegistryClassName != null;
+                for (var scopeCursor = _currentScope; !allowsThis && scopeCursor != null; scopeCursor = scopeCursor.Parent)
+                {
+                    allowsThis =
+                        scopeCursor.Kind == ScopeKind.Global
+                        || scopeCursor.Kind == ScopeKind.Class
+                        || scopeCursor.Parent?.Kind == ScopeKind.Class
+                        || scopeCursor.AstNode is FunctionExpression
+                        || scopeCursor.AstNode is FunctionDeclaration
+                        || scopeCursor.AstNode is ArrowFunctionExpression;
+                }
                 if (!allowsThis)
                 {
                     return false;
@@ -4199,6 +4225,16 @@ class HIRMethodBuilder
         }
 
         return null;
+    }
+
+    private static Scope GetCallableBodyScope(Scope scope, BlockStatement bodyBlock)
+    {
+        var blockName = $"Block_L{bodyBlock.Location.Start.Line}C{bodyBlock.Location.Start.Column}";
+        return scope.Children.FirstOrDefault(child =>
+                   child.Kind == ScopeKind.Block
+                   && (ReferenceEquals(child.AstNode, bodyBlock)
+                       || string.Equals(child.Name, blockName, StringComparison.Ordinal)))
+               ?? scope;
     }
 
     private Scope? FindDescendantArrowScopeForAstNode(ArrowFunctionExpression arrow)

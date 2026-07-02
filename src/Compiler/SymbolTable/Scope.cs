@@ -156,6 +156,19 @@ public class Scope
     public bool HasRestParameters { get; set; }
 
     /// <summary>
+    /// True when this callable has parameter expressions (defaults, rest, or destructuring)
+    /// that require a distinct parameter environment.
+    /// </summary>
+    public bool HasParameterExpressions { get; set; }
+
+    /// <summary>
+    /// True when this block scope is the hoisting target for <c>var</c> declarations.
+    /// Used for synthetic function-body scopes created when parameter expressions require
+    /// separate parameter/body environments.
+    /// </summary>
+    public bool IsVarHoistingScope { get; set; }
+
+    /// <summary>
     /// True when source code in this module referenced the ECMAScript globalThis binding.
     /// Used to gate global-var mirroring onto the global object so we only emit the extra
     /// global-object write when user code actually observes the global object.
