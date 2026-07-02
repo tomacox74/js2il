@@ -4,7 +4,7 @@
 
 [Back to Section15](Section15.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-03-07T01:50:59Z
+> Last generated (UTC): 2026-07-02T16:38:00Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -22,14 +22,14 @@
 
 ## Support
 
-Feature-level support tracking with test script references.
+Feature-level support tracking with repo test references and optional test262 evidence.
 
 ### 15.6 ([tc39.es](https://tc39.es/ecma262/#sec-async-generator-function-definitions))
 
-| Feature name | Status | Test scripts | Notes |
-|---|---|---|---|
-| async generator functions (async function*) | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js) | Async generators are compiled via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. AsyncGeneratorScope inherits from AsyncScope and includes generator state. AsyncGeneratorObject implements IJavaScriptAsyncIterator with next() returning Promises. Known limitations: throw() and return() protocol methods have known issues; try/catch/finally with async generators may generate invalid IL in some cases. |
-| await expression in async generators | Supported | [`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js) | Await expressions work within async generator functions, allowing promises to be awaited before yielding values. |
-| for await...of with async generators | Supported | [`AsyncGenerator_ForAwaitOf.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) | for await...of loops correctly consume async generators, awaiting each yielded value. |
-| yield expression in async generators | Supported | [`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js) | Yield expressions work within async generator functions, suspending execution and returning Promise-wrapped iterator results. |
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| async generator functions (async function*) | Supported with Limitations | [`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js)<br>[`AsyncGenerator_ForAwaitOf.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js)<br>[`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js)<br>[`named-dflt-obj-ptrn-prop-obj-value-undef.js`](../../../tests/Jroc.Test262.Tests/language/expressions/async-generator/JavaScript/dstr/named-dflt-obj-ptrn-prop-obj-value-undef.js) | `test/language/expressions/async-generator/dstr/named-dflt-obj-ptrn-prop-obj-value-undef.js` | Async generators are compiled via dual-dispatch state machine combining async (Promise-based suspension) with generator (user-controlled iteration) semantics. AsyncGeneratorScope inherits from AsyncScope and includes generator state. AsyncGeneratorObject implements IJavaScriptAsyncIterator with next() returning Promises. Parameter binding runs when the async generator function is called, so covered destructuring/default errors are thrown synchronously before iteration. Known limitations: throw() and return() protocol methods have known issues; try/catch/finally with async generators may generate invalid IL in some cases. |
+| await expression in async generators | Supported | [`AsyncGenerator_YieldAwait.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_YieldAwait.js) |  | Await expressions work within async generator functions, allowing promises to be awaited before yielding values. |
+| for await...of with async generators | Supported | [`AsyncGenerator_ForAwaitOf.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_ForAwaitOf.js) |  | for await...of loops correctly consume async generators, awaiting each yielded value. |
+| yield expression in async generators | Supported | [`AsyncGenerator_BasicNext.js`](../../../tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js) |  | Yield expressions work within async generator functions, suspending execution and returning Promise-wrapped iterator results. |
 

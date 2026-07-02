@@ -119,9 +119,13 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Arguments_Unmapped_StrictAndComplex.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Call_Basic.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js",
-          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassMethod_ReturnsThis_IsSelf_Log.js",
+          "tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-35-s.js"
         ],
-        "notes": "Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, and lazy materialization of a dedicated arguments object when the implicit binding is referenced. Non-arrow functions use mapped arguments objects for non-strict simple parameter lists and unmapped arguments objects for strict-mode or complex parameter lists; remaining gaps are the narrower 10.4.4 descriptor/invariant edge cases rather than wholesale lack of arguments-object support."
+        "test262Paths": [
+          "test/language/function-code/10.4.3-1-35-s.js"
+        ],
+        "notes": "Delegate-backed user functions support ordinary calls, receiver-sensitive method calls, lexical this for arrow functions, strict bare-call `this` preserving undefined, and lazy materialization of a dedicated arguments object when the implicit binding is referenced. Non-arrow functions use mapped arguments objects for non-strict simple parameter lists and unmapped arguments objects for strict-mode or complex parameter lists; remaining gaps are the narrower 10.4.4 descriptor/invariant edge cases rather than wholesale lack of arguments-object support."
       },
       {
         "clause": "10.2.2",
@@ -166,6 +170,21 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_ToString_Basic.js"
         ],
         "notes": "Delegate-backed functions lazily synthesize prototype, constructor, name, length, and toString metadata so common library patterns continue to work. These properties are inferred from CLR delegates rather than being installed through the exact SetFunctionName / SetFunctionLength / MakeConstructor abstract-operation flow."
+      },
+      {
+        "clause": "10.2.9",
+        "feature": "SetFunctionName for anonymous functions in destructuring defaults",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-setfunctionname",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/function/dstr/JavaScript/obj-ptrn-id-init-fn-name-gen.js",
+          "tests/Jroc.Test262.Tests/language/expressions/object/dstr/JavaScript/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/function/dstr/obj-ptrn-id-init-fn-name-gen.js",
+          "test/language/expressions/object/dstr/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js"
+        ],
+        "notes": "Anonymous function and generator expressions created by destructuring default initializers infer the target binding name in the covered object/array binding cases. Broader SetFunctionName coverage remains limited for less-common syntactic forms."
       },
       {
         "clause": "10.2.11",
