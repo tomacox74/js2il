@@ -961,11 +961,13 @@ namespace Jroc.SymbolTables
                                 }
                             }
 
+                            methodScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(mfunc);
                             BuildFunctionParameterScopes(globalScope, mfunc.Params, methodScope);
 
                             if (mfunc.Body is BlockStatement mblock)
                             {
-                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
+                                var methodBodyScope = GetOrCreateCallableBodyScope(methodScope, mblock);
+                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodBodyScope);
                             }
 
                             AddImplicitArgumentsBinding(methodScope);
@@ -1086,11 +1088,13 @@ namespace Jroc.SymbolTables
                                 }
                             }
 
+                            methodScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(mfunc);
                             BuildFunctionParameterScopes(globalScope, mfunc.Params, methodScope);
 
                             if (mfunc.Body is BlockStatement mblock)
                             {
-                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
+                                var methodBodyScope = GetOrCreateCallableBodyScope(methodScope, mblock);
+                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodBodyScope);
                             }
 
                             AddImplicitArgumentsBinding(methodScope);
@@ -1128,12 +1132,14 @@ namespace Jroc.SymbolTables
                     }
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
+                        funcScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(funcDecl);
                         BuildFunctionParameterScopes(globalScope, funcDecl.Params, funcScope);
 
                         if (funcDecl.Body is BlockStatement fblock)
                         {
+                            var functionBodyScope = GetOrCreateCallableBodyScope(funcScope, fblock);
                             foreach (var statement in fblock.Body)
-                                BuildScopeRecursive(globalScope, statement, funcScope);
+                                BuildScopeRecursive(globalScope, statement, functionBodyScope);
                         }
                         else
                         {
@@ -1186,13 +1192,14 @@ namespace Jroc.SymbolTables
                         funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExprScope, funcExpr);
                     }
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
+                    funcExprScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(funcExpr);
                     BuildFunctionParameterScopes(globalScope, funcExpr.Params, funcExprScope);
 
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
-                        // For function bodies, process statements directly in function scope without creating a block scope
+                        var functionBodyScope = GetOrCreateCallableBodyScope(funcExprScope, funcExprBlock);
                         foreach (var statement in funcExprBlock.Body)
-                            BuildScopeRecursive(globalScope, statement, funcExprScope);
+                            BuildScopeRecursive(globalScope, statement, functionBodyScope);
                     }
                     else
                     {
@@ -1222,19 +1229,9 @@ namespace Jroc.SymbolTables
 
                             // Hoist `var` declared inside block statements to the nearest function/global scope
                             // per JavaScript semantics. `let`/`const` remain block-scoped.
-                            Scope targetScope = currentScope;
-                            if (kind == BindingKind.Var && currentScope.Kind == ScopeKind.Block)
-                            {
-                                var ancestor = currentScope.Parent;
-                                while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
-                                {
-                                    ancestor = ancestor.Parent;
-                                }
-                                if (ancestor != null)
-                                {
-                                    targetScope = ancestor;
-                                }
-                            }
+                            Scope targetScope = kind == BindingKind.Var
+                                ? GetVarHoistingTarget(currentScope)
+                                : currentScope;
 
                                 // If this scope already has an injected module parameter with this name,
                                 // `var <name>` must not create a new binding (JavaScript semantics).
@@ -1289,19 +1286,9 @@ namespace Jroc.SymbolTables
                             };
 
                             // Determine hoisting target for `var` declarations made inside blocks
-                            Scope targetScope = currentScope;
-                            if (kind == BindingKind.Var && currentScope.Kind == ScopeKind.Block)
-                            {
-                                var ancestor = currentScope.Parent;
-                                while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
-                                {
-                                    ancestor = ancestor.Parent;
-                                }
-                                if (ancestor != null)
-                                {
-                                    targetScope = ancestor;
-                                }
-                            }
+                            Scope targetScope = kind == BindingKind.Var
+                                ? GetVarHoistingTarget(currentScope)
+                                : currentScope;
 
                             // Synthetic temporary binding to hold the initializer object so IL can mirror snapshots
                             // Name policy: use "perf" when destructuring a perf_hooks require; otherwise a generic name.
@@ -1582,13 +1569,14 @@ namespace Jroc.SymbolTables
                             }
                         }
                     }
+                    arrowScope.HasParameterExpressions = Jroc.Utilities.ArgumentsObjectSemantics.HasParameterExpressions(arrowFunc);
                     BuildFunctionParameterScopes(globalScope, arrowFunc.Params, arrowScope);
 
                     if (arrowFunc.Body is BlockStatement arrowBlock)
                     {
-                        // For function bodies, process statements directly in function scope without creating a block scope
+                        var arrowBodyScope = GetOrCreateCallableBodyScope(arrowScope, arrowBlock);
                         foreach (var statement in arrowBlock.Body)
-                            BuildScopeRecursive(globalScope, statement, arrowScope);
+                            BuildScopeRecursive(globalScope, statement, arrowBodyScope);
                     }
                     else
                     {
@@ -2691,18 +2679,38 @@ namespace Jroc.SymbolTables
 
         private static Scope GetVarHoistingTarget(Scope currentScope)
         {
-            if (currentScope.Kind != ScopeKind.Block)
+            var scope = currentScope;
+            while (scope.Kind == ScopeKind.Block && !scope.IsVarHoistingScope)
             {
-                return currentScope;
+                scope = scope.Parent ?? scope;
             }
 
-            var ancestor = currentScope.Parent;
-            while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+            return scope;
+        }
+
+        private static Scope GetOrCreateCallableBodyScope(Scope functionScope, BlockStatement bodyBlock)
+        {
+            if (!functionScope.HasParameterExpressions)
             {
-                ancestor = ancestor.Parent;
+                return functionScope;
             }
 
-            return ancestor ?? currentScope;
+            var blockName = $"Block_L{bodyBlock.Location.Start.Line}C{bodyBlock.Location.Start.Column}";
+            var existingBlock = functionScope.Children.FirstOrDefault(child =>
+                child.Kind == ScopeKind.Block
+                && (ReferenceEquals(child.AstNode, bodyBlock)
+                    || string.Equals(child.Name, blockName, StringComparison.Ordinal)));
+
+            if (existingBlock != null)
+            {
+                existingBlock.IsVarHoistingScope = true;
+                return existingBlock;
+            }
+
+            return new Scope(blockName, ScopeKind.Block, functionScope, bodyBlock)
+            {
+                IsVarHoistingScope = true
+            };
         }
 
         private static void BindPatternBindings(Node pattern, BindingKind kind, Scope targetScope, Node declarationNode)

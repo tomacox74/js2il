@@ -301,8 +301,11 @@ public sealed partial class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(paramTemp, notNullLabel));
 
             // Evaluate default value expression
+            var previousDefaultParameterIndex = _currentDefaultParameterIndex;
+            _currentDefaultParameterIndex = i;
             if (!TryLowerExpression(def.Default, out var defaultValueTemp))
             {
+                _currentDefaultParameterIndex = previousDefaultParameterIndex;
                 // If we can't lower the default expression, roll back all instructions
                 // and signal that the entire method should fall back to legacy.
                 // Note: We only rollback instructions here, not temp variables or labels.
@@ -314,6 +317,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 return false;
             }
+            _currentDefaultParameterIndex = previousDefaultParameterIndex;
 
             // Ensure the default value is boxed to object
             defaultValueTemp = EnsureObject(defaultValueTemp);

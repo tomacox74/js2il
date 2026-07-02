@@ -110,7 +110,7 @@ public sealed partial class HIRToLIRLowerer
                     }
                     defaultTemp = EnsureObject(defaultTemp);
                     if (def.Target is HIRIdentifierPattern defaultIdentifier
-                        && def.Default is HIRFunctionExpression)
+                        && def.Default is HIRFunctionExpression or HIRArrowFunctionExpression)
                     {
                         var inferredNameTemp = EmitConstString(defaultIdentifier.Symbol.Name);
                         var namedDefaultTemp = CreateTempVariable();

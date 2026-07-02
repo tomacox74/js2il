@@ -589,6 +589,35 @@ public sealed partial class HIRToLIRLowerer
             return new ValueStorage(ValueStorageKind.Reference, typeof(object));
         }
 
+        TempVariable EmitTemporalDeadZoneReferenceError(BindingInfo b)
+        {
+            var messageTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString($"Cannot access '{b.Name}' before initialization", messageTemp));
+            DefineTempStorage(messageTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var errorTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRNewBuiltInError("ReferenceError", messageTemp, errorTemp));
+            DefineTempStorage(errorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRThrow(errorTemp));
+
+            var errorResult = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstUndefined(errorResult));
+            DefineTempStorage(errorResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return errorResult;
+        }
+
+        bool IsParameterTemporallyUninitialized(BindingInfo b)
+            => _scope?.HasParameterExpressions == true
+               && _currentDefaultParameterIndex is int defaultParameterIndex
+               && _parameterIndexMap.TryGetValue(b, out var referencedParameterIndex)
+               && referencedParameterIndex >= defaultParameterIndex;
+
+        if (IsParameterTemporallyUninitialized(binding))
+        {
+            result = EmitTemporalDeadZoneReferenceError(binding);
+            return true;
+        }
+
         // Per-iteration environments: if this binding lives in an active materialized scope instance
         // (e.g., for-loop iteration scope), load from that scope temp.
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))

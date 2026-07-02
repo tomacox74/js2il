@@ -531,6 +531,18 @@ public sealed partial class HIRToLIRLowerer
                     return result;
                 }
 
+                bool IsParameterTemporallyUninitialized(BindingInfo b)
+                    => _scope?.HasParameterExpressions == true
+                       && _currentDefaultParameterIndex is int defaultParameterIndex
+                       && _parameterIndexMap.TryGetValue(b, out var referencedParameterIndex)
+                       && referencedParameterIndex >= defaultParameterIndex;
+
+                if (IsParameterTemporallyUninitialized(binding))
+                {
+                    resultTempVar = EmitTemporalDeadZoneReferenceError(binding);
+                    return true;
+                }
+
                 // Per-iteration environments: if this binding lives in an active materialized scope instance
                 // (e.g., `for (let/const ...)` loop-head scope), load directly from that scope field.
                 if (binding.Kind != BindingKind.Global
