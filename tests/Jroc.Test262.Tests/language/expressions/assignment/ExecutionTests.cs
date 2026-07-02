@@ -1,5 +1,4 @@
 using Jroc.Tests;
-using Jroc.Test262.Tests.language;
 
 namespace Jroc.Test262.Tests.language.expressions.assignment;
 
@@ -54,11 +53,6 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "11.13.1-4-28gs")]
     public Task _11_13_1_4_28gs()
         => ExecutionTest("11.13.1-4-28gs");
-}
-
-public class PortExpressionsBatchExecutionTests : DiskExecutionTestsBase
-{
-    public PortExpressionsBatchExecutionTests() : base("language.expressions.assignment") { }
 
     [Fact(DisplayName = "11.13.1-4-29gs")]
     public Task _11_13_1_4_29gs()
