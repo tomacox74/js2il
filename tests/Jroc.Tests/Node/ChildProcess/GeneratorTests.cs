@@ -47,5 +47,9 @@ namespace Jroc.Tests.Node.ChildProcess
         [Fact]
         public Task Require_ChildProcess_ExecFileSync_Basic()
             => GenerateTest(nameof(Require_ChildProcess_ExecFileSync_Basic));
+
+        [Fact]
+        public Task Require_ChildProcess_ExecSync_Quoted()
+            => GenerateTest(nameof(Require_ChildProcess_ExecSync_Quoted));
     }
 }
