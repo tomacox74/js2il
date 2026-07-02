@@ -86,7 +86,10 @@
         "testScripts": [
           "tests/Jroc.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
         ],
-        "notes": "Supports computed MemberExpression assignment via JavaScriptRuntime.Object.SetItem(obj, index, value). Works for object literals (ExpandoObject), JavaScriptRuntime.Array index writes (including extending length), and Int32Array index writes."
+        "test262Paths": [
+          "test/language/expressions/assignment/target-member-computed-reference.js"
+        ],
+        "notes": "Supports computed MemberExpression assignment via JavaScriptRuntime.Object.SetItem(obj, index, value). Works for object literals (ExpandoObject), JavaScriptRuntime.Array index writes (including extending length), and Int32Array index writes. Simple assignments now preserve the spec-required evaluation order by resolving the base reference and computed key before evaluating the right-hand side."
       },
       {
         "clause": "13.15.1",
@@ -142,9 +145,12 @@
           "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Module_Exports_ChainedAssignment_Lib.js"
         ],
         "test262Paths": [
-          "test/language/expressions/assignment/11.13.1-4-28gs.js"
+          "test/language/expressions/assignment/11.13.1-4-28gs.js",
+          "test/language/expressions/assignment/11.13.1-4-29gs.js",
+          "test/language/expressions/assignment/11.13.1-4-6-s.js",
+          "test/language/expressions/assignment/8.14.4-8-b_2.js"
         ],
-        "notes": "Supports assignment to non-computed member targets and returns the assigned value (JavaScript assignment-expression semantics), including chained assignment patterns where the result is consumed (e.g., exports = module.exports = {...}; fixes #558). Emitted via JavaScriptRuntime.Object.SetItem(obj, key, value) with a string key. Supports ExpandoObject (object literals) and reflection-backed host objects; strings are treated as immutable and ignore writes. Strict assignment to read-only intrinsic data properties such as Math.PI throws TypeError."
+        "notes": "Supports assignment to non-computed member targets and returns the assigned value (JavaScript assignment-expression semantics), including chained assignment patterns where the result is consumed (e.g., exports = module.exports = {...}; fixes #558). Emitted via JavaScriptRuntime.Object.SetItem(obj, key, value) with a string key. Supports ExpandoObject (object literals) and reflection-backed host objects; strings are treated as immutable and ignore writes. Strict assignment to read-only intrinsic, built-in, and inherited data properties such as Math.PI, Function.length, and non-writable prototype properties throws TypeError."
       },
       {
         "clause": "13.15.2",
