@@ -9,9 +9,10 @@ internal static class Program
     {
         var compiledModulePath = Path.Combine(AppContext.BaseDirectory, "picocolors.dll");
         var asm = Assembly.LoadFrom(compiledModulePath);
+        var moduleId = ResolvePicocolorsModuleId(asm);
 
         // module.exports from picocolors is the color-functions object itself.
-        using dynamic pc = JsEngine.LoadModule(asm, moduleId: "picocolors");
+        using dynamic pc = JsEngine.LoadModule(asm, moduleId);
 
         // Call a representative selection of picocolors color/style functions.
         // When ANSI color is supported the strings include ANSI escape codes;
@@ -28,5 +29,32 @@ internal static class Program
         Console.WriteLine($"cyan={cyan}");
         Console.WriteLine($"bold={bold}");
         Console.WriteLine("done");
+    }
+
+    private static string ResolvePicocolorsModuleId(Assembly asm)
+    {
+        var moduleIds = JsEngine.GetModuleIds(asm);
+        foreach (var candidate in moduleIds)
+        {
+            if (string.Equals(candidate, "picocolors", StringComparison.Ordinal))
+            {
+                return candidate;
+            }
+        }
+
+        foreach (var candidate in moduleIds)
+        {
+            if (string.Equals(candidate, "picocolors/picocolors", StringComparison.Ordinal))
+            {
+                return candidate;
+            }
+        }
+
+        if (moduleIds.Count > 0)
+        {
+            return moduleIds[0];
+        }
+
+        throw new InvalidOperationException("No compiled module IDs were found in picocolors.dll.");
     }
 }
