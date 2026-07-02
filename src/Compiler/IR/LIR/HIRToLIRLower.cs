@@ -40,6 +40,7 @@ public sealed partial class HIRToLIRLowerer
 
     // Maps parameter bindings to their 0-based JS parameter index (not IL arg index)
     private readonly Dictionary<BindingInfo, int> _parameterIndexMap = new Dictionary<BindingInfo, int>();
+    private int? _currentDefaultParameterIndex;
 
     // Maps an active scope registry name to a temp holding that scope instance.
     // Used for nested lexical environments that are materialized within the current method
@@ -189,7 +190,7 @@ public sealed partial class HIRToLIRLowerer
             lowerer.EmitGeneratorStateSwitchIfNeeded();
         }
         
-        if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
+        if (lowerer.TryLowerStatement(hirMethod.Body))
         {
             // If a return epilogue is needed (for try/finally), emit it at the end.
             if (lowerer._needsReturnEpilogueBlock && lowerer._methodBodyIR.ReturnEpilogueLabelId.HasValue)
