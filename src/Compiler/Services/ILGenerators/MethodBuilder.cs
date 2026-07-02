@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Jroc.Utilities.Ecma335;
 
 namespace Jroc.Services.ILGenerators
 {
@@ -20,7 +21,8 @@ namespace Jroc.Services.ILGenerators
             bool returnsVoid,
             Type? returnClrType = null,
             EntityHandle returnTypeHandle = default,
-            IReadOnlyList<Type?>? jsParameterClrTypes = null)
+            IReadOnlyList<Type?>? jsParameterClrTypes = null,
+            TypeReferenceRegistry? typeReferenceRegistry = null)
         {
             if (hasScopesParam && paramCount == 0)
             {
@@ -61,6 +63,17 @@ namespace Jroc.Services.ILGenerators
                         {
                             returnType.Type().String();
                         }
+                        else if (t == typeof(JavaScriptRuntime.Array))
+                        {
+                            if (typeReferenceRegistry == null)
+                            {
+                                returnType.Type().Object();
+                            }
+                            else
+                            {
+                                returnType.Type().Type(typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)), isValueType: false);
+                            }
+                        }
                         else
                         {
                             returnType.Type().Object();
@@ -80,14 +93,15 @@ namespace Jroc.Services.ILGenerators
                     {
                         EmitParameterType(parameters.AddParameter().Type(), jsParameterClrTypes != null && i < jsParameterClrTypes.Count
                             ? jsParameterClrTypes[i]
-                            : null);
+                            : null,
+                            typeReferenceRegistry);
                     }
                 });
 
             return metadata.GetOrAddBlob(sig);
         }
 
-        private static void EmitParameterType(SignatureTypeEncoder typeEncoder, Type? clrType)
+        private static void EmitParameterType(SignatureTypeEncoder typeEncoder, Type? clrType, TypeReferenceRegistry? typeReferenceRegistry)
         {
             if (clrType == typeof(double))
             {
@@ -100,6 +114,17 @@ namespace Jroc.Services.ILGenerators
             else if (clrType == typeof(string))
             {
                 typeEncoder.String();
+            }
+            else if (clrType == typeof(JavaScriptRuntime.Array))
+            {
+                if (typeReferenceRegistry == null)
+                {
+                    typeEncoder.Object();
+                }
+                else
+                {
+                    typeEncoder.Type(typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)), isValueType: false);
+                }
             }
             else
             {

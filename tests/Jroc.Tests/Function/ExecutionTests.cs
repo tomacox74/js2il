@@ -261,6 +261,12 @@ namespace Jroc.Tests.Function
         [Fact]
         public Task Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature() { var testName = nameof(Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature() { var testName = nameof(Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ParameterTypeInference_DirectRotateArrayArgument() { var testName = nameof(Function_ParameterTypeInference_DirectRotateArrayArgument); return ExecutionTest(testName); }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return ExecutionTest(testName); }

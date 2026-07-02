@@ -8,6 +8,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 - perf/benchmarks/tooling: add `scripts/runCubePhasedGuardrails.js` plus npm scripts (`perf:phased:cube*`) to run only the Dromaeo cube phased scenarios and report `jroc-execute` vs `jint-execute-prepared` vs `okojo-execute` time/allocation counters, with optional generated-IL smell counting for allocation/codegen guardrails; add phased benchmark `--scenario` filtering so script selection happens in benchmark setup instead of via BenchmarkDotNet `--filter`.
 - perf/compiler/runtime: add numeric fast paths for `Math.abs`, `Math.ceil`, `Math.round`, `Math.sqrt`, `Math.sin`, and `Math.cos` when arguments are already unboxed doubles, plus safe `Math.PI` constant lowering (`Math.PI / 180` fold) when the global `Math` binding has not been written; preserve dynamic dispatch when `Math` is written/replaced.
+- perf/compiler/tests: infer stable `JavaScriptRuntime.Array` parameter types for direct function and arrow callsites, including the Dromaeo cube `RotateX`/`RotateY`/`RotateZ` helpers, while keeping escaped callables on the object ABI.
 
 ## v0.11.7 - 2026-06-30
 

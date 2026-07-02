@@ -1,4 +1,4 @@
-// IL code: Math_Imul_Clz32_Basics
+﻿// IL code: Math_Imul_Clz32_Basics
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2266
+				// Method begins at RVA 0x2257
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
-				object n
+				float64 n
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
@@ -44,11 +44,11 @@
 			)
 			// Method begins at RVA 0x21d8
 			// Header size: 12
-			// Code size: 121 (0x79)
+			// Code size: 106 (0x6a)
 			.maxstack 8
 			.locals init (
-				[0] bool,
-				[1] object,
+				[0] object,
+				[1] bool,
 				[2] float64,
 				[3] object,
 				[4] object
@@ -56,48 +56,44 @@
 
 			IL_0000: ldarg.1
 			IL_0001: ldc.r8 0.0
-			IL_000a: box [System.Runtime]System.Double
-			IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0014: stloc.0
-			IL_0015: ldloc.0
-			IL_0016: box [System.Runtime]System.Boolean
-			IL_001b: stloc.1
-			IL_001c: ldloc.1
-			IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0022: stloc.0
-			IL_0023: ldloc.0
-			IL_0024: brfalse IL_0052
+			IL_000a: ceq
+			IL_000c: box [System.Runtime]System.Boolean
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0018: stloc.1
+			IL_0019: ldloc.1
+			IL_001a: brfalse IL_0043
 
-			IL_0029: ldc.r8 1
-			IL_0032: ldarg.1
-			IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0038: div
-			IL_0039: stloc.2
-			IL_003a: ldloc.2
-			IL_003b: ldc.r8 0.0
-			IL_0044: clt
-			IL_0046: box [System.Runtime]System.Boolean
-			IL_004b: stloc.s 4
-			IL_004d: br IL_0055
+			IL_001f: ldc.r8 1
+			IL_0028: ldarg.1
+			IL_0029: div
+			IL_002a: stloc.2
+			IL_002b: ldloc.2
+			IL_002c: ldc.r8 0.0
+			IL_0035: clt
+			IL_0037: box [System.Runtime]System.Boolean
+			IL_003c: stloc.s 4
+			IL_003e: br IL_0046
 
-			IL_0052: ldloc.1
-			IL_0053: stloc.s 4
+			IL_0043: ldloc.0
+			IL_0044: stloc.s 4
 
-			IL_0055: ldloc.s 4
-			IL_0057: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_005c: stloc.0
-			IL_005d: ldloc.0
-			IL_005e: brfalse IL_0069
+			IL_0046: ldloc.s 4
+			IL_0048: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_004d: stloc.1
+			IL_004e: ldloc.1
+			IL_004f: brfalse IL_005a
 
-			IL_0063: ldstr "-0"
-			IL_0068: ret
+			IL_0054: ldstr "-0"
+			IL_0059: ret
 
-			IL_0069: ldstr ""
-			IL_006e: ldarg.1
-			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0074: stloc.s 4
-			IL_0076: ldloc.s 4
-			IL_0078: ret
+			IL_005a: ldstr ""
+			IL_005f: ldarg.1
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0065: stloc.s 4
+			IL_0067: ldloc.s 4
+			IL_0069: ret
 		} // end of method toStr::__js_call__
 
 	} // end of class toStr
@@ -116,7 +112,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x225d
+			// Method begins at RVA 0x224e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -164,8 +160,8 @@
 		IL_0000: newobj instance void Modules.Math_Imul_Clz32_Basics/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object, float64)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, float64, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: conv.r8
 		IL_0014: ldstr "toStr"
@@ -241,8 +237,8 @@
 		IL_0126: box [System.Runtime]System.Double
 		IL_012b: stloc.s 10
 		IL_012d: ldnull
-		IL_012e: ldloc.s 10
-		IL_0130: call object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object, object)
+		IL_012e: ldloc.s 4
+		IL_0130: call object Modules.Math_Imul_Clz32_Basics/toStr::__js_call__(object, float64)
 		IL_0135: stloc.s 8
 		IL_0137: ldloc.s 11
 		IL_0139: ldloc.s 8
@@ -279,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x226f
+		// Method begins at RVA 0x2260
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

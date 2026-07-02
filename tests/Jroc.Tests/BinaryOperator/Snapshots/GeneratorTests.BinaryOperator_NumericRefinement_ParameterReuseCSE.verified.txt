@@ -1,4 +1,4 @@
-// IL code: BinaryOperator_NumericRefinement_ParameterReuseCSE
+﻿// IL code: BinaryOperator_NumericRefinement_ParameterReuseCSE
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x2115
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,50 +36,46 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
-				object x
+				float64 x
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e4
+			// Method begins at RVA 0x20d4
 			// Header size: 12
-			// Code size: 51 (0x33)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] float64,
-				[3] float64
+				[2] float64
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: stloc.2
-			IL_0007: ldloc.2
-			IL_0008: conv.i4
-			IL_0009: conv.u4
-			IL_000a: ldc.r8 5
+			IL_0001: conv.i4
+			IL_0002: conv.u4
+			IL_0003: ldc.r8 5
+			IL_000c: conv.i4
+			IL_000d: shr.un
+			IL_000e: conv.r.un
+			IL_000f: stloc.2
+			IL_0010: ldloc.2
+			IL_0011: stloc.0
+			IL_0012: ldarg.1
 			IL_0013: conv.i4
-			IL_0014: shr.un
-			IL_0015: conv.r.un
-			IL_0016: stloc.3
-			IL_0017: ldloc.3
-			IL_0018: stloc.0
-			IL_0019: ldloc.2
-			IL_001a: conv.i4
-			IL_001b: ldc.r8 31
-			IL_0024: conv.i4
-			IL_0025: and
-			IL_0026: conv.r8
-			IL_0027: stloc.2
-			IL_0028: ldloc.2
-			IL_0029: stloc.1
-			IL_002a: ldloc.0
-			IL_002b: ldloc.1
-			IL_002c: add
-			IL_002d: box [System.Runtime]System.Double
-			IL_0032: ret
+			IL_0014: ldc.r8 31
+			IL_001d: conv.i4
+			IL_001e: and
+			IL_001f: conv.r8
+			IL_0020: stloc.2
+			IL_0021: ldloc.2
+			IL_0022: stloc.1
+			IL_0023: ldloc.0
+			IL_0024: ldloc.1
+			IL_0025: add
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: ret
 		} // end of method bitwiseParamTwice::__js_call__
 
 	} // end of class bitwiseParamTwice
@@ -99,7 +95,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2123
+			// Method begins at RVA 0x210c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -125,7 +121,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 135 (0x87)
+		// Code size: 120 (0x78)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/Scope,
@@ -136,8 +132,8 @@
 		IL_0000: newobj instance void Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, float64)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, float64, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: conv.r8
 		IL_0014: ldstr "bitwiseParamTwice"
@@ -149,32 +145,29 @@
 		IL_0022: stloc.1
 		IL_0023: ldnull
 		IL_0024: ldc.r8 100
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: call object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, object)
-		IL_0037: stloc.2
-		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003d: ldloc.2
-		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0043: pop
-		IL_0044: ldnull
-		IL_0045: ldc.r8 0.0
-		IL_004e: box [System.Runtime]System.Double
-		IL_0053: call object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, object)
-		IL_0058: stloc.2
-		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005e: ldloc.2
-		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0064: pop
-		IL_0065: ldnull
-		IL_0066: ldc.r8 255
-		IL_006f: box [System.Runtime]System.Double
-		IL_0074: call object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, object)
-		IL_0079: stloc.2
-		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007f: ldloc.2
-		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0085: pop
-		IL_0086: ret
+		IL_002d: call object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, float64)
+		IL_0032: stloc.2
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0038: ldloc.2
+		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_003e: pop
+		IL_003f: ldnull
+		IL_0040: ldc.r8 0.0
+		IL_0049: call object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, float64)
+		IL_004e: stloc.2
+		IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0054: ldloc.2
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_005a: pop
+		IL_005b: ldnull
+		IL_005c: ldc.r8 255
+		IL_0065: call object Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE/bitwiseParamTwice::__js_call__(object, float64)
+		IL_006a: stloc.2
+		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0070: ldloc.2
+		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0076: pop
+		IL_0077: ret
 	} // end of method BinaryOperator_NumericRefinement_ParameterReuseCSE::__js_module_init__
 
 } // end of class Modules.BinaryOperator_NumericRefinement_ParameterReuseCSE
@@ -186,7 +179,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x211e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

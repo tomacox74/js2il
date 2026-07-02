@@ -166,9 +166,12 @@ internal sealed class JsMethodCompiler
     private static Type GetStableParameterClrTypeOrObject(Scope scope, int jsParameterIndex)
     {
         return scope.StableParameterClrTypes.TryGetValue(jsParameterIndex, out var clrType)
-            && (clrType == typeof(double) || clrType == typeof(bool) || clrType == typeof(string))
-            ? clrType
-            : typeof(object);
+        && (clrType == typeof(double)
+            || clrType == typeof(bool)
+            || clrType == typeof(string)
+            || clrType == typeof(JavaScriptRuntime.Array))
+        ? clrType
+        : typeof(object);
     }
 
     #region Public API - Entry Points

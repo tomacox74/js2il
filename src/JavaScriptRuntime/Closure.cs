@@ -201,7 +201,7 @@ namespace JavaScriptRuntime
                 var parameters = invoke.GetParameters();
                 var abi = JsCallableScopeAbiResolver.Resolve(del);
                 bool hasScopes = abi.HasExplicitScopePayload;
-                bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
+                bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(del, parameters, abi.Kind);
                 int jsParamStart = hasScopes
                     ? (hasNewTarget ? 2 : 1)
                     : (hasNewTarget ? 1 : 0);
@@ -459,7 +459,7 @@ namespace JavaScriptRuntime
 
             var abi = JsCallableScopeAbiResolver.Resolve(target);
             bool hasScopes = abi.HasExplicitScopePayload;
-            bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(parameters, abi.Kind);
+            bool hasNewTarget = JsCallableScopeAbiResolver.HasNewTargetParameter(target, parameters, abi.Kind);
             int jsParamStart = hasScopes
                 ? (hasNewTarget ? 2 : 1)
                 : (hasNewTarget ? 1 : 0);

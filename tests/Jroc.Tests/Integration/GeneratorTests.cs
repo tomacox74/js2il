@@ -7,6 +7,9 @@ namespace Jroc.Tests.Integration
         public GeneratorTests() : base("Integration") { }
 
         [Fact]
+        public Task Compile_Resources_Dromaeo_3d_Cube() => GenerateTest(nameof(Compile_Resources_Dromaeo_3d_Cube));
+
+        [Fact]
         public Task Compile_Scripts_GenerateNodeSupportMd() => GenerateTest(nameof(Compile_Scripts_GenerateNodeSupportMd));
 
         [Fact]

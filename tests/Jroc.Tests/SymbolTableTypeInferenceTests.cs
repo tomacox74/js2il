@@ -518,7 +518,7 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
-    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_DirectCallsKeepObjectParameters()
+    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_DirectCallsInferStableParameters()
     {
         var source = @"
                 function format(a, b, enabled, prefix) {
@@ -536,11 +536,167 @@ public class SymbolTableTypeInferenceTests
             && string.Equals(s.Name, "format", StringComparison.Ordinal));
 
         Assert.NotNull(functionScope);
+        AssertStableParameterTypes(
+            functionScope!,
+            ("a", typeof(double)),
+            ("b", typeof(double)),
+            ("enabled", typeof(bool)),
+            ("prefix", typeof(string)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_DirectArrayCallsInferArrayParameter()
+    {
+        var source = @"
+                function rotate(m, phi) {
+                    return m[0][0] + phi;
+                }
+
+                const matrix = [[1, 0], [0, 1]];
+                rotate(matrix, 30);
+                rotate(matrix, 45);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "rotate", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        AssertStableParameterTypes(
+            functionScope!,
+            ("m", typeof(JavaScriptRuntime.Array)),
+            ("phi", typeof(double)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_EscapedArrowKeepsObjectParameters()
+    {
+        var source = @"
+                const add = (a, b) => {
+                    return a + b;
+                };
+
+                module.exports = add;
+                add(1, 2);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && s.AstNode is ArrowFunctionExpression);
+
+        Assert.NotNull(functionScope);
         Assert.Empty(functionScope!.StableParameterClrTypes);
         AssertObjectParameter(functionScope, "a");
         AssertObjectParameter(functionScope, "b");
-        AssertObjectParameter(functionScope, "enabled");
-        AssertObjectParameter(functionScope, "prefix");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_ShadowedArrayDoesNotInferArrayParameter()
+    {
+        var source = @"
+                const Array = {
+                    from() { return 1; }
+                };
+
+                function consume(value) {
+                    return value;
+                }
+
+                consume(Array.from());
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "consume", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "value");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_ShadowedNewArrayDoesNotInferArrayParameter()
+    {
+        var source = @"
+                function Array() {
+                }
+
+                function consume(value) {
+                    return value;
+                }
+
+                consume(new Array());
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "consume", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "value");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_MutableArrayIdentifierDoesNotInferArrayParameter()
+    {
+        var source = @"
+                let value = [1];
+                value = 0;
+
+                function consume(value) {
+                    return value;
+                }
+
+                consume(value);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "consume", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Empty(functionScope!.StableParameterClrTypes);
+        AssertObjectParameter(functionScope, "value");
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_StableParameters_DirectArrowCallsInferArrayAfterStableReturnAssignments()
+    {
+        var source = @"
+                const makeMatrix = () => [[1, 0], [0, 1]];
+                let matrix = [];
+                matrix = makeMatrix();
+
+                const rotate = (m, phi) => {
+                    return m[0][0] + phi;
+                };
+
+                rotate(matrix, 30);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && s.AstNode is ArrowFunctionExpression
+            && s.Parameters.Contains("m"));
+
+        Assert.NotNull(functionScope);
+        AssertStableParameterTypes(
+            functionScope!,
+            ("m", typeof(JavaScriptRuntime.Array)),
+            ("phi", typeof(double)));
     }
 
     [Fact]

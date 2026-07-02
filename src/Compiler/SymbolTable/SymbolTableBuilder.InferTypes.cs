@@ -7,6 +7,8 @@ namespace Jroc.SymbolTables;
 
 public partial class SymbolTableBuilder
 {
+    private const int MaxMaterializedTypedJsParameterCount = 13;
+
     /// <Summary>
     /// /// Infers variable CLR types from the JavaScript AST
     /// </Summary>
@@ -63,7 +65,7 @@ public partial class SymbolTableBuilder
         var parentMap = BuildParentMap(root.AstNode);
         foreach (var candidate in candidatesByScope.Values)
         {
-            if (candidate.Scope.AstNode is FunctionExpression or ArrowFunctionExpression
+            if (candidate.Scope.AstNode is FunctionExpression
                 && parentMap.TryGetValue(candidate.Scope.AstNode, out var parent)
                 && parent is not Acornima.Ast.MethodDefinition)
             {
@@ -212,7 +214,7 @@ public partial class SymbolTableBuilder
                     return;
                 }
 
-                var argType = builder.InferExpressionClrType(arg, callScope);
+                var argType = builder.InferStableParameterArgumentClrType(arg, callScope);
                 if (!IsSupportedStableParameterType(argType))
                 {
                     IsUnsafe = true;
@@ -233,6 +235,113 @@ public partial class SymbolTableBuilder
         }
     }
 
+    private Type? InferStableParameterArgumentClrType(Node argument, Scope callScope)
+    {
+        var inferredType = argument switch
+        {
+            NumericLiteral => typeof(double),
+            StringLiteral => typeof(string),
+            BooleanLiteral => typeof(bool),
+            ArrayExpression => typeof(JavaScriptRuntime.Array),
+            Identifier id => InferStableIdentifierArgumentClrType(callScope, id.Name),
+            MemberExpression memberExpression => InferStableMemberArgumentClrType(memberExpression, callScope),
+            NewExpression newExpression => InferStableNewArgumentClrType(newExpression, callScope),
+            CallExpression callExpression => InferStableCallArgumentClrType(callExpression, callScope),
+            _ => null
+        };
+
+        return IsSupportedStableParameterType(inferredType) ? inferredType : null;
+    }
+
+    private Type? InferStableIdentifierArgumentClrType(Scope callScope, string name)
+    {
+        var binding = TryResolveBinding(callScope, name);
+        return binding?.IsStableType == true && IsSupportedStableParameterType(binding.ClrType)
+            ? binding.ClrType
+            : null;
+    }
+
+    private static Type? InferStableMemberArgumentClrType(MemberExpression memberExpression, Scope callScope)
+    {
+        if (memberExpression.Computed
+            || memberExpression.Object is not ThisExpression
+            || memberExpression.Property is not Identifier fieldId)
+        {
+            return null;
+        }
+
+        var classScope = FindEnclosingClassScope(callScope);
+        return classScope?.StableInstanceFieldClrTypes.TryGetValue(fieldId.Name, out var fieldClrType) == true
+            ? fieldClrType
+            : null;
+    }
+
+    private static Type? InferStableNewArgumentClrType(NewExpression newExpression, Scope callScope)
+    {
+        if (newExpression.Callee is Identifier ctorId && string.Equals(ctorId.Name, "Array", StringComparison.Ordinal))
+        {
+            return IsIdentifierShadowed(callScope, "Array") ? null : typeof(JavaScriptRuntime.Array);
+        }
+
+        return null;
+    }
+
+    private Type? InferStableCallArgumentClrType(CallExpression callExpression, Scope callScope)
+    {
+        if (callExpression.Callee is Identifier calleeId)
+        {
+            var binding = TryResolveBinding(callScope, calleeId.Name);
+            var root = FindRootScope(callScope) ?? callScope;
+            var targetScope = TryGetStableDirectCallableScopeForBinding(root, binding);
+            var stableReturnType = targetScope?.StableReturnClrType;
+            if (IsSupportedStableParameterType(stableReturnType))
+            {
+                return stableReturnType;
+            }
+        }
+
+        if (callExpression.Callee is not MemberExpression
+            {
+                Computed: false,
+                Object: Identifier objectId,
+                Property: Identifier propertyId
+            })
+        {
+            return null;
+        }
+
+        if (string.Equals(objectId.Name, "Math", StringComparison.Ordinal)
+            && !IsIdentifierShadowed(callScope, "Math")
+            && IsSupportedMathNumberMethod(propertyId.Name))
+        {
+            return typeof(double);
+        }
+
+        if (string.Equals(objectId.Name, "String", StringComparison.Ordinal)
+            && string.Equals(propertyId.Name, "fromCharCode", StringComparison.Ordinal)
+            && !IsIdentifierShadowed(callScope, "String"))
+        {
+            return typeof(string);
+        }
+
+        if (string.Equals(objectId.Name, "Array", StringComparison.Ordinal)
+            && !IsIdentifierShadowed(callScope, "Array"))
+        {
+            if (string.Equals(propertyId.Name, "of", StringComparison.Ordinal)
+                || string.Equals(propertyId.Name, "from", StringComparison.Ordinal))
+            {
+                return typeof(JavaScriptRuntime.Array);
+            }
+
+            if (string.Equals(propertyId.Name, "isArray", StringComparison.Ordinal))
+            {
+                return typeof(bool);
+            }
+        }
+
+        return null;
+    }
+
     private bool TryCreateParameterInferenceCandidate(Scope scope, out ParameterInferenceCandidate candidate)
     {
         candidate = null!;
@@ -242,7 +351,9 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (scope.Parent?.Kind != ScopeKind.Class)
+        if (scope.Parent?.Kind != ScopeKind.Class
+            && scope.AstNode is not FunctionDeclaration
+            && scope.AstNode is not ArrowFunctionExpression)
         {
             return false;
         }
@@ -253,6 +364,12 @@ public partial class SymbolTableBuilder
         }
 
         if (parameterNames.Count == 0)
+        {
+            return false;
+        }
+
+        if (scope.Parent?.Kind != ScopeKind.Class
+            && parameterNames.Count > MaxMaterializedTypedJsParameterCount)
         {
             return false;
         }
@@ -346,6 +463,27 @@ public partial class SymbolTableBuilder
         };
     }
 
+    private Scope? TryGetStableDirectCallableScopeForBinding(Scope root, BindingInfo? binding)
+    {
+        if (binding == null)
+        {
+            return null;
+        }
+
+        if (binding.DeclarationNode is FunctionDeclaration functionDeclaration)
+        {
+            return FindScopeByAstNode(root, functionDeclaration);
+        }
+
+        if (binding.Kind == BindingKind.Const
+            && binding.DeclarationNode is VariableDeclarator { Init: FunctionExpression or ArrowFunctionExpression } declarator)
+        {
+            return FindScopeByAstNode(root, declarator.Init);
+        }
+
+        return null;
+    }
+
     private Scope? TryGetClassMethodScopeForReceiver(Scope callScope, Node receiver, string methodName)
     {
         if (receiver is ThisExpression)
@@ -381,7 +519,35 @@ public partial class SymbolTableBuilder
     }
 
     private static bool IsSupportedStableParameterType(Type? type)
-        => type == typeof(double) || type == typeof(bool) || type == typeof(string);
+        => type == typeof(double)
+            || type == typeof(bool)
+            || type == typeof(string)
+            || type == typeof(JavaScriptRuntime.Array);
+
+    private static bool IsSupportedMathNumberMethod(string? name) =>
+        name != null && (name == "abs" || name == "acos" || name == "acosh" || name == "asin" || name == "asinh" ||
+                         name == "atan" || name == "atan2" || name == "atanh" || name == "cbrt" || name == "ceil" ||
+                         name == "clz32" || name == "cos" || name == "cosh" || name == "exp" || name == "expm1" ||
+                         name == "floor" || name == "fround" || name == "hypot" || name == "imul" || name == "log" ||
+                         name == "log10" || name == "log1p" || name == "log2" || name == "max" || name == "min" ||
+                         name == "pow" || name == "random" || name == "round" || name == "sign" || name == "sin" ||
+                         name == "sinh" || name == "sqrt" || name == "tan" || name == "tanh" || name == "trunc");
+
+    private static bool IsIdentifierShadowed(Scope? scope, string name)
+    {
+        var current = scope;
+        while (current != null)
+        {
+            if (current.Bindings.ContainsKey(name))
+            {
+                return true;
+            }
+
+            current = current.Parent;
+        }
+
+        return false;
+    }
 
     private static bool IsDirectIdentifierCall(Identifier id, Node? parent)
         => parent is CallExpression call && ReferenceEquals(call.Callee, id);
@@ -623,7 +789,9 @@ public partial class SymbolTableBuilder
             if (arrowExpr.Body is not BlockStatement body)
             {
                 var inferredExpr = InferExpressionClrType(arrowExpr.Body, callableScope);
-                return inferredExpr == typeof(double) || inferredExpr == typeof(bool)
+                return inferredExpr == typeof(double)
+                    || inferredExpr == typeof(bool)
+                    || inferredExpr == typeof(JavaScriptRuntime.Array)
                     ? inferredExpr
                     : null;
             }
@@ -2124,29 +2292,6 @@ public partial class SymbolTableBuilder
         static bool IsSupportedNumberLike(Type? t) =>
             t == typeof(double) || t == typeof(bool) || t == typeof(JavaScriptRuntime.JsNull);
 
-        static bool IsIdentifierShadowed(Scope? s, string name)
-        {
-            var current = s;
-            while (current != null)
-            {
-                if (current.Bindings.ContainsKey(name))
-                {
-                    return true;
-                }
-                current = current.Parent;
-            }
-            return false;
-        }
-
-        static bool IsSupportedMathNumberMethod(string? name) =>
-            name != null && (name == "abs" || name == "acos" || name == "acosh" || name == "asin" || name == "asinh" ||
-                             name == "atan" || name == "atan2" || name == "atanh" || name == "cbrt" || name == "ceil" ||
-                             name == "clz32" || name == "cos" || name == "cosh" || name == "exp" || name == "expm1" ||
-                             name == "floor" || name == "fround" || name == "hypot" || name == "imul" || name == "log" ||
-                             name == "log10" || name == "log1p" || name == "log2" || name == "max" || name == "min" ||
-                             name == "pow" || name == "random" || name == "round" || name == "sign" || name == "sin" ||
-                             name == "sinh" || name == "sqrt" || name == "tan" || name == "tanh" || name == "trunc");
-
         Scope? FindEnclosingClassScope(Scope? s)
         {
             var current = s;
@@ -2299,7 +2444,7 @@ public partial class SymbolTableBuilder
                 // new Array(...)
                 if (ne.Callee is Identifier ctorId && string.Equals(ctorId.Name, "Array", StringComparison.Ordinal))
                 {
-                    return typeof(JavaScriptRuntime.Array);
+                    return IsIdentifierShadowed(scope, "Array") ? null : typeof(JavaScriptRuntime.Array);
                 }
 
                 // new <Intrinsic>(...) (e.g., Int32Array)
@@ -2378,18 +2523,14 @@ public partial class SymbolTableBuilder
                 if (ce.Callee is Identifier calleeId && scope != null)
                 {
                     var calleeBinding = TryResolveBinding(scope, calleeId.Name);
-                    if (calleeBinding?.Kind == BindingKind.Function && calleeBinding.DeclarationNode != null)
+                    var root = FindRootScope(scope);
+                    var calleeScope = root != null
+                        ? TryGetStableDirectCallableScopeForBinding(root, calleeBinding)
+                        : null;
+                    var stableReturn = calleeScope?.StableReturnClrType;
+                    if (IsSupportedStableParameterType(stableReturn))
                     {
-                        var root = FindRootScope(scope);
-                        if (root != null)
-                        {
-                            var calleeScope = FindScopeByAstNodeRecursive(root, calleeBinding.DeclarationNode);
-                            var stableReturn = calleeScope?.StableReturnClrType;
-                            if (stableReturn == typeof(JavaScriptRuntime.Array))
-                            {
-                                return stableReturn;
-                            }
-                        }
+                        return stableReturn;
                     }
                 }
 
@@ -2458,7 +2599,11 @@ public partial class SymbolTableBuilder
                 }
 
                 // Array.of(...) / Array.from(...)
-                if (ce.Callee is MemberExpression me && me.Object is Identifier objId && string.Equals(objId.Name, "Array", StringComparison.Ordinal))
+                if (ce.Callee is MemberExpression me
+                    && !me.Computed
+                    && me.Object is Identifier objId
+                    && string.Equals(objId.Name, "Array", StringComparison.Ordinal)
+                    && !IsIdentifierShadowed(scope, "Array"))
                 {
                     if (me.Property is Identifier propId)
                     {

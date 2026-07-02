@@ -1,4 +1,4 @@
-// IL code: Function_GlobalFunctionWithParameter
+﻿// IL code: Function_GlobalFunctionWithParameter
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -36,7 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
-				object message
+				string message
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
@@ -110,8 +110,8 @@
 		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithParameter/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, string)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, string, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: conv.r8
 		IL_0014: ldstr "printMessage"
@@ -123,7 +123,7 @@
 		IL_0022: stloc.1
 		IL_0023: ldnull
 		IL_0024: ldstr "Hello, Jroc!"
-		IL_0029: call object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, object)
+		IL_0029: call object Modules.Function_GlobalFunctionWithParameter/printMessage::__js_call__(object, string)
 		IL_002e: pop
 		IL_002f: ret
 	} // end of method Function_GlobalFunctionWithParameter::__js_module_init__

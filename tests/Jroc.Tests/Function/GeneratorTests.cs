@@ -254,6 +254,37 @@ namespace Jroc.Tests.Function
             });
         }
 
+        [Fact]
+        public Task Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature()
+        {
+            var testName = nameof(Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                var functionType = moduleType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic)
+                    .Single(t => t.Name.StartsWith("ArrowFunction_", StringComparison.Ordinal));
+                var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+                Assert.Equal(new[] { typeof(object), typeof(object) }, callMethod.GetParameters().Select(p => p.ParameterType).Skip(1).ToArray());
+            });
+        }
+
+        [Fact]
+        public Task Function_ParameterTypeInference_DirectRotateArrayArgument()
+        {
+            var testName = nameof(Function_ParameterTypeInference_DirectRotateArrayArgument);
+            return GenerateTest(testName, verifyAssembly: assembly =>
+            {
+                var moduleType = assembly.GetType($"Modules.{testName}", throwOnError: true)!;
+                foreach (var functionName in new[] { "RotateX", "RotateY", "RotateZ" })
+                {
+                    var functionType = moduleType.GetNestedType(functionName, BindingFlags.Public | BindingFlags.NonPublic)!;
+                    var callMethod = functionType.GetMethod("__js_call__", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
+                    var jsParameterTypes = callMethod.GetParameters().Select(p => p.ParameterType).Skip(1).ToArray();
+                    Assert.Equal(new[] { typeof(JavaScriptRuntime.Array), typeof(double) }, jsParameterTypes);
+                }
+            });
+        }
+
         // ABI optimization tests: non-capturing functions should NOT have scopes parameter
         [Fact]
         public Task Function_NoCapture_NoScopesParameter() { var testName = nameof(Function_NoCapture_NoScopesParameter); return GenerateTest(testName); }
