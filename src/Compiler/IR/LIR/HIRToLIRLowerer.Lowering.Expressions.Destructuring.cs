@@ -109,6 +109,19 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
                     defaultTemp = EnsureObject(defaultTemp);
+                    if (def.Target is HIRIdentifierPattern defaultIdentifier
+                        && def.Default is HIRFunctionExpression)
+                    {
+                        var inferredNameTemp = EmitConstString(defaultIdentifier.Symbol.Name);
+                        var namedDefaultTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                            nameof(JavaScriptRuntime.Function),
+                            nameof(JavaScriptRuntime.Function.SetInferredNameIfAnonymous),
+                            new[] { defaultTemp, EnsureObject(inferredNameTemp) },
+                            namedDefaultTemp));
+                        DefineTempStorage(namedDefaultTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        defaultTemp = namedDefaultTemp;
+                    }
                     _methodBodyIR.Instructions.Add(new LIRCopyTemp(defaultTemp, selected));
                     _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
 

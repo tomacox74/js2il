@@ -125,4 +125,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "yield-star-before-newline")]
     public Task yield_star_before_newline()
         => ExecutionTest("yield-star-before-newline");
+
+    [Fact(DisplayName = "arguments-with-arguments-lex")]
+    public Task arguments_with_arguments_lex()
+        => ExecutionTest("arguments-with-arguments-lex");
 }

@@ -37,4 +37,8 @@ public class ExecutionTests : ExecutionTestsBase
     [Fact(DisplayName = "fields-multiple-definitions-static-private-methods-proxy")]
     public Task fields_multiple_definitions_static_private_methods_proxy()
         => ExecutionTest("fields-multiple-definitions-static-private-methods-proxy");
+
+    [Fact(DisplayName = "new-sc-line-method-computed-symbol-names")]
+    public Task new_sc_line_method_computed_symbol_names()
+        => ExecutionTest("new-sc-line-method-computed-symbol-names");
 }

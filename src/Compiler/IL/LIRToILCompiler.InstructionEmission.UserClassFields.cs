@@ -131,7 +131,7 @@ internal sealed partial class LIRToILCompiler
                         var defineClassField = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
                             nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty),
-                            parameterTypes: new[] { typeof(object), typeof(string), typeof(object) });
+                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(defineClassField);
                         ilEncoder.OpCode(ILOpCode.Pop);

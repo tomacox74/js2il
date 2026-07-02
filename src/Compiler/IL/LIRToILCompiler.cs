@@ -319,6 +319,8 @@ internal sealed partial class LIRToILCompiler
         {
             nameof(JavaScriptRuntime.GeneratorScope._genState) => typeof(int),
             nameof(JavaScriptRuntime.GeneratorScope._started) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._parametersInitialized) => typeof(bool),
+            nameof(JavaScriptRuntime.GeneratorScope._parameterInitializationOnly) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._done) => typeof(bool),
             nameof(JavaScriptRuntime.GeneratorScope._resumeValue) => typeof(object),
             nameof(JavaScriptRuntime.GeneratorScope._resumeException) => typeof(object),
@@ -341,6 +343,8 @@ internal sealed partial class LIRToILCompiler
 
         return fieldName is nameof(JavaScriptRuntime.GeneratorScope._genState)
             or nameof(JavaScriptRuntime.GeneratorScope._started)
+            or nameof(JavaScriptRuntime.GeneratorScope._parametersInitialized)
+            or nameof(JavaScriptRuntime.GeneratorScope._parameterInitializationOnly)
             or nameof(JavaScriptRuntime.GeneratorScope._done)
             or nameof(JavaScriptRuntime.GeneratorScope._resumeValue)
             or nameof(JavaScriptRuntime.GeneratorScope._resumeException)

@@ -641,6 +641,35 @@ public class RuntimeServices
         }
     }
 
+    public static object ValidateClassPrivateMethodReceiver(object? receiver, Type ownerType, bool isStatic)
+    {
+        receiver = ResolveLexicalThis(receiver);
+        if (!HasClassPrivateMethodBrand(receiver, ownerType, isStatic))
+        {
+            throw new TypeError("Receiver does not have the requested private method");
+        }
+
+        return receiver!;
+    }
+
+    public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType)
+    {
+        receiver = ResolveLexicalThis(receiver);
+        var hasBrand = receiver switch
+        {
+            Type type => type == ownerType,
+            ClassConstructorValue classConstructorValue => classConstructorValue.Type == ownerType,
+            _ => receiver != null && ownerType.IsInstanceOfType(receiver)
+        };
+
+        if (!hasBrand)
+        {
+            throw new TypeError("Receiver does not have the requested private method");
+        }
+
+        return receiver!;
+    }
+
     private static bool IsPrototypeObjectForClass(object? receiver, Type ownerType)
     {
         // JS permits calling prototype methods with the prototype object as the receiver

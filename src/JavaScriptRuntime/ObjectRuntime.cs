@@ -121,6 +121,9 @@ namespace JavaScriptRuntime
         public static object? ValidateClassHeritage(object? heritage)
             => RuntimeServices.ValidateClassHeritage(heritage);
 
+        public static object ValidateDirectClassPrivateMethodReceiver(object? receiver, Type ownerType)
+            => RuntimeServices.ValidateDirectClassPrivateMethodReceiver(receiver, ownerType);
+
         public static object DefineObjectLiteralAccessorProperty(object target, object? prop, object? getter, object? setter)
             => DefineAccessorProperty(target, prop, getter, setter, enumerable: true, createDictionarySlot: true);
 
@@ -198,12 +201,21 @@ namespace JavaScriptRuntime
                 args[11]);
         }
 
-        public static object DefineClassFieldDataProperty(object target, string prop, object? value)
+        public static object DefineClassFieldDataProperty(object target, object? prop, object? value)
         {
             ConfigureFunctionNameFromPropertyKey(prop, value);
+            var key = Object.ToPropertyKeyString(prop);
+            if ((target is Type && string.Equals(key, "prototype", StringComparison.Ordinal))
+                || (PropertyDescriptorStore.TryGetOwn(target, key, out var existingDescriptor)
+                && existingDescriptor.Kind == JsPropertyDescriptorKind.Data
+                && !existingDescriptor.Writable))
+            {
+                throw new TypeError($"Cannot redefine property: {key}");
+            }
+
             return DefineDataPropertyCore(
                 target,
-                prop,
+                key,
                 value,
                 static (jsObject, key, objectValue) => jsObject.SetObject(key, objectValue),
                 enumerable: true);
@@ -316,22 +328,7 @@ namespace JavaScriptRuntime
 
         private static void ConfigureFunctionNameFromPropertyKey(object? propertyKey, object? value)
         {
-            if (value is not Delegate del)
-            {
-                return;
-            }
-
-            if (Function.TryEnsureOwnMetadataPropertyDescriptor(del, "name", out var nameDescriptor)
-                && nameDescriptor.Value is string existingName
-                && !string.IsNullOrEmpty(existingName))
-            {
-                return;
-            }
-
-            var functionName = propertyKey is Symbol sym
-                ? sym.Description is null ? string.Empty : $"[{sym.Description}]"
-                : Object.ToPropertyKeyString(propertyKey);
-            Function.DefineMetadataProperty(del, "name", functionName);
+            Function.SetInferredNameIfAnonymous(value, propertyKey);
         }
 
         private static bool HasGlobalBinding(string name)

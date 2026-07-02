@@ -465,15 +465,17 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-object-initializer",
         "testScripts": [
-          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js",
+          "tests/Jroc.Test262.Tests/language/expressions/object/dstr/JavaScript/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js"
         ],
         "test262Paths": [
+          "test/language/expressions/object/dstr/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js",
           "test/language/expressions/object/method-definition/fn-name-gen.js",
           "test/language/expressions/object/method-definition/generator-invoke-ctor.js",
           "test/language/expressions/object/method-definition/generator-invoke-fn-no-strict.js",
           "test/language/expressions/object/method-definition/generator-invoke-fn-strict.js"
         ],
-        "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis. Generator method values initialize the generator-function surface, reject construction with TypeError, and remain callable as generator functions."
+        "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis. Generator method values initialize the generator-function surface, reject construction with TypeError, remain callable as generator functions, and support covered parameter default/name inference behavior."
       },
       {
         "clause": "13.2.5.1",

@@ -435,30 +435,10 @@ namespace Jroc.Services.ILGenerators
                     }
                     declaredFieldNames.Add(pname);
                 }
-                else if (pdef.Computed && ClassElementNames.TryGetPropertyName(pdef.Key, computed: true, out var computedName) && !string.IsNullOrWhiteSpace(computedName))
+                else if (pdef.Computed)
                 {
-                    var clrType = pdef.Static ? typeof(object) : TryGetStableInstanceFieldClrType(computedName!);
-                    var fSig = new BlobBuilder();
-                    EncodeFieldType(new BlobEncoder(fSig), clrType, computedName!);
-                    var fSigHandle = _metadata.GetOrAddBlob(fSig);
-                    if (pdef.Static)
-                    {
-                        var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, computedName!, fSigHandle);
-                        _classRegistry.RegisterStaticField(registryClassName, computedName!, fh);
-                        _classRegistry.RegisterStaticFieldClrType(registryClassName, computedName!, typeof(object));
-                    }
-                    else
-                    {
-                        var fh = tb.AddFieldDefinition(FieldAttributes.Public, computedName!, fSigHandle);
-                        _classRegistry.RegisterField(registryClassName, computedName!, fh);
-                        _classRegistry.RegisterFieldClrType(registryClassName, computedName!, clrType ?? typeof(object));
-
-                        if (TryGetStableInstanceFieldUserClassTypeHandle(computedName!, out var userFieldTypeHandle))
-                        {
-                            _classRegistry.RegisterFieldTypeHandle(registryClassName, computedName!, userFieldTypeHandle);
-                        }
-                    }
-                    declaredFieldNames.Add(computedName!);
+                    // Computed public fields must be runtime own data properties so Symbol keys,
+                    // numeric/string keys, and uninitialized fields use ordinary class-field descriptors.
                 }
                 else if (pdef.Key is Identifier pid)
                 {

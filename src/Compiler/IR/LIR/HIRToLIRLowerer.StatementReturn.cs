@@ -26,6 +26,26 @@ public sealed partial class HIRToLIRLowerer
 
             ctorReturnTemp = EnsureObject(ctorReturnTemp);
 
+            if (_isDerivedConstructor)
+            {
+                var overrideLabel = CreateLabel();
+                var endReturnCheckLabel = CreateLabel();
+                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(ctorReturnTemp, overrideLabel));
+                _methodBodyIR.Instructions.Add(new LIRBranch(endReturnCheckLabel));
+                _methodBodyIR.Instructions.Add(new LIRLabel(overrideLabel));
+
+                var isObjectReturnTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                    nameof(JavaScriptRuntime.Function),
+                    nameof(JavaScriptRuntime.Function.IsConstructorReturnOverride),
+                    new[] { ctorReturnTemp },
+                    isObjectReturnTemp));
+                DefineTempStorage(isObjectReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isObjectReturnTemp, endReturnCheckLabel));
+                _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Derived constructors may only return object or undefined"));
+                _methodBodyIR.Instructions.Add(new LIRLabel(endReturnCheckLabel));
+            }
+
             if (!TryGetEnclosingClassRegistryName(out var registryClassName))
             {
                 return false;

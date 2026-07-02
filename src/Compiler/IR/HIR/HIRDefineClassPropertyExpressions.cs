@@ -5,16 +5,18 @@ namespace Jroc.HIR;
 
 public sealed class HIRDefineClassDataPropertyExpression : HIRExpression
 {
-    public HIRDefineClassDataPropertyExpression(HIRExpression target, HIRExpression key, HIRExpression value)
+    public HIRDefineClassDataPropertyExpression(HIRExpression target, HIRExpression key, HIRExpression value, bool isField = false)
     {
         Target = target;
         Key = key;
         Value = value;
+        IsField = isField;
     }
 
     public HIRExpression Target { get; init; }
     public HIRExpression Key { get; init; }
     public HIRExpression Value { get; init; }
+    public bool IsField { get; init; }
 }
 
 public sealed class HIRDefineClassAccessorPropertyExpression : HIRExpression

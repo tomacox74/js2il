@@ -1,4 +1,4 @@
-// IL code: Generator_TryFinally_ReturnWhileSuspended
+﻿// IL code: Generator_TryFinally_ReturnWhileSuspended
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23e5
+					// Method begins at RVA 0x23fd
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23ee
+					// Method begins at RVA 0x2406
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23dc
+				// Method begins at RVA 0x23f4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			)
 			// Method begins at RVA 0x21dc
 			// Header size: 12
-			// Code size: 491 (0x1eb)
+			// Code size: 515 (0x203)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Generator_TryFinally_ReturnWhileSuspended/g/Scope,
@@ -124,164 +124,175 @@
 
 			IL_003d: stloc.0
 			IL_003e: ldloc.0
-			IL_003f: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+			IL_003f: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_parametersInitialized
 			IL_0044: stloc.1
 			IL_0045: ldloc.1
-			IL_0046: brtrue IL_0052
+			IL_0046: brtrue IL_006a
 
 			IL_004b: ldloc.0
 			IL_004c: ldc.i4.1
-			IL_004d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
-
+			IL_004d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_parametersInitialized
 			IL_0052: ldloc.0
-			IL_0053: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
-			IL_0058: switch (IL_0065, IL_00bd)
+			IL_0053: ldc.i4.1
+			IL_0054: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+			IL_0059: ldloc.0
+			IL_005a: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_parameterInitializationOnly
+			IL_005f: stloc.s 4
+			IL_0061: ldloc.s 4
+			IL_0063: brfalse IL_006a
 
-			IL_0065: ldloc.0
-			IL_0066: ldc.i4.0
-			IL_0067: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_006c: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_0071: ldloc.0
-			IL_0072: ldc.i4.0
-			IL_0073: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0078: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_0068: ldnull
+			IL_0069: ret
+
+			IL_006a: ldloc.0
+			IL_006b: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_0070: switch (IL_007d, IL_00d5)
+
 			IL_007d: ldloc.0
 			IL_007e: ldc.i4.0
-			IL_007f: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
-			IL_0084: ldloc.0
-			IL_0085: ldc.i4.0
-			IL_0086: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
-			IL_008b: newobj instance void Modules.Generator_TryFinally_ReturnWhileSuspended/g/Scope/Block_L4C6::.ctor()
-			IL_0090: stloc.2
-			IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0096: ldstr "try"
-			IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00a0: pop
-			IL_00a1: ldloc.0
-			IL_00a2: ldc.i4.1
-			IL_00a3: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
-			IL_00a8: ldc.r8 1
-			IL_00b1: box [System.Runtime]System.Double
-			IL_00b6: ldc.i4.0
-			IL_00b7: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_00bc: ret
+			IL_007f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0084: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_0089: ldloc.0
+			IL_008a: ldc.i4.0
+			IL_008b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0090: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_0095: ldloc.0
+			IL_0096: ldc.i4.0
+			IL_0097: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
+			IL_009c: ldloc.0
+			IL_009d: ldc.i4.0
+			IL_009e: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
+			IL_00a3: newobj instance void Modules.Generator_TryFinally_ReturnWhileSuspended/g/Scope/Block_L4C6::.ctor()
+			IL_00a8: stloc.2
+			IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00ae: ldstr "try"
+			IL_00b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b8: pop
+			IL_00b9: ldloc.0
+			IL_00ba: ldc.i4.1
+			IL_00bb: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_00c0: ldc.r8 1
+			IL_00c9: box [System.Runtime]System.Double
+			IL_00ce: ldc.i4.0
+			IL_00cf: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_00d4: ret
 
-			IL_00bd: ldloc.0
-			IL_00be: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
-			IL_00c3: stloc.s 4
-			IL_00c5: ldloc.s 4
-			IL_00c7: brfalse IL_0102
+			IL_00d5: ldloc.0
+			IL_00d6: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_00db: stloc.s 4
+			IL_00dd: ldloc.s 4
+			IL_00df: brfalse IL_011a
 
-			IL_00cc: ldloc.0
-			IL_00cd: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
-			IL_00d2: stloc.s 5
-			IL_00d4: ldloc.0
-			IL_00d5: ldloc.s 5
-			IL_00d7: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
-			IL_00dc: ldloc.0
-			IL_00dd: ldc.i4.1
-			IL_00de: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
-			IL_00e3: ldloc.0
-			IL_00e4: ldc.i4.0
-			IL_00e5: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
-			IL_00ea: ldloc.0
-			IL_00eb: ldc.i4.0
-			IL_00ec: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
-			IL_00f1: ldloc.0
-			IL_00f2: ldc.i4.0
-			IL_00f3: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_00f8: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_00fd: br IL_015c
-
+			IL_00e4: ldloc.0
+			IL_00e5: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
+			IL_00ea: stloc.s 5
+			IL_00ec: ldloc.0
+			IL_00ed: ldloc.s 5
+			IL_00ef: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_00f4: ldloc.0
+			IL_00f5: ldc.i4.1
+			IL_00f6: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
+			IL_00fb: ldloc.0
+			IL_00fc: ldc.i4.0
+			IL_00fd: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
 			IL_0102: ldloc.0
-			IL_0103: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
-			IL_0108: stloc.s 4
-			IL_010a: ldloc.s 4
-			IL_010c: brfalse IL_0147
+			IL_0103: ldc.i4.0
+			IL_0104: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_0109: ldloc.0
+			IL_010a: ldc.i4.0
+			IL_010b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0110: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_0115: br IL_0174
 
-			IL_0111: ldloc.0
-			IL_0112: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
-			IL_0117: stloc.s 5
-			IL_0119: ldloc.0
-			IL_011a: ldloc.s 5
-			IL_011c: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_0121: ldloc.0
-			IL_0122: ldc.i4.0
-			IL_0123: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0128: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
-			IL_012d: ldloc.0
-			IL_012e: ldc.i4.1
-			IL_012f: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
-			IL_0134: ldloc.0
-			IL_0135: ldc.i4.0
-			IL_0136: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
-			IL_013b: ldloc.0
-			IL_013c: ldc.i4.0
-			IL_013d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
-			IL_0142: br IL_015c
+			IL_011a: ldloc.0
+			IL_011b: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_0120: stloc.s 4
+			IL_0122: ldloc.s 4
+			IL_0124: brfalse IL_015f
 
-			IL_0147: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_014c: ldstr "after-yield"
-			IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0156: pop
-			IL_0157: br IL_015c
+			IL_0129: ldloc.0
+			IL_012a: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
+			IL_012f: stloc.s 5
+			IL_0131: ldloc.0
+			IL_0132: ldloc.s 5
+			IL_0134: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_0139: ldloc.0
+			IL_013a: ldc.i4.0
+			IL_013b: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0140: stfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_0145: ldloc.0
+			IL_0146: ldc.i4.1
+			IL_0147: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
+			IL_014c: ldloc.0
+			IL_014d: ldc.i4.0
+			IL_014e: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
+			IL_0153: ldloc.0
+			IL_0154: ldc.i4.0
+			IL_0155: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_015a: br IL_0174
 
-			IL_015c: newobj instance void Modules.Generator_TryFinally_ReturnWhileSuspended/g/Scope/Block_L8C12::.ctor()
-			IL_0161: stloc.3
-			IL_0162: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0167: ldstr "finally"
-			IL_016c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0171: pop
-			IL_0172: br IL_0177
+			IL_015f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0164: ldstr "after-yield"
+			IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_016e: pop
+			IL_016f: br IL_0174
 
-			IL_0177: ldloc.0
-			IL_0178: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
-			IL_017d: stloc.s 4
-			IL_017f: ldloc.s 4
-			IL_0181: brfalse IL_01a5
+			IL_0174: newobj instance void Modules.Generator_TryFinally_ReturnWhileSuspended/g/Scope/Block_L8C12::.ctor()
+			IL_0179: stloc.3
+			IL_017a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_017f: ldstr "finally"
+			IL_0184: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0189: pop
+			IL_018a: br IL_018f
 
-			IL_0186: ldloc.0
-			IL_0187: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_018c: isinst [System.Runtime]System.Exception
-			IL_0191: dup
-			IL_0192: brtrue IL_01a4
+			IL_018f: ldloc.0
+			IL_0190: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingException
+			IL_0195: stloc.s 4
+			IL_0197: ldloc.s 4
+			IL_0199: brfalse IL_01bd
 
-			IL_0197: pop
-			IL_0198: ldloc.0
-			IL_0199: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
-			IL_019e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_01a3: throw
+			IL_019e: ldloc.0
+			IL_019f: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_01a4: isinst [System.Runtime]System.Exception
+			IL_01a9: dup
+			IL_01aa: brtrue IL_01bc
 
-			IL_01a4: throw
+			IL_01af: pop
+			IL_01b0: ldloc.0
+			IL_01b1: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingException
+			IL_01b6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_01bb: throw
 
-			IL_01a5: ldloc.0
-			IL_01a6: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
-			IL_01ab: stloc.s 4
-			IL_01ad: ldloc.s 4
-			IL_01af: brfalse IL_01cc
+			IL_01bc: throw
 
-			IL_01b4: ldloc.0
-			IL_01b5: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
-			IL_01ba: stloc.s 5
-			IL_01bc: ldloc.0
-			IL_01bd: ldc.i4.1
-			IL_01be: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_01c3: ldloc.s 5
-			IL_01c5: ldc.i4.1
-			IL_01c6: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_01cb: ret
+			IL_01bd: ldloc.0
+			IL_01be: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasGenPendingReturn
+			IL_01c3: stloc.s 4
+			IL_01c5: ldloc.s 4
+			IL_01c7: brfalse IL_01e4
 
-			IL_01cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01d1: ldstr "after-try"
-			IL_01d6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_01db: pop
-			IL_01dc: ldloc.0
+			IL_01cc: ldloc.0
+			IL_01cd: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genPendingReturnValue
+			IL_01d2: stloc.s 5
+			IL_01d4: ldloc.0
+			IL_01d5: ldc.i4.1
+			IL_01d6: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_01db: ldloc.s 5
 			IL_01dd: ldc.i4.1
-			IL_01de: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_01e3: ldnull
-			IL_01e4: ldc.i4.1
-			IL_01e5: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_01ea: ret
+			IL_01de: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_01e3: ret
+
+			IL_01e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_01e9: ldstr "after-try"
+			IL_01ee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_01f3: pop
+			IL_01f4: ldloc.0
+			IL_01f5: ldc.i4.1
+			IL_01f6: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_01fb: ldnull
+			IL_01fc: ldc.i4.1
+			IL_01fd: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0202: ret
 		} // end of method g::__js_call__
 
 	} // end of class g
@@ -299,7 +310,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23d3
+			// Method begins at RVA 0x23eb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -470,7 +481,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23f7
+		// Method begins at RVA 0x240f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

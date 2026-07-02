@@ -12,6 +12,8 @@ public class AsyncGeneratorScope : AsyncScope
     // Generator state machine fields
     public int _genState;
     public bool _started;
+    public bool _parametersInitialized;
+    public bool _parameterInitializationOnly;
     public bool _done;
 
     // yield* delegation state (mirrors GeneratorScope)

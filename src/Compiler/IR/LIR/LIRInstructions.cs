@@ -253,6 +253,7 @@ public record LIRCallUserClassInstanceMethod(
     string MethodName,
     MethodDefinitionHandle MethodHandle,
     bool HasScopesParameter,
+    bool RequiresPrivateBrandCheck,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
     TempVariable Result) : LIRInstruction;
@@ -355,6 +356,8 @@ public record LIRLoadScopeField(TempVariable ScopeInstance, BindingInfo Binding,
 public record LIRStoreScopeField(TempVariable ScopeInstance, BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Value) : LIRInstruction;
 
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
+
+public record LIRReturnUndefinedImmediate : LIRInstruction;
 
 public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVariable Result) : LIRInstruction;
 

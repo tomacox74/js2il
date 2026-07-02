@@ -387,9 +387,11 @@
         "testScripts": [
           "tests/Jroc.Tests/Function/JavaScript/Function_Bind_Basic_PartialApplication.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Bind_ThisBinding_IgnoresCallReceiver.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_Prototype_Bind_PropertyExists.js",
+          "tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-97-s.js"
         ],
         "test262Paths": [
+          "test/language/function-code/10.4.3-1-97-s.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-0-1.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-1.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-10-1.js",
@@ -404,7 +406,7 @@
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-15.js",
           "test/built-ins/Function/prototype/bind/15.3.4.5-2-16.js"
         ],
-        "notes": "bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. Current bounded test262 coverage also exercises bound length/name metadata, constructor forwarding, and ordinary-object/boxed thisArg cases. True [[BoundTargetFunction]] / [[BoundArguments]] slot fidelity and broader exotic-function invariants remain incomplete."
+        "notes": "bind creates wrapper delegates with captured this/arguments and remembers the original target for metadata lookups. Bound calls normalize null/undefined thisArg according to the target function's this mode, so non-strict bound functions observe the global object while strict functions preserve the provided value. Current bounded test262 coverage also exercises bound length/name metadata, constructor forwarding, and ordinary-object/boxed thisArg cases. True [[BoundTargetFunction]] / [[BoundArguments]] slot fidelity and broader exotic-function invariants remain incomplete."
       },
       {
         "clause": "10.4.2",

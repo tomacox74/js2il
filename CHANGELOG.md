@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- compiler/runtime/tests/test262: fix the newly ported language test262 cases by aligning strict/bound `this`, destructuring default function-name inference, class field data-property descriptors, computed/private class element handling, derived constructor primitive returns, and generator/async-generator parameter initialization timing.
 
 ## v0.11.8 - 2026-07-02
 

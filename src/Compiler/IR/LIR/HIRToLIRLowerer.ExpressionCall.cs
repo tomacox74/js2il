@@ -890,7 +890,8 @@ public sealed partial class HIRToLIRLowerer
         // Case 2b.2: User-defined class static method call (e.g., Greeter.helloWorld()).
         // If the receiver is a class identifier (ClassDeclaration binding) and the member is a static method,
         // emit a direct call to the declared method token via CallableRegistry.
-        if (calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: not null }
+        if ((calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: not null }
+                || (_callableKind == CallableKind.ClassStaticMethod && calleePropAccess.Object is HIRThisExpression))
             && _scope != null)
         {
             var classScope = _scope;
@@ -968,6 +969,28 @@ public sealed partial class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
                         DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                         callArgTemps.Add(undefTemp);
+                    }
+
+                    if (_callableKind == CallableKind.ClassStaticMethod
+                        && calleePropAccess.Object is HIRThisExpression { StaticClassRegistryName: null }
+                        && member.Key is PrivateIdentifier)
+                    {
+                        var receiverTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRLoadThis(receiverTemp));
+                        DefineTempStorage(receiverTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                        var ownerTypeTemp = CreateTempVariable();
+                        var registryClassName = $"{(classScope!.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
+                        _methodBodyIR.Instructions.Add(new LIRGetUserClassType(registryClassName, ownerTypeTemp));
+                        DefineTempStorage(ownerTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+                        var validationTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                            IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.ValidateDirectClassPrivateMethodReceiver),
+                            Arguments: new[] { EnsureObject(receiverTemp), EnsureObject(ownerTypeTemp) },
+                            Result: validationTemp));
+                        DefineTempStorage(validationTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
 
                     _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
@@ -1052,8 +1075,27 @@ public sealed partial class HIRToLIRLowerer
                     callArgTemps.Add(undefTemp);
                 }
 
+                if (!TryLowerExpression(calleePropAccess.Object, out var staticReceiverTemp))
+                {
+                    return false;
+                }
+
+                var previousThisTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+                    new[] { EnsureObject(staticReceiverTemp) },
+                    previousThisTemp));
+                DefineTempStorage(previousThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
                 _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                var restoreThisTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    nameof(JavaScriptRuntime.RuntimeServices.SetCurrentThis),
+                    new[] { EnsureObject(previousThisTemp) },
+                    restoreThisTemp));
+                DefineTempStorage(restoreThisTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
         }
@@ -1237,6 +1279,7 @@ public sealed partial class HIRToLIRLowerer
                     calleePropAccess.PropertyName,
                     methodHandle,
                     hasScopesParam,
+                    calleePropAccess.PropertyName.StartsWith("__jroc_priv_method_", StringComparison.Ordinal),
                     maxParamCount,
                     argTemps,
                     resultTempVar));

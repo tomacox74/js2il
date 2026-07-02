@@ -70,7 +70,13 @@
         "feature": "directive prologue / strict mode (\"use strict\") semantics",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-static-semantics-functionbodycontainsusestrict",
-        "notes": "JROC parses directive prologues but does not currently aim for full strict-mode semantics/early errors across the language. This clause is tracked as limited until a dedicated strict-mode test matrix exists."
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/function-code/JavaScript/10.4.3-1-35-s.js"
+        ],
+        "test262Paths": [
+          "test/language/function-code/10.4.3-1-35-s.js"
+        ],
+        "notes": "JROC parses directive prologues and preserves strict function `this` for bare calls in the covered function-code case. This clause remains limited because full strict-mode semantics and early errors across the language still need a broader dedicated test matrix."
       },
       {
         "clause": "15.2",
@@ -81,14 +87,16 @@
           "tests/Jroc.Tests/Function/JavaScript/Function_NestedFunctionExpression_ReturnedAndCalledViaVariable.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_CallViaVariable_Reassignment.js",
           "tests/Jroc.Tests/Function/JavaScript/Function_Closure_MultiLevel_ReadWriteAcrossScopes.js",
-          "tests/Jroc.Tests/Function/JavaScript/Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter.js"
+          "tests/Jroc.Tests/Function/JavaScript/Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter.js",
+          "tests/Jroc.Test262.Tests/language/expressions/function/dstr/JavaScript/obj-ptrn-id-init-fn-name-gen.js"
         ],
         "test262Paths": [
           "test/language/expressions/function/scope-name-var-close.js",
           "test/language/expressions/function/scope-name-var-open-non-strict.js",
-          "test/language/expressions/function/scope-name-var-open-strict.js"
+          "test/language/expressions/function/scope-name-var-open-strict.js",
+          "test/language/expressions/function/dstr/obj-ptrn-id-init-fn-name-gen.js"
         ],
-        "notes": "Named function expressions initialize the function-name binding to the created function object and keep that binding immutable for closures created from parameter initializers and function bodies."
+        "notes": "Named function expressions initialize the function-name binding to the created function object and keep that binding immutable for closures created from parameter initializers and function bodies. Anonymous generator/function expressions used as destructuring defaults infer covered target binding names."
       },
       {
         "clause": "15.2",

@@ -19,7 +19,9 @@ public sealed partial class HIRToLIRLowerer
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
             IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
-            MethodName: nameof(JavaScriptRuntime.ObjectRuntime.DefineClassElementDataProperty),
+            MethodName: expression.IsField
+                ? nameof(JavaScriptRuntime.ObjectRuntime.DefineClassFieldDataProperty)
+                : nameof(JavaScriptRuntime.ObjectRuntime.DefineClassElementDataProperty),
             Arguments: new List<TempVariable> { EnsureObject(targetTemp), EnsureObject(keyTemp), EnsureObject(valueTemp) },
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

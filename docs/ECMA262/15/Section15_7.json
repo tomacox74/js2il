@@ -183,9 +183,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js",
-          "tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js"
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/subclass/JavaScript/derived-class-return-override-with-number.js"
         ],
-        "notes": "Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Returning a primitive does not override."
+        "test262Paths": [
+          "test/language/statements/class/subclass/derived-class-return-override-with-number.js"
+        ],
+        "notes": "Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Base constructors ignore primitive explicit returns, while derived constructors throw TypeError for explicit primitive returns."
       },
       {
         "clause": "15.7.1",
@@ -300,9 +304,14 @@
         "specUrl": "https://tc39.es/ecma262/#sec-class-definitions",
         "testScripts": [
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js",
-          "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js"
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/fields-multiple-definitions-static-private-methods-proxy.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/JavaScript/new-sc-line-method-rs-static-method-privatename-identifier-alt.js"
         ],
-        "notes": "Static methods are available through normal direct dispatch and as non-enumerable configurable writable function-valued properties on the class constructor value. Static private method calls enforce the declaring-class receiver brand, including proxy mismatch rejection."
+        "test262Paths": [
+          "test/language/expressions/class/elements/fields-multiple-definitions-static-private-methods-proxy.js",
+          "test/language/statements/class/elements/new-sc-line-method-rs-static-method-privatename-identifier-alt.js"
+        ],
+        "notes": "Static methods are available through normal direct dispatch and as non-enumerable configurable writable function-valued properties on the class constructor value. Static private method calls dispatch through private-callable metadata instead of normal property lookup and enforce the declaring-class receiver brand, including proxy mismatch rejection."
       },
       {
         "clause": "15.7.1",
@@ -559,6 +568,9 @@
         "testScripts": [
           "tests/Jroc.Tests/ValidatorTests.cs",
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DeclarationOrder.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassComputedFieldAndMethod_DynamicKey_Log.js",
+          "tests/Jroc.Test262.Tests/language/expressions/class/elements/JavaScript/new-sc-line-method-computed-symbol-names.js",
+          "tests/Jroc.Test262.Tests/language/statements/class/elements/JavaScript/after-same-line-static-gen-computed-names.js",
           "tests/Jroc.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-condition-expression-true.js",
           "tests/Jroc.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-identifier.js",
           "tests/Jroc.Test262.Tests/language/statements/class/JavaScript/cpn-class-decl-fields-computed-property-name-from-null.js",
@@ -574,6 +586,8 @@
           "nightly"
         ],
         "test262Paths": [
+          "test/language/expressions/class/elements/new-sc-line-method-computed-symbol-names.js",
+          "test/language/statements/class/elements/after-same-line-static-gen-computed-names.js",
           "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-condition-expression-true.js",
           "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-identifier.js",
           "test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-null.js",
@@ -584,7 +598,7 @@
           "test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-string-literal.js",
           "test/language/expressions/class/cpn-class-expr-fields-computed-property-name-from-numeric-literal.js"
         ],
-        "notes": "Identifier/private-identifier field definitions are emitted as CLR fields. Covered declaration and expression cases resolve identifier, null, string-literal, and numeric-literal computed field keys onto the generated class surface; dynamically computed field keys still use the generic runtime property path."
+        "notes": "Identifier/private-identifier field definitions are emitted as CLR fields. Instance computed field definitions use class-field data-property semantics for runtime property keys, including string, numeric, uninitialized, and Symbol keys, so they create own enumerable/writable/configurable properties. Some static computed field and arbitrary computed method-key edge cases remain limited."
       },
       {
         "clause": "15.7.11",

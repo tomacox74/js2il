@@ -158,8 +158,13 @@
         "specUrl": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns-runtime-semantics-propertybindinginitialization",
         "testScripts": [
           "tests/Jroc.Tests/Variable/JavaScript/Variable_ObjectDestructuring_WithDefaults.js",
-          "tests/Jroc.Tests/Variable/JavaScript/Variable_NestedDestructuring_Defaults.js"
-        ]
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_NestedDestructuring_Defaults.js",
+          "tests/Jroc.Test262.Tests/language/expressions/function/dstr/JavaScript/obj-ptrn-id-init-fn-name-gen.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/function/dstr/obj-ptrn-id-init-fn-name-gen.js"
+        ],
+        "notes": "Object binding defaults are supported, including anonymous generator/function default initializers that infer the target binding name in covered parameter-binding contexts."
       },
       {
         "clause": "14.3.3.2",
@@ -192,7 +197,8 @@
           "tests/Jroc.Tests/Variable/JavaScript/Variable_ArrayDestructuring_DefaultsAndRest.js",
           "tests/Jroc.Test262.Tests/language/statements/const/ExecutionTests.cs",
           "tests/Jroc.Test262.Tests/language/statements/for/ExecutionTests.cs",
-          "tests/Jroc.Test262.Tests/language/statements/variable/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/language/statements/variable/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/language/expressions/object/dstr/JavaScript/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js"
         ],
         "test262Paths": [
           "test/language/destructuring/binding/syntax/array-pattern-with-no-elements.js",
@@ -200,9 +206,10 @@
           "test/language/destructuring/binding/syntax/array-elements-with-initializer.js",
           "test/language/destructuring/binding/syntax/array-elements-with-object-patterns.js",
           "test/language/destructuring/binding/syntax/array-rest-elements.js",
-          "test/language/destructuring/binding/syntax/recursive-array-and-object-patterns.js"
+          "test/language/destructuring/binding/syntax/recursive-array-and-object-patterns.js",
+          "test/language/expressions/object/dstr/gen-meth-dflt-ary-ptrn-elem-id-init-fn-name-cover.js"
         ],
-        "notes": "Array binding patterns cover empty patterns, elisions, default initializers, nested object patterns, rest elements, and recursive combinations backed by the current bounded test262 coverage. Statement-position binding cases in `const`, `var`, and `for` headers now also follow the expected iterator-consumption behavior."
+        "notes": "Array binding patterns cover empty patterns, elisions, default initializers, nested object patterns, rest elements, and recursive combinations backed by the current bounded test262 coverage. Statement-position binding cases in `const`, `var`, and `for` headers now also follow the expected iterator-consumption behavior. Covered default initializer cases also infer anonymous function names from the target binding."
       },
       {
         "clause": "14.3.3.1",

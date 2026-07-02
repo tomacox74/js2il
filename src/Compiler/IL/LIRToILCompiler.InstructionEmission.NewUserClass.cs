@@ -254,7 +254,8 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Dup);
                         ilEncoder.Branch(ILOpCode.Brfalse, keepThis);
 
-                        // If not an object (primitive) => keep constructed instance.
+                        // If not an object (primitive) => base constructors keep the instance,
+                        // but derived constructors must reject explicit primitive returns.
                         ilEncoder.OpCode(ILOpCode.Dup);
                         var isOverride = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.TypeUtilities),
@@ -262,6 +263,22 @@ internal sealed partial class LIRToILCompiler
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(isOverride);
+                        if (newUserClass.IsDerivedConstructor)
+                        {
+                            var overrideObject = ilEncoder.DefineLabel();
+                            ilEncoder.Branch(ILOpCode.Brtrue, overrideObject);
+
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                            var typeErrorCtor = _memberRefRegistry.GetOrAddConstructor(
+                                typeof(JavaScriptRuntime.TypeError),
+                                parameterTypes: new[] { typeof(string) });
+                            ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString("Derived constructors may only return object or undefined"));
+                            ilEncoder.OpCode(ILOpCode.Newobj);
+                            ilEncoder.Token(typeErrorCtor);
+                            ilEncoder.OpCode(ILOpCode.Throw);
+
+                            ilEncoder.MarkLabel(overrideObject);
+                        }
                         ilEncoder.Branch(ILOpCode.Brfalse, keepThis);
 
                         // Override result with the returned object.

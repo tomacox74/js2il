@@ -1,4 +1,4 @@
-// IL code: Generator_ClassMethod_WithThis
+﻿// IL code: Generator_ClassMethod_WithThis
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2348
+				// Method begins at RVA 0x235e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2351
+				// Method begins at RVA 0x2367
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x235a
+				// Method begins at RVA 0x2370
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,11 +106,12 @@
 			)
 			// Method begins at RVA 0x225c
 			// Header size: 12
-			// Code size: 215 (0xd7)
+			// Code size: 237 (0xed)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Generator_ClassMethod_WithThis/Counter/Scope_getCountLater,
-				[1] bool
+				[1] bool,
+				[2] bool
 			)
 
 			IL_0000: ldarg.1
@@ -140,62 +141,73 @@
 
 			IL_003d: stloc.0
 			IL_003e: ldloc.0
-			IL_003f: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+			IL_003f: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_parametersInitialized
 			IL_0044: stloc.1
 			IL_0045: ldloc.1
-			IL_0046: brtrue IL_0052
+			IL_0046: brtrue IL_0068
 
 			IL_004b: ldloc.0
 			IL_004c: ldc.i4.1
-			IL_004d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
-
+			IL_004d: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_parametersInitialized
 			IL_0052: ldloc.0
-			IL_0053: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
-			IL_0058: switch (IL_0065, IL_0081)
+			IL_0053: ldc.i4.1
+			IL_0054: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_started
+			IL_0059: ldloc.0
+			IL_005a: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_parameterInitializationOnly
+			IL_005f: stloc.2
+			IL_0060: ldloc.2
+			IL_0061: brfalse IL_0068
 
-			IL_0065: ldloc.0
-			IL_0066: ldc.i4.1
-			IL_0067: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
-			IL_006c: ldc.r8 0.0
-			IL_0075: box [System.Runtime]System.Double
-			IL_007a: ldc.i4.0
-			IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_0080: ret
+			IL_0066: ldnull
+			IL_0067: ret
 
-			IL_0081: ldloc.0
-			IL_0082: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
-			IL_0087: brfalse IL_00a0
+			IL_0068: ldloc.0
+			IL_0069: ldfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_006e: switch (IL_007b, IL_0097)
 
-			IL_008c: ldloc.0
-			IL_008d: ldc.i4.1
-			IL_008e: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_0093: ldloc.0
-			IL_0094: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
-			IL_0099: ldc.i4.1
-			IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_009f: ret
+			IL_007b: ldloc.0
+			IL_007c: ldc.i4.1
+			IL_007d: stfld int32 [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_genState
+			IL_0082: ldc.r8 0.0
+			IL_008b: box [System.Runtime]System.Double
+			IL_0090: ldc.i4.0
+			IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_0096: ret
 
-			IL_00a0: ldloc.0
-			IL_00a1: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
-			IL_00a6: brfalse IL_00be
+			IL_0097: ldloc.0
+			IL_0098: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasReturn
+			IL_009d: brfalse IL_00b6
 
-			IL_00ab: ldloc.0
-			IL_00ac: ldc.i4.0
-			IL_00ad: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
-			IL_00b2: ldloc.0
-			IL_00b3: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
-			IL_00b8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_00bd: throw
+			IL_00a2: ldloc.0
+			IL_00a3: ldc.i4.1
+			IL_00a4: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_00a9: ldloc.0
+			IL_00aa: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_returnValue
+			IL_00af: ldc.i4.1
+			IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_00b5: ret
 
-			IL_00be: ldloc.0
-			IL_00bf: ldc.i4.1
-			IL_00c0: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
-			IL_00c5: ldarg.0
-			IL_00c6: ldfld float64 Modules.Generator_ClassMethod_WithThis/Counter::count
-			IL_00cb: box [System.Runtime]System.Double
-			IL_00d0: ldc.i4.1
-			IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
-			IL_00d6: ret
+			IL_00b6: ldloc.0
+			IL_00b7: ldfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_00bc: brfalse IL_00d4
+
+			IL_00c1: ldloc.0
+			IL_00c2: ldc.i4.0
+			IL_00c3: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_hasResumeException
+			IL_00c8: ldloc.0
+			IL_00c9: ldfld object [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_resumeException
+			IL_00ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_00d3: throw
+
+			IL_00d4: ldloc.0
+			IL_00d5: ldc.i4.1
+			IL_00d6: stfld bool [JavaScriptRuntime]JavaScriptRuntime.GeneratorScope::_done
+			IL_00db: ldarg.0
+			IL_00dc: ldfld float64 Modules.Generator_ClassMethod_WithThis/Counter::count
+			IL_00e1: box [System.Runtime]System.Double
+			IL_00e6: ldc.i4.1
+			IL_00e7: call class [JavaScriptRuntime]JavaScriptRuntime.IteratorResultObject [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
+			IL_00ec: ret
 		} // end of method Counter::getCountLater
 
 	} // end of class Counter
@@ -207,7 +219,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x233f
+			// Method begins at RVA 0x2355
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -452,7 +464,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2363
+		// Method begins at RVA 0x2379
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
