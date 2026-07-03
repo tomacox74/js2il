@@ -821,6 +821,11 @@ public sealed partial class HIRToLIRLowerer
             case HIRFunctionExpression funcExpr:
                 return TryLowerFunctionExpression(funcExpr, out resultTempVar);
             case HIRInitializedUserClassTypeExpression initializedUserClassType:
+                if (TryLowerNamedClassExpressionInitialization(initializedUserClassType, out resultTempVar))
+                {
+                    return true;
+                }
+
                 foreach (var initStatement in initializedUserClassType.InitializationStatements)
                 {
                     if (!TryLowerStatement(initStatement))
@@ -860,6 +865,85 @@ public sealed partial class HIRToLIRLowerer
                 // Unsupported expression type
                 IRPipelineMetrics.RecordFailure($"HIR->LIR: unsupported expression type {expression.GetType().Name}");
                 return false;
+        }
+    }
+
+    private bool TryLowerNamedClassExpressionInitialization(HIRInitializedUserClassTypeExpression initializedUserClassType, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (initializedUserClassType.ClassScope.AstNode is not ClassExpression classExpression
+            || classExpression.Id is not Identifier className
+            || !initializedUserClassType.ClassScope.Bindings.TryGetValue(className.Name, out var classNameBinding))
+        {
+            return false;
+        }
+
+        var classNameBindingDeclarationIndex = -1;
+        for (var index = 0; index < initializedUserClassType.InitializationStatements.Count; index++)
+        {
+            if (initializedUserClassType.InitializationStatements[index] is HIRVariableDeclaration variableDeclaration
+                && ReferenceEquals(variableDeclaration.Name.BindingInfo, classNameBinding)
+                && variableDeclaration.Initializer is HIRInitializedUserClassTypeExpression initializer
+                && ReferenceEquals(initializer.ClassScope, initializedUserClassType.ClassScope)
+                && initializer.InitializationStatements.Count == 0)
+            {
+                classNameBindingDeclarationIndex = index;
+                break;
+            }
+        }
+
+        if (classNameBindingDeclarationIndex < 0)
+        {
+            return false;
+        }
+
+        var classScopeName = ScopeNaming.GetRegistryScopeName(initializedUserClassType.ClassScope);
+        var classScopeTemp = CreateTempVariable();
+        DefineTempStorage(classScopeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: classScopeName));
+        SetTempVariableSlot(classScopeTemp, CreateAnonymousVariableSlot($"$class_lexenv_{classScopeName}", new ValueStorage(ValueStorageKind.Reference, typeof(object), ScopeName: classScopeName)));
+        _methodBodyIR.Instructions.Add(new LIRCreateScopeInstance(new ScopeId(classScopeName), classScopeTemp));
+
+        var hadPreviousScope = _activeScopeTempsByScopeName.TryGetValue(classScopeName, out var previousScopeTemp);
+        _activeScopeTempsByScopeName[classScopeName] = classScopeTemp;
+        try
+        {
+            if (!TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
+            {
+                return false;
+            }
+
+            for (var index = 0; index < initializedUserClassType.InitializationStatements.Count; index++)
+            {
+                if (index == classNameBindingDeclarationIndex)
+                {
+                    if (!TryStoreToBinding(classNameBinding, classConstructorValue, out _))
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if (!TryLowerStatement(initializedUserClassType.InitializationStatements[index]))
+                {
+                    return false;
+                }
+            }
+
+            resultTempVar = classConstructorValue;
+            return true;
+        }
+        finally
+        {
+            if (hadPreviousScope)
+            {
+                _activeScopeTempsByScopeName[classScopeName] = previousScopeTemp;
+            }
+            else
+            {
+                _activeScopeTempsByScopeName.Remove(classScopeName);
+            }
         }
     }
 
