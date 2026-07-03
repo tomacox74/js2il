@@ -3729,7 +3729,8 @@ class HIRMethodBuilder
                     }
 
                     if (classExpr.Id is Identifier className
-                        && classExprScope.Bindings.TryGetValue(className.Name, out var classNameBinding))
+                        && classExprScope.Bindings.TryGetValue(className.Name, out var classNameBinding)
+                        && classNameBinding.IsCaptured)
                     {
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, []);
                         var classSymbol = new Symbol(classNameBinding);
