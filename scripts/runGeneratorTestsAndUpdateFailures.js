@@ -141,8 +141,33 @@ function writeFailedTestsFile(outputPath, failedTests) {
   fs.writeFileSync(outputPath, content, 'utf8');
 }
 
+function looksLikeRepoRoot(candidate) {
+  if (!candidate) return false;
+
+  const normalized = path.resolve(candidate);
+  return fs.existsSync(path.join(normalized, 'tests', 'Jroc.Tests', 'Jroc.Tests.csproj'))
+    && fs.existsSync(path.join(normalized, 'tests', 'Jroc.Test262.Tests', 'Jroc.Test262.Tests.csproj'));
+}
+
+function resolveRepoRoot() {
+  const candidates = [
+    process.env.JROC_REPO_ROOT,
+    process.env.GITHUB_WORKSPACE,
+    process.cwd(),
+    path.resolve(__dirname, '..'),
+  ];
+
+  for (const candidate of candidates) {
+    if (looksLikeRepoRoot(candidate)) {
+      return path.resolve(candidate);
+    }
+  }
+
+  return path.resolve(__dirname, '..');
+}
+
 function main() {
-  const repoRoot = path.resolve(__dirname, '..');
+  const repoRoot = resolveRepoRoot();
   const args = parseArgs(process.argv.slice(2));
 
   if (args.help) {
