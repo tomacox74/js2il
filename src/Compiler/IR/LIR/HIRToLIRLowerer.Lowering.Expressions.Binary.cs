@@ -26,16 +26,6 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        if (binaryExpr.Operator == Acornima.Operator.InstanceOf && GetTempVariableSlot(leftTempVar) >= 0)
-        {
-            // Preserve the evaluated LHS before the RHS runs. Without this, a slot-mapped temp like
-            // `object` in `object instanceof (object = 0, Object)` can observe the later assignment.
-            var preservedLeftTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftTempVar, preservedLeftTemp));
-            DefineTempStorage(preservedLeftTemp, GetTempStorage(leftTempVar));
-            leftTempVar = preservedLeftTemp;
-        }
-
         // Handle logical operators with correct short-circuit evaluation.
         // JavaScript logical operators (&&, ||) return one of the operand VALUES (not a boolean).
         if (binaryExpr.Operator == Acornima.Operator.LogicalAnd)
@@ -145,6 +135,16 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Non-logical operators: evaluate RHS eagerly.
+        // Preserve the evaluated LHS before the RHS runs. Without this, a slot-mapped temp like
+        // `x` in `x !== (x = 1)` can observe the later assignment and break left-to-right semantics.
+        if (GetTempVariableSlot(leftTempVar) >= 0)
+        {
+            var preservedLeftTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftTempVar, preservedLeftTemp));
+            DefineTempStorage(preservedLeftTemp, GetTempStorage(leftTempVar));
+            leftTempVar = preservedLeftTemp;
+        }
+
         // In async methods, RHS evaluation can suspend (await). Preserve the evaluated LHS in a
         // spillable variable slot so it survives suspension and resume.
         if (_isAsync
