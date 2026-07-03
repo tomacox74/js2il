@@ -145,6 +145,17 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // Non-logical operators: evaluate RHS eagerly.
+        // In async methods, RHS evaluation can suspend (await). Preserve the evaluated LHS in a
+        // spillable variable slot so it survives suspension and resume.
+        if (_isAsync
+            && _methodBodyIR.AsyncInfo != null
+            && CountAwaitExpressionsInExpression(binaryExpr.Right) > 0)
+        {
+            var preservedLeftStorage = GetTempStorage(leftTempVar);
+            var preservedLeftSlot = CreateAnonymousVariableSlot("$binary_left_across_await", preservedLeftStorage);
+            leftTempVar = EnsureTempMappedToSlot(preservedLeftSlot, leftTempVar);
+        }
+
         if (!TryLowerExpression(binaryExpr.Right, out var rightTempVar))
         {
             return false;
