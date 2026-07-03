@@ -68,18 +68,28 @@ jobs:
           dotnet tool restore
           dotnet restore
 
+      - name: Load generator snapshot tooling from master
+        run: |
+          set -euo pipefail
+
+          tooling_dir="$RUNNER_TEMP/generator-snapshot-tooling"
+          mkdir -p "$tooling_dir"
+
+          git show origin/master:scripts/runGeneratorTestsAndUpdateFailures.js > "$tooling_dir/runGeneratorTestsAndUpdateFailures.js"
+          git show origin/master:scripts/updateVerifiedFiles.js > "$tooling_dir/updateVerifiedFiles.js"
+
       - name: Run generator tests and update generator snapshots
         id: update
         run: |
           set -euo pipefail
 
           set +e
-          node scripts/runGeneratorTestsAndUpdateFailures.js
+          node "$RUNNER_TEMP/generator-snapshot-tooling/runGeneratorTestsAndUpdateFailures.js"
           test_exit=$?
           set -e
 
           echo "Initial generator test exit code: $test_exit"
-          node scripts/updateVerifiedFiles.js --root tests --generator-only
+          node "$RUNNER_TEMP/generator-snapshot-tooling/updateVerifiedFiles.js" --root tests --generator-only
 
           find tests -name 'GeneratorTests.*.received.txt' -delete
           find tests -path '*/Snapshots/GeneratorTests.*.verified.txt' -print0 | xargs -r -0 git add --
