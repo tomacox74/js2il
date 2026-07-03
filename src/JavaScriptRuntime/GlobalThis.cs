@@ -722,6 +722,7 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayConstructorValue(_uint8ClampedArrayConstructorValue);
             ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue);
             ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
+            ConfigureTypedArrayInstancePrototype(_uint8ArrayConstructorValue, JavaScriptRuntime.Uint8Array.Prototype);
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
@@ -753,6 +754,27 @@ namespace JavaScriptRuntime
         {
             ConfigureBuiltinFunctionObject(constructorValue);
             PrototypeChain.SetPrototype(constructorValue, _typedArrayConstructorValue);
+        }
+
+        private static void ConfigureTypedArrayInstancePrototype(object constructorValue, object prototypeValue)
+        {
+            PrototypeChain.SetPrototype(prototypeValue, _typedArrayPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(constructorValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = prototypeValue
+            });
+            PropertyDescriptorStore.DefineOrUpdate(prototypeValue, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = constructorValue
+            });
         }
         internal static ServiceContainer? ServiceProvider
         {
