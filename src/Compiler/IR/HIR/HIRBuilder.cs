@@ -1110,8 +1110,7 @@ class HIRMethodBuilder
             return false;
         }
 
-        var registryClassName = $"{(binding.DeclaringScope.DotNetNamespace ?? "Classes")}.{(binding.DeclaringScope.DotNetTypeName ?? binding.DeclaringScope.Name)}";
-        hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, binding.DeclaringScope, []);
+        hirExpr = new HIRVariableExpression(symbol);
         return true;
     }
 
@@ -3704,7 +3703,7 @@ class HIRMethodBuilder
                     }
 
                     var registryClassName = $"{(classExprScope.DotNetNamespace ?? "Classes")}.{(classExprScope.DotNetTypeName ?? classExprScope.Name)}";
-                    if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements, out _))
+                    if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements, out var classNameBindingInsertIndex))
                     {
                         return false;
                     }
@@ -3727,6 +3726,18 @@ class HIRMethodBuilder
 
                             staticInitStatements.Insert(0, new HIRExpressionStatement(new HIRClassHeritageValidationExpression(hirHeritageExpression)));
                         }
+                    }
+
+                    if (classExpr.Id is Identifier className
+                        && classExprScope.Bindings.TryGetValue(className.Name, out var classNameBinding)
+                        && classNameBinding.IsCaptured)
+                    {
+                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, []);
+                        var classSymbol = new Symbol(classNameBinding);
+                        var bindingInsertionIndex = classNameBindingInsertIndex >= 0
+                            ? classNameBindingInsertIndex
+                            : staticInitStatements.Count;
+                        staticInitStatements.Insert(bindingInsertionIndex, new HIRVariableDeclaration(classSymbol, classConstructorValueExpr));
                     }
 
                     hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, staticInitStatements);

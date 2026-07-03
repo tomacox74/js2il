@@ -997,11 +997,11 @@ namespace Jroc.SymbolTables
                     classExprScope.DotNetNamespace = BuildClassRegistryNamespace(globalScope, currentScope, classExpr, forceUniqueSuffix: true);
                     classExprScope.DotNetTypeName = SanitizeForMetadata(classExprName!);
 
-                    // Named class expressions create an internal binding for the class name that is only
-                    // visible inside the class body.
+                    // Named class expressions create an immutable internal binding for the class name that
+                    // is only visible inside the class body.
                     if (!classExprScope.Bindings.ContainsKey(classExprName!))
                     {
-                        classExprScope.Bindings[classExprName!] = new BindingInfo(classExprName!, BindingKind.Let, classExprScope, classExpr);
+                        classExprScope.Bindings[classExprName!] = new BindingInfo(classExprName!, BindingKind.Const, classExprScope, classExpr);
                     }
 
                     if (UnwrapExpression(classExpr.SuperClass) is FunctionExpression classExprSuperFunction)
