@@ -1,4 +1,4 @@
-// IL code: Stream_Pipe_Basic
+﻿// IL code: Stream_Pipe_Basic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224e
+				// Method begins at RVA 0x2252
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2235
+			// Method begins at RVA 0x2239
 			// Header size: 1
 			// Code size: 15 (0xf)
 			.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2245
+			// Method begins at RVA 0x2249
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,7 +100,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2260
+				// Method begins at RVA 0x2264
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -118,7 +118,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2257
+			// Method begins at RVA 0x225b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -144,7 +144,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 473 (0x1d9)
+		// Code size: 477 (0x1dd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Pipe_Basic/Scope,
@@ -156,9 +156,9 @@
 			[6] object,
 			[7] class Modules.Stream_Pipe_Basic/Scope_For_L28C5/Block_L28C45,
 			[8] object,
-			[9] float64,
+			[9] object,
 			[10] float64,
-			[11] object,
+			[11] float64,
 			[12] object
 		)
 
@@ -274,53 +274,55 @@
 		IL_0149: box [System.Runtime]System.Double
 		IL_014e: stloc.s 6
 		// loop start (head: IL_0150)
-			IL_0150: ldloc.0
-			IL_0151: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_0156: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_015b: conv.r8
-			IL_015c: stloc.s 9
-			IL_015e: ldloc.s 6
-			IL_0160: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0165: stloc.s 10
-			IL_0167: ldloc.s 10
-			IL_0169: ldloc.s 9
-			IL_016b: clt
-			IL_016d: brfalse IL_01d8
+			IL_0150: ldloc.s 6
+			IL_0152: stloc.s 9
+			IL_0154: ldloc.0
+			IL_0155: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+			IL_015a: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_015f: conv.r8
+			IL_0160: stloc.s 10
+			IL_0162: ldloc.s 9
+			IL_0164: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0169: stloc.s 11
+			IL_016b: ldloc.s 11
+			IL_016d: ldloc.s 10
+			IL_016f: clt
+			IL_0171: brfalse IL_01dc
 
-			IL_0172: newobj instance void Modules.Stream_Pipe_Basic/Scope_For_L28C5/Block_L28C45::.ctor()
-			IL_0177: stloc.s 7
-			IL_0179: ldstr "Chunk "
-			IL_017e: ldloc.s 6
-			IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0185: stloc.s 11
-			IL_0187: ldloc.s 11
-			IL_0189: ldstr ":"
-			IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0193: stloc.s 11
-			IL_0195: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_019a: ldloc.s 11
-			IL_019c: ldloc.0
-			IL_019d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
-			IL_01a2: ldloc.s 6
-			IL_01a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_01a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01ae: pop
-			IL_01af: ldloc.s 6
-			IL_01b1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_01b6: stloc.s 9
-			IL_01b8: ldloc.s 9
-			IL_01ba: ldc.r8 1
-			IL_01c3: add
-			IL_01c4: stloc.s 9
-			IL_01c6: ldloc.s 9
-			IL_01c8: box [System.Runtime]System.Double
-			IL_01cd: stloc.s 12
-			IL_01cf: ldloc.s 12
-			IL_01d1: stloc.s 6
-			IL_01d3: br IL_0150
+			IL_0176: newobj instance void Modules.Stream_Pipe_Basic/Scope_For_L28C5/Block_L28C45::.ctor()
+			IL_017b: stloc.s 7
+			IL_017d: ldstr "Chunk "
+			IL_0182: ldloc.s 6
+			IL_0184: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0189: stloc.s 12
+			IL_018b: ldloc.s 12
+			IL_018d: ldstr ":"
+			IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0197: stloc.s 12
+			IL_0199: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_019e: ldloc.s 12
+			IL_01a0: ldloc.0
+			IL_01a1: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Basic/Scope::writtenData
+			IL_01a6: ldloc.s 6
+			IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_01ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_01b2: pop
+			IL_01b3: ldloc.s 6
+			IL_01b5: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_01ba: stloc.s 10
+			IL_01bc: ldloc.s 10
+			IL_01be: ldc.r8 1
+			IL_01c7: add
+			IL_01c8: stloc.s 10
+			IL_01ca: ldloc.s 10
+			IL_01cc: box [System.Runtime]System.Double
+			IL_01d1: stloc.s 9
+			IL_01d3: ldloc.s 9
+			IL_01d5: stloc.s 6
+			IL_01d7: br IL_0150
 		// end loop
 
-		IL_01d8: ret
+		IL_01dc: ret
 	} // end of method Stream_Pipe_Basic::__js_module_init__
 
 } // end of class Modules.Stream_Pipe_Basic
@@ -332,7 +334,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2269
+		// Method begins at RVA 0x226d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
