@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x216a
+					// Method begins at RVA 0x2208
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2161
+				// Method begins at RVA 0x21ff
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -65,81 +65,134 @@
 			)
 			// Method begins at RVA 0x209c
 			// Header size: 12
-			// Code size: 176 (0xb0)
+			// Code size: 334 (0x14e)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] float64,
+				[0] object,
+				[1] object,
 				[2] class Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/Scope/Block_L3C33,
-				[3] float64,
-				[4] float64
+				[3] object,
+				[4] object,
+				[5] float64,
+				[6] object,
+				[7] float64
 			)
 
 			IL_0000: ldc.r8 0.0
-			IL_0009: stloc.0
-			IL_000a: ldc.r8 0.0
-			IL_0013: stloc.1
-			// loop start (head: IL_0014)
-				IL_0014: ldloc.1
-				IL_0015: stloc.s 4
-				IL_0017: ldloc.s 4
-				IL_0019: ldc.r8 20
-				IL_0022: clt
-				IL_0024: brfalse IL_00ae
+			IL_0009: box [System.Runtime]System.Double
+			IL_000e: stloc.0
+			IL_000f: ldc.r8 0.0
+			IL_0018: box [System.Runtime]System.Double
+			IL_001d: stloc.1
+			// loop start (head: IL_001e)
+				IL_001e: ldloc.1
+				IL_001f: stloc.s 4
+				IL_0021: ldloc.s 4
+				IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0028: stloc.s 5
+				IL_002a: ldloc.s 5
+				IL_002c: ldc.r8 20
+				IL_0035: clt
+				IL_0037: brfalse IL_0143
 
-				IL_0029: newobj instance void Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/Scope/Block_L3C33::.ctor()
-				IL_002e: stloc.2
-				IL_002f: ldc.r8 0.0
-				IL_0038: stloc.3
-				IL_0039: ldloc.3
-				IL_003a: ldc.r8 1
-				IL_0043: add
-				IL_0044: stloc.s 4
-				IL_0046: ldloc.s 4
-				IL_0048: stloc.3
-				IL_0049: ldloc.3
-				IL_004a: stloc.s 4
-				IL_004c: ldloc.s 4
-				IL_004e: ldc.r8 3
-				IL_0057: call float64 [System.Runtime]System.Math::Pow(float64, float64)
-				IL_005c: stloc.s 4
-				IL_005e: ldloc.s 4
-				IL_0060: stloc.3
-				IL_0061: ldloc.3
-				IL_0062: ldc.r8 7
-				IL_006b: mul
-				IL_006c: stloc.s 4
-				IL_006e: ldloc.s 4
-				IL_0070: stloc.3
-				IL_0071: ldloc.3
-				IL_0072: ldc.r8 11
-				IL_007b: sub
-				IL_007c: stloc.s 4
-				IL_007e: ldloc.s 4
-				IL_0080: stloc.3
-				IL_0081: ldloc.3
-				IL_0082: ldc.r8 2
-				IL_008b: div
-				IL_008c: stloc.s 4
-				IL_008e: ldloc.s 4
-				IL_0090: stloc.3
-				IL_0091: ldloc.0
-				IL_0092: stloc.s 4
-				IL_0094: ldloc.s 4
-				IL_0096: ldloc.3
-				IL_0097: add
-				IL_0098: stloc.s 4
-				IL_009a: ldloc.s 4
-				IL_009c: stloc.0
-				IL_009d: ldloc.1
-				IL_009e: ldc.r8 1
-				IL_00a7: add
-				IL_00a8: stloc.1
-				IL_00a9: br IL_0014
+				IL_003c: newobj instance void Modules.NumericInference_ExponentiationLoop_NoBoxing/arith/Scope/Block_L3C33::.ctor()
+				IL_0041: stloc.2
+				IL_0042: ldc.r8 0.0
+				IL_004b: box [System.Runtime]System.Double
+				IL_0050: stloc.3
+				IL_0051: ldloc.3
+				IL_0052: ldc.r8 1
+				IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_0060: stloc.s 6
+				IL_0062: ldloc.s 6
+				IL_0064: stloc.3
+				IL_0065: ldloc.3
+				IL_0066: stloc.s 6
+				IL_0068: ldloc.s 6
+				IL_006a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_006f: stloc.s 5
+				IL_0071: ldloc.s 5
+				IL_0073: ldc.r8 3
+				IL_007c: call float64 [System.Runtime]System.Math::Pow(float64, float64)
+				IL_0081: stloc.s 5
+				IL_0083: ldloc.s 5
+				IL_0085: box [System.Runtime]System.Double
+				IL_008a: stloc.s 4
+				IL_008c: ldloc.s 4
+				IL_008e: stloc.3
+				IL_008f: ldloc.3
+				IL_0090: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0095: stloc.s 5
+				IL_0097: ldloc.s 5
+				IL_0099: ldc.r8 7
+				IL_00a2: mul
+				IL_00a3: stloc.s 5
+				IL_00a5: ldloc.s 5
+				IL_00a7: box [System.Runtime]System.Double
+				IL_00ac: stloc.s 4
+				IL_00ae: ldloc.s 4
+				IL_00b0: stloc.3
+				IL_00b1: ldloc.3
+				IL_00b2: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00b7: stloc.s 5
+				IL_00b9: ldloc.s 5
+				IL_00bb: ldc.r8 11
+				IL_00c4: sub
+				IL_00c5: stloc.s 5
+				IL_00c7: ldloc.s 5
+				IL_00c9: box [System.Runtime]System.Double
+				IL_00ce: stloc.s 4
+				IL_00d0: ldloc.s 4
+				IL_00d2: stloc.3
+				IL_00d3: ldloc.3
+				IL_00d4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00d9: stloc.s 5
+				IL_00db: ldloc.s 5
+				IL_00dd: ldc.r8 2
+				IL_00e6: div
+				IL_00e7: stloc.s 5
+				IL_00e9: ldloc.s 5
+				IL_00eb: box [System.Runtime]System.Double
+				IL_00f0: stloc.s 4
+				IL_00f2: ldloc.s 4
+				IL_00f4: stloc.3
+				IL_00f5: ldloc.0
+				IL_00f6: stloc.s 4
+				IL_00f8: ldloc.s 4
+				IL_00fa: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00ff: stloc.s 5
+				IL_0101: ldloc.3
+				IL_0102: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0107: stloc.s 7
+				IL_0109: ldloc.s 5
+				IL_010b: ldloc.s 7
+				IL_010d: add
+				IL_010e: stloc.s 7
+				IL_0110: ldloc.s 7
+				IL_0112: box [System.Runtime]System.Double
+				IL_0117: stloc.s 4
+				IL_0119: ldloc.s 4
+				IL_011b: stloc.0
+				IL_011c: ldloc.1
+				IL_011d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0122: stloc.s 7
+				IL_0124: ldloc.s 7
+				IL_0126: ldc.r8 1
+				IL_012f: add
+				IL_0130: stloc.s 7
+				IL_0132: ldloc.s 7
+				IL_0134: box [System.Runtime]System.Double
+				IL_0139: stloc.s 4
+				IL_013b: ldloc.s 4
+				IL_013d: stloc.1
+				IL_013e: br IL_001e
 			// end loop
 
-			IL_00ae: ldloc.0
-			IL_00af: ret
+			IL_0143: ldloc.0
+			IL_0144: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0149: stloc.s 7
+			IL_014b: ldloc.s 7
+			IL_014d: ret
 		} // end of method arith::__js_call__
 
 	} // end of class arith
@@ -158,7 +211,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2158
+			// Method begins at RVA 0x21f6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -230,7 +283,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2173
+		// Method begins at RVA 0x2211
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

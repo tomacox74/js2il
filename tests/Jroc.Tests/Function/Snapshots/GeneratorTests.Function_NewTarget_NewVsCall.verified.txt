@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2127
+				// Method begins at RVA 0x2137
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,55 +46,62 @@
 			)
 			// Method begins at RVA 0x20b8
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 106 (0x6a)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
-				[2] bool,
-				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
+				[2] object,
+				[3] bool,
+				[4] object,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
 			)
 
 			IL_0000: ldarg.1
 			IL_0001: stloc.1
-			IL_0002: ldloc.1
-			IL_0003: ldarg.0
-			IL_0004: ldfld object Modules.Function_NewTarget_NewVsCall/Scope::C
-			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_000e: stloc.2
-			IL_000f: ldloc.2
-			IL_0010: box [System.Runtime]System.Boolean
-			IL_0015: stloc.3
-			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001b: ldloc.3
-			IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0021: pop
-			IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0027: stloc.s 4
-			IL_0029: ldarg.1
-			IL_002a: stloc.1
-			IL_002b: ldloc.1
-			IL_002c: ldc.i4.0
-			IL_002d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0032: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-			IL_0037: stloc.2
-			IL_0038: ldloc.2
-			IL_0039: brfalse IL_0049
+			IL_0002: ldarg.0
+			IL_0003: ldfld object Modules.Function_NewTarget_NewVsCall/Scope::C
+			IL_0008: stloc.2
+			IL_0009: ldstr "C"
+			IL_000e: ldloc.2
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0014: stloc.2
+			IL_0015: ldloc.1
+			IL_0016: ldloc.2
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_001c: stloc.3
+			IL_001d: ldloc.3
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: stloc.s 4
+			IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002a: ldloc.s 4
+			IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0031: pop
+			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0037: stloc.s 5
+			IL_0039: ldarg.1
+			IL_003a: stloc.2
+			IL_003b: ldloc.2
+			IL_003c: ldc.i4.0
+			IL_003d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+			IL_0047: stloc.3
+			IL_0048: ldloc.3
+			IL_0049: brfalse IL_0059
 
-			IL_003e: ldstr "undefined"
-			IL_0043: stloc.0
-			IL_0044: br IL_004f
+			IL_004e: ldstr "undefined"
+			IL_0053: stloc.0
+			IL_0054: br IL_005f
 
-			IL_0049: ldstr "defined"
-			IL_004e: stloc.0
+			IL_0059: ldstr "defined"
+			IL_005e: stloc.0
 
-			IL_004f: ldloc.s 4
-			IL_0051: ldloc.0
-			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0057: pop
-			IL_0058: ldnull
-			IL_0059: ret
+			IL_005f: ldloc.s 5
+			IL_0061: ldloc.0
+			IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0067: pop
+			IL_0068: ldnull
+			IL_0069: ret
 		} // end of method C::__js_call__
 
 	} // end of class C
@@ -112,7 +119,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211e
+			// Method begins at RVA 0x212e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -191,7 +198,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x2140
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

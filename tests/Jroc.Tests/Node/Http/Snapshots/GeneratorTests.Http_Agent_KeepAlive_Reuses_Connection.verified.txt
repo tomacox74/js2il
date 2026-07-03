@@ -1,4 +1,4 @@
-// IL code: Http_Agent_KeepAlive_Reuses_Connection
+﻿// IL code: Http_Agent_KeepAlive_Reuses_Connection
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x277a
+				// Method begins at RVA 0x287a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,45 +48,58 @@
 			)
 			// Method begins at RVA 0x21c4
 			// Header size: 12
-			// Code size: 96 (0x60)
+			// Code size: 124 (0x7c)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-			IL_0006: ldc.r8 1
-			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0014: stloc.0
-			IL_0015: ldarg.0
-			IL_0016: ldloc.0
-			IL_0017: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-			IL_001c: ldarg.3
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0006: stloc.0
+			IL_0007: ldstr "responses"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldloc.0
+			IL_0014: ldc.r8 1
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
 			IL_0022: stloc.1
-			IL_0023: ldloc.1
-			IL_0024: ldstr "setHeader"
-			IL_0029: ldstr "Content-Type"
-			IL_002e: ldstr "text/plain"
-			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0038: pop
-			IL_0039: ldarg.3
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_003f: stloc.1
-			IL_0040: ldstr "resp"
-			IL_0045: ldarg.0
-			IL_0046: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0050: stloc.0
-			IL_0051: ldloc.1
-			IL_0052: ldstr "end"
-			IL_0057: ldloc.0
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_005d: pop
-			IL_005e: ldnull
-			IL_005f: ret
+			IL_0023: ldarg.0
+			IL_0024: ldloc.1
+			IL_0025: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
+			IL_002a: ldarg.3
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0030: stloc.0
+			IL_0031: ldloc.0
+			IL_0032: ldstr "setHeader"
+			IL_0037: ldstr "Content-Type"
+			IL_003c: ldstr "text/plain"
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0046: pop
+			IL_0047: ldarg.3
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004d: stloc.0
+			IL_004e: ldarg.0
+			IL_004f: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::responses
+			IL_0054: stloc.2
+			IL_0055: ldstr "responses"
+			IL_005a: ldloc.2
+			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0060: stloc.2
+			IL_0061: ldstr "resp"
+			IL_0066: ldloc.2
+			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_006c: stloc.1
+			IL_006d: ldloc.0
+			IL_006e: ldstr "end"
+			IL_0073: ldloc.1
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0079: pop
+			IL_007a: ldnull
+			IL_007b: ret
 		} // end of method FunctionExpression_server::__js_call__
 
 	} // end of class FunctionExpression_server
@@ -102,7 +115,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2783
+				// Method begins at RVA 0x2883
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -128,24 +141,31 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x2230
+			// Method begins at RVA 0x224c
 			// Header size: 12
-			// Code size: 30 (0x1e)
+			// Code size: 44 (0x2c)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-			IL_0006: ldc.r8 1
-			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0014: stloc.0
-			IL_0015: ldarg.0
-			IL_0016: ldloc.0
-			IL_0017: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-			IL_001c: ldnull
-			IL_001d: ret
+			IL_0006: stloc.0
+			IL_0007: ldstr "connections"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldloc.0
+			IL_0014: ldc.r8 1
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0022: stloc.1
+			IL_0023: ldarg.0
+			IL_0024: ldloc.1
+			IL_0025: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
+			IL_002a: ldnull
+			IL_002b: ret
 		} // end of method FunctionExpression_L15C24::__js_call__
 
 	} // end of class FunctionExpression_L15C24
@@ -169,7 +189,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x279e
+						// Method begins at RVA 0x289e
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -194,12 +214,13 @@
 					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x242c
+					// Method begins at RVA 0x2484
 					// Header size: 12
-					// Code size: 36 (0x24)
+					// Code size: 50 (0x32)
 					.maxstack 8
 					.locals init (
-						[0] object
+						[0] object,
+						[1] object
 					)
 
 					IL_0000: ldarg.0
@@ -207,17 +228,23 @@
 					IL_0002: ldelem.ref
 					IL_0003: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
 					IL_0008: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
-					IL_000d: ldarg.2
-					IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_0013: stloc.0
-					IL_0014: ldarg.0
-					IL_0015: ldc.i4.2
-					IL_0016: ldelem.ref
-					IL_0017: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
-					IL_001c: ldloc.0
-					IL_001d: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
-					IL_0022: ldnull
-					IL_0023: ret
+					IL_000d: stloc.0
+					IL_000e: ldstr "body"
+					IL_0013: ldloc.0
+					IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+					IL_0019: stloc.0
+					IL_001a: ldloc.0
+					IL_001b: ldarg.2
+					IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_0021: stloc.1
+					IL_0022: ldarg.0
+					IL_0023: ldc.i4.2
+					IL_0024: ldelem.ref
+					IL_0025: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
+					IL_002a: ldloc.1
+					IL_002b: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
+					IL_0030: ldnull
+					IL_0031: ret
 				} // end of method FunctionExpression_L34C21::__js_call__
 
 			} // end of class FunctionExpression_L34C21
@@ -241,7 +268,7 @@
 							.method public hidebysig specialname rtspecialname 
 								instance void .ctor () cil managed 
 							{
-								// Method begins at RVA 0x27b9
+								// Method begins at RVA 0x28b9
 								// Header size: 1
 								// Code size: 8 (0x8)
 								.maxstack 8
@@ -266,12 +293,13 @@
 							.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 								01 00 02 00 00 00 00 00
 							)
-							// Method begins at RVA 0x2678
+							// Method begins at RVA 0x2730
 							// Header size: 12
-							// Code size: 36 (0x24)
+							// Code size: 50 (0x32)
 							.maxstack 8
 							.locals init (
-								[0] object
+								[0] object,
+								[1] object
 							)
 
 							IL_0000: ldarg.0
@@ -279,17 +307,23 @@
 							IL_0002: ldelem.ref
 							IL_0003: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
 							IL_0008: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
-							IL_000d: ldarg.2
-							IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-							IL_0013: stloc.0
-							IL_0014: ldarg.0
-							IL_0015: ldc.i4.4
-							IL_0016: ldelem.ref
-							IL_0017: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
-							IL_001c: ldloc.0
-							IL_001d: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
-							IL_0022: ldnull
-							IL_0023: ret
+							IL_000d: stloc.0
+							IL_000e: ldstr "nextBody"
+							IL_0013: ldloc.0
+							IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+							IL_0019: stloc.0
+							IL_001a: ldloc.0
+							IL_001b: ldarg.2
+							IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+							IL_0021: stloc.1
+							IL_0022: ldarg.0
+							IL_0023: ldc.i4.4
+							IL_0024: ldelem.ref
+							IL_0025: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
+							IL_002a: ldloc.1
+							IL_002b: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
+							IL_0030: ldnull
+							IL_0031: ret
 						} // end of method FunctionExpression_L53C31::__js_call__
 
 					} // end of class FunctionExpression_L53C31
@@ -309,7 +343,7 @@
 								.method public hidebysig specialname rtspecialname 
 									instance void .ctor () cil managed 
 								{
-									// Method begins at RVA 0x27cb
+									// Method begins at RVA 0x28cb
 									// Header size: 1
 									// Code size: 8 (0x8)
 									.maxstack 8
@@ -332,7 +366,7 @@
 								.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 									01 00 00 00 00 00 00 00
 								)
-								// Method begins at RVA 0x275e
+								// Method begins at RVA 0x285e
 								// Header size: 1
 								// Code size: 18 (0x12)
 								.maxstack 8
@@ -354,7 +388,7 @@
 							.method public hidebysig specialname rtspecialname 
 								instance void .ctor () cil managed 
 							{
-								// Method begins at RVA 0x27c2
+								// Method begins at RVA 0x28c2
 								// Header size: 1
 								// Code size: 8 (0x8)
 								.maxstack 8
@@ -378,9 +412,9 @@
 							.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 								01 00 02 00 00 00 00 00
 							)
-							// Method begins at RVA 0x26a8
+							// Method begins at RVA 0x2770
 							// Header size: 12
-							// Code size: 170 (0xaa)
+							// Code size: 226 (0xe2)
 							.maxstack 8
 							.locals init (
 								[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/Scope,
@@ -391,65 +425,89 @@
 
 							IL_0000: newobj instance void Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/Scope::.ctor()
 							IL_0005: stloc.0
-							IL_0006: ldstr "body2:"
-							IL_000b: ldarg.0
-							IL_000c: ldc.i4.4
-							IL_000d: ldelem.ref
-							IL_000e: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
-							IL_0013: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
-							IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-							IL_001d: stloc.1
-							IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-							IL_0023: ldloc.1
-							IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-							IL_0029: pop
-							IL_002a: ldstr "connections:"
-							IL_002f: ldarg.0
-							IL_0030: ldc.i4.0
-							IL_0031: ldelem.ref
-							IL_0032: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-							IL_0037: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
-							IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-							IL_0041: stloc.1
-							IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-							IL_0047: ldloc.1
-							IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-							IL_004d: pop
-							IL_004e: ldarg.0
-							IL_004f: ldc.i4.0
-							IL_0050: ldelem.ref
-							IL_0051: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-							IL_0056: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-							IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-							IL_0060: stloc.2
-							IL_0061: ldloc.2
-							IL_0062: ldstr "destroy"
-							IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-							IL_006c: pop
-							IL_006d: ldarg.0
-							IL_006e: ldc.i4.0
-							IL_006f: ldelem.ref
-							IL_0070: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-							IL_0075: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-							IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-							IL_007f: stloc.2
-							IL_0080: ldnull
-							IL_0081: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/FunctionExpression_L61C27::__js_call__(object)
-							IL_0087: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-							IL_008c: ldc.i4.0
-							IL_008d: conv.r8
-							IL_008e: ldstr ""
-							IL_0093: ldc.i4.0
-							IL_0094: ldc.i4.1
-							IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-							IL_009a: stloc.3
-							IL_009b: ldloc.2
-							IL_009c: ldstr "close"
-							IL_00a1: ldloc.3
-							IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-							IL_00a7: pop
-							IL_00a8: ldnull
-							IL_00a9: ret
+							IL_0006: ldarg.0
+							IL_0007: ldc.i4.4
+							IL_0008: ldelem.ref
+							IL_0009: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope
+							IL_000e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/Scope::nextBody
+							IL_0013: stloc.1
+							IL_0014: ldstr "nextBody"
+							IL_0019: ldloc.1
+							IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+							IL_001f: stloc.1
+							IL_0020: ldstr "body2:"
+							IL_0025: ldloc.1
+							IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+							IL_002b: stloc.2
+							IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+							IL_0031: ldloc.2
+							IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+							IL_0037: pop
+							IL_0038: ldarg.0
+							IL_0039: ldc.i4.0
+							IL_003a: ldelem.ref
+							IL_003b: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+							IL_0040: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::connections
+							IL_0045: stloc.1
+							IL_0046: ldstr "connections"
+							IL_004b: ldloc.1
+							IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+							IL_0051: stloc.1
+							IL_0052: ldstr "connections:"
+							IL_0057: ldloc.1
+							IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+							IL_005d: stloc.2
+							IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+							IL_0063: ldloc.2
+							IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+							IL_0069: pop
+							IL_006a: ldarg.0
+							IL_006b: ldc.i4.0
+							IL_006c: ldelem.ref
+							IL_006d: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+							IL_0072: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+							IL_0077: stloc.1
+							IL_0078: ldstr "agent"
+							IL_007d: ldloc.1
+							IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+							IL_0083: stloc.1
+							IL_0084: ldloc.1
+							IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+							IL_008a: stloc.1
+							IL_008b: ldloc.1
+							IL_008c: ldstr "destroy"
+							IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+							IL_0096: pop
+							IL_0097: ldarg.0
+							IL_0098: ldc.i4.0
+							IL_0099: ldelem.ref
+							IL_009a: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+							IL_009f: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
+							IL_00a4: stloc.1
+							IL_00a5: ldstr "server"
+							IL_00aa: ldloc.1
+							IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+							IL_00b0: stloc.1
+							IL_00b1: ldloc.1
+							IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+							IL_00b7: stloc.1
+							IL_00b8: ldnull
+							IL_00b9: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10/FunctionExpression_L57C30/FunctionExpression_L61C27::__js_call__(object)
+							IL_00bf: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+							IL_00c4: ldc.i4.0
+							IL_00c5: conv.r8
+							IL_00c6: ldstr ""
+							IL_00cb: ldc.i4.0
+							IL_00cc: ldc.i4.1
+							IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+							IL_00d2: stloc.3
+							IL_00d3: ldloc.1
+							IL_00d4: ldstr "close"
+							IL_00d9: ldloc.3
+							IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+							IL_00df: pop
+							IL_00e0: ldnull
+							IL_00e1: ret
 						} // end of method FunctionExpression_L57C30::__js_call__
 
 					} // end of class FunctionExpression_L57C30
@@ -468,7 +526,7 @@
 						.method public hidebysig specialname rtspecialname 
 							instance void .ctor () cil managed 
 						{
-							// Method begins at RVA 0x27b0
+							// Method begins at RVA 0x28b0
 							// Header size: 1
 							// Code size: 8 (0x8)
 							.maxstack 8
@@ -493,7 +551,7 @@
 						.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 							01 00 02 00 00 00 00 00
 						)
-						// Method begins at RVA 0x2568
+						// Method begins at RVA 0x2620
 						// Header size: 12
 						// Code size: 257 (0x101)
 						.maxstack 8
@@ -638,7 +696,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x27a7
+						// Method begins at RVA 0x28a7
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -662,9 +720,9 @@
 					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x245c
+					// Method begins at RVA 0x24c4
 					// Header size: 12
-					// Code size: 255 (0xff)
+					// Code size: 333 (0x14d)
 					.maxstack 8
 					.locals init (
 						[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/Scope,
@@ -672,109 +730,140 @@
 						[2] object,
 						[3] object,
 						[4] object,
-						[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+						[5] object,
+						[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 					)
 
 					IL_0000: newobj instance void Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/Scope::.ctor()
 					IL_0005: stloc.0
-					IL_0006: ldstr "body1:"
-					IL_000b: ldarg.0
-					IL_000c: ldc.i4.2
-					IL_000d: ldelem.ref
-					IL_000e: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
-					IL_0013: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
-					IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_001d: stloc.1
-					IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_0023: ldloc.1
-					IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-					IL_0029: pop
-					IL_002a: ldarg.0
-					IL_002b: ldc.i4.0
-					IL_002c: ldelem.ref
-					IL_002d: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-					IL_0032: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
-					IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-					IL_003c: stloc.2
-					IL_003d: ldarg.0
-					IL_003e: ldc.i4.1
-					IL_003f: ldelem.ref
-					IL_0040: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
-					IL_0045: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-					IL_004a: ldstr "address"
-					IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-					IL_0054: stloc.3
-					IL_0055: ldarg.0
-					IL_0056: ldc.i4.1
-					IL_0057: ldelem.ref
-					IL_0058: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
-					IL_005d: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-					IL_0062: ldstr "port"
-					IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-					IL_006c: stloc.s 4
-					IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-					IL_0073: dup
-					IL_0074: ldstr "host"
-					IL_0079: ldloc.3
-					IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_007f: dup
-					IL_0080: ldstr "port"
-					IL_0085: ldloc.s 4
-					IL_0087: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_008c: dup
-					IL_008d: ldstr "path"
-					IL_0092: ldstr "/two"
-					IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_009c: dup
-					IL_009d: ldstr "agent"
-					IL_00a2: ldarg.0
-					IL_00a3: ldc.i4.0
-					IL_00a4: ldelem.ref
-					IL_00a5: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
-					IL_00aa: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-					IL_00af: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-					IL_00b4: stloc.s 5
-					IL_00b6: ldc.i4.4
-					IL_00b7: newarr [System.Runtime]System.Object
-					IL_00bc: dup
-					IL_00bd: ldc.i4.0
-					IL_00be: ldarg.0
-					IL_00bf: ldc.i4.0
-					IL_00c0: ldelem.ref
-					IL_00c1: stelem.ref
-					IL_00c2: dup
-					IL_00c3: ldc.i4.1
-					IL_00c4: ldarg.0
-					IL_00c5: ldc.i4.1
-					IL_00c6: ldelem.ref
-					IL_00c7: stelem.ref
-					IL_00c8: dup
-					IL_00c9: ldc.i4.2
-					IL_00ca: ldarg.0
-					IL_00cb: ldc.i4.2
-					IL_00cc: ldelem.ref
-					IL_00cd: stelem.ref
-					IL_00ce: dup
-					IL_00cf: ldc.i4.3
-					IL_00d0: ldloc.0
-					IL_00d1: stelem.ref
-					IL_00d2: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10::__js_call__(object[], object, object)
-					IL_00d8: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-					IL_00dd: ldc.i4.1
-					IL_00de: conv.r8
-					IL_00df: ldstr ""
-					IL_00e4: ldc.i4.0
-					IL_00e5: ldc.i4.1
-					IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-					IL_00eb: stloc.s 4
-					IL_00ed: ldloc.2
-					IL_00ee: ldstr "get"
-					IL_00f3: ldloc.s 5
-					IL_00f5: ldloc.s 4
-					IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-					IL_00fc: pop
-					IL_00fd: ldnull
-					IL_00fe: ret
+					IL_0006: ldarg.0
+					IL_0007: ldc.i4.2
+					IL_0008: ldelem.ref
+					IL_0009: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope
+					IL_000e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/Scope::body
+					IL_0013: stloc.1
+					IL_0014: ldstr "body"
+					IL_0019: ldloc.1
+					IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+					IL_001f: stloc.1
+					IL_0020: ldstr "body1:"
+					IL_0025: ldloc.1
+					IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_002b: stloc.2
+					IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_0031: ldloc.2
+					IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+					IL_0037: pop
+					IL_0038: ldarg.0
+					IL_0039: ldc.i4.0
+					IL_003a: ldelem.ref
+					IL_003b: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+					IL_0040: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
+					IL_0045: stloc.1
+					IL_0046: ldstr "http"
+					IL_004b: ldloc.1
+					IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+					IL_0051: stloc.1
+					IL_0052: ldloc.1
+					IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_0058: stloc.1
+					IL_0059: ldarg.0
+					IL_005a: ldc.i4.1
+					IL_005b: ldelem.ref
+					IL_005c: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
+					IL_0061: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+					IL_0066: stloc.3
+					IL_0067: ldstr "info"
+					IL_006c: ldloc.3
+					IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+					IL_0072: stloc.3
+					IL_0073: ldloc.3
+					IL_0074: ldstr "address"
+					IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_007e: stloc.3
+					IL_007f: ldarg.0
+					IL_0080: ldc.i4.1
+					IL_0081: ldelem.ref
+					IL_0082: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope
+					IL_0087: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+					IL_008c: stloc.s 4
+					IL_008e: ldstr "info"
+					IL_0093: ldloc.s 4
+					IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+					IL_009a: stloc.s 4
+					IL_009c: ldloc.s 4
+					IL_009e: ldstr "port"
+					IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+					IL_00a8: stloc.s 4
+					IL_00aa: ldarg.0
+					IL_00ab: ldc.i4.0
+					IL_00ac: ldelem.ref
+					IL_00ad: castclass Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope
+					IL_00b2: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+					IL_00b7: stloc.s 5
+					IL_00b9: ldstr "agent"
+					IL_00be: ldloc.s 5
+					IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+					IL_00c5: stloc.s 5
+					IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+					IL_00cc: dup
+					IL_00cd: ldstr "host"
+					IL_00d2: ldloc.3
+					IL_00d3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00d8: dup
+					IL_00d9: ldstr "port"
+					IL_00de: ldloc.s 4
+					IL_00e0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00e5: dup
+					IL_00e6: ldstr "path"
+					IL_00eb: ldstr "/two"
+					IL_00f0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_00f5: dup
+					IL_00f6: ldstr "agent"
+					IL_00fb: ldloc.s 5
+					IL_00fd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+					IL_0102: stloc.s 6
+					IL_0104: ldc.i4.4
+					IL_0105: newarr [System.Runtime]System.Object
+					IL_010a: dup
+					IL_010b: ldc.i4.0
+					IL_010c: ldarg.0
+					IL_010d: ldc.i4.0
+					IL_010e: ldelem.ref
+					IL_010f: stelem.ref
+					IL_0110: dup
+					IL_0111: ldc.i4.1
+					IL_0112: ldarg.0
+					IL_0113: ldc.i4.1
+					IL_0114: ldelem.ref
+					IL_0115: stelem.ref
+					IL_0116: dup
+					IL_0117: ldc.i4.2
+					IL_0118: ldarg.0
+					IL_0119: ldc.i4.2
+					IL_011a: ldelem.ref
+					IL_011b: stelem.ref
+					IL_011c: dup
+					IL_011d: ldc.i4.3
+					IL_011e: ldloc.0
+					IL_011f: stelem.ref
+					IL_0120: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4/FunctionExpression_L38C20/FunctionExpression_L48C10::__js_call__(object[], object, object)
+					IL_0126: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+					IL_012b: ldc.i4.1
+					IL_012c: conv.r8
+					IL_012d: ldstr ""
+					IL_0132: ldc.i4.0
+					IL_0133: ldc.i4.1
+					IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+					IL_0139: stloc.s 5
+					IL_013b: ldloc.1
+					IL_013c: ldstr "get"
+					IL_0141: ldloc.s 6
+					IL_0143: ldloc.s 5
+					IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+					IL_014a: pop
+					IL_014b: ldnull
+					IL_014c: ret
 				} // end of method FunctionExpression_L38C20::__js_call__
 
 			} // end of class FunctionExpression_L38C20
@@ -793,7 +882,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2795
+					// Method begins at RVA 0x2895
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -818,7 +907,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2334
+				// Method begins at RVA 0x238c
 				// Header size: 12
 				// Code size: 233 (0xe9)
 				.maxstack 8
@@ -946,7 +1035,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x278c
+				// Method begins at RVA 0x288c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -972,91 +1061,110 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0d 00 00 02
 			)
-			// Method begins at RVA 0x225c
+			// Method begins at RVA 0x2284
 			// Header size: 12
-			// Code size: 204 (0xcc)
+			// Code size: 252 (0xfc)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope,
 				[1] object,
 				[2] object,
 				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[4] object,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: newobj instance void Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::server
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: stloc.1
+			IL_000c: stloc.1
+			IL_000d: ldstr "server"
 			IL_0012: ldloc.1
-			IL_0013: ldstr "address"
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_001d: stloc.1
-			IL_001e: ldloc.0
-			IL_001f: ldloc.1
-			IL_0020: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-			IL_0025: ldarg.0
-			IL_0026: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0030: stloc.1
-			IL_0031: ldloc.0
-			IL_0032: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-			IL_0037: ldstr "address"
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0041: stloc.2
-			IL_0042: ldloc.0
-			IL_0043: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
-			IL_0048: ldstr "port"
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0052: stloc.3
-			IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0058: dup
-			IL_0059: ldstr "host"
-			IL_005e: ldloc.2
-			IL_005f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0064: dup
-			IL_0065: ldstr "port"
-			IL_006a: ldloc.3
-			IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0070: dup
-			IL_0071: ldstr "path"
-			IL_0076: ldstr "/one"
-			IL_007b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0080: dup
-			IL_0081: ldstr "agent"
-			IL_0086: ldarg.0
-			IL_0087: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
-			IL_008c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0091: stloc.s 4
-			IL_0093: ldc.i4.2
-			IL_0094: newarr [System.Runtime]System.Object
-			IL_0099: dup
-			IL_009a: ldc.i4.0
-			IL_009b: ldarg.0
-			IL_009c: stelem.ref
-			IL_009d: dup
-			IL_009e: ldc.i4.1
-			IL_009f: ldloc.0
-			IL_00a0: stelem.ref
-			IL_00a1: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4::__js_call__(object[], object, object)
-			IL_00a7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_00ac: ldc.i4.1
-			IL_00ad: conv.r8
-			IL_00ae: ldstr ""
-			IL_00b3: ldc.i4.0
-			IL_00b4: ldc.i4.1
-			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_00ba: stloc.3
-			IL_00bb: ldloc.1
-			IL_00bc: ldstr "get"
-			IL_00c1: ldloc.s 4
-			IL_00c3: ldloc.3
-			IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00c9: pop
-			IL_00ca: ldnull
-			IL_00cb: ret
+			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0018: stloc.1
+			IL_0019: ldloc.1
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_001f: stloc.1
+			IL_0020: ldloc.1
+			IL_0021: ldstr "address"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_002b: stloc.1
+			IL_002c: ldloc.0
+			IL_002d: ldloc.1
+			IL_002e: stfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+			IL_0033: ldarg.0
+			IL_0034: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::http
+			IL_0039: stloc.1
+			IL_003a: ldstr "http"
+			IL_003f: ldloc.1
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0045: stloc.1
+			IL_0046: ldloc.1
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004c: stloc.1
+			IL_004d: ldloc.0
+			IL_004e: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+			IL_0053: ldstr "address"
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005d: stloc.2
+			IL_005e: ldloc.0
+			IL_005f: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/Scope::info
+			IL_0064: ldstr "port"
+			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_006e: stloc.3
+			IL_006f: ldarg.0
+			IL_0070: ldfld object Modules.Http_Agent_KeepAlive_Reuses_Connection/Scope::agent
+			IL_0075: stloc.s 4
+			IL_0077: ldstr "agent"
+			IL_007c: ldloc.s 4
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0083: stloc.s 4
+			IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_008a: dup
+			IL_008b: ldstr "host"
+			IL_0090: ldloc.2
+			IL_0091: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0096: dup
+			IL_0097: ldstr "port"
+			IL_009c: ldloc.3
+			IL_009d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00a2: dup
+			IL_00a3: ldstr "path"
+			IL_00a8: ldstr "/one"
+			IL_00ad: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00b2: dup
+			IL_00b3: ldstr "agent"
+			IL_00b8: ldloc.s 4
+			IL_00ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_00bf: stloc.s 5
+			IL_00c1: ldc.i4.2
+			IL_00c2: newarr [System.Runtime]System.Object
+			IL_00c7: dup
+			IL_00c8: ldc.i4.0
+			IL_00c9: ldarg.0
+			IL_00ca: stelem.ref
+			IL_00cb: dup
+			IL_00cc: ldc.i4.1
+			IL_00cd: ldloc.0
+			IL_00ce: stelem.ref
+			IL_00cf: ldftn object Modules.Http_Agent_KeepAlive_Reuses_Connection/FunctionExpression_L19C30/FunctionExpression_L29C4::__js_call__(object[], object, object)
+			IL_00d5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_00da: ldc.i4.1
+			IL_00db: conv.r8
+			IL_00dc: ldstr ""
+			IL_00e1: ldc.i4.0
+			IL_00e2: ldc.i4.1
+			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_00e8: stloc.s 4
+			IL_00ea: ldloc.1
+			IL_00eb: ldstr "get"
+			IL_00f0: ldloc.s 5
+			IL_00f2: ldloc.s 4
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00f9: pop
+			IL_00fa: ldnull
+			IL_00fb: ret
 		} // end of method FunctionExpression_L19C30::__js_call__
 
 	} // end of class FunctionExpression_L19C30
@@ -1084,7 +1192,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2771
+			// Method begins at RVA 0x2871
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1256,7 +1364,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x27d4
+		// Method begins at RVA 0x28d4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

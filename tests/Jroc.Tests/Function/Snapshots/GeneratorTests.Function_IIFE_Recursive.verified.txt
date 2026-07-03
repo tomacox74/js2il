@@ -26,7 +26,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2236
+					// Method begins at RVA 0x2263
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x223f
+					// Method begins at RVA 0x226c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222d
+				// Method begins at RVA 0x225a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -94,18 +94,19 @@
 			)
 			// Method begins at RVA 0x2154
 			// Header size: 12
-			// Code size: 196 (0xc4)
+			// Code size: 241 (0xf1)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class Modules.Function_IIFE_Recursive/walk/Scope/Block_L6C19,
-				[2] float64,
+				[2] object,
 				[3] class Modules.Function_IIFE_Recursive/walk/Scope/Block_L9C51,
 				[4] object,
 				[5] object,
-				[6] float64,
-				[7] object[],
-				[8] object
+				[6] object,
+				[7] float64,
+				[8] object[],
+				[9] object
 			)
 
 			IL_0000: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentCallee()
@@ -134,48 +135,63 @@
 			IL_0047: ret
 
 			IL_0048: ldc.r8 0.0
-			IL_0051: stloc.2
-			// loop start (head: IL_0052)
-				IL_0052: ldloc.2
-				IL_0053: stloc.s 6
-				IL_0055: ldloc.s 6
-				IL_0057: ldarg.1
-				IL_0058: ldstr "children"
-				IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0062: ldstr "length"
-				IL_0067: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_006c: clt
-				IL_006e: brfalse IL_00c2
+			IL_0051: box [System.Runtime]System.Double
+			IL_0056: stloc.2
+			// loop start (head: IL_0057)
+				IL_0057: ldloc.2
+				IL_0058: stloc.s 6
+				IL_005a: ldarg.1
+				IL_005b: ldstr "children"
+				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0065: ldstr "length"
+				IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_006f: stloc.s 5
+				IL_0071: ldloc.s 6
+				IL_0073: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0078: stloc.s 7
+				IL_007a: ldloc.s 7
+				IL_007c: ldloc.s 5
+				IL_007e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0083: clt
+				IL_0085: brfalse IL_00ef
 
-				IL_0073: newobj instance void Modules.Function_IIFE_Recursive/walk/Scope/Block_L9C51::.ctor()
-				IL_0078: stloc.3
-				IL_0079: ldarg.1
-				IL_007a: ldstr "children"
-				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0084: ldloc.2
-				IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_008a: stloc.s 4
-				IL_008c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-				IL_0091: stloc.s 7
-				IL_0093: ldarg.2
-				IL_0094: ldc.r8 1
-				IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_00a2: stloc.s 8
-				IL_00a4: ldloc.0
-				IL_00a5: ldloc.s 7
-				IL_00a7: ldloc.s 4
-				IL_00a9: ldloc.s 8
-				IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-				IL_00b0: pop
-				IL_00b1: ldloc.2
-				IL_00b2: ldc.r8 1
-				IL_00bb: add
-				IL_00bc: stloc.2
-				IL_00bd: br IL_0052
+				IL_008a: newobj instance void Modules.Function_IIFE_Recursive/walk/Scope/Block_L9C51::.ctor()
+				IL_008f: stloc.3
+				IL_0090: ldarg.1
+				IL_0091: ldstr "children"
+				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_009b: ldloc.2
+				IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+				IL_00a1: stloc.s 4
+				IL_00a3: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+				IL_00a8: stloc.s 8
+				IL_00aa: ldarg.2
+				IL_00ab: ldc.r8 1
+				IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_00b9: stloc.s 9
+				IL_00bb: ldloc.0
+				IL_00bc: ldloc.s 8
+				IL_00be: ldloc.s 4
+				IL_00c0: ldloc.s 9
+				IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+				IL_00c7: pop
+				IL_00c8: ldloc.2
+				IL_00c9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_00ce: stloc.s 7
+				IL_00d0: ldloc.s 7
+				IL_00d2: ldc.r8 1
+				IL_00db: add
+				IL_00dc: stloc.s 7
+				IL_00de: ldloc.s 7
+				IL_00e0: box [System.Runtime]System.Double
+				IL_00e5: stloc.s 6
+				IL_00e7: ldloc.s 6
+				IL_00e9: stloc.2
+				IL_00ea: br IL_0057
 			// end loop
 
-			IL_00c2: ldnull
-			IL_00c3: ret
+			IL_00ef: ldnull
+			IL_00f0: ret
 		} // end of method walk::__js_call__
 
 	} // end of class walk
@@ -187,7 +203,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2224
+			// Method begins at RVA 0x2251
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -312,7 +328,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2248
+		// Method begins at RVA 0x2275
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

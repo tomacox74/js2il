@@ -1,4 +1,4 @@
-// IL code: Stream_Pipeline_Error_PropagatesToPeers
+﻿// IL code: Stream_Pipeline_Error_PropagatesToPeers
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c2
+				// Method begins at RVA 0x2404
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -85,7 +85,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23cb
+				// Method begins at RVA 0x240d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -144,7 +144,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d4
+				// Method begins at RVA 0x2416
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -203,7 +203,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23dd
+				// Method begins at RVA 0x241f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -262,7 +262,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23e6
+				// Method begins at RVA 0x2428
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -291,13 +291,14 @@
 			)
 			// Method begins at RVA 0x22f8
 			// Header size: 12
-			// Code size: 181 (0xb5)
+			// Code size: 247 (0xf7)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
 				[2] bool,
-				[3] object
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -325,41 +326,65 @@
 			IL_0037: ldloc.3
 			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 			IL_003d: pop
-			IL_003e: ldstr "source-destroyed:"
-			IL_0043: ldarg.0
-			IL_0044: ldfld object Modules.Stream_Pipeline_Error_PropagatesToPeers/Scope::readable
-			IL_0049: ldstr "destroyed"
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0058: stloc.3
-			IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005e: ldloc.3
-			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0064: pop
-			IL_0065: ldstr "pass-destroyed:"
-			IL_006a: ldarg.0
-			IL_006b: ldfld object Modules.Stream_Pipeline_Error_PropagatesToPeers/Scope::pass
-			IL_0070: ldstr "destroyed"
-			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_007f: stloc.3
-			IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0085: ldloc.3
-			IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_008b: pop
-			IL_008c: ldstr "writable-destroyed:"
-			IL_0091: ldarg.0
-			IL_0092: ldfld object Modules.Stream_Pipeline_Error_PropagatesToPeers/Scope::writable
-			IL_0097: ldstr "destroyed"
-			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00a6: stloc.3
-			IL_00a7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ac: ldloc.3
-			IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00b2: pop
-			IL_00b3: ldnull
-			IL_00b4: ret
+			IL_003e: ldarg.0
+			IL_003f: ldfld object Modules.Stream_Pipeline_Error_PropagatesToPeers/Scope::readable
+			IL_0044: stloc.s 4
+			IL_0046: ldstr "readable"
+			IL_004b: ldloc.s 4
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0052: stloc.s 4
+			IL_0054: ldloc.s 4
+			IL_0056: ldstr "destroyed"
+			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0060: stloc.s 4
+			IL_0062: ldstr "source-destroyed:"
+			IL_0067: ldloc.s 4
+			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_006e: stloc.3
+			IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0074: ldloc.3
+			IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_007a: pop
+			IL_007b: ldarg.0
+			IL_007c: ldfld object Modules.Stream_Pipeline_Error_PropagatesToPeers/Scope::pass
+			IL_0081: stloc.s 4
+			IL_0083: ldstr "pass"
+			IL_0088: ldloc.s 4
+			IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_008f: stloc.s 4
+			IL_0091: ldloc.s 4
+			IL_0093: ldstr "destroyed"
+			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_009d: stloc.s 4
+			IL_009f: ldstr "pass-destroyed:"
+			IL_00a4: ldloc.s 4
+			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00ab: stloc.3
+			IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00b1: ldloc.3
+			IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00b7: pop
+			IL_00b8: ldarg.0
+			IL_00b9: ldfld object Modules.Stream_Pipeline_Error_PropagatesToPeers/Scope::writable
+			IL_00be: stloc.s 4
+			IL_00c0: ldstr "writable"
+			IL_00c5: ldloc.s 4
+			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00cc: stloc.s 4
+			IL_00ce: ldloc.s 4
+			IL_00d0: ldstr "destroyed"
+			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00da: stloc.s 4
+			IL_00dc: ldstr "writable-destroyed:"
+			IL_00e1: ldloc.s 4
+			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00e8: stloc.3
+			IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00ee: ldloc.3
+			IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_00f4: pop
+			IL_00f5: ldnull
+			IL_00f6: ret
 		} // end of method FunctionExpression_L25C42::__js_call__
 
 	} // end of class FunctionExpression_L25C42
@@ -382,7 +407,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23b9
+			// Method begins at RVA 0x23fb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -608,7 +633,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ef
+		// Method begins at RVA 0x2431
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

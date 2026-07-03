@@ -1,4 +1,4 @@
-// IL code: Require_ChildProcess_Exec_Callback
+﻿// IL code: Require_ChildProcess_Exec_Callback
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -29,7 +29,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224c
+				// Method begins at RVA 0x2258
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -60,7 +60,7 @@
 			)
 			// Method begins at RVA 0x2190
 			// Header size: 12
-			// Code size: 156 (0x9c)
+			// Code size: 168 (0xa8)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -105,20 +105,24 @@
 			IL_006b: ldstr "Cannot access 'child' before initialization"
 			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 			IL_0075: stloc.2
-			IL_0076: ldloc.2
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_007c: stloc.2
-			IL_007d: ldloc.2
-			IL_007e: ldstr "kill"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0076: ldstr "child"
+			IL_007b: ldloc.2
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0081: stloc.2
+			IL_0082: ldloc.2
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0088: stloc.2
-			IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_008e: ldstr "kill after callback:"
-			IL_0093: ldloc.2
-			IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0099: pop
-			IL_009a: ldnull
-			IL_009b: ret
+			IL_0089: ldloc.2
+			IL_008a: ldstr "kill"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0094: stloc.2
+			IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_009a: ldstr "kill after callback:"
+			IL_009f: ldloc.2
+			IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_00a5: pop
+			IL_00a6: ldnull
+			IL_00a7: ret
 		} // end of method ArrowFunction_L9C42::__js_call__
 
 	} // end of class ArrowFunction_L9C42
@@ -137,7 +141,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2238
+			// Method begins at RVA 0x2244
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -293,7 +297,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2255
+		// Method begins at RVA 0x2261
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

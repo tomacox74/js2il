@@ -1,4 +1,4 @@
-// IL code: FSPromises_Realpath
+﻿// IL code: FSPromises_Realpath
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2294
+				// Method begins at RVA 0x22bc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -54,10 +54,13 @@
 			)
 			// Method begins at RVA 0x21dc
 			// Header size: 12
-			// Code size: 133 (0x85)
+			// Code size: 173 (0xad)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
+				[2] object[],
+				[3] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -86,20 +89,40 @@
 			IL_0058: pop
 			IL_0059: ldarg.0
 			IL_005a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Realpath/Scope::require
-			IL_005f: ldstr "fs"
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-			IL_0069: stloc.0
-			IL_006a: ldloc.0
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0070: stloc.0
-			IL_0071: ldloc.0
-			IL_0072: ldstr "rmSync"
-			IL_0077: ldarg.0
-			IL_0078: ldfld object Modules.FSPromises_Realpath/Scope::testFile
-			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0082: pop
-			IL_0083: ldnull
-			IL_0084: ret
+			IL_005f: stloc.1
+			IL_0060: ldstr "require"
+			IL_0065: ldloc.1
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_006b: stloc.0
+			IL_006c: ldc.i4.1
+			IL_006d: newarr [System.Runtime]System.Object
+			IL_0072: dup
+			IL_0073: ldc.i4.0
+			IL_0074: ldarg.0
+			IL_0075: stelem.ref
+			IL_0076: stloc.2
+			IL_0077: ldloc.0
+			IL_0078: ldloc.2
+			IL_0079: ldstr "fs"
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_0083: stloc.0
+			IL_0084: ldloc.0
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_008a: stloc.0
+			IL_008b: ldarg.0
+			IL_008c: ldfld object Modules.FSPromises_Realpath/Scope::testFile
+			IL_0091: stloc.3
+			IL_0092: ldstr "testFile"
+			IL_0097: ldloc.3
+			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_009d: stloc.3
+			IL_009e: ldloc.0
+			IL_009f: ldstr "rmSync"
+			IL_00a4: ldloc.3
+			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00aa: pop
+			IL_00ab: ldnull
+			IL_00ac: ret
 		} // end of method ArrowFunction_L8C28::__js_call__
 
 	} // end of class ArrowFunction_L8C28
@@ -122,7 +145,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x229d
+				// Method begins at RVA 0x22c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -146,7 +169,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x226d
+			// Method begins at RVA 0x2295
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -180,7 +203,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x228b
+			// Method begins at RVA 0x22b3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -361,7 +384,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22a6
+		// Method begins at RVA 0x22ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

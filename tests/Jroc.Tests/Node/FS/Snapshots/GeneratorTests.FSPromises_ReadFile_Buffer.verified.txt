@@ -1,4 +1,4 @@
-// IL code: FSPromises_ReadFile_Buffer
+﻿// IL code: FSPromises_ReadFile_Buffer
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2275
+				// Method begins at RVA 0x22a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -54,12 +54,15 @@
 			)
 			// Method begins at RVA 0x21dc
 			// Header size: 12
-			// Code size: 102 (0x66)
+			// Code size: 148 (0x94)
 			.maxstack 8
 			.locals init (
 				[0] bool,
 				[1] object,
-				[2] object
+				[2] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
+				[3] object,
+				[4] object[],
+				[5] object
 			)
 
 			IL_0000: ldarg.2
@@ -82,20 +85,40 @@
 			IL_0039: pop
 			IL_003a: ldarg.0
 			IL_003b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_ReadFile_Buffer/Scope::require
-			IL_0040: ldstr "fs"
-			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-			IL_004a: stloc.2
-			IL_004b: ldloc.2
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0051: stloc.2
-			IL_0052: ldloc.2
-			IL_0053: ldstr "rmSync"
-			IL_0058: ldarg.0
-			IL_0059: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
-			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0063: pop
-			IL_0064: ldnull
-			IL_0065: ret
+			IL_0040: stloc.2
+			IL_0041: ldstr "require"
+			IL_0046: ldloc.2
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_004c: stloc.3
+			IL_004d: ldc.i4.1
+			IL_004e: newarr [System.Runtime]System.Object
+			IL_0053: dup
+			IL_0054: ldc.i4.0
+			IL_0055: ldarg.0
+			IL_0056: stelem.ref
+			IL_0057: stloc.s 4
+			IL_0059: ldloc.3
+			IL_005a: ldloc.s 4
+			IL_005c: ldstr "fs"
+			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_0066: stloc.3
+			IL_0067: ldloc.3
+			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_006d: stloc.3
+			IL_006e: ldarg.0
+			IL_006f: ldfld object Modules.FSPromises_ReadFile_Buffer/Scope::testFile
+			IL_0074: stloc.s 5
+			IL_0076: ldstr "testFile"
+			IL_007b: ldloc.s 5
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0082: stloc.s 5
+			IL_0084: ldloc.3
+			IL_0085: ldstr "rmSync"
+			IL_008a: ldloc.s 5
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0091: pop
+			IL_0092: ldnull
+			IL_0093: ret
 		} // end of method ArrowFunction_L8C28::__js_call__
 
 	} // end of class ArrowFunction_L8C28
@@ -118,7 +141,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227e
+				// Method begins at RVA 0x22ac
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -142,7 +165,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x224e
+			// Method begins at RVA 0x227c
 			// Header size: 1
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -176,7 +199,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x226c
+			// Method begins at RVA 0x229a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -357,7 +380,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2287
+		// Method begins at RVA 0x22b5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27c2
+				// Method begins at RVA 0x298e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -65,7 +65,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27cb
+				// Method begins at RVA 0x2997
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,7 +114,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x27dd
+					// Method begins at RVA 0x29a9
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -132,7 +132,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27d4
+				// Method begins at RVA 0x29a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -196,7 +196,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x27ef
+					// Method begins at RVA 0x29bb
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -214,7 +214,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27e6
+				// Method begins at RVA 0x29b2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -275,7 +275,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27f8
+				// Method begins at RVA 0x29c4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -299,7 +299,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x280a
+					// Method begins at RVA 0x29d6
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -317,7 +317,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2801
+				// Method begins at RVA 0x29cd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -345,12 +345,16 @@
 			)
 			// Method begins at RVA 0x247c
 			// Header size: 12
-			// Code size: 92 (0x5c)
+			// Code size: 162 (0xa2)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] class Modules.Compile_Performance_Dromaeo_Object_Array_Modern/ArrowFunction_L15C32/Scope_For_L16C9/Block_L16C37,
-				[2] float64
+				[2] float64,
+				[3] object,
+				[4] float64,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[6] object
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -358,36 +362,58 @@
 			// loop start (head: IL_000a)
 				IL_000a: ldloc.0
 				IL_000b: stloc.2
-				IL_000c: ldloc.2
-				IL_000d: ldarg.0
-				IL_000e: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_0013: ldc.r8 15
-				IL_001c: mul
-				IL_001d: clt
-				IL_001f: brfalse IL_005a
+				IL_000c: ldstr "i"
+				IL_0011: ldarg.0
+				IL_0012: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0017: box [System.Runtime]System.Double
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0021: stloc.3
+				IL_0022: ldloc.3
+				IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0028: stloc.s 4
+				IL_002a: ldloc.s 4
+				IL_002c: ldc.r8 15
+				IL_0035: mul
+				IL_0036: stloc.s 4
+				IL_0038: ldloc.2
+				IL_0039: ldloc.s 4
+				IL_003b: clt
+				IL_003d: brfalse IL_00a0
 
-				IL_0024: newobj instance void Modules.Compile_Performance_Dromaeo_Object_Array_Modern/ArrowFunction_L15C32/Scope_For_L16C9/Block_L16C37::.ctor()
-				IL_0029: stloc.1
-				IL_002a: ldarg.0
-				IL_002b: ldc.i4.0
-				IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_0031: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-				IL_0036: ldarg.0
-				IL_0037: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_003c: stloc.2
-				IL_003d: ldarg.0
-				IL_003e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-				IL_0043: ldloc.2
-				IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
-				IL_0049: ldloc.0
-				IL_004a: ldc.r8 1
-				IL_0053: add
-				IL_0054: stloc.0
-				IL_0055: br IL_000a
+				IL_0042: newobj instance void Modules.Compile_Performance_Dromaeo_Object_Array_Modern/ArrowFunction_L15C32/Scope_For_L16C9/Block_L16C37::.ctor()
+				IL_0047: stloc.1
+				IL_0048: ldarg.0
+				IL_0049: ldc.i4.0
+				IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_004f: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
+				IL_0054: ldarg.0
+				IL_0055: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
+				IL_005a: stloc.s 5
+				IL_005c: ldstr "ret"
+				IL_0061: ldloc.s 5
+				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0068: stloc.3
+				IL_0069: ldstr "i"
+				IL_006e: ldarg.0
+				IL_006f: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0074: box [System.Runtime]System.Double
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_007e: stloc.s 6
+				IL_0080: ldloc.3
+				IL_0081: ldstr "length"
+				IL_0086: ldloc.s 6
+				IL_0088: ldc.i4.1
+				IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+				IL_008e: pop
+				IL_008f: ldloc.0
+				IL_0090: ldc.r8 1
+				IL_0099: add
+				IL_009a: stloc.0
+				IL_009b: br IL_000a
 			// end loop
 
-			IL_005a: ldnull
-			IL_005b: ret
+			IL_00a0: ldnull
+			IL_00a1: ret
 		} // end of method ArrowFunction_L15C32::__js_call__
 
 	} // end of class ArrowFunction_L15C32
@@ -403,7 +429,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2813
+				// Method begins at RVA 0x29df
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -423,7 +449,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x281c
+				// Method begins at RVA 0x29e8
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -449,14 +475,15 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x24e4
+			// Method begins at RVA 0x252c
 			// Header size: 12
-			// Code size: 93 (0x5d)
+			// Code size: 131 (0x83)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] object
+				[2] object,
+				[3] float64
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -464,37 +491,51 @@
 			// loop start (head: IL_000a)
 				IL_000a: ldloc.0
 				IL_000b: stloc.1
-				IL_000c: ldloc.1
-				IL_000d: ldarg.0
-				IL_000e: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_0013: ldc.r8 10
-				IL_001c: mul
-				IL_001d: clt
-				IL_001f: brfalse IL_005b
+				IL_000c: ldstr "i"
+				IL_0011: ldarg.0
+				IL_0012: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0017: box [System.Runtime]System.Double
+				IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0021: stloc.2
+				IL_0022: ldloc.2
+				IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0028: stloc.3
+				IL_0029: ldloc.3
+				IL_002a: ldc.r8 10
+				IL_0033: mul
+				IL_0034: stloc.3
+				IL_0035: ldloc.1
+				IL_0036: ldloc.3
+				IL_0037: clt
+				IL_0039: brfalse IL_0081
 
-				IL_0024: ldc.i4.1
-				IL_0025: newarr [System.Runtime]System.Object
-				IL_002a: dup
-				IL_002b: ldc.i4.0
-				IL_002c: ldarg.0
-				IL_002d: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_0032: box [System.Runtime]System.Double
-				IL_0037: stelem.ref
-				IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct(object[])
-				IL_003d: stloc.2
-				IL_003e: ldarg.0
-				IL_003f: ldloc.2
-				IL_0040: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-				IL_0045: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-				IL_004a: ldloc.0
-				IL_004b: ldc.r8 1
-				IL_0054: add
-				IL_0055: stloc.0
-				IL_0056: br IL_000a
+				IL_003e: ldstr "i"
+				IL_0043: ldarg.0
+				IL_0044: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0049: box [System.Runtime]System.Double
+				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0053: stloc.2
+				IL_0054: ldc.i4.1
+				IL_0055: newarr [System.Runtime]System.Object
+				IL_005a: dup
+				IL_005b: ldc.i4.0
+				IL_005c: ldloc.2
+				IL_005d: stelem.ref
+				IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::Construct(object[])
+				IL_0063: stloc.2
+				IL_0064: ldarg.0
+				IL_0065: ldloc.2
+				IL_0066: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+				IL_006b: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
+				IL_0070: ldloc.0
+				IL_0071: ldc.r8 1
+				IL_007a: add
+				IL_007b: stloc.0
+				IL_007c: br IL_000a
 			// end loop
 
-			IL_005b: ldnull
-			IL_005c: ret
+			IL_0081: ldnull
+			IL_0082: ret
 		} // end of method ArrowFunction_L22C41::__js_call__
 
 	} // end of class ArrowFunction_L22C41
@@ -510,7 +551,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2825
+				// Method begins at RVA 0x29f1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -530,7 +571,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x282e
+				// Method begins at RVA 0x29fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -556,15 +597,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x2550
+			// Method begins at RVA 0x25bc
 			// Header size: 12
-			// Code size: 79 (0x4f)
+			// Code size: 131 (0x83)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[3] object
+				[2] object,
+				[3] float64,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[5] object
 			)
 
 			IL_0000: ldarg.0
@@ -576,31 +619,47 @@
 			// loop start (head: IL_0016)
 				IL_0016: ldloc.0
 				IL_0017: stloc.1
-				IL_0018: ldloc.1
-				IL_0019: ldarg.0
-				IL_001a: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_001f: clt
-				IL_0021: brfalse IL_004d
+				IL_0018: ldstr "i"
+				IL_001d: ldarg.0
+				IL_001e: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0023: box [System.Runtime]System.Double
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_002d: stloc.2
+				IL_002e: ldloc.2
+				IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0034: stloc.3
+				IL_0035: ldloc.1
+				IL_0036: ldloc.3
+				IL_0037: clt
+				IL_0039: brfalse IL_0081
 
-				IL_0026: ldarg.0
-				IL_0027: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-				IL_002c: stloc.2
-				IL_002d: ldloc.0
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: stloc.3
-				IL_0034: ldloc.2
-				IL_0035: ldloc.3
-				IL_0036: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::unshift(object)
-				IL_003b: pop
-				IL_003c: ldloc.0
-				IL_003d: ldc.r8 1
-				IL_0046: add
-				IL_0047: stloc.0
-				IL_0048: br IL_0016
+				IL_003e: ldarg.0
+				IL_003f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
+				IL_0044: stloc.s 4
+				IL_0046: ldstr "ret"
+				IL_004b: ldloc.s 4
+				IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0052: stloc.2
+				IL_0053: ldloc.2
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0059: stloc.2
+				IL_005a: ldloc.0
+				IL_005b: box [System.Runtime]System.Double
+				IL_0060: stloc.s 5
+				IL_0062: ldloc.2
+				IL_0063: ldstr "unshift"
+				IL_0068: ldloc.s 5
+				IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_006f: pop
+				IL_0070: ldloc.0
+				IL_0071: ldc.r8 1
+				IL_007a: add
+				IL_007b: stloc.0
+				IL_007c: br IL_0016
 			// end loop
 
-			IL_004d: ldnull
-			IL_004e: ret
+			IL_0081: ldnull
+			IL_0082: ret
 		} // end of method ArrowFunction_L27C37::__js_call__
 
 	} // end of class ArrowFunction_L27C37
@@ -616,7 +675,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2837
+				// Method begins at RVA 0x2a03
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -636,7 +695,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2840
+				// Method begins at RVA 0x2a0c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -662,15 +721,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x25ac
+			// Method begins at RVA 0x264c
 			// Header size: 12
-			// Code size: 107 (0x6b)
+			// Code size: 159 (0x9f)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[3] object
+				[2] object,
+				[3] float64,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[5] object
 			)
 
 			IL_0000: ldarg.0
@@ -682,35 +743,51 @@
 			// loop start (head: IL_0016)
 				IL_0016: ldloc.0
 				IL_0017: stloc.1
-				IL_0018: ldloc.1
-				IL_0019: ldarg.0
-				IL_001a: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_001f: clt
-				IL_0021: brfalse IL_0069
+				IL_0018: ldstr "i"
+				IL_001d: ldarg.0
+				IL_001e: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0023: box [System.Runtime]System.Double
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_002d: stloc.2
+				IL_002e: ldloc.2
+				IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0034: stloc.3
+				IL_0035: ldloc.1
+				IL_0036: ldloc.3
+				IL_0037: clt
+				IL_0039: brfalse IL_009d
 
-				IL_0026: ldarg.0
-				IL_0027: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-				IL_002c: stloc.2
-				IL_002d: ldloc.0
-				IL_002e: box [System.Runtime]System.Double
-				IL_0033: stloc.3
-				IL_0034: ldloc.2
-				IL_0035: ldc.r8 0.0
-				IL_003e: box [System.Runtime]System.Double
-				IL_0043: ldc.r8 0.0
-				IL_004c: box [System.Runtime]System.Double
-				IL_0051: ldloc.3
-				IL_0052: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object, object)
-				IL_0057: pop
-				IL_0058: ldloc.0
-				IL_0059: ldc.r8 1
-				IL_0062: add
-				IL_0063: stloc.0
-				IL_0064: br IL_0016
+				IL_003e: ldarg.0
+				IL_003f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
+				IL_0044: stloc.s 4
+				IL_0046: ldstr "ret"
+				IL_004b: ldloc.s 4
+				IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0052: stloc.2
+				IL_0053: ldloc.2
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0059: stloc.2
+				IL_005a: ldloc.0
+				IL_005b: box [System.Runtime]System.Double
+				IL_0060: stloc.s 5
+				IL_0062: ldloc.2
+				IL_0063: ldstr "splice"
+				IL_0068: ldc.r8 0.0
+				IL_0071: box [System.Runtime]System.Double
+				IL_0076: ldc.r8 0.0
+				IL_007f: box [System.Runtime]System.Double
+				IL_0084: ldloc.s 5
+				IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+				IL_008b: pop
+				IL_008c: ldloc.0
+				IL_008d: ldc.r8 1
+				IL_0096: add
+				IL_0097: stloc.0
+				IL_0098: br IL_0016
 			// end loop
 
-			IL_0069: ldnull
-			IL_006a: ret
+			IL_009d: ldnull
+			IL_009e: ret
 		} // end of method ArrowFunction_L33C36::__js_call__
 
 	} // end of class ArrowFunction_L33C36
@@ -726,7 +803,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2849
+				// Method begins at RVA 0x2a15
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -746,7 +823,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2852
+				// Method begins at RVA 0x2a1e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -772,50 +849,73 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x2624
+			// Method begins at RVA 0x26f8
 			// Header size: 12
-			// Code size: 75 (0x4b)
+			// Code size: 139 (0x8b)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[3] float64,
-				[4] object
+				[3] object,
+				[4] float64,
+				[5] float64
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-			IL_0006: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
-			IL_000b: stloc.2
+			IL_0006: stloc.2
+			IL_0007: ldstr "ret"
 			IL_000c: ldloc.2
-			IL_000d: stloc.0
-			IL_000e: ldc.r8 0.0
-			IL_0017: stloc.1
-			// loop start (head: IL_0018)
-				IL_0018: ldloc.1
-				IL_0019: stloc.3
-				IL_001a: ldloc.3
-				IL_001b: ldarg.0
-				IL_001c: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_0021: clt
-				IL_0023: brfalse IL_0049
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.3
+			IL_0013: ldloc.3
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.3
+			IL_001a: ldloc.3
+			IL_001b: ldstr "slice"
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0025: stloc.3
+			IL_0026: ldloc.3
+			IL_0027: stloc.0
+			IL_0028: ldc.r8 0.0
+			IL_0031: stloc.1
+			// loop start (head: IL_0032)
+				IL_0032: ldloc.1
+				IL_0033: stloc.s 4
+				IL_0035: ldstr "i"
+				IL_003a: ldarg.0
+				IL_003b: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0040: box [System.Runtime]System.Double
+				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_004a: stloc.3
+				IL_004b: ldloc.3
+				IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0051: stloc.s 5
+				IL_0053: ldloc.s 4
+				IL_0055: ldloc.s 5
+				IL_0057: clt
+				IL_0059: brfalse IL_0089
 
-				IL_0028: ldloc.0
-				IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::shift()
-				IL_002e: stloc.s 4
-				IL_0030: ldarg.0
-				IL_0031: ldloc.s 4
-				IL_0033: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
-				IL_0038: ldloc.1
-				IL_0039: ldc.r8 1
-				IL_0042: add
-				IL_0043: stloc.1
-				IL_0044: br IL_0018
+				IL_005e: ldloc.0
+				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0064: stloc.3
+				IL_0065: ldloc.3
+				IL_0066: ldstr "shift"
+				IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_0070: stloc.3
+				IL_0071: ldarg.0
+				IL_0072: ldloc.3
+				IL_0073: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
+				IL_0078: ldloc.1
+				IL_0079: ldc.r8 1
+				IL_0082: add
+				IL_0083: stloc.1
+				IL_0084: br IL_0032
 			// end loop
 
-			IL_0049: ldnull
-			IL_004a: ret
+			IL_0089: ldnull
+			IL_008a: ret
 		} // end of method ArrowFunction_L39C37::__js_call__
 
 	} // end of class ArrowFunction_L39C37
@@ -831,7 +931,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x285b
+				// Method begins at RVA 0x2a27
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -851,7 +951,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2864
+				// Method begins at RVA 0x2a30
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -877,53 +977,77 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x267c
+			// Method begins at RVA 0x2790
 			// Header size: 12
-			// Code size: 101 (0x65)
+			// Code size: 167 (0xa7)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[3] float64
+				[3] object,
+				[4] float64,
+				[5] float64
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-			IL_0006: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
-			IL_000b: stloc.2
+			IL_0006: stloc.2
+			IL_0007: ldstr "ret"
 			IL_000c: ldloc.2
-			IL_000d: stloc.0
-			IL_000e: ldc.r8 0.0
-			IL_0017: stloc.1
-			// loop start (head: IL_0018)
-				IL_0018: ldloc.1
-				IL_0019: stloc.3
-				IL_001a: ldloc.3
-				IL_001b: ldarg.0
-				IL_001c: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_0021: clt
-				IL_0023: brfalse IL_0063
-
-				IL_0028: ldloc.0
-				IL_0029: ldc.r8 0.0
-				IL_0032: box [System.Runtime]System.Double
-				IL_0037: ldc.r8 1
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.3
+			IL_0013: ldloc.3
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.3
+			IL_001a: ldloc.3
+			IL_001b: ldstr "slice"
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0025: stloc.3
+			IL_0026: ldloc.3
+			IL_0027: stloc.0
+			IL_0028: ldc.r8 0.0
+			IL_0031: stloc.1
+			// loop start (head: IL_0032)
+				IL_0032: ldloc.1
+				IL_0033: stloc.s 4
+				IL_0035: ldstr "i"
+				IL_003a: ldarg.0
+				IL_003b: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
 				IL_0040: box [System.Runtime]System.Double
-				IL_0045: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object, object)
-				IL_004a: stloc.2
-				IL_004b: ldarg.0
-				IL_004c: ldloc.2
-				IL_004d: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
-				IL_0052: ldloc.1
-				IL_0053: ldc.r8 1
-				IL_005c: add
-				IL_005d: stloc.1
-				IL_005e: br IL_0018
+				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_004a: stloc.3
+				IL_004b: ldloc.3
+				IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0051: stloc.s 5
+				IL_0053: ldloc.s 4
+				IL_0055: ldloc.s 5
+				IL_0057: clt
+				IL_0059: brfalse IL_00a5
+
+				IL_005e: ldloc.0
+				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0064: stloc.3
+				IL_0065: ldloc.3
+				IL_0066: ldstr "splice"
+				IL_006b: ldc.r8 0.0
+				IL_0074: box [System.Runtime]System.Double
+				IL_0079: ldc.r8 1
+				IL_0082: box [System.Runtime]System.Double
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_008c: stloc.3
+				IL_008d: ldarg.0
+				IL_008e: ldloc.3
+				IL_008f: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
+				IL_0094: ldloc.1
+				IL_0095: ldc.r8 1
+				IL_009e: add
+				IL_009f: stloc.1
+				IL_00a0: br IL_0032
 			// end loop
 
-			IL_0063: ldnull
-			IL_0064: ret
+			IL_00a5: ldnull
+			IL_00a6: ret
 		} // end of method ArrowFunction_L45C38::__js_call__
 
 	} // end of class ArrowFunction_L45C38
@@ -939,7 +1063,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x286d
+				// Method begins at RVA 0x2a39
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -959,7 +1083,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2876
+				// Method begins at RVA 0x2a42
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -985,15 +1109,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x26f0
+			// Method begins at RVA 0x2844
 			// Header size: 12
-			// Code size: 89 (0x59)
+			// Code size: 143 (0x8f)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[3] object
+				[2] object,
+				[3] float64,
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[5] object
 			)
 
 			IL_0000: ldarg.0
@@ -1005,33 +1131,51 @@
 			// loop start (head: IL_0016)
 				IL_0016: ldloc.0
 				IL_0017: stloc.1
-				IL_0018: ldloc.1
-				IL_0019: ldarg.0
-				IL_001a: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_001f: ldc.r8 25
-				IL_0028: mul
-				IL_0029: clt
-				IL_002b: brfalse IL_0057
+				IL_0018: ldstr "i"
+				IL_001d: ldarg.0
+				IL_001e: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0023: box [System.Runtime]System.Double
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_002d: stloc.2
+				IL_002e: ldloc.2
+				IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0034: stloc.3
+				IL_0035: ldloc.3
+				IL_0036: ldc.r8 25
+				IL_003f: mul
+				IL_0040: stloc.3
+				IL_0041: ldloc.1
+				IL_0042: ldloc.3
+				IL_0043: clt
+				IL_0045: brfalse IL_008d
 
-				IL_0030: ldarg.0
-				IL_0031: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-				IL_0036: stloc.2
-				IL_0037: ldloc.0
-				IL_0038: box [System.Runtime]System.Double
-				IL_003d: stloc.3
-				IL_003e: ldloc.2
-				IL_003f: ldloc.3
-				IL_0040: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_0045: pop
-				IL_0046: ldloc.0
-				IL_0047: ldc.r8 1
-				IL_0050: add
-				IL_0051: stloc.0
-				IL_0052: br IL_0016
+				IL_004a: ldarg.0
+				IL_004b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
+				IL_0050: stloc.s 4
+				IL_0052: ldstr "ret"
+				IL_0057: ldloc.s 4
+				IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_005e: stloc.2
+				IL_005f: ldloc.2
+				IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0065: stloc.2
+				IL_0066: ldloc.0
+				IL_0067: box [System.Runtime]System.Double
+				IL_006c: stloc.s 5
+				IL_006e: ldloc.2
+				IL_006f: ldstr "push"
+				IL_0074: ldloc.s 5
+				IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_007b: pop
+				IL_007c: ldloc.0
+				IL_007d: ldc.r8 1
+				IL_0086: add
+				IL_0087: stloc.0
+				IL_0088: br IL_0016
 			// end loop
 
-			IL_0057: ldnull
-			IL_0058: ret
+			IL_008d: ldnull
+			IL_008e: ret
 		} // end of method ArrowFunction_L51C34::__js_call__
 
 	} // end of class ArrowFunction_L51C34
@@ -1047,7 +1191,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x287f
+				// Method begins at RVA 0x2a4b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1067,7 +1211,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2888
+				// Method begins at RVA 0x2a54
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1093,52 +1237,77 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 0f 00 00 02
 			)
-			// Method begins at RVA 0x2758
+			// Method begins at RVA 0x28e0
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 153 (0x99)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[0] object,
 				[1] float64,
 				[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[3] float64,
-				[4] object
+				[3] object,
+				[4] float64,
+				[5] float64
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::'ret'
-			IL_0006: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::slice()
-			IL_000b: stloc.2
+			IL_0006: stloc.2
+			IL_0007: ldstr "ret"
 			IL_000c: ldloc.2
-			IL_000d: stloc.0
-			IL_000e: ldc.r8 0.0
-			IL_0017: stloc.1
-			// loop start (head: IL_0018)
-				IL_0018: ldloc.1
-				IL_0019: stloc.3
-				IL_001a: ldloc.3
-				IL_001b: ldarg.0
-				IL_001c: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
-				IL_0021: ldc.r8 25
-				IL_002a: mul
-				IL_002b: clt
-				IL_002d: brfalse IL_0053
-
-				IL_0032: ldloc.0
-				IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::'pop'()
-				IL_0038: stloc.s 4
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.3
+			IL_0013: ldloc.3
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.3
+			IL_001a: ldloc.3
+			IL_001b: ldstr "slice"
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0025: stloc.3
+			IL_0026: ldloc.3
+			IL_0027: stloc.0
+			IL_0028: ldc.r8 0.0
+			IL_0031: stloc.1
+			// loop start (head: IL_0032)
+				IL_0032: ldloc.1
+				IL_0033: stloc.s 4
+				IL_0035: ldstr "i"
 				IL_003a: ldarg.0
-				IL_003b: ldloc.s 4
-				IL_003d: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
-				IL_0042: ldloc.1
-				IL_0043: ldc.r8 1
-				IL_004c: add
-				IL_004d: stloc.1
-				IL_004e: br IL_0018
+				IL_003b: ldfld float64 Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::i
+				IL_0040: box [System.Runtime]System.Double
+				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_004a: stloc.3
+				IL_004b: ldloc.3
+				IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0051: stloc.s 5
+				IL_0053: ldloc.s 5
+				IL_0055: ldc.r8 25
+				IL_005e: mul
+				IL_005f: stloc.s 5
+				IL_0061: ldloc.s 4
+				IL_0063: ldloc.s 5
+				IL_0065: clt
+				IL_0067: brfalse IL_0097
+
+				IL_006c: ldloc.0
+				IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0072: stloc.3
+				IL_0073: ldloc.3
+				IL_0074: ldstr "pop"
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_007e: stloc.3
+				IL_007f: ldarg.0
+				IL_0080: ldloc.3
+				IL_0081: stfld object Modules.Compile_Performance_Dromaeo_Object_Array_Modern/Scope::tmp
+				IL_0086: ldloc.1
+				IL_0087: ldc.r8 1
+				IL_0090: add
+				IL_0091: stloc.1
+				IL_0092: br IL_0032
 			// end loop
 
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0097: ldnull
+			IL_0098: ret
 		} // end of method ArrowFunction_L57C35::__js_call__
 
 	} // end of class ArrowFunction_L57C35
@@ -1168,7 +1337,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x27b9
+			// Method begins at RVA 0x2985
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1573,7 +1742,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2891
+		// Method begins at RVA 0x2a5d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

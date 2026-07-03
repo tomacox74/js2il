@@ -1,4 +1,4 @@
-// IL code: Proxy_ApplyAndConstructTraps_WithFallback
+﻿// IL code: Proxy_ApplyAndConstructTraps_WithFallback
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23db
+				// Method begins at RVA 0x2419
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -72,7 +72,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23e4
+				// Method begins at RVA 0x2422
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,7 +103,7 @@
 			)
 			// Method begins at RVA 0x22f8
 			// Header size: 12
-			// Code size: 110 (0x6e)
+			// Code size: 158 (0x9e)
 			.maxstack 8
 			.locals init (
 				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
@@ -115,42 +115,58 @@
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_ApplyAndConstructTraps_WithFallback/Scope::applySeen
 			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: ldarg.s args
-			IL_000a: ldc.r8 0.0
-			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0018: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_001d: pop
-			IL_001e: ldarg.0
-			IL_001f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_ApplyAndConstructTraps_WithFallback/Scope::applySeen
-			IL_0024: stloc.0
-			IL_0025: ldloc.0
-			IL_0026: ldarg.s args
-			IL_0028: ldc.r8 1
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_0036: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_003b: pop
-			IL_003c: ldarg.2
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0042: stloc.1
-			IL_0043: ldloc.1
-			IL_0044: ldstr "apply"
-			IL_0049: ldarg.3
-			IL_004a: ldarg.s args
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0051: stloc.1
-			IL_0052: ldloc.1
-			IL_0053: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0058: stloc.2
-			IL_0059: ldloc.2
-			IL_005a: ldc.r8 2
-			IL_0063: mul
-			IL_0064: stloc.2
-			IL_0065: ldloc.2
-			IL_0066: box [System.Runtime]System.Double
-			IL_006b: stloc.3
-			IL_006c: ldloc.3
-			IL_006d: ret
+			IL_0007: ldstr "applySeen"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.1
+			IL_001a: ldloc.1
+			IL_001b: ldstr "push"
+			IL_0020: ldarg.s args
+			IL_0022: ldc.r8 0.0
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0035: pop
+			IL_0036: ldarg.0
+			IL_0037: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Proxy_ApplyAndConstructTraps_WithFallback/Scope::applySeen
+			IL_003c: stloc.0
+			IL_003d: ldstr "applySeen"
+			IL_0042: ldloc.0
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0048: stloc.1
+			IL_0049: ldloc.1
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004f: stloc.1
+			IL_0050: ldloc.1
+			IL_0051: ldstr "push"
+			IL_0056: ldarg.s args
+			IL_0058: ldc.r8 1
+			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_006b: pop
+			IL_006c: ldarg.2
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0072: stloc.1
+			IL_0073: ldloc.1
+			IL_0074: ldstr "apply"
+			IL_0079: ldarg.3
+			IL_007a: ldarg.s args
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0081: stloc.1
+			IL_0082: ldloc.1
+			IL_0083: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0088: stloc.2
+			IL_0089: ldloc.2
+			IL_008a: ldc.r8 2
+			IL_0093: mul
+			IL_0094: stloc.2
+			IL_0095: ldloc.2
+			IL_0096: box [System.Runtime]System.Double
+			IL_009b: stloc.3
+			IL_009c: ldloc.3
+			IL_009d: ret
 		} // end of method FunctionExpression_applyProxy::__js_call__
 
 	} // end of class FunctionExpression_applyProxy
@@ -166,7 +182,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23ed
+				// Method begins at RVA 0x242b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -190,7 +206,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2372
+			// Method begins at RVA 0x23a2
 			// Header size: 1
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -218,7 +234,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23f6
+				// Method begins at RVA 0x2434
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -247,37 +263,44 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2388
+			// Method begins at RVA 0x23b8
 			// Header size: 12
-			// Code size: 62 (0x3e)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] bool,
-				[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[1] object,
+				[2] bool,
+				[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 			)
 
 			IL_0000: ldarg.3
 			IL_0001: ldc.r8 0.0
 			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
 			IL_000f: stloc.0
-			IL_0010: ldarg.s newTarget
-			IL_0012: ldarg.0
-			IL_0013: ldfld object Modules.Proxy_ApplyAndConstructTraps_WithFallback/Scope::constructProxy
-			IL_0018: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_001d: stloc.1
-			IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0023: dup
-			IL_0024: ldstr "value"
-			IL_0029: ldloc.0
-			IL_002a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_002f: dup
-			IL_0030: ldstr "sameNewTarget"
-			IL_0035: ldloc.1
-			IL_0036: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_003b: stloc.2
-			IL_003c: ldloc.2
-			IL_003d: ret
+			IL_0010: ldarg.0
+			IL_0011: ldfld object Modules.Proxy_ApplyAndConstructTraps_WithFallback/Scope::constructProxy
+			IL_0016: stloc.1
+			IL_0017: ldstr "constructProxy"
+			IL_001c: ldloc.1
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0022: stloc.1
+			IL_0023: ldarg.s newTarget
+			IL_0025: ldloc.1
+			IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_002b: stloc.2
+			IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0031: dup
+			IL_0032: ldstr "value"
+			IL_0037: ldloc.0
+			IL_0038: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_003d: dup
+			IL_003e: ldstr "sameNewTarget"
+			IL_0043: ldloc.2
+			IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0049: stloc.3
+			IL_004a: ldloc.3
+			IL_004b: ret
 		} // end of method FunctionExpression_L25C13::__js_call__
 
 	} // end of class FunctionExpression_L25C13
@@ -303,7 +326,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23d2
+			// Method begins at RVA 0x2410
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -571,7 +594,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ff
+		// Method begins at RVA 0x243d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
