@@ -62,7 +62,8 @@ public sealed partial class HIRToLIRLowerer
         if (exprStmt.Initializer != null)
         {
             var shouldSetPendingAnonymousClassName =
-                exprStmt.Initializer is HIRInitializedUserClassTypeExpression;
+                exprStmt.Initializer is HIRInitializedUserClassTypeExpression initializedClassExpr
+                && initializedClassExpr.ClassScope.Name.StartsWith("ClassExpression_", StringComparison.Ordinal);
 
             var previousPendingAnonymousClassName = _pendingAnonymousClassExpressionInferredName;
             if (shouldSetPendingAnonymousClassName)
