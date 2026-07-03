@@ -48,7 +48,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2273
+			// Method begins at RVA 0x2272
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -285,7 +285,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 275 (0x113)
+		// Code size: 274 (0x112)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Basic/Scope,
@@ -385,12 +385,11 @@
 		IL_00fa: ldstr "Log"
 		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_0104: pop
-		IL_0105: ldloc.0
-		IL_0106: castclass Modules.CommonJS_Require_Basic/Scope
-		IL_010b: ldnull
-		IL_010c: call object Modules.CommonJS_Require_Basic/commonFunctionName::__js_call__(class Modules.CommonJS_Require_Basic/Scope, object)
-		IL_0111: pop
-		IL_0112: ret
+		IL_0105: ldloc.1
+		IL_0106: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0110: pop
+		IL_0111: ret
 	} // end of method CommonJS_Require_Basic::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Basic
@@ -677,7 +676,7 @@
 	{
 		// Method begins at RVA 0x2170
 		// Header size: 12
-		// Code size: 247 (0xf7)
+		// Code size: 246 (0xf6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Dependency/Scope,
@@ -769,12 +768,11 @@
 		IL_00de: ldstr "Log"
 		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_00e8: pop
-		IL_00e9: ldloc.0
-		IL_00ea: castclass Modules.CommonJS_Require_Dependency/Scope
-		IL_00ef: ldnull
-		IL_00f0: call object Modules.CommonJS_Require_Dependency/commonFunctionName::__js_call__(class Modules.CommonJS_Require_Dependency/Scope, object)
-		IL_00f5: pop
-		IL_00f6: ret
+		IL_00e9: ldloc.1
+		IL_00ea: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00f4: pop
+		IL_00f5: ret
 	} // end of method CommonJS_Require_Dependency::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Dependency

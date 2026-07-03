@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x227a
+					// Method begins at RVA 0x227e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2283
+					// Method begins at RVA 0x2287
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2271
+				// Method begins at RVA 0x2275
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,7 +88,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2158
 			// Header size: 12
 			// Code size: 247 (0xf7)
 			.maxstack 8
@@ -230,7 +230,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2268
+			// Method begins at RVA 0x226c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -256,13 +256,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 247 (0xf7)
+		// Code size: 251 (0xfb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_Repeat_Basic/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.String_Repeat_Basic/Scope::.ctor()
@@ -287,58 +287,62 @@
 		IL_0030: stloc.2
 		IL_0031: ldloc.2
 		IL_0032: stloc.1
-		IL_0033: ldloc.0
-		IL_0034: castclass Modules.String_Repeat_Basic/Scope
-		IL_0039: ldnull
-		IL_003a: ldstr "ab"
-		IL_003f: ldc.r8 3
-		IL_0048: box [System.Runtime]System.Double
-		IL_004d: call object Modules.String_Repeat_Basic/logRepeat::__js_call__(class Modules.String_Repeat_Basic/Scope, object, object, object)
-		IL_0052: pop
-		IL_0053: ldloc.0
-		IL_0054: castclass Modules.String_Repeat_Basic/Scope
-		IL_0059: ldnull
-		IL_005a: ldstr "x"
-		IL_005f: ldc.r8 0.0
-		IL_0068: box [System.Runtime]System.Double
-		IL_006d: call object Modules.String_Repeat_Basic/logRepeat::__js_call__(class Modules.String_Repeat_Basic/Scope, object, object, object)
-		IL_0072: pop
-		IL_0073: ldloc.0
-		IL_0074: castclass Modules.String_Repeat_Basic/Scope
-		IL_0079: ldnull
-		IL_007a: ldstr "x"
-		IL_007f: ldc.r8 1
-		IL_0088: box [System.Runtime]System.Double
-		IL_008d: call object Modules.String_Repeat_Basic/logRepeat::__js_call__(class Modules.String_Repeat_Basic/Scope, object, object, object)
-		IL_0092: pop
-		IL_0093: ldloc.0
-		IL_0094: castclass Modules.String_Repeat_Basic/Scope
-		IL_0099: ldnull
-		IL_009a: ldstr "x"
-		IL_009f: ldc.r8 2.9
-		IL_00a8: box [System.Runtime]System.Double
-		IL_00ad: call object Modules.String_Repeat_Basic/logRepeat::__js_call__(class Modules.String_Repeat_Basic/Scope, object, object, object)
-		IL_00b2: pop
-		IL_00b3: ldc.r8 1
-		IL_00bc: neg
-		IL_00bd: box [System.Runtime]System.Double
-		IL_00c2: stloc.3
-		IL_00c3: ldloc.0
-		IL_00c4: castclass Modules.String_Repeat_Basic/Scope
-		IL_00c9: ldnull
-		IL_00ca: ldstr "x"
-		IL_00cf: ldloc.3
-		IL_00d0: call object Modules.String_Repeat_Basic/logRepeat::__js_call__(class Modules.String_Repeat_Basic/Scope, object, object, object)
-		IL_00d5: pop
-		IL_00d6: ldloc.0
-		IL_00d7: castclass Modules.String_Repeat_Basic/Scope
-		IL_00dc: ldnull
-		IL_00dd: ldstr "x"
-		IL_00e2: ldc.r8 (00 00 00 00 00 00 F0 7F)
-		IL_00eb: box [System.Runtime]System.Double
-		IL_00f0: call object Modules.String_Repeat_Basic/logRepeat::__js_call__(class Modules.String_Repeat_Basic/Scope, object, object, object)
-		IL_00f5: pop
-		IL_00f6: ret
+		IL_0033: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0038: stloc.3
+		IL_0039: ldloc.1
+		IL_003a: ldloc.3
+		IL_003b: ldstr "ab"
+		IL_0040: ldc.r8 3
+		IL_0049: box [System.Runtime]System.Double
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0053: pop
+		IL_0054: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0059: stloc.3
+		IL_005a: ldloc.1
+		IL_005b: ldloc.3
+		IL_005c: ldstr "x"
+		IL_0061: ldc.r8 0.0
+		IL_006a: box [System.Runtime]System.Double
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0074: pop
+		IL_0075: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_007a: stloc.3
+		IL_007b: ldloc.1
+		IL_007c: ldloc.3
+		IL_007d: ldstr "x"
+		IL_0082: ldc.r8 1
+		IL_008b: box [System.Runtime]System.Double
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0095: pop
+		IL_0096: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_009b: stloc.3
+		IL_009c: ldloc.1
+		IL_009d: ldloc.3
+		IL_009e: ldstr "x"
+		IL_00a3: ldc.r8 2.9
+		IL_00ac: box [System.Runtime]System.Double
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00b6: pop
+		IL_00b7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00bc: stloc.3
+		IL_00bd: ldloc.1
+		IL_00be: ldloc.3
+		IL_00bf: ldstr "x"
+		IL_00c4: ldc.r8 1
+		IL_00cd: neg
+		IL_00ce: box [System.Runtime]System.Double
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00d8: pop
+		IL_00d9: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00de: stloc.3
+		IL_00df: ldloc.1
+		IL_00e0: ldloc.3
+		IL_00e1: ldstr "x"
+		IL_00e6: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_00ef: box [System.Runtime]System.Double
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00f9: pop
+		IL_00fa: ret
 	} // end of method String_Repeat_Basic::__js_module_init__
 
 } // end of class Modules.String_Repeat_Basic
@@ -350,7 +354,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x228c
+		// Method begins at RVA 0x2290
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
