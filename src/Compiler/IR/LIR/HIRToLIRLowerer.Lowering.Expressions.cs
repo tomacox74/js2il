@@ -849,6 +849,27 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+                {
+                    var classTypeTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, classTypeTemp));
+                    DefineTempStorage(classTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+                    var inferredNameTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                    DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                    var namedClassTypeTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                        Arguments: new[] { EnsureObject(classTypeTemp), EnsureObject(inferredNameTemp) },
+                        Result: namedClassTypeTemp));
+                    DefineTempStorage(namedClassTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    SetTempVariableSlot(
+                        namedClassTypeTemp,
+                        CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                }
+
                 foreach (var initStatement in initializedUserClassType.InitializationStatements)
                 {
                     if (!TryLowerStatement(initStatement))
@@ -860,6 +881,20 @@ public sealed partial class HIRToLIRLowerer
 
                 if (TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out resultTempVar))
                 {
+                    if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+                    {
+                        var inferredNameTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                        DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                        var namedClassConstructorTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                            MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                            Arguments: new[] { EnsureObject(resultTempVar), EnsureObject(inferredNameTemp) },
+                            Result: namedClassConstructorTemp));
+                        DefineTempStorage(namedClassConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        resultTempVar = namedClassConstructorTemp;
+                    }
                     return true;
                 }
                 // Fall through: TryLowerClassConstructorValue failed (e.g., caller has no parent scopes).
@@ -931,9 +966,45 @@ public sealed partial class HIRToLIRLowerer
         _activeScopeTempsByScopeName[classScopeName] = classScopeTemp;
         try
         {
+            if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+            {
+                var classTypeTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, classTypeTemp));
+                DefineTempStorage(classTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+                var inferredNameTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var namedClassTypeTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                    Arguments: new[] { EnsureObject(classTypeTemp), EnsureObject(inferredNameTemp) },
+                    Result: namedClassTypeTemp));
+                DefineTempStorage(namedClassTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                SetTempVariableSlot(
+                    namedClassTypeTemp,
+                    CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+            }
+
             if (!TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
             {
                 return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+            {
+                var inferredNameTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var namedClassConstructorTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                    Arguments: new[] { EnsureObject(classConstructorValue), EnsureObject(inferredNameTemp) },
+                    Result: namedClassConstructorTemp));
+                DefineTempStorage(namedClassConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                classConstructorValue = namedClassConstructorTemp;
             }
 
             for (var index = 0; index < initializedUserClassType.InitializationStatements.Count; index++)

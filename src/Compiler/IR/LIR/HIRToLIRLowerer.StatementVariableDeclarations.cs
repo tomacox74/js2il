@@ -61,10 +61,26 @@ public sealed partial class HIRToLIRLowerer
 
         if (exprStmt.Initializer != null)
         {
-            if (!TryLowerExpression(exprStmt.Initializer, out value))
+            var shouldSetPendingAnonymousClassName =
+                exprStmt.Initializer is HIRInitializedUserClassTypeExpression;
+
+            var previousPendingAnonymousClassName = _pendingAnonymousClassExpressionInferredName;
+            if (shouldSetPendingAnonymousClassName)
             {
-                IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
-                return false;
+                _pendingAnonymousClassExpressionInferredName = exprStmt.Name.Name;
+            }
+
+            try
+            {
+                if (!TryLowerExpression(exprStmt.Initializer, out value))
+                {
+                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
+                    return false;
+                }
+            }
+            finally
+            {
+                _pendingAnonymousClassExpressionInferredName = previousPendingAnonymousClassName;
             }
 
             if (!TryApplyInferredNameToDeclarationValue(exprStmt, value, out value))
