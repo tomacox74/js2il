@@ -637,6 +637,7 @@ public sealed partial class HIRToLIRLowerer
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                    resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                     _tempBindingOrigin[resultTempVar] = binding;
                                     return true;
                                 }
@@ -650,6 +651,7 @@ public sealed partial class HIRToLIRLowerer
                                     var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                                     _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                    resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                     _tempBindingOrigin[resultTempVar] = binding;
                                     return true;
                                 }
@@ -704,6 +706,7 @@ public sealed partial class HIRToLIRLowerer
                                 resultTempVar = CreateTempVariable();
                                 _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
                                 DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                 _tempBindingOrigin[resultTempVar] = binding;
                                 _variableMap[binding] = resultTempVar;
                                 return true;
@@ -1021,6 +1024,8 @@ public sealed partial class HIRToLIRLowerer
             resultTempVar = EmitMarkUndefinedPrototype(resultTempVar);
         }
 
+        resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
+
         return true;
     }
 
@@ -1051,6 +1056,8 @@ public sealed partial class HIRToLIRLowerer
             IsAsync: arrowScope.IsAsync,
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
         return true;
     }
 
