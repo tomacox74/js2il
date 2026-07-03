@@ -569,6 +569,11 @@ public sealed partial class HIRToLIRLowerer
 
         ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
         {
+            if (b.Kind == BindingKind.Var)
+            {
+                return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+            }
+
             // Only propagate unboxed doubles for stable types. This matches the current
             // typed-scope-field support in TypeGenerator/VariableRegistry.
             if (b.IsStableType && b.ClrType == typeof(double))

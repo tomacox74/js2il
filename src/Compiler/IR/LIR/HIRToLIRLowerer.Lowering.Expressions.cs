@@ -471,6 +471,13 @@ public sealed partial class HIRToLIRLowerer
                         return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
                     }
 
+                    // var bindings can be observed as `undefined` before their initializer runs.
+                    // Keep reads boxed to preserve that state shape across all control-flow paths.
+                    if (b.Kind == BindingKind.Var)
+                    {
+                        return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                    }
+
                     if (b.RequiresRuntimeTemporalDeadZoneChecks)
                     {
                         return new ValueStorage(ValueStorageKind.Reference, typeof(object));
