@@ -95,12 +95,13 @@
 			)
 			// Method begins at RVA 0x2158
 			// Header size: 12
-			// Code size: 130 (0x82)
+			// Code size: 132 (0x84)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Call_Spread_EvaluationOrder/dump/Scope,
 				[1] float64,
-				[2] class Modules.Function_Call_Spread_EvaluationOrder/dump/Scope_For_L5C9/Block_L5C47
+				[2] class Modules.Function_Call_Spread_EvaluationOrder/dump/Scope_For_L5C9/Block_L5C47,
+				[3] float64
 			)
 
 			IL_0000: newobj instance void Modules.Function_Call_Spread_EvaluationOrder/dump/Scope::.ctor()
@@ -123,31 +124,33 @@
 			IL_0039: stloc.1
 			// loop start (head: IL_003a)
 				IL_003a: ldloc.1
-				IL_003b: ldloc.0
-				IL_003c: ldfld object Modules.Function_Call_Spread_EvaluationOrder/dump/Scope::arguments
-				IL_0041: ldstr "length"
-				IL_0046: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_004b: clt
-				IL_004d: brfalse IL_0080
+				IL_003b: stloc.3
+				IL_003c: ldloc.3
+				IL_003d: ldloc.0
+				IL_003e: ldfld object Modules.Function_Call_Spread_EvaluationOrder/dump/Scope::arguments
+				IL_0043: ldstr "length"
+				IL_0048: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_004d: clt
+				IL_004f: brfalse IL_0082
 
-				IL_0052: newobj instance void Modules.Function_Call_Spread_EvaluationOrder/dump/Scope_For_L5C9/Block_L5C47::.ctor()
-				IL_0057: stloc.2
-				IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_005d: ldloc.0
-				IL_005e: ldfld object Modules.Function_Call_Spread_EvaluationOrder/dump/Scope::arguments
-				IL_0063: ldloc.1
-				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_006e: pop
-				IL_006f: ldloc.1
-				IL_0070: ldc.r8 1
-				IL_0079: add
-				IL_007a: stloc.1
-				IL_007b: br IL_003a
+				IL_0054: newobj instance void Modules.Function_Call_Spread_EvaluationOrder/dump/Scope_For_L5C9/Block_L5C47::.ctor()
+				IL_0059: stloc.2
+				IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_005f: ldloc.0
+				IL_0060: ldfld object Modules.Function_Call_Spread_EvaluationOrder/dump/Scope::arguments
+				IL_0065: ldloc.1
+				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+				IL_0070: pop
+				IL_0071: ldloc.1
+				IL_0072: ldc.r8 1
+				IL_007b: add
+				IL_007c: stloc.1
+				IL_007d: br IL_003a
 			// end loop
 
-			IL_0080: ldnull
-			IL_0081: ret
+			IL_0082: ldnull
+			IL_0083: ret
 		} // end of method dump::__js_call__
 
 	} // end of class dump

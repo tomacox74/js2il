@@ -30,11 +30,12 @@ public abstract class HIRObjectMember
 /// </summary>
 public sealed class HIRObjectProperty : HIRObjectMember
 {
-    public HIRObjectProperty(string key, HIRExpression value, bool isPrototypeMutation = false)
+    public HIRObjectProperty(string key, HIRExpression value, bool isPrototypeMutation = false, bool isMethodDefinition = false)
     {
         Key = key;
         Value = value;
         IsPrototypeMutation = isPrototypeMutation;
+        IsMethodDefinition = isMethodDefinition;
     }
 
     /// <summary>
@@ -48,6 +49,8 @@ public sealed class HIRObjectProperty : HIRObjectMember
     public HIRExpression Value { get; init; }
 
     public bool IsPrototypeMutation { get; init; }
+
+    public bool IsMethodDefinition { get; init; }
 }
 
 /// <summary>
@@ -55,14 +58,16 @@ public sealed class HIRObjectProperty : HIRObjectMember
 /// </summary>
 public sealed class HIRObjectComputedProperty : HIRObjectMember
 {
-    public HIRObjectComputedProperty(HIRExpression keyExpression, HIRExpression value)
+    public HIRObjectComputedProperty(HIRExpression keyExpression, HIRExpression value, bool isMethodDefinition = false)
     {
         KeyExpression = keyExpression;
         Value = value;
+        IsMethodDefinition = isMethodDefinition;
     }
 
     public HIRExpression KeyExpression { get; init; }
     public HIRExpression Value { get; init; }
+    public bool IsMethodDefinition { get; init; }
 }
 
 /// <summary>

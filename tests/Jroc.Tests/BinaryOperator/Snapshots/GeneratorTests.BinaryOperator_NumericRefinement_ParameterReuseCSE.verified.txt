@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2139
+				// Method begins at RVA 0x213f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,12 +44,13 @@
 			)
 			// Method begins at RVA 0x20f8
 			// Header size: 12
-			// Code size: 44 (0x2c)
+			// Code size: 50 (0x32)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] float64
+				[2] float64,
+				[3] object
 			)
 
 			IL_0000: ldarg.1
@@ -72,10 +73,16 @@
 			IL_0021: ldloc.2
 			IL_0022: stloc.1
 			IL_0023: ldloc.0
-			IL_0024: ldloc.1
-			IL_0025: add
-			IL_0026: box [System.Runtime]System.Double
-			IL_002b: ret
+			IL_0024: stloc.2
+			IL_0025: ldloc.2
+			IL_0026: ldloc.1
+			IL_0027: add
+			IL_0028: stloc.2
+			IL_0029: ldloc.2
+			IL_002a: box [System.Runtime]System.Double
+			IL_002f: stloc.3
+			IL_0030: ldloc.3
+			IL_0031: ret
 		} // end of method bitwiseParamTwice::__js_call__
 
 	} // end of class bitwiseParamTwice
@@ -95,7 +102,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2130
+			// Method begins at RVA 0x2136
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -192,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2142
+		// Method begins at RVA 0x2148
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

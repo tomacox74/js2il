@@ -1,4 +1,4 @@
-// IL code: Stream_Writable_CustomWrite
+﻿// IL code: Stream_Writable_CustomWrite
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2203
+				// Method begins at RVA 0x222f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,23 +45,37 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x21d9
-			// Header size: 1
-			// Code size: 32 (0x20)
+			// Method begins at RVA 0x21e0
+			// Header size: 12
+			// Code size: 58 (0x3a)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[1] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
-			IL_0006: ldarg.2
-			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_000c: pop
-			IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0012: ldstr "_write called with:"
-			IL_0017: ldarg.2
-			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_001d: pop
-			IL_001e: ldnull
-			IL_001f: ret
+			IL_0006: stloc.0
+			IL_0007: ldstr "writtenData"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.1
+			IL_001a: ldloc.1
+			IL_001b: ldstr "push"
+			IL_0020: ldarg.2
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0026: pop
+			IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_002c: ldstr "_write called with:"
+			IL_0031: ldarg.2
+			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0037: pop
+			IL_0038: ldnull
+			IL_0039: ret
 		} // end of method FunctionExpression_L11C18::__js_call__
 
 	} // end of class FunctionExpression_L11C18
@@ -81,7 +95,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21fa
+			// Method begins at RVA 0x2226
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -105,7 +119,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2215
+				// Method begins at RVA 0x2241
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -123,7 +137,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x220c
+			// Method begins at RVA 0x2238
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -149,7 +163,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 381 (0x17d)
+		// Code size: 385 (0x181)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Writable_CustomWrite/Scope,
@@ -159,9 +173,9 @@
 			[4] object,
 			[5] class Modules.Stream_Writable_CustomWrite/Scope_For_L22C5/Block_L22C45,
 			[6] object,
-			[7] float64,
+			[7] object,
 			[8] float64,
-			[9] object,
+			[9] float64,
 			[10] object
 		)
 
@@ -248,53 +262,55 @@
 		IL_00ed: box [System.Runtime]System.Double
 		IL_00f2: stloc.s 4
 		// loop start (head: IL_00f4)
-			IL_00f4: ldloc.0
-			IL_00f5: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
-			IL_00fa: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_00ff: conv.r8
-			IL_0100: stloc.s 7
-			IL_0102: ldloc.s 4
-			IL_0104: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0109: stloc.s 8
-			IL_010b: ldloc.s 8
-			IL_010d: ldloc.s 7
-			IL_010f: clt
-			IL_0111: brfalse IL_017c
+			IL_00f4: ldloc.s 4
+			IL_00f6: stloc.s 7
+			IL_00f8: ldloc.0
+			IL_00f9: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
+			IL_00fe: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_0103: conv.r8
+			IL_0104: stloc.s 8
+			IL_0106: ldloc.s 7
+			IL_0108: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_010d: stloc.s 9
+			IL_010f: ldloc.s 9
+			IL_0111: ldloc.s 8
+			IL_0113: clt
+			IL_0115: brfalse IL_0180
 
-			IL_0116: newobj instance void Modules.Stream_Writable_CustomWrite/Scope_For_L22C5/Block_L22C45::.ctor()
-			IL_011b: stloc.s 5
-			IL_011d: ldstr "Chunk "
-			IL_0122: ldloc.s 4
-			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0129: stloc.s 9
-			IL_012b: ldloc.s 9
-			IL_012d: ldstr ":"
-			IL_0132: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0137: stloc.s 9
-			IL_0139: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_013e: ldloc.s 9
-			IL_0140: ldloc.0
-			IL_0141: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
-			IL_0146: ldloc.s 4
-			IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_014d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0152: pop
-			IL_0153: ldloc.s 4
-			IL_0155: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_015a: stloc.s 7
-			IL_015c: ldloc.s 7
-			IL_015e: ldc.r8 1
-			IL_0167: add
-			IL_0168: stloc.s 7
-			IL_016a: ldloc.s 7
-			IL_016c: box [System.Runtime]System.Double
-			IL_0171: stloc.s 10
-			IL_0173: ldloc.s 10
-			IL_0175: stloc.s 4
-			IL_0177: br IL_00f4
+			IL_011a: newobj instance void Modules.Stream_Writable_CustomWrite/Scope_For_L22C5/Block_L22C45::.ctor()
+			IL_011f: stloc.s 5
+			IL_0121: ldstr "Chunk "
+			IL_0126: ldloc.s 4
+			IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_012d: stloc.s 10
+			IL_012f: ldloc.s 10
+			IL_0131: ldstr ":"
+			IL_0136: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_013b: stloc.s 10
+			IL_013d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0142: ldloc.s 10
+			IL_0144: ldloc.0
+			IL_0145: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Writable_CustomWrite/Scope::writtenData
+			IL_014a: ldloc.s 4
+			IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_0151: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+			IL_0156: pop
+			IL_0157: ldloc.s 4
+			IL_0159: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_015e: stloc.s 8
+			IL_0160: ldloc.s 8
+			IL_0162: ldc.r8 1
+			IL_016b: add
+			IL_016c: stloc.s 8
+			IL_016e: ldloc.s 8
+			IL_0170: box [System.Runtime]System.Double
+			IL_0175: stloc.s 7
+			IL_0177: ldloc.s 7
+			IL_0179: stloc.s 4
+			IL_017b: br IL_00f4
 		// end loop
 
-		IL_017c: ret
+		IL_0180: ret
 	} // end of method Stream_Writable_CustomWrite::__js_module_init__
 
 } // end of class Modules.Stream_Writable_CustomWrite
@@ -306,7 +322,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221e
+		// Method begins at RVA 0x224a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -569,6 +569,12 @@ public sealed partial class HIRToLIRLowerer
 
         ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
         {
+            if (b.Kind == BindingKind.Var
+                && !b.DeclaringScope.Parameters.Contains(b.Name))
+            {
+                return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+            }
+
             // Only propagate unboxed doubles for stable types. This matches the current
             // typed-scope-field support in TypeGenerator/VariableRegistry.
             if (b.IsStableType && b.ClrType == typeof(double))
@@ -618,6 +624,18 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        if (_scope?.HasParameterExpressions == true
+            && _currentDefaultParameterIndex is int currentDefaultParameterIndex
+            && _parameterIndexMap.TryGetValue(binding, out var referencedParameterIndex)
+            && referencedParameterIndex < currentDefaultParameterIndex)
+        {
+            result = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadParameter(referencedParameterIndex, result));
+            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _tempBindingOrigin[result] = binding;
+            return true;
+        }
+
         // Per-iteration environments: if this binding lives in an active materialized scope instance
         // (e.g., for-loop iteration scope), load from that scope temp.
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
@@ -625,6 +643,7 @@ public sealed partial class HIRToLIRLowerer
             result = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRLoadScopeField(activeScopeTemp, binding, activeFieldId, activeScopeId, result));
             DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
+            result = EmitResolveWithBindingOrDefault(binding, result);
             _tempBindingOrigin[result] = binding;
             return true;
         }
@@ -687,6 +706,7 @@ public sealed partial class HIRToLIRLowerer
                             result = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, result));
                             DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
+                            result = EmitResolveWithBindingOrDefault(binding, result);
                             _tempBindingOrigin[result] = binding;
                             return true;
                         }
@@ -703,6 +723,7 @@ public sealed partial class HIRToLIRLowerer
                             var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                             _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, result));
                             DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
+                            result = EmitResolveWithBindingOrDefault(binding, result);
                             _tempBindingOrigin[result] = binding;
                             return true;
                         }

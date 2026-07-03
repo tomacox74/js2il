@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a4
+				// Method begins at RVA 0x21ac
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b6
+					// Method begins at RVA 0x21be
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ad
+				// Method begins at RVA 0x21b5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -88,14 +88,16 @@
 			)
 			// Method begins at RVA 0x2124
 			// Header size: 12
-			// Code size: 107 (0x6b)
+			// Code size: 115 (0x73)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] float64,
 				[3] class Modules.Function_RestParameters_Basic/sum/Scope_For_L5C9/Block_L5C45,
-				[4] object
+				[4] float64,
+				[5] object,
+				[6] object
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -109,31 +111,35 @@
 			IL_002c: stloc.2
 			// loop start (head: IL_002d)
 				IL_002d: ldloc.2
-				IL_002e: ldloc.0
-				IL_002f: ldstr "length"
-				IL_0034: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0039: clt
-				IL_003b: brfalse IL_0069
+				IL_002e: stloc.s 4
+				IL_0030: ldloc.s 4
+				IL_0032: ldloc.0
+				IL_0033: ldstr "length"
+				IL_0038: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_003d: clt
+				IL_003f: brfalse IL_0071
 
-				IL_0040: newobj instance void Modules.Function_RestParameters_Basic/sum/Scope_For_L5C9/Block_L5C45::.ctor()
-				IL_0045: stloc.3
-				IL_0046: ldloc.1
-				IL_0047: ldloc.0
-				IL_0048: ldloc.2
-				IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0053: stloc.s 4
-				IL_0055: ldloc.s 4
-				IL_0057: stloc.1
-				IL_0058: ldloc.2
-				IL_0059: ldc.r8 1
-				IL_0062: add
-				IL_0063: stloc.2
-				IL_0064: br IL_002d
+				IL_0044: newobj instance void Modules.Function_RestParameters_Basic/sum/Scope_For_L5C9/Block_L5C45::.ctor()
+				IL_0049: stloc.3
+				IL_004a: ldloc.1
+				IL_004b: stloc.s 5
+				IL_004d: ldloc.s 5
+				IL_004f: ldloc.0
+				IL_0050: ldloc.2
+				IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_005b: stloc.s 6
+				IL_005d: ldloc.s 6
+				IL_005f: stloc.1
+				IL_0060: ldloc.2
+				IL_0061: ldc.r8 1
+				IL_006a: add
+				IL_006b: stloc.2
+				IL_006c: br IL_002d
 			// end loop
 
-			IL_0069: ldloc.1
-			IL_006a: ret
+			IL_0071: ldloc.1
+			IL_0072: ret
 		} // end of method sum::__js_call__
 
 	} // end of class sum
@@ -152,7 +158,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219b
+			// Method begins at RVA 0x21a3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -259,7 +265,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bf
+		// Method begins at RVA 0x21c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

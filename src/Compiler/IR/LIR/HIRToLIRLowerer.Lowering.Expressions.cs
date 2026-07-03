@@ -471,6 +471,14 @@ public sealed partial class HIRToLIRLowerer
                         return new ValueStorage(ValueStorageKind.Reference, typeof(global::JavaScriptRuntime.CommonJS.RequireDelegate));
                     }
 
+                    // var bindings can be observed as `undefined` before their initializer runs.
+                    // Keep reads boxed to preserve that state shape across all control-flow paths.
+                    if (b.Kind == BindingKind.Var
+                        && !b.DeclaringScope.Parameters.Contains(b.Name))
+                    {
+                        return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                    }
+
                     if (b.RequiresRuntimeTemporalDeadZoneChecks)
                     {
                         return new ValueStorage(ValueStorageKind.Reference, typeof(object));
@@ -540,6 +548,18 @@ public sealed partial class HIRToLIRLowerer
                 if (IsParameterTemporallyUninitialized(binding))
                 {
                     resultTempVar = EmitTemporalDeadZoneReferenceError(binding);
+                    return true;
+                }
+
+                if (_scope?.HasParameterExpressions == true
+                    && _currentDefaultParameterIndex is int currentDefaultParameterIndex
+                    && _parameterIndexMap.TryGetValue(binding, out var referencedParameterIndex)
+                    && referencedParameterIndex < currentDefaultParameterIndex)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRLoadParameter(referencedParameterIndex, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    _tempBindingOrigin[resultTempVar] = binding;
                     return true;
                 }
 
@@ -637,6 +657,7 @@ public sealed partial class HIRToLIRLowerer
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                    resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                     _tempBindingOrigin[resultTempVar] = binding;
                                     return true;
                                 }
@@ -650,6 +671,7 @@ public sealed partial class HIRToLIRLowerer
                                     var parentIndex = AdjustParentScopeFieldIndexForCurrentMethod(storage.ParentScopeIndex);
                                     _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, parentIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                    resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                     _tempBindingOrigin[resultTempVar] = binding;
                                     return true;
                                 }
@@ -704,6 +726,7 @@ public sealed partial class HIRToLIRLowerer
                                 resultTempVar = CreateTempVariable();
                                 _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
                                 DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
+                                resultTempVar = EmitResolveWithBindingOrDefault(binding, resultTempVar);
                                 _tempBindingOrigin[resultTempVar] = binding;
                                 _variableMap[binding] = resultTempVar;
                                 return true;
@@ -826,6 +849,28 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)
+                    && initializedUserClassType.InitializationStatements.Count > 0)
+                {
+                    var classTypeTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, classTypeTemp));
+                    DefineTempStorage(classTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+                    var inferredNameTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                    DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                    var namedClassTypeTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                        MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                        Arguments: new[] { EnsureObject(classTypeTemp), EnsureObject(inferredNameTemp) },
+                        Result: namedClassTypeTemp));
+                    DefineTempStorage(namedClassTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    SetTempVariableSlot(
+                        namedClassTypeTemp,
+                        CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+                }
+
                 foreach (var initStatement in initializedUserClassType.InitializationStatements)
                 {
                     if (!TryLowerStatement(initStatement))
@@ -837,6 +882,21 @@ public sealed partial class HIRToLIRLowerer
 
                 if (TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out resultTempVar))
                 {
+                    if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName)
+                        && initializedUserClassType.InitializationStatements.Count > 0)
+                    {
+                        var inferredNameTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                        DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                        var namedClassConstructorTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                            MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                            Arguments: new[] { EnsureObject(resultTempVar), EnsureObject(inferredNameTemp) },
+                            Result: namedClassConstructorTemp));
+                        DefineTempStorage(namedClassConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        resultTempVar = namedClassConstructorTemp;
+                    }
                     return true;
                 }
                 // Fall through: TryLowerClassConstructorValue failed (e.g., caller has no parent scopes).
@@ -908,9 +968,45 @@ public sealed partial class HIRToLIRLowerer
         _activeScopeTempsByScopeName[classScopeName] = classScopeTemp;
         try
         {
+            if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+            {
+                var classTypeTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRGetUserClassType(initializedUserClassType.RegistryClassName, classTypeTemp));
+                DefineTempStorage(classTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(Type)));
+
+                var inferredNameTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var namedClassTypeTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                    Arguments: new[] { EnsureObject(classTypeTemp), EnsureObject(inferredNameTemp) },
+                    Result: namedClassTypeTemp));
+                DefineTempStorage(namedClassTypeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                SetTempVariableSlot(
+                    namedClassTypeTemp,
+                    CreateAnonymousVariableSlot("$anon_class_type_with_inferred_name", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+            }
+
             if (!TryLowerClassConstructorValue(initializedUserClassType.RegistryClassName, initializedUserClassType.ClassScope, out var classConstructorValue))
             {
                 return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(_pendingAnonymousClassExpressionInferredName))
+            {
+                var inferredNameTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(_pendingAnonymousClassExpressionInferredName, inferredNameTemp));
+                DefineTempStorage(inferredNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var namedClassConstructorTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCallRuntimeServicesStatic(
+                    MethodName: nameof(JavaScriptRuntime.RuntimeServices.SetClassConstructorInferredName),
+                    Arguments: new[] { EnsureObject(classConstructorValue), EnsureObject(inferredNameTemp) },
+                    Result: namedClassConstructorTemp));
+                DefineTempStorage(namedClassConstructorTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                classConstructorValue = namedClassConstructorTemp;
             }
 
             for (var index = 0; index < initializedUserClassType.InitializationStatements.Count; index++)
@@ -1015,6 +1111,14 @@ public sealed partial class HIRToLIRLowerer
             IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator,
             IsAsync: funcScope.IsAsync));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (funcExpr.IsNonConstructible)
+        {
+            resultTempVar = EmitMarkUndefinedPrototype(resultTempVar);
+        }
+
+        resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
+
         return true;
     }
 
@@ -1045,6 +1149,8 @@ public sealed partial class HIRToLIRLowerer
             IsAsync: arrowScope.IsAsync,
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
         return true;
     }
 

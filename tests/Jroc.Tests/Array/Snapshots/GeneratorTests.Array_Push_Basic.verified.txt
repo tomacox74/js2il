@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2166
+				// Method begins at RVA 0x2192
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215d
+			// Method begins at RVA 0x2189
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,15 +62,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 257 (0x101)
+		// Code size: 301 (0x12d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Push_Basic/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] float64,
+			[2] object,
 			[3] class Modules.Array_Push_Basic/Scope/Block_L7C37,
 			[4] float64,
-			[5] object
+			[5] object,
+			[6] float64
 		)
 
 		IL_0000: newobj instance void Modules.Array_Push_Basic/Scope::.ctor()
@@ -128,31 +129,47 @@
 		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
 		IL_00bd: pop
 		IL_00be: ldc.r8 0.0
-		IL_00c7: stloc.2
-		// loop start (head: IL_00c8)
-			IL_00c8: ldloc.2
-			IL_00c9: ldloc.1
-			IL_00ca: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_00cf: conv.r8
-			IL_00d0: clt
-			IL_00d2: brfalse IL_0100
+		IL_00c7: box [System.Runtime]System.Double
+		IL_00cc: stloc.2
+		// loop start (head: IL_00cd)
+			IL_00cd: ldloc.2
+			IL_00ce: stloc.s 5
+			IL_00d0: ldloc.1
+			IL_00d1: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_00d6: conv.r8
+			IL_00d7: stloc.s 4
+			IL_00d9: ldloc.s 5
+			IL_00db: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00e0: stloc.s 6
+			IL_00e2: ldloc.s 6
+			IL_00e4: ldloc.s 4
+			IL_00e6: clt
+			IL_00e8: brfalse IL_012c
 
-			IL_00d7: newobj instance void Modules.Array_Push_Basic/Scope/Block_L7C37::.ctor()
-			IL_00dc: stloc.3
-			IL_00dd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00e2: ldloc.1
-			IL_00e3: ldloc.2
-			IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00ee: pop
-			IL_00ef: ldloc.2
-			IL_00f0: ldc.r8 1
-			IL_00f9: add
-			IL_00fa: stloc.2
-			IL_00fb: br IL_00c8
+			IL_00ed: newobj instance void Modules.Array_Push_Basic/Scope/Block_L7C37::.ctor()
+			IL_00f2: stloc.3
+			IL_00f3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00f8: ldloc.1
+			IL_00f9: ldloc.2
+			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_00ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0104: pop
+			IL_0105: ldloc.2
+			IL_0106: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_010b: stloc.s 4
+			IL_010d: ldloc.s 4
+			IL_010f: ldc.r8 1
+			IL_0118: add
+			IL_0119: stloc.s 4
+			IL_011b: ldloc.s 4
+			IL_011d: box [System.Runtime]System.Double
+			IL_0122: stloc.s 5
+			IL_0124: ldloc.s 5
+			IL_0126: stloc.2
+			IL_0127: br IL_00cd
 		// end loop
 
-		IL_0100: ret
+		IL_012c: ret
 	} // end of method Array_Push_Basic::__js_module_init__
 
 } // end of class Modules.Array_Push_Basic
@@ -164,7 +181,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216f
+		// Method begins at RVA 0x219b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

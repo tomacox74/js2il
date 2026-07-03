@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2140
+				// Method begins at RVA 0x2148
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,13 +44,14 @@
 			)
 			// Method begins at RVA 0x20f0
 			// Header size: 12
-			// Code size: 59 (0x3b)
+			// Code size: 67 (0x43)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
 				[2] float64,
-				[3] float64
+				[3] float64,
+				[4] object
 			)
 
 			IL_0000: ldarg.1
@@ -79,10 +80,16 @@
 			IL_0030: ldloc.2
 			IL_0031: stloc.1
 			IL_0032: ldloc.0
-			IL_0033: ldloc.1
-			IL_0034: add
-			IL_0035: box [System.Runtime]System.Double
-			IL_003a: ret
+			IL_0033: stloc.2
+			IL_0034: ldloc.2
+			IL_0035: ldloc.1
+			IL_0036: add
+			IL_0037: stloc.2
+			IL_0038: ldloc.2
+			IL_0039: box [System.Runtime]System.Double
+			IL_003e: stloc.s 4
+			IL_0040: ldloc.s 4
+			IL_0042: ret
 		} // end of method numberAssignmentRefinement::__js_call__
 
 	} // end of class numberAssignmentRefinement
@@ -104,7 +111,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2137
+			// Method begins at RVA 0x213f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -200,7 +207,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2149
+		// Method begins at RVA 0x2151
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
