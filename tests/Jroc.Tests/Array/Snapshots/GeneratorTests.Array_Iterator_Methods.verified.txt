@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x26d9
+						// Method begins at RVA 0x26e7
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x26d0
+					// Method begins at RVA 0x26de
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -70,11 +70,12 @@
 				)
 				// Method begins at RVA 0x2640
 				// Header size: 12
-				// Code size: 114 (0x72)
+				// Code size: 128 (0x80)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Array_Iterator_Methods/FunctionExpression_L41C30/FunctionExpression_L44C10/Scope/Block_L45C16,
-					[1] bool
+					[1] object,
+					[2] bool
 				)
 
 				IL_0000: ldarg.0
@@ -82,41 +83,47 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope
 				IL_0008: ldfld object Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope::used
-				IL_000d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0012: stloc.1
+				IL_000d: stloc.1
+				IL_000e: ldstr "used"
 				IL_0013: ldloc.1
-				IL_0014: brfalse IL_003d
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0019: stloc.1
+				IL_001a: ldloc.1
+				IL_001b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0020: stloc.2
+				IL_0021: ldloc.2
+				IL_0022: brfalse IL_004b
 
-				IL_0019: newobj instance void Modules.Array_Iterator_Methods/FunctionExpression_L41C30/FunctionExpression_L44C10/Scope/Block_L45C16::.ctor()
-				IL_001e: stloc.0
-				IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0024: dup
-				IL_0025: ldstr "value"
-				IL_002a: ldnull
-				IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0030: dup
-				IL_0031: ldstr "done"
-				IL_0036: ldc.i4.1
-				IL_0037: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_003c: ret
+				IL_0027: newobj instance void Modules.Array_Iterator_Methods/FunctionExpression_L41C30/FunctionExpression_L44C10/Scope/Block_L45C16::.ctor()
+				IL_002c: stloc.0
+				IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0032: dup
+				IL_0033: ldstr "value"
+				IL_0038: ldnull
+				IL_0039: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_003e: dup
+				IL_003f: ldstr "done"
+				IL_0044: ldc.i4.1
+				IL_0045: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_004a: ret
 
-				IL_003d: ldarg.0
-				IL_003e: ldc.i4.1
-				IL_003f: ldelem.ref
-				IL_0040: castclass Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope
-				IL_0045: ldc.i4.1
-				IL_0046: box [System.Runtime]System.Boolean
-				IL_004b: stfld object Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope::used
-				IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0055: dup
-				IL_0056: ldstr "value"
-				IL_005b: ldstr "override"
-				IL_0060: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0065: dup
-				IL_0066: ldstr "done"
-				IL_006b: ldc.i4.0
-				IL_006c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_0071: ret
+				IL_004b: ldarg.0
+				IL_004c: ldc.i4.1
+				IL_004d: ldelem.ref
+				IL_004e: castclass Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope
+				IL_0053: ldc.i4.1
+				IL_0054: box [System.Runtime]System.Boolean
+				IL_0059: stfld object Modules.Array_Iterator_Methods/FunctionExpression_L41C30/Scope::used
+				IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_0063: dup
+				IL_0064: ldstr "value"
+				IL_0069: ldstr "override"
+				IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0073: dup
+				IL_0074: ldstr "done"
+				IL_0079: ldc.i4.0
+				IL_007a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_007f: ret
 			} // end of method FunctionExpression_L44C10::__js_call__
 
 		} // end of class FunctionExpression_L44C10
@@ -135,7 +142,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26c7
+				// Method begins at RVA 0x26d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -215,7 +222,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x26be
+			// Method begins at RVA 0x26cc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -239,7 +246,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x26eb
+				// Method begins at RVA 0x26f9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -257,7 +264,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x26e2
+			// Method begins at RVA 0x26f0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -738,7 +745,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x26f4
+		// Method begins at RVA 0x2702
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
