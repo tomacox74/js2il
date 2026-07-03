@@ -473,7 +473,8 @@ public sealed partial class HIRToLIRLowerer
 
                     // var bindings can be observed as `undefined` before their initializer runs.
                     // Keep reads boxed to preserve that state shape across all control-flow paths.
-                    if (b.Kind == BindingKind.Var)
+                    if (b.Kind == BindingKind.Var
+                        && !b.DeclaringScope.Parameters.Contains(b.Name))
                     {
                         return new ValueStorage(ValueStorageKind.Reference, typeof(object));
                     }

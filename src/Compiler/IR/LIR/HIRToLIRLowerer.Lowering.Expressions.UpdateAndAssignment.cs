@@ -270,9 +270,10 @@ public sealed partial class HIRToLIRLowerer
         // into the stable variable slot at the update point so it survives the back-edge.
         // Relying on slot mapping alone can allow later materialization/stackification to elide the
         // store when source and destination share the same slot.
+        var slotValue = CoerceToVariableSlotStorage(slot, updatedTemp);
         var storeTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCopyTemp(updatedTemp, storeTemp));
-        DefineTempStorage(storeTemp, GetTempStorage(updatedTemp));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(slotValue, storeTemp));
+        DefineTempStorage(storeTemp, GetTempStorage(slotValue));
         SetTempVariableSlot(storeTemp, slot);
 
         _variableMap[updateBinding] = storeTemp;
