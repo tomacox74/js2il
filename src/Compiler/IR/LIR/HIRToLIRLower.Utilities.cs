@@ -45,6 +45,16 @@ public sealed partial class HIRToLIRLowerer
     /// </summary>
     private TempVariable EmitResolveWithBindingOrDefault(BindingInfo binding, TempVariable lexicalValueTemp)
     {
+        // Only reads of bindings captured from an outer scope can be shadowed by a
+        // creation-time `with` object. Current-scope locals/parameters must keep their
+        // lexical value and skip runtime with-resolution.
+        if (_scope is not null
+            && binding.DeclaringScope is not null
+            && ReferenceEquals(binding.DeclaringScope, _scope))
+        {
+            return lexicalValueTemp;
+        }
+
         var nameTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, nameTemp));
         DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));

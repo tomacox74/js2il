@@ -543,6 +543,18 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
+                if (_scope?.HasParameterExpressions == true
+                    && _currentDefaultParameterIndex is int currentDefaultParameterIndex
+                    && _parameterIndexMap.TryGetValue(binding, out var referencedParameterIndex)
+                    && referencedParameterIndex < currentDefaultParameterIndex)
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRLoadParameter(referencedParameterIndex, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    _tempBindingOrigin[resultTempVar] = binding;
+                    return true;
+                }
+
                 // Per-iteration environments: if this binding lives in an active materialized scope instance
                 // (e.g., `for (let/const ...)` loop-head scope), load directly from that scope field.
                 if (binding.Kind != BindingKind.Global
