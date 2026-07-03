@@ -1015,6 +1015,12 @@ public sealed partial class HIRToLIRLowerer
             IsAsyncGeneratorFunction: funcScope.IsAsync && funcScope.IsGenerator,
             IsAsync: funcScope.IsAsync));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        if (funcExpr.IsNonConstructible)
+        {
+            resultTempVar = EmitMarkUndefinedPrototype(resultTempVar);
+        }
+
         return true;
     }
 

@@ -973,7 +973,9 @@ class HIRMethodBuilder
             AstNode = funcExpr
         };
 
-        return new HIRFunctionExpression(callableId, functionScope);
+        var isNonConstructible = functionScope.AstNode is MethodDefinition methodDefinition
+            && ReferenceEquals(methodDefinition.Value, funcExpr);
+        return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
     }
 
     private bool IsCurrentClassHeritageFunctionExpression(FunctionExpression funcExpr)
@@ -3955,7 +3957,7 @@ class HIRMethodBuilder
                             {
                                 return false;
                             }
-                            objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, methodValueHir!));
+                            objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, methodValueHir!, isMethodDefinition: true));
                         }
                         else
                         {
@@ -3964,7 +3966,7 @@ class HIRMethodBuilder
                                 return false;
                             }
 
-                            objectMembers.Add(new HIRObjectProperty(methodName!, methodValueHir!));
+                            objectMembers.Add(new HIRObjectProperty(methodName!, methodValueHir!, isMethodDefinition: true));
                         }
 
                         continue;
@@ -4040,7 +4042,10 @@ class HIRMethodBuilder
                             return false;
                         }
 
-                        objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, computedValueExpr!));
+                        objectMembers.Add(new HIRObjectComputedProperty(
+                            keyExprHir!,
+                            computedValueExpr!,
+                            isMethodDefinition: objProp.Method));
                         continue;
                     }
 
@@ -4064,7 +4069,8 @@ class HIRMethodBuilder
                     objectMembers.Add(new HIRObjectProperty(
                         propName!,
                         valueExpr!,
-                        isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal)));
+                        isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal),
+                        isMethodDefinition: objProp.Method));
                 }
                 hirExpr = new HIRObjectExpression(objectMembers);
                 return true;

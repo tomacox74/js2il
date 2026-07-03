@@ -107,6 +107,11 @@ public sealed partial class HIRToLIRLowerer
                     return false;
                 }
 
+                if (prop.IsMethodDefinition)
+                {
+                    valueTemp = EmitMarkUndefinedPrototype(valueTemp);
+                }
+
                 properties.Add(new ObjectProperty(prop.Key, valueTemp));
             }
 
@@ -141,6 +146,11 @@ public sealed partial class HIRToLIRLowerer
                         return false;
                     }
 
+                    if (prop.IsMethodDefinition)
+                    {
+                        valueTemp = EmitMarkUndefinedPrototype(valueTemp);
+                    }
+
                     EnsureObjectTargetCreated();
                     if (prop.IsPrototypeMutation)
                     {
@@ -167,6 +177,11 @@ public sealed partial class HIRToLIRLowerer
                     if (!TryLowerExpression(computed.Value, out var valueTemp))
                     {
                         return false;
+                    }
+
+                    if (computed.IsMethodDefinition)
+                    {
+                        valueTemp = EmitMarkUndefinedPrototype(valueTemp);
                     }
 
                     EnsureObjectTargetCreated();
@@ -325,7 +340,12 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
-        return TryLowerExpression(accessorExpression, out accessorTemp);
-    }
+        if (!TryLowerExpression(accessorExpression, out accessorTemp))
+        {
+            return false;
+        }
 
+        accessorTemp = EmitMarkUndefinedPrototype(accessorTemp);
+        return true;
+    }
 }
