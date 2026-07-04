@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2120
+					// Method begins at RVA 0x217c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2117
+				// Method begins at RVA 0x2173
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210e
+			// Method begins at RVA 0x216a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -84,13 +84,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 178 (0xb2)
+		// Code size: 270 (0x10e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Switch_LabeledBreak/Scope,
 			[1] class Modules.ControlFlow_Switch_LabeledBreak/Scope/Block_L3C7,
 			[2] class Modules.ControlFlow_Switch_LabeledBreak/Scope/Block_L3C7/Switch_L4C2,
-			[3] bool
+			[3] bool,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Switch_LabeledBreak/Scope::.ctor()
@@ -115,32 +116,60 @@
 		IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_005b: stloc.3
 		IL_005c: ldloc.3
-		IL_005d: brtrue IL_007c
+		IL_005d: brtrue IL_0093
 
-		IL_0062: br IL_0091
+		IL_0062: br IL_00bf
 
-		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006c: ldstr "x"
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0076: pop
-		IL_0077: br IL_0091
+		IL_0067: ldstr "console"
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0071: stloc.s 4
+		IL_0073: ldloc.s 4
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007a: stloc.s 4
+		IL_007c: ldloc.s 4
+		IL_007e: ldstr "log"
+		IL_0083: ldstr "x"
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_008d: pop
+		IL_008e: br IL_00bf
 
-		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0081: ldstr "a"
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008b: pop
-		IL_008c: br IL_00a1
+		IL_0093: ldstr "console"
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009d: stloc.s 4
+		IL_009f: ldloc.s 4
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a6: stloc.s 4
+		IL_00a8: ldloc.s 4
+		IL_00aa: ldstr "log"
+		IL_00af: ldstr "a"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b9: pop
+		IL_00ba: br IL_00e6
 
-		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0096: ldstr "b"
-		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a0: pop
+		IL_00bf: ldstr "console"
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c9: stloc.s 4
+		IL_00cb: ldloc.s 4
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d2: stloc.s 4
+		IL_00d4: ldloc.s 4
+		IL_00d6: ldstr "log"
+		IL_00db: ldstr "b"
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e5: pop
 
-		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a6: ldstr "c"
-		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b0: pop
-		IL_00b1: ret
+		IL_00e6: ldstr "console"
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00f0: stloc.s 4
+		IL_00f2: ldloc.s 4
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f9: stloc.s 4
+		IL_00fb: ldloc.s 4
+		IL_00fd: ldstr "log"
+		IL_0102: ldstr "c"
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_010c: pop
+		IL_010d: ret
 	} // end of method ControlFlow_Switch_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_Switch_LabeledBreak
@@ -152,7 +181,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2129
+		// Method begins at RVA 0x2185
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

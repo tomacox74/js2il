@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2200
+				// Method begins at RVA 0x2238
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2108
+			// Method begins at RVA 0x2140
 			// Header size: 12
 			// Code size: 227 (0xe3)
 			.maxstack 8
@@ -161,7 +161,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21f7
+			// Method begins at RVA 0x222f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -187,7 +187,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 170 (0xaa)
+		// Code size: 226 (0xe2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_Prototype_Constructor/Scope,
@@ -196,8 +196,9 @@
 			[3] object,
 			[4] object,
 			[5] object,
-			[6] bool,
-			[7] object
+			[6] object,
+			[7] bool,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Generator_Prototype_Constructor/Scope::.ctor()
@@ -220,45 +221,69 @@
 		IL_002e: stloc.s 5
 		IL_0030: ldloc.s 5
 		IL_0032: stloc.1
-		IL_0033: ldloc.1
-		IL_0034: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_003e: stloc.s 5
-		IL_0040: ldloc.s 5
-		IL_0042: stloc.2
-		IL_0043: ldloc.1
-		IL_0044: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_004e: stloc.s 5
-		IL_0050: ldloc.s 5
-		IL_0052: stloc.3
-		IL_0053: ldloc.2
-		IL_0054: ldstr "constructor"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_005e: stloc.s 4
-		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0065: ldloc.s 4
-		IL_0067: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0071: pop
-		IL_0072: ldloc.2
-		IL_0073: ldstr "constructor"
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: stelem.ref
+		IL_003d: ldnull
+		IL_003e: call object Modules.Generator_Prototype_Constructor/g::__js_call__(object[], object)
+		IL_0043: stloc.s 5
+		IL_0045: ldloc.s 5
+		IL_0047: stloc.2
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: ldnull
+		IL_0053: call object Modules.Generator_Prototype_Constructor/g::__js_call__(object[], object)
+		IL_0058: stloc.s 5
+		IL_005a: ldloc.s 5
+		IL_005c: stloc.3
+		IL_005d: ldloc.2
+		IL_005e: ldstr "constructor"
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0068: stloc.s 4
+		IL_006a: ldstr "console"
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0074: stloc.s 5
+		IL_0076: ldloc.s 5
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_007d: stloc.s 5
 		IL_007f: ldloc.s 5
-		IL_0081: ldloc.3
-		IL_0082: ldstr "constructor"
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0091: stloc.s 6
-		IL_0093: ldloc.s 6
-		IL_0095: box [System.Runtime]System.Boolean
-		IL_009a: stloc.s 7
-		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a1: ldloc.s 7
-		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a8: pop
-		IL_00a9: ret
+		IL_0081: ldstr "log"
+		IL_0086: ldloc.s 4
+		IL_0088: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0092: pop
+		IL_0093: ldstr "console"
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009d: stloc.s 5
+		IL_009f: ldloc.s 5
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a6: stloc.s 5
+		IL_00a8: ldloc.2
+		IL_00a9: ldstr "constructor"
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b3: stloc.s 6
+		IL_00b5: ldloc.s 6
+		IL_00b7: ldloc.3
+		IL_00b8: ldstr "constructor"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00c7: stloc.s 7
+		IL_00c9: ldloc.s 7
+		IL_00cb: box [System.Runtime]System.Boolean
+		IL_00d0: stloc.s 8
+		IL_00d2: ldloc.s 5
+		IL_00d4: ldstr "log"
+		IL_00d9: ldloc.s 8
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e0: pop
+		IL_00e1: ret
 	} // end of method Generator_Prototype_Constructor::__js_module_init__
 
 } // end of class Modules.Generator_Prototype_Constructor
@@ -270,7 +295,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2209
+		// Method begins at RVA 0x2241
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

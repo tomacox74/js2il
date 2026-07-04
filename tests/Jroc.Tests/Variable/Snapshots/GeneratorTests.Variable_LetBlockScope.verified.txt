@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ac
+				// Method begins at RVA 0x20da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a3
+			// Method begins at RVA 0x20d1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,14 +62,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 71 (0x47)
+		// Code size: 117 (0x75)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_LetBlockScope/Scope,
 			[1] float64,
 			[2] class Modules.Variable_LetBlockScope/Scope/Block_L4C0,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_LetBlockScope/Scope::.ctor()
@@ -81,18 +82,32 @@
 		IL_0016: ldc.r8 2
 		IL_001f: box [System.Runtime]System.Double
 		IL_0024: stloc.3
-		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002a: ldloc.3
-		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0030: pop
-		IL_0031: ldloc.1
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: stloc.s 4
-		IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003e: ldloc.s 4
-		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0045: pop
-		IL_0046: ret
+		IL_0025: ldstr "console"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.s 4
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0038: stloc.s 4
+		IL_003a: ldloc.s 4
+		IL_003c: ldstr "log"
+		IL_0041: ldloc.3
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0047: pop
+		IL_0048: ldstr "console"
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0052: stloc.s 4
+		IL_0054: ldloc.s 4
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005b: stloc.s 4
+		IL_005d: ldloc.1
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stloc.s 5
+		IL_0065: ldloc.s 4
+		IL_0067: ldstr "log"
+		IL_006c: ldloc.s 5
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0073: pop
+		IL_0074: ret
 	} // end of method Variable_LetBlockScope::__js_module_init__
 
 } // end of class Modules.Variable_LetBlockScope
@@ -104,7 +119,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b5
+		// Method begins at RVA 0x20e3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

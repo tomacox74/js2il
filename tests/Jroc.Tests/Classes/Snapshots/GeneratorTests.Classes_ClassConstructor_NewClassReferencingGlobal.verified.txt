@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c5
+				// Method begins at RVA 0x21d1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ce
+				// Method begins at RVA 0x21da
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -65,13 +65,12 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x217c
+			// Method begins at RVA 0x2194
 			// Header size: 12
-			// Code size: 52 (0x34)
+			// Code size: 40 (0x28)
 			.maxstack 8
 			.locals init (
-				[0] object[],
-				[1] object
+				[0] object[]
 			)
 
 			IL_0000: ldarg.0
@@ -81,19 +80,15 @@
 			IL_0008: ldarg.0
 			IL_0009: ldloc.0
 			IL_000a: stfld object[] Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner::_scopes
-			IL_000f: ldstr "GLOBAL_VALUE"
-			IL_0014: ldarg.1
-			IL_0015: ldc.i4.0
-			IL_0016: ldelem.ref
-			IL_0017: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope
-			IL_001c: ldfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::GLOBAL_VALUE
-			IL_0021: box [System.Runtime]System.Double
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_002b: stloc.1
-			IL_002c: ldarg.0
-			IL_002d: ldloc.1
-			IL_002e: stfld object Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner::'value'
-			IL_0033: ret
+			IL_000f: ldarg.0
+			IL_0010: ldarg.1
+			IL_0011: ldc.i4.0
+			IL_0012: ldelem.ref
+			IL_0013: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope
+			IL_0018: ldfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope::GLOBAL_VALUE
+			IL_001d: box [System.Runtime]System.Double
+			IL_0022: stfld object Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Inner::'value'
+			IL_0027: ret
 		} // end of method Inner::.ctor
 
 	} // end of class Inner
@@ -109,7 +104,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d7
+				// Method begins at RVA 0x21e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -129,7 +124,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e0
+				// Method begins at RVA 0x21ec
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -156,7 +151,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2150
+			// Method begins at RVA 0x2168
 			// Header size: 12
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -200,7 +195,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21bc
+			// Method begins at RVA 0x21c8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -226,7 +221,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 242 (0xf2)
+		// Code size: 265 (0x109)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal/Scope,
@@ -304,15 +299,22 @@
 		IL_00c9: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_00ce: ldloc.s 6
 		IL_00d0: stloc.2
-		IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d6: ldloc.2
-		IL_00d7: ldstr "inner"
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00e1: ldstr "value"
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f0: pop
-		IL_00f1: ret
+		IL_00d1: ldstr "console"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00db: stloc.s 5
+		IL_00dd: ldloc.s 5
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e4: stloc.s 5
+		IL_00e6: ldloc.s 5
+		IL_00e8: ldstr "log"
+		IL_00ed: ldloc.2
+		IL_00ee: ldstr "inner"
+		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00f8: ldstr "value"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0107: pop
+		IL_0108: ret
 	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal
@@ -324,7 +326,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e9
+		// Method begins at RVA 0x21f5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

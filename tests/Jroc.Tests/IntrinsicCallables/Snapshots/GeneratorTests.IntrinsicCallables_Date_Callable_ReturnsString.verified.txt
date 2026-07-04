@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x209f
+			// Method begins at RVA 0x20c5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,37 +40,52 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 105 (0x69)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.IntrinsicCallables_Date_Callable_ReturnsString/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Date,
-			[2] string
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Date,
+			[3] string
 		)
 
 		IL_0000: newobj instance void Modules.IntrinsicCallables_Date_Callable_ReturnsString/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor()
-		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Date::toISOString()
-		IL_0012: stloc.2
-		IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0018: ldloc.2
-		IL_0019: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0023: pop
-		IL_0024: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor()
-		IL_0029: stloc.1
-		IL_002a: ldloc.1
-		IL_002b: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Date::toISOString()
-		IL_0030: stloc.2
-		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0036: ldloc.2
-		IL_0037: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0041: pop
-		IL_0042: ret
+		IL_0006: ldstr "console"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0017: stloc.1
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor()
+		IL_001d: stloc.2
+		IL_001e: ldloc.2
+		IL_001f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Date::toISOString()
+		IL_0024: stloc.3
+		IL_0025: ldloc.1
+		IL_0026: ldstr "log"
+		IL_002b: ldloc.3
+		IL_002c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0036: pop
+		IL_0037: ldstr "console"
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0041: stloc.1
+		IL_0042: ldloc.1
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0048: stloc.1
+		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor()
+		IL_004e: stloc.2
+		IL_004f: ldloc.2
+		IL_0050: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Date::toISOString()
+		IL_0055: stloc.3
+		IL_0056: ldloc.1
+		IL_0057: ldstr "log"
+		IL_005c: ldloc.3
+		IL_005d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0067: pop
+		IL_0068: ret
 	} // end of method IntrinsicCallables_Date_Callable_ReturnsString::__js_module_init__
 
 } // end of class Modules.IntrinsicCallables_Date_Callable_ReturnsString
@@ -82,7 +97,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a8
+		// Method begins at RVA 0x20ce
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

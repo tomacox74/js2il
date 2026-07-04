@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2084
+			// Method begins at RVA 0x2097
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 40 (0x28)
+		// Code size: 59 (0x3b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_AddStringString/Scope,
-			[1] string
+			[1] string,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_AddStringString/Scope::.ctor()
@@ -53,12 +54,19 @@
 		IL_000b: ldstr "2"
 		IL_0010: call string [System.Runtime]System.String::Concat(string, string)
 		IL_0015: stloc.1
-		IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001b: ldstr "x is"
-		IL_0020: ldloc.1
-		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0026: pop
-		IL_0027: ret
+		IL_0016: ldstr "console"
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0020: stloc.2
+		IL_0021: ldloc.2
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0027: stloc.2
+		IL_0028: ldloc.2
+		IL_0029: ldstr "log"
+		IL_002e: ldstr "x is"
+		IL_0033: ldloc.1
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method BinaryOperator_AddStringString::__js_module_init__
 
 } // end of class Modules.BinaryOperator_AddStringString
@@ -70,7 +78,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208d
+		// Method begins at RVA 0x20a0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

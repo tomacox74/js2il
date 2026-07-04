@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e2
+			// Method begins at RVA 0x2108
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 134 (0x86)
+		// Code size: 172 (0xac)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_HasOwn_Basic/Scope,
@@ -70,29 +70,43 @@
 		IL_0038: ldc.i4.1
 		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
 		IL_003e: pop
-		IL_003f: ldloc.2
-		IL_0040: ldstr "own"
-		IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_004a: stloc.s 4
-		IL_004c: ldloc.s 4
-		IL_004e: box [System.Runtime]System.Boolean
-		IL_0053: stloc.s 5
-		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005a: ldloc.s 5
-		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0061: pop
-		IL_0062: ldloc.2
-		IL_0063: ldstr "p"
-		IL_0068: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
-		IL_006d: stloc.s 4
-		IL_006f: ldloc.s 4
-		IL_0071: box [System.Runtime]System.Boolean
-		IL_0076: stloc.s 5
-		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007d: ldloc.s 5
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0084: pop
-		IL_0085: ret
+		IL_003f: ldstr "console"
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0049: stloc.3
+		IL_004a: ldloc.3
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0050: stloc.3
+		IL_0051: ldloc.2
+		IL_0052: ldstr "own"
+		IL_0057: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_005c: stloc.s 4
+		IL_005e: ldloc.s 4
+		IL_0060: box [System.Runtime]System.Boolean
+		IL_0065: stloc.s 5
+		IL_0067: ldloc.3
+		IL_0068: ldstr "log"
+		IL_006d: ldloc.s 5
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0074: pop
+		IL_0075: ldstr "console"
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007f: stloc.3
+		IL_0080: ldloc.3
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0086: stloc.3
+		IL_0087: ldloc.2
+		IL_0088: ldstr "p"
+		IL_008d: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::hasOwn(object, object)
+		IL_0092: stloc.s 4
+		IL_0094: ldloc.s 4
+		IL_0096: box [System.Runtime]System.Boolean
+		IL_009b: stloc.s 5
+		IL_009d: ldloc.3
+		IL_009e: ldstr "log"
+		IL_00a3: ldloc.s 5
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00aa: pop
+		IL_00ab: ret
 	} // end of method Object_HasOwn_Basic::__js_module_init__
 
 } // end of class Modules.Object_HasOwn_Basic
@@ -104,7 +118,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x2111
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

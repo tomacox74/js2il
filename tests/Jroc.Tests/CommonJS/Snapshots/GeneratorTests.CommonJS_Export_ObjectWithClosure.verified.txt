@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22a9
+			// Method begins at RVA 0x22c3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 183 (0xb7)
+		// Code size: 256 (0x100)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Export_ObjectWithClosure/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithClosure/Scope::.ctor()
@@ -57,53 +58,74 @@
 		IL_0011: stloc.3
 		IL_0012: ldloc.3
 		IL_0013: stloc.1
-		IL_0014: ldloc.1
-		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_001a: stloc.3
-		IL_001b: ldloc.3
-		IL_001c: ldstr "multiplyModuleFactor"
-		IL_0021: ldc.r8 3
-		IL_002a: box [System.Runtime]System.Double
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0034: stloc.3
-		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003a: ldstr "lib.multiplyModuleFactor(3):"
-		IL_003f: ldloc.3
-		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0045: pop
-		IL_0046: ldloc.1
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004c: stloc.3
-		IL_004d: ldloc.3
-		IL_004e: ldstr "createCalculator"
-		IL_0053: ldc.r8 10
-		IL_005c: box [System.Runtime]System.Double
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0066: stloc.3
-		IL_0067: ldloc.3
-		IL_0068: stloc.2
-		IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006e: ldstr "calc.factor:"
-		IL_0073: ldloc.2
-		IL_0074: ldstr "factor"
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0083: pop
-		IL_0084: ldloc.2
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008a: stloc.3
-		IL_008b: ldloc.3
-		IL_008c: ldstr "multiply"
-		IL_0091: ldc.r8 5
-		IL_009a: box [System.Runtime]System.Double
-		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a4: stloc.3
-		IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00aa: ldstr "calc.multiply(5):"
-		IL_00af: ldloc.3
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_0014: ldstr "console"
+		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_001e: stloc.3
+		IL_001f: ldloc.3
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0025: stloc.3
+		IL_0026: ldloc.1
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_002c: stloc.s 4
+		IL_002e: ldloc.s 4
+		IL_0030: ldstr "multiplyModuleFactor"
+		IL_0035: ldc.r8 3
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0048: stloc.s 4
+		IL_004a: ldloc.3
+		IL_004b: ldstr "log"
+		IL_0050: ldstr "lib.multiplyModuleFactor(3):"
+		IL_0055: ldloc.s 4
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_005c: pop
+		IL_005d: ldloc.1
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0063: stloc.s 4
+		IL_0065: ldloc.s 4
+		IL_0067: ldstr "createCalculator"
+		IL_006c: ldc.r8 10
+		IL_0075: box [System.Runtime]System.Double
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_007f: stloc.s 4
+		IL_0081: ldloc.s 4
+		IL_0083: stloc.2
+		IL_0084: ldstr "console"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008e: stloc.s 4
+		IL_0090: ldloc.s 4
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0097: stloc.s 4
+		IL_0099: ldloc.s 4
+		IL_009b: ldstr "log"
+		IL_00a0: ldstr "calc.factor:"
+		IL_00a5: ldloc.2
+		IL_00a6: ldstr "factor"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
 		IL_00b5: pop
-		IL_00b6: ret
+		IL_00b6: ldstr "console"
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c0: stloc.s 4
+		IL_00c2: ldloc.s 4
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c9: stloc.s 4
+		IL_00cb: ldloc.2
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d1: stloc.3
+		IL_00d2: ldloc.3
+		IL_00d3: ldstr "multiply"
+		IL_00d8: ldc.r8 5
+		IL_00e1: box [System.Runtime]System.Double
+		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00eb: stloc.3
+		IL_00ec: ldloc.s 4
+		IL_00ee: ldstr "log"
+		IL_00f3: ldstr "calc.multiply(5):"
+		IL_00f8: ldloc.3
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00fe: pop
+		IL_00ff: ret
 	} // end of method CommonJS_Export_ObjectWithClosure::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithClosure
@@ -123,7 +145,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22bb
+				// Method begins at RVA 0x22d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -150,38 +172,23 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x21c0
+			// Method begins at RVA 0x2208
 			// Header size: 12
-			// Code size: 49 (0x31)
+			// Code size: 21 (0x15)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] float64,
-				[2] float64,
-				[3] object
+				[0] float64
 			)
 
-			IL_0000: ldstr "moduleFactor"
-			IL_0005: ldarg.0
-			IL_0006: ldfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
-			IL_000b: box [System.Runtime]System.Double
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0015: stloc.0
-			IL_0016: ldarg.2
-			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001c: stloc.1
-			IL_001d: ldloc.0
-			IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0023: stloc.2
-			IL_0024: ldloc.1
-			IL_0025: ldloc.2
-			IL_0026: mul
-			IL_0027: stloc.2
-			IL_0028: ldloc.2
-			IL_0029: box [System.Runtime]System.Double
-			IL_002e: stloc.3
-			IL_002f: ldloc.3
-			IL_0030: ret
+			IL_0000: ldarg.0
+			IL_0001: ldfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib/Scope::moduleFactor
+			IL_0006: stloc.0
+			IL_0007: ldarg.2
+			IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_000d: ldloc.0
+			IL_000e: mul
+			IL_000f: box [System.Runtime]System.Double
+			IL_0014: ret
 		} // end of method multiplyModuleFactor::__js_call__
 
 	} // end of class multiplyModuleFactor
@@ -201,7 +208,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22cd
+					// Method begins at RVA 0x22e7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -226,15 +233,13 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2268
+				// Method begins at RVA 0x2294
 				// Header size: 12
-				// Code size: 53 (0x35)
+				// Code size: 35 (0x23)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] float64,
-					[2] float64,
-					[3] object
+					[1] float64
 				)
 
 				IL_0000: ldarg.0
@@ -243,25 +248,15 @@
 				IL_0003: castclass Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope
 				IL_0008: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib/createCalculator/Scope::factor
 				IL_000d: stloc.0
-				IL_000e: ldstr "factor"
-				IL_0013: ldloc.0
-				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-				IL_0019: stloc.0
-				IL_001a: ldarg.2
-				IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0020: stloc.1
-				IL_0021: ldloc.0
-				IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0027: stloc.2
-				IL_0028: ldloc.1
-				IL_0029: ldloc.2
-				IL_002a: mul
-				IL_002b: stloc.2
-				IL_002c: ldloc.2
-				IL_002d: box [System.Runtime]System.Double
-				IL_0032: stloc.3
-				IL_0033: ldloc.3
-				IL_0034: ret
+				IL_000e: ldarg.2
+				IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0014: stloc.1
+				IL_0015: ldloc.1
+				IL_0016: ldloc.0
+				IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_001c: mul
+				IL_001d: box [System.Runtime]System.Double
+				IL_0022: ret
 			} // end of method multiply::__js_call__
 
 		} // end of class multiply
@@ -282,7 +277,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22c4
+				// Method begins at RVA 0x22de
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -309,7 +304,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x222c
 			// Header size: 12
 			// Code size: 92 (0x5c)
 			.maxstack 8
@@ -385,7 +380,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22b2
+			// Method begins at RVA 0x22cc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -409,7 +404,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x215c
 		// Header size: 12
 		// Code size: 158 (0x9e)
 		.maxstack 8
@@ -494,7 +489,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22d6
+		// Method begins at RVA 0x22f0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

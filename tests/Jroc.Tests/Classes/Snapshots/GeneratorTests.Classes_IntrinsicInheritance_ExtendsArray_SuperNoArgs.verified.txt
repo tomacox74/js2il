@@ -1,4 +1,4 @@
-// IL code: Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs
+﻿// IL code: Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213d
+				// Method begins at RVA 0x216b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2146
+				// Method begins at RVA 0x2174
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x211a
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 25 (0x19)
 			.maxstack 8
@@ -84,7 +84,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2134
+			// Method begins at RVA 0x2162
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,7 +110,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 190 (0xbe)
+		// Code size: 236 (0xec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs/Scope,
@@ -162,19 +162,33 @@
 		IL_0085: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_008a: ldloc.s 5
 		IL_008c: stloc.2
-		IL_008d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0092: ldloc.2
-		IL_0093: ldstr "length"
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a2: pop
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: ldloc.2
-		IL_00a9: ldc.r8 0.0
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00bc: pop
-		IL_00bd: ret
+		IL_008d: ldstr "console"
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0097: stloc.s 5
+		IL_0099: ldloc.s 5
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a0: stloc.s 5
+		IL_00a2: ldloc.s 5
+		IL_00a4: ldstr "log"
+		IL_00a9: ldloc.2
+		IL_00aa: ldstr "length"
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b9: pop
+		IL_00ba: ldstr "console"
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c4: stloc.s 5
+		IL_00c6: ldloc.s 5
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cd: stloc.s 5
+		IL_00cf: ldloc.s 5
+		IL_00d1: ldstr "log"
+		IL_00d6: ldloc.2
+		IL_00d7: ldc.r8 0.0
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ea: pop
+		IL_00eb: ret
 	} // end of method Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs::__js_module_init__
 
 } // end of class Modules.Classes_IntrinsicInheritance_ExtendsArray_SuperNoArgs
@@ -186,7 +200,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214f
+		// Method begins at RVA 0x217d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

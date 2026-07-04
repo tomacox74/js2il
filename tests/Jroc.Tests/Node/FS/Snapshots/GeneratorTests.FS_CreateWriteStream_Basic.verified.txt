@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2487
+				// Method begins at RVA 0x2472
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,70 +46,58 @@
 			)
 			// Method begins at RVA 0x2324
 			// Header size: 12
-			// Code size: 157 (0x9d)
+			// Code size: 124 (0x7c)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::fs
-			IL_0006: stloc.0
-			IL_0007: ldstr "fs"
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0012: stloc.0
-			IL_0013: ldloc.0
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0019: stloc.0
-			IL_001a: ldarg.0
-			IL_001b: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
-			IL_0020: stloc.1
-			IL_0021: ldstr "file"
-			IL_0026: ldloc.1
-			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_002c: stloc.1
-			IL_002d: ldloc.0
-			IL_002e: ldstr "readFileSync"
-			IL_0033: ldloc.1
-			IL_0034: ldstr "utf8"
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_003e: stloc.1
-			IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0044: ldstr "FileText:"
-			IL_0049: ldloc.1
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004f: pop
-			IL_0050: ldarg.0
-			IL_0051: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::fs
-			IL_0056: stloc.1
-			IL_0057: ldstr "fs"
-			IL_005c: ldloc.1
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0062: stloc.1
-			IL_0063: ldloc.1
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0069: stloc.1
-			IL_006a: ldarg.0
-			IL_006b: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
-			IL_0070: stloc.0
-			IL_0071: ldstr "file"
-			IL_0076: ldloc.0
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_007c: stloc.0
-			IL_007d: ldloc.1
-			IL_007e: ldstr "rmSync"
-			IL_0083: ldloc.0
-			IL_0084: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0089: dup
-			IL_008a: ldstr "force"
-			IL_008f: ldc.i4.1
-			IL_0090: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_009a: pop
-			IL_009b: ldnull
-			IL_009c: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.0
+			IL_0013: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::fs
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_001d: stloc.1
+			IL_001e: ldarg.0
+			IL_001f: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
+			IL_0024: stloc.2
+			IL_0025: ldloc.1
+			IL_0026: ldstr "readFileSync"
+			IL_002b: ldloc.2
+			IL_002c: ldstr "utf8"
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0036: stloc.2
+			IL_0037: ldloc.0
+			IL_0038: ldstr "log"
+			IL_003d: ldstr "FileText:"
+			IL_0042: ldloc.2
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0048: pop
+			IL_0049: ldarg.0
+			IL_004a: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::fs
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0054: stloc.2
+			IL_0055: ldarg.0
+			IL_0056: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
+			IL_005b: stloc.0
+			IL_005c: ldloc.2
+			IL_005d: ldstr "rmSync"
+			IL_0062: ldloc.0
+			IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0068: dup
+			IL_0069: ldstr "force"
+			IL_006e: ldc.i4.1
+			IL_006f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0079: pop
+			IL_007a: ldnull
+			IL_007b: ret
 		} // end of method ArrowFunction_L13C21::__js_call__
 
 	} // end of class ArrowFunction_L13C21
@@ -125,7 +113,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2490
+				// Method begins at RVA 0x247b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -148,19 +136,29 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x23cd
-			// Header size: 1
-			// Code size: 24 (0x18)
+			// Method begins at RVA 0x23ac
+			// Header size: 12
+			// Code size: 43 (0x2b)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Closed:"
-			IL_000a: ldc.i4.1
-			IL_000b: box [System.Runtime]System.Boolean
-			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0015: pop
-			IL_0016: ldnull
-			IL_0017: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Closed:"
+			IL_001d: ldc.i4.1
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0028: pop
+			IL_0029: ldnull
+			IL_002a: ret
 		} // end of method ArrowFunction_L18C20::__js_call__
 
 	} // end of class ArrowFunction_L18C20
@@ -183,7 +181,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2499
+				// Method begins at RVA 0x2484
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -210,70 +208,64 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x23e8
+			// Method begins at RVA 0x23e4
 			// Header size: 12
-			// Code size: 138 (0x8a)
+			// Code size: 121 (0x79)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[0] object,
 				[1] bool,
 				[2] object,
 				[3] object,
-				[4] object,
-				[5] object
+				[4] object
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.0
-			IL_0006: ldarg.2
-			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_000c: stloc.1
-			IL_000d: ldloc.1
-			IL_000e: brfalse IL_0024
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.2
+			IL_0013: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0018: stloc.1
+			IL_0019: ldloc.1
+			IL_001a: brfalse IL_0030
 
-			IL_0013: ldarg.2
-			IL_0014: ldstr "message"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001e: stloc.3
-			IL_001f: br IL_0026
+			IL_001f: ldarg.2
+			IL_0020: ldstr "message"
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002a: stloc.3
+			IL_002b: br IL_0032
 
-			IL_0024: ldarg.2
-			IL_0025: stloc.3
+			IL_0030: ldarg.2
+			IL_0031: stloc.3
 
-			IL_0026: ldloc.0
-			IL_0027: ldstr "Error:"
-			IL_002c: ldloc.3
-			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0032: pop
-			IL_0033: ldarg.0
-			IL_0034: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::fs
-			IL_0039: stloc.s 4
-			IL_003b: ldstr "fs"
-			IL_0040: ldloc.s 4
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0047: stloc.s 4
-			IL_0049: ldloc.s 4
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0050: stloc.s 4
-			IL_0052: ldarg.0
-			IL_0053: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
-			IL_0058: stloc.s 5
-			IL_005a: ldstr "file"
-			IL_005f: ldloc.s 5
-			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0066: stloc.s 5
-			IL_0068: ldloc.s 4
-			IL_006a: ldstr "rmSync"
-			IL_006f: ldloc.s 5
-			IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0076: dup
-			IL_0077: ldstr "force"
-			IL_007c: ldc.i4.1
-			IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0087: pop
-			IL_0088: ldnull
-			IL_0089: ret
+			IL_0032: ldloc.0
+			IL_0033: ldstr "log"
+			IL_0038: ldstr "Error:"
+			IL_003d: ldloc.3
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0043: pop
+			IL_0044: ldarg.0
+			IL_0045: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::fs
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004f: stloc.0
+			IL_0050: ldarg.0
+			IL_0051: ldfld object Modules.FS_CreateWriteStream_Basic/Scope::file
+			IL_0056: stloc.s 4
+			IL_0058: ldloc.0
+			IL_0059: ldstr "rmSync"
+			IL_005e: ldloc.s 4
+			IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0065: dup
+			IL_0066: ldstr "force"
+			IL_006b: ldc.i4.1
+			IL_006c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0076: pop
+			IL_0077: ldnull
+			IL_0078: ret
 		} // end of method ArrowFunction_L22C20::__js_call__
 
 	} // end of class ArrowFunction_L22C20
@@ -293,7 +285,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x247e
+			// Method begins at RVA 0x2469
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -585,7 +577,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24a2
+		// Method begins at RVA 0x248d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

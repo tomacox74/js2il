@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c6
+			// Method begins at RVA 0x20dd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 129 (0x81)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Ceil_Sqrt_Basic/Scope,
@@ -50,7 +50,8 @@
 			[4] float64,
 			[5] object,
 			[6] object,
-			[7] object
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Ceil_Sqrt_Basic/Scope::.ctor()
@@ -71,22 +72,29 @@
 		IL_003b: stloc.s 4
 		IL_003d: ldloc.s 4
 		IL_003f: stloc.3
-		IL_0040: ldloc.1
-		IL_0041: box [System.Runtime]System.Double
-		IL_0046: stloc.s 5
-		IL_0048: ldloc.2
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: stloc.s 6
-		IL_0050: ldloc.3
-		IL_0051: box [System.Runtime]System.Double
-		IL_0056: stloc.s 7
-		IL_0058: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005d: ldloc.s 5
-		IL_005f: ldloc.s 6
-		IL_0061: ldloc.s 7
-		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-		IL_0068: pop
-		IL_0069: ret
+		IL_0040: ldstr "console"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004a: stloc.s 5
+		IL_004c: ldloc.s 5
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0053: stloc.s 5
+		IL_0055: ldloc.1
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: stloc.s 6
+		IL_005d: ldloc.2
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stloc.s 7
+		IL_0065: ldloc.3
+		IL_0066: box [System.Runtime]System.Double
+		IL_006b: stloc.s 8
+		IL_006d: ldloc.s 5
+		IL_006f: ldstr "log"
+		IL_0074: ldloc.s 6
+		IL_0076: ldloc.s 7
+		IL_0078: ldloc.s 8
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_007f: pop
+		IL_0080: ret
 	} // end of method Math_Ceil_Sqrt_Basic::__js_module_init__
 
 } // end of class Modules.Math_Ceil_Sqrt_Basic
@@ -98,7 +106,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20cf
+		// Method begins at RVA 0x20e6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

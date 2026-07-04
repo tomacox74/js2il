@@ -1,4 +1,4 @@
-// IL code: UnaryOperator_DoubleNot_NaNTruthiness
+﻿// IL code: UnaryOperator_DoubleNot_NaNTruthiness
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2122
+				// Method begins at RVA 0x2148
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212b
+				// Method begins at RVA 0x2151
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2134
+				// Method begins at RVA 0x215a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213d
+				// Method begins at RVA 0x2163
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,55 +101,70 @@
 			)
 			// Method begins at RVA 0x2094
 			// Header size: 12
-			// Code size: 89 (0x59)
+			// Code size: 127 (0x7f)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] bool,
-				[2] object
+				[0] object,
+				[1] float64,
+				[2] bool,
+				[3] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: ldarg.0
-			IL_0007: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNaN()
-			IL_000c: stloc.0
-			IL_000d: ldloc.0
-			IL_000e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
-			IL_0013: ldc.i4.0
-			IL_0014: ceq
-			IL_0016: stloc.1
-			IL_0017: ldloc.1
-			IL_0018: ldc.i4.0
-			IL_0019: ceq
-			IL_001b: stloc.1
-			IL_001c: ldloc.1
-			IL_001d: box [System.Runtime]System.Boolean
-			IL_0022: stloc.2
-			IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0028: ldloc.2
-			IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002e: pop
-			IL_002f: ldarg.0
-			IL_0030: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNumber()
-			IL_0035: stloc.0
-			IL_0036: ldloc.0
-			IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
-			IL_003c: ldc.i4.0
-			IL_003d: ceq
-			IL_003f: stloc.1
-			IL_0040: ldloc.1
-			IL_0041: ldc.i4.0
-			IL_0042: ceq
-			IL_0044: stloc.1
-			IL_0045: ldloc.1
-			IL_0046: box [System.Runtime]System.Boolean
-			IL_004b: stloc.2
-			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0051: ldloc.2
-			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0057: pop
-			IL_0058: ret
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldarg.0
+			IL_0019: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNaN()
+			IL_001e: stloc.1
+			IL_001f: ldloc.1
+			IL_0020: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+			IL_0025: ldc.i4.0
+			IL_0026: ceq
+			IL_0028: stloc.2
+			IL_0029: ldloc.2
+			IL_002a: ldc.i4.0
+			IL_002b: ceq
+			IL_002d: stloc.2
+			IL_002e: ldloc.2
+			IL_002f: box [System.Runtime]System.Boolean
+			IL_0034: stloc.3
+			IL_0035: ldloc.0
+			IL_0036: ldstr "log"
+			IL_003b: ldloc.3
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0041: pop
+			IL_0042: ldstr "console"
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_004c: stloc.0
+			IL_004d: ldloc.0
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0053: stloc.0
+			IL_0054: ldarg.0
+			IL_0055: callvirt instance float64 Modules.UnaryOperator_DoubleNot_NaNTruthiness/C::returnNumber()
+			IL_005a: stloc.1
+			IL_005b: ldloc.1
+			IL_005c: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(float64)
+			IL_0061: ldc.i4.0
+			IL_0062: ceq
+			IL_0064: stloc.2
+			IL_0065: ldloc.2
+			IL_0066: ldc.i4.0
+			IL_0067: ceq
+			IL_0069: stloc.2
+			IL_006a: ldloc.2
+			IL_006b: box [System.Runtime]System.Boolean
+			IL_0070: stloc.3
+			IL_0071: ldloc.0
+			IL_0072: ldstr "log"
+			IL_0077: ldloc.3
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_007d: pop
+			IL_007e: ret
 		} // end of method C::.ctor
 
 		.method public hidebysig 
@@ -158,7 +173,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f9
+			// Method begins at RVA 0x211f
 			// Header size: 1
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -175,7 +190,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x210e
+			// Method begins at RVA 0x2134
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -193,7 +208,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2119
+			// Method begins at RVA 0x213f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -249,7 +264,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2146
+		// Method begins at RVA 0x216c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

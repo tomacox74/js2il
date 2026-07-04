@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2159
+			// Method begins at RVA 0x21cc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 253 (0xfd)
+		// Code size: 368 (0x170)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_BracketWrite_StringKey/Scope,
@@ -80,51 +80,86 @@
 		IL_0063: ldc.i4.1
 		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_0069: pop
-		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006f: ldloc.1
-		IL_0070: ldstr "name"
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007f: pop
-		IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0085: ldloc.1
-		IL_0086: ldstr "age"
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0095: pop
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009b: ldloc.1
-		IL_009c: ldstr "city"
-		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ab: pop
-		IL_00ac: ldstr "score"
-		IL_00b1: stloc.2
-		IL_00b2: ldloc.1
-		IL_00b3: ldloc.2
-		IL_00b4: ldc.r8 100
-		IL_00bd: ldc.i4.1
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_006a: ldstr "console"
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0074: stloc.s 4
+		IL_0076: ldloc.s 4
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007d: stloc.s 4
+		IL_007f: ldloc.s 4
+		IL_0081: ldstr "log"
+		IL_0086: ldloc.1
+		IL_0087: ldstr "name"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0096: pop
+		IL_0097: ldstr "console"
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a1: stloc.s 4
+		IL_00a3: ldloc.s 4
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00aa: stloc.s 4
+		IL_00ac: ldloc.s 4
+		IL_00ae: ldstr "log"
+		IL_00b3: ldloc.1
+		IL_00b4: ldstr "age"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_00c3: pop
-		IL_00c4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c9: ldloc.1
-		IL_00ca: ldloc.2
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d5: pop
-		IL_00d6: ldloc.1
-		IL_00d7: ldstr "level"
-		IL_00dc: ldc.r8 5
-		IL_00e5: ldc.i4.1
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_00eb: stloc.s 4
-		IL_00ed: ldloc.s 4
-		IL_00ef: stloc.3
-		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f5: ldloc.3
-		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fb: pop
-		IL_00fc: ret
+		IL_00c4: ldstr "console"
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ce: stloc.s 4
+		IL_00d0: ldloc.s 4
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d7: stloc.s 4
+		IL_00d9: ldloc.s 4
+		IL_00db: ldstr "log"
+		IL_00e0: ldloc.1
+		IL_00e1: ldstr "city"
+		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f0: pop
+		IL_00f1: ldstr "score"
+		IL_00f6: stloc.2
+		IL_00f7: ldloc.1
+		IL_00f8: ldloc.2
+		IL_00f9: ldc.r8 100
+		IL_0102: ldc.i4.1
+		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0108: pop
+		IL_0109: ldstr "console"
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0113: stloc.s 4
+		IL_0115: ldloc.s 4
+		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011c: stloc.s 4
+		IL_011e: ldloc.s 4
+		IL_0120: ldstr "log"
+		IL_0125: ldloc.1
+		IL_0126: ldloc.2
+		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0131: pop
+		IL_0132: ldloc.1
+		IL_0133: ldstr "level"
+		IL_0138: ldc.r8 5
+		IL_0141: ldc.i4.1
+		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0147: stloc.s 4
+		IL_0149: ldloc.s 4
+		IL_014b: stloc.3
+		IL_014c: ldstr "console"
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0156: stloc.s 4
+		IL_0158: ldloc.s 4
+		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_015f: stloc.s 4
+		IL_0161: ldloc.s 4
+		IL_0163: ldstr "log"
+		IL_0168: ldloc.3
+		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_016e: pop
+		IL_016f: ret
 	} // end of method Object_BracketWrite_StringKey::__js_module_init__
 
 } // end of class Modules.Object_BracketWrite_StringKey
@@ -136,7 +171,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2162
+		// Method begins at RVA 0x21d5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d2
+			// Method begins at RVA 0x20e9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 118 (0x76)
+		// Code size: 141 (0x8d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_MemberCall_Arity0_Reverse/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[4] string
+			[4] object,
+			[5] string
 		)
 
 		IL_0000: newobj instance void Modules.Array_MemberCall_Arity0_Reverse/Scope::.ctor()
@@ -72,20 +73,27 @@
 		IL_004f: stloc.3
 		IL_0050: ldloc.3
 		IL_0051: stloc.2
-		IL_0052: ldloc.2
-		IL_0053: ldc.i4.1
-		IL_0054: newarr [System.Runtime]System.Object
-		IL_0059: dup
-		IL_005a: ldc.i4.0
-		IL_005b: ldstr ","
-		IL_0060: stelem.ref
-		IL_0061: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0066: stloc.s 4
-		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006d: ldloc.s 4
-		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0074: pop
-		IL_0075: ret
+		IL_0052: ldstr "console"
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_005c: stloc.s 4
+		IL_005e: ldloc.s 4
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0065: stloc.s 4
+		IL_0067: ldloc.2
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldstr ","
+		IL_0075: stelem.ref
+		IL_0076: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_007b: stloc.s 5
+		IL_007d: ldloc.s 4
+		IL_007f: ldstr "log"
+		IL_0084: ldloc.s 5
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_008b: pop
+		IL_008c: ret
 	} // end of method Array_MemberCall_Arity0_Reverse::__js_module_init__
 
 } // end of class Modules.Array_MemberCall_Arity0_Reverse
@@ -97,7 +105,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20db
+		// Method begins at RVA 0x20f2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

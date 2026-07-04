@@ -1,4 +1,4 @@
-// IL code: Classes_ClassPrivateProperty_HelperMethod_Log
+﻿// IL code: Classes_ClassPrivateProperty_HelperMethod_Log
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2110
+				// Method begins at RVA 0x212f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2119
+				// Method begins at RVA 0x2138
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -92,18 +92,28 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f3
-			// Header size: 1
-			// Code size: 19 (0x13)
+			// Method begins at RVA 0x20f4
+			// Header size: 12
+			// Code size: 38 (0x26)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldarg.0
-			IL_0006: ldfld string Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::_secret
-			IL_000b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0010: pop
-			IL_0011: ldnull
-			IL_0012: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldarg.0
+			IL_0019: ldfld string Modules.Classes_ClassPrivateProperty_HelperMethod_Log/Greeter::_secret
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0023: pop
+			IL_0024: ldnull
+			IL_0025: ret
 		} // end of method Greeter::logSecret
 
 	} // end of class Greeter
@@ -115,7 +125,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2107
+			// Method begins at RVA 0x2126
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -202,7 +212,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2122
+		// Method begins at RVA 0x2141
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2141
+					// Method begins at RVA 0x216f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2119
+				// Method begins at RVA 0x2147
 				// Header size: 1
 				// Code size: 21 (0x15)
 				.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2138
+				// Method begins at RVA 0x2166
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,9 +106,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x209c
+			// Method begins at RVA 0x20a0
 			// Header size: 12
-			// Code size: 113 (0x71)
+			// Code size: 155 (0x9b)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope,
@@ -143,27 +143,45 @@
 			IL_0031: ldc.i4.0
 			IL_0032: box [System.Runtime]System.Boolean
 			IL_0037: stfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
-			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: ldloc.0
-			IL_0042: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
-			IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_004c: pop
-			IL_004d: ldloc.1
-			IL_004e: ldc.i4.1
-			IL_004f: newarr [System.Runtime]System.Object
-			IL_0054: dup
-			IL_0055: ldc.i4.0
-			IL_0056: ldarg.0
-			IL_0057: stelem.ref
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-			IL_005d: pop
-			IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0063: ldloc.0
-			IL_0064: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
-			IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_006e: pop
-			IL_006f: ldnull
-			IL_0070: ret
+			IL_003c: ldstr "console"
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0046: stloc.2
+			IL_0047: ldloc.2
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004d: stloc.2
+			IL_004e: ldloc.2
+			IL_004f: ldstr "log"
+			IL_0054: ldloc.0
+			IL_0055: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
+			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_005f: pop
+			IL_0060: ldc.i4.2
+			IL_0061: newarr [System.Runtime]System.Object
+			IL_0066: dup
+			IL_0067: ldc.i4.0
+			IL_0068: ldarg.0
+			IL_0069: stelem.ref
+			IL_006a: dup
+			IL_006b: ldc.i4.1
+			IL_006c: ldloc.0
+			IL_006d: stelem.ref
+			IL_006e: ldnull
+			IL_006f: call object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/setTrue::__js_call__(object[], object)
+			IL_0074: pop
+			IL_0075: ldstr "console"
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_007f: stloc.2
+			IL_0080: ldloc.2
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0086: stloc.2
+			IL_0087: ldloc.2
+			IL_0088: ldstr "log"
+			IL_008d: ldloc.0
+			IL_008e: ldfld object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer/Scope::flag
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0098: pop
+			IL_0099: ldnull
+			IL_009a: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -182,7 +200,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212f
+			// Method begins at RVA 0x215d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -208,7 +226,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 64 (0x40)
+		// Code size: 65 (0x41)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Closure_CapturedBoolean_AssignAndRead/Scope,
@@ -238,11 +256,12 @@
 		IL_0030: stloc.2
 		IL_0031: ldloc.2
 		IL_0032: stloc.1
-		IL_0033: ldloc.1
-		IL_0034: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_003e: pop
-		IL_003f: ret
+		IL_0033: ldloc.0
+		IL_0034: castclass Modules.Function_Closure_CapturedBoolean_AssignAndRead/Scope
+		IL_0039: ldnull
+		IL_003a: call object Modules.Function_Closure_CapturedBoolean_AssignAndRead/outer::__js_call__(class Modules.Function_Closure_CapturedBoolean_AssignAndRead/Scope, object)
+		IL_003f: pop
+		IL_0040: ret
 	} // end of method Function_Closure_CapturedBoolean_AssignAndRead::__js_module_init__
 
 } // end of class Modules.Function_Closure_CapturedBoolean_AssignAndRead
@@ -254,7 +273,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214a
+		// Method begins at RVA 0x2178
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

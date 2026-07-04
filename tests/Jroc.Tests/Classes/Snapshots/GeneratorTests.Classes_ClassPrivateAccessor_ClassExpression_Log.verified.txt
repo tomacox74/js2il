@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2285
+				// Method begins at RVA 0x2260
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228e
+				// Method begins at RVA 0x2269
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2297
+				// Method begins at RVA 0x2272
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -79,7 +79,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2240
+			// Method begins at RVA 0x2206
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -95,7 +95,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2248
+			// Method begins at RVA 0x220e
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -110,27 +110,35 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2254
+			// Method begins at RVA 0x221c
 			// Header size: 12
-			// Code size: 28 (0x1c)
+			// Code size: 47 (0x2f)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object,
+				[1] float64,
+				[2] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17::__jroc_priv_get_value()
-			IL_0006: stloc.0
-			IL_0007: ldloc.0
-			IL_0008: box [System.Runtime]System.Double
-			IL_000d: stloc.1
-			IL_000e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0013: ldloc.1
-			IL_0014: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0019: pop
-			IL_001a: ldnull
-			IL_001b: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.0
+			IL_0013: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17::__jroc_priv_get_value()
+			IL_0018: stloc.1
+			IL_0019: ldloc.1
+			IL_001a: box [System.Runtime]System.Double
+			IL_001f: stloc.2
+			IL_0020: ldloc.0
+			IL_0021: ldstr "log"
+			IL_0026: ldloc.2
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002c: pop
+			IL_002d: ldnull
+			IL_002e: ret
 		} // end of method ClassExpression_L3C17::log
 
 	} // end of class ClassExpression_L3C17
@@ -142,7 +150,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x227c
+			// Method begins at RVA 0x2257
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -168,15 +176,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 484 (0x1e4)
+		// Code size: 426 (0x1aa)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/Scope,
 			[1] object,
-			[2] object,
-			[3] class [System.Runtime]System.Type,
-			[4] object,
-			[5] object[]
+			[2] class [System.Runtime]System.Type,
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/Scope::.ctor()
@@ -185,198 +192,185 @@
 		IL_000b: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0010: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
 		IL_0015: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_001a: stloc.3
-		IL_001b: ldloc.3
-		IL_001c: ldstr "Counter"
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
-		IL_0026: stloc.1
+		IL_001a: stloc.2
+		IL_001b: ldloc.2
+		IL_001c: ldstr "prototype"
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0026: stloc.3
 		IL_0027: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
 		IL_002c: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
 		IL_0031: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
 		IL_0036: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_003b: stloc.3
-		IL_003c: ldloc.3
-		IL_003d: ldstr "prototype"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0047: stloc.s 4
-		IL_0049: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
-		IL_004e: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_0053: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
-		IL_0058: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_005d: stloc.3
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldloc.0
-		IL_0067: stelem.ref
-		IL_0068: stloc.s 5
-		IL_006a: ldc.i4.s 12
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldloc.s 4
-		IL_0075: stelem.ref
-		IL_0076: dup
-		IL_0077: ldc.i4.1
-		IL_0078: ldstr "value"
-		IL_007d: stelem.ref
-		IL_007e: dup
-		IL_007f: ldc.i4.2
-		IL_0080: ldloc.3
-		IL_0081: stelem.ref
-		IL_0082: dup
-		IL_0083: ldc.i4.3
-		IL_0084: ldstr "__jroc_priv_get_value"
-		IL_0089: stelem.ref
-		IL_008a: dup
-		IL_008b: ldc.i4.4
-		IL_008c: ldc.r8 0.0
-		IL_0095: box [System.Runtime]System.Double
+		IL_003b: stloc.2
+		IL_003c: ldc.i4.1
+		IL_003d: newarr [System.Runtime]System.Object
+		IL_0042: dup
+		IL_0043: ldc.i4.0
+		IL_0044: ldloc.0
+		IL_0045: stelem.ref
+		IL_0046: stloc.s 4
+		IL_0048: ldc.i4.s 12
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: dup
+		IL_0050: ldc.i4.0
+		IL_0051: ldloc.3
+		IL_0052: stelem.ref
+		IL_0053: dup
+		IL_0054: ldc.i4.1
+		IL_0055: ldstr "value"
+		IL_005a: stelem.ref
+		IL_005b: dup
+		IL_005c: ldc.i4.2
+		IL_005d: ldloc.2
+		IL_005e: stelem.ref
+		IL_005f: dup
+		IL_0060: ldc.i4.3
+		IL_0061: ldstr "__jroc_priv_get_value"
+		IL_0066: stelem.ref
+		IL_0067: dup
+		IL_0068: ldc.i4.4
+		IL_0069: ldc.r8 0.0
+		IL_0072: box [System.Runtime]System.Double
+		IL_0077: stelem.ref
+		IL_0078: dup
+		IL_0079: ldc.i4.5
+		IL_007a: ldstr "get value"
+		IL_007f: stelem.ref
+		IL_0080: dup
+		IL_0081: ldc.i4.6
+		IL_0082: ldc.i4.0
+		IL_0083: box [System.Runtime]System.Boolean
+		IL_0088: stelem.ref
+		IL_0089: dup
+		IL_008a: ldc.i4.7
+		IL_008b: ldc.i4.1
+		IL_008c: box [System.Runtime]System.Boolean
+		IL_0091: stelem.ref
+		IL_0092: dup
+		IL_0093: ldc.i4.8
+		IL_0094: ldc.i4.0
+		IL_0095: box [System.Runtime]System.Boolean
 		IL_009a: stelem.ref
 		IL_009b: dup
-		IL_009c: ldc.i4.5
-		IL_009d: ldstr "get value"
-		IL_00a2: stelem.ref
-		IL_00a3: dup
-		IL_00a4: ldc.i4.6
-		IL_00a5: ldc.i4.0
-		IL_00a6: box [System.Runtime]System.Boolean
-		IL_00ab: stelem.ref
-		IL_00ac: dup
-		IL_00ad: ldc.i4.7
-		IL_00ae: ldc.i4.1
-		IL_00af: box [System.Runtime]System.Boolean
+		IL_009c: ldc.i4.s 9
+		IL_009e: ldc.i4.0
+		IL_009f: box [System.Runtime]System.Boolean
+		IL_00a4: stelem.ref
+		IL_00a5: dup
+		IL_00a6: ldc.i4.s 10
+		IL_00a8: ldc.i4.0
+		IL_00a9: box [System.Runtime]System.Boolean
+		IL_00ae: stelem.ref
+		IL_00af: dup
+		IL_00b0: ldc.i4.s 11
+		IL_00b2: ldloc.s 4
 		IL_00b4: stelem.ref
-		IL_00b5: dup
-		IL_00b6: ldc.i4.8
-		IL_00b7: ldc.i4.0
-		IL_00b8: box [System.Runtime]System.Boolean
-		IL_00bd: stelem.ref
-		IL_00be: dup
-		IL_00bf: ldc.i4.s 9
-		IL_00c1: ldc.i4.0
-		IL_00c2: box [System.Runtime]System.Boolean
-		IL_00c7: stelem.ref
-		IL_00c8: dup
-		IL_00c9: ldc.i4.s 10
-		IL_00cb: ldc.i4.0
-		IL_00cc: box [System.Runtime]System.Boolean
-		IL_00d1: stelem.ref
-		IL_00d2: dup
-		IL_00d3: ldc.i4.s 11
-		IL_00d5: ldloc.s 5
-		IL_00d7: stelem.ref
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassMethodAccessorProperty(object[])
-		IL_00dd: pop
-		IL_00de: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
-		IL_00e3: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00e8: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
-		IL_00ed: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
-		IL_00f2: stloc.3
-		IL_00f3: ldc.i4.1
-		IL_00f4: newarr [System.Runtime]System.Object
-		IL_00f9: dup
-		IL_00fa: ldc.i4.0
-		IL_00fb: ldloc.0
-		IL_00fc: stelem.ref
-		IL_00fd: stloc.s 5
-		IL_00ff: ldc.i4.s 10
-		IL_0101: newarr [System.Runtime]System.Object
-		IL_0106: dup
-		IL_0107: ldc.i4.0
-		IL_0108: ldloc.3
-		IL_0109: stelem.ref
-		IL_010a: dup
-		IL_010b: ldc.i4.1
-		IL_010c: ldstr "log"
-		IL_0111: stelem.ref
-		IL_0112: dup
-		IL_0113: ldc.i4.2
-		IL_0114: ldstr "log"
-		IL_0119: stelem.ref
-		IL_011a: dup
-		IL_011b: ldc.i4.3
-		IL_011c: ldc.r8 0.0
-		IL_0125: box [System.Runtime]System.Double
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::DefineClassMethodAccessorProperty(object[])
+		IL_00ba: pop
+		IL_00bb: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
+		IL_00c0: call void [System.Runtime]System.Runtime.CompilerServices.RuntimeHelpers::RunClassConstructor(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00c5: ldtoken Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
+		IL_00ca: call class [System.Runtime]System.Type [System.Runtime]System.Type::GetTypeFromHandle(valuetype [System.Runtime]System.RuntimeTypeHandle)
+		IL_00cf: stloc.2
+		IL_00d0: ldc.i4.1
+		IL_00d1: newarr [System.Runtime]System.Object
+		IL_00d6: dup
+		IL_00d7: ldc.i4.0
+		IL_00d8: ldloc.0
+		IL_00d9: stelem.ref
+		IL_00da: stloc.s 4
+		IL_00dc: ldc.i4.s 10
+		IL_00de: newarr [System.Runtime]System.Object
+		IL_00e3: dup
+		IL_00e4: ldc.i4.0
+		IL_00e5: ldloc.2
+		IL_00e6: stelem.ref
+		IL_00e7: dup
+		IL_00e8: ldc.i4.1
+		IL_00e9: ldstr "log"
+		IL_00ee: stelem.ref
+		IL_00ef: dup
+		IL_00f0: ldc.i4.2
+		IL_00f1: ldstr "log"
+		IL_00f6: stelem.ref
+		IL_00f7: dup
+		IL_00f8: ldc.i4.3
+		IL_00f9: ldc.r8 0.0
+		IL_0102: box [System.Runtime]System.Double
+		IL_0107: stelem.ref
+		IL_0108: dup
+		IL_0109: ldc.i4.4
+		IL_010a: ldstr "log"
+		IL_010f: stelem.ref
+		IL_0110: dup
+		IL_0111: ldc.i4.5
+		IL_0112: ldc.i4.0
+		IL_0113: box [System.Runtime]System.Boolean
+		IL_0118: stelem.ref
+		IL_0119: dup
+		IL_011a: ldc.i4.6
+		IL_011b: ldc.i4.0
+		IL_011c: box [System.Runtime]System.Boolean
+		IL_0121: stelem.ref
+		IL_0122: dup
+		IL_0123: ldc.i4.7
+		IL_0124: ldc.i4.0
+		IL_0125: box [System.Runtime]System.Boolean
 		IL_012a: stelem.ref
 		IL_012b: dup
-		IL_012c: ldc.i4.4
-		IL_012d: ldstr "log"
-		IL_0132: stelem.ref
-		IL_0133: dup
-		IL_0134: ldc.i4.5
-		IL_0135: ldc.i4.0
-		IL_0136: box [System.Runtime]System.Boolean
-		IL_013b: stelem.ref
-		IL_013c: dup
-		IL_013d: ldc.i4.6
-		IL_013e: ldc.i4.0
-		IL_013f: box [System.Runtime]System.Boolean
-		IL_0144: stelem.ref
-		IL_0145: dup
-		IL_0146: ldc.i4.7
+		IL_012c: ldc.i4.8
+		IL_012d: ldc.i4.0
+		IL_012e: box [System.Runtime]System.Boolean
+		IL_0133: stelem.ref
+		IL_0134: dup
+		IL_0135: ldc.i4.s 9
+		IL_0137: ldloc.s 4
+		IL_0139: stelem.ref
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
+		IL_013f: pop
+		IL_0140: ldc.i4.1
+		IL_0141: newarr [System.Runtime]System.Object
+		IL_0146: dup
 		IL_0147: ldc.i4.0
-		IL_0148: box [System.Runtime]System.Boolean
-		IL_014d: stelem.ref
-		IL_014e: dup
-		IL_014f: ldc.i4.8
-		IL_0150: ldc.i4.0
-		IL_0151: box [System.Runtime]System.Boolean
-		IL_0156: stelem.ref
-		IL_0157: dup
-		IL_0158: ldc.i4.s 9
-		IL_015a: ldloc.s 5
-		IL_015c: stelem.ref
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RegisterLazyClassMethodDataProperty(object[])
-		IL_0162: pop
-		IL_0163: ldc.i4.1
-		IL_0164: newarr [System.Runtime]System.Object
-		IL_0169: dup
-		IL_016a: ldc.i4.0
-		IL_016b: ldloc.0
-		IL_016c: stelem.ref
-		IL_016d: stloc.s 5
+		IL_0148: ldloc.0
+		IL_0149: stelem.ref
+		IL_014a: stloc.s 4
+		IL_014c: ldloc.2
+		IL_014d: ldloc.s 4
+		IL_014f: ldc.r8 0.0
+		IL_0158: box [System.Runtime]System.Double
+		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
+		IL_0162: stloc.3
+		IL_0163: ldloc.3
+		IL_0164: ldstr "Counter"
+		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
+		IL_016e: stloc.3
 		IL_016f: ldloc.3
-		IL_0170: ldloc.s 5
-		IL_0172: ldc.r8 0.0
-		IL_017b: box [System.Runtime]System.Double
-		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateClassConstructorValue(object, object, object)
-		IL_0185: stloc.s 4
-		IL_0187: ldloc.s 4
-		IL_0189: ldstr "Counter"
-		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
-		IL_0193: stloc.s 4
-		IL_0195: ldloc.s 4
-		IL_0197: ldstr "Counter"
-		IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetClassConstructorInferredName(object, object)
-		IL_01a1: stloc.s 4
-		IL_01a3: ldloc.s 4
-		IL_01a5: stloc.2
-		IL_01a6: ldloc.2
-		IL_01a7: ldc.i4.0
-		IL_01a8: newarr [System.Runtime]System.Object
-		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
-		IL_01b2: stloc.s 4
-		IL_01b4: ldloc.s 4
-		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01bb: stloc.s 4
-		IL_01bd: ldloc.s 4
-		IL_01bf: isinst Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
-		IL_01c4: dup
-		IL_01c5: brfalse IL_01d5
+		IL_0170: stloc.1
+		IL_0171: ldloc.1
+		IL_0172: ldc.i4.0
+		IL_0173: newarr [System.Runtime]System.Object
+		IL_0178: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
+		IL_017d: stloc.3
+		IL_017e: ldloc.3
+		IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0184: stloc.3
+		IL_0185: ldloc.3
+		IL_0186: isinst Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17
+		IL_018b: dup
+		IL_018c: brfalse IL_019c
 
-		IL_01ca: callvirt instance object Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17::log()
-		IL_01cf: pop
-		IL_01d0: br IL_01e3
+		IL_0191: callvirt instance object Modules.Classes_ClassPrivateAccessor_ClassExpression_Log/ClassExpression_L3C17::log()
+		IL_0196: pop
+		IL_0197: br IL_01a9
 
-		IL_01d5: pop
-		IL_01d6: ldloc.s 4
-		IL_01d8: ldstr "log"
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_01e2: pop
+		IL_019c: pop
+		IL_019d: ldloc.3
+		IL_019e: ldstr "log"
+		IL_01a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_01a8: pop
 
-		IL_01e3: ret
+		IL_01a9: ret
 	} // end of method Classes_ClassPrivateAccessor_ClassExpression_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassPrivateAccessor_ClassExpression_Log
@@ -388,7 +382,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22a0
+		// Method begins at RVA 0x227b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

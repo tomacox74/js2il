@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e3
+			// Method begins at RVA 0x2122
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 135 (0x87)
+		// Code size: 198 (0xc6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_In_Object_OwnAndMissing/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[2] bool,
-			[3] object
+			[2] object,
+			[3] bool,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_In_Object_OwnAndMissing/Scope::.ctor()
@@ -57,41 +58,62 @@
 		IL_0011: ldc.r8 1
 		IL_001a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_001f: stloc.1
-		IL_0020: ldstr "a"
-		IL_0025: ldloc.1
-		IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_002b: stloc.2
-		IL_002c: ldloc.2
-		IL_002d: box [System.Runtime]System.Boolean
-		IL_0032: stloc.3
-		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0038: ldloc.3
-		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003e: pop
-		IL_003f: ldstr "b"
-		IL_0044: ldloc.1
-		IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_004a: stloc.2
-		IL_004b: ldloc.2
-		IL_004c: box [System.Runtime]System.Boolean
-		IL_0051: stloc.3
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldloc.3
-		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005d: pop
-		IL_005e: ldc.r8 100
-		IL_0067: box [System.Runtime]System.Double
-		IL_006c: ldloc.1
-		IL_006d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
-		IL_0072: stloc.2
-		IL_0073: ldloc.2
-		IL_0074: box [System.Runtime]System.Boolean
-		IL_0079: stloc.3
-		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007f: ldloc.3
-		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0085: pop
-		IL_0086: ret
+		IL_0020: ldstr "console"
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002a: stloc.2
+		IL_002b: ldloc.2
+		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0031: stloc.2
+		IL_0032: ldstr "a"
+		IL_0037: ldloc.1
+		IL_0038: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_003d: stloc.3
+		IL_003e: ldloc.3
+		IL_003f: box [System.Runtime]System.Boolean
+		IL_0044: stloc.s 4
+		IL_0046: ldloc.2
+		IL_0047: ldstr "log"
+		IL_004c: ldloc.s 4
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0053: pop
+		IL_0054: ldstr "console"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_005e: stloc.2
+		IL_005f: ldloc.2
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0065: stloc.2
+		IL_0066: ldstr "b"
+		IL_006b: ldloc.1
+		IL_006c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_0071: stloc.3
+		IL_0072: ldloc.3
+		IL_0073: box [System.Runtime]System.Boolean
+		IL_0078: stloc.s 4
+		IL_007a: ldloc.2
+		IL_007b: ldstr "log"
+		IL_0080: ldloc.s 4
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0087: pop
+		IL_0088: ldstr "console"
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0092: stloc.2
+		IL_0093: ldloc.2
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0099: stloc.2
+		IL_009a: ldc.r8 100
+		IL_00a3: box [System.Runtime]System.Double
+		IL_00a8: ldloc.1
+		IL_00a9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::In(object, object)
+		IL_00ae: stloc.3
+		IL_00af: ldloc.3
+		IL_00b0: box [System.Runtime]System.Boolean
+		IL_00b5: stloc.s 4
+		IL_00b7: ldloc.2
+		IL_00b8: ldstr "log"
+		IL_00bd: ldloc.s 4
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c4: pop
+		IL_00c5: ret
 	} // end of method BinaryOperator_In_Object_OwnAndMissing::__js_module_init__
 
 } // end of class Modules.BinaryOperator_In_Object_OwnAndMissing
@@ -103,7 +125,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ec
+		// Method begins at RVA 0x212b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

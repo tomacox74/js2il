@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20bf
+				// Method begins at RVA 0x20e9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c8
+				// Method begins at RVA 0x20f2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20b6
+			// Method begins at RVA 0x20e0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 132 (0x84)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_LessThan/Scope,
@@ -90,7 +90,7 @@
 			[2] float64,
 			[3] class Modules.ControlFlow_If_LessThan/Scope/Block_L5C11,
 			[4] class Modules.ControlFlow_If_LessThan/Scope/Block_L7C7,
-			[5] float64
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_If_LessThan/Scope::.ctor()
@@ -100,28 +100,40 @@
 		IL_0010: ldc.r8 5
 		IL_0019: stloc.2
 		IL_001a: ldloc.1
-		IL_001b: stloc.s 5
-		IL_001d: ldloc.s 5
-		IL_001f: ldloc.2
-		IL_0020: clt
-		IL_0022: brfalse IL_0042
+		IL_001b: ldloc.2
+		IL_001c: clt
+		IL_001e: brfalse IL_0055
 
-		IL_0027: newobj instance void Modules.ControlFlow_If_LessThan/Scope/Block_L5C11::.ctor()
-		IL_002c: stloc.3
-		IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0032: ldstr "lte"
-		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_003c: pop
-		IL_003d: br IL_0059
+		IL_0023: newobj instance void Modules.ControlFlow_If_LessThan/Scope/Block_L5C11::.ctor()
+		IL_0028: stloc.3
+		IL_0029: ldstr "console"
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0033: stloc.s 5
+		IL_0035: ldloc.s 5
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003c: stloc.s 5
+		IL_003e: ldloc.s 5
+		IL_0040: ldstr "log"
+		IL_0045: ldstr "lte"
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_004f: pop
+		IL_0050: br IL_0083
 
-		IL_0042: newobj instance void Modules.ControlFlow_If_LessThan/Scope/Block_L7C7::.ctor()
-		IL_0047: stloc.s 4
-		IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004e: ldstr "gt"
-		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0058: pop
+		IL_0055: newobj instance void Modules.ControlFlow_If_LessThan/Scope/Block_L7C7::.ctor()
+		IL_005a: stloc.s 4
+		IL_005c: ldstr "console"
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0066: stloc.s 5
+		IL_0068: ldloc.s 5
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006f: stloc.s 5
+		IL_0071: ldloc.s 5
+		IL_0073: ldstr "log"
+		IL_0078: ldstr "gt"
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0082: pop
 
-		IL_0059: ret
+		IL_0083: ret
 	} // end of method ControlFlow_If_LessThan::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_LessThan
@@ -133,7 +145,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d1
+		// Method begins at RVA 0x20fb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

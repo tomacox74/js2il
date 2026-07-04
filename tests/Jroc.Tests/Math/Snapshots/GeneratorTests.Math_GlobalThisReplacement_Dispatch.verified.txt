@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20df
+				// Method begins at RVA 0x2102
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20cb
+			// Method begins at RVA 0x20ee
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -59,7 +59,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d6
+			// Method begins at RVA 0x20f9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -85,11 +85,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 146 (0x92)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_GlobalThisReplacement_Dispatch/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_GlobalThisReplacement_Dispatch/Scope::.ctor()
@@ -104,28 +105,43 @@
 		IL_001a: ldc.i4.0
 		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
 		IL_0020: stloc.1
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_globalThis()
-		IL_0026: ldstr "Math"
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0030: ldstr "round"
-		IL_0035: ldloc.1
-		IL_0036: ldc.i4.0
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_003c: pop
-		IL_003d: call class [System.Runtime]System.Type [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Math()
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0047: stloc.1
-		IL_0048: ldloc.1
-		IL_0049: ldstr "round"
-		IL_004e: ldc.r8 1.2
-		IL_0057: box [System.Runtime]System.Double
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0061: stloc.1
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldloc.1
-		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006d: pop
-		IL_006e: ret
+		IL_0021: ldstr "globalThis"
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002b: stloc.2
+		IL_002c: ldloc.2
+		IL_002d: ldstr "Math"
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0037: stloc.2
+		IL_0038: ldloc.2
+		IL_0039: ldstr "round"
+		IL_003e: ldloc.1
+		IL_003f: ldc.i4.0
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0045: pop
+		IL_0046: ldstr "console"
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0050: stloc.1
+		IL_0051: ldloc.1
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0057: stloc.1
+		IL_0058: ldstr "Math"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0062: stloc.2
+		IL_0063: ldloc.2
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0069: stloc.2
+		IL_006a: ldloc.2
+		IL_006b: ldstr "round"
+		IL_0070: ldc.r8 1.2
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0083: stloc.2
+		IL_0084: ldloc.1
+		IL_0085: ldstr "log"
+		IL_008a: ldloc.2
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0090: pop
+		IL_0091: ret
 	} // end of method Math_GlobalThisReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_GlobalThisReplacement_Dispatch
@@ -137,7 +153,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x210b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

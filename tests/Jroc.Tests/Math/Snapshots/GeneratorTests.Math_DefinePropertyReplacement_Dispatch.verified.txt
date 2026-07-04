@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2100
+				// Method begins at RVA 0x211f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x210b
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -59,7 +59,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f7
+			// Method begins at RVA 0x2116
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -85,62 +85,73 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 144 (0x90)
+		// Code size: 175 (0xaf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_DefinePropertyReplacement_Dispatch/Scope,
-			[1] class [System.Runtime]System.Type,
+			[1] object,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		)
 
 		IL_0000: newobj instance void Modules.Math_DefinePropertyReplacement_Dispatch/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [System.Runtime]System.Type [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Math()
-		IL_000b: stloc.1
-		IL_000c: ldnull
-		IL_000d: ldftn float64 Modules.Math_DefinePropertyReplacement_Dispatch/FunctionExpression_L2C9::__js_call__(object)
-		IL_0013: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
-		IL_0018: ldc.i4.0
-		IL_0019: conv.r8
-		IL_001a: ldstr ""
-		IL_001f: ldc.i4.0
-		IL_0020: ldc.i4.0
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0026: stloc.2
-		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_002c: dup
-		IL_002d: ldstr "value"
-		IL_0032: ldloc.2
-		IL_0033: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0038: dup
-		IL_0039: ldstr "configurable"
-		IL_003e: ldc.i4.1
-		IL_003f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0044: dup
-		IL_0045: ldstr "writable"
-		IL_004a: ldc.i4.1
-		IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-		IL_0050: stloc.3
-		IL_0051: ldloc.1
-		IL_0052: ldstr "sqrt"
-		IL_0057: ldloc.3
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-		IL_005d: pop
-		IL_005e: call class [System.Runtime]System.Type [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Math()
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0068: stloc.2
-		IL_0069: ldloc.2
-		IL_006a: ldstr "sqrt"
-		IL_006f: ldc.r8 9
-		IL_0078: box [System.Runtime]System.Double
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0082: stloc.2
-		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0088: ldloc.2
-		IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008e: pop
-		IL_008f: ret
+		IL_0006: ldstr "Math"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0010: stloc.1
+		IL_0011: ldnull
+		IL_0012: ldftn float64 Modules.Math_DefinePropertyReplacement_Dispatch/FunctionExpression_L2C9::__js_call__(object)
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
+		IL_001d: ldc.i4.0
+		IL_001e: conv.r8
+		IL_001f: ldstr ""
+		IL_0024: ldc.i4.0
+		IL_0025: ldc.i4.0
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_002b: stloc.2
+		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0031: dup
+		IL_0032: ldstr "value"
+		IL_0037: ldloc.2
+		IL_0038: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_003d: dup
+		IL_003e: ldstr "configurable"
+		IL_0043: ldc.i4.1
+		IL_0044: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0049: dup
+		IL_004a: ldstr "writable"
+		IL_004f: ldc.i4.1
+		IL_0050: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+		IL_0055: stloc.3
+		IL_0056: ldloc.1
+		IL_0057: ldstr "sqrt"
+		IL_005c: ldloc.3
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+		IL_0062: pop
+		IL_0063: ldstr "console"
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_006d: stloc.1
+		IL_006e: ldloc.1
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0074: stloc.1
+		IL_0075: ldstr "Math"
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_007f: stloc.2
+		IL_0080: ldloc.2
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0086: stloc.2
+		IL_0087: ldloc.2
+		IL_0088: ldstr "sqrt"
+		IL_008d: ldc.r8 9
+		IL_0096: box [System.Runtime]System.Double
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a0: stloc.2
+		IL_00a1: ldloc.1
+		IL_00a2: ldstr "log"
+		IL_00a7: ldloc.2
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ad: pop
+		IL_00ae: ret
 	} // end of method Math_DefinePropertyReplacement_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_DefinePropertyReplacement_Dispatch
@@ -152,7 +163,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2109
+		// Method begins at RVA 0x2128
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

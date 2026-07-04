@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2179
+				// Method begins at RVA 0x21cb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,19 +41,29 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2127
-			// Header size: 1
-			// Code size: 32 (0x20)
+			// Method begins at RVA 0x213c
+			// Header size: 12
+			// Code size: 51 (0x33)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Hello, World!"
-			IL_000a: ldc.r8 2
-			IL_0013: box [System.Runtime]System.Double
-			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_001d: pop
-			IL_001e: ldnull
-			IL_001f: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Hello, World!"
+			IL_001d: ldc.r8 2
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0030: pop
+			IL_0031: ldnull
+			IL_0032: ret
 		} // end of method ArrowFunction_L4C20::__js_call__
 
 	} // end of class ArrowFunction_L4C20
@@ -69,7 +79,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2182
+				// Method begins at RVA 0x21d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -95,22 +105,32 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2148
-			// Header size: 1
-			// Code size: 39 (0x27)
+			// Method begins at RVA 0x217c
+			// Header size: 12
+			// Code size: 58 (0x3a)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "This is a proxy function."
-			IL_000a: ldc.r8 1
-			IL_0013: box [System.Runtime]System.Double
-			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_001d: pop
-			IL_001e: ldnull
-			IL_001f: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L4C20::__js_call__(object)
-			IL_0024: pop
-			IL_0025: ldnull
-			IL_0026: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "This is a proxy function."
+			IL_001d: ldc.r8 1
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0030: pop
+			IL_0031: ldnull
+			IL_0032: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L4C20::__js_call__(object)
+			IL_0037: pop
+			IL_0038: ldnull
+			IL_0039: ret
 		} // end of method ArrowFunction_L8C25::__js_call__
 
 	} // end of class ArrowFunction_L8C25
@@ -130,7 +150,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2170
+			// Method begins at RVA 0x21c2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -156,7 +176,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 203 (0xcb)
+		// Code size: 222 (0xde)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope,
@@ -230,13 +250,20 @@
 		IL_00a5: ldnull
 		IL_00a6: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25::__js_call__(class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope, object)
 		IL_00ab: pop
-		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b1: ldstr "finally is now"
-		IL_00b6: ldc.r8 3
-		IL_00bf: box [System.Runtime]System.Double
-		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c9: pop
-		IL_00ca: ret
+		IL_00ac: ldstr "console"
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b6: stloc.2
+		IL_00b7: ldloc.2
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00bd: stloc.2
+		IL_00be: ldloc.2
+		IL_00bf: ldstr "log"
+		IL_00c4: ldstr "finally is now"
+		IL_00c9: ldc.r8 3
+		IL_00d2: box [System.Runtime]System.Double
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00dc: pop
+		IL_00dd: ret
 	} // end of method ArrowFunction_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction
@@ -248,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218b
+		// Method begins at RVA 0x21dd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

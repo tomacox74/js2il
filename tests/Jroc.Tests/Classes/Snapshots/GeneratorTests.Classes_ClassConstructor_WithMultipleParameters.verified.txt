@@ -1,4 +1,4 @@
-// IL code: Classes_ClassConstructor_WithMultipleParameters
+﻿// IL code: Classes_ClassConstructor_WithMultipleParameters
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x253d
+				// Method begins at RVA 0x25f7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2546
+				// Method begins at RVA 0x2600
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -61,19 +61,29 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x242f
-			// Header size: 1
-			// Code size: 24 (0x18)
+			// Method begins at RVA 0x2430
+			// Header size: 12
+			// Code size: 43 (0x2b)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldstr "C1"
-			IL_0010: ldarg.1
-			IL_0011: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0016: pop
-			IL_0017: ret
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldloc.0
+			IL_0019: ldstr "log"
+			IL_001e: ldstr "C1"
+			IL_0023: ldarg.1
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0029: pop
+			IL_002a: ret
 		} // end of method C1::.ctor
 
 	} // end of class C1
@@ -89,7 +99,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x254f
+				// Method begins at RVA 0x2609
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -109,7 +119,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2558
+				// Method begins at RVA 0x2612
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -133,20 +143,30 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2448
-			// Header size: 1
-			// Code size: 25 (0x19)
+			// Method begins at RVA 0x2468
+			// Header size: 12
+			// Code size: 44 (0x2c)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldstr "C2"
-			IL_0010: ldarg.1
-			IL_0011: ldarg.2
-			IL_0012: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_0017: pop
-			IL_0018: ret
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldloc.0
+			IL_0019: ldstr "log"
+			IL_001e: ldstr "C2"
+			IL_0023: ldarg.1
+			IL_0024: ldarg.2
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_002a: pop
+			IL_002b: ret
 		} // end of method C2::.ctor
 
 	} // end of class C2
@@ -162,7 +182,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2561
+				// Method begins at RVA 0x261b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -182,7 +202,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x256a
+				// Method begins at RVA 0x2624
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -207,35 +227,45 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2462
-			// Header size: 1
-			// Code size: 44 (0x2c)
+			// Method begins at RVA 0x24a0
+			// Header size: 12
+			// Code size: 63 (0x3f)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldc.i4.4
-			IL_000c: newarr [System.Runtime]System.Object
-			IL_0011: dup
-			IL_0012: ldc.i4.0
-			IL_0013: ldstr "C3"
-			IL_0018: stelem.ref
-			IL_0019: dup
-			IL_001a: ldc.i4.1
-			IL_001b: ldarg.1
-			IL_001c: stelem.ref
-			IL_001d: dup
-			IL_001e: ldc.i4.2
-			IL_001f: ldarg.2
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.3
-			IL_0023: ldarg.3
-			IL_0024: stelem.ref
-			IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_002a: pop
-			IL_002b: ret
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldloc.0
+			IL_0019: ldstr "log"
+			IL_001e: ldc.i4.4
+			IL_001f: newarr [System.Runtime]System.Object
+			IL_0024: dup
+			IL_0025: ldc.i4.0
+			IL_0026: ldstr "C3"
+			IL_002b: stelem.ref
+			IL_002c: dup
+			IL_002d: ldc.i4.1
+			IL_002e: ldarg.1
+			IL_002f: stelem.ref
+			IL_0030: dup
+			IL_0031: ldc.i4.2
+			IL_0032: ldarg.2
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.3
+			IL_0036: ldarg.3
+			IL_0037: stelem.ref
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_003d: pop
+			IL_003e: ret
 		} // end of method C3::.ctor
 
 	} // end of class C3
@@ -251,7 +281,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2573
+				// Method begins at RVA 0x262d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -271,7 +301,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x257c
+				// Method begins at RVA 0x2636
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -297,39 +327,49 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x248f
-			// Header size: 1
-			// Code size: 49 (0x31)
+			// Method begins at RVA 0x24ec
+			// Header size: 12
+			// Code size: 68 (0x44)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldc.i4.5
-			IL_000c: newarr [System.Runtime]System.Object
-			IL_0011: dup
-			IL_0012: ldc.i4.0
-			IL_0013: ldstr "C4"
-			IL_0018: stelem.ref
-			IL_0019: dup
-			IL_001a: ldc.i4.1
-			IL_001b: ldarg.1
-			IL_001c: stelem.ref
-			IL_001d: dup
-			IL_001e: ldc.i4.2
-			IL_001f: ldarg.2
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.3
-			IL_0023: ldarg.3
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.4
-			IL_0027: ldarg.s d
-			IL_0029: stelem.ref
-			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_002f: pop
-			IL_0030: ret
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldloc.0
+			IL_0019: ldstr "log"
+			IL_001e: ldc.i4.5
+			IL_001f: newarr [System.Runtime]System.Object
+			IL_0024: dup
+			IL_0025: ldc.i4.0
+			IL_0026: ldstr "C4"
+			IL_002b: stelem.ref
+			IL_002c: dup
+			IL_002d: ldc.i4.1
+			IL_002e: ldarg.1
+			IL_002f: stelem.ref
+			IL_0030: dup
+			IL_0031: ldc.i4.2
+			IL_0032: ldarg.2
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.3
+			IL_0036: ldarg.3
+			IL_0037: stelem.ref
+			IL_0038: dup
+			IL_0039: ldc.i4.4
+			IL_003a: ldarg.s d
+			IL_003c: stelem.ref
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0042: pop
+			IL_0043: ret
 		} // end of method C4::.ctor
 
 	} // end of class C4
@@ -345,7 +385,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2585
+				// Method begins at RVA 0x263f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -365,7 +405,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x258e
+				// Method begins at RVA 0x2648
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -392,43 +432,53 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x24c1
-			// Header size: 1
-			// Code size: 54 (0x36)
+			// Method begins at RVA 0x253c
+			// Header size: 12
+			// Code size: 73 (0x49)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldc.i4.6
-			IL_000c: newarr [System.Runtime]System.Object
-			IL_0011: dup
-			IL_0012: ldc.i4.0
-			IL_0013: ldstr "C5"
-			IL_0018: stelem.ref
-			IL_0019: dup
-			IL_001a: ldc.i4.1
-			IL_001b: ldarg.1
-			IL_001c: stelem.ref
-			IL_001d: dup
-			IL_001e: ldc.i4.2
-			IL_001f: ldarg.2
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.3
-			IL_0023: ldarg.3
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.4
-			IL_0027: ldarg.s d
-			IL_0029: stelem.ref
-			IL_002a: dup
-			IL_002b: ldc.i4.5
-			IL_002c: ldarg.s e
-			IL_002e: stelem.ref
-			IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0034: pop
-			IL_0035: ret
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldloc.0
+			IL_0019: ldstr "log"
+			IL_001e: ldc.i4.6
+			IL_001f: newarr [System.Runtime]System.Object
+			IL_0024: dup
+			IL_0025: ldc.i4.0
+			IL_0026: ldstr "C5"
+			IL_002b: stelem.ref
+			IL_002c: dup
+			IL_002d: ldc.i4.1
+			IL_002e: ldarg.1
+			IL_002f: stelem.ref
+			IL_0030: dup
+			IL_0031: ldc.i4.2
+			IL_0032: ldarg.2
+			IL_0033: stelem.ref
+			IL_0034: dup
+			IL_0035: ldc.i4.3
+			IL_0036: ldarg.3
+			IL_0037: stelem.ref
+			IL_0038: dup
+			IL_0039: ldc.i4.4
+			IL_003a: ldarg.s d
+			IL_003c: stelem.ref
+			IL_003d: dup
+			IL_003e: ldc.i4.5
+			IL_003f: ldarg.s e
+			IL_0041: stelem.ref
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0047: pop
+			IL_0048: ret
 		} // end of method C5::.ctor
 
 	} // end of class C5
@@ -444,7 +494,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2597
+				// Method begins at RVA 0x2651
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -464,7 +514,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x25a0
+				// Method begins at RVA 0x265a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -492,47 +542,57 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x24f8
-			// Header size: 1
-			// Code size: 59 (0x3b)
+			// Method begins at RVA 0x2594
+			// Header size: 12
+			// Code size: 78 (0x4e)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: ldc.i4.7
-			IL_000c: newarr [System.Runtime]System.Object
-			IL_0011: dup
-			IL_0012: ldc.i4.0
-			IL_0013: ldstr "C6"
-			IL_0018: stelem.ref
-			IL_0019: dup
-			IL_001a: ldc.i4.1
-			IL_001b: ldarg.1
-			IL_001c: stelem.ref
-			IL_001d: dup
-			IL_001e: ldc.i4.2
-			IL_001f: ldarg.2
-			IL_0020: stelem.ref
-			IL_0021: dup
-			IL_0022: ldc.i4.3
-			IL_0023: ldarg.3
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.4
-			IL_0027: ldarg.s d
-			IL_0029: stelem.ref
-			IL_002a: dup
-			IL_002b: ldc.i4.5
-			IL_002c: ldarg.s e
-			IL_002e: stelem.ref
-			IL_002f: dup
-			IL_0030: ldc.i4.6
-			IL_0031: ldarg.s f
+			IL_0006: ldstr "console"
+			IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0010: stloc.0
+			IL_0011: ldloc.0
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0017: stloc.0
+			IL_0018: ldloc.0
+			IL_0019: ldstr "log"
+			IL_001e: ldc.i4.7
+			IL_001f: newarr [System.Runtime]System.Object
+			IL_0024: dup
+			IL_0025: ldc.i4.0
+			IL_0026: ldstr "C6"
+			IL_002b: stelem.ref
+			IL_002c: dup
+			IL_002d: ldc.i4.1
+			IL_002e: ldarg.1
+			IL_002f: stelem.ref
+			IL_0030: dup
+			IL_0031: ldc.i4.2
+			IL_0032: ldarg.2
 			IL_0033: stelem.ref
-			IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0039: pop
-			IL_003a: ret
+			IL_0034: dup
+			IL_0035: ldc.i4.3
+			IL_0036: ldarg.3
+			IL_0037: stelem.ref
+			IL_0038: dup
+			IL_0039: ldc.i4.4
+			IL_003a: ldarg.s d
+			IL_003c: stelem.ref
+			IL_003d: dup
+			IL_003e: ldc.i4.5
+			IL_003f: ldarg.s e
+			IL_0041: stelem.ref
+			IL_0042: dup
+			IL_0043: ldc.i4.6
+			IL_0044: ldarg.s f
+			IL_0046: stelem.ref
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_004c: pop
+			IL_004d: ret
 		} // end of method C6::.ctor
 
 	} // end of class C6
@@ -544,7 +604,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2534
+			// Method begins at RVA 0x25ee
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -833,7 +893,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25a9
+		// Method begins at RVA 0x2663
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

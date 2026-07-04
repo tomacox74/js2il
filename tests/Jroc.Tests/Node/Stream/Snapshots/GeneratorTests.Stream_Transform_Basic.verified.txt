@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22de
+				// Method begins at RVA 0x22cb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -83,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e7
+				// Method begins at RVA 0x22d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,32 +110,18 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x223c
-			// Header size: 12
-			// Code size: 41 (0x29)
+			// Method begins at RVA 0x2239
+			// Header size: 1
+			// Code size: 15 (0xf)
 			.maxstack 8
-			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[1] object
-			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
-			IL_0006: stloc.0
-			IL_0007: ldstr "written"
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0012: stloc.1
-			IL_0013: ldloc.1
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0019: stloc.1
-			IL_001a: ldloc.1
-			IL_001b: ldstr "push"
-			IL_0020: ldarg.2
-			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0026: pop
-			IL_0027: ldnull
-			IL_0028: ret
+			IL_0006: ldarg.2
+			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_000c: pop
+			IL_000d: ldnull
+			IL_000e: ret
 		} // end of method FunctionExpression_L14C18::__js_call__
 
 	} // end of class FunctionExpression_L14C18
@@ -151,7 +137,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22f0
+				// Method begins at RVA 0x22dd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -177,45 +163,53 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2274
+			// Method begins at RVA 0x224c
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 106 (0x6a)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-				[1] object,
-				[2] object
+				[0] object,
+				[1] string
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "finish"
-			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_000f: pop
-			IL_0010: ldarg.0
-			IL_0011: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
-			IL_0016: stloc.0
-			IL_0017: ldstr "written"
-			IL_001c: ldloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0022: stloc.1
-			IL_0023: ldloc.1
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0029: stloc.1
-			IL_002a: ldloc.1
-			IL_002b: ldstr "join"
-			IL_0030: ldstr ","
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003a: stloc.1
-			IL_003b: ldstr "written:"
-			IL_0040: ldloc.1
-			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0046: stloc.2
-			IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004c: ldloc.2
-			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0052: pop
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "finish"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0022: pop
+			IL_0023: ldstr "console"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0034: stloc.0
+			IL_0035: ldarg.0
+			IL_0036: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Transform_Basic/Scope::written
+			IL_003b: ldc.i4.1
+			IL_003c: newarr [System.Runtime]System.Object
+			IL_0041: dup
+			IL_0042: ldc.i4.0
+			IL_0043: ldstr ","
+			IL_0048: stelem.ref
+			IL_0049: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_004e: stloc.1
+			IL_004f: ldstr "written:"
+			IL_0054: ldloc.1
+			IL_0055: call string [System.Runtime]System.String::Concat(string, string)
+			IL_005a: stloc.1
+			IL_005b: ldloc.0
+			IL_005c: ldstr "log"
+			IL_0061: ldloc.1
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0067: pop
+			IL_0068: ldnull
+			IL_0069: ret
 		} // end of method FunctionExpression_L18C22::__js_call__
 
 	} // end of class FunctionExpression_L18C22
@@ -234,7 +228,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22d5
+			// Method begins at RVA 0x22c2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -431,7 +425,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22f9
+		// Method begins at RVA 0x22e6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

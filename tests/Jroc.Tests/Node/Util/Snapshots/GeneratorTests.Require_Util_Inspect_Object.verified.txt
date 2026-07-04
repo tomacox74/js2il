@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213b
+			// Method begins at RVA 0x2169
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,14 +40,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 223 (0xdf)
+		// Code size: 269 (0x10d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Inspect_Object/Scope,
 			[1] object,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Util_Inspect_Object/Scope::.ctor()
@@ -72,49 +73,63 @@
 		IL_0045: ldc.i4.1
 		IL_0046: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
 		IL_004b: stloc.2
-		IL_004c: ldloc.1
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0052: stloc.s 4
-		IL_0054: ldloc.s 4
-		IL_0056: ldstr "inspect"
-		IL_005b: ldloc.2
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0061: stloc.s 4
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldloc.s 4
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006f: pop
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0075: dup
-		IL_0076: ldstr "person"
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0080: dup
-		IL_0081: ldstr "name"
-		IL_0086: ldstr "Jane"
-		IL_008b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0090: dup
-		IL_0091: ldstr "age"
-		IL_0096: ldc.r8 25
-		IL_009f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_00a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00a9: dup
-		IL_00aa: ldstr "city"
-		IL_00af: ldstr "NYC"
-		IL_00b4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_00b9: stloc.3
-		IL_00ba: ldloc.1
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c0: stloc.s 4
-		IL_00c2: ldloc.s 4
-		IL_00c4: ldstr "inspect"
-		IL_00c9: ldloc.3
-		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00cf: stloc.s 4
-		IL_00d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d6: ldloc.s 4
-		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00dd: pop
-		IL_00de: ret
+		IL_004c: ldstr "console"
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.s 4
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005f: stloc.s 4
+		IL_0061: ldloc.1
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0067: stloc.s 5
+		IL_0069: ldloc.s 5
+		IL_006b: ldstr "inspect"
+		IL_0070: ldloc.2
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0076: stloc.s 5
+		IL_0078: ldloc.s 4
+		IL_007a: ldstr "log"
+		IL_007f: ldloc.s 5
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0086: pop
+		IL_0087: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_008c: dup
+		IL_008d: ldstr "person"
+		IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0097: dup
+		IL_0098: ldstr "name"
+		IL_009d: ldstr "Jane"
+		IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00a7: dup
+		IL_00a8: ldstr "age"
+		IL_00ad: ldc.r8 25
+		IL_00b6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_00bb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00c0: dup
+		IL_00c1: ldstr "city"
+		IL_00c6: ldstr "NYC"
+		IL_00cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_00d0: stloc.3
+		IL_00d1: ldstr "console"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00db: stloc.s 5
+		IL_00dd: ldloc.s 5
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e4: stloc.s 5
+		IL_00e6: ldloc.1
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ec: stloc.s 4
+		IL_00ee: ldloc.s 4
+		IL_00f0: ldstr "inspect"
+		IL_00f5: ldloc.3
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00fb: stloc.s 4
+		IL_00fd: ldloc.s 5
+		IL_00ff: ldstr "log"
+		IL_0104: ldloc.s 4
+		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_010b: pop
+		IL_010c: ret
 	} // end of method Require_Util_Inspect_Object::__js_module_init__
 
 } // end of class Modules.Require_Util_Inspect_Object
@@ -126,7 +141,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2144
+		// Method begins at RVA 0x2172
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

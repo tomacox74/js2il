@@ -1,4 +1,4 @@
-// IL code: Function_Apply_Basic
+﻿// IL code: Function_Apply_Basic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f3
+				// Method begins at RVA 0x2107
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d4
+			// Method begins at RVA 0x20e8
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -75,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ea
+			// Method begins at RVA 0x20fe
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,12 +101,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 119 (0x77)
+		// Code size: 138 (0x8a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Apply_Basic/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Apply_Basic/Scope::.ctor()
@@ -123,30 +124,37 @@
 		IL_0020: stloc.2
 		IL_0021: ldloc.2
 		IL_0022: stloc.1
-		IL_0023: ldloc.1
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0029: stloc.2
-		IL_002a: ldloc.2
-		IL_002b: ldstr "apply"
-		IL_0030: ldc.i4.0
-		IL_0031: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0036: ldc.i4.2
-		IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_003c: dup
-		IL_003d: ldc.r8 1
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0050: dup
-		IL_0051: ldc.r8 2
-		IL_005a: box [System.Runtime]System.Double
-		IL_005f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0069: stloc.2
-		IL_006a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006f: ldloc.2
-		IL_0070: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0075: pop
-		IL_0076: ret
+		IL_0023: ldstr "console"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002d: stloc.2
+		IL_002e: ldloc.2
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0034: stloc.2
+		IL_0035: ldloc.1
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_003b: stloc.3
+		IL_003c: ldloc.3
+		IL_003d: ldstr "apply"
+		IL_0042: ldc.i4.0
+		IL_0043: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0048: ldc.i4.2
+		IL_0049: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004e: dup
+		IL_004f: ldc.r8 1
+		IL_0058: box [System.Runtime]System.Double
+		IL_005d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0062: dup
+		IL_0063: ldc.r8 2
+		IL_006c: box [System.Runtime]System.Double
+		IL_0071: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_007b: stloc.3
+		IL_007c: ldloc.2
+		IL_007d: ldstr "log"
+		IL_0082: ldloc.3
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0088: pop
+		IL_0089: ret
 	} // end of method Function_Apply_Basic::__js_module_init__
 
 } // end of class Modules.Function_Apply_Basic
@@ -158,7 +166,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2110
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

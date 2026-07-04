@@ -1,4 +1,4 @@
-// IL code: FS_CreateReadStream_Missing_Error
+﻿// IL code: FS_CreateReadStream_Missing_Error
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e6
+				// Method begins at RVA 0x2318
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,10 +51,10 @@
 			)
 			// Method begins at RVA 0x225c
 			// Header size: 12
-			// Code size: 92 (0x5c)
+			// Code size: 109 (0x6d)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[0] object,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.RegExp,
 				[2] object,
 				[3] bool,
@@ -62,42 +62,47 @@
 				[5] object
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.0
-			IL_0006: ldstr "^ENOENT:"
-			IL_000b: ldstr ""
-			IL_0010: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
-			IL_0015: stloc.1
-			IL_0016: ldloc.1
-			IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_001c: stloc.2
-			IL_001d: ldarg.1
-			IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0023: stloc.3
-			IL_0024: ldloc.3
-			IL_0025: brfalse IL_003c
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldstr "^ENOENT:"
+			IL_0017: ldstr ""
+			IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.RegExp::.ctor(object, object)
+			IL_0021: stloc.1
+			IL_0022: ldloc.1
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0028: stloc.2
+			IL_0029: ldarg.1
+			IL_002a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_002f: stloc.3
+			IL_0030: ldloc.3
+			IL_0031: brfalse IL_0048
 
-			IL_002a: ldarg.1
-			IL_002b: ldstr "message"
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0035: stloc.s 5
-			IL_0037: br IL_003f
+			IL_0036: ldarg.1
+			IL_0037: ldstr "message"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0041: stloc.s 5
+			IL_0043: br IL_004b
 
-			IL_003c: ldarg.1
-			IL_003d: stloc.s 5
+			IL_0048: ldarg.1
+			IL_0049: stloc.s 5
 
-			IL_003f: ldloc.2
-			IL_0040: ldstr "test"
-			IL_0045: ldloc.s 5
-			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_004c: stloc.2
-			IL_004d: ldloc.0
-			IL_004e: ldstr "ErrorStartsWithENOENT:"
-			IL_0053: ldloc.2
-			IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0059: pop
-			IL_005a: ldnull
-			IL_005b: ret
+			IL_004b: ldloc.2
+			IL_004c: ldstr "test"
+			IL_0051: ldloc.s 5
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0058: stloc.2
+			IL_0059: ldloc.0
+			IL_005a: ldstr "log"
+			IL_005f: ldstr "ErrorStartsWithENOENT:"
+			IL_0064: ldloc.2
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_006a: pop
+			IL_006b: ldnull
+			IL_006c: ret
 		} // end of method ArrowFunction_L13C20::__js_call__
 
 	} // end of class ArrowFunction_L13C20
@@ -113,7 +118,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ef
+				// Method begins at RVA 0x2321
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -136,19 +141,29 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22c4
-			// Header size: 1
-			// Code size: 24 (0x18)
+			// Method begins at RVA 0x22d8
+			// Header size: 12
+			// Code size: 43 (0x2b)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Closed:"
-			IL_000a: ldc.i4.1
-			IL_000b: box [System.Runtime]System.Boolean
-			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0015: pop
-			IL_0016: ldnull
-			IL_0017: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Closed:"
+			IL_001d: ldc.i4.1
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0028: pop
+			IL_0029: ldnull
+			IL_002a: ret
 		} // end of method ArrowFunction_L17C20::__js_call__
 
 	} // end of class ArrowFunction_L17C20
@@ -160,7 +175,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22dd
+			// Method begins at RVA 0x230f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -384,7 +399,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22f8
+		// Method begins at RVA 0x232a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

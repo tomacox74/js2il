@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2131
+			// Method begins at RVA 0x2157
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 213 (0xd5)
+		// Code size: 251 (0xfb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic/Scope,
@@ -56,7 +56,8 @@
 			[10] object,
 			[11] object,
 			[12] object,
-			[13] object
+			[13] object,
+			[14] object
 		)
 
 		IL_0000: newobj instance void Modules.ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic/Scope::.ctor()
@@ -87,53 +88,63 @@
 		IL_0047: ldloc.s 12
 		IL_0049: stloc.3
 		IL_004a: ldloc.3
-		IL_004b: stloc.s 12
-		IL_004d: ldloc.s 12
-		IL_004f: ldc.r8 10
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_005d: stloc.s 12
-		IL_005f: ldloc.s 12
-		IL_0061: stloc.s 4
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldloc.s 4
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006f: pop
-		IL_0070: ldc.r8 3
-		IL_0079: stloc.s 5
-		IL_007b: ldloc.s 5
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: stloc.s 8
-		IL_0084: ldloc.s 8
-		IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_008b: stloc.s 9
-		IL_008d: ldloc.s 9
-		IL_008f: brtrue IL_00a5
+		IL_004b: ldc.r8 10
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_0059: stloc.s 12
+		IL_005b: ldloc.s 12
+		IL_005d: stloc.s 4
+		IL_005f: ldstr "console"
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0069: stloc.s 13
+		IL_006b: ldloc.s 13
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0072: stloc.s 13
+		IL_0074: ldloc.s 13
+		IL_0076: ldstr "log"
+		IL_007b: ldloc.s 4
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0082: pop
+		IL_0083: ldc.r8 3
+		IL_008c: stloc.s 5
+		IL_008e: ldloc.s 5
+		IL_0090: box [System.Runtime]System.Double
+		IL_0095: stloc.s 8
+		IL_0097: ldloc.s 8
+		IL_0099: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_009e: stloc.s 9
+		IL_00a0: ldloc.s 9
+		IL_00a2: brtrue IL_00b8
 
-		IL_0094: ldloc.2
-		IL_0095: box [System.Runtime]System.Double
-		IL_009a: stloc.s 10
-		IL_009c: ldloc.s 10
-		IL_009e: stloc.s 13
-		IL_00a0: br IL_00a9
+		IL_00a7: ldloc.2
+		IL_00a8: box [System.Runtime]System.Double
+		IL_00ad: stloc.s 10
+		IL_00af: ldloc.s 10
+		IL_00b1: stloc.s 14
+		IL_00b3: br IL_00bc
 
-		IL_00a5: ldloc.s 8
-		IL_00a7: stloc.s 13
+		IL_00b8: ldloc.s 8
+		IL_00ba: stloc.s 14
 
-		IL_00a9: ldloc.s 13
-		IL_00ab: stloc.s 6
-		IL_00ad: ldloc.s 6
-		IL_00af: stloc.s 13
-		IL_00b1: ldloc.s 13
-		IL_00b3: ldc.r8 10
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_00c1: stloc.s 13
-		IL_00c3: ldloc.s 13
-		IL_00c5: stloc.s 7
-		IL_00c7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cc: ldloc.s 7
-		IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d3: pop
-		IL_00d4: ret
+		IL_00bc: ldloc.s 14
+		IL_00be: stloc.s 6
+		IL_00c0: ldloc.s 6
+		IL_00c2: ldc.r8 10
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00d0: stloc.s 14
+		IL_00d2: ldloc.s 14
+		IL_00d4: stloc.s 7
+		IL_00d6: ldstr "console"
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00e0: stloc.s 13
+		IL_00e2: ldloc.s 13
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e9: stloc.s 13
+		IL_00eb: ldloc.s 13
+		IL_00ed: ldstr "log"
+		IL_00f2: ldloc.s 7
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f9: pop
+		IL_00fa: ret
 	} // end of method ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic::__js_module_init__
 
 } // end of class Modules.ShapeCoverage_JoinMaterialization_LogicalOrFeedsArithmetic
@@ -145,7 +156,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213a
+		// Method begins at RVA 0x2160
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
