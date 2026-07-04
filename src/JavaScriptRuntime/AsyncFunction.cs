@@ -13,7 +13,7 @@ public static class AsyncFunction
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
         Function.InitializeFunctionInstance(ConstructorValue);
-        PrototypeChain.SetPrototype(ConstructorValue, Function.Prototype);
+        PrototypeChain.SetPrototype(ConstructorValue, GlobalThis.Function);
         PrototypeChain.SetPrototype(Prototype, Function.Prototype);
 
         DefineDataProperty(

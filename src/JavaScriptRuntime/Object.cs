@@ -1016,14 +1016,15 @@ namespace JavaScriptRuntime
 
                 obj = proxy.GetTarget("getPrototypeOf");
             }
-            if (!IsObjectLikeForPrototype(obj))
-            {
-                throw new TypeError("Object.getPrototypeOf called on non-object");
-            }
 
             if (obj is JavaScriptRuntime.Symbol)
             {
                 return GlobalThis.SymbolPrototypeValue;
+            }
+
+            if (!IsObjectLikeForPrototype(obj))
+            {
+                throw new TypeError("Object.getPrototypeOf called on non-object");
             }
 
             // Calling getPrototypeOf is itself an opt-in signal.
@@ -1293,6 +1294,27 @@ namespace JavaScriptRuntime
             var wrapper = CreateOrdinaryObject();
             PrototypeChain.SetPrototype(wrapper, prototype);
             PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, CreatePrimitiveValueDescriptor(primitiveValue));
+
+            PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
+            });
+
+            if (includeOwnStringMethods || primitiveValue is System.Numerics.BigInteger or JavaScriptRuntime.Symbol)
+            {
+                PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = false,
+                    Configurable = true,
+                    Writable = true,
+                    Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
+                });
+            }
 
             return wrapper;
         }
