@@ -121,10 +121,33 @@ const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'src', 'JavaScriptRuntime', 'JavaScr
 const SAMPLES_PROPS_PATH = path.join(ROOT, 'samples', 'Directory.Build.props');
 
 function sleep(ms) {
-  // Synchronous sleep without additional deps.
-  const sab = new SharedArrayBuffer(4);
-  const i32 = new Int32Array(sab);
-  Atomics.wait(i32, 0, 0, ms);
+  const delayMs = Math.max(0, Math.trunc(Number(ms) || 0));
+  if (delayMs === 0) {
+    return;
+  }
+
+  // Prefer the in-process blocking wait when the runtime exposes the SharedArrayBuffer APIs.
+  if (typeof SharedArrayBuffer === 'function'
+    && typeof Int32Array === 'function'
+    && typeof Atomics === 'object'
+    && typeof Atomics.wait === 'function') {
+    const sab = new SharedArrayBuffer(4);
+    const i32 = new Int32Array(sab);
+    Atomics.wait(i32, 0, 0, delayMs);
+    return;
+  }
+
+  // JROC's compiled runtime does not currently expose SharedArrayBuffer. Fall back to a
+  // platform sleep command so the release script can still poll GitHub checks synchronously.
+  if (process.platform === 'win32') {
+    cp.execFileSync(
+      'powershell',
+      ['-NoLogo', '-NoProfile', '-Command', `Start-Sleep -Milliseconds ${delayMs}`],
+      { stdio: 'ignore' });
+    return;
+  }
+
+  cp.execFileSync('sleep', [(delayMs / 1000).toString()], { stdio: 'ignore' });
 }
 
 function writeStdout(text) {
