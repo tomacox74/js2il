@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2299
+				// Method begins at RVA 0x22c1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -54,10 +54,13 @@
 			)
 			// Method begins at RVA 0x21ec
 			// Header size: 12
-			// Code size: 90 (0x5a)
+			// Code size: 130 (0x82)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
+				[2] object[],
+				[3] object
 			)
 
 			IL_0000: ldstr "console"
@@ -76,20 +79,40 @@
 			IL_002d: pop
 			IL_002e: ldarg.0
 			IL_002f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_Stat_FileSize/Scope::require
-			IL_0034: ldstr "fs"
-			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-			IL_003e: stloc.0
-			IL_003f: ldloc.0
-			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0045: stloc.0
-			IL_0046: ldloc.0
-			IL_0047: ldstr "rmSync"
-			IL_004c: ldarg.0
-			IL_004d: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
-			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0057: pop
-			IL_0058: ldnull
-			IL_0059: ret
+			IL_0034: stloc.1
+			IL_0035: ldstr "require"
+			IL_003a: ldloc.1
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0040: stloc.0
+			IL_0041: ldc.i4.1
+			IL_0042: newarr [System.Runtime]System.Object
+			IL_0047: dup
+			IL_0048: ldc.i4.0
+			IL_0049: ldarg.0
+			IL_004a: stelem.ref
+			IL_004b: stloc.2
+			IL_004c: ldloc.0
+			IL_004d: ldloc.2
+			IL_004e: ldstr "fs"
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_0058: stloc.0
+			IL_0059: ldloc.0
+			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_005f: stloc.0
+			IL_0060: ldarg.0
+			IL_0061: ldfld object Modules.FSPromises_Stat_FileSize/Scope::testFile
+			IL_0066: stloc.3
+			IL_0067: ldstr "testFile"
+			IL_006c: ldloc.3
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0072: stloc.3
+			IL_0073: ldloc.0
+			IL_0074: ldstr "rmSync"
+			IL_0079: ldloc.3
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_007f: pop
+			IL_0080: ldnull
+			IL_0081: ret
 		} // end of method ArrowFunction_L9C24::__js_call__
 
 	} // end of class ArrowFunction_L9C24
@@ -112,7 +135,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a2
+				// Method begins at RVA 0x22ca
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -136,7 +159,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2254
+			// Method begins at RVA 0x227c
 			// Header size: 12
 			// Code size: 48 (0x30)
 			.maxstack 8
@@ -180,7 +203,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2290
+			// Method begins at RVA 0x22b8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -364,7 +387,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ab
+		// Method begins at RVA 0x22d3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

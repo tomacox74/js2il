@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x217c
+					// Method begins at RVA 0x2190
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,15 +46,16 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2120
+				// Method begins at RVA 0x2124
 				// Header size: 12
-				// Code size: 62 (0x3e)
+				// Code size: 78 (0x4e)
 				.maxstack 8
 				.locals init (
 					[0] object,
 					[1] object,
-					[2] bool,
-					[3] object
+					[2] object,
+					[3] bool,
+					[4] object
 				)
 
 				IL_0000: ldstr "console"
@@ -65,24 +66,30 @@
 				IL_0011: stloc.0
 				IL_0012: ldarg.1
 				IL_0013: stloc.1
-				IL_0014: ldloc.1
-				IL_0015: ldarg.0
-				IL_0016: ldc.i4.0
-				IL_0017: ldelem.ref
-				IL_0018: castclass Modules.Function_NewTarget_Arrow_Inherits/Scope
-				IL_001d: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
-				IL_0022: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0027: stloc.2
-				IL_0028: ldloc.2
-				IL_0029: box [System.Runtime]System.Boolean
-				IL_002e: stloc.3
-				IL_002f: ldloc.0
-				IL_0030: ldstr "log"
-				IL_0035: ldloc.3
-				IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_003b: pop
-				IL_003c: ldnull
-				IL_003d: ret
+				IL_0014: ldarg.0
+				IL_0015: ldc.i4.0
+				IL_0016: ldelem.ref
+				IL_0017: castclass Modules.Function_NewTarget_Arrow_Inherits/Scope
+				IL_001c: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
+				IL_0021: stloc.2
+				IL_0022: ldstr "Outer"
+				IL_0027: ldloc.2
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_002d: stloc.2
+				IL_002e: ldloc.1
+				IL_002f: ldloc.2
+				IL_0030: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0035: stloc.3
+				IL_0036: ldloc.3
+				IL_0037: box [System.Runtime]System.Boolean
+				IL_003c: stloc.s 4
+				IL_003e: ldloc.0
+				IL_003f: ldstr "log"
+				IL_0044: ldloc.s 4
+				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_004b: pop
+				IL_004c: ldnull
+				IL_004d: ret
 			} // end of method ArrowFunction_L4C19::__js_call__
 
 		} // end of class ArrowFunction_L4C19
@@ -94,7 +101,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2173
+				// Method begins at RVA 0x2187
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -120,7 +127,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20b4
+			// Method begins at RVA 0x20b8
 			// Header size: 12
 			// Code size: 95 (0x5f)
 			.maxstack 8
@@ -190,7 +197,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x216a
+			// Method begins at RVA 0x217e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -216,7 +223,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 88 (0x58)
+		// Code size: 92 (0x5c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NewTarget_Arrow_Inherits/Scope,
@@ -253,11 +260,11 @@
 		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
 		IL_0049: pop
 		IL_004a: ldloc.0
-		IL_004b: castclass Modules.Function_NewTarget_Arrow_Inherits/Scope
-		IL_0050: ldnull
-		IL_0051: call object Modules.Function_NewTarget_Arrow_Inherits/Outer::__js_call__(class Modules.Function_NewTarget_Arrow_Inherits/Scope, object)
-		IL_0056: pop
-		IL_0057: ret
+		IL_004b: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
+		IL_0050: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_005a: pop
+		IL_005b: ret
 	} // end of method Function_NewTarget_Arrow_Inherits::__js_module_init__
 
 } // end of class Modules.Function_NewTarget_Arrow_Inherits
@@ -269,7 +276,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2185
+		// Method begins at RVA 0x2199
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a4
+				// Method begins at RVA 0x21ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -47,13 +47,14 @@
 			)
 			// Method begins at RVA 0x2104
 			// Header size: 12
-			// Code size: 139 (0x8b)
+			// Code size: 161 (0xa1)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] bool,
-				[3] object
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldstr "console"
@@ -92,20 +93,28 @@
 			IL_005a: ldloc.1
 			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0060: stloc.1
-			IL_0061: ldstr "destroyed:"
-			IL_0066: ldarg.0
-			IL_0067: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
-			IL_006c: ldstr "destroyed"
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_007b: stloc.3
-			IL_007c: ldloc.1
-			IL_007d: ldstr "log"
-			IL_0082: ldloc.3
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0088: pop
-			IL_0089: ldnull
-			IL_008a: ret
+			IL_0061: ldarg.0
+			IL_0062: ldfld object Modules.Stream_Finished_Callback_DestroyError/Scope::readable
+			IL_0067: stloc.s 4
+			IL_0069: ldstr "readable"
+			IL_006e: ldloc.s 4
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0075: stloc.s 4
+			IL_0077: ldloc.s 4
+			IL_0079: ldstr "destroyed"
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0083: stloc.s 4
+			IL_0085: ldstr "destroyed:"
+			IL_008a: ldloc.s 4
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0091: stloc.3
+			IL_0092: ldloc.1
+			IL_0093: ldstr "log"
+			IL_0098: ldloc.3
+			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_009e: pop
+			IL_009f: ldnull
+			IL_00a0: ret
 		} // end of method FunctionExpression_L7C26::__js_call__
 
 	} // end of class FunctionExpression_L7C26
@@ -124,7 +133,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219b
+			// Method begins at RVA 0x21b1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -233,7 +242,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ad
+		// Method begins at RVA 0x21c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2178
+				// Method begins at RVA 0x21a0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x216f
+			// Method begins at RVA 0x2197
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,17 +62,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 275 (0x113)
+		// Code size: 315 (0x13b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Environment_EnumerateProcessArgV/Scope,
-			[1] float64,
+			[1] object,
 			[2] class Modules.Environment_EnumerateProcessArgV/Scope/Block_L4C46,
 			[3] object,
 			[4] object,
-			[5] float64,
-			[6] object,
-			[7] object[]
+			[5] object,
+			[6] float64,
+			[7] float64,
+			[8] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Environment_EnumerateProcessArgV/Scope::.ctor()
@@ -101,78 +102,92 @@
 		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
 		IL_0052: pop
 		IL_0053: ldc.r8 0.0
-		IL_005c: stloc.1
-		// loop start (head: IL_005d)
-			IL_005d: ldstr "process"
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0067: stloc.s 4
-			IL_0069: ldloc.s 4
-			IL_006b: ldstr "argv"
-			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0075: stloc.s 4
-			IL_0077: ldloc.s 4
-			IL_0079: ldstr "length"
-			IL_007e: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-			IL_0083: stloc.s 5
-			IL_0085: ldloc.1
-			IL_0086: ldloc.s 5
-			IL_0088: clt
-			IL_008a: brfalse IL_0112
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: stloc.1
+		// loop start (head: IL_0062)
+			IL_0062: ldloc.1
+			IL_0063: stloc.s 5
+			IL_0065: ldstr "process"
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_006f: stloc.s 4
+			IL_0071: ldloc.s 4
+			IL_0073: ldstr "argv"
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_007d: stloc.s 4
+			IL_007f: ldloc.s 4
+			IL_0081: ldstr "length"
+			IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_008b: stloc.s 4
+			IL_008d: ldloc.s 5
+			IL_008f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0094: stloc.s 6
+			IL_0096: ldloc.s 4
+			IL_0098: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_009d: stloc.s 7
+			IL_009f: ldloc.s 6
+			IL_00a1: ldloc.s 7
+			IL_00a3: clt
+			IL_00a5: brfalse IL_013a
 
-			IL_008f: newobj instance void Modules.Environment_EnumerateProcessArgV/Scope/Block_L4C46::.ctor()
-			IL_0094: stloc.2
-			IL_0095: ldstr "console"
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_009f: stloc.s 4
-			IL_00a1: ldloc.s 4
-			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a8: stloc.s 4
-			IL_00aa: ldloc.1
-			IL_00ab: box [System.Runtime]System.Double
-			IL_00b0: stloc.s 6
-			IL_00b2: ldstr "process"
-			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00bc: stloc.3
-			IL_00bd: ldloc.3
-			IL_00be: ldstr "argv"
-			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00c8: stloc.3
-			IL_00c9: ldloc.3
-			IL_00ca: ldloc.1
-			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_00d0: stloc.3
-			IL_00d1: ldc.i4.4
-			IL_00d2: newarr [System.Runtime]System.Object
-			IL_00d7: dup
-			IL_00d8: ldc.i4.0
-			IL_00d9: ldstr "arg"
-			IL_00de: stelem.ref
-			IL_00df: dup
-			IL_00e0: ldc.i4.1
-			IL_00e1: ldloc.s 6
-			IL_00e3: stelem.ref
-			IL_00e4: dup
-			IL_00e5: ldc.i4.2
-			IL_00e6: ldstr "="
-			IL_00eb: stelem.ref
-			IL_00ec: dup
-			IL_00ed: ldc.i4.3
-			IL_00ee: ldloc.3
-			IL_00ef: stelem.ref
-			IL_00f0: stloc.s 7
-			IL_00f2: ldloc.s 4
-			IL_00f4: ldstr "log"
-			IL_00f9: ldloc.s 7
-			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_0100: pop
-			IL_0101: ldloc.1
-			IL_0102: ldc.r8 1
-			IL_010b: add
-			IL_010c: stloc.1
-			IL_010d: br IL_005d
+			IL_00aa: newobj instance void Modules.Environment_EnumerateProcessArgV/Scope/Block_L4C46::.ctor()
+			IL_00af: stloc.2
+			IL_00b0: ldstr "console"
+			IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00ba: stloc.s 4
+			IL_00bc: ldloc.s 4
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c3: stloc.s 4
+			IL_00c5: ldstr "process"
+			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00cf: stloc.3
+			IL_00d0: ldloc.3
+			IL_00d1: ldstr "argv"
+			IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00db: stloc.3
+			IL_00dc: ldloc.3
+			IL_00dd: ldloc.1
+			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_00e3: stloc.3
+			IL_00e4: ldc.i4.4
+			IL_00e5: newarr [System.Runtime]System.Object
+			IL_00ea: dup
+			IL_00eb: ldc.i4.0
+			IL_00ec: ldstr "arg"
+			IL_00f1: stelem.ref
+			IL_00f2: dup
+			IL_00f3: ldc.i4.1
+			IL_00f4: ldloc.1
+			IL_00f5: stelem.ref
+			IL_00f6: dup
+			IL_00f7: ldc.i4.2
+			IL_00f8: ldstr "="
+			IL_00fd: stelem.ref
+			IL_00fe: dup
+			IL_00ff: ldc.i4.3
+			IL_0100: ldloc.3
+			IL_0101: stelem.ref
+			IL_0102: stloc.s 8
+			IL_0104: ldloc.s 4
+			IL_0106: ldstr "log"
+			IL_010b: ldloc.s 8
+			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0112: pop
+			IL_0113: ldloc.1
+			IL_0114: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0119: stloc.s 7
+			IL_011b: ldloc.s 7
+			IL_011d: ldc.r8 1
+			IL_0126: add
+			IL_0127: stloc.s 7
+			IL_0129: ldloc.s 7
+			IL_012b: box [System.Runtime]System.Double
+			IL_0130: stloc.s 5
+			IL_0132: ldloc.s 5
+			IL_0134: stloc.1
+			IL_0135: br IL_0062
 		// end loop
 
-		IL_0112: ret
+		IL_013a: ret
 	} // end of method Environment_EnumerateProcessArgV::__js_module_init__
 
 } // end of class Modules.Environment_EnumerateProcessArgV
@@ -184,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2181
+		// Method begins at RVA 0x21a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

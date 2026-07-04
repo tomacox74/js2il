@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ef
+				// Method begins at RVA 0x20fb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x20dc
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -75,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e6
+			// Method begins at RVA 0x20f2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,13 +101,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 116 (0x74)
+		// Code size: 125 (0x7d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object[],
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature/Scope::.ctor()
@@ -136,19 +137,22 @@
 		IL_003c: ldloc.2
 		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0042: stloc.2
-		IL_0043: ldnull
-		IL_0044: ldc.r8 1
-		IL_004d: box [System.Runtime]System.Double
-		IL_0052: ldc.r8 2
-		IL_005b: box [System.Runtime]System.Double
-		IL_0060: call object Modules.Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature/'add'::__js_call__(object, object, object)
-		IL_0065: stloc.3
-		IL_0066: ldloc.2
-		IL_0067: ldstr "log"
-		IL_006c: ldloc.3
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0072: pop
-		IL_0073: ret
+		IL_0043: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0048: stloc.3
+		IL_0049: ldloc.1
+		IL_004a: ldloc.3
+		IL_004b: ldc.r8 1
+		IL_0054: box [System.Runtime]System.Double
+		IL_0059: ldc.r8 2
+		IL_0062: box [System.Runtime]System.Double
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_006c: stloc.s 4
+		IL_006e: ldloc.2
+		IL_006f: ldstr "log"
+		IL_0074: ldloc.s 4
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_007b: pop
+		IL_007c: ret
 	} // end of method Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature::__js_module_init__
 
 } // end of class Modules.Function_ParameterTypeInference_EscapedFunction_KeepsObjectSignature
@@ -160,7 +164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f8
+		// Method begins at RVA 0x2104
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

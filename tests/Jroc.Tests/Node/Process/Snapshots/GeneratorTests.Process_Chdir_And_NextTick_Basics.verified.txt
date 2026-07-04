@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ce
+				// Method begins at RVA 0x230d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,23 +46,30 @@
 			)
 			// Method begins at RVA 0x2240
 			// Header size: 12
-			// Code size: 26 (0x1a)
+			// Code size: 45 (0x2d)
 			.maxstack 8
 			.locals init (
-				[0] float64,
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 				[1] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0006: ldstr "tick"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: box [System.Runtime]System.Double
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ret
+			IL_0006: stloc.0
+			IL_0007: ldstr "order"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.1
+			IL_001a: ldloc.1
+			IL_001b: ldstr "push"
+			IL_0020: ldstr "tick"
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002a: stloc.1
+			IL_002b: ldloc.1
+			IL_002c: ret
 		} // end of method ArrowFunction_L10C18::__js_call__
 
 	} // end of class ArrowFunction_L10C18
@@ -78,7 +85,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d7
+				// Method begins at RVA 0x2316
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,44 +111,60 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2268
+			// Method begins at RVA 0x227c
 			// Header size: 12
-			// Code size: 81 (0x51)
+			// Code size: 124 (0x7c)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] string
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0006: ldstr "immediate"
-			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_0010: pop
-			IL_0011: ldstr "console"
-			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_001b: stloc.0
-			IL_001c: ldloc.0
-			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0022: stloc.0
-			IL_0023: ldarg.0
-			IL_0024: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0029: ldc.i4.1
-			IL_002a: newarr [System.Runtime]System.Object
-			IL_002f: dup
-			IL_0030: ldc.i4.0
-			IL_0031: ldstr ","
-			IL_0036: stelem.ref
-			IL_0037: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_0006: stloc.0
+			IL_0007: ldstr "order"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.1
+			IL_001a: ldloc.1
+			IL_001b: ldstr "push"
+			IL_0020: ldstr "immediate"
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002a: pop
+			IL_002b: ldstr "console"
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0035: stloc.1
+			IL_0036: ldloc.1
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_003c: stloc.1
-			IL_003d: ldloc.0
-			IL_003e: ldstr "log"
-			IL_0043: ldstr "order"
-			IL_0048: ldloc.1
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_004e: pop
-			IL_004f: ldnull
-			IL_0050: ret
+			IL_003d: ldarg.0
+			IL_003e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+			IL_0043: stloc.0
+			IL_0044: ldstr "order"
+			IL_0049: ldloc.0
+			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_004f: stloc.2
+			IL_0050: ldloc.2
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0056: stloc.2
+			IL_0057: ldloc.2
+			IL_0058: ldstr "join"
+			IL_005d: ldstr ","
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0067: stloc.2
+			IL_0068: ldloc.1
+			IL_0069: ldstr "log"
+			IL_006e: ldstr "order"
+			IL_0073: ldloc.2
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0079: pop
+			IL_007a: ldnull
+			IL_007b: ret
 		} // end of method ArrowFunction_L12C14::__js_call__
 
 	} // end of class ArrowFunction_L12C14
@@ -160,7 +183,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22c5
+			// Method begins at RVA 0x2304
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -382,7 +405,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22e0
+		// Method begins at RVA 0x231f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

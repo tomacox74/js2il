@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2245
+					// Method begins at RVA 0x225f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -47,13 +47,15 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2204
+				// Method begins at RVA 0x220c
 				// Header size: 12
-				// Code size: 35 (0x23)
+				// Code size: 53 (0x35)
 				.maxstack 8
 				.locals init (
 					[0] object,
-					[1] float64
+					[1] float64,
+					[2] float64,
+					[3] object
 				)
 
 				IL_0000: ldarg.0
@@ -62,15 +64,25 @@
 				IL_0003: castclass Modules.Function_ReturnObjectWithClosure/createCalculator/Scope
 				IL_0008: ldfld object Modules.Function_ReturnObjectWithClosure/createCalculator/Scope::factor
 				IL_000d: stloc.0
-				IL_000e: ldarg.2
-				IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0014: stloc.1
-				IL_0015: ldloc.1
-				IL_0016: ldloc.0
-				IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_001c: mul
-				IL_001d: box [System.Runtime]System.Double
-				IL_0022: ret
+				IL_000e: ldstr "factor"
+				IL_0013: ldloc.0
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0019: stloc.0
+				IL_001a: ldarg.2
+				IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0020: stloc.1
+				IL_0021: ldloc.0
+				IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0027: stloc.2
+				IL_0028: ldloc.1
+				IL_0029: ldloc.2
+				IL_002a: mul
+				IL_002b: stloc.2
+				IL_002c: ldloc.2
+				IL_002d: box [System.Runtime]System.Double
+				IL_0032: stloc.3
+				IL_0033: ldloc.3
+				IL_0034: ret
 			} // end of method multiply::__js_call__
 
 		} // end of class multiply
@@ -91,7 +103,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223c
+				// Method begins at RVA 0x2256
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -118,7 +130,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x21a4
 			// Header size: 12
 			// Code size: 92 (0x5c)
 			.maxstack 8
@@ -187,7 +199,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2233
+			// Method begins at RVA 0x224d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -213,7 +225,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 320 (0x140)
+		// Code size: 326 (0x146)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnObjectWithClosure/Scope,
@@ -221,7 +233,8 @@
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object
+			[5] object[],
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ReturnObjectWithClosure/Scope::.ctor()
@@ -246,81 +259,83 @@
 		IL_0030: stloc.s 4
 		IL_0032: ldloc.s 4
 		IL_0034: stloc.1
-		IL_0035: ldloc.0
-		IL_0036: castclass Modules.Function_ReturnObjectWithClosure/Scope
-		IL_003b: ldnull
-		IL_003c: ldc.r8 10
-		IL_0045: box [System.Runtime]System.Double
-		IL_004a: call object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(class Modules.Function_ReturnObjectWithClosure/Scope, object, object)
-		IL_004f: stloc.s 4
-		IL_0051: ldloc.s 4
-		IL_0053: stloc.2
-		IL_0054: ldstr "console"
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.s 4
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: stloc.s 4
-		IL_0069: ldloc.2
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006f: stloc.s 5
-		IL_0071: ldloc.s 5
-		IL_0073: ldstr "multiply"
-		IL_0078: ldc.r8 5
-		IL_0081: box [System.Runtime]System.Double
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_008b: stloc.s 5
-		IL_008d: ldloc.s 4
-		IL_008f: ldstr "log"
-		IL_0094: ldstr "multiply(5):"
-		IL_0099: ldloc.s 5
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00a0: pop
-		IL_00a1: ldstr "console"
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ab: stloc.s 5
-		IL_00ad: ldloc.s 5
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b4: stloc.s 5
-		IL_00b6: ldloc.s 5
-		IL_00b8: ldstr "log"
-		IL_00bd: ldstr "factor:"
-		IL_00c2: ldloc.2
-		IL_00c3: ldstr "factor"
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00d2: pop
-		IL_00d3: ldloc.0
-		IL_00d4: castclass Modules.Function_ReturnObjectWithClosure/Scope
-		IL_00d9: ldnull
-		IL_00da: ldc.r8 3
-		IL_00e3: box [System.Runtime]System.Double
-		IL_00e8: call object Modules.Function_ReturnObjectWithClosure/createCalculator::__js_call__(class Modules.Function_ReturnObjectWithClosure/Scope, object, object)
-		IL_00ed: stloc.s 5
-		IL_00ef: ldloc.s 5
-		IL_00f1: stloc.3
-		IL_00f2: ldstr "console"
-		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00fc: stloc.s 5
-		IL_00fe: ldloc.s 5
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0105: stloc.s 5
-		IL_0107: ldloc.3
-		IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010d: stloc.s 4
-		IL_010f: ldloc.s 4
-		IL_0111: ldstr "multiply"
-		IL_0116: ldc.r8 7
-		IL_011f: box [System.Runtime]System.Double
-		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0129: stloc.s 4
-		IL_012b: ldloc.s 5
-		IL_012d: ldstr "log"
-		IL_0132: ldstr "calc2.multiply(7):"
-		IL_0137: ldloc.s 4
-		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_013e: pop
-		IL_013f: ret
+		IL_0035: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_003a: stloc.s 5
+		IL_003c: ldloc.1
+		IL_003d: ldloc.s 5
+		IL_003f: ldc.r8 10
+		IL_0048: box [System.Runtime]System.Double
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0052: stloc.s 4
+		IL_0054: ldloc.s 4
+		IL_0056: stloc.2
+		IL_0057: ldstr "console"
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0061: stloc.s 4
+		IL_0063: ldloc.s 4
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006a: stloc.s 4
+		IL_006c: ldloc.2
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0072: stloc.s 6
+		IL_0074: ldloc.s 6
+		IL_0076: ldstr "multiply"
+		IL_007b: ldc.r8 5
+		IL_0084: box [System.Runtime]System.Double
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_008e: stloc.s 6
+		IL_0090: ldloc.s 4
+		IL_0092: ldstr "log"
+		IL_0097: ldstr "multiply(5):"
+		IL_009c: ldloc.s 6
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00a3: pop
+		IL_00a4: ldstr "console"
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ae: stloc.s 6
+		IL_00b0: ldloc.s 6
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b7: stloc.s 6
+		IL_00b9: ldloc.s 6
+		IL_00bb: ldstr "log"
+		IL_00c0: ldstr "factor:"
+		IL_00c5: ldloc.2
+		IL_00c6: ldstr "factor"
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00d5: pop
+		IL_00d6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00db: stloc.s 5
+		IL_00dd: ldloc.1
+		IL_00de: ldloc.s 5
+		IL_00e0: ldc.r8 3
+		IL_00e9: box [System.Runtime]System.Double
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00f3: stloc.s 6
+		IL_00f5: ldloc.s 6
+		IL_00f7: stloc.3
+		IL_00f8: ldstr "console"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0102: stloc.s 6
+		IL_0104: ldloc.s 6
+		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010b: stloc.s 6
+		IL_010d: ldloc.3
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0113: stloc.s 4
+		IL_0115: ldloc.s 4
+		IL_0117: ldstr "multiply"
+		IL_011c: ldc.r8 7
+		IL_0125: box [System.Runtime]System.Double
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_012f: stloc.s 4
+		IL_0131: ldloc.s 6
+		IL_0133: ldstr "log"
+		IL_0138: ldstr "calc2.multiply(7):"
+		IL_013d: ldloc.s 4
+		IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0144: pop
+		IL_0145: ret
 	} // end of method Function_ReturnObjectWithClosure::__js_module_init__
 
 } // end of class Modules.Function_ReturnObjectWithClosure
@@ -332,7 +347,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224e
+		// Method begins at RVA 0x2268
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

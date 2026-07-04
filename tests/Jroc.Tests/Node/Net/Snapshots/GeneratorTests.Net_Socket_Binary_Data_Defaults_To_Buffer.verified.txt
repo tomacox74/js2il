@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x27d4
+						// Method begins at RVA 0x2884
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x27cb
+					// Method begins at RVA 0x287b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -69,23 +69,24 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x22e8
+				// Method begins at RVA 0x2304
 				// Header size: 12
-				// Code size: 573 (0x23d)
+				// Code size: 639 (0x27f)
 				.maxstack 8
 				.locals init (
 					[0] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
 					[1] class Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/FunctionExpression_server/Scope/Block_L12C39,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[3] float64,
-					[4] bool,
-					[5] object,
-					[6] object,
+					[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+					[3] object,
+					[4] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+					[5] float64,
+					[6] bool,
 					[7] object,
 					[8] object,
 					[9] object,
 					[10] object,
-					[11] object
+					[11] object,
+					[12] object
 				)
 
 				IL_0000: ldarg.0
@@ -93,186 +94,214 @@
 				IL_0002: ldelem.ref
 				IL_0003: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
 				IL_0008: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::received
-				IL_000d: ldarg.2
-				IL_000e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_0013: pop
-				IL_0014: ldarg.0
-				IL_0015: ldc.i4.1
-				IL_0016: ldelem.ref
-				IL_0017: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
-				IL_001c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::received
-				IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::concat(object)
-				IL_0026: stloc.2
-				IL_0027: ldloc.2
-				IL_0028: stloc.0
-				IL_0029: ldloc.0
-				IL_002a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
-				IL_002f: stloc.3
-				IL_0030: ldloc.3
-				IL_0031: ldc.r8 4
-				IL_003a: clt
-				IL_003c: stloc.s 4
-				IL_003e: ldloc.s 4
-				IL_0040: box [System.Runtime]System.Boolean
-				IL_0045: stloc.s 5
-				IL_0047: ldloc.s 5
-				IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_000d: stloc.2
+				IL_000e: ldstr "received"
+				IL_0013: ldloc.2
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0019: stloc.3
+				IL_001a: ldloc.3
+				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0020: stloc.3
+				IL_0021: ldloc.3
+				IL_0022: ldstr "push"
+				IL_0027: ldarg.2
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_002d: pop
+				IL_002e: ldarg.0
+				IL_002f: ldc.i4.1
+				IL_0030: ldelem.ref
+				IL_0031: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
+				IL_0036: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::received
+				IL_003b: stloc.2
+				IL_003c: ldstr "received"
+				IL_0041: ldloc.2
+				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0047: stloc.3
+				IL_0048: ldloc.3
+				IL_0049: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::concat(object)
 				IL_004e: stloc.s 4
 				IL_0050: ldloc.s 4
-				IL_0052: brtrue IL_006b
+				IL_0052: stloc.0
+				IL_0053: ldloc.0
+				IL_0054: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
+				IL_0059: stloc.s 5
+				IL_005b: ldloc.s 5
+				IL_005d: ldc.r8 4
+				IL_0066: clt
+				IL_0068: stloc.s 6
+				IL_006a: ldloc.s 6
+				IL_006c: box [System.Runtime]System.Boolean
+				IL_0071: stloc.s 7
+				IL_0073: ldloc.s 7
+				IL_0075: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_007a: stloc.s 6
+				IL_007c: ldloc.s 6
+				IL_007e: brtrue IL_00a5
 
-				IL_0057: ldarg.0
-				IL_0058: ldc.i4.1
-				IL_0059: ldelem.ref
-				IL_005a: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
-				IL_005f: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::replied
-				IL_0064: stloc.s 7
-				IL_0066: br IL_006f
+				IL_0083: ldarg.0
+				IL_0084: ldc.i4.1
+				IL_0085: ldelem.ref
+				IL_0086: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
+				IL_008b: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::replied
+				IL_0090: stloc.3
+				IL_0091: ldstr "replied"
+				IL_0096: ldloc.3
+				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_009c: stloc.3
+				IL_009d: ldloc.3
+				IL_009e: stloc.s 9
+				IL_00a0: br IL_00a9
 
-				IL_006b: ldloc.s 5
-				IL_006d: stloc.s 7
+				IL_00a5: ldloc.s 7
+				IL_00a7: stloc.s 9
 
-				IL_006f: ldloc.s 7
-				IL_0071: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0076: stloc.s 4
-				IL_0078: ldloc.s 4
-				IL_007a: brfalse IL_0087
+				IL_00a9: ldloc.s 9
+				IL_00ab: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_00b0: stloc.s 6
+				IL_00b2: ldloc.s 6
+				IL_00b4: brfalse IL_00c1
 
-				IL_007f: newobj instance void Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/FunctionExpression_server/Scope/Block_L12C39::.ctor()
-				IL_0084: stloc.1
-				IL_0085: ldnull
-				IL_0086: ret
+				IL_00b9: newobj instance void Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/FunctionExpression_server/Scope/Block_L12C39::.ctor()
+				IL_00be: stloc.1
+				IL_00bf: ldnull
+				IL_00c0: ret
 
-				IL_0087: ldarg.0
-				IL_0088: ldc.i4.1
-				IL_0089: ldelem.ref
-				IL_008a: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
-				IL_008f: ldc.i4.1
-				IL_0090: box [System.Runtime]System.Boolean
-				IL_0095: stfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::replied
-				IL_009a: ldstr "console"
-				IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00a4: stloc.s 8
-				IL_00a6: ldloc.s 8
-				IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00ad: stloc.s 8
-				IL_00af: ldloc.0
-				IL_00b0: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
-				IL_00b5: stloc.s 4
-				IL_00b7: ldloc.s 4
-				IL_00b9: box [System.Runtime]System.Boolean
-				IL_00be: stloc.s 5
-				IL_00c0: ldstr "server buffer:"
-				IL_00c5: ldloc.s 5
-				IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00cc: stloc.s 7
-				IL_00ce: ldloc.s 8
-				IL_00d0: ldstr "log"
-				IL_00d5: ldloc.s 7
-				IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_00dc: pop
-				IL_00dd: ldstr "console"
-				IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_00e7: stloc.s 8
-				IL_00e9: ldloc.s 8
-				IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00f0: stloc.s 8
-				IL_00f2: ldloc.0
-				IL_00f3: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
-				IL_00f8: stloc.3
-				IL_00f9: ldstr "server bytes:"
-				IL_00fe: ldloc.3
-				IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_0104: stloc.s 7
-				IL_0106: ldloc.s 7
-				IL_0108: ldstr ":"
-				IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0112: stloc.s 7
-				IL_0114: ldloc.s 7
-				IL_0116: ldloc.0
-				IL_0117: ldc.r8 0.0
-				IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_012a: stloc.s 7
-				IL_012c: ldloc.s 7
-				IL_012e: ldstr ":"
-				IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0138: stloc.s 7
-				IL_013a: ldloc.s 7
-				IL_013c: ldloc.0
-				IL_013d: ldc.r8 1
-				IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_014b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0150: stloc.s 7
-				IL_0152: ldloc.s 7
-				IL_0154: ldstr ":"
-				IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_015e: stloc.s 7
-				IL_0160: ldloc.s 7
-				IL_0162: ldloc.0
-				IL_0163: ldc.r8 2
-				IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0171: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0176: stloc.s 7
-				IL_0178: ldloc.s 7
-				IL_017a: ldstr ":"
-				IL_017f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0184: stloc.s 7
-				IL_0186: ldloc.s 7
-				IL_0188: ldloc.0
-				IL_0189: ldc.r8 3
-				IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_019c: stloc.s 7
-				IL_019e: ldloc.s 8
-				IL_01a0: ldstr "log"
-				IL_01a5: ldloc.s 7
-				IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_01ac: pop
-				IL_01ad: ldarg.0
-				IL_01ae: ldc.i4.1
-				IL_01af: ldelem.ref
-				IL_01b0: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
-				IL_01b5: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::socket
-				IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_01bf: stloc.s 8
-				IL_01c1: ldloc.0
-				IL_01c2: ldc.r8 3
-				IL_01cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_01d0: stloc.s 9
-				IL_01d2: ldloc.0
-				IL_01d3: ldc.r8 2
-				IL_01dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_01e1: stloc.s 10
-				IL_01e3: ldloc.0
-				IL_01e4: ldc.r8 1
-				IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_01f2: stloc.s 11
-				IL_01f4: ldc.i4.4
-				IL_01f5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_01fa: dup
-				IL_01fb: ldloc.s 9
-				IL_01fd: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0202: dup
-				IL_0203: ldloc.s 10
-				IL_0205: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_020a: dup
-				IL_020b: ldloc.s 11
-				IL_020d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0212: dup
+				IL_00c1: ldarg.0
+				IL_00c2: ldc.i4.1
+				IL_00c3: ldelem.ref
+				IL_00c4: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
+				IL_00c9: ldc.i4.1
+				IL_00ca: box [System.Runtime]System.Boolean
+				IL_00cf: stfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::replied
+				IL_00d4: ldstr "console"
+				IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_00de: stloc.3
+				IL_00df: ldloc.3
+				IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00e5: stloc.3
+				IL_00e6: ldloc.0
+				IL_00e7: call bool [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::isBuffer(object)
+				IL_00ec: stloc.s 6
+				IL_00ee: ldloc.s 6
+				IL_00f0: box [System.Runtime]System.Boolean
+				IL_00f5: stloc.s 7
+				IL_00f7: ldstr "server buffer:"
+				IL_00fc: ldloc.s 7
+				IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0103: stloc.s 9
+				IL_0105: ldloc.3
+				IL_0106: ldstr "log"
+				IL_010b: ldloc.s 9
+				IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0112: pop
+				IL_0113: ldstr "console"
+				IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_011d: stloc.3
+				IL_011e: ldloc.3
+				IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0124: stloc.3
+				IL_0125: ldloc.0
+				IL_0126: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
+				IL_012b: stloc.s 5
+				IL_012d: ldstr "server bytes:"
+				IL_0132: ldloc.s 5
+				IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_0139: stloc.s 9
+				IL_013b: ldloc.s 9
+				IL_013d: ldstr ":"
+				IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0147: stloc.s 9
+				IL_0149: ldloc.s 9
+				IL_014b: ldloc.0
+				IL_014c: ldc.r8 0.0
+				IL_0155: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_015f: stloc.s 9
+				IL_0161: ldloc.s 9
+				IL_0163: ldstr ":"
+				IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_016d: stloc.s 9
+				IL_016f: ldloc.s 9
+				IL_0171: ldloc.0
+				IL_0172: ldc.r8 1
+				IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0185: stloc.s 9
+				IL_0187: ldloc.s 9
+				IL_0189: ldstr ":"
+				IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0193: stloc.s 9
+				IL_0195: ldloc.s 9
+				IL_0197: ldloc.0
+				IL_0198: ldc.r8 2
+				IL_01a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_01a6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_01ab: stloc.s 9
+				IL_01ad: ldloc.s 9
+				IL_01af: ldstr ":"
+				IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_01b9: stloc.s 9
+				IL_01bb: ldloc.s 9
+				IL_01bd: ldloc.0
+				IL_01be: ldc.r8 3
+				IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_01d1: stloc.s 9
+				IL_01d3: ldloc.3
+				IL_01d4: ldstr "log"
+				IL_01d9: ldloc.s 9
+				IL_01db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_01e0: pop
+				IL_01e1: ldarg.0
+				IL_01e2: ldc.i4.1
+				IL_01e3: ldelem.ref
+				IL_01e4: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope
+				IL_01e9: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_server/Scope::socket
+				IL_01ee: stloc.3
+				IL_01ef: ldstr "socket"
+				IL_01f4: ldloc.3
+				IL_01f5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_01fa: stloc.3
+				IL_01fb: ldloc.3
+				IL_01fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0201: stloc.3
+				IL_0202: ldloc.0
+				IL_0203: ldc.r8 3
+				IL_020c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0211: stloc.s 10
 				IL_0213: ldloc.0
-				IL_0214: ldc.r8 0.0
+				IL_0214: ldc.r8 2
 				IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0222: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0227: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_022c: stloc.2
-				IL_022d: ldloc.s 8
-				IL_022f: ldstr "end"
-				IL_0234: ldloc.2
-				IL_0235: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_023a: pop
-				IL_023b: ldnull
-				IL_023c: ret
+				IL_0222: stloc.s 11
+				IL_0224: ldloc.0
+				IL_0225: ldc.r8 1
+				IL_022e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0233: stloc.s 12
+				IL_0235: ldc.i4.4
+				IL_0236: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_023b: dup
+				IL_023c: ldloc.s 10
+				IL_023e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0243: dup
+				IL_0244: ldloc.s 11
+				IL_0246: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_024b: dup
+				IL_024c: ldloc.s 12
+				IL_024e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0253: dup
+				IL_0254: ldloc.0
+				IL_0255: ldc.r8 0.0
+				IL_025e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0263: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0268: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_026d: stloc.s 4
+				IL_026f: ldloc.3
+				IL_0270: ldstr "end"
+				IL_0275: ldloc.s 4
+				IL_0277: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_027c: pop
+				IL_027d: ldnull
+				IL_027e: ret
 			} // end of method FunctionExpression_server::__js_call__
 
 		} // end of class FunctionExpression_server
@@ -296,7 +325,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27c2
+				// Method begins at RVA 0x2872
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -396,7 +425,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x27f1
+					// Method begins at RVA 0x28a1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -420,9 +449,9 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2534
+				// Method begins at RVA 0x2590
 				// Header size: 12
-				// Code size: 138 (0x8a)
+				// Code size: 150 (0x96)
 				.maxstack 8
 				.locals init (
 					[0] object,
@@ -437,36 +466,40 @@
 				IL_000d: ldstr "Cannot access 'client' before initialization"
 				IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 				IL_0017: stloc.0
-				IL_0018: ldloc.0
-				IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_001e: stloc.0
-				IL_001f: ldc.i4.4
-				IL_0020: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-				IL_0025: dup
-				IL_0026: ldc.r8 1
-				IL_002f: box [System.Runtime]System.Double
-				IL_0034: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0039: dup
-				IL_003a: ldc.r8 2
-				IL_0043: box [System.Runtime]System.Double
-				IL_0048: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_004d: dup
-				IL_004e: ldc.r8 65
-				IL_0057: box [System.Runtime]System.Double
-				IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0061: dup
-				IL_0062: ldc.r8 66
-				IL_006b: box [System.Runtime]System.Double
-				IL_0070: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-				IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-				IL_007a: stloc.1
-				IL_007b: ldloc.0
-				IL_007c: ldstr "write"
-				IL_0081: ldloc.1
-				IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0087: pop
-				IL_0088: ldnull
-				IL_0089: ret
+				IL_0018: ldstr "client"
+				IL_001d: ldloc.0
+				IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0023: stloc.0
+				IL_0024: ldloc.0
+				IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_002a: stloc.0
+				IL_002b: ldc.i4.4
+				IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+				IL_0031: dup
+				IL_0032: ldc.r8 1
+				IL_003b: box [System.Runtime]System.Double
+				IL_0040: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0045: dup
+				IL_0046: ldc.r8 2
+				IL_004f: box [System.Runtime]System.Double
+				IL_0054: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0059: dup
+				IL_005a: ldc.r8 65
+				IL_0063: box [System.Runtime]System.Double
+				IL_0068: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_006d: dup
+				IL_006e: ldc.r8 66
+				IL_0077: box [System.Runtime]System.Double
+				IL_007c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+				IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+				IL_0086: stloc.1
+				IL_0087: ldloc.0
+				IL_0088: ldstr "write"
+				IL_008d: ldloc.1
+				IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0093: pop
+				IL_0094: ldnull
+				IL_0095: ret
 			} // end of method FunctionExpression_client::__js_call__
 
 		} // end of class FunctionExpression_client
@@ -482,7 +515,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x27fa
+					// Method begins at RVA 0x28aa
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -507,15 +540,16 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x25cc
+				// Method begins at RVA 0x2634
 				// Header size: 12
-				// Code size: 122 (0x7a)
+				// Code size: 162 (0xa2)
 				.maxstack 8
 				.locals init (
 					[0] object,
 					[1] bool,
 					[2] object,
-					[3] object
+					[3] object,
+					[4] class [JavaScriptRuntime]JavaScriptRuntime.Array
 				)
 
 				IL_0000: ldstr "console"
@@ -544,26 +578,40 @@
 				IL_003b: ldelem.ref
 				IL_003c: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope
 				IL_0041: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::reply
-				IL_0046: ldarg.2
-				IL_0047: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_004c: pop
-				IL_004d: ldarg.0
-				IL_004e: ldc.i4.1
-				IL_004f: ldelem.ref
-				IL_0050: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope
-				IL_0055: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-				IL_005a: ldstr "Cannot access 'client' before initialization"
-				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-				IL_0064: stloc.0
-				IL_0065: ldloc.0
-				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_006b: stloc.0
-				IL_006c: ldloc.0
-				IL_006d: ldstr "end"
-				IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-				IL_0077: pop
-				IL_0078: ldnull
-				IL_0079: ret
+				IL_0046: stloc.s 4
+				IL_0048: ldstr "reply"
+				IL_004d: ldloc.s 4
+				IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0054: stloc.0
+				IL_0055: ldloc.0
+				IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_005b: stloc.0
+				IL_005c: ldloc.0
+				IL_005d: ldstr "push"
+				IL_0062: ldarg.2
+				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0068: pop
+				IL_0069: ldarg.0
+				IL_006a: ldc.i4.1
+				IL_006b: ldelem.ref
+				IL_006c: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope
+				IL_0071: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+				IL_0076: ldstr "Cannot access 'client' before initialization"
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+				IL_0080: stloc.0
+				IL_0081: ldstr "client"
+				IL_0086: ldloc.0
+				IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_008c: stloc.0
+				IL_008d: ldloc.0
+				IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0093: stloc.0
+				IL_0094: ldloc.0
+				IL_0095: ldstr "end"
+				IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+				IL_009f: pop
+				IL_00a0: ldnull
+				IL_00a1: ret
 			} // end of method FunctionExpression_L30C20::__js_call__
 
 		} // end of class FunctionExpression_L30C20
@@ -583,7 +631,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x280c
+						// Method begins at RVA 0x28bc
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -606,7 +654,7 @@
 					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 						01 00 00 00 00 00 00 00
 					)
-					// Method begins at RVA 0x2788
+					// Method begins at RVA 0x2838
 					// Header size: 12
 					// Code size: 37 (0x25)
 					.maxstack 8
@@ -638,7 +686,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2803
+					// Method begins at RVA 0x28b3
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -662,18 +710,19 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2654
+				// Method begins at RVA 0x26e4
 				// Header size: 12
-				// Code size: 296 (0x128)
+				// Code size: 326 (0x146)
 				.maxstack 8
 				.locals init (
 					[0] class Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19/Scope,
 					[1] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
-					[2] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+					[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 					[3] object,
-					[4] float64,
-					[5] object,
-					[6] object
+					[4] class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer,
+					[5] float64,
+					[6] object,
+					[7] object
 				)
 
 				IL_0000: newobj instance void Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19/Scope::.ctor()
@@ -683,92 +732,104 @@
 				IL_0008: ldelem.ref
 				IL_0009: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope
 				IL_000e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::reply
-				IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::concat(object)
-				IL_0018: stloc.2
+				IL_0013: stloc.2
+				IL_0014: ldstr "reply"
 				IL_0019: ldloc.2
-				IL_001a: stloc.1
-				IL_001b: ldstr "console"
-				IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0025: stloc.3
-				IL_0026: ldloc.3
-				IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_002c: stloc.3
-				IL_002d: ldloc.1
-				IL_002e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
-				IL_0033: stloc.s 4
-				IL_0035: ldstr "client bytes:"
-				IL_003a: ldloc.s 4
-				IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-				IL_0041: stloc.s 5
-				IL_0043: ldloc.s 5
-				IL_0045: ldstr ":"
-				IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_004f: stloc.s 5
-				IL_0051: ldloc.s 5
-				IL_0053: ldloc.1
-				IL_0054: ldc.r8 0.0
-				IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0067: stloc.s 5
-				IL_0069: ldloc.s 5
-				IL_006b: ldstr ":"
-				IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_0075: stloc.s 5
-				IL_0077: ldloc.s 5
-				IL_0079: ldloc.1
-				IL_007a: ldc.r8 1
-				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_008d: stloc.s 5
-				IL_008f: ldloc.s 5
-				IL_0091: ldstr ":"
-				IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_009b: stloc.s 5
-				IL_009d: ldloc.s 5
-				IL_009f: ldloc.1
-				IL_00a0: ldc.r8 2
-				IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00b3: stloc.s 5
-				IL_00b5: ldloc.s 5
-				IL_00b7: ldstr ":"
-				IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00c1: stloc.s 5
-				IL_00c3: ldloc.s 5
-				IL_00c5: ldloc.1
-				IL_00c6: ldc.r8 3
-				IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_00d9: stloc.s 5
-				IL_00db: ldloc.3
-				IL_00dc: ldstr "log"
-				IL_00e1: ldloc.s 5
-				IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_00e8: pop
-				IL_00e9: ldarg.0
-				IL_00ea: ldc.i4.0
-				IL_00eb: ldelem.ref
-				IL_00ec: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope
-				IL_00f1: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope::server
-				IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_00fb: stloc.3
-				IL_00fc: ldnull
-				IL_00fd: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19/FunctionExpression_L39C17::__js_call__(object)
-				IL_0103: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-				IL_0108: ldc.i4.0
-				IL_0109: conv.r8
-				IL_010a: ldstr ""
-				IL_010f: ldc.i4.0
-				IL_0110: ldc.i4.1
-				IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_0116: stloc.s 6
-				IL_0118: ldloc.3
-				IL_0119: ldstr "close"
-				IL_011e: ldloc.s 6
-				IL_0120: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0125: pop
-				IL_0126: ldnull
-				IL_0127: ret
+				IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_001f: stloc.3
+				IL_0020: ldloc.3
+				IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::concat(object)
+				IL_0026: stloc.s 4
+				IL_0028: ldloc.s 4
+				IL_002a: stloc.1
+				IL_002b: ldstr "console"
+				IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0035: stloc.3
+				IL_0036: ldloc.3
+				IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_003c: stloc.3
+				IL_003d: ldloc.1
+				IL_003e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::get_length()
+				IL_0043: stloc.s 5
+				IL_0045: ldstr "client bytes:"
+				IL_004a: ldloc.s 5
+				IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+				IL_0051: stloc.s 6
+				IL_0053: ldloc.s 6
+				IL_0055: ldstr ":"
+				IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_005f: stloc.s 6
+				IL_0061: ldloc.s 6
+				IL_0063: ldloc.1
+				IL_0064: ldc.r8 0.0
+				IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0077: stloc.s 6
+				IL_0079: ldloc.s 6
+				IL_007b: ldstr ":"
+				IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0085: stloc.s 6
+				IL_0087: ldloc.s 6
+				IL_0089: ldloc.1
+				IL_008a: ldc.r8 1
+				IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_009d: stloc.s 6
+				IL_009f: ldloc.s 6
+				IL_00a1: ldstr ":"
+				IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00ab: stloc.s 6
+				IL_00ad: ldloc.s 6
+				IL_00af: ldloc.1
+				IL_00b0: ldc.r8 2
+				IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00c3: stloc.s 6
+				IL_00c5: ldloc.s 6
+				IL_00c7: ldstr ":"
+				IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00d1: stloc.s 6
+				IL_00d3: ldloc.s 6
+				IL_00d5: ldloc.1
+				IL_00d6: ldc.r8 3
+				IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_00e9: stloc.s 6
+				IL_00eb: ldloc.3
+				IL_00ec: ldstr "log"
+				IL_00f1: ldloc.s 6
+				IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_00f8: pop
+				IL_00f9: ldarg.0
+				IL_00fa: ldc.i4.0
+				IL_00fb: ldelem.ref
+				IL_00fc: castclass Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope
+				IL_0101: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope::server
+				IL_0106: stloc.3
+				IL_0107: ldstr "server"
+				IL_010c: ldloc.3
+				IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0112: stloc.3
+				IL_0113: ldloc.3
+				IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0119: stloc.3
+				IL_011a: ldnull
+				IL_011b: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19/FunctionExpression_L39C17::__js_call__(object)
+				IL_0121: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+				IL_0126: ldc.i4.0
+				IL_0127: conv.r8
+				IL_0128: ldstr ""
+				IL_012d: ldc.i4.0
+				IL_012e: ldc.i4.1
+				IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_0134: stloc.s 7
+				IL_0136: ldloc.3
+				IL_0137: ldstr "close"
+				IL_013c: ldloc.s 7
+				IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0143: pop
+				IL_0144: ldnull
+				IL_0145: ret
 			} // end of method FunctionExpression_L36C19::__js_call__
 
 		} // end of class FunctionExpression_L36C19
@@ -789,7 +850,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x27dd
+				// Method begins at RVA 0x288d
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -820,7 +881,7 @@
 			)
 			// Method begins at RVA 0x2194
 			// Header size: 12
-			// Code size: 326 (0x146)
+			// Code size: 354 (0x162)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope,
@@ -835,127 +896,139 @@
 			IL_0005: stloc.0
 			IL_0006: ldarg.0
 			IL_0007: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope::server
-			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0011: stloc.2
+			IL_000c: stloc.2
+			IL_000d: ldstr "server"
 			IL_0012: ldloc.2
-			IL_0013: ldstr "address"
-			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_001d: stloc.2
-			IL_001e: ldloc.2
-			IL_001f: stloc.1
-			IL_0020: ldarg.0
-			IL_0021: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope::net
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0018: stloc.2
+			IL_0019: ldloc.2
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_001f: stloc.2
+			IL_0020: ldloc.2
+			IL_0021: ldstr "address"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 			IL_002b: stloc.2
-			IL_002c: ldloc.1
-			IL_002d: ldstr "port"
-			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0037: stloc.3
-			IL_0038: ldloc.1
-			IL_0039: ldstr "address"
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0043: stloc.s 4
-			IL_0045: ldc.i4.2
-			IL_0046: newarr [System.Runtime]System.Object
-			IL_004b: dup
-			IL_004c: ldc.i4.0
-			IL_004d: ldarg.0
-			IL_004e: stelem.ref
-			IL_004f: dup
-			IL_0050: ldc.i4.1
-			IL_0051: ldloc.0
-			IL_0052: stelem.ref
-			IL_0053: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_client::__js_call__(object[], object)
-			IL_0059: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_005e: ldc.i4.0
-			IL_005f: conv.r8
-			IL_0060: ldstr ""
-			IL_0065: ldc.i4.0
-			IL_0066: ldc.i4.1
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_006c: stloc.s 5
-			IL_006e: ldloc.2
-			IL_006f: ldstr "connect"
-			IL_0074: ldloc.3
-			IL_0075: ldloc.s 4
-			IL_0077: ldloc.s 5
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-			IL_007e: stloc.s 5
-			IL_0080: ldloc.0
-			IL_0081: ldloc.s 5
-			IL_0083: stfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-			IL_0088: ldloc.0
-			IL_0089: ldc.i4.0
-			IL_008a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-			IL_008f: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::reply
-			IL_0094: ldloc.0
-			IL_0095: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-			IL_009a: ldstr "Cannot access 'client' before initialization"
-			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_00a4: stloc.s 5
-			IL_00a6: ldloc.s 5
-			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ad: stloc.s 5
-			IL_00af: ldc.i4.2
-			IL_00b0: newarr [System.Runtime]System.Object
-			IL_00b5: dup
-			IL_00b6: ldc.i4.0
-			IL_00b7: ldarg.0
-			IL_00b8: stelem.ref
-			IL_00b9: dup
-			IL_00ba: ldc.i4.1
-			IL_00bb: ldloc.0
-			IL_00bc: stelem.ref
-			IL_00bd: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L30C20::__js_call__(object[], object, object)
-			IL_00c3: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-			IL_00c8: ldc.i4.1
-			IL_00c9: conv.r8
-			IL_00ca: ldstr ""
-			IL_00cf: ldc.i4.0
-			IL_00d0: ldc.i4.1
-			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_00d6: stloc.s 4
-			IL_00d8: ldloc.s 5
-			IL_00da: ldstr "on"
-			IL_00df: ldstr "data"
-			IL_00e4: ldloc.s 4
-			IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00eb: pop
-			IL_00ec: ldloc.0
-			IL_00ed: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
-			IL_00f2: ldstr "Cannot access 'client' before initialization"
-			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_00fc: stloc.s 4
-			IL_00fe: ldloc.s 4
-			IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0105: stloc.s 4
-			IL_0107: ldc.i4.2
-			IL_0108: newarr [System.Runtime]System.Object
-			IL_010d: dup
-			IL_010e: ldc.i4.0
-			IL_010f: ldarg.0
-			IL_0110: stelem.ref
-			IL_0111: dup
-			IL_0112: ldc.i4.1
-			IL_0113: ldloc.0
-			IL_0114: stelem.ref
-			IL_0115: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19::__js_call__(object[], object)
-			IL_011b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0120: ldc.i4.0
-			IL_0121: conv.r8
-			IL_0122: ldstr ""
-			IL_0127: ldc.i4.0
-			IL_0128: ldc.i4.1
-			IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_012e: stloc.s 5
-			IL_0130: ldloc.s 4
-			IL_0132: ldstr "on"
-			IL_0137: ldstr "end"
-			IL_013c: ldloc.s 5
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0143: pop
-			IL_0144: ldnull
-			IL_0145: ret
+			IL_002c: ldloc.2
+			IL_002d: stloc.1
+			IL_002e: ldarg.0
+			IL_002f: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/Scope::net
+			IL_0034: stloc.2
+			IL_0035: ldstr "net"
+			IL_003a: ldloc.2
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0040: stloc.2
+			IL_0041: ldloc.2
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0047: stloc.2
+			IL_0048: ldloc.1
+			IL_0049: ldstr "port"
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0053: stloc.3
+			IL_0054: ldloc.1
+			IL_0055: ldstr "address"
+			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_005f: stloc.s 4
+			IL_0061: ldc.i4.2
+			IL_0062: newarr [System.Runtime]System.Object
+			IL_0067: dup
+			IL_0068: ldc.i4.0
+			IL_0069: ldarg.0
+			IL_006a: stelem.ref
+			IL_006b: dup
+			IL_006c: ldc.i4.1
+			IL_006d: ldloc.0
+			IL_006e: stelem.ref
+			IL_006f: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_client::__js_call__(object[], object)
+			IL_0075: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_007a: ldc.i4.0
+			IL_007b: conv.r8
+			IL_007c: ldstr ""
+			IL_0081: ldc.i4.0
+			IL_0082: ldc.i4.1
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0088: stloc.s 5
+			IL_008a: ldloc.2
+			IL_008b: ldstr "connect"
+			IL_0090: ldloc.3
+			IL_0091: ldloc.s 4
+			IL_0093: ldloc.s 5
+			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_009a: stloc.s 5
+			IL_009c: ldloc.0
+			IL_009d: ldloc.s 5
+			IL_009f: stfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+			IL_00a4: ldloc.0
+			IL_00a5: ldc.i4.0
+			IL_00a6: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+			IL_00ab: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::reply
+			IL_00b0: ldloc.0
+			IL_00b1: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+			IL_00b6: ldstr "Cannot access 'client' before initialization"
+			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_00c0: stloc.s 5
+			IL_00c2: ldloc.s 5
+			IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c9: stloc.s 5
+			IL_00cb: ldc.i4.2
+			IL_00cc: newarr [System.Runtime]System.Object
+			IL_00d1: dup
+			IL_00d2: ldc.i4.0
+			IL_00d3: ldarg.0
+			IL_00d4: stelem.ref
+			IL_00d5: dup
+			IL_00d6: ldc.i4.1
+			IL_00d7: ldloc.0
+			IL_00d8: stelem.ref
+			IL_00d9: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L30C20::__js_call__(object[], object, object)
+			IL_00df: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+			IL_00e4: ldc.i4.1
+			IL_00e5: conv.r8
+			IL_00e6: ldstr ""
+			IL_00eb: ldc.i4.0
+			IL_00ec: ldc.i4.1
+			IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_00f2: stloc.s 4
+			IL_00f4: ldloc.s 5
+			IL_00f6: ldstr "on"
+			IL_00fb: ldstr "data"
+			IL_0100: ldloc.s 4
+			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0107: pop
+			IL_0108: ldloc.0
+			IL_0109: ldfld object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/Scope::client
+			IL_010e: ldstr "Cannot access 'client' before initialization"
+			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0118: stloc.s 4
+			IL_011a: ldloc.s 4
+			IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0121: stloc.s 4
+			IL_0123: ldc.i4.2
+			IL_0124: newarr [System.Runtime]System.Object
+			IL_0129: dup
+			IL_012a: ldc.i4.0
+			IL_012b: ldarg.0
+			IL_012c: stelem.ref
+			IL_012d: dup
+			IL_012e: ldc.i4.1
+			IL_012f: ldloc.0
+			IL_0130: stelem.ref
+			IL_0131: ldftn object Modules.Net_Socket_Binary_Data_Defaults_To_Buffer/FunctionExpression_L23C30/FunctionExpression_L36C19::__js_call__(object[], object)
+			IL_0137: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_013c: ldc.i4.0
+			IL_013d: conv.r8
+			IL_013e: ldstr ""
+			IL_0143: ldc.i4.0
+			IL_0144: ldc.i4.1
+			IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_014a: stloc.s 5
+			IL_014c: ldloc.s 4
+			IL_014e: ldstr "on"
+			IL_0153: ldstr "end"
+			IL_0158: ldloc.s 5
+			IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_015f: pop
+			IL_0160: ldnull
+			IL_0161: ret
 		} // end of method FunctionExpression_L23C30::__js_call__
 
 	} // end of class FunctionExpression_L23C30
@@ -976,7 +1049,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x27b9
+			// Method begins at RVA 0x2869
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1091,7 +1164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2815
+		// Method begins at RVA 0x28c5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

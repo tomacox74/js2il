@@ -28,7 +28,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f2
+				// Method begins at RVA 0x21ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -53,7 +53,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20a8
+			// Method begins at RVA 0x20a4
 			// Header size: 12
 			// Code size: 309 (0x135)
 			.maxstack 8
@@ -209,7 +209,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21e9
+			// Method begins at RVA 0x21e5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -235,12 +235,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 75 (0x4b)
+		// Code size: 72 (0x48)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TimersPromises_SetTimeout_AwaitsValue/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.TimersPromises_SetTimeout_AwaitsValue/Scope::.ctor()
@@ -262,21 +263,18 @@
 		IL_0029: stloc.2
 		IL_002a: ldloc.2
 		IL_002b: stloc.1
-		IL_002c: ldarg.1
-		IL_002d: ldstr "node:timers/promises"
-		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0037: stloc.2
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.0
-		IL_0041: stelem.ref
-		IL_0042: ldnull
-		IL_0043: ldloc.2
-		IL_0044: call object Modules.TimersPromises_SetTimeout_AwaitsValue/main::__js_call__(object[], object, object)
-		IL_0049: pop
-		IL_004a: ret
+		IL_002c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0031: stloc.3
+		IL_0032: ldarg.1
+		IL_0033: ldstr "node:timers/promises"
+		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_003d: stloc.2
+		IL_003e: ldloc.1
+		IL_003f: ldloc.3
+		IL_0040: ldloc.2
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0046: pop
+		IL_0047: ret
 	} // end of method TimersPromises_SetTimeout_AwaitsValue::__js_module_init__
 
 } // end of class Modules.TimersPromises_SetTimeout_AwaitsValue
@@ -288,7 +286,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21fb
+		// Method begins at RVA 0x21f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

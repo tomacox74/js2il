@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2213
+				// Method begins at RVA 0x2219
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x221c
+				// Method begins at RVA 0x2222
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -62,7 +62,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x222e
+					// Method begins at RVA 0x2234
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2225
+				// Method begins at RVA 0x222b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,7 +106,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2198
+			// Method begins at RVA 0x219c
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -130,14 +130,15 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21b4
+			// Method begins at RVA 0x21b8
 			// Header size: 12
-			// Code size: 74 (0x4a)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] float64,
-				[2] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/Scope_For_L9C7/Block_L9C31
+				[2] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/Scope_For_L9C7/Block_L9C31,
+				[3] float64
 			)
 
 			IL_0000: ldc.r8 0.0
@@ -146,25 +147,27 @@
 			IL_0013: stloc.1
 			// loop start (head: IL_0014)
 				IL_0014: ldloc.1
-				IL_0015: ldc.r8 10
-				IL_001e: clt
-				IL_0020: brfalse IL_0048
+				IL_0015: stloc.3
+				IL_0016: ldloc.3
+				IL_0017: ldc.r8 10
+				IL_0020: clt
+				IL_0022: brfalse IL_004a
 
-				IL_0025: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/Scope_For_L9C7/Block_L9C31::.ctor()
-				IL_002a: stloc.2
-				IL_002b: ldloc.0
-				IL_002c: ldc.r8 1
-				IL_0035: add
-				IL_0036: stloc.0
-				IL_0037: ldloc.1
-				IL_0038: ldc.r8 1
-				IL_0041: add
-				IL_0042: stloc.1
-				IL_0043: br IL_0014
+				IL_0027: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/Scope_For_L9C7/Block_L9C31::.ctor()
+				IL_002c: stloc.2
+				IL_002d: ldloc.0
+				IL_002e: ldc.r8 1
+				IL_0037: add
+				IL_0038: stloc.0
+				IL_0039: ldloc.1
+				IL_003a: ldc.r8 1
+				IL_0043: add
+				IL_0044: stloc.1
+				IL_0045: br IL_0014
 			// end loop
 
-			IL_0048: ldloc.0
-			IL_0049: ret
+			IL_004a: ldloc.0
+			IL_004b: ret
 		} // end of method Counter::count
 
 	} // end of class Counter
@@ -176,7 +179,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x220a
+			// Method begins at RVA 0x2210
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -202,7 +205,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 315 (0x13b)
+		// Code size: 319 (0x13f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope,
@@ -212,8 +215,9 @@
 			[4] object,
 			[5] class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter,
 			[6] object,
-			[7] bool,
-			[8] object
+			[7] object,
+			[8] bool,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn/Scope::.ctor()
@@ -302,18 +306,20 @@
 		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0116: stloc.s 6
 		IL_0118: ldloc.3
-		IL_0119: ldloc.s 4
-		IL_011b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_0120: stloc.s 7
-		IL_0122: ldloc.s 7
-		IL_0124: box [System.Runtime]System.Boolean
-		IL_0129: stloc.s 8
-		IL_012b: ldloc.s 6
-		IL_012d: ldstr "log"
-		IL_0132: ldloc.s 8
-		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0139: pop
-		IL_013a: ret
+		IL_0119: stloc.s 7
+		IL_011b: ldloc.s 7
+		IL_011d: ldloc.s 4
+		IL_011f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0124: stloc.s 8
+		IL_0126: ldloc.s 8
+		IL_0128: box [System.Runtime]System.Boolean
+		IL_012d: stloc.s 9
+		IL_012f: ldloc.s 6
+		IL_0131: ldstr "log"
+		IL_0136: ldloc.s 9
+		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_013d: pop
+		IL_013e: ret
 	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualObjectPropertyVsMethodReturn
@@ -325,7 +331,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2237
+		// Method begins at RVA 0x223d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

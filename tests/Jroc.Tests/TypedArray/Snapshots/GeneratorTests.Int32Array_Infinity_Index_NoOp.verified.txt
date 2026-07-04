@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213e
+			// Method begins at RVA 0x2142
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 226 (0xe2)
+		// Code size: 230 (0xe6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_Infinity_Index_NoOp/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
-			[3] object
+			[3] object,
+			[4] float64
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_Infinity_Index_NoOp/Scope::.ctor()
@@ -83,26 +84,28 @@
 		IL_007f: ldc.r8 1
 		IL_0088: ldc.r8 200
 		IL_0091: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_0096: ldloc.1
-		IL_0097: ldc.r8 (00 00 00 00 00 00 F0 7F)
-		IL_00a0: neg
-		IL_00a1: ldc.r8 888
-		IL_00aa: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-		IL_00af: ldstr "console"
-		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b9: stloc.3
-		IL_00ba: ldloc.3
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c0: stloc.3
-		IL_00c1: ldloc.3
-		IL_00c2: ldstr "log"
-		IL_00c7: ldloc.1
-		IL_00c8: ldc.r8 1
-		IL_00d1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-		IL_00d6: box [System.Runtime]System.Double
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00e0: pop
-		IL_00e1: ret
+		IL_0096: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_009f: neg
+		IL_00a0: stloc.s 4
+		IL_00a2: ldloc.1
+		IL_00a3: ldloc.s 4
+		IL_00a5: ldc.r8 888
+		IL_00ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(float64, float64)
+		IL_00b3: ldstr "console"
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00bd: stloc.3
+		IL_00be: ldloc.3
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c4: stloc.3
+		IL_00c5: ldloc.3
+		IL_00c6: ldstr "log"
+		IL_00cb: ldloc.1
+		IL_00cc: ldc.r8 1
+		IL_00d5: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+		IL_00da: box [System.Runtime]System.Double
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e4: pop
+		IL_00e5: ret
 	} // end of method Int32Array_Infinity_Index_NoOp::__js_module_init__
 
 } // end of class Modules.Int32Array_Infinity_Index_NoOp
@@ -114,7 +117,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2147
+		// Method begins at RVA 0x214b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

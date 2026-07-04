@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21a2
+					// Method begins at RVA 0x2176
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2199
+				// Method begins at RVA 0x216d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -63,7 +63,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20bc
 			// Header size: 12
 			// Code size: 156 (0x9c)
 			.maxstack 8
@@ -136,7 +136,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2190
+			// Method begins at RVA 0x2164
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -162,12 +162,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 140 (0x8c)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_RestParameters_Empty/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_RestParameters_Empty/Scope::.ctor()
@@ -184,44 +185,27 @@
 		IL_0020: stloc.2
 		IL_0021: ldloc.2
 		IL_0022: stloc.1
-		IL_0023: ldnull
-		IL_0024: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object)
-		IL_002a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_002f: ldc.i4.0
-		IL_0030: newarr [System.Runtime]System.Object
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_003a: pop
-		IL_003b: ldnull
-		IL_003c: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object)
-		IL_0042: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldstr "hello"
-		IL_0054: stelem.ref
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_005a: pop
-		IL_005b: ldnull
-		IL_005c: ldftn object Modules.Function_RestParameters_Empty/logArgs::__js_call__(object)
-		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0067: ldc.i4.3
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldstr "a"
-		IL_0074: stelem.ref
-		IL_0075: dup
-		IL_0076: ldc.i4.1
-		IL_0077: ldstr "b"
-		IL_007c: stelem.ref
-		IL_007d: dup
-		IL_007e: ldc.i4.2
-		IL_007f: ldstr "c"
-		IL_0084: stelem.ref
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0, object[])
-		IL_008a: pop
-		IL_008b: ret
+		IL_0023: ldloc.1
+		IL_0024: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_002e: pop
+		IL_002f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0034: stloc.3
+		IL_0035: ldloc.1
+		IL_0036: ldloc.3
+		IL_0037: ldstr "hello"
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0041: pop
+		IL_0042: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0047: stloc.3
+		IL_0048: ldloc.1
+		IL_0049: ldloc.3
+		IL_004a: ldstr "a"
+		IL_004f: ldstr "b"
+		IL_0054: ldstr "c"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method Function_RestParameters_Empty::__js_module_init__
 
 } // end of class Modules.Function_RestParameters_Empty
@@ -233,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ab
+		// Method begins at RVA 0x217f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2103
+				// Method begins at RVA 0x212b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20f0
+			// Method begins at RVA 0x2118
 			// Header size: 1
 			// Code size: 9 (0x9)
 			.maxstack 8
@@ -71,7 +71,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fa
+			// Method begins at RVA 0x2122
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -97,13 +97,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 148 (0x94)
+		// Code size: 188 (0xbc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_MulObjectObject/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object[],
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_MulObjectObject/Scope::.ctor()
@@ -126,33 +127,43 @@
 		IL_002e: ldloc.2
 		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0034: stloc.2
-		IL_0035: ldnull
-		IL_0036: ldc.r8 3
-		IL_003f: ldc.r8 4
-		IL_0048: call object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object, float64, float64)
-		IL_004d: stloc.3
-		IL_004e: ldloc.2
-		IL_004f: ldstr "log"
-		IL_0054: ldloc.3
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_005a: pop
-		IL_005b: ldstr "console"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0065: stloc.3
-		IL_0066: ldloc.3
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006c: stloc.3
-		IL_006d: ldnull
-		IL_006e: ldc.r8 2.5
-		IL_0077: ldc.r8 4
-		IL_0080: call object Modules.BinaryOperator_MulObjectObject/'mul'::__js_call__(object, float64, float64)
-		IL_0085: stloc.2
-		IL_0086: ldloc.3
-		IL_0087: ldstr "log"
-		IL_008c: ldloc.2
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0092: pop
-		IL_0093: ret
+		IL_0035: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_003a: stloc.3
+		IL_003b: ldloc.1
+		IL_003c: ldloc.3
+		IL_003d: ldc.r8 3
+		IL_0046: box [System.Runtime]System.Double
+		IL_004b: ldc.r8 4
+		IL_0054: box [System.Runtime]System.Double
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_005e: stloc.s 4
+		IL_0060: ldloc.2
+		IL_0061: ldstr "log"
+		IL_0066: ldloc.s 4
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006d: pop
+		IL_006e: ldstr "console"
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0078: stloc.s 4
+		IL_007a: ldloc.s 4
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0081: stloc.s 4
+		IL_0083: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0088: stloc.3
+		IL_0089: ldloc.1
+		IL_008a: ldloc.3
+		IL_008b: ldc.r8 2.5
+		IL_0094: box [System.Runtime]System.Double
+		IL_0099: ldc.r8 4
+		IL_00a2: box [System.Runtime]System.Double
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00ac: stloc.2
+		IL_00ad: ldloc.s 4
+		IL_00af: ldstr "log"
+		IL_00b4: ldloc.2
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ba: pop
+		IL_00bb: ret
 	} // end of method BinaryOperator_MulObjectObject::__js_module_init__
 
 } // end of class Modules.BinaryOperator_MulObjectObject
@@ -164,7 +175,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2134
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

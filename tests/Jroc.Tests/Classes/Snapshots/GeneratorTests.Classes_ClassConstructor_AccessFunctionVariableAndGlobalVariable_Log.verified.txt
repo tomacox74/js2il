@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x218c
+					// Method begins at RVA 0x21a8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2195
+					// Method begins at RVA 0x21b1
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -70,11 +70,12 @@
 				)
 				// Method begins at RVA 0x2108
 				// Header size: 12
-				// Code size: 102 (0x66)
+				// Code size: 130 (0x82)
 				.maxstack 8
 				.locals init (
 					[0] object[],
-					[1] object
+					[1] object,
+					[2] object
 				)
 
 				IL_0000: ldarg.0
@@ -90,31 +91,43 @@
 				IL_001a: ldloc.1
 				IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_0020: stloc.1
-				IL_0021: ldloc.1
-				IL_0022: ldstr "log"
-				IL_0027: ldarg.1
-				IL_0028: ldc.i4.0
-				IL_0029: ldelem.ref
-				IL_002a: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope
-				IL_002f: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
-				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0039: pop
-				IL_003a: ldstr "console"
-				IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0044: stloc.1
-				IL_0045: ldloc.1
-				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_004b: stloc.1
-				IL_004c: ldloc.1
-				IL_004d: ldstr "log"
-				IL_0052: ldarg.1
-				IL_0053: ldc.i4.1
-				IL_0054: ldelem.ref
-				IL_0055: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope
-				IL_005a: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope::FUNCTION_VALUE
-				IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_0064: pop
-				IL_0065: ret
+				IL_0021: ldarg.1
+				IL_0022: ldc.i4.0
+				IL_0023: ldelem.ref
+				IL_0024: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope
+				IL_0029: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
+				IL_002e: stloc.2
+				IL_002f: ldstr "GLOBAL_VALUE"
+				IL_0034: ldloc.2
+				IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_003a: stloc.2
+				IL_003b: ldloc.1
+				IL_003c: ldstr "log"
+				IL_0041: ldloc.2
+				IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0047: pop
+				IL_0048: ldstr "console"
+				IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0052: stloc.2
+				IL_0053: ldloc.2
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0059: stloc.2
+				IL_005a: ldarg.1
+				IL_005b: ldc.i4.1
+				IL_005c: ldelem.ref
+				IL_005d: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope
+				IL_0062: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction/Scope::FUNCTION_VALUE
+				IL_0067: stloc.1
+				IL_0068: ldstr "FUNCTION_VALUE"
+				IL_006d: ldloc.1
+				IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0073: stloc.1
+				IL_0074: ldloc.2
+				IL_0075: ldstr "log"
+				IL_007a: ldloc.1
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0080: pop
+				IL_0081: ret
 			} // end of method MyClass::.ctor
 
 		} // end of class MyClass
@@ -134,7 +147,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2183
+				// Method begins at RVA 0x219f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -223,7 +236,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x217a
+			// Method begins at RVA 0x2196
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -249,7 +262,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope,
@@ -282,12 +295,11 @@
 		IL_0033: ldloc.0
 		IL_0034: ldstr "Hello from global"
 		IL_0039: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope::GLOBAL_VALUE
-		IL_003e: ldloc.0
-		IL_003f: castclass Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope
-		IL_0044: ldnull
-		IL_0045: call object Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/testFunction::__js_call__(class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log/Scope, object)
-		IL_004a: pop
-		IL_004b: ret
+		IL_003e: ldloc.1
+		IL_003f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log
@@ -299,7 +311,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x219e
+		// Method begins at RVA 0x21ba
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2116
+				// Method begins at RVA 0x213f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,17 +51,34 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20fe
-			// Header size: 1
-			// Code size: 14 (0xe)
+			// Method begins at RVA 0x2100
+			// Header size: 12
+			// Code size: 42 (0x2a)
 			.maxstack 8
+			.locals init (
+				[0] object,
+				[1] float64,
+				[2] object
+			)
 
-			IL_0000: ldarg.2
-			IL_0001: ldarg.0
-			IL_0002: ldfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
-			IL_0007: mul
-			IL_0008: box [System.Runtime]System.Double
-			IL_000d: ret
+			IL_0000: ldstr "n"
+			IL_0005: ldarg.0
+			IL_0006: ldfld float64 Modules.ArrowFunction_CapturesOuterVariable/Scope::n
+			IL_000b: box [System.Runtime]System.Double
+			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0015: stloc.0
+			IL_0016: ldloc.0
+			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001c: stloc.1
+			IL_001d: ldarg.2
+			IL_001e: ldloc.1
+			IL_001f: mul
+			IL_0020: stloc.1
+			IL_0021: ldloc.1
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: stloc.2
+			IL_0028: ldloc.2
+			IL_0029: ret
 		} // end of method ArrowFunction_L4C13::__js_call__
 
 	} // end of class ArrowFunction_L4C13
@@ -79,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210d
+			// Method begins at RVA 0x2136
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -182,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211f
+		// Method begins at RVA 0x2148
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2145
+				// Method begins at RVA 0x214e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x212b
+			// Method begins at RVA 0x2134
 			// Header size: 1
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -61,7 +61,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213c
+			// Method begins at RVA 0x2145
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -87,7 +87,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 207 (0xcf)
+		// Code size: 216 (0xd8)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_ShorthandAndMethod/Scope,
@@ -133,37 +133,40 @@
 		IL_0065: ldc.i4.1
 		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
 		IL_006b: stloc.s 5
-		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0072: dup
-		IL_0073: ldstr "x"
-		IL_0078: ldc.r8 7
-		IL_0081: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_0086: dup
-		IL_0087: ldstr "m"
-		IL_008c: ldloc.s 5
-		IL_008e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0093: stloc.s 4
-		IL_0095: ldloc.s 4
-		IL_0097: stloc.2
-		IL_0098: ldstr "console"
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a2: stloc.s 5
-		IL_00a4: ldloc.s 5
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_006d: ldloc.s 5
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0074: stloc.s 5
+		IL_0076: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_007b: dup
+		IL_007c: ldstr "x"
+		IL_0081: ldc.r8 7
+		IL_008a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_008f: dup
+		IL_0090: ldstr "m"
+		IL_0095: ldloc.s 5
+		IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_009c: stloc.s 4
+		IL_009e: ldloc.s 4
+		IL_00a0: stloc.2
+		IL_00a1: ldstr "console"
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_00ab: stloc.s 5
-		IL_00ad: ldloc.2
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b3: stloc.3
-		IL_00b4: ldloc.3
-		IL_00b5: ldstr "m"
-		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00bf: stloc.3
-		IL_00c0: ldloc.s 5
-		IL_00c2: ldstr "log"
-		IL_00c7: ldloc.3
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00cd: pop
-		IL_00ce: ret
+		IL_00ad: ldloc.s 5
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b4: stloc.s 5
+		IL_00b6: ldloc.2
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00bc: stloc.3
+		IL_00bd: ldloc.3
+		IL_00be: ldstr "m"
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00c8: stloc.3
+		IL_00c9: ldloc.s 5
+		IL_00cb: ldstr "log"
+		IL_00d0: ldloc.3
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d6: pop
+		IL_00d7: ret
 	} // end of method ObjectLiteral_ShorthandAndMethod::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_ShorthandAndMethod
@@ -175,7 +178,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214e
+		// Method begins at RVA 0x2157
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
