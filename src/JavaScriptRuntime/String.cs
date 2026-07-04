@@ -1434,16 +1434,29 @@ namespace JavaScriptRuntime
                 return ReplaceWithRegExp(input, regExp, replacement);
             }
 
-            var pattern = patternOrString?.ToString() ?? string.Empty;
-            var repl = replacement?.ToString() ?? string.Empty;
+            var pattern = DotNet2JSConversions.ToString(patternOrString) ?? string.Empty;
             if (pattern.Length == 0)
             {
-                // JS inserts at start for empty pattern; keep simple and return input for now.
-                return input;
+                var startReplacement = replacement is Delegate emptyPatternCallback
+                    ? InvokeStringReplaceCallback(emptyPatternCallback, string.Empty, 0d, input)
+                    : DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+                return startReplacement + input;
             }
+
             var idx = input.IndexOf(pattern, StringComparison.Ordinal);
             if (idx < 0) return input;
+
+            var repl = replacement is Delegate callback
+                ? InvokeStringReplaceCallback(callback, pattern, (double)idx, input)
+                : DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+
             return input.Substring(0, idx) + repl + input.Substring(idx + pattern.Length);
+        }
+
+        private static string InvokeStringReplaceCallback(Delegate callback, string matched, double position, string input)
+        {
+            var callbackResult = Closure.InvokeFunctionCallWithArgs3(callback, System.Array.Empty<object>(), matched, position, input);
+            return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
         }
 
         /// <summary>
@@ -1679,7 +1692,7 @@ namespace JavaScriptRuntime
                     return ReplaceEmptyPattern(input, match => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
                 }
 
-                return ReplaceLiteralWithCallback(input, pattern, global: true, match => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
+                return ReplaceLiteralWithCallback(input, pattern, global: true, (match, _) => DotNet2JSConversions.ToString(callback1(System.Array.Empty<object>(), match)) ?? string.Empty);
             }
 
             if (replaceValue is Func<object[], object> callback0)
@@ -1689,7 +1702,7 @@ namespace JavaScriptRuntime
                     return ReplaceEmptyPattern(input, _ => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
                 }
 
-                return ReplaceLiteralWithCallback(input, pattern, global: true, _ => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
+                return ReplaceLiteralWithCallback(input, pattern, global: true, (_, _) => DotNet2JSConversions.ToString(callback0(System.Array.Empty<object>())) ?? string.Empty);
             }
 
             var replacementText = DotNet2JSConversions.ToString(replaceValue) ?? string.Empty;
@@ -1732,23 +1745,18 @@ namespace JavaScriptRuntime
             if (ignoreCase) options |= RegexOptions.IgnoreCase;
             var re = new Regex(pattern, options);
 
-            string Invoke(object? cb, string match)
+            string Invoke(object? cb, Match match)
             {
-                if (cb is Func<object[], object, object> f1)
+                if (cb is Delegate callback)
                 {
-                    var r = f1(System.Array.Empty<object>(), match);
-                    return DotNet2JSConversions.ToString(r);
+                    return InvokeStringReplaceCallback(callback, match.Value, (double)match.Index, input);
                 }
-                if (cb is Func<object[], object> f0)
-                {
-                    var r = f0(System.Array.Empty<object>());
-                    return DotNet2JSConversions.ToString(r);
-                }
+
                 // Fallback: ToString on callback object (unlikely useful)
-                return DotNet2JSConversions.ToString(cb);
+                return DotNet2JSConversions.ToString(cb) ?? string.Empty;
             }
 
-            var evaluator = new MatchEvaluator(m => Invoke(replacementCallback, m.Value));
+            var evaluator = new MatchEvaluator(m => Invoke(replacementCallback, m));
             if (global)
             {
                 return re.Replace(input, evaluator);
@@ -1759,7 +1767,7 @@ namespace JavaScriptRuntime
                 int count = 0;
                 return re.Replace(input, m =>
                 {
-                    if (count++ == 0) return Invoke(replacementCallback, m.Value);
+                    if (count++ == 0) return Invoke(replacementCallback, m);
                     return m.Value;
                 });
             }
@@ -2003,22 +2011,9 @@ namespace JavaScriptRuntime
                     return literalReplaceResult;
                 }
 
-                if (replacement is Func<object[], object, object> || replacement is Func<object[], object>)
+                if (replacement is Delegate replacementCallback)
                 {
-                    string Invoke(string match)
-                    {
-                        if (replacement is Func<object[], object, object> cb1)
-                        {
-                            var r = cb1(System.Array.Empty<object>(), match);
-                            return DotNet2JSConversions.ToString(r) ?? string.Empty;
-                        }
-
-                        var cb0 = (Func<object[], object>)replacement;
-                        var r0 = cb0(System.Array.Empty<object>());
-                        return DotNet2JSConversions.ToString(r0) ?? string.Empty;
-                    }
-
-                    var evaluator = new MatchEvaluator(m => Invoke(m.Value));
+                    var evaluator = new MatchEvaluator(m => InvokeStringReplaceCallback(replacementCallback, m.Value, (double)m.Index, input));
                     if (regExp.Global)
                     {
                         return regExp.Regex.Replace(input, evaluator);
@@ -2049,22 +2044,13 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (replacement is Func<object[], object, object> || replacement is Func<object[], object>)
+            if (replacement is Delegate replacementCallback)
             {
-                string InvokeReplacement(string match)
-                {
-                    if (replacement is Func<object[], object, object> cb1)
-                    {
-                        var callbackResult = cb1(System.Array.Empty<object>(), match);
-                        return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
-                    }
-
-                    var cb0 = (Func<object[], object>)replacement;
-                    var zeroArgResult = cb0(System.Array.Empty<object>());
-                    return DotNet2JSConversions.ToString(zeroArgResult) ?? string.Empty;
-                }
-
-                result = ReplaceLiteralWithCallback(input, literalPattern, regExp.Global, InvokeReplacement);
+                result = ReplaceLiteralWithCallback(
+                    input,
+                    literalPattern,
+                    regExp.Global,
+                    (match, index) => InvokeStringReplaceCallback(replacementCallback, match, (double)index, input));
                 return true;
             }
 
@@ -2093,7 +2079,7 @@ namespace JavaScriptRuntime
             return true;
         }
 
-        private static string ReplaceLiteralWithCallback(string input, string literalPattern, bool global, Func<string, string> replacementFactory)
+        private static string ReplaceLiteralWithCallback(string input, string literalPattern, bool global, Func<string, int, string> replacementFactory)
         {
             var firstMatchIndex = input.IndexOf(literalPattern, StringComparison.Ordinal);
             if (firstMatchIndex < 0)
@@ -2104,7 +2090,7 @@ namespace JavaScriptRuntime
             if (!global)
             {
                 return input.Substring(0, firstMatchIndex)
-                    + replacementFactory(literalPattern)
+                    + replacementFactory(literalPattern, firstMatchIndex)
                     + input.Substring(firstMatchIndex + literalPattern.Length);
             }
 
@@ -2120,7 +2106,7 @@ namespace JavaScriptRuntime
                 }
 
                 builder.Append(input, searchIndex, matchIndex - searchIndex);
-                builder.Append(replacementFactory(literalPattern));
+                builder.Append(replacementFactory(literalPattern, matchIndex));
                 searchIndex = matchIndex + literalPattern.Length;
             }
 
