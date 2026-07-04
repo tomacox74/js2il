@@ -1,4 +1,4 @@
-// IL code: Function_Bind_Construct_NewTargetAndPrototype
+﻿// IL code: Function_Bind_Construct_NewTargetAndPrototype
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227f
+				// Method begins at RVA 0x229d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,53 +48,66 @@
 			)
 			// Method begins at RVA 0x2208
 			// Header size: 12
-			// Code size: 98 (0x62)
+			// Code size: 128 (0x80)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] bool,
-				[2] object,
-				[3] object
+				[1] object,
+				[2] bool,
+				[3] object,
+				[4] object
 			)
 
 			IL_0000: ldarg.1
 			IL_0001: stloc.0
-			IL_0002: ldloc.0
-			IL_0003: ldarg.0
-			IL_0004: ldfld object Modules.Function_Bind_Construct_NewTargetAndPrototype/Scope::C
-			IL_0009: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_000e: stloc.1
-			IL_000f: ldloc.1
-			IL_0010: box [System.Runtime]System.Boolean
-			IL_0015: stloc.2
-			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001b: ldloc.2
-			IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0021: pop
-			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0027: ldarg.0
-			IL_0028: ldfld object Modules.Function_Bind_Construct_NewTargetAndPrototype/Scope::boundThis
-			IL_002d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0032: stloc.1
-			IL_0033: ldloc.1
-			IL_0034: box [System.Runtime]System.Boolean
-			IL_0039: stloc.2
-			IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003f: ldloc.2
-			IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0045: pop
-			IL_0046: ldarg.2
-			IL_0047: ldarg.3
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_004d: stloc.3
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0053: ldstr "sum"
-			IL_0058: ldloc.3
-			IL_0059: ldc.i4.1
-			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-			IL_005f: pop
-			IL_0060: ldnull
-			IL_0061: ret
+			IL_0002: ldarg.0
+			IL_0003: ldfld object Modules.Function_Bind_Construct_NewTargetAndPrototype/Scope::C
+			IL_0008: stloc.1
+			IL_0009: ldstr "C"
+			IL_000e: ldloc.1
+			IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0014: stloc.1
+			IL_0015: ldloc.0
+			IL_0016: ldloc.1
+			IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_001c: stloc.2
+			IL_001d: ldloc.2
+			IL_001e: box [System.Runtime]System.Boolean
+			IL_0023: stloc.3
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: ldloc.3
+			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_002f: pop
+			IL_0030: ldarg.0
+			IL_0031: ldfld object Modules.Function_Bind_Construct_NewTargetAndPrototype/Scope::boundThis
+			IL_0036: stloc.1
+			IL_0037: ldstr "boundThis"
+			IL_003c: ldloc.1
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0042: stloc.1
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0048: ldloc.1
+			IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_004e: stloc.2
+			IL_004f: ldloc.2
+			IL_0050: box [System.Runtime]System.Boolean
+			IL_0055: stloc.3
+			IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_005b: ldloc.3
+			IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0061: pop
+			IL_0062: ldarg.2
+			IL_0063: ldarg.3
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0069: stloc.s 4
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+			IL_0070: ldstr "sum"
+			IL_0075: ldloc.s 4
+			IL_0077: ldc.i4.1
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+			IL_007d: pop
+			IL_007e: ldnull
+			IL_007f: ret
 		} // end of method C::__js_call__
 
 	} // end of class C
@@ -115,7 +128,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2276
+			// Method begins at RVA 0x2294
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -298,7 +311,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2288
+		// Method begins at RVA 0x22a6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

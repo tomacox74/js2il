@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23de
+				// Method begins at RVA 0x23fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a4
+			// Method begins at RVA 0x21c0
 			// Header size: 12
 			// Code size: 173 (0xad)
 			.maxstack 8
@@ -114,7 +114,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23e7
+				// Method begins at RVA 0x2403
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -139,7 +139,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2260
+			// Method begins at RVA 0x227c
 			// Header size: 12
 			// Code size: 173 (0xad)
 			.maxstack 8
@@ -210,7 +210,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23f0
+				// Method begins at RVA 0x240c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -235,7 +235,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x231c
+			// Method begins at RVA 0x2338
 			// Header size: 12
 			// Code size: 173 (0xad)
 			.maxstack 8
@@ -314,7 +314,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23d5
+			// Method begins at RVA 0x23f1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -340,7 +340,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 327 (0x147)
+		// Code size: 354 (0x162)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ParameterTypeInference_DirectRotateArrayArgument/Scope,
@@ -349,7 +349,8 @@
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[7] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_ParameterTypeInference_DirectRotateArrayArgument/Scope::.ctor()
@@ -419,37 +420,46 @@
 		IL_00cb: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_00d0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
 		IL_00d5: stloc.s 4
-		IL_00d7: ldnull
-		IL_00d8: ldloc.s 4
-		IL_00da: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_00df: ldc.r8 30
-		IL_00e8: call object Modules.Function_ParameterTypeInference_DirectRotateArrayArgument/RotateX::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array, float64)
-		IL_00ed: stloc.s 5
-		IL_00ef: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f4: ldloc.s 5
-		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fb: pop
-		IL_00fc: ldnull
-		IL_00fd: ldloc.s 4
-		IL_00ff: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0104: ldc.r8 45
-		IL_010d: call object Modules.Function_ParameterTypeInference_DirectRotateArrayArgument/RotateY::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array, float64)
-		IL_0112: stloc.s 5
-		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0119: ldloc.s 5
-		IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0120: pop
-		IL_0121: ldnull
-		IL_0122: ldloc.s 4
-		IL_0124: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0129: ldc.r8 60
-		IL_0132: call object Modules.Function_ParameterTypeInference_DirectRotateArrayArgument/RotateZ::__js_call__(object, class [JavaScriptRuntime]JavaScriptRuntime.Array, float64)
-		IL_0137: stloc.s 5
-		IL_0139: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_013e: ldloc.s 5
-		IL_0140: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0145: pop
-		IL_0146: ret
+		IL_00d7: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00dc: stloc.s 7
+		IL_00de: ldloc.1
+		IL_00df: ldloc.s 7
+		IL_00e1: ldloc.s 4
+		IL_00e3: ldc.r8 30
+		IL_00ec: box [System.Runtime]System.Double
+		IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_00f6: stloc.s 5
+		IL_00f8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00fd: ldloc.s 5
+		IL_00ff: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0104: pop
+		IL_0105: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_010a: stloc.s 7
+		IL_010c: ldloc.2
+		IL_010d: ldloc.s 7
+		IL_010f: ldloc.s 4
+		IL_0111: ldc.r8 45
+		IL_011a: box [System.Runtime]System.Double
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0124: stloc.s 5
+		IL_0126: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012b: ldloc.s 5
+		IL_012d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0132: pop
+		IL_0133: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0138: stloc.s 7
+		IL_013a: ldloc.3
+		IL_013b: ldloc.s 7
+		IL_013d: ldloc.s 4
+		IL_013f: ldc.r8 60
+		IL_0148: box [System.Runtime]System.Double
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_0152: stloc.s 5
+		IL_0154: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0159: ldloc.s 5
+		IL_015b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0160: pop
+		IL_0161: ret
 	} // end of method Function_ParameterTypeInference_DirectRotateArrayArgument::__js_module_init__
 
 } // end of class Modules.Function_ParameterTypeInference_DirectRotateArrayArgument
@@ -461,7 +471,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23f9
+		// Method begins at RVA 0x2415
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -235,6 +235,11 @@ namespace JavaScriptRuntime
             // If either is a string, concatenate string representations
             if (a is string || b is string)
             {
+                if (a is Symbol || b is Symbol)
+                {
+                    throw new TypeError("Cannot convert a Symbol value to a string");
+                }
+
                 var sa = DotNet2JSConversions.ToString(a);
                 var sb = DotNet2JSConversions.ToString(b);
                 return string.Concat(sa, sb);

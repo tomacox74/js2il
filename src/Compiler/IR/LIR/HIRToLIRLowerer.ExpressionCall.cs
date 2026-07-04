@@ -523,9 +523,13 @@ public sealed partial class HIRToLIRLowerer
                 return true;
             }
 
-            // If the callee is not a direct function binding (e.g., it's a local/const holding a closure),
-            // invoke via runtime dispatch (Closure.InvokeWithArgs).
-            if (symbol.Kind != BindingKind.Function)
+            var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
+
+            // Strict bare calls must preserve undefined `this`; route them through the function-value
+            // dispatch path instead of the direct static-call fast path.
+            // Non-function bindings also use runtime dispatch (e.g., locals/consts holding closures).
+            if (symbol.Kind != BindingKind.Function
+                || callableId?.HasRestrictedFunctionProperties == true)
             {
                 // Lower callee value
                 if (!TryLowerExpression(funcVarExpr, out var calleeTemp))
@@ -598,8 +602,7 @@ public sealed partial class HIRToLIRLowerer
                 }
                 DefineTempStorage(scopesTempForSpread, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-                var callableIdForSpread = TryCreateCallableIdForFunctionDeclaration(symbol);
-                _methodBodyIR.Instructions.Add(new LIRCallFunctionWithArgsArray(symbol, scopesTempForSpread, argsArrayTemp, resultTempVar, callableIdForSpread));
+                _methodBodyIR.Instructions.Add(new LIRCallFunctionWithArgsArray(symbol, scopesTempForSpread, argsArrayTemp, resultTempVar, callableId));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
@@ -625,7 +628,6 @@ public sealed partial class HIRToLIRLowerer
             DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
             // Emit the function call with arguments
-            var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
             _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar, callableId));
             DefineDirectCallResultStorage(resultTempVar, callableId, symbol.BindingInfo);
 

@@ -27,8 +27,14 @@ public static class Function
     {
     }
 
+    private sealed class WithObjectSlot
+    {
+        public object? Value;
+    }
+
     private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
     private static readonly ConditionalWeakTable<Delegate, UndefinedPrototypeSlot> _undefinedPrototypeFunctions = new();
+    private static readonly ConditionalWeakTable<Delegate, WithObjectSlot> _withObjectBindings = new();
 
     internal static readonly ExpandoObject Prototype = CreatePrototype();
     internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
@@ -464,6 +470,32 @@ public static class Function
 
         internal static bool HasUndefinedPrototype(Delegate functionValue)
             => _undefinedPrototypeFunctions.TryGetValue(functionValue, out _);
+
+        public static object BindWithObject(object functionValue, object withObject)
+        {
+            if (functionValue is Delegate del)
+            {
+                var slot = _withObjectBindings.GetOrCreateValue(del);
+                slot.Value = withObject;
+            }
+
+            return functionValue;
+        }
+
+        internal static bool TryGetBoundWithObject(Delegate functionValue, out object? withObject)
+        {
+            if (_withObjectBindings.TryGetValue(functionValue, out var slot))
+            {
+                withObject = slot.Value;
+                return withObject is not null;
+            }
+
+            withObject = null;
+            return false;
+        }
+
+        internal static bool HasBoundWithObject(Delegate functionValue)
+            => _withObjectBindings.TryGetValue(functionValue, out var slot) && slot.Value is not null;
 
         internal static string[] ParseDynamicFunctionParameterNames(object?[] args)
         {

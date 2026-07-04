@@ -68,21 +68,33 @@ jobs:
           dotnet tool restore
           dotnet restore
 
+      - name: Load generator snapshot tooling from master
+        run: |
+          set -euo pipefail
+
+          tooling_dir="$RUNNER_TEMP/generator-snapshot-tooling"
+          mkdir -p "$tooling_dir"
+
+          git show origin/master:scripts/runGeneratorTestsAndUpdateFailures.js > "$tooling_dir/runGeneratorTestsAndUpdateFailures.js"
+          git show origin/master:scripts/updateVerifiedFiles.js > "$tooling_dir/updateVerifiedFiles.js"
+
       - name: Run generator tests and update generator snapshots
         id: update
         run: |
           set -euo pipefail
 
+          export JROC_REPO_ROOT="$GITHUB_WORKSPACE"
+
           set +e
-          node scripts/runGeneratorTestsAndUpdateFailures.js
+          node "$RUNNER_TEMP/generator-snapshot-tooling/runGeneratorTestsAndUpdateFailures.js"
           test_exit=$?
           set -e
 
           echo "Initial generator test exit code: $test_exit"
-          node scripts/updateVerifiedFiles.js --root tests/Jroc.Tests --generator-only
+          node "$RUNNER_TEMP/generator-snapshot-tooling/updateVerifiedFiles.js" --root tests --generator-only
 
-          find tests/Jroc.Tests -name 'GeneratorTests.*.received.txt' -delete
-          find tests/Jroc.Tests -path '*/Snapshots/GeneratorTests.*.verified.txt' -print0 | xargs -r -0 git add --
+          find tests -name 'GeneratorTests.*.received.txt' -delete
+          find tests -path '*/Snapshots/GeneratorTests.*.verified.txt' -print0 | xargs -r -0 git add --
 
           if git diff --cached --quiet; then
             if [ "$test_exit" -ne 0 ]; then
@@ -98,7 +110,9 @@ jobs:
 
       - name: Verify generator tests after snapshot update
         if: steps.update.outputs.changed == 'true'
-        run: dotnet test tests/Jroc.Tests/Jroc.Tests.csproj -c Debug --filter "FullyQualifiedName~.GeneratorTests." --nologo
+        run: |
+          dotnet test tests/Jroc.Tests/Jroc.Tests.csproj -c Debug --filter "FullyQualifiedName~.GeneratorTests." --nologo
+          dotnet test tests/Jroc.Test262.Tests/Jroc.Test262.Tests.csproj -c Debug --filter "FullyQualifiedName~.GeneratorTests." --nologo
 
       - name: Commit and push generator snapshots
         if: steps.update.outputs.changed == 'true'

@@ -882,6 +882,23 @@ public class RuntimeServices
         return previous;
     }
 
+    public static object? ResolveWithBindingOrDefault(object? nameValue, object? defaultValue)
+    {
+        var callee = _currentCallee.Value;
+        if (callee is Delegate del
+            && JavaScriptRuntime.Function.TryGetBoundWithObject(del, out var withObject)
+            && withObject is not null)
+        {
+            var name = nameValue as string ?? DotNet2JSConversions.ToString(nameValue);
+            if (JavaScriptRuntime.Object.HasPropertyIn(name, withObject))
+            {
+                return JavaScriptRuntime.Object.GetProperty(withObject, name);
+            }
+        }
+
+        return defaultValue;
+    }
+
     public static object EnsureTemporalDeadZoneInitialized(object value, string bindingName)
     {
         if (ReferenceEquals(value, TemporalDeadZoneSentinel))

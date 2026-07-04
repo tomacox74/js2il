@@ -1,4 +1,4 @@
-// IL code: CoercionCSE_BoxedDoubleToNumber_NoCse
+﻿// IL code: CoercionCSE_BoxedDoubleToNumber_NoCse
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2158
+				// Method begins at RVA 0x2170
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,9 +42,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20fc
 			// Header size: 12
-			// Code size: 91 (0x5b)
+			// Code size: 95 (0x5f)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -78,20 +78,22 @@
 			IL_0037: ldloc.s 4
 			IL_0039: stloc.2
 			IL_003a: ldloc.1
-			IL_003b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0040: stloc.3
-			IL_0041: ldloc.2
-			IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0047: stloc.s 5
-			IL_0049: ldloc.3
-			IL_004a: ldloc.s 5
-			IL_004c: add
-			IL_004d: stloc.s 5
-			IL_004f: ldloc.s 5
-			IL_0051: box [System.Runtime]System.Double
-			IL_0056: stloc.s 4
-			IL_0058: ldloc.s 4
-			IL_005a: ret
+			IL_003b: stloc.s 4
+			IL_003d: ldloc.s 4
+			IL_003f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0044: stloc.3
+			IL_0045: ldloc.2
+			IL_0046: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_004b: stloc.s 5
+			IL_004d: ldloc.3
+			IL_004e: ldloc.s 5
+			IL_0050: add
+			IL_0051: stloc.s 5
+			IL_0053: ldloc.s 5
+			IL_0055: box [System.Runtime]System.Double
+			IL_005a: stloc.s 4
+			IL_005c: ldloc.s 4
+			IL_005e: ret
 		} // end of method compute::__js_call__
 
 	} // end of class compute
@@ -110,7 +112,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214f
+			// Method begins at RVA 0x2167
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -136,13 +138,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 138 (0x8a)
+		// Code size: 157 (0x9d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/Scope,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/Scope::.ctor()
@@ -159,37 +161,44 @@
 		IL_0020: stloc.2
 		IL_0021: ldloc.2
 		IL_0022: stloc.1
-		IL_0023: ldnull
-		IL_0024: ldc.r8 5
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: call object Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/compute::__js_call__(object, object)
-		IL_0037: stloc.2
-		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003d: ldloc.2
-		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0043: pop
-		IL_0044: ldnull
-		IL_0045: ldc.r8 3.14
-		IL_004e: box [System.Runtime]System.Double
-		IL_0053: call object Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/compute::__js_call__(object, object)
-		IL_0058: stloc.2
-		IL_0059: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005e: ldloc.2
-		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0064: pop
-		IL_0065: ldc.r8 2
-		IL_006e: neg
-		IL_006f: box [System.Runtime]System.Double
-		IL_0074: stloc.3
-		IL_0075: ldnull
-		IL_0076: ldloc.3
-		IL_0077: call object Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/compute::__js_call__(object, object)
-		IL_007c: stloc.2
-		IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0082: ldloc.2
-		IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0088: pop
-		IL_0089: ret
+		IL_0023: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0028: stloc.3
+		IL_0029: ldloc.1
+		IL_002a: ldloc.3
+		IL_002b: ldc.r8 5
+		IL_0034: box [System.Runtime]System.Double
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_003e: stloc.2
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0044: ldloc.2
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_004a: pop
+		IL_004b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0050: stloc.3
+		IL_0051: ldloc.1
+		IL_0052: ldloc.3
+		IL_0053: ldc.r8 3.14
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0066: stloc.2
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006c: ldloc.2
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0072: pop
+		IL_0073: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0078: stloc.3
+		IL_0079: ldloc.1
+		IL_007a: ldloc.3
+		IL_007b: ldc.r8 2
+		IL_0084: neg
+		IL_0085: box [System.Runtime]System.Double
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_008f: stloc.2
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: ldloc.2
+		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009b: pop
+		IL_009c: ret
 	} // end of method CoercionCSE_BoxedDoubleToNumber_NoCse::__js_module_init__
 
 } // end of class Modules.CoercionCSE_BoxedDoubleToNumber_NoCse
@@ -201,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2161
+		// Method begins at RVA 0x2179
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

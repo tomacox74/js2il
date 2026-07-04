@@ -973,7 +973,9 @@ class HIRMethodBuilder
             AstNode = funcExpr
         };
 
-        return new HIRFunctionExpression(callableId, functionScope);
+        var isNonConstructible = functionScope.AstNode is MethodDefinition methodDefinition
+            && ReferenceEquals(methodDefinition.Value, funcExpr);
+        return new HIRFunctionExpression(callableId, functionScope, isNonConstructible);
     }
 
     private bool IsCurrentClassHeritageFunctionExpression(FunctionExpression funcExpr)
@@ -1110,8 +1112,7 @@ class HIRMethodBuilder
             return false;
         }
 
-        var registryClassName = $"{(binding.DeclaringScope.DotNetNamespace ?? "Classes")}.{(binding.DeclaringScope.DotNetTypeName ?? binding.DeclaringScope.Name)}";
-        hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, binding.DeclaringScope, []);
+        hirExpr = new HIRVariableExpression(symbol);
         return true;
     }
 
@@ -3704,7 +3705,7 @@ class HIRMethodBuilder
                     }
 
                     var registryClassName = $"{(classExprScope.DotNetNamespace ?? "Classes")}.{(classExprScope.DotNetTypeName ?? classExprScope.Name)}";
-                    if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements, out _))
+                    if (!TryBuildClassStaticInitializationStatements(classExpr, classExprScope, out var staticInitStatements, out var classNameBindingInsertIndex))
                     {
                         return false;
                     }
@@ -3727,6 +3728,18 @@ class HIRMethodBuilder
 
                             staticInitStatements.Insert(0, new HIRExpressionStatement(new HIRClassHeritageValidationExpression(hirHeritageExpression)));
                         }
+                    }
+
+                    if (classExpr.Id is Identifier className
+                        && classExprScope.Bindings.TryGetValue(className.Name, out var classNameBinding)
+                        && classNameBinding.IsCaptured)
+                    {
+                        var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, []);
+                        var classSymbol = new Symbol(classNameBinding);
+                        var bindingInsertionIndex = classNameBindingInsertIndex >= 0
+                            ? classNameBindingInsertIndex
+                            : staticInitStatements.Count;
+                        staticInitStatements.Insert(bindingInsertionIndex, new HIRVariableDeclaration(classSymbol, classConstructorValueExpr));
                     }
 
                     hirExpr = new HIRInitializedUserClassTypeExpression(registryClassName, classExprScope, staticInitStatements);
@@ -3944,7 +3957,7 @@ class HIRMethodBuilder
                             {
                                 return false;
                             }
-                            objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, methodValueHir!));
+                            objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, methodValueHir!, isMethodDefinition: true));
                         }
                         else
                         {
@@ -3953,7 +3966,7 @@ class HIRMethodBuilder
                                 return false;
                             }
 
-                            objectMembers.Add(new HIRObjectProperty(methodName!, methodValueHir!));
+                            objectMembers.Add(new HIRObjectProperty(methodName!, methodValueHir!, isMethodDefinition: true));
                         }
 
                         continue;
@@ -4029,7 +4042,10 @@ class HIRMethodBuilder
                             return false;
                         }
 
-                        objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, computedValueExpr!));
+                        objectMembers.Add(new HIRObjectComputedProperty(
+                            keyExprHir!,
+                            computedValueExpr!,
+                            isMethodDefinition: objProp.Method));
                         continue;
                     }
 
@@ -4053,7 +4069,8 @@ class HIRMethodBuilder
                     objectMembers.Add(new HIRObjectProperty(
                         propName!,
                         valueExpr!,
-                        isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal)));
+                        isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal),
+                        isMethodDefinition: objProp.Method));
                 }
                 hirExpr = new HIRObjectExpression(objectMembers);
                 return true;

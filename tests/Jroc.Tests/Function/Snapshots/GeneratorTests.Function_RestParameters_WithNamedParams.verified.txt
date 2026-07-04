@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e7
+				// Method begins at RVA 0x21c3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2202
+						// Method begins at RVA 0x21de
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -64,7 +64,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21f9
+					// Method begins at RVA 0x21d5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f0
+				// Method begins at RVA 0x21cc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -109,9 +109,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x214c
+			// Method begins at RVA 0x2118
 			// Header size: 12
-			// Code size: 134 (0x86)
+			// Code size: 150 (0x96)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -119,7 +119,9 @@
 				[2] float64,
 				[3] class Modules.Function_RestParameters_WithNamedParams/combine/Scope_For_L5C9/Block_L5C43,
 				[4] class Modules.Function_RestParameters_WithNamedParams/combine/Scope_For_L5C9/Block_L5C43/Block_L6C19,
-				[5] object
+				[5] float64,
+				[6] string,
+				[7] object
 			)
 
 			IL_0000: ldc.r8 1
@@ -132,45 +134,53 @@
 			IL_0023: stloc.2
 			// loop start (head: IL_0024)
 				IL_0024: ldloc.2
-				IL_0025: ldloc.0
-				IL_0026: ldstr "length"
-				IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_0030: clt
-				IL_0032: brfalse IL_0084
+				IL_0025: stloc.s 5
+				IL_0027: ldloc.s 5
+				IL_0029: ldloc.0
+				IL_002a: ldstr "length"
+				IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_0034: clt
+				IL_0036: brfalse IL_0094
 
-				IL_0037: newobj instance void Modules.Function_RestParameters_WithNamedParams/combine/Scope_For_L5C9/Block_L5C43::.ctor()
-				IL_003c: stloc.3
-				IL_003d: ldloc.2
-				IL_003e: ldc.r8 0.0
-				IL_0047: cgt
-				IL_0049: brfalse IL_0061
+				IL_003b: newobj instance void Modules.Function_RestParameters_WithNamedParams/combine/Scope_For_L5C9/Block_L5C43::.ctor()
+				IL_0040: stloc.3
+				IL_0041: ldloc.2
+				IL_0042: stloc.s 5
+				IL_0044: ldloc.s 5
+				IL_0046: ldc.r8 0.0
+				IL_004f: cgt
+				IL_0051: brfalse IL_006d
 
-				IL_004e: newobj instance void Modules.Function_RestParameters_WithNamedParams/combine/Scope_For_L5C9/Block_L5C43/Block_L6C19::.ctor()
-				IL_0053: stloc.s 4
-				IL_0055: ldloc.1
-				IL_0056: ldarg.2
-				IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_005c: stloc.s 5
-				IL_005e: ldloc.s 5
-				IL_0060: stloc.1
+				IL_0056: newobj instance void Modules.Function_RestParameters_WithNamedParams/combine/Scope_For_L5C9/Block_L5C43/Block_L6C19::.ctor()
+				IL_005b: stloc.s 4
+				IL_005d: ldloc.1
+				IL_005e: stloc.s 6
+				IL_0060: ldloc.s 6
+				IL_0062: ldarg.2
+				IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0068: stloc.s 7
+				IL_006a: ldloc.s 7
+				IL_006c: stloc.1
 
-				IL_0061: ldloc.1
-				IL_0062: ldloc.0
-				IL_0063: ldloc.2
-				IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_006e: stloc.s 5
-				IL_0070: ldloc.s 5
-				IL_0072: stloc.1
+				IL_006d: ldloc.1
+				IL_006e: stloc.s 7
+				IL_0070: ldloc.s 7
+				IL_0072: ldloc.0
 				IL_0073: ldloc.2
-				IL_0074: ldc.r8 1
-				IL_007d: add
-				IL_007e: stloc.2
-				IL_007f: br IL_0024
+				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_007e: stloc.s 7
+				IL_0080: ldloc.s 7
+				IL_0082: stloc.1
+				IL_0083: ldloc.2
+				IL_0084: ldc.r8 1
+				IL_008d: add
+				IL_008e: stloc.2
+				IL_008f: br IL_0024
 			// end loop
 
-			IL_0084: ldloc.1
-			IL_0085: ret
+			IL_0094: ldloc.1
+			IL_0095: ret
 		} // end of method combine::__js_call__
 
 	} // end of class combine
@@ -189,7 +199,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21de
+			// Method begins at RVA 0x21ba
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -215,12 +225,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 239 (0xef)
+		// Code size: 188 (0xbc)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_RestParameters_WithNamedParams/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Function_RestParameters_WithNamedParams/Scope::.ctor()
@@ -245,75 +256,59 @@
 		IL_0030: stloc.2
 		IL_0031: ldloc.2
 		IL_0032: stloc.1
-		IL_0033: ldloc.0
-		IL_0034: castclass Modules.Function_RestParameters_WithNamedParams/Scope
-		IL_0039: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(class Modules.Function_RestParameters_WithNamedParams/Scope, object, object)
-		IL_003f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0044: ldc.i4.4
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldstr "-"
-		IL_0051: stelem.ref
-		IL_0052: dup
-		IL_0053: ldc.i4.1
-		IL_0054: ldstr "a"
-		IL_0059: stelem.ref
-		IL_005a: dup
-		IL_005b: ldc.i4.2
-		IL_005c: ldstr "b"
-		IL_0061: stelem.ref
-		IL_0062: dup
-		IL_0063: ldc.i4.3
-		IL_0064: ldstr "c"
-		IL_0069: stelem.ref
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[])
-		IL_006f: stloc.2
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0075: ldloc.2
-		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007b: pop
-		IL_007c: ldloc.0
-		IL_007d: castclass Modules.Function_RestParameters_WithNamedParams/Scope
-		IL_0082: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(class Modules.Function_RestParameters_WithNamedParams/Scope, object, object)
-		IL_0088: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_008d: ldc.i4.3
-		IL_008e: newarr [System.Runtime]System.Object
-		IL_0093: dup
-		IL_0094: ldc.i4.0
-		IL_0095: ldstr " "
-		IL_009a: stelem.ref
-		IL_009b: dup
-		IL_009c: ldc.i4.1
-		IL_009d: ldstr "hello"
-		IL_00a2: stelem.ref
-		IL_00a3: dup
-		IL_00a4: ldc.i4.2
-		IL_00a5: ldstr "world"
-		IL_00aa: stelem.ref
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[])
-		IL_00b0: stloc.2
-		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b6: ldloc.2
-		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00bc: pop
-		IL_00bd: ldloc.0
-		IL_00be: castclass Modules.Function_RestParameters_WithNamedParams/Scope
-		IL_00c3: ldftn object Modules.Function_RestParameters_WithNamedParams/combine::__js_call__(class Modules.Function_RestParameters_WithNamedParams/Scope, object, object)
-		IL_00c9: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00ce: ldc.i4.1
-		IL_00cf: newarr [System.Runtime]System.Object
-		IL_00d4: dup
-		IL_00d5: ldc.i4.0
-		IL_00d6: ldstr ","
-		IL_00db: stelem.ref
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeDirectWithArgs(class [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1, object[])
-		IL_00e1: stloc.2
-		IL_00e2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e7: ldloc.2
-		IL_00e8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ed: pop
-		IL_00ee: ret
+		IL_0033: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0038: stloc.3
+		IL_0039: ldloc.1
+		IL_003a: ldloc.3
+		IL_003b: ldc.i4.4
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldstr "-"
+		IL_0048: stelem.ref
+		IL_0049: dup
+		IL_004a: ldc.i4.1
+		IL_004b: ldstr "a"
+		IL_0050: stelem.ref
+		IL_0051: dup
+		IL_0052: ldc.i4.2
+		IL_0053: ldstr "b"
+		IL_0058: stelem.ref
+		IL_0059: dup
+		IL_005a: ldc.i4.3
+		IL_005b: ldstr "c"
+		IL_0060: stelem.ref
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0066: stloc.2
+		IL_0067: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006c: ldloc.2
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0072: pop
+		IL_0073: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0078: stloc.3
+		IL_0079: ldloc.1
+		IL_007a: ldloc.3
+		IL_007b: ldstr " "
+		IL_0080: ldstr "hello"
+		IL_0085: ldstr "world"
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs3(object, object[], object, object, object)
+		IL_008f: stloc.2
+		IL_0090: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0095: ldloc.2
+		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_009b: pop
+		IL_009c: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00a1: stloc.3
+		IL_00a2: ldloc.1
+		IL_00a3: ldloc.3
+		IL_00a4: ldstr ","
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_00ae: stloc.2
+		IL_00af: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b4: ldloc.2
+		IL_00b5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00ba: pop
+		IL_00bb: ret
 	} // end of method Function_RestParameters_WithNamedParams::__js_module_init__
 
 } // end of class Modules.Function_RestParameters_WithNamedParams
@@ -325,7 +320,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x220b
+		// Method begins at RVA 0x21e7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

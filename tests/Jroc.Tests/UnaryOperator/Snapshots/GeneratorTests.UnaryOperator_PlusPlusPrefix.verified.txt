@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b5
+				// Method begins at RVA 0x2560
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2251
+			// Method begins at RVA 0x22a6
 			// Header size: 1
 			// Code size: 36 (0x24)
 			.maxstack 8
@@ -88,7 +88,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23be
+				// Method begins at RVA 0x2569
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -114,53 +114,114 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x22cc
 			// Header size: 12
-			// Code size: 93 (0x5d)
+			// Code size: 211 (0xd3)
 			.maxstack 8
 			.locals init (
 				[0] float64,
 				[1] object,
 				[2] float64,
 				[3] object,
-				[4] object
+				[4] float64,
+				[5] object,
+				[6] object[],
+				[7] object,
+				[8] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
-			IL_0006: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000b: stloc.0
-			IL_000c: ldarg.0
-			IL_000d: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
-			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0017: ldc.r8 1
-			IL_0020: add
-			IL_0021: box [System.Runtime]System.Double
-			IL_0026: stloc.3
-			IL_0027: ldarg.0
-			IL_0028: ldloc.3
-			IL_0029: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
-			IL_002e: ldloc.3
-			IL_002f: stloc.1
-			IL_0030: ldarg.0
-			IL_0031: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
-			IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003b: stloc.2
-			IL_003c: ldloc.0
-			IL_003d: box [System.Runtime]System.Double
-			IL_0042: stloc.3
-			IL_0043: ldloc.2
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stloc.s 4
-			IL_004b: ldnull
-			IL_004c: ldstr "captured-double"
-			IL_0051: ldloc.3
-			IL_0052: ldloc.1
-			IL_0053: ldloc.s 4
-			IL_0055: call object Modules.UnaryOperator_PlusPlusPrefix/logCase::__js_call__(object, object, object, object, object)
-			IL_005a: pop
-			IL_005b: ldnull
-			IL_005c: ret
+			IL_0006: stloc.3
+			IL_0007: ldstr "capturedGlobalDouble"
+			IL_000c: ldloc.3
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.3
+			IL_0013: ldloc.3
+			IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0019: stloc.s 4
+			IL_001b: ldloc.s 4
+			IL_001d: stloc.0
+			IL_001e: ldarg.0
+			IL_001f: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
+			IL_0024: stloc.3
+			IL_0025: ldstr "capturedGlobalDouble"
+			IL_002a: ldloc.3
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0030: stloc.3
+			IL_0031: ldloc.3
+			IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0037: stloc.s 4
+			IL_0039: ldloc.s 4
+			IL_003b: ldc.r8 1
+			IL_0044: add
+			IL_0045: stloc.s 4
+			IL_0047: ldloc.s 4
+			IL_0049: box [System.Runtime]System.Double
+			IL_004e: stloc.s 5
+			IL_0050: ldarg.0
+			IL_0051: ldloc.s 5
+			IL_0053: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
+			IL_0058: ldloc.s 5
+			IL_005a: stloc.1
+			IL_005b: ldarg.0
+			IL_005c: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
+			IL_0061: stloc.3
+			IL_0062: ldstr "capturedGlobalDouble"
+			IL_0067: ldloc.3
+			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_006d: stloc.3
+			IL_006e: ldloc.3
+			IL_006f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0074: stloc.s 4
+			IL_0076: ldloc.s 4
+			IL_0078: stloc.2
+			IL_0079: ldarg.0
+			IL_007a: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::logCase
+			IL_007f: stloc.3
+			IL_0080: ldstr "logCase"
+			IL_0085: ldloc.3
+			IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_008b: stloc.3
+			IL_008c: ldc.i4.1
+			IL_008d: newarr [System.Runtime]System.Object
+			IL_0092: dup
+			IL_0093: ldc.i4.0
+			IL_0094: ldarg.0
+			IL_0095: stelem.ref
+			IL_0096: stloc.s 6
+			IL_0098: ldloc.0
+			IL_0099: box [System.Runtime]System.Double
+			IL_009e: stloc.s 5
+			IL_00a0: ldloc.2
+			IL_00a1: box [System.Runtime]System.Double
+			IL_00a6: stloc.s 7
+			IL_00a8: ldc.i4.4
+			IL_00a9: newarr [System.Runtime]System.Object
+			IL_00ae: dup
+			IL_00af: ldc.i4.0
+			IL_00b0: ldstr "captured-double"
+			IL_00b5: stelem.ref
+			IL_00b6: dup
+			IL_00b7: ldc.i4.1
+			IL_00b8: ldloc.s 5
+			IL_00ba: stelem.ref
+			IL_00bb: dup
+			IL_00bc: ldc.i4.2
+			IL_00bd: ldloc.1
+			IL_00be: stelem.ref
+			IL_00bf: dup
+			IL_00c0: ldc.i4.3
+			IL_00c1: ldloc.s 7
+			IL_00c3: stelem.ref
+			IL_00c4: stloc.s 8
+			IL_00c6: ldloc.3
+			IL_00c7: ldloc.s 6
+			IL_00c9: ldloc.s 8
+			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+			IL_00d0: pop
+			IL_00d1: ldnull
+			IL_00d2: ret
 		} // end of method capturedDouble::__js_call__
 
 	} // end of class capturedDouble
@@ -176,7 +237,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c7
+				// Method begins at RVA 0x2572
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -203,15 +264,18 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x22e4
+			// Method begins at RVA 0x23ac
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 107 (0x6b)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] object,
-				[3] object
+				[3] object,
+				[4] object,
+				[5] object[],
+				[6] object[]
 			)
 
 			IL_0000: ldarg.2
@@ -228,15 +292,46 @@
 			IL_001c: stloc.1
 			IL_001d: ldarg.2
 			IL_001e: stloc.2
-			IL_001f: ldnull
-			IL_0020: ldstr "arg-double"
-			IL_0025: ldloc.0
-			IL_0026: ldloc.1
-			IL_0027: ldloc.2
-			IL_0028: call object Modules.UnaryOperator_PlusPlusPrefix/logCase::__js_call__(object, object, object, object, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_001f: ldarg.0
+			IL_0020: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::logCase
+			IL_0025: stloc.s 4
+			IL_0027: ldstr "logCase"
+			IL_002c: ldloc.s 4
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0033: stloc.s 4
+			IL_0035: ldc.i4.1
+			IL_0036: newarr [System.Runtime]System.Object
+			IL_003b: dup
+			IL_003c: ldc.i4.0
+			IL_003d: ldarg.0
+			IL_003e: stelem.ref
+			IL_003f: stloc.s 5
+			IL_0041: ldc.i4.4
+			IL_0042: newarr [System.Runtime]System.Object
+			IL_0047: dup
+			IL_0048: ldc.i4.0
+			IL_0049: ldstr "arg-double"
+			IL_004e: stelem.ref
+			IL_004f: dup
+			IL_0050: ldc.i4.1
+			IL_0051: ldloc.0
+			IL_0052: stelem.ref
+			IL_0053: dup
+			IL_0054: ldc.i4.2
+			IL_0055: ldloc.1
+			IL_0056: stelem.ref
+			IL_0057: dup
+			IL_0058: ldc.i4.3
+			IL_0059: ldloc.2
+			IL_005a: stelem.ref
+			IL_005b: stloc.s 6
+			IL_005d: ldloc.s 4
+			IL_005f: ldloc.s 5
+			IL_0061: ldloc.s 6
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+			IL_0068: pop
+			IL_0069: ldnull
+			IL_006a: ret
 		} // end of method argDouble::__js_call__
 
 	} // end of class argDouble
@@ -252,7 +347,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d0
+				// Method begins at RVA 0x257b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -278,44 +373,101 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2320
+			// Method begins at RVA 0x2424
 			// Header size: 12
-			// Code size: 67 (0x43)
+			// Code size: 175 (0xaf)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] object,
-				[3] object
+				[3] object,
+				[4] float64,
+				[5] object,
+				[6] object[],
+				[7] object[]
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
-			IL_0006: stloc.0
-			IL_0007: ldarg.0
-			IL_0008: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
-			IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0012: ldc.r8 1
-			IL_001b: add
-			IL_001c: box [System.Runtime]System.Double
-			IL_0021: stloc.3
-			IL_0022: ldarg.0
-			IL_0023: ldloc.3
-			IL_0024: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
-			IL_0029: ldloc.3
-			IL_002a: stloc.1
-			IL_002b: ldarg.0
-			IL_002c: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
-			IL_0031: stloc.2
-			IL_0032: ldnull
-			IL_0033: ldstr "captured-string"
-			IL_0038: ldloc.0
-			IL_0039: ldloc.1
-			IL_003a: ldloc.2
-			IL_003b: call object Modules.UnaryOperator_PlusPlusPrefix/logCase::__js_call__(object, object, object, object, object)
-			IL_0040: pop
-			IL_0041: ldnull
-			IL_0042: ret
+			IL_0006: stloc.3
+			IL_0007: ldstr "capturedGlobalString"
+			IL_000c: ldloc.3
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.3
+			IL_0013: ldloc.3
+			IL_0014: stloc.0
+			IL_0015: ldarg.0
+			IL_0016: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
+			IL_001b: stloc.3
+			IL_001c: ldstr "capturedGlobalString"
+			IL_0021: ldloc.3
+			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0027: stloc.3
+			IL_0028: ldloc.3
+			IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002e: stloc.s 4
+			IL_0030: ldloc.s 4
+			IL_0032: ldc.r8 1
+			IL_003b: add
+			IL_003c: stloc.s 4
+			IL_003e: ldloc.s 4
+			IL_0040: box [System.Runtime]System.Double
+			IL_0045: stloc.s 5
+			IL_0047: ldarg.0
+			IL_0048: ldloc.s 5
+			IL_004a: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
+			IL_004f: ldloc.s 5
+			IL_0051: stloc.1
+			IL_0052: ldarg.0
+			IL_0053: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
+			IL_0058: stloc.3
+			IL_0059: ldstr "capturedGlobalString"
+			IL_005e: ldloc.3
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0064: stloc.3
+			IL_0065: ldloc.3
+			IL_0066: stloc.2
+			IL_0067: ldarg.0
+			IL_0068: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::logCase
+			IL_006d: stloc.3
+			IL_006e: ldstr "logCase"
+			IL_0073: ldloc.3
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0079: stloc.3
+			IL_007a: ldc.i4.1
+			IL_007b: newarr [System.Runtime]System.Object
+			IL_0080: dup
+			IL_0081: ldc.i4.0
+			IL_0082: ldarg.0
+			IL_0083: stelem.ref
+			IL_0084: stloc.s 6
+			IL_0086: ldc.i4.4
+			IL_0087: newarr [System.Runtime]System.Object
+			IL_008c: dup
+			IL_008d: ldc.i4.0
+			IL_008e: ldstr "captured-string"
+			IL_0093: stelem.ref
+			IL_0094: dup
+			IL_0095: ldc.i4.1
+			IL_0096: ldloc.0
+			IL_0097: stelem.ref
+			IL_0098: dup
+			IL_0099: ldc.i4.2
+			IL_009a: ldloc.1
+			IL_009b: stelem.ref
+			IL_009c: dup
+			IL_009d: ldc.i4.3
+			IL_009e: ldloc.2
+			IL_009f: stelem.ref
+			IL_00a0: stloc.s 7
+			IL_00a2: ldloc.3
+			IL_00a3: ldloc.s 6
+			IL_00a5: ldloc.s 7
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+			IL_00ac: pop
+			IL_00ad: ldnull
+			IL_00ae: ret
 		} // end of method capturedString::__js_call__
 
 	} // end of class capturedString
@@ -331,7 +483,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d9
+				// Method begins at RVA 0x2584
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -358,15 +510,18 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 08 00 00 02
 			)
-			// Method begins at RVA 0x2370
+			// Method begins at RVA 0x24e0
 			// Header size: 12
-			// Code size: 48 (0x30)
+			// Code size: 107 (0x6b)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
 				[2] object,
-				[3] object
+				[3] object,
+				[4] object,
+				[5] object[],
+				[6] object[]
 			)
 
 			IL_0000: ldarg.2
@@ -383,15 +538,46 @@
 			IL_001c: stloc.1
 			IL_001d: ldarg.2
 			IL_001e: stloc.2
-			IL_001f: ldnull
-			IL_0020: ldstr "arg-string"
-			IL_0025: ldloc.0
-			IL_0026: ldloc.1
-			IL_0027: ldloc.2
-			IL_0028: call object Modules.UnaryOperator_PlusPlusPrefix/logCase::__js_call__(object, object, object, object, object)
-			IL_002d: pop
-			IL_002e: ldnull
-			IL_002f: ret
+			IL_001f: ldarg.0
+			IL_0020: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::logCase
+			IL_0025: stloc.s 4
+			IL_0027: ldstr "logCase"
+			IL_002c: ldloc.s 4
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0033: stloc.s 4
+			IL_0035: ldc.i4.1
+			IL_0036: newarr [System.Runtime]System.Object
+			IL_003b: dup
+			IL_003c: ldc.i4.0
+			IL_003d: ldarg.0
+			IL_003e: stelem.ref
+			IL_003f: stloc.s 5
+			IL_0041: ldc.i4.4
+			IL_0042: newarr [System.Runtime]System.Object
+			IL_0047: dup
+			IL_0048: ldc.i4.0
+			IL_0049: ldstr "arg-string"
+			IL_004e: stelem.ref
+			IL_004f: dup
+			IL_0050: ldc.i4.1
+			IL_0051: ldloc.0
+			IL_0052: stelem.ref
+			IL_0053: dup
+			IL_0054: ldc.i4.2
+			IL_0055: ldloc.1
+			IL_0056: stelem.ref
+			IL_0057: dup
+			IL_0058: ldc.i4.3
+			IL_0059: ldloc.2
+			IL_005a: stelem.ref
+			IL_005b: stloc.s 6
+			IL_005d: ldloc.s 4
+			IL_005f: ldloc.s 5
+			IL_0061: ldloc.s 6
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+			IL_0068: pop
+			IL_0069: ldnull
+			IL_006a: ret
 		} // end of method argString::__js_call__
 
 	} // end of class argString
@@ -429,7 +615,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23ac
+			// Method begins at RVA 0x2557
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -455,7 +641,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 501 (0x1f5)
+		// Code size: 586 (0x24a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.UnaryOperator_PlusPlusPrefix/Scope,
@@ -470,8 +656,10 @@
 			[9] string,
 			[10] object,
 			[11] object,
-			[12] string,
-			[13] float64
+			[12] object[],
+			[13] object[],
+			[14] string,
+			[15] float64
 		)
 
 		IL_0000: newobj instance void Modules.UnaryOperator_PlusPlusPrefix/Scope::.ctor()
@@ -590,77 +778,121 @@
 		IL_0121: stloc.s 11
 		IL_0123: ldloc.s 11
 		IL_0125: stloc.s 8
-		IL_0127: ldnull
-		IL_0128: ldstr "global-double"
-		IL_012d: ldloc.s 6
-		IL_012f: ldloc.s 7
-		IL_0131: ldloc.s 8
-		IL_0133: call object Modules.UnaryOperator_PlusPlusPrefix/logCase::__js_call__(object, object, object, object, object)
-		IL_0138: pop
-		IL_0139: ldloc.0
-		IL_013a: ldc.r8 3
-		IL_0143: box [System.Runtime]System.Double
-		IL_0148: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
-		IL_014d: ldloc.0
-		IL_014e: castclass Modules.UnaryOperator_PlusPlusPrefix/Scope
-		IL_0153: ldnull
-		IL_0154: call object Modules.UnaryOperator_PlusPlusPrefix/capturedDouble::__js_call__(class Modules.UnaryOperator_PlusPlusPrefix/Scope, object)
-		IL_0159: pop
-		IL_015a: ldloc.0
-		IL_015b: castclass Modules.UnaryOperator_PlusPlusPrefix/Scope
-		IL_0160: ldnull
-		IL_0161: ldc.r8 3
-		IL_016a: box [System.Runtime]System.Double
-		IL_016f: call object Modules.UnaryOperator_PlusPlusPrefix/argDouble::__js_call__(class Modules.UnaryOperator_PlusPlusPrefix/Scope, object, object)
-		IL_0174: pop
-		IL_0175: ldstr "3"
-		IL_017a: stloc.s 9
-		IL_017c: ldloc.s 9
-		IL_017e: stloc.s 12
-		IL_0180: ldloc.s 12
-		IL_0182: stloc.s 6
-		IL_0184: ldloc.s 9
-		IL_0186: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_018b: stloc.s 13
-		IL_018d: ldloc.s 13
-		IL_018f: ldc.r8 1
-		IL_0198: add
-		IL_0199: stloc.s 13
-		IL_019b: ldloc.s 13
-		IL_019d: box [System.Runtime]System.Double
-		IL_01a2: stloc.s 11
-		IL_01a4: ldloc.s 11
-		IL_01a6: stloc.s 9
-		IL_01a8: ldloc.s 9
-		IL_01aa: stloc.s 11
-		IL_01ac: ldloc.s 11
-		IL_01ae: stloc.s 7
-		IL_01b0: ldloc.s 9
-		IL_01b2: stloc.s 11
-		IL_01b4: ldloc.s 11
-		IL_01b6: stloc.s 8
-		IL_01b8: ldnull
-		IL_01b9: ldstr "global-string"
-		IL_01be: ldloc.s 6
-		IL_01c0: ldloc.s 7
-		IL_01c2: ldloc.s 8
-		IL_01c4: call object Modules.UnaryOperator_PlusPlusPrefix/logCase::__js_call__(object, object, object, object, object)
-		IL_01c9: pop
-		IL_01ca: ldloc.0
-		IL_01cb: ldstr "3"
-		IL_01d0: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
-		IL_01d5: ldloc.0
-		IL_01d6: castclass Modules.UnaryOperator_PlusPlusPrefix/Scope
-		IL_01db: ldnull
-		IL_01dc: call object Modules.UnaryOperator_PlusPlusPrefix/capturedString::__js_call__(class Modules.UnaryOperator_PlusPlusPrefix/Scope, object)
-		IL_01e1: pop
+		IL_0127: ldloc.0
+		IL_0128: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::logCase
+		IL_012d: stloc.s 10
+		IL_012f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0134: stloc.s 12
+		IL_0136: ldc.i4.4
+		IL_0137: newarr [System.Runtime]System.Object
+		IL_013c: dup
+		IL_013d: ldc.i4.0
+		IL_013e: ldstr "global-double"
+		IL_0143: stelem.ref
+		IL_0144: dup
+		IL_0145: ldc.i4.1
+		IL_0146: ldloc.s 6
+		IL_0148: stelem.ref
+		IL_0149: dup
+		IL_014a: ldc.i4.2
+		IL_014b: ldloc.s 7
+		IL_014d: stelem.ref
+		IL_014e: dup
+		IL_014f: ldc.i4.3
+		IL_0150: ldloc.s 8
+		IL_0152: stelem.ref
+		IL_0153: stloc.s 13
+		IL_0155: ldloc.s 10
+		IL_0157: ldloc.s 12
+		IL_0159: ldloc.s 13
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0160: pop
+		IL_0161: ldloc.0
+		IL_0162: ldc.r8 3
+		IL_016b: box [System.Runtime]System.Double
+		IL_0170: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalDouble
+		IL_0175: ldloc.1
+		IL_0176: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0180: pop
+		IL_0181: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0186: stloc.s 13
+		IL_0188: ldloc.2
+		IL_0189: ldloc.s 13
+		IL_018b: ldc.r8 3
+		IL_0194: box [System.Runtime]System.Double
+		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_019e: pop
+		IL_019f: ldstr "3"
+		IL_01a4: stloc.s 9
+		IL_01a6: ldloc.s 9
+		IL_01a8: stloc.s 14
+		IL_01aa: ldloc.s 14
+		IL_01ac: stloc.s 6
+		IL_01ae: ldloc.s 9
+		IL_01b0: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_01b5: stloc.s 15
+		IL_01b7: ldloc.s 15
+		IL_01b9: ldc.r8 1
+		IL_01c2: add
+		IL_01c3: stloc.s 15
+		IL_01c5: ldloc.s 15
+		IL_01c7: box [System.Runtime]System.Double
+		IL_01cc: stloc.s 11
+		IL_01ce: ldloc.s 11
+		IL_01d0: stloc.s 9
+		IL_01d2: ldloc.s 9
+		IL_01d4: stloc.s 11
+		IL_01d6: ldloc.s 11
+		IL_01d8: stloc.s 7
+		IL_01da: ldloc.s 9
+		IL_01dc: stloc.s 11
+		IL_01de: ldloc.s 11
+		IL_01e0: stloc.s 8
 		IL_01e2: ldloc.0
-		IL_01e3: castclass Modules.UnaryOperator_PlusPlusPrefix/Scope
-		IL_01e8: ldnull
-		IL_01e9: ldstr "3"
-		IL_01ee: call object Modules.UnaryOperator_PlusPlusPrefix/argString::__js_call__(class Modules.UnaryOperator_PlusPlusPrefix/Scope, object, object)
-		IL_01f3: pop
-		IL_01f4: ret
+		IL_01e3: ldfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::logCase
+		IL_01e8: stloc.s 10
+		IL_01ea: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_01ef: stloc.s 13
+		IL_01f1: ldc.i4.4
+		IL_01f2: newarr [System.Runtime]System.Object
+		IL_01f7: dup
+		IL_01f8: ldc.i4.0
+		IL_01f9: ldstr "global-string"
+		IL_01fe: stelem.ref
+		IL_01ff: dup
+		IL_0200: ldc.i4.1
+		IL_0201: ldloc.s 6
+		IL_0203: stelem.ref
+		IL_0204: dup
+		IL_0205: ldc.i4.2
+		IL_0206: ldloc.s 7
+		IL_0208: stelem.ref
+		IL_0209: dup
+		IL_020a: ldc.i4.3
+		IL_020b: ldloc.s 8
+		IL_020d: stelem.ref
+		IL_020e: stloc.s 12
+		IL_0210: ldloc.s 10
+		IL_0212: ldloc.s 13
+		IL_0214: ldloc.s 12
+		IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_021b: pop
+		IL_021c: ldloc.0
+		IL_021d: ldstr "3"
+		IL_0222: stfld object Modules.UnaryOperator_PlusPlusPrefix/Scope::capturedGlobalString
+		IL_0227: ldloc.3
+		IL_0228: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_022d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0232: pop
+		IL_0233: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0238: stloc.s 12
+		IL_023a: ldloc.s 4
+		IL_023c: ldloc.s 12
+		IL_023e: ldstr "3"
+		IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0248: pop
+		IL_0249: ret
 	} // end of method UnaryOperator_PlusPlusPrefix::__js_module_init__
 
 } // end of class Modules.UnaryOperator_PlusPlusPrefix
@@ -672,7 +904,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23e2
+		// Method begins at RVA 0x258d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

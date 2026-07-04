@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2144
+					// Method begins at RVA 0x2160
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -47,27 +47,36 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2101
-				// Header size: 1
-				// Code size: 48 (0x30)
+				// Method begins at RVA 0x2104
+				// Header size: 12
+				// Code size: 62 (0x3e)
 				.maxstack 8
+				.locals init (
+					[0] object
+				)
 
-				IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0005: ldstr "Outer Param:"
-				IL_000a: ldarg.0
-				IL_000b: ldc.i4.1
-				IL_000c: ldelem.ref
-				IL_000d: castclass Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope
-				IL_0012: ldfld object Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope::outerParam
-				IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_001c: pop
-				IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0022: ldstr "Inner Param:"
-				IL_0027: ldarg.2
-				IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_002d: pop
-				IL_002e: ldnull
-				IL_002f: ret
+				IL_0000: ldarg.0
+				IL_0001: ldc.i4.1
+				IL_0002: ldelem.ref
+				IL_0003: castclass Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope
+				IL_0008: ldfld object Modules.Function_NestedFunctionLogsOuterParameter/outerFunction/Scope::outerParam
+				IL_000d: stloc.0
+				IL_000e: ldstr "outerParam"
+				IL_0013: ldloc.0
+				IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_0019: stloc.0
+				IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_001f: ldstr "Outer Param:"
+				IL_0024: ldloc.0
+				IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_002a: pop
+				IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0030: ldstr "Inner Param:"
+				IL_0035: ldarg.2
+				IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_003b: pop
+				IL_003c: ldnull
+				IL_003d: ret
 			} // end of method innerFunction::__js_call__
 
 		} // end of class innerFunction
@@ -89,7 +98,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213b
+				// Method begins at RVA 0x2157
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -173,7 +182,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2132
+			// Method begins at RVA 0x214e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -199,7 +208,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 96 (0x60)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NestedFunctionLogsOuterParameter/Scope,
@@ -231,22 +240,23 @@
 		IL_0030: stloc.3
 		IL_0031: ldloc.3
 		IL_0032: stloc.1
-		IL_0033: ldloc.0
-		IL_0034: castclass Modules.Function_NestedFunctionLogsOuterParameter/Scope
-		IL_0039: ldnull
-		IL_003a: ldstr "Value from outer"
-		IL_003f: call object Modules.Function_NestedFunctionLogsOuterParameter/outerFunction::__js_call__(class Modules.Function_NestedFunctionLogsOuterParameter/Scope, object, object)
-		IL_0044: stloc.3
-		IL_0045: ldloc.3
-		IL_0046: stloc.2
-		IL_0047: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_004c: stloc.s 4
-		IL_004e: ldloc.2
-		IL_004f: ldloc.s 4
-		IL_0051: ldstr "Value from inner"
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_005b: pop
-		IL_005c: ret
+		IL_0033: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0038: stloc.s 4
+		IL_003a: ldloc.1
+		IL_003b: ldloc.s 4
+		IL_003d: ldstr "Value from outer"
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0047: stloc.3
+		IL_0048: ldloc.3
+		IL_0049: stloc.2
+		IL_004a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_004f: stloc.s 4
+		IL_0051: ldloc.2
+		IL_0052: ldloc.s 4
+		IL_0054: ldstr "Value from inner"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_005e: pop
+		IL_005f: ret
 	} // end of method Function_NestedFunctionLogsOuterParameter::__js_module_init__
 
 } // end of class Modules.Function_NestedFunctionLogsOuterParameter
@@ -258,7 +268,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214d
+		// Method begins at RVA 0x2169
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

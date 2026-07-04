@@ -1,4 +1,4 @@
-// IL code: BinaryOperator_EqualMethodReturn
+﻿// IL code: BinaryOperator_EqualMethodReturn
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x217d
+				// Method begins at RVA 0x2189
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2186
+				// Method begins at RVA 0x2192
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2161
+			// Method begins at RVA 0x216d
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -75,7 +75,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2169
+			// Method begins at RVA 0x2175
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -93,7 +93,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2174
+			// Method begins at RVA 0x2180
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -119,7 +119,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 261 (0x105)
+		// Code size: 273 (0x111)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_EqualMethodReturn/Scope,
@@ -130,7 +130,8 @@
 			[5] object,
 			[6] object,
 			[7] bool,
-			[8] object
+			[8] object,
+			[9] float64
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_EqualMethodReturn/Scope::.ctor()
@@ -172,52 +173,58 @@
 		IL_0072: stloc.2
 		IL_0073: ldc.r8 4
 		IL_007c: stloc.3
-		IL_007d: ldloc.3
-		IL_007e: box [System.Runtime]System.Double
-		IL_0083: stloc.s 6
-		IL_0085: ldloc.2
-		IL_0086: ldloc.s 6
-		IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_008d: stloc.s 7
-		IL_008f: ldloc.s 7
-		IL_0091: box [System.Runtime]System.Boolean
-		IL_0096: stloc.s 8
-		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009d: ldstr "methodResult == literalValue:"
-		IL_00a2: ldloc.s 8
-		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00a9: pop
-		IL_00aa: ldloc.3
-		IL_00ab: box [System.Runtime]System.Double
-		IL_00b0: stloc.s 6
-		IL_00b2: ldloc.s 6
-		IL_00b4: ldloc.2
-		IL_00b5: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
-		IL_00ba: stloc.s 7
-		IL_00bc: ldloc.s 7
-		IL_00be: box [System.Runtime]System.Boolean
-		IL_00c3: stloc.s 8
-		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ca: ldstr "literalValue == methodResult:"
-		IL_00cf: ldloc.s 8
-		IL_00d1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00d6: pop
-		IL_00d7: ldloc.3
-		IL_00d8: box [System.Runtime]System.Double
-		IL_00dd: stloc.s 6
+		IL_007d: ldloc.2
+		IL_007e: stloc.s 5
+		IL_0080: ldloc.3
+		IL_0081: box [System.Runtime]System.Double
+		IL_0086: stloc.s 6
+		IL_0088: ldloc.s 5
+		IL_008a: ldloc.s 6
+		IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0091: stloc.s 7
+		IL_0093: ldloc.s 7
+		IL_0095: box [System.Runtime]System.Boolean
+		IL_009a: stloc.s 8
+		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a1: ldstr "methodResult == literalValue:"
+		IL_00a6: ldloc.s 8
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00ad: pop
+		IL_00ae: ldloc.3
+		IL_00af: stloc.s 9
+		IL_00b1: ldloc.s 9
+		IL_00b3: box [System.Runtime]System.Double
+		IL_00b8: stloc.s 6
+		IL_00ba: ldloc.s 6
+		IL_00bc: ldloc.2
+		IL_00bd: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_00c2: stloc.s 7
+		IL_00c4: ldloc.s 7
+		IL_00c6: box [System.Runtime]System.Boolean
+		IL_00cb: stloc.s 8
+		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d2: ldstr "literalValue == methodResult:"
+		IL_00d7: ldloc.s 8
+		IL_00d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_00de: pop
 		IL_00df: ldloc.2
-		IL_00e0: ldloc.s 6
-		IL_00e2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00e7: stloc.s 7
-		IL_00e9: ldloc.s 7
-		IL_00eb: box [System.Runtime]System.Boolean
-		IL_00f0: stloc.s 8
-		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f7: ldstr "methodResult === literalValue:"
-		IL_00fc: ldloc.s 8
-		IL_00fe: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0103: pop
-		IL_0104: ret
+		IL_00e0: stloc.s 5
+		IL_00e2: ldloc.3
+		IL_00e3: box [System.Runtime]System.Double
+		IL_00e8: stloc.s 6
+		IL_00ea: ldloc.s 5
+		IL_00ec: ldloc.s 6
+		IL_00ee: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00f3: stloc.s 7
+		IL_00f5: ldloc.s 7
+		IL_00f7: box [System.Runtime]System.Boolean
+		IL_00fc: stloc.s 8
+		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0103: ldstr "methodResult === literalValue:"
+		IL_0108: ldloc.s 8
+		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+		IL_010f: pop
+		IL_0110: ret
 	} // end of method BinaryOperator_EqualMethodReturn::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualMethodReturn
@@ -229,7 +236,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218f
+		// Method begins at RVA 0x219b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

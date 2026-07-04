@@ -1,4 +1,4 @@
-// IL code: Classes_AccessorMethods_InstanceAndStatic
+﻿// IL code: Classes_AccessorMethods_InstanceAndStatic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2615
+				// Method begins at RVA 0x2621
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x261e
+				// Method begins at RVA 0x262a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2627
+				// Method begins at RVA 0x2633
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2630
+				// Method begins at RVA 0x263c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,7 +98,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2639
+				// Method begins at RVA 0x2645
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -250,34 +250,38 @@
 			)
 			// Method begins at RVA 0x25bc
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 69 (0x45)
 			.maxstack 8
 			.locals init (
-				[0] float64,
-				[1] object
+				[0] object,
+				[1] float64
 			)
 
-			IL_0000: ldarg.2
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 2
-			IL_000f: mul
-			IL_0010: stloc.0
-			IL_0011: ldarg.0
-			IL_0012: ldc.i4.0
-			IL_0013: ldelem.ref
-			IL_0014: castclass Modules.Classes_AccessorMethods_InstanceAndStatic/Scope
-			IL_0019: ldfld object Modules.Classes_AccessorMethods_InstanceAndStatic/Scope::Counter
-			IL_001e: ldstr "Cannot access 'Counter' before initialization"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0028: stloc.1
-			IL_0029: ldloc.1
-			IL_002a: ldstr "_total"
-			IL_002f: ldloc.0
-			IL_0030: ldc.i4.1
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-			IL_0036: pop
-			IL_0037: ldnull
-			IL_0038: ret
+			IL_0000: ldarg.0
+			IL_0001: ldc.i4.0
+			IL_0002: ldelem.ref
+			IL_0003: castclass Modules.Classes_AccessorMethods_InstanceAndStatic/Scope
+			IL_0008: ldfld object Modules.Classes_AccessorMethods_InstanceAndStatic/Scope::Counter
+			IL_000d: ldstr "Cannot access 'Counter' before initialization"
+			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0017: stloc.0
+			IL_0018: ldstr "Counter"
+			IL_001d: ldloc.0
+			IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0023: stloc.0
+			IL_0024: ldarg.2
+			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_002a: ldc.r8 2
+			IL_0033: mul
+			IL_0034: stloc.1
+			IL_0035: ldloc.0
+			IL_0036: ldstr "_total"
+			IL_003b: ldloc.1
+			IL_003c: ldc.i4.1
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+			IL_0042: pop
+			IL_0043: ldnull
+			IL_0044: ret
 		} // end of method Counter::set_total
 
 		.method private hidebysig specialname rtspecialname static 
@@ -307,7 +311,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2601
+			// Method begins at RVA 0x260d
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -849,7 +853,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2642
+		// Method begins at RVA 0x264e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

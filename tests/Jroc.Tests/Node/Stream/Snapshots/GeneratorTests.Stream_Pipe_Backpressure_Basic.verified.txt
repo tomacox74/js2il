@@ -1,4 +1,4 @@
-// IL code: Stream_Pipe_Backpressure_Basic
+﻿// IL code: Stream_Pipe_Backpressure_Basic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2379
+				// Method begins at RVA 0x2432
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,17 +46,31 @@
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
 			// Method begins at RVA 0x2254
-			// Header size: 1
-			// Code size: 15 (0xf)
+			// Header size: 12
+			// Code size: 41 (0x29)
 			.maxstack 8
+			.locals init (
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[1] object
+			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::written
-			IL_0006: ldarg.2
-			IL_0007: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_000c: pop
-			IL_000d: ldnull
-			IL_000e: ret
+			IL_0006: stloc.0
+			IL_0007: ldstr "written"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.1
+			IL_0013: ldloc.1
+			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0019: stloc.1
+			IL_001a: ldloc.1
+			IL_001b: ldstr "push"
+			IL_0020: ldarg.2
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0026: pop
+			IL_0027: ldnull
+			IL_0028: ret
 		} // end of method FunctionExpression_L11C18::__js_call__
 
 	} // end of class FunctionExpression_L11C18
@@ -72,7 +86,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2382
+				// Method begins at RVA 0x243b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -95,7 +109,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2264
+			// Method begins at RVA 0x2289
 			// Header size: 1
 			// Code size: 18 (0x12)
 			.maxstack 8
@@ -121,7 +135,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x238b
+				// Method begins at RVA 0x2444
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -147,12 +161,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x229c
 			// Header size: 12
-			// Code size: 68 (0x44)
+			// Code size: 85 (0x55)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -161,24 +177,29 @@
 			IL_000f: pop
 			IL_0010: ldarg.0
 			IL_0011: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::written
-			IL_0016: ldc.i4.1
-			IL_0017: newarr [System.Runtime]System.Object
-			IL_001c: dup
-			IL_001d: ldc.i4.0
-			IL_001e: ldstr ","
-			IL_0023: stelem.ref
-			IL_0024: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_0029: stloc.0
-			IL_002a: ldstr "written:"
-			IL_002f: ldloc.0
-			IL_0030: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0035: stloc.0
-			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003b: ldloc.0
-			IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0041: pop
-			IL_0042: ldnull
-			IL_0043: ret
+			IL_0016: stloc.0
+			IL_0017: ldstr "written"
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: ldstr "join"
+			IL_0030: ldstr ","
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_003a: stloc.1
+			IL_003b: ldstr "written:"
+			IL_0040: ldloc.1
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0046: stloc.2
+			IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004c: ldloc.2
+			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0052: pop
+			IL_0053: ldnull
+			IL_0054: ret
 		} // end of method FunctionExpression_L19C22::__js_call__
 
 	} // end of class FunctionExpression_L19C22
@@ -198,7 +219,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x239d
+					// Method begins at RVA 0x2456
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -218,7 +239,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23a6
+					// Method begins at RVA 0x245f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -236,7 +257,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2394
+				// Method begins at RVA 0x244d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -262,71 +283,125 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x22c8
+			// Method begins at RVA 0x2300
 			// Header size: 12
-			// Code size: 156 (0x9c)
+			// Code size: 285 (0x11d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L29C29,
 				[1] class Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L31C9,
 				[2] object,
-				[3] float64
+				[3] float64,
+				[4] object,
+				[5] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+				[6] object,
+				[7] float64,
+				[8] object
 			)
 
 			IL_0000: ldarg.0
-			IL_0001: ldarg.0
-			IL_0002: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_000c: ldc.r8 1
-			IL_0015: add
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0020: ldarg.0
-			IL_0021: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0026: stloc.2
-			IL_0027: ldarg.0
-			IL_0028: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-			IL_002d: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_0032: conv.r8
-			IL_0033: stloc.3
-			IL_0034: ldloc.2
-			IL_0035: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003a: ldloc.3
-			IL_003b: clt
-			IL_003d: brfalse IL_0076
+			IL_0001: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0006: stloc.2
+			IL_0007: ldstr "index"
+			IL_000c: ldloc.2
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.2
+			IL_0013: ldloc.2
+			IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0019: stloc.3
+			IL_001a: ldloc.3
+			IL_001b: ldc.r8 1
+			IL_0024: add
+			IL_0025: stloc.3
+			IL_0026: ldloc.3
+			IL_0027: box [System.Runtime]System.Double
+			IL_002c: stloc.s 4
+			IL_002e: ldarg.0
+			IL_002f: ldloc.s 4
+			IL_0031: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0036: ldarg.0
+			IL_0037: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_003c: stloc.2
+			IL_003d: ldstr "index"
+			IL_0042: ldloc.2
+			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0048: stloc.2
+			IL_0049: ldarg.0
+			IL_004a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_004f: stloc.s 5
+			IL_0051: ldstr "chunks"
+			IL_0056: ldloc.s 5
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_005d: stloc.s 6
+			IL_005f: ldloc.s 6
+			IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0066: stloc.3
+			IL_0067: ldloc.2
+			IL_0068: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_006d: stloc.s 7
+			IL_006f: ldloc.s 7
+			IL_0071: ldloc.3
+			IL_0072: clt
+			IL_0074: brfalse IL_00e3
 
-			IL_0042: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L29C29::.ctor()
-			IL_0047: stloc.0
-			IL_0048: ldarg.0
-			IL_0049: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0053: stloc.2
-			IL_0054: ldloc.2
-			IL_0055: ldstr "push"
-			IL_005a: ldarg.0
-			IL_005b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
-			IL_0060: ldarg.0
-			IL_0061: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0070: pop
-			IL_0071: br IL_009a
+			IL_0079: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L29C29::.ctor()
+			IL_007e: stloc.0
+			IL_007f: ldarg.0
+			IL_0080: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_0085: stloc.2
+			IL_0086: ldstr "readable"
+			IL_008b: ldloc.2
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0091: stloc.2
+			IL_0092: ldloc.2
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0098: stloc.2
+			IL_0099: ldarg.0
+			IL_009a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_009f: stloc.s 5
+			IL_00a1: ldstr "chunks"
+			IL_00a6: ldloc.s 5
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00ad: stloc.s 6
+			IL_00af: ldarg.0
+			IL_00b0: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_00b5: stloc.s 8
+			IL_00b7: ldstr "index"
+			IL_00bc: ldloc.s 8
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00c3: stloc.s 8
+			IL_00c5: ldloc.s 6
+			IL_00c7: ldloc.s 8
+			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_00ce: stloc.s 8
+			IL_00d0: ldloc.2
+			IL_00d1: ldstr "push"
+			IL_00d6: ldloc.s 8
+			IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00dd: pop
+			IL_00de: br IL_011b
 
-			IL_0076: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L31C9::.ctor()
-			IL_007b: stloc.1
-			IL_007c: ldarg.0
-			IL_007d: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0087: stloc.2
-			IL_0088: ldloc.2
-			IL_0089: ldstr "push"
-			IL_008e: ldc.i4.0
-			IL_008f: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0099: pop
+			IL_00e3: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L31C9::.ctor()
+			IL_00e8: stloc.1
+			IL_00e9: ldarg.0
+			IL_00ea: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_00ef: stloc.s 8
+			IL_00f1: ldstr "readable"
+			IL_00f6: ldloc.s 8
+			IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00fd: stloc.s 8
+			IL_00ff: ldloc.s 8
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0106: stloc.s 8
+			IL_0108: ldloc.s 8
+			IL_010a: ldstr "push"
+			IL_010f: ldc.i4.0
+			IL_0110: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_011a: pop
 
-			IL_009a: ldnull
-			IL_009b: ret
+			IL_011b: ldnull
+			IL_011c: ret
 		} // end of method FunctionExpression_L27C21::__js_call__
 
 	} // end of class FunctionExpression_L27C21
@@ -351,7 +426,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2370
+			// Method begins at RVA 0x2429
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -572,7 +647,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23af
+		// Method begins at RVA 0x2468
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x21a7
+						// Method begins at RVA 0x21c3
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x219e
+					// Method begins at RVA 0x21ba
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -64,7 +64,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b0
+					// Method begins at RVA 0x21cc
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2195
+				// Method begins at RVA 0x21b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -108,9 +108,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20f0
+			// Method begins at RVA 0x20ec
 			// Header size: 12
-			// Code size: 127 (0x7f)
+			// Code size: 159 (0x9f)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue/Scope/Block_L4C8,
@@ -119,8 +119,10 @@
 				[3] object,
 				[4] class [System.Runtime]System.Exception,
 				[5] class Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue/Scope/Block_L9C12,
-				[6] object,
-				[7] bool
+				[6] class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate,
+				[7] object,
+				[8] object[],
+				[9] bool
 			)
 
 			.try
@@ -131,56 +133,70 @@
 				IL_0007: stloc.1
 				IL_0008: ldarg.0
 				IL_0009: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.CommonJS_Require_OptionalChain_InNestedFunction/Scope::require
-				IL_000e: ldstr "./CommonJS_Require_OptionalChain_Lib"
-				IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-				IL_0018: stloc.s 6
-				IL_001a: ldloc.s 6
-				IL_001c: brfalse IL_0040
+				IL_000e: stloc.s 6
+				IL_0010: ldstr "require"
+				IL_0015: ldloc.s 6
+				IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_001c: stloc.s 7
+				IL_001e: ldc.i4.1
+				IL_001f: newarr [System.Runtime]System.Object
+				IL_0024: dup
+				IL_0025: ldc.i4.0
+				IL_0026: ldarg.0
+				IL_0027: stelem.ref
+				IL_0028: stloc.s 8
+				IL_002a: ldloc.s 7
+				IL_002c: ldloc.s 8
+				IL_002e: ldstr "./CommonJS_Require_OptionalChain_Lib"
+				IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+				IL_0038: stloc.s 7
+				IL_003a: ldloc.s 7
+				IL_003c: brfalse IL_0060
 
-				IL_0021: ldloc.s 6
-				IL_0023: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-				IL_0028: brtrue IL_0040
+				IL_0041: ldloc.s 7
+				IL_0043: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+				IL_0048: brtrue IL_0060
 
-				IL_002d: ldloc.s 6
-				IL_002f: ldstr "value"
-				IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0039: stloc.s 6
-				IL_003b: br IL_0043
+				IL_004d: ldloc.s 7
+				IL_004f: ldstr "value"
+				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0059: stloc.s 7
+				IL_005b: br IL_0063
 
-				IL_0040: ldnull
-				IL_0041: stloc.s 6
+				IL_0060: ldnull
+				IL_0061: stloc.s 7
 
-				IL_0043: ldloc.s 6
-				IL_0045: stloc.1
-				IL_0046: ldloc.1
-				IL_0047: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_004c: stloc.s 7
-				IL_004e: ldloc.s 7
-				IL_0050: brfalse IL_0064
+				IL_0063: ldloc.s 7
+				IL_0065: stloc.1
+				IL_0066: ldloc.1
+				IL_0067: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_006c: stloc.s 9
+				IL_006e: ldloc.s 9
+				IL_0070: brfalse IL_0084
 
-				IL_0055: newobj instance void Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue/Scope/Block_L4C8/Block_L6C76::.ctor()
-				IL_005a: stloc.2
-				IL_005b: ldnull
-				IL_005c: stloc.3
-				IL_005d: ldloc.1
-				IL_005e: stloc.3
-				IL_005f: leave IL_007d
+				IL_0075: newobj instance void Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue/Scope/Block_L4C8/Block_L6C76::.ctor()
+				IL_007a: stloc.2
+				IL_007b: ldnull
+				IL_007c: stloc.3
+				IL_007d: ldloc.1
+				IL_007e: stloc.3
+				IL_007f: leave IL_009d
 
-				IL_0064: leave IL_0077
+				IL_0084: leave IL_0097
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_0069: stloc.s 4
-				IL_006b: newobj instance void Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue/Scope/Block_L9C12::.ctor()
-				IL_0070: stloc.s 5
-				IL_0072: leave IL_0077
+				IL_0089: stloc.s 4
+				IL_008b: newobj instance void Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue/Scope/Block_L9C12::.ctor()
+				IL_0090: stloc.s 5
+				IL_0092: leave IL_0097
 			} // end handler
 
-			IL_0077: ldstr "missing"
-			IL_007c: ret
+			IL_0097: ldstr "missing"
+			IL_009c: ret
 
-			IL_007d: ldloc.3
-			IL_007e: ret
+			IL_009d: ldloc.3
+			IL_009e: ret
 		} // end of method loadValue::__js_call__
 
 	} // end of class loadValue
@@ -202,7 +218,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218c
+			// Method begins at RVA 0x21a8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -228,7 +244,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 89 (0x59)
+		// Code size: 88 (0x58)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_OptionalChain_InNestedFunction/Scope,
@@ -262,16 +278,15 @@
 		IL_003c: stloc.2
 		IL_003d: ldloc.2
 		IL_003e: stloc.1
-		IL_003f: ldloc.0
-		IL_0040: castclass Modules.CommonJS_Require_OptionalChain_InNestedFunction/Scope
-		IL_0045: ldnull
-		IL_0046: call object Modules.CommonJS_Require_OptionalChain_InNestedFunction/loadValue::__js_call__(class Modules.CommonJS_Require_OptionalChain_InNestedFunction/Scope, object)
-		IL_004b: stloc.2
-		IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0051: ldloc.2
-		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0057: pop
-		IL_0058: ret
+		IL_003f: ldloc.1
+		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_004a: stloc.2
+		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0050: ldloc.2
+		IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0056: pop
+		IL_0057: ret
 	} // end of method CommonJS_Require_OptionalChain_InNestedFunction::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_OptionalChain_InNestedFunction
@@ -287,7 +302,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b9
+			// Method begins at RVA 0x21d5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -311,7 +326,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b8
+		// Method begins at RVA 0x20b4
 		// Header size: 12
 		// Code size: 43 (0x2b)
 		.maxstack 8
@@ -346,7 +361,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c2
+		// Method begins at RVA 0x21de
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

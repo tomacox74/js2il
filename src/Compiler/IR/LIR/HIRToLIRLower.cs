@@ -64,6 +64,20 @@ public sealed partial class HIRToLIRLowerer
     // EnsureNumber can propagate the coercion result back into _numericRefinements.
     // Entries are consumed on use and cleared at control-flow labels.
     private readonly Dictionary<TempVariable, BindingInfo> _tempBindingOrigin = new Dictionary<TempVariable, BindingInfo>();
+    
+    /// <summary>
+    /// Carries the inferred variable name for an anonymous class expression while lowering its initializer.
+    /// This allows class-name metadata to be applied before static field initializers run, so
+    /// initializer reads of <c>this.name</c> observe the inferred class name.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// var C = class {
+    ///   static f = this.name; // must observe "C" during initializer evaluation
+    /// };
+    /// </code>
+    /// </example>
+    private string? _pendingAnonymousClassExpressionInferredName;
 
     // Incremental scan cursor used to detect labels emitted by any lowering path.
     // When a new label is observed, numeric refinements/origin mappings are cleared

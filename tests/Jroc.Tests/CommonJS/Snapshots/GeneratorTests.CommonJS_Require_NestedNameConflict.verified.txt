@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23ea
+			// Method begins at RVA 0x241c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -86,7 +86,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23fc
+				// Method begins at RVA 0x242e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,7 +110,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2293
+			// Method begins at RVA 0x2292
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -132,7 +132,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2417
+				// Method begins at RVA 0x2449
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -160,30 +160,37 @@
 			)
 			// Method begins at RVA 0x2298
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 64 (0x40)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] object,
+				[1] string
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld string Modules.b/Scope::moduleName
-			IL_0006: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_000b: stloc.0
-			IL_000c: ldstr "Function from "
-			IL_0011: ldloc.0
-			IL_0012: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0017: stloc.0
-			IL_0018: ldloc.0
-			IL_0019: ldstr " has been called"
-			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0023: stloc.0
-			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0029: ldloc.0
-			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002f: pop
-			IL_0030: ldnull
-			IL_0031: ret
+			IL_0006: stloc.0
+			IL_0007: ldstr "moduleName"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldloc.0
+			IL_0014: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0019: stloc.1
+			IL_001a: ldstr "Function from "
+			IL_001f: ldloc.1
+			IL_0020: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0025: stloc.1
+			IL_0026: ldloc.1
+			IL_0027: ldstr " has been called"
+			IL_002c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0031: stloc.1
+			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0037: ldloc.1
+			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003d: pop
+			IL_003e: ldnull
+			IL_003f: ret
 		} // end of method commonFunctionName::__js_call__
 
 	} // end of class commonFunctionName
@@ -199,7 +206,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2405
+				// Method begins at RVA 0x2437
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -219,7 +226,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x240e
+				// Method begins at RVA 0x2440
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -245,7 +252,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22d8
+			// Method begins at RVA 0x22e4
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -269,12 +276,13 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22f4
+			// Method begins at RVA 0x2300
 			// Header size: 12
-			// Code size: 62 (0x3e)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] object,
+				[1] string
 			)
 
 			IL_0000: ldarg.0
@@ -283,22 +291,28 @@
 			IL_0007: ldelem.ref
 			IL_0008: castclass Modules.b/Scope
 			IL_000d: ldfld string Modules.b/Scope::moduleName
-			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0017: stloc.0
-			IL_0018: ldstr "class from "
-			IL_001d: ldloc.0
-			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ldstr " has been loaded"
-			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_002f: stloc.0
-			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldloc.0
-			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003b: pop
-			IL_003c: ldnull
-			IL_003d: ret
+			IL_0012: stloc.0
+			IL_0013: ldstr "moduleName"
+			IL_0018: ldloc.0
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_001e: stloc.0
+			IL_001f: ldloc.0
+			IL_0020: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0025: stloc.1
+			IL_0026: ldstr "class from "
+			IL_002b: ldloc.1
+			IL_002c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0031: stloc.1
+			IL_0032: ldloc.1
+			IL_0033: ldstr " has been loaded"
+			IL_0038: call string [System.Runtime]System.String::Concat(string, string)
+			IL_003d: stloc.1
+			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0043: ldloc.1
+			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method CommonClassName::Log
 
 	} // end of class CommonClassName
@@ -321,7 +335,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23f3
+			// Method begins at RVA 0x2425
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -347,7 +361,7 @@
 	{
 		// Method begins at RVA 0x208c
 		// Header size: 12
-		// Code size: 247 (0xf7)
+		// Code size: 246 (0xf6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.b/Scope,
@@ -439,12 +453,11 @@
 		IL_00de: ldstr "Log"
 		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_00e8: pop
-		IL_00e9: ldloc.0
-		IL_00ea: castclass Modules.b/Scope
-		IL_00ef: ldnull
-		IL_00f0: call object Modules.b/commonFunctionName::__js_call__(class Modules.b/Scope, object)
-		IL_00f5: pop
-		IL_00f6: ret
+		IL_00e9: ldloc.1
+		IL_00ea: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00f4: pop
+		IL_00f5: ret
 	} // end of method b::__js_module_init__
 
 } // end of class Modules.b
@@ -470,7 +483,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2429
+				// Method begins at RVA 0x245b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -494,7 +507,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x233e
+			// Method begins at RVA 0x2358
 			// Header size: 1
 			// Code size: 2 (0x2)
 			.maxstack 8
@@ -516,7 +529,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2444
+				// Method begins at RVA 0x2476
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -542,32 +555,39 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 11 00 00 02
 			)
-			// Method begins at RVA 0x2344
+			// Method begins at RVA 0x235c
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 64 (0x40)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] object,
+				[1] string
 			)
 
 			IL_0000: ldarg.0
 			IL_0001: ldfld string Modules.helpers_b/Scope::moduleName
-			IL_0006: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_000b: stloc.0
-			IL_000c: ldstr "Function from "
-			IL_0011: ldloc.0
-			IL_0012: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0017: stloc.0
-			IL_0018: ldloc.0
-			IL_0019: ldstr " has been called"
-			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0023: stloc.0
-			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0029: ldloc.0
-			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002f: pop
-			IL_0030: ldnull
-			IL_0031: ret
+			IL_0006: stloc.0
+			IL_0007: ldstr "moduleName"
+			IL_000c: ldloc.0
+			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0012: stloc.0
+			IL_0013: ldloc.0
+			IL_0014: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0019: stloc.1
+			IL_001a: ldstr "Function from "
+			IL_001f: ldloc.1
+			IL_0020: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0025: stloc.1
+			IL_0026: ldloc.1
+			IL_0027: ldstr " has been called"
+			IL_002c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0031: stloc.1
+			IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0037: ldloc.1
+			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_003d: pop
+			IL_003e: ldnull
+			IL_003f: ret
 		} // end of method commonFunctionName::__js_call__
 
 	} // end of class commonFunctionName
@@ -583,7 +603,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2432
+				// Method begins at RVA 0x2464
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -603,7 +623,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x243b
+				// Method begins at RVA 0x246d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -629,7 +649,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2384
+			// Method begins at RVA 0x23a8
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -653,12 +673,13 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x23a0
+			// Method begins at RVA 0x23c4
 			// Header size: 12
-			// Code size: 62 (0x3e)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] object,
+				[1] string
 			)
 
 			IL_0000: ldarg.0
@@ -667,22 +688,28 @@
 			IL_0007: ldelem.ref
 			IL_0008: castclass Modules.helpers_b/Scope
 			IL_000d: ldfld string Modules.helpers_b/Scope::moduleName
-			IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0017: stloc.0
-			IL_0018: ldstr "class from "
-			IL_001d: ldloc.0
-			IL_001e: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0023: stloc.0
-			IL_0024: ldloc.0
-			IL_0025: ldstr " has been loaded"
-			IL_002a: call string [System.Runtime]System.String::Concat(string, string)
-			IL_002f: stloc.0
-			IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0035: ldloc.0
-			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003b: pop
-			IL_003c: ldnull
-			IL_003d: ret
+			IL_0012: stloc.0
+			IL_0013: ldstr "moduleName"
+			IL_0018: ldloc.0
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_001e: stloc.0
+			IL_001f: ldloc.0
+			IL_0020: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0025: stloc.1
+			IL_0026: ldstr "class from "
+			IL_002b: ldloc.1
+			IL_002c: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0031: stloc.1
+			IL_0032: ldloc.1
+			IL_0033: ldstr " has been loaded"
+			IL_0038: call string [System.Runtime]System.String::Concat(string, string)
+			IL_003d: stloc.1
+			IL_003e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0043: ldloc.1
+			IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method CommonClassName::Log
 
 	} // end of class CommonClassName
@@ -705,7 +732,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2420
+			// Method begins at RVA 0x2452
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -731,7 +758,7 @@
 	{
 		// Method begins at RVA 0x2190
 		// Header size: 12
-		// Code size: 247 (0xf7)
+		// Code size: 246 (0xf6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.helpers_b/Scope,
@@ -823,12 +850,11 @@
 		IL_00de: ldstr "Log"
 		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_00e8: pop
-		IL_00e9: ldloc.0
-		IL_00ea: castclass Modules.helpers_b/Scope
-		IL_00ef: ldnull
-		IL_00f0: call object Modules.helpers_b/commonFunctionName::__js_call__(class Modules.helpers_b/Scope, object)
-		IL_00f5: pop
-		IL_00f6: ret
+		IL_00e9: ldloc.1
+		IL_00ea: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00f4: pop
+		IL_00f5: ret
 	} // end of method helpers_b::__js_module_init__
 
 } // end of class Modules.helpers_b
@@ -840,7 +866,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x244d
+		// Method begins at RVA 0x247f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

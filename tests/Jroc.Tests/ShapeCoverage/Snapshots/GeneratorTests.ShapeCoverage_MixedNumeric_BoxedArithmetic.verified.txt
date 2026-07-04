@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212c
+				// Method begins at RVA 0x2184
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x211b
+			// Method begins at RVA 0x2173
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -68,7 +68,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2123
+			// Method begins at RVA 0x217b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -94,7 +94,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 191 (0xbf)
+		// Code size: 279 (0x117)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ShapeCoverage_MixedNumeric_BoxedArithmetic/Scope,
@@ -102,7 +102,9 @@
 			[2] float64,
 			[3] float64,
 			[4] object,
-			[5] float64
+			[5] object[],
+			[6] float64,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.ShapeCoverage_MixedNumeric_BoxedArithmetic/Scope::.ctor()
@@ -119,60 +121,98 @@
 		IL_0020: stloc.s 4
 		IL_0022: ldloc.s 4
 		IL_0024: stloc.1
-		IL_0025: ldnull
-		IL_0026: ldc.r8 3
-		IL_002f: call object Modules.ShapeCoverage_MixedNumeric_BoxedArithmetic/id::__js_call__(object, float64)
-		IL_0034: stloc.s 4
-		IL_0036: ldloc.s 4
-		IL_0038: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003d: stloc.s 5
-		IL_003f: ldloc.s 5
-		IL_0041: stloc.2
-		IL_0042: ldnull
-		IL_0043: ldc.r8 4
-		IL_004c: call object Modules.ShapeCoverage_MixedNumeric_BoxedArithmetic/id::__js_call__(object, float64)
-		IL_0051: stloc.s 4
-		IL_0053: ldloc.s 4
-		IL_0055: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_005a: stloc.s 5
-		IL_005c: ldloc.s 5
-		IL_005e: stloc.3
-		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0064: ldloc.2
-		IL_0065: ldloc.3
-		IL_0066: add
-		IL_0067: box [System.Runtime]System.Double
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0071: pop
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0077: ldloc.2
-		IL_0078: ldloc.3
-		IL_0079: sub
-		IL_007a: box [System.Runtime]System.Double
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0084: pop
-		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008a: ldloc.2
-		IL_008b: ldloc.3
-		IL_008c: mul
-		IL_008d: box [System.Runtime]System.Double
-		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0097: pop
-		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009d: ldloc.2
-		IL_009e: ldloc.3
-		IL_009f: div
-		IL_00a0: box [System.Runtime]System.Double
-		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00aa: pop
-		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b0: ldloc.2
-		IL_00b1: ldloc.3
-		IL_00b2: rem
-		IL_00b3: box [System.Runtime]System.Double
-		IL_00b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00bd: pop
-		IL_00be: ret
+		IL_0025: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_002a: stloc.s 5
+		IL_002c: ldloc.1
+		IL_002d: ldloc.s 5
+		IL_002f: ldc.r8 3
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0042: stloc.s 4
+		IL_0044: ldloc.s 4
+		IL_0046: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_004b: stloc.s 6
+		IL_004d: ldloc.s 6
+		IL_004f: stloc.2
+		IL_0050: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0055: stloc.s 5
+		IL_0057: ldloc.1
+		IL_0058: ldloc.s 5
+		IL_005a: ldc.r8 4
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_006d: stloc.s 4
+		IL_006f: ldloc.s 4
+		IL_0071: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0076: stloc.s 6
+		IL_0078: ldloc.s 6
+		IL_007a: stloc.3
+		IL_007b: ldloc.2
+		IL_007c: stloc.s 6
+		IL_007e: ldloc.s 6
+		IL_0080: ldloc.3
+		IL_0081: add
+		IL_0082: stloc.s 6
+		IL_0084: ldloc.s 6
+		IL_0086: box [System.Runtime]System.Double
+		IL_008b: stloc.s 7
+		IL_008d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0092: ldloc.s 7
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0099: pop
+		IL_009a: ldloc.2
+		IL_009b: stloc.s 6
+		IL_009d: ldloc.s 6
+		IL_009f: ldloc.3
+		IL_00a0: sub
+		IL_00a1: stloc.s 6
+		IL_00a3: ldloc.s 6
+		IL_00a5: box [System.Runtime]System.Double
+		IL_00aa: stloc.s 7
+		IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b1: ldloc.s 7
+		IL_00b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00b8: pop
+		IL_00b9: ldloc.2
+		IL_00ba: stloc.s 6
+		IL_00bc: ldloc.s 6
+		IL_00be: ldloc.3
+		IL_00bf: mul
+		IL_00c0: stloc.s 6
+		IL_00c2: ldloc.s 6
+		IL_00c4: box [System.Runtime]System.Double
+		IL_00c9: stloc.s 7
+		IL_00cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d0: ldloc.s 7
+		IL_00d2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00d7: pop
+		IL_00d8: ldloc.2
+		IL_00d9: stloc.s 6
+		IL_00db: ldloc.s 6
+		IL_00dd: ldloc.3
+		IL_00de: div
+		IL_00df: stloc.s 6
+		IL_00e1: ldloc.s 6
+		IL_00e3: box [System.Runtime]System.Double
+		IL_00e8: stloc.s 7
+		IL_00ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ef: ldloc.s 7
+		IL_00f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00f6: pop
+		IL_00f7: ldloc.2
+		IL_00f8: stloc.s 6
+		IL_00fa: ldloc.s 6
+		IL_00fc: ldloc.3
+		IL_00fd: rem
+		IL_00fe: stloc.s 6
+		IL_0100: ldloc.s 6
+		IL_0102: box [System.Runtime]System.Double
+		IL_0107: stloc.s 7
+		IL_0109: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_010e: ldloc.s 7
+		IL_0110: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_0115: pop
+		IL_0116: ret
 	} // end of method ShapeCoverage_MixedNumeric_BoxedArithmetic::__js_module_init__
 
 } // end of class Modules.ShapeCoverage_MixedNumeric_BoxedArithmetic
@@ -184,7 +224,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x218d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

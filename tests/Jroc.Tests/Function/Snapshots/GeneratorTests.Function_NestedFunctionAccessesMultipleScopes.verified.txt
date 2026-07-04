@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2179
+					// Method begins at RVA 0x2191
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,41 +46,54 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2108
+				// Method begins at RVA 0x2104
 				// Header size: 12
-				// Code size: 83 (0x53)
+				// Code size: 111 (0x6f)
 				.maxstack 8
 				.locals init (
-					[0] string
+					[0] string,
+					[1] object
 				)
 
 				IL_0000: ldstr "I am inner"
 				IL_0005: stloc.0
-				IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_000b: ldstr "Global:"
-				IL_0010: ldarg.0
-				IL_0011: ldc.i4.0
-				IL_0012: ldelem.ref
-				IL_0013: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
-				IL_0018: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-				IL_001d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0022: pop
-				IL_0023: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0028: ldstr "Outer:"
-				IL_002d: ldarg.0
-				IL_002e: ldc.i4.1
-				IL_002f: ldelem.ref
-				IL_0030: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope
-				IL_0035: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
-				IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_003f: pop
-				IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0045: ldstr "Inner:"
-				IL_004a: ldloc.0
-				IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-				IL_0050: pop
-				IL_0051: ldnull
-				IL_0052: ret
+				IL_0006: ldarg.0
+				IL_0007: ldc.i4.0
+				IL_0008: ldelem.ref
+				IL_0009: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
+				IL_000e: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
+				IL_0013: stloc.1
+				IL_0014: ldstr "globalVar"
+				IL_0019: ldloc.1
+				IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_001f: stloc.1
+				IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0025: ldstr "Global:"
+				IL_002a: ldloc.1
+				IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_0030: pop
+				IL_0031: ldarg.0
+				IL_0032: ldc.i4.1
+				IL_0033: ldelem.ref
+				IL_0034: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope
+				IL_0039: ldfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
+				IL_003e: stloc.1
+				IL_003f: ldstr "outerVar"
+				IL_0044: ldloc.1
+				IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_004a: stloc.1
+				IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0050: ldstr "Outer:"
+				IL_0055: ldloc.1
+				IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_005b: pop
+				IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0061: ldstr "Inner:"
+				IL_0066: ldloc.0
+				IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
+				IL_006c: pop
+				IL_006d: ldnull
+				IL_006e: ret
 			} // end of method innerFunction::__js_call__
 
 		} // end of class innerFunction
@@ -102,7 +115,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2170
+				// Method begins at RVA 0x2188
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -130,7 +143,7 @@
 			)
 			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 82 (0x52)
+			// Code size: 78 (0x4e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope,
@@ -164,21 +177,17 @@
 			IL_0030: ldloc.0
 			IL_0031: ldstr "I am outer"
 			IL_0036: stfld string Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/Scope::outerVar
-			IL_003b: ldc.i4.2
-			IL_003c: newarr [System.Runtime]System.Object
-			IL_0041: dup
-			IL_0042: ldc.i4.0
-			IL_0043: ldarg.0
-			IL_0044: stelem.ref
-			IL_0045: dup
-			IL_0046: ldc.i4.1
-			IL_0047: ldloc.0
-			IL_0048: stelem.ref
-			IL_0049: ldnull
-			IL_004a: call object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::__js_call__(object[], object)
-			IL_004f: pop
-			IL_0050: ldnull
-			IL_0051: ret
+			IL_003b: ldloc.1
+			IL_003c: ldc.i4.1
+			IL_003d: newarr [System.Runtime]System.Object
+			IL_0042: dup
+			IL_0043: ldc.i4.0
+			IL_0044: ldarg.0
+			IL_0045: stelem.ref
+			IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+			IL_004b: pop
+			IL_004c: ldnull
+			IL_004d: ret
 		} // end of method testFunction::__js_call__
 
 	} // end of class testFunction
@@ -200,7 +209,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2167
+			// Method begins at RVA 0x217f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -226,7 +235,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope,
@@ -259,12 +268,11 @@
 		IL_0033: ldloc.0
 		IL_0034: ldstr "I am global"
 		IL_0039: stfld string Modules.Function_NestedFunctionAccessesMultipleScopes/Scope::globalVar
-		IL_003e: ldloc.0
-		IL_003f: castclass Modules.Function_NestedFunctionAccessesMultipleScopes/Scope
-		IL_0044: ldnull
-		IL_0045: call object Modules.Function_NestedFunctionAccessesMultipleScopes/testFunction::__js_call__(class Modules.Function_NestedFunctionAccessesMultipleScopes/Scope, object)
-		IL_004a: pop
-		IL_004b: ret
+		IL_003e: ldloc.1
+		IL_003f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method Function_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
 } // end of class Modules.Function_NestedFunctionAccessesMultipleScopes
@@ -276,7 +284,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2182
+		// Method begins at RVA 0x219a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

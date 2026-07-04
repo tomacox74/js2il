@@ -620,7 +620,9 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
-            if (target is Delegate fastDelegate && !Function.RequiresInvocationContext(fastDelegate))
+            if (target is Delegate fastDelegate
+                && !Function.RequiresInvocationContext(fastDelegate)
+                && !Function.HasBoundWithObject(fastDelegate))
             {
                 return InvokeDelegateWithArgs(fastDelegate, scopes, args, newTarget);
             }

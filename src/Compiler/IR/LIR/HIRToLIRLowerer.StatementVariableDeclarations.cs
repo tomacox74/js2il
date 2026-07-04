@@ -73,10 +73,27 @@ public sealed partial class HIRToLIRLowerer
 
         if (exprStmt.Initializer != null)
         {
-            if (!TryLowerExpression(exprStmt.Initializer, out value))
+            var shouldSetPendingAnonymousClassName =
+                exprStmt.Initializer is HIRInitializedUserClassTypeExpression initializedClassExpr
+                && initializedClassExpr.ClassScope.Name.StartsWith("ClassExpression_", StringComparison.Ordinal);
+
+            var previousPendingAnonymousClassName = _pendingAnonymousClassExpressionInferredName;
+            if (shouldSetPendingAnonymousClassName)
             {
-                IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
-                return false;
+                _pendingAnonymousClassExpressionInferredName = exprStmt.Name.Name;
+            }
+
+            try
+            {
+                if (!TryLowerExpression(exprStmt.Initializer, out value))
+                {
+                    IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
+                    return false;
+                }
+            }
+            finally
+            {
+                _pendingAnonymousClassExpressionInferredName = previousPendingAnonymousClassName;
             }
 
             if (!TryApplyInferredNameToDeclarationValue(exprStmt, value, out value))
@@ -104,12 +121,12 @@ public sealed partial class HIRToLIRLowerer
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
         {
             TempVariable fieldValue;
-            if ((binding.IsStableType && binding.ClrType == typeof(double))
+            if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(double))
                 || (binding.Kind == BindingKind.Const && initializerProvesUnboxedDouble))
             {
                 fieldValue = EnsureNumber(value);
             }
-            else if ((binding.IsStableType && binding.ClrType == typeof(bool))
+            else if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
                 || (binding.Kind == BindingKind.Const && initializerProvesUnboxedBool))
             {
                 fieldValue = EnsureBoolean(value);
@@ -139,7 +156,7 @@ public sealed partial class HIRToLIRLowerer
                 // Most scope fields are object-typed, but stable inferred primitive fields can be typed.
                 // For typed bool fields, do NOT box (stfld bool cannot consume object).
                 var fieldValue = value;
-                if (binding.IsStableType && binding.ClrType == typeof(bool))
+                if (binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
                 {
                     fieldValue = EnsureBoolean(value);
                 }
@@ -166,12 +183,12 @@ public sealed partial class HIRToLIRLowerer
         // IMPORTANT: declared locals should never store raw unboxed JsNull into an object-typed IL local.
         // Use unboxed locals only for proven-stable primitives (double/bool); otherwise box to object.
         TempVariable slotValue;
-        if ((binding.IsStableType && binding.ClrType == typeof(double))
+        if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(double))
             || (binding.Kind == BindingKind.Const && initializerProvesUnboxedDouble))
         {
             slotValue = EnsureNumber(value);
         }
-        else if ((binding.IsStableType && binding.ClrType == typeof(bool))
+        else if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
             || (binding.Kind == BindingKind.Const && initializerProvesUnboxedBool))
         {
             slotValue = EnsureBoolean(value);

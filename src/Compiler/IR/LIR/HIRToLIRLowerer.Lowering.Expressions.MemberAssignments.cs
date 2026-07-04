@@ -38,7 +38,15 @@ public sealed partial class HIRToLIRLowerer
         {
             return false;
         }
-        objTemp = EnsureObject(objTemp);
+
+        return TryLowerPropertyAssignmentTarget(objTemp, propertyName, valueToStore, out resultTempVar);
+    }
+
+    private bool TryLowerPropertyAssignmentTarget(TempVariable objectTemp, string propertyName, TempVariable valueToStore, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        objectTemp = EnsureObject(objectTemp);
 
         var keyTemp = EmitConstString(propertyName);
         var boxedKey = EnsureObject(keyTemp);
@@ -54,7 +62,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedKey, valueToStore, setResult, UsesStrictAssignmentSemantics()));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objectTemp, boxedKey, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         resultTempVar = setResult;
         return true;
@@ -88,12 +96,20 @@ public sealed partial class HIRToLIRLowerer
         {
             return false;
         }
-        objTemp = EnsureObject(objTemp);
 
         if (!TryLowerExpression(indexExpr, out var indexTemp))
         {
             return false;
         }
+
+        return TryLowerIndexAssignmentTarget(objTemp, indexTemp, valueToStore, out resultTempVar);
+    }
+
+    private bool TryLowerIndexAssignmentTarget(TempVariable objectTemp, TempVariable indexTemp, TempVariable valueToStore, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        objectTemp = EnsureObject(objectTemp);
 
         var indexStorage = GetTempStorage(indexTemp);
         var valueStorage = GetTempStorage(valueToStore);
@@ -111,7 +127,7 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult, UsesStrictAssignmentSemantics()));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objectTemp, indexForSet, valueToStore, setResult, UsesStrictAssignmentSemantics()));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         resultTempVar = setResult;
         return true;
@@ -174,10 +190,31 @@ public sealed partial class HIRToLIRLowerer
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
         {
+            if (_classRegistry != null
+                && assignExpr.Object is HIRThisExpression
+                && TryGetEnclosingClassRegistryName(out var currentClass)
+                && currentClass != null
+                && _classRegistry.TryGetField(currentClass, assignExpr.PropertyName, out _))
+            {
+                if (!TryLowerExpression(assignExpr.Value, out valueToStore))
+                {
+                    return false;
+                }
+
+                return TryLowerPropertyAssignmentTarget(assignExpr.Object, assignExpr.PropertyName, valueToStore, out resultTempVar);
+            }
+
+            if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+            {
+                return false;
+            }
+
             if (!TryLowerExpression(assignExpr.Value, out valueToStore))
             {
                 return false;
             }
+
+            return TryLowerPropertyAssignmentTarget(objTemp, assignExpr.PropertyName, valueToStore, out resultTempVar);
         }
         else
         {
@@ -287,10 +324,39 @@ public sealed partial class HIRToLIRLowerer
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
         {
+            if (_classRegistry != null
+                && assignExpr.Object is HIRThisExpression
+                && assignExpr.Index is HIRLiteralExpression literalIndex
+                && literalIndex.Kind == JavascriptType.String
+                && literalIndex.Value is string literalFieldName
+                && TryGetEnclosingClassRegistryName(out var currentClass)
+                && currentClass != null
+                && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+            {
+                if (!TryLowerExpression(assignExpr.Value, out valueToStore))
+                {
+                    return false;
+                }
+
+                return TryLowerIndexAssignmentTarget(assignExpr.Object, assignExpr.Index, valueToStore, out resultTempVar);
+            }
+
+            if (!TryLowerExpression(assignExpr.Object, out var objTemp))
+            {
+                return false;
+            }
+
+            if (!TryLowerExpression(assignExpr.Index, out var indexTemp))
+            {
+                return false;
+            }
+
             if (!TryLowerExpression(assignExpr.Value, out valueToStore))
             {
                 return false;
             }
+
+            return TryLowerIndexAssignmentTarget(objTemp, indexTemp, valueToStore, out resultTempVar);
         }
         else
         {

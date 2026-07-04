@@ -6,7 +6,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/tests/docs/test262: support named class expression lexical bindings so heritage-created closures and class methods observe the immutable internal class name while same-named outer bindings remain unchanged.
 - compiler/runtime/tests/test262: fix the newly ported language test262 cases by aligning strict/bound `this`, destructuring default function-name inference, class field data-property descriptors, computed/private class element handling, derived constructor primitive returns, and generator/async-generator parameter initialization timing.
+- compiler/tests/docs/test262: fix assignment-expression evaluation order for computed member targets, add explicit strict-mode prologues for the strict-only assignment ports that rely on read-only-property TypeErrors, and refresh the ECMA-262 assignment-operator coverage notes.
+- runtime/tests/docs/test262: align `Array.prototype.at` with spec `ToIntegerOrInfinity` coercion and builtin callable metadata so object indexes coerce via `valueOf()`, `Symbol()` indexes throw `TypeError`, and the method exposes the expected `name` descriptor.
+- compiler/tests/docs/test262: preserve strict bare-call `this` semantics by routing strict direct function calls through the normal function-value invocation path, fixing the newly split `language/function-code` strict nested function cases.
 
 ## v0.11.8 - 2026-07-02
 
