@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/nodejs: add minimal `SharedArrayBuffer` and `Atomics.wait(...)` global support so the compiled `scripts/release.js` canary can execute unchanged; cover the canary path with focused typed-array execution/generator tests and document the intentionally partial global support.
 - compiler/tests/docs/test262: support named class expression lexical bindings so heritage-created closures and class methods observe the immutable internal class name while same-named outer bindings remain unchanged.
 - compiler/runtime/tests/test262: fix the newly ported language test262 cases by aligning strict/bound `this`, destructuring default function-name inference, class field data-property descriptors, computed/private class element handling, derived constructor primitive returns, and generator/async-generator parameter initialization timing.
 - compiler/tests/docs/test262: fix assignment-expression evaluation order for computed member targets, add explicit strict-mode prologues for the strict-only assignment ports that rely on read-only-property TypeErrors, and refresh the ECMA-262 assignment-operator coverage notes.
