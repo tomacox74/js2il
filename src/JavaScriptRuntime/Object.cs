@@ -178,6 +178,7 @@ namespace JavaScriptRuntime
             // JS null/undefined are not objects.
             if (value is null) return false;
             if (value is JsNull) return false;
+            if (value is JavaScriptRuntime.Symbol) return false;
 
             // JS primitives (string/number/boolean/etc) are not objects.
             if (value is string) return false;
@@ -190,7 +191,7 @@ namespace JavaScriptRuntime
         {
             // In JS, [[Prototype]] must be an object or null.
             if (value is JsNull) return true;
-            return TypeUtilities.IsConstructorReturnOverride(value);
+            return value is not null && IsObjectLikeForPrototype(value);
         }
 
         private sealed class ObjectIntegrityState
