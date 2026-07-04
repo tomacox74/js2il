@@ -1069,6 +1069,11 @@ namespace JavaScriptRuntime
                 return !double.IsNaN(leftDouble) && !double.IsNaN(rightDouble) && leftDouble == rightDouble;
             }
 
+            if (a is Delegate || b is Delegate)
+            {
+                return ReferenceEquals(a, b);
+            }
+
             // Same type, value comparison
             return a.Equals(b);
         }

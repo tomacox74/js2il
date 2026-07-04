@@ -5871,7 +5871,7 @@ namespace JavaScriptRuntime
                 && psChosen[1].ParameterType == typeof(object);
             var empty = System.Array.Empty<object>();
 
-            // Helper to coerce primitive numeric CLR types to JS number (double)
+            // Helper to normalize CLR primitives into the boxed JS values expected by runtime intrinsics.
             static object CoerceToJsNumber(object o)
             {
                 switch (o)
@@ -5889,6 +5889,49 @@ namespace JavaScriptRuntime
                     case decimal d: return (double)d;
                     default: return o;
                 }
+            }
+
+            static object? CoerceJsValue(object? value)
+                => value is null ? null : CoerceToJsNumber(value);
+
+            static object? CoerceArgumentForParameter(object? value, Type parameterType)
+            {
+                if (parameterType == typeof(object))
+                {
+                    return CoerceJsValue(value);
+                }
+
+                if (parameterType == typeof(string))
+                {
+                    return DotNet2JSConversions.ToString(value);
+                }
+
+                if (parameterType == typeof(bool))
+                {
+                    return TypeUtilities.ToBoolean(value);
+                }
+
+                if (parameterType == typeof(double))
+                {
+                    return TypeUtilities.ToNumber(value);
+                }
+
+                if (parameterType == typeof(float))
+                {
+                    return (float)TypeUtilities.ToNumber(value);
+                }
+
+                if (parameterType == typeof(int))
+                {
+                    return TypeUtilities.ToInt32(value);
+                }
+
+                if (parameterType == typeof(uint))
+                {
+                    return TypeUtilities.ToUint32(value);
+                }
+
+                return value;
             }
 
             var src = srcArgs;
@@ -5938,10 +5981,10 @@ namespace JavaScriptRuntime
             // Also ensure we never write past the end of the argument array.
             if (expectsParamsArray && !expectsLeadingScopes)
             {
-                var coerced = new object[src.Length];
+                var coerced = new object?[src.Length];
                 for (int i = 0; i < src.Length; i++)
                 {
-                    coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                    coerced[i] = CoerceJsValue(src[i]);
                 }
 
                 return InvokeChosen(new object?[] { coerced });
@@ -5950,7 +5993,7 @@ namespace JavaScriptRuntime
             if (expectsLeadingScopes)
             {
                 var scopes = ResolveScopesArray(instance);
-                var coerced = new object[psChosen.Length];
+                var coerced = new object?[psChosen.Length];
                 coerced[0] = scopes;
 
                 int firstJsArgIndex = 1;
@@ -5963,18 +6006,18 @@ namespace JavaScriptRuntime
                 var copyCount = System.Math.Min(src.Length, psChosen.Length - firstJsArgIndex);
                 for (int i = 0; i < copyCount; i++)
                 {
-                    coerced[i + firstJsArgIndex] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                    coerced[i + firstJsArgIndex] = CoerceArgumentForParameter(src[i], psChosen[i + firstJsArgIndex].ParameterType);
                 }
 
                 return InvokeChosen(coerced);
             }
 
             {
-                var coerced = new object[psChosen.Length];
+                var coerced = new object?[psChosen.Length];
                 var copyCount = System.Math.Min(src.Length, coerced.Length);
                 for (int i = 0; i < copyCount; i++)
                 {
-                    coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+                    coerced[i] = CoerceArgumentForParameter(src[i], psChosen[i].ParameterType);
                 }
 
                 return InvokeChosen(coerced);

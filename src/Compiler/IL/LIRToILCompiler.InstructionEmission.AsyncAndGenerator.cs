@@ -463,7 +463,7 @@ internal sealed partial class LIRToILCompiler
 
                         // Persist variable locals across the suspension.
                         // The async continuation re-enters the method, so IL locals must be restored from scope storage.
-                        EmitSpillVariableSlotsToAsyncLocalsArray(ilEncoder);
+                        EmitSpillVariableSlotsToAsyncLocalsArray(ilEncoder, allocation);
 
                         // --- Step 3: Return _deferred.promise ---
                         // ldloc.0, ldfld _deferred, callvirt get_promise, ret

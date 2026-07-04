@@ -1205,7 +1205,6 @@ namespace JavaScriptRuntime
                     }
 
                     var len = (int)d;
-
                     var result = new Array();
                     result._logicalLength = len;
                     return result;
