@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.9 - 2026-07-04
+
 - compiler/tests/docs/test262: support named class expression lexical bindings so heritage-created closures and class methods observe the immutable internal class name while same-named outer bindings remain unchanged.
 - compiler/runtime/tests/test262: fix the newly ported language test262 cases by aligning strict/bound `this`, destructuring default function-name inference, class field data-property descriptors, computed/private class element handling, derived constructor primitive returns, and generator/async-generator parameter initialization timing.
 - compiler/tests/docs/test262: fix assignment-expression evaluation order for computed member targets, add explicit strict-mode prologues for the strict-only assignment ports that rely on read-only-property TypeErrors, and refresh the ECMA-262 assignment-operator coverage notes.
