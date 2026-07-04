@@ -1,4 +1,4 @@
-// IL code: Classes_ClassFieldTypeInference_Primitives
+﻿// IL code: Classes_ClassFieldTypeInference_Primitives
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223b
+				// Method begins at RVA 0x227f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2244
+				// Method begins at RVA 0x2288
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x224d
+				// Method begins at RVA 0x2291
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -84,7 +84,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21e2
+			// Method begins at RVA 0x2227
 			// Header size: 1
 			// Code size: 40 (0x28)
 			.maxstack 8
@@ -109,7 +109,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x220c
+			// Method begins at RVA 0x2250
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -138,7 +138,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2232
+			// Method begins at RVA 0x2276
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -164,7 +164,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 390 (0x186)
+		// Code size: 459 (0x1cb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassFieldTypeInference_Primitives/Scope,
@@ -304,25 +304,46 @@
 		IL_013d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 		IL_0142: pop
 
-		IL_0143: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0148: ldloc.2
-		IL_0149: ldstr "value"
-		IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0153: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0158: pop
-		IL_0159: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_015e: ldloc.2
-		IL_015f: ldstr "name"
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_016e: pop
-		IL_016f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0174: ldloc.2
-		IL_0175: ldstr "active"
-		IL_017a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_017f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0184: pop
-		IL_0185: ret
+		IL_0143: ldstr "console"
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_014d: stloc.s 5
+		IL_014f: ldloc.s 5
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0156: stloc.s 5
+		IL_0158: ldloc.s 5
+		IL_015a: ldstr "log"
+		IL_015f: ldloc.2
+		IL_0160: ldstr "value"
+		IL_0165: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_016f: pop
+		IL_0170: ldstr "console"
+		IL_0175: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_017a: stloc.s 5
+		IL_017c: ldloc.s 5
+		IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0183: stloc.s 5
+		IL_0185: ldloc.s 5
+		IL_0187: ldstr "log"
+		IL_018c: ldloc.2
+		IL_018d: ldstr "name"
+		IL_0192: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0197: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_019c: pop
+		IL_019d: ldstr "console"
+		IL_01a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01a7: stloc.s 5
+		IL_01a9: ldloc.s 5
+		IL_01ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b0: stloc.s 5
+		IL_01b2: ldloc.s 5
+		IL_01b4: ldstr "log"
+		IL_01b9: ldloc.2
+		IL_01ba: ldstr "active"
+		IL_01bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01c9: pop
+		IL_01ca: ret
 	} // end of method Classes_ClassFieldTypeInference_Primitives::__js_module_init__
 
 } // end of class Modules.Classes_ClassFieldTypeInference_Primitives
@@ -334,7 +355,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2256
+		// Method begins at RVA 0x229a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

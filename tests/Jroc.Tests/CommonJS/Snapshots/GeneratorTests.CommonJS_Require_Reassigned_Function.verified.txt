@@ -1,4 +1,4 @@
-// IL code: CommonJS_Require_Reassigned_Function
+﻿// IL code: CommonJS_Require_Reassigned_Function
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20df
+				// Method begins at RVA 0x20ef
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20bc
+			// Method begins at RVA 0x20cc
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -74,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d6
+			// Method begins at RVA 0x20e6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,12 +100,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 112 (0x70)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Function/Scope,
 			[1] object,
-			[2] object[]
+			[2] object[],
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_Reassigned_Function/Scope::.ctor()
@@ -131,18 +132,25 @@
 		IL_0039: stloc.1
 		IL_003a: ldloc.1
 		IL_003b: starg.s require
-		IL_003d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0042: stloc.2
-		IL_0043: ldarg.1
-		IL_0044: ldloc.2
-		IL_0045: ldstr "fs"
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_004f: stloc.1
-		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0055: ldloc.1
-		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005b: pop
-		IL_005c: ret
+		IL_003d: ldstr "console"
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0047: stloc.1
+		IL_0048: ldloc.1
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004e: stloc.1
+		IL_004f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0054: stloc.2
+		IL_0055: ldarg.1
+		IL_0056: ldloc.2
+		IL_0057: ldstr "fs"
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0061: stloc.3
+		IL_0062: ldloc.1
+		IL_0063: ldstr "log"
+		IL_0068: ldloc.3
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006e: pop
+		IL_006f: ret
 	} // end of method CommonJS_Require_Reassigned_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Function
@@ -154,7 +162,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20f8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ce
+				// Method begins at RVA 0x20e1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20bd
+			// Method begins at RVA 0x20d0
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -73,7 +73,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c5
+			// Method begins at RVA 0x20d8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -99,12 +99,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 97 (0x61)
+		// Code size: 116 (0x74)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Capture_HasScopesParameter/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Capture_HasScopesParameter/Scope::.ctor()
@@ -133,16 +134,23 @@
 		IL_0034: ldc.r8 42
 		IL_003d: box [System.Runtime]System.Double
 		IL_0042: stfld object Modules.Function_Capture_HasScopesParameter/Scope::outerValue
-		IL_0047: ldloc.0
-		IL_0048: castclass Modules.Function_Capture_HasScopesParameter/Scope
-		IL_004d: ldnull
-		IL_004e: call object Modules.Function_Capture_HasScopesParameter/captureOuter::__js_call__(class Modules.Function_Capture_HasScopesParameter/Scope, object)
-		IL_0053: stloc.2
-		IL_0054: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0059: ldloc.2
-		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005f: pop
-		IL_0060: ret
+		IL_0047: ldstr "console"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0051: stloc.2
+		IL_0052: ldloc.2
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0058: stloc.2
+		IL_0059: ldloc.0
+		IL_005a: castclass Modules.Function_Capture_HasScopesParameter/Scope
+		IL_005f: ldnull
+		IL_0060: call object Modules.Function_Capture_HasScopesParameter/captureOuter::__js_call__(class Modules.Function_Capture_HasScopesParameter/Scope, object)
+		IL_0065: stloc.3
+		IL_0066: ldloc.2
+		IL_0067: ldstr "log"
+		IL_006c: ldloc.3
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0072: pop
+		IL_0073: ret
 	} // end of method Function_Capture_HasScopesParameter::__js_module_init__
 
 } // end of class Modules.Function_Capture_HasScopesParameter
@@ -154,7 +162,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d7
+		// Method begins at RVA 0x20ea
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

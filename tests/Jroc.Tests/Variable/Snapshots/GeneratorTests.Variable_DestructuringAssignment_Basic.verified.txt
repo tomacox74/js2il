@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211a
+			// Method begins at RVA 0x2148
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 190 (0xbe)
+		// Code size: 236 (0xec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_DestructuringAssignment_Basic/Scope,
@@ -48,7 +48,8 @@
 			[2] float64,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] float64,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_DestructuringAssignment_Basic/Scope::.ctor()
@@ -91,23 +92,37 @@
 		IL_0084: stloc.s 4
 		IL_0086: ldloc.s 4
 		IL_0088: stloc.2
-		IL_0089: ldloc.1
-		IL_008a: box [System.Runtime]System.Double
-		IL_008f: stloc.s 5
-		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0096: ldstr "x="
-		IL_009b: ldloc.s 5
-		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00a2: pop
-		IL_00a3: ldloc.2
-		IL_00a4: box [System.Runtime]System.Double
-		IL_00a9: stloc.s 5
-		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b0: ldstr "y="
-		IL_00b5: ldloc.s 5
-		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00bc: pop
-		IL_00bd: ret
+		IL_0089: ldstr "console"
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0093: stloc.s 5
+		IL_0095: ldloc.s 5
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009c: stloc.s 5
+		IL_009e: ldloc.1
+		IL_009f: box [System.Runtime]System.Double
+		IL_00a4: stloc.s 6
+		IL_00a6: ldloc.s 5
+		IL_00a8: ldstr "log"
+		IL_00ad: ldstr "x="
+		IL_00b2: ldloc.s 6
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00b9: pop
+		IL_00ba: ldstr "console"
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c4: stloc.s 5
+		IL_00c6: ldloc.s 5
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cd: stloc.s 5
+		IL_00cf: ldloc.2
+		IL_00d0: box [System.Runtime]System.Double
+		IL_00d5: stloc.s 6
+		IL_00d7: ldloc.s 5
+		IL_00d9: ldstr "log"
+		IL_00de: ldstr "y="
+		IL_00e3: ldloc.s 6
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00ea: pop
+		IL_00eb: ret
 	} // end of method Variable_DestructuringAssignment_Basic::__js_module_init__
 
 } // end of class Modules.Variable_DestructuringAssignment_Basic
@@ -119,7 +134,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2123
+		// Method begins at RVA 0x2151
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

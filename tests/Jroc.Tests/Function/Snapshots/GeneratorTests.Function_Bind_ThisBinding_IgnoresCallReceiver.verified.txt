@@ -1,4 +1,4 @@
-// IL code: Function_Bind_ThisBinding_IgnoresCallReceiver
+﻿// IL code: Function_Bind_ThisBinding_IgnoresCallReceiver
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2141
+				// Method begins at RVA 0x2159
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x212c
 			// Header size: 12
 			// Code size: 24 (0x18)
 			.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2138
+			// Method begins at RVA 0x2150
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 183 (0xb7)
+		// Code size: 206 (0xce)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_Bind_ThisBinding_IgnoresCallReceiver/Scope,
@@ -111,7 +111,8 @@
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_Bind_ThisBinding_IgnoresCallReceiver/Scope::.ctor()
@@ -156,20 +157,27 @@
 		IL_007e: stloc.s 6
 		IL_0080: ldloc.s 6
 		IL_0082: stloc.s 4
-		IL_0084: ldloc.s 4
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008b: stloc.s 5
-		IL_008d: ldloc.s 5
-		IL_008f: ldstr "m"
-		IL_0094: ldc.r8 5
-		IL_009d: box [System.Runtime]System.Double
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a7: stloc.s 5
-		IL_00a9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ae: ldloc.s 5
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b5: pop
-		IL_00b6: ret
+		IL_0084: ldstr "console"
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008e: stloc.s 5
+		IL_0090: ldloc.s 5
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0097: stloc.s 5
+		IL_0099: ldloc.s 4
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a0: stloc.s 7
+		IL_00a2: ldloc.s 7
+		IL_00a4: ldstr "m"
+		IL_00a9: ldc.r8 5
+		IL_00b2: box [System.Runtime]System.Double
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00bc: stloc.s 7
+		IL_00be: ldloc.s 5
+		IL_00c0: ldstr "log"
+		IL_00c5: ldloc.s 7
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00cc: pop
+		IL_00cd: ret
 	} // end of method Function_Bind_ThisBinding_IgnoresCallReceiver::__js_module_init__
 
 } // end of class Modules.Function_Bind_ThisBinding_IgnoresCallReceiver
@@ -181,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214a
+		// Method begins at RVA 0x2162
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

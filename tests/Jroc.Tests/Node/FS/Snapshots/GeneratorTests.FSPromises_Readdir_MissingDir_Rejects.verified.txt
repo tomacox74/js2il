@@ -1,4 +1,4 @@
-// IL code: FSPromises_Readdir_MissingDir_Rejects
+﻿// IL code: FSPromises_Readdir_MissingDir_Rejects
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21f5
+				// Method begins at RVA 0x2228
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,17 +41,27 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x218f
-			// Header size: 1
-			// Code size: 18 (0x12)
+			// Method begins at RVA 0x2190
+			// Header size: 12
+			// Code size: 37 (0x25)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Unexpected success"
-			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_000f: pop
-			IL_0010: ldnull
-			IL_0011: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Unexpected success"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0022: pop
+			IL_0023: ldnull
+			IL_0024: ret
 		} // end of method ArrowFunction_L9C11::__js_call__
 
 	} // end of class ArrowFunction_L9C11
@@ -74,7 +84,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21fe
+				// Method begins at RVA 0x2231
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -98,35 +108,43 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a4
+			// Method begins at RVA 0x21c4
 			// Header size: 12
-			// Code size: 60 (0x3c)
+			// Code size: 79 (0x4f)
 			.maxstack 8
 			.locals init (
-				[0] string,
-				[1] object
+				[0] object,
+				[1] string,
+				[2] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: ldstr "message"
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_000b: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0010: stloc.0
-			IL_0011: ldloc.0
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0017: stloc.1
-			IL_0018: ldloc.1
-			IL_0019: ldstr "startsWith"
-			IL_001e: ldstr "ENOENT:"
-			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0028: stloc.1
-			IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_002e: ldstr "Is ENOENT:"
-			IL_0033: ldloc.1
-			IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0039: pop
-			IL_003a: ldnull
-			IL_003b: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.1
+			IL_0013: ldstr "message"
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_001d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0029: stloc.2
+			IL_002a: ldloc.2
+			IL_002b: ldstr "startsWith"
+			IL_0030: ldstr "ENOENT:"
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_003a: stloc.2
+			IL_003b: ldloc.0
+			IL_003c: ldstr "log"
+			IL_0041: ldstr "Is ENOENT:"
+			IL_0046: ldloc.2
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_004c: pop
+			IL_004d: ldnull
+			IL_004e: ret
 		} // end of method ArrowFunction_L12C12::__js_call__
 
 	} // end of class ArrowFunction_L12C12
@@ -138,7 +156,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21ec
+			// Method begins at RVA 0x221f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -296,7 +314,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2207
+		// Method begins at RVA 0x223a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

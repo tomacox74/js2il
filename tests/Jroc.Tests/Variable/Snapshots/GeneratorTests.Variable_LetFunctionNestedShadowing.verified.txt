@@ -1,4 +1,4 @@
-// IL code: Variable_LetFunctionNestedShadowing
+﻿// IL code: Variable_LetFunctionNestedShadowing
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x213d
+					// Method begins at RVA 0x2178
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -45,26 +45,34 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2100
+				// Method begins at RVA 0x2128
 				// Header size: 12
-				// Code size: 31 (0x1f)
+				// Code size: 50 (0x32)
 				.maxstack 8
 				.locals init (
 					[0] float64,
-					[1] object
+					[1] object,
+					[2] object
 				)
 
 				IL_0000: ldc.r8 2
 				IL_0009: stloc.0
-				IL_000a: ldloc.0
-				IL_000b: box [System.Runtime]System.Double
-				IL_0010: stloc.1
-				IL_0011: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0016: ldloc.1
-				IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_001c: pop
-				IL_001d: ldnull
-				IL_001e: ret
+				IL_000a: ldstr "console"
+				IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0014: stloc.1
+				IL_0015: ldloc.1
+				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_001b: stloc.1
+				IL_001c: ldloc.0
+				IL_001d: box [System.Runtime]System.Double
+				IL_0022: stloc.2
+				IL_0023: ldloc.1
+				IL_0024: ldstr "log"
+				IL_0029: ldloc.2
+				IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_002f: pop
+				IL_0030: ldnull
+				IL_0031: ret
 			} // end of method inner::__js_call__
 
 		} // end of class inner
@@ -83,7 +91,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2134
+				// Method begins at RVA 0x216f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,9 +114,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20a8
+			// Method begins at RVA 0x20bc
 			// Header size: 12
-			// Code size: 75 (0x4b)
+			// Code size: 94 (0x5e)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Variable_LetFunctionNestedShadowing/outer/Scope,
@@ -137,15 +145,22 @@
 			IL_002d: ldnull
 			IL_002e: call object Modules.Variable_LetFunctionNestedShadowing/outer/inner::__js_call__(object)
 			IL_0033: pop
-			IL_0034: ldloc.2
-			IL_0035: box [System.Runtime]System.Double
-			IL_003a: stloc.s 4
-			IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0041: ldloc.s 4
-			IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0048: pop
-			IL_0049: ldnull
-			IL_004a: ret
+			IL_0034: ldstr "console"
+			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_003e: stloc.3
+			IL_003f: ldloc.3
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0045: stloc.3
+			IL_0046: ldloc.2
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: stloc.s 4
+			IL_004e: ldloc.3
+			IL_004f: ldstr "log"
+			IL_0054: ldloc.s 4
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_005b: pop
+			IL_005c: ldnull
+			IL_005d: ret
 		} // end of method outer::__js_call__
 
 	} // end of class outer
@@ -164,7 +179,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212b
+			// Method begins at RVA 0x2166
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -190,7 +205,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 93 (0x5d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_LetFunctionNestedShadowing/Scope,
@@ -219,14 +234,21 @@
 		IL_002d: ldnull
 		IL_002e: call object Modules.Variable_LetFunctionNestedShadowing/outer::__js_call__(object)
 		IL_0033: pop
-		IL_0034: ldloc.2
-		IL_0035: box [System.Runtime]System.Double
-		IL_003a: stloc.s 4
-		IL_003c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0041: ldloc.s 4
-		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0048: pop
-		IL_0049: ret
+		IL_0034: ldstr "console"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_003e: stloc.3
+		IL_003f: ldloc.3
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0045: stloc.3
+		IL_0046: ldloc.2
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: stloc.s 4
+		IL_004e: ldloc.3
+		IL_004f: ldstr "log"
+		IL_0054: ldloc.s 4
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_005b: pop
+		IL_005c: ret
 	} // end of method Variable_LetFunctionNestedShadowing::__js_module_init__
 
 } // end of class Modules.Variable_LetFunctionNestedShadowing
@@ -238,7 +260,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2146
+		// Method begins at RVA 0x2181
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

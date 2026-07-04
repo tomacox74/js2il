@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2209
+				// Method begins at RVA 0x2295
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2212
+				// Method begins at RVA 0x229e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x221b
+				// Method begins at RVA 0x22a7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2224
+				// Method begins at RVA 0x22b0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x228c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -122,7 +122,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 391 (0x187)
+		// Code size: 529 (0x211)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope,
@@ -164,125 +164,167 @@
 			IL_0038: stloc.s 16
 			IL_003a: ldloc.s 16
 			IL_003c: stloc.3
-			IL_003d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0042: ldloc.3
-			IL_0043: ldstr "byteLength"
-			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0052: pop
-			IL_0053: leave IL_00c8
+			IL_003d: ldstr "console"
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0047: stloc.s 17
+			IL_0049: ldloc.s 17
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0050: stloc.s 17
+			IL_0052: ldloc.s 17
+			IL_0054: ldstr "log"
+			IL_0059: ldloc.3
+			IL_005a: ldstr "byteLength"
+			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0069: pop
+			IL_006a: leave IL_010d
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0058: stloc.s 4
-			IL_005a: ldloc.s 4
-			IL_005c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0061: dup
-			IL_0062: brtrue IL_0078
+			IL_006f: stloc.s 4
+			IL_0071: ldloc.s 4
+			IL_0073: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0078: dup
+			IL_0079: brtrue IL_008f
 
-			IL_0067: pop
-			IL_0068: ldloc.s 4
-			IL_006a: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_006f: dup
-			IL_0070: brtrue IL_0084
+			IL_007e: pop
+			IL_007f: ldloc.s 4
+			IL_0081: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0086: dup
+			IL_0087: brtrue IL_009b
 
-			IL_0075: pop
-			IL_0076: rethrow
+			IL_008c: pop
+			IL_008d: rethrow
 
-			IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_007d: stloc.s 5
-			IL_007f: br IL_0086
+			IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0094: stloc.s 5
+			IL_0096: br IL_009d
 
-			IL_0084: stloc.s 5
+			IL_009b: stloc.s 5
 
-			IL_0086: ldloc.s 5
-			IL_0088: stloc.s 17
-			IL_008a: ldloc.s 17
-			IL_008c: stloc.s 6
-			IL_008e: newobj instance void Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope/Block_L8C12::.ctor()
-			IL_0093: stloc.s 7
-			IL_0095: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_009a: ldloc.s 6
-			IL_009c: ldstr "name"
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00ab: pop
-			IL_00ac: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b1: ldloc.s 6
-			IL_00b3: ldstr "message"
-			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00c2: pop
-			IL_00c3: leave IL_00c8
+			IL_009d: ldloc.s 5
+			IL_009f: stloc.s 17
+			IL_00a1: ldloc.s 17
+			IL_00a3: stloc.s 6
+			IL_00a5: newobj instance void Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope/Block_L8C12::.ctor()
+			IL_00aa: stloc.s 7
+			IL_00ac: ldstr "console"
+			IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00b6: stloc.s 17
+			IL_00b8: ldloc.s 17
+			IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00bf: stloc.s 17
+			IL_00c1: ldloc.s 17
+			IL_00c3: ldstr "log"
+			IL_00c8: ldloc.s 6
+			IL_00ca: ldstr "name"
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00d9: pop
+			IL_00da: ldstr "console"
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00e4: stloc.s 17
+			IL_00e6: ldloc.s 17
+			IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ed: stloc.s 17
+			IL_00ef: ldloc.s 17
+			IL_00f1: ldstr "log"
+			IL_00f6: ldloc.s 6
+			IL_00f8: ldstr "message"
+			IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0107: pop
+			IL_0108: leave IL_010d
 		} // end handler
 		.try
 		{
-			IL_00c8: newobj instance void Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope/Block_L13C4::.ctor()
-			IL_00cd: stloc.s 8
-			IL_00cf: ldloc.1
-			IL_00d0: ldc.r8 0.0
-			IL_00d9: box [System.Runtime]System.Double
-			IL_00de: ldc.r8 5
-			IL_00e7: box [System.Runtime]System.Double
-			IL_00ec: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object, object, object)
-			IL_00f1: stloc.s 16
-			IL_00f3: ldloc.s 16
-			IL_00f5: stloc.s 9
-			IL_00f7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00fc: ldloc.s 9
-			IL_00fe: ldstr "byteLength"
-			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0108: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_010d: pop
-			IL_010e: leave IL_0183
+			IL_010d: newobj instance void Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope/Block_L13C4::.ctor()
+			IL_0112: stloc.s 8
+			IL_0114: ldloc.1
+			IL_0115: ldc.r8 0.0
+			IL_011e: box [System.Runtime]System.Double
+			IL_0123: ldc.r8 5
+			IL_012c: box [System.Runtime]System.Double
+			IL_0131: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.DataView::.ctor(object, object, object)
+			IL_0136: stloc.s 16
+			IL_0138: ldloc.s 16
+			IL_013a: stloc.s 9
+			IL_013c: ldstr "console"
+			IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0146: stloc.s 17
+			IL_0148: ldloc.s 17
+			IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_014f: stloc.s 17
+			IL_0151: ldloc.s 17
+			IL_0153: ldstr "log"
+			IL_0158: ldloc.s 9
+			IL_015a: ldstr "byteLength"
+			IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0169: pop
+			IL_016a: leave IL_020d
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0113: stloc.s 10
-			IL_0115: ldloc.s 10
-			IL_0117: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_011c: dup
-			IL_011d: brtrue IL_0133
+			IL_016f: stloc.s 10
+			IL_0171: ldloc.s 10
+			IL_0173: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0178: dup
+			IL_0179: brtrue IL_018f
 
-			IL_0122: pop
-			IL_0123: ldloc.s 10
-			IL_0125: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_012a: dup
-			IL_012b: brtrue IL_013f
+			IL_017e: pop
+			IL_017f: ldloc.s 10
+			IL_0181: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0186: dup
+			IL_0187: brtrue IL_019b
 
-			IL_0130: pop
-			IL_0131: rethrow
+			IL_018c: pop
+			IL_018d: rethrow
 
-			IL_0133: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0138: stloc.s 11
-			IL_013a: br IL_0141
+			IL_018f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0194: stloc.s 11
+			IL_0196: br IL_019d
 
-			IL_013f: stloc.s 11
+			IL_019b: stloc.s 11
 
-			IL_0141: ldloc.s 11
-			IL_0143: stloc.s 17
-			IL_0145: ldloc.s 17
-			IL_0147: stloc.s 12
-			IL_0149: newobj instance void Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope/Block_L16C12::.ctor()
-			IL_014e: stloc.s 13
-			IL_0150: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0155: ldloc.s 12
-			IL_0157: ldstr "name"
-			IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0161: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0166: pop
-			IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_016c: ldloc.s 12
-			IL_016e: ldstr "message"
-			IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0178: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_017d: pop
-			IL_017e: leave IL_0183
+			IL_019d: ldloc.s 11
+			IL_019f: stloc.s 17
+			IL_01a1: ldloc.s 17
+			IL_01a3: stloc.s 12
+			IL_01a5: newobj instance void Modules.DataView_InvalidByteOffset_ByteLength_Messages/Scope/Block_L16C12::.ctor()
+			IL_01aa: stloc.s 13
+			IL_01ac: ldstr "console"
+			IL_01b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01b6: stloc.s 17
+			IL_01b8: ldloc.s 17
+			IL_01ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01bf: stloc.s 17
+			IL_01c1: ldloc.s 17
+			IL_01c3: ldstr "log"
+			IL_01c8: ldloc.s 12
+			IL_01ca: ldstr "name"
+			IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01d4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_01d9: pop
+			IL_01da: ldstr "console"
+			IL_01df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01e4: stloc.s 17
+			IL_01e6: ldloc.s 17
+			IL_01e8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01ed: stloc.s 17
+			IL_01ef: ldloc.s 17
+			IL_01f1: ldstr "log"
+			IL_01f6: ldloc.s 12
+			IL_01f8: ldstr "message"
+			IL_01fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0207: pop
+			IL_0208: leave IL_020d
 		} // end handler
 
-		IL_0183: ldnull
-		IL_0184: stloc.s 14
-		IL_0186: ret
+		IL_020d: ldnull
+		IL_020e: stloc.s 14
+		IL_0210: ret
 	} // end of method DataView_InvalidByteOffset_ByteLength_Messages::__js_module_init__
 
 } // end of class Modules.DataView_InvalidByteOffset_ByteLength_Messages
@@ -294,7 +336,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x222d
+		// Method begins at RVA 0x22b9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2140
+				// Method begins at RVA 0x2170
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2108
+			// Method begins at RVA 0x2138
 			// Header size: 12
 			// Code size: 35 (0x23)
 			.maxstack 8
@@ -82,7 +82,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2137
+			// Method begins at RVA 0x2167
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -108,7 +108,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 172 (0xac)
+		// Code size: 218 (0xda)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope,
@@ -171,16 +171,30 @@
 
 		IL_008c: ldloc.2
 		IL_008d: stloc.3
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0093: ldloc.3
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0099: pop
-		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009f: ldloc.0
-		IL_00a0: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
-		IL_00a5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00aa: pop
-		IL_00ab: ret
+		IL_008e: ldstr "console"
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0098: stloc.s 4
+		IL_009a: ldloc.s 4
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a1: stloc.s 4
+		IL_00a3: ldloc.s 4
+		IL_00a5: ldstr "log"
+		IL_00aa: ldloc.3
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b0: pop
+		IL_00b1: ldstr "console"
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00bb: stloc.s 4
+		IL_00bd: ldloc.s 4
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c4: stloc.s 4
+		IL_00c6: ldloc.s 4
+		IL_00c8: ldstr "log"
+		IL_00cd: ldloc.0
+		IL_00ce: ldfld object Modules.ControlFlow_Conditional_Ternary_ShortCircuit/Scope::x
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d8: pop
+		IL_00d9: ret
 	} // end of method ControlFlow_Conditional_Ternary_ShortCircuit::__js_module_init__
 
 } // end of class Modules.ControlFlow_Conditional_Ternary_ShortCircuit
@@ -192,7 +206,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2149
+		// Method begins at RVA 0x2179
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

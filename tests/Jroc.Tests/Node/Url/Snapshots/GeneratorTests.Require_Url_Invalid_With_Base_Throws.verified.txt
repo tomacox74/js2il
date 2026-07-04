@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2169
+				// Method begins at RVA 0x21c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2172
+				// Method begins at RVA 0x21ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2160
+			// Method begins at RVA 0x21bc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 243 (0xf3)
+		// Code size: 335 (0x14f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Url_Invalid_With_Base_Throws/Scope,
@@ -125,69 +125,97 @@
 			IL_0040: stelem.ref
 			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Object::ConstructValue(object, object[])
 			IL_0046: pop
-			IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004c: ldstr "threw:"
-			IL_0051: ldc.i4.0
-			IL_0052: box [System.Runtime]System.Boolean
-			IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_005c: pop
-			IL_005d: leave IL_00ef
+			IL_0047: ldstr "console"
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0051: stloc.s 8
+			IL_0053: ldloc.s 8
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_005a: stloc.s 8
+			IL_005c: ldloc.s 8
+			IL_005e: ldstr "log"
+			IL_0063: ldstr "threw:"
+			IL_0068: ldc.i4.0
+			IL_0069: box [System.Runtime]System.Boolean
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0073: pop
+			IL_0074: leave IL_014b
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0062: stloc.3
-			IL_0063: ldloc.3
-			IL_0064: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_0069: dup
-			IL_006a: brtrue IL_007f
+			IL_0079: stloc.3
+			IL_007a: ldloc.3
+			IL_007b: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0080: dup
+			IL_0081: brtrue IL_0096
 
-			IL_006f: pop
-			IL_0070: ldloc.3
-			IL_0071: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0076: dup
-			IL_0077: brtrue IL_008b
+			IL_0086: pop
+			IL_0087: ldloc.3
+			IL_0088: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_008d: dup
+			IL_008e: brtrue IL_00a2
 
-			IL_007c: pop
-			IL_007d: rethrow
+			IL_0093: pop
+			IL_0094: rethrow
 
-			IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0084: stloc.s 4
-			IL_0086: br IL_008d
+			IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_009b: stloc.s 4
+			IL_009d: br IL_00a4
 
-			IL_008b: stloc.s 4
+			IL_00a2: stloc.s 4
 
-			IL_008d: ldloc.s 4
-			IL_008f: stloc.s 8
-			IL_0091: ldloc.s 8
-			IL_0093: stloc.s 5
-			IL_0095: newobj instance void Modules.Require_Url_Invalid_With_Base_Throws/Scope/Block_L8C16::.ctor()
-			IL_009a: stloc.s 6
-			IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00a1: ldstr "threw:"
-			IL_00a6: ldc.i4.1
-			IL_00a7: box [System.Runtime]System.Boolean
-			IL_00ac: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00b1: pop
-			IL_00b2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b7: ldstr "name:"
-			IL_00bc: ldloc.s 5
-			IL_00be: ldstr "name"
-			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00cd: pop
-			IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00d3: ldstr "message:"
-			IL_00d8: ldloc.s 5
-			IL_00da: ldstr "message"
-			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00e4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00e9: pop
-			IL_00ea: leave IL_00ef
+			IL_00a4: ldloc.s 4
+			IL_00a6: stloc.s 8
+			IL_00a8: ldloc.s 8
+			IL_00aa: stloc.s 5
+			IL_00ac: newobj instance void Modules.Require_Url_Invalid_With_Base_Throws/Scope/Block_L8C16::.ctor()
+			IL_00b1: stloc.s 6
+			IL_00b3: ldstr "console"
+			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00bd: stloc.s 8
+			IL_00bf: ldloc.s 8
+			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c6: stloc.s 8
+			IL_00c8: ldloc.s 8
+			IL_00ca: ldstr "log"
+			IL_00cf: ldstr "threw:"
+			IL_00d4: ldc.i4.1
+			IL_00d5: box [System.Runtime]System.Boolean
+			IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00df: pop
+			IL_00e0: ldstr "console"
+			IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00ea: stloc.s 8
+			IL_00ec: ldloc.s 8
+			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00f3: stloc.s 8
+			IL_00f5: ldloc.s 8
+			IL_00f7: ldstr "log"
+			IL_00fc: ldstr "name:"
+			IL_0101: ldloc.s 5
+			IL_0103: ldstr "name"
+			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0112: pop
+			IL_0113: ldstr "console"
+			IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_011d: stloc.s 8
+			IL_011f: ldloc.s 8
+			IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0126: stloc.s 8
+			IL_0128: ldloc.s 8
+			IL_012a: ldstr "log"
+			IL_012f: ldstr "message:"
+			IL_0134: ldloc.s 5
+			IL_0136: ldstr "message"
+			IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0145: pop
+			IL_0146: leave IL_014b
 		} // end handler
 
-		IL_00ef: ldnull
-		IL_00f0: stloc.s 7
-		IL_00f2: ret
+		IL_014b: ldnull
+		IL_014c: stloc.s 7
+		IL_014e: ret
 	} // end of method Require_Url_Invalid_With_Base_Throws::__js_module_init__
 
 } // end of class Modules.Require_Url_Invalid_With_Base_Throws
@@ -199,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217b
+		// Method begins at RVA 0x21d7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2103
+				// Method begins at RVA 0x2117
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,7 +51,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20e4
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fa
+			// Method begins at RVA 0x210e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,12 +102,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 134 (0x86)
+		// Code size: 153 (0x99)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature/Scope::.ctor()
@@ -143,18 +144,25 @@
 		IL_004f: ldc.i4.1
 		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_0055: pop
-		IL_0056: ldnull
-		IL_0057: ldc.r8 1
-		IL_0060: box [System.Runtime]System.Double
-		IL_0065: ldc.r8 2
-		IL_006e: box [System.Runtime]System.Double
-		IL_0073: call object Modules.Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature/ArrowFunction_L3C13::__js_call__(object, object, object)
-		IL_0078: stloc.2
-		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007e: ldloc.2
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0084: pop
-		IL_0085: ret
+		IL_0056: ldstr "console"
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0060: stloc.2
+		IL_0061: ldloc.2
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0067: stloc.2
+		IL_0068: ldnull
+		IL_0069: ldc.r8 1
+		IL_0072: box [System.Runtime]System.Double
+		IL_0077: ldc.r8 2
+		IL_0080: box [System.Runtime]System.Double
+		IL_0085: call object Modules.Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature/ArrowFunction_L3C13::__js_call__(object, object, object)
+		IL_008a: stloc.3
+		IL_008b: ldloc.2
+		IL_008c: ldstr "log"
+		IL_0091: ldloc.3
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0097: pop
+		IL_0098: ret
 	} // end of method Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature::__js_module_init__
 
 } // end of class Modules.Function_ParameterTypeInference_EscapedArrow_KeepsObjectSignature
@@ -166,7 +174,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2120
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

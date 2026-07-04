@@ -1,4 +1,4 @@
-// IL code: Classes_ClassMethod_AccessGlobalVariable_Log
+﻿// IL code: Classes_ClassMethod_AccessGlobalVariable_Log
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211d
+				// Method begins at RVA 0x213b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2126
+				// Method begins at RVA 0x2144
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -89,21 +89,31 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Method begins at RVA 0x20f4
-			// Header size: 1
-			// Code size: 31 (0x1f)
+			// Header size: 12
+			// Code size: 50 (0x32)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldarg.0
-			IL_0006: ldfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::_scopes
-			IL_000b: ldc.i4.0
-			IL_000c: ldelem.ref
-			IL_000d: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope
-			IL_0012: ldfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
-			IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_001c: pop
-			IL_001d: ldnull
-			IL_001e: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldarg.0
+			IL_0019: ldfld object[] Modules.Classes_ClassMethod_AccessGlobalVariable_Log/MyClass::_scopes
+			IL_001e: ldc.i4.0
+			IL_001f: ldelem.ref
+			IL_0020: castclass Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope
+			IL_0025: ldfld string Modules.Classes_ClassMethod_AccessGlobalVariable_Log/Scope::GLOBAL_VALUE
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_002f: pop
+			IL_0030: ldnull
+			IL_0031: ret
 		} // end of method MyClass::logGlobal
 
 	} // end of class MyClass
@@ -123,7 +133,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2114
+			// Method begins at RVA 0x2132
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -213,7 +223,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212f
+		// Method begins at RVA 0x214d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

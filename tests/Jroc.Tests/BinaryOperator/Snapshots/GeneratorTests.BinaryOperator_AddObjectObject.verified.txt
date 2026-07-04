@@ -1,4 +1,4 @@
-// IL code: BinaryOperator_AddObjectObject
+﻿// IL code: BinaryOperator_AddObjectObject
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20eb
+				// Method begins at RVA 0x2113
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20cc
+			// Method begins at RVA 0x20f4
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -75,7 +75,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e2
+			// Method begins at RVA 0x210a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -101,12 +101,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 112 (0x70)
+		// Code size: 150 (0x96)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_AddObjectObject/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_AddObjectObject/Scope::.ctor()
@@ -123,27 +124,41 @@
 		IL_0020: stloc.2
 		IL_0021: ldloc.2
 		IL_0022: stloc.1
-		IL_0023: ldnull
-		IL_0024: ldc.r8 1
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: ldc.r8 2
-		IL_003b: box [System.Runtime]System.Double
-		IL_0040: call object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
-		IL_0045: stloc.2
-		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004b: ldloc.2
-		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0051: pop
-		IL_0052: ldnull
-		IL_0053: ldstr "a:"
-		IL_0058: ldstr "b"
-		IL_005d: call object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
-		IL_0062: stloc.2
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldloc.2
-		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_006e: pop
-		IL_006f: ret
+		IL_0023: ldstr "console"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002d: stloc.2
+		IL_002e: ldloc.2
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0034: stloc.2
+		IL_0035: ldnull
+		IL_0036: ldc.r8 1
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: ldc.r8 2
+		IL_004d: box [System.Runtime]System.Double
+		IL_0052: call object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
+		IL_0057: stloc.3
+		IL_0058: ldloc.2
+		IL_0059: ldstr "log"
+		IL_005e: ldloc.3
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0064: pop
+		IL_0065: ldstr "console"
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_006f: stloc.3
+		IL_0070: ldloc.3
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0076: stloc.3
+		IL_0077: ldnull
+		IL_0078: ldstr "a:"
+		IL_007d: ldstr "b"
+		IL_0082: call object Modules.BinaryOperator_AddObjectObject/'add'::__js_call__(object, object, object)
+		IL_0087: stloc.2
+		IL_0088: ldloc.3
+		IL_0089: ldstr "log"
+		IL_008e: ldloc.2
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0094: pop
+		IL_0095: ret
 	} // end of method BinaryOperator_AddObjectObject::__js_module_init__
 
 } // end of class Modules.BinaryOperator_AddObjectObject
@@ -155,7 +170,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f4
+		// Method begins at RVA 0x211c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

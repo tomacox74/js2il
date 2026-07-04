@@ -1,4 +1,4 @@
-// IL code: Process_Chdir_And_NextTick_Basics
+﻿// IL code: Process_Chdir_And_NextTick_Basics
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226b
+				// Method begins at RVA 0x22ce
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21f0
+			// Method begins at RVA 0x2240
 			// Header size: 12
 			// Code size: 26 (0x1a)
 			.maxstack 8
@@ -78,7 +78,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2274
+				// Method begins at RVA 0x22d7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,12 +104,13 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2218
+			// Method begins at RVA 0x2268
 			// Header size: 12
-			// Code size: 62 (0x3e)
+			// Code size: 81 (0x51)
 			.maxstack 8
 			.locals init (
-				[0] string
+				[0] object,
+				[1] string
 			)
 
 			IL_0000: ldarg.0
@@ -117,23 +118,30 @@
 			IL_0006: ldstr "immediate"
 			IL_000b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
 			IL_0010: pop
-			IL_0011: ldarg.0
-			IL_0012: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-			IL_0017: ldc.i4.1
-			IL_0018: newarr [System.Runtime]System.Object
-			IL_001d: dup
-			IL_001e: ldc.i4.0
-			IL_001f: ldstr ","
-			IL_0024: stelem.ref
-			IL_0025: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-			IL_002a: stloc.0
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: ldstr "order"
-			IL_0035: ldloc.0
-			IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_003b: pop
-			IL_003c: ldnull
-			IL_003d: ret
+			IL_0011: ldstr "console"
+			IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_001b: stloc.0
+			IL_001c: ldloc.0
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0022: stloc.0
+			IL_0023: ldarg.0
+			IL_0024: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+			IL_0029: ldc.i4.1
+			IL_002a: newarr [System.Runtime]System.Object
+			IL_002f: dup
+			IL_0030: ldc.i4.0
+			IL_0031: ldstr ","
+			IL_0036: stelem.ref
+			IL_0037: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+			IL_003c: stloc.1
+			IL_003d: ldloc.0
+			IL_003e: ldstr "log"
+			IL_0043: ldstr "order"
+			IL_0048: ldloc.1
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_004e: pop
+			IL_004f: ldnull
+			IL_0050: ret
 		} // end of method ArrowFunction_L12C14::__js_call__
 
 	} // end of class ArrowFunction_L12C14
@@ -152,7 +160,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2262
+			// Method begins at RVA 0x22c5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -178,159 +186,191 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 402 (0x192)
+		// Code size: 482 (0x1e2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Chdir_And_NextTick_Basics/Scope,
 			[1] object,
 			[2] object,
-			[3] bool,
-			[4] object,
+			[3] object,
+			[4] bool,
 			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Process_Chdir_And_NextTick_Basics/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0006: ldstr "process"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0010: stloc.2
 		IL_0011: ldloc.2
-		IL_0012: ldstr "cwd"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_001c: stloc.2
-		IL_001d: ldloc.2
-		IL_001e: stloc.1
-		IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0029: stloc.2
-		IL_002a: ldloc.2
-		IL_002b: ldstr "chdir"
-		IL_0030: ldarg.s __dirname
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0037: pop
-		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0042: stloc.2
-		IL_0043: ldloc.2
-		IL_0044: ldstr "cwd"
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_004e: stloc.2
-		IL_004f: ldloc.2
-		IL_0050: ldarg.s __dirname
-		IL_0052: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0057: stloc.3
-		IL_0058: ldloc.3
-		IL_0059: box [System.Runtime]System.Boolean
-		IL_005e: stloc.s 4
-		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0065: ldstr "cwd changed"
-		IL_006a: ldloc.s 4
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0071: pop
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007c: stloc.2
-		IL_007d: ldloc.2
-		IL_007e: ldstr "chdir"
-		IL_0083: ldloc.1
-		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0089: pop
-		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0094: stloc.2
-		IL_0095: ldloc.2
-		IL_0096: ldstr "cwd"
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00a0: stloc.2
-		IL_00a1: ldloc.2
-		IL_00a2: ldloc.1
-		IL_00a3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_00a8: stloc.3
-		IL_00a9: ldloc.3
-		IL_00aa: box [System.Runtime]System.Boolean
-		IL_00af: stloc.s 4
-		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b6: ldstr "cwd restored"
-		IL_00bb: ldloc.s 4
-		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00c2: pop
-		IL_00c3: ldloc.0
-		IL_00c4: ldc.i4.0
-		IL_00c5: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_00ca: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-		IL_00cf: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d9: stloc.2
-		IL_00da: ldc.i4.1
-		IL_00db: newarr [System.Runtime]System.Object
-		IL_00e0: dup
-		IL_00e1: ldc.i4.0
-		IL_00e2: ldloc.0
-		IL_00e3: stelem.ref
-		IL_00e4: ldc.i4.0
-		IL_00e5: ldelem.ref
-		IL_00e6: castclass Modules.Process_Chdir_And_NextTick_Basics/Scope
-		IL_00eb: ldftn object Modules.Process_Chdir_And_NextTick_Basics/ArrowFunction_L10C18::__js_call__(class Modules.Process_Chdir_And_NextTick_Basics/Scope, object)
-		IL_00f1: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_00f6: ldc.i4.1
-		IL_00f7: newarr [System.Runtime]System.Object
-		IL_00fc: dup
-		IL_00fd: ldc.i4.0
-		IL_00fe: ldloc.0
-		IL_00ff: stelem.ref
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_010a: ldc.i4.0
-		IL_010b: conv.r8
-		IL_010c: ldstr ""
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0017: stloc.2
+		IL_0018: ldloc.2
+		IL_0019: ldstr "cwd"
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0023: stloc.2
+		IL_0024: ldloc.2
+		IL_0025: stloc.1
+		IL_0026: ldstr "process"
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0030: stloc.2
+		IL_0031: ldloc.2
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0037: stloc.2
+		IL_0038: ldloc.2
+		IL_0039: ldstr "chdir"
+		IL_003e: ldarg.s __dirname
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0045: pop
+		IL_0046: ldstr "console"
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0050: stloc.2
+		IL_0051: ldloc.2
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0057: stloc.2
+		IL_0058: ldstr "process"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0062: stloc.3
+		IL_0063: ldloc.3
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0069: stloc.3
+		IL_006a: ldloc.3
+		IL_006b: ldstr "cwd"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0075: stloc.3
+		IL_0076: ldloc.3
+		IL_0077: ldarg.s __dirname
+		IL_0079: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_007e: stloc.s 4
+		IL_0080: ldloc.s 4
+		IL_0082: box [System.Runtime]System.Boolean
+		IL_0087: stloc.s 5
+		IL_0089: ldloc.2
+		IL_008a: ldstr "log"
+		IL_008f: ldstr "cwd changed"
+		IL_0094: ldloc.s 5
+		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_009b: pop
+		IL_009c: ldstr "process"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a6: stloc.2
+		IL_00a7: ldloc.2
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ad: stloc.2
+		IL_00ae: ldloc.2
+		IL_00af: ldstr "chdir"
+		IL_00b4: ldloc.1
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ba: pop
+		IL_00bb: ldstr "console"
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c5: stloc.2
+		IL_00c6: ldloc.2
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cc: stloc.2
+		IL_00cd: ldstr "process"
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00d7: stloc.3
+		IL_00d8: ldloc.3
+		IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00de: stloc.3
+		IL_00df: ldloc.3
+		IL_00e0: ldstr "cwd"
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_00ea: stloc.3
+		IL_00eb: ldloc.3
+		IL_00ec: ldloc.1
+		IL_00ed: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00f2: stloc.s 4
+		IL_00f4: ldloc.s 4
+		IL_00f6: box [System.Runtime]System.Boolean
+		IL_00fb: stloc.s 5
+		IL_00fd: ldloc.2
+		IL_00fe: ldstr "log"
+		IL_0103: ldstr "cwd restored"
+		IL_0108: ldloc.s 5
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_010f: pop
+		IL_0110: ldloc.0
 		IL_0111: ldc.i4.0
-		IL_0112: ldc.i4.1
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_011d: stloc.s 5
-		IL_011f: ldloc.2
-		IL_0120: ldstr "nextTick"
-		IL_0125: ldloc.s 5
-		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_012c: pop
-		IL_012d: ldloc.0
-		IL_012e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
-		IL_0133: ldstr "sync"
-		IL_0138: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-		IL_013d: pop
-		IL_013e: ldc.i4.1
-		IL_013f: newarr [System.Runtime]System.Object
-		IL_0144: dup
-		IL_0145: ldc.i4.0
-		IL_0146: ldloc.0
-		IL_0147: stelem.ref
-		IL_0148: ldc.i4.0
-		IL_0149: ldelem.ref
-		IL_014a: castclass Modules.Process_Chdir_And_NextTick_Basics/Scope
-		IL_014f: ldftn object Modules.Process_Chdir_And_NextTick_Basics/ArrowFunction_L12C14::__js_call__(class Modules.Process_Chdir_And_NextTick_Basics/Scope, object)
-		IL_0155: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_015a: ldc.i4.1
-		IL_015b: newarr [System.Runtime]System.Object
-		IL_0160: dup
-		IL_0161: ldc.i4.0
-		IL_0162: ldloc.0
-		IL_0163: stelem.ref
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_016e: ldc.i4.0
-		IL_016f: conv.r8
-		IL_0170: ldstr ""
-		IL_0175: ldc.i4.0
-		IL_0176: ldc.i4.1
-		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0181: stloc.s 5
-		IL_0183: ldloc.s 5
-		IL_0185: ldc.i4.0
-		IL_0186: newarr [System.Runtime]System.Object
-		IL_018b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0190: pop
-		IL_0191: ret
+		IL_0112: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0117: stfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+		IL_011c: ldstr "process"
+		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0126: stloc.2
+		IL_0127: ldloc.2
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_012d: stloc.2
+		IL_012e: ldc.i4.1
+		IL_012f: newarr [System.Runtime]System.Object
+		IL_0134: dup
+		IL_0135: ldc.i4.0
+		IL_0136: ldloc.0
+		IL_0137: stelem.ref
+		IL_0138: ldc.i4.0
+		IL_0139: ldelem.ref
+		IL_013a: castclass Modules.Process_Chdir_And_NextTick_Basics/Scope
+		IL_013f: ldftn object Modules.Process_Chdir_And_NextTick_Basics/ArrowFunction_L10C18::__js_call__(class Modules.Process_Chdir_And_NextTick_Basics/Scope, object)
+		IL_0145: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_014a: ldc.i4.1
+		IL_014b: newarr [System.Runtime]System.Object
+		IL_0150: dup
+		IL_0151: ldc.i4.0
+		IL_0152: ldloc.0
+		IL_0153: stelem.ref
+		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_015e: ldc.i4.0
+		IL_015f: conv.r8
+		IL_0160: ldstr ""
+		IL_0165: ldc.i4.0
+		IL_0166: ldc.i4.1
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0171: stloc.3
+		IL_0172: ldloc.2
+		IL_0173: ldstr "nextTick"
+		IL_0178: ldloc.3
+		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_017e: pop
+		IL_017f: ldloc.0
+		IL_0180: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Process_Chdir_And_NextTick_Basics/Scope::order
+		IL_0185: ldstr "sync"
+		IL_018a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+		IL_018f: pop
+		IL_0190: ldc.i4.1
+		IL_0191: newarr [System.Runtime]System.Object
+		IL_0196: dup
+		IL_0197: ldc.i4.0
+		IL_0198: ldloc.0
+		IL_0199: stelem.ref
+		IL_019a: ldc.i4.0
+		IL_019b: ldelem.ref
+		IL_019c: castclass Modules.Process_Chdir_And_NextTick_Basics/Scope
+		IL_01a1: ldftn object Modules.Process_Chdir_And_NextTick_Basics/ArrowFunction_L12C14::__js_call__(class Modules.Process_Chdir_And_NextTick_Basics/Scope, object)
+		IL_01a7: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01ac: ldc.i4.1
+		IL_01ad: newarr [System.Runtime]System.Object
+		IL_01b2: dup
+		IL_01b3: ldc.i4.0
+		IL_01b4: ldloc.0
+		IL_01b5: stelem.ref
+		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_01c0: ldc.i4.0
+		IL_01c1: conv.r8
+		IL_01c2: ldstr ""
+		IL_01c7: ldc.i4.0
+		IL_01c8: ldc.i4.1
+		IL_01c9: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_01d3: stloc.3
+		IL_01d4: ldloc.3
+		IL_01d5: ldc.i4.0
+		IL_01d6: newarr [System.Runtime]System.Object
+		IL_01db: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_01e0: pop
+		IL_01e1: ret
 	} // end of method Process_Chdir_And_NextTick_Basics::__js_module_init__
 
 } // end of class Modules.Process_Chdir_And_NextTick_Basics
@@ -342,7 +382,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227d
+		// Method begins at RVA 0x22e0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

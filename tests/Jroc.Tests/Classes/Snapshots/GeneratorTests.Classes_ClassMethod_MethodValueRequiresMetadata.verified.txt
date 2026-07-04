@@ -1,4 +1,4 @@
-// IL code: Classes_ClassMethod_MethodValueRequiresMetadata
+﻿// IL code: Classes_ClassMethod_MethodValueRequiresMetadata
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x220f
+				// Method begins at RVA 0x2226
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2218
+				// Method begins at RVA 0x222f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2221
+				// Method begins at RVA 0x2238
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -79,7 +79,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21ea
+			// Method begins at RVA 0x2201
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -95,7 +95,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21ff
+			// Method begins at RVA 0x2216
 			// Header size: 1
 			// Code size: 6 (0x6)
 			.maxstack 8
@@ -110,7 +110,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21f2
+			// Method begins at RVA 0x2209
 			// Header size: 1
 			// Code size: 12 (0xc)
 			.maxstack 8
@@ -130,7 +130,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2206
+			// Method begins at RVA 0x221d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -156,7 +156,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 398 (0x18e)
+		// Code size: 421 (0x1a5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Scope,
@@ -165,7 +165,8 @@
 			[3] class [System.Runtime]System.Type,
 			[4] object[],
 			[5] object,
-			[6] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
+			[6] class Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Scope::.ctor()
@@ -309,30 +310,37 @@
 		IL_0143: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_0148: ldloc.s 6
 		IL_014a: stloc.2
-		IL_014b: ldloc.2
-		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0151: stloc.s 5
-		IL_0153: ldloc.s 5
-		IL_0155: isinst Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
-		IL_015a: dup
-		IL_015b: brfalse IL_016c
+		IL_014b: ldstr "console"
+		IL_0150: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0155: stloc.s 5
+		IL_0157: ldloc.s 5
+		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_015e: stloc.s 5
+		IL_0160: ldloc.2
+		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0166: stloc.s 7
+		IL_0168: ldloc.s 7
+		IL_016a: isinst Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter
+		IL_016f: dup
+		IL_0170: brfalse IL_0181
 
-		IL_0160: callvirt instance object Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::getGreet()
-		IL_0165: stloc.s 5
-		IL_0167: br IL_017b
+		IL_0175: callvirt instance object Modules.Classes_ClassMethod_MethodValueRequiresMetadata/Greeter::getGreet()
+		IL_017a: stloc.s 7
+		IL_017c: br IL_0190
 
-		IL_016c: pop
-		IL_016d: ldloc.s 5
-		IL_016f: ldstr "getGreet"
-		IL_0174: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0179: stloc.s 5
+		IL_0181: pop
+		IL_0182: ldloc.s 7
+		IL_0184: ldstr "getGreet"
+		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_018e: stloc.s 7
 
-		IL_017b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0180: ldloc.s 5
-		IL_0182: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0187: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_018c: pop
-		IL_018d: ret
+		IL_0190: ldloc.s 5
+		IL_0192: ldstr "log"
+		IL_0197: ldloc.s 7
+		IL_0199: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01a3: pop
+		IL_01a4: ret
 	} // end of method Classes_ClassMethod_MethodValueRequiresMetadata::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_MethodValueRequiresMetadata
@@ -344,7 +352,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x222a
+		// Method begins at RVA 0x2241
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

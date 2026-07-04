@@ -1,4 +1,4 @@
-// IL code: Classes_ClassWithMethod_NoInstantiation
+﻿// IL code: Classes_ClassWithMethod_NoInstantiation
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x208f
+				// Method begins at RVA 0x20a2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2098
+				// Method begins at RVA 0x20ab
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2073
+			// Method begins at RVA 0x2086
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -75,7 +75,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x207b
+			// Method begins at RVA 0x208e
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -93,7 +93,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2086
+			// Method begins at RVA 0x2099
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -119,19 +119,27 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 23 (0x17)
+		// Code size: 42 (0x2a)
 		.maxstack 8
-		.locals (
-			[0] class Modules.Classes_ClassWithMethod_NoInstantiation/Scope
+		.locals init (
+			[0] class Modules.Classes_ClassWithMethod_NoInstantiation/Scope,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithMethod_NoInstantiation/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldstr "Classes_ClassWithMethod_NoInstantiation"
-		IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0015: pop
-		IL_0016: ret
+		IL_0006: ldstr "console"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0017: stloc.1
+		IL_0018: ldloc.1
+		IL_0019: ldstr "log"
+		IL_001e: ldstr "Classes_ClassWithMethod_NoInstantiation"
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0028: pop
+		IL_0029: ret
 	} // end of method Classes_ClassWithMethod_NoInstantiation::__js_module_init__
 
 } // end of class Modules.Classes_ClassWithMethod_NoInstantiation
@@ -143,7 +151,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a1
+		// Method begins at RVA 0x20b4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

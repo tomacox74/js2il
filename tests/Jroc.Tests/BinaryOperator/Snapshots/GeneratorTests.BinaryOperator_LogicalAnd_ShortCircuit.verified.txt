@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2124
+				// Method begins at RVA 0x2134
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20fc
 			// Header size: 12
 			// Code size: 35 (0x23)
 			.maxstack 8
@@ -82,7 +82,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211b
+			// Method begins at RVA 0x212b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -108,7 +108,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 160 (0xa0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope,
@@ -168,12 +168,19 @@
 
 		IL_0078: ldloc.s 6
 		IL_007a: stloc.2
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: ldloc.0
-		IL_0081: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008b: pop
-		IL_008c: ret
+		IL_007b: ldstr "console"
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0085: stloc.3
+		IL_0086: ldloc.3
+		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008c: stloc.3
+		IL_008d: ldloc.3
+		IL_008e: ldstr "log"
+		IL_0093: ldloc.0
+		IL_0094: ldfld object Modules.BinaryOperator_LogicalAnd_ShortCircuit/Scope::x
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_009e: pop
+		IL_009f: ret
 	} // end of method BinaryOperator_LogicalAnd_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LogicalAnd_ShortCircuit
@@ -185,7 +192,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212d
+		// Method begins at RVA 0x213d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

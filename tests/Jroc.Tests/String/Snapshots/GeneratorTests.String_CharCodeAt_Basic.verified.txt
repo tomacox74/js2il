@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c5
+			// Method begins at RVA 0x20eb
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,42 +40,57 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 143 (0x8f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_CharCodeAt_Basic/Scope,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.String_CharCodeAt_Basic/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldstr "A"
-		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0006: ldstr "console"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
 		IL_0010: stloc.1
 		IL_0011: ldloc.1
-		IL_0012: ldstr "charCodeAt"
-		IL_0017: ldc.r8 0.0
-		IL_0020: box [System.Runtime]System.Double
-		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_002a: stloc.1
-		IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0030: ldloc.1
-		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0036: pop
-		IL_0037: ldstr "ABC"
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0041: stloc.1
-		IL_0042: ldloc.1
-		IL_0043: ldstr "charCodeAt"
-		IL_0048: ldc.r8 2
-		IL_0051: box [System.Runtime]System.Double
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_005b: stloc.1
-		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0061: ldloc.1
-		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0067: pop
-		IL_0068: ret
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0017: stloc.1
+		IL_0018: ldstr "A"
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0022: stloc.2
+		IL_0023: ldloc.2
+		IL_0024: ldstr "charCodeAt"
+		IL_0029: ldc.r8 0.0
+		IL_0032: box [System.Runtime]System.Double
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_003c: stloc.2
+		IL_003d: ldloc.1
+		IL_003e: ldstr "log"
+		IL_0043: ldloc.2
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0049: pop
+		IL_004a: ldstr "console"
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0054: stloc.2
+		IL_0055: ldloc.2
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005b: stloc.2
+		IL_005c: ldstr "ABC"
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0066: stloc.1
+		IL_0067: ldloc.1
+		IL_0068: ldstr "charCodeAt"
+		IL_006d: ldc.r8 2
+		IL_0076: box [System.Runtime]System.Double
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0080: stloc.1
+		IL_0081: ldloc.2
+		IL_0082: ldstr "log"
+		IL_0087: ldloc.1
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_008d: pop
+		IL_008e: ret
 	} // end of method String_CharCodeAt_Basic::__js_module_init__
 
 } // end of class Modules.String_CharCodeAt_Basic
@@ -87,7 +102,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ce
+		// Method begins at RVA 0x20f4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

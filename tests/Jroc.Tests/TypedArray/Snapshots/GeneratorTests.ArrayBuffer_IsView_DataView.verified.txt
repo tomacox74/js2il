@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x213d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 156 (0x9c)
+		// Code size: 225 (0xe1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrayBuffer_IsView_DataView/Scope,
@@ -50,8 +50,9 @@
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
 			[5] class [JavaScriptRuntime]JavaScriptRuntime.DataView,
 			[6] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
-			[7] bool,
-			[8] object
+			[7] object,
+			[8] bool,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrayBuffer_IsView_DataView/Scope::.ctor()
@@ -73,37 +74,58 @@
 		IL_003c: stloc.s 6
 		IL_003e: ldloc.s 6
 		IL_0040: stloc.3
-		IL_0041: ldloc.1
-		IL_0042: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
-		IL_0047: stloc.s 7
-		IL_0049: ldloc.s 7
-		IL_004b: box [System.Runtime]System.Boolean
-		IL_0050: stloc.s 8
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldloc.s 8
-		IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005e: pop
-		IL_005f: ldloc.2
-		IL_0060: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
-		IL_0065: stloc.s 7
+		IL_0041: ldstr "console"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004b: stloc.s 7
+		IL_004d: ldloc.s 7
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0054: stloc.s 7
+		IL_0056: ldloc.1
+		IL_0057: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
+		IL_005c: stloc.s 8
+		IL_005e: ldloc.s 8
+		IL_0060: box [System.Runtime]System.Boolean
+		IL_0065: stloc.s 9
 		IL_0067: ldloc.s 7
-		IL_0069: box [System.Runtime]System.Boolean
-		IL_006e: stloc.s 8
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0075: ldloc.s 8
-		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007c: pop
-		IL_007d: ldloc.3
-		IL_007e: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
-		IL_0083: stloc.s 7
-		IL_0085: ldloc.s 7
-		IL_0087: box [System.Runtime]System.Boolean
-		IL_008c: stloc.s 8
-		IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0069: ldstr "log"
+		IL_006e: ldloc.s 9
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0075: pop
+		IL_0076: ldstr "console"
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0080: stloc.s 7
+		IL_0082: ldloc.s 7
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0089: stloc.s 7
+		IL_008b: ldloc.2
+		IL_008c: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
+		IL_0091: stloc.s 8
 		IL_0093: ldloc.s 8
-		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009a: pop
-		IL_009b: ret
+		IL_0095: box [System.Runtime]System.Boolean
+		IL_009a: stloc.s 9
+		IL_009c: ldloc.s 7
+		IL_009e: ldstr "log"
+		IL_00a3: ldloc.s 9
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00aa: pop
+		IL_00ab: ldstr "console"
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b5: stloc.s 7
+		IL_00b7: ldloc.s 7
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00be: stloc.s 7
+		IL_00c0: ldloc.3
+		IL_00c1: call bool [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer::isView(object)
+		IL_00c6: stloc.s 8
+		IL_00c8: ldloc.s 8
+		IL_00ca: box [System.Runtime]System.Boolean
+		IL_00cf: stloc.s 9
+		IL_00d1: ldloc.s 7
+		IL_00d3: ldstr "log"
+		IL_00d8: ldloc.s 9
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00df: pop
+		IL_00e0: ret
 	} // end of method ArrayBuffer_IsView_DataView::__js_module_init__
 
 } // end of class Modules.ArrayBuffer_IsView_DataView
@@ -115,7 +137,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2101
+		// Method begins at RVA 0x2146
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

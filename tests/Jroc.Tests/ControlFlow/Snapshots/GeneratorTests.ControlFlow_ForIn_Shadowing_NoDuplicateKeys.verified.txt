@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2262
+				// Method begins at RVA 0x2276
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226b
+				// Method begins at RVA 0x227f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -62,7 +62,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21a2
+			// Method begins at RVA 0x21b9
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -88,7 +88,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2274
+				// Method begins at RVA 0x2288
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -108,7 +108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x227d
+				// Method begins at RVA 0x2291
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -133,7 +133,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21bc
+			// Method begins at RVA 0x21d0
 			// Header size: 12
 			// Code size: 145 (0x91)
 			.maxstack 8
@@ -188,7 +188,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2259
+			// Method begins at RVA 0x226d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -212,7 +212,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x228f
+				// Method begins at RVA 0x22a3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -230,7 +230,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2286
+			// Method begins at RVA 0x229a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -256,7 +256,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 326 (0x146)
+		// Code size: 349 (0x15d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys/Scope,
@@ -368,20 +368,27 @@
 		IL_0119: ldloc.s 4
 		IL_011b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::sort()
 		IL_0120: pop
-		IL_0121: ldloc.s 4
-		IL_0123: ldc.i4.1
-		IL_0124: newarr [System.Runtime]System.Object
-		IL_0129: dup
-		IL_012a: ldc.i4.0
-		IL_012b: ldstr ","
-		IL_0130: stelem.ref
-		IL_0131: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0136: stloc.s 12
-		IL_0138: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_013d: ldloc.s 12
-		IL_013f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0144: pop
-		IL_0145: ret
+		IL_0121: ldstr "console"
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_012b: stloc.s 10
+		IL_012d: ldloc.s 10
+		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0134: stloc.s 10
+		IL_0136: ldloc.s 4
+		IL_0138: ldc.i4.1
+		IL_0139: newarr [System.Runtime]System.Object
+		IL_013e: dup
+		IL_013f: ldc.i4.0
+		IL_0140: ldstr ","
+		IL_0145: stelem.ref
+		IL_0146: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_014b: stloc.s 12
+		IL_014d: ldloc.s 10
+		IL_014f: ldstr "log"
+		IL_0154: ldloc.s 12
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_015b: pop
+		IL_015c: ret
 	} // end of method ControlFlow_ForIn_Shadowing_NoDuplicateKeys::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForIn_Shadowing_NoDuplicateKeys
@@ -393,7 +400,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2298
+		// Method begins at RVA 0x22ac
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

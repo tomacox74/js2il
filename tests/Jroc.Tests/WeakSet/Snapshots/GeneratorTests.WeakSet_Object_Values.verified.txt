@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210d
+			// Method begins at RVA 0x213b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 177 (0xb1)
+		// Code size: 223 (0xdf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakSet_Object_Values/Scope,
@@ -48,7 +48,8 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.WeakSet,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.WeakSet_Object_Values/Scope::.ctor()
@@ -85,31 +86,45 @@
 		IL_0061: ldloc.3
 		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0067: pop
-		IL_0068: ldloc.1
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006e: stloc.s 5
-		IL_0070: ldloc.s 5
-		IL_0072: ldstr "has"
-		IL_0077: ldloc.2
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_007d: stloc.s 5
-		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0084: ldloc.s 5
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008b: pop
-		IL_008c: ldloc.1
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0092: stloc.s 5
+		IL_0068: ldstr "console"
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0072: stloc.s 5
+		IL_0074: ldloc.s 5
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007b: stloc.s 5
+		IL_007d: ldloc.1
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0083: stloc.s 6
+		IL_0085: ldloc.s 6
+		IL_0087: ldstr "has"
+		IL_008c: ldloc.2
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0092: stloc.s 6
 		IL_0094: ldloc.s 5
-		IL_0096: ldstr "has"
-		IL_009b: ldloc.3
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a1: stloc.s 5
-		IL_00a3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a8: ldloc.s 5
-		IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00af: pop
-		IL_00b0: ret
+		IL_0096: ldstr "log"
+		IL_009b: ldloc.s 6
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a2: pop
+		IL_00a3: ldstr "console"
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ad: stloc.s 6
+		IL_00af: ldloc.s 6
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b6: stloc.s 6
+		IL_00b8: ldloc.1
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00be: stloc.s 5
+		IL_00c0: ldloc.s 5
+		IL_00c2: ldstr "has"
+		IL_00c7: ldloc.3
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00cd: stloc.s 5
+		IL_00cf: ldloc.s 6
+		IL_00d1: ldstr "log"
+		IL_00d6: ldloc.s 5
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00dd: pop
+		IL_00de: ret
 	} // end of method WeakSet_Object_Values::__js_module_init__
 
 } // end of class Modules.WeakSet_Object_Values
@@ -121,7 +136,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2116
+		// Method begins at RVA 0x2144
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

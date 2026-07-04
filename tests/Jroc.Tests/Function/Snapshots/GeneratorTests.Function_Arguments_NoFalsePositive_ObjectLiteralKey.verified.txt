@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e7
+				// Method begins at RVA 0x20fa
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,10 +46,11 @@
 			)
 			// Method begins at RVA 0x20a0
 			// Header size: 12
-			// Code size: 50 (0x32)
+			// Code size: 69 (0x45)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[0] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+				[1] object
 			)
 
 			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
@@ -58,14 +59,21 @@
 			IL_000b: ldc.r8 123
 			IL_0014: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 			IL_0019: stloc.0
-			IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001f: ldloc.0
-			IL_0020: ldstr "arguments"
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002f: pop
-			IL_0030: ldnull
-			IL_0031: ret
+			IL_001a: ldstr "console"
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0024: stloc.1
+			IL_0025: ldloc.1
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_002b: stloc.1
+			IL_002c: ldloc.1
+			IL_002d: ldstr "log"
+			IL_0032: ldloc.0
+			IL_0033: ldstr "arguments"
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0042: pop
+			IL_0043: ldnull
+			IL_0044: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -83,7 +91,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20de
+			// Method begins at RVA 0x20f1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -156,7 +164,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f0
+		// Method begins at RVA 0x2103
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

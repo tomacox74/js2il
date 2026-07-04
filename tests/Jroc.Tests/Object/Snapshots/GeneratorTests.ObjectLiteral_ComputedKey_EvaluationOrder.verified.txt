@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222f
+				// Method begins at RVA 0x2273
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x2188
+			// Method begins at RVA 0x21cc
 			// Header size: 12
 			// Code size: 30 (0x1e)
 			.maxstack 8
@@ -77,7 +77,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2238
+				// Method begins at RVA 0x227c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -103,7 +103,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21b4
+			// Method begins at RVA 0x21f8
 			// Header size: 12
 			// Code size: 39 (0x27)
 			.maxstack 8
@@ -137,7 +137,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2241
+				// Method begins at RVA 0x2285
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -163,7 +163,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x21e8
+			// Method begins at RVA 0x222c
 			// Header size: 12
 			// Code size: 50 (0x32)
 			.maxstack 8
@@ -207,7 +207,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2226
+			// Method begins at RVA 0x226a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -233,7 +233,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 297 (0x129)
+		// Code size: 366 (0x16e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope,
@@ -339,24 +339,45 @@
 		IL_00e4: pop
 		IL_00e5: ldloc.s 7
 		IL_00e7: stloc.s 4
-		IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ee: ldloc.0
-		IL_00ef: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
-		IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f9: pop
-		IL_00fa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ff: ldloc.s 4
-		IL_0101: ldstr "k"
-		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_010b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
+		IL_00e9: ldstr "console"
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00f3: stloc.s 6
+		IL_00f5: ldloc.s 6
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fc: stloc.s 6
+		IL_00fe: ldloc.s 6
+		IL_0100: ldstr "log"
+		IL_0105: ldloc.0
+		IL_0106: ldfld object Modules.ObjectLiteral_ComputedKey_EvaluationOrder/Scope::log
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0110: pop
-		IL_0111: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0116: ldloc.s 4
-		IL_0118: ldstr "a"
-		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0127: pop
-		IL_0128: ret
+		IL_0111: ldstr "console"
+		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_011b: stloc.s 6
+		IL_011d: ldloc.s 6
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0124: stloc.s 6
+		IL_0126: ldloc.s 6
+		IL_0128: ldstr "log"
+		IL_012d: ldloc.s 4
+		IL_012f: ldstr "k"
+		IL_0134: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_013e: pop
+		IL_013f: ldstr "console"
+		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0149: stloc.s 6
+		IL_014b: ldloc.s 6
+		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0152: stloc.s 6
+		IL_0154: ldloc.s 6
+		IL_0156: ldstr "log"
+		IL_015b: ldloc.s 4
+		IL_015d: ldstr "a"
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_016c: pop
+		IL_016d: ret
 	} // end of method ObjectLiteral_ComputedKey_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_ComputedKey_EvaluationOrder
@@ -368,7 +389,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224a
+		// Method begins at RVA 0x228e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

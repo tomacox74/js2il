@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x213a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 176 (0xb0)
+		// Code size: 222 (0xde)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic/Scope,
@@ -50,7 +50,8 @@
 			[4] object,
 			[5] object,
 			[6] object,
-			[7] bool
+			[7] object,
+			[8] bool
 		)
 
 		IL_0000: newobj instance void Modules.ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic/Scope::.ctor()
@@ -77,41 +78,55 @@
 		IL_0042: stloc.s 6
 		IL_0044: ldloc.s 6
 		IL_0046: stloc.s 4
-		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004d: ldloc.s 4
-		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0054: pop
-		IL_0055: ldc.i4.0
-		IL_0056: stloc.s 7
-		IL_0058: ldloc.s 7
-		IL_005a: stloc.1
-		IL_005b: ldloc.1
-		IL_005c: brfalse IL_0076
+		IL_0048: ldstr "console"
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0052: stloc.s 7
+		IL_0054: ldloc.s 7
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005b: stloc.s 7
+		IL_005d: ldloc.s 7
+		IL_005f: ldstr "log"
+		IL_0064: ldloc.s 4
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006b: pop
+		IL_006c: ldc.i4.0
+		IL_006d: stloc.s 8
+		IL_006f: ldloc.s 8
+		IL_0071: stloc.1
+		IL_0072: ldloc.1
+		IL_0073: brfalse IL_008d
 
-		IL_0061: ldc.r8 10
-		IL_006a: box [System.Runtime]System.Double
-		IL_006f: stloc.s 5
-		IL_0071: br IL_0086
+		IL_0078: ldc.r8 10
+		IL_0081: box [System.Runtime]System.Double
+		IL_0086: stloc.s 5
+		IL_0088: br IL_009d
 
-		IL_0076: ldc.r8 20
-		IL_007f: box [System.Runtime]System.Double
-		IL_0084: stloc.s 5
+		IL_008d: ldc.r8 20
+		IL_0096: box [System.Runtime]System.Double
+		IL_009b: stloc.s 5
 
-		IL_0086: ldloc.s 5
-		IL_0088: stloc.s 6
-		IL_008a: ldloc.s 6
-		IL_008c: stloc.3
-		IL_008d: ldloc.3
-		IL_008e: ldc.r8 5
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_009c: stloc.s 6
-		IL_009e: ldloc.s 6
-		IL_00a0: stloc.s 4
-		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a7: ldloc.s 4
-		IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00ae: pop
-		IL_00af: ret
+		IL_009d: ldloc.s 5
+		IL_009f: stloc.s 6
+		IL_00a1: ldloc.s 6
+		IL_00a3: stloc.3
+		IL_00a4: ldloc.3
+		IL_00a5: ldc.r8 5
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00b3: stloc.s 6
+		IL_00b5: ldloc.s 6
+		IL_00b7: stloc.s 4
+		IL_00b9: ldstr "console"
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c3: stloc.s 7
+		IL_00c5: ldloc.s 7
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00cc: stloc.s 7
+		IL_00ce: ldloc.s 7
+		IL_00d0: ldstr "log"
+		IL_00d5: ldloc.s 4
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00dc: pop
+		IL_00dd: ret
 	} // end of method ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic::__js_module_init__
 
 } // end of class Modules.ShapeCoverage_JoinMaterialization_TernaryFeedsArithmetic
@@ -123,7 +138,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2115
+		// Method begins at RVA 0x2143
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

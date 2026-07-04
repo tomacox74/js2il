@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bc
+				// Method begins at RVA 0x2218
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b3
+			// Method begins at RVA 0x220f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 343 (0x157)
+		// Code size: 435 (0x1b3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_LeftShiftBit31/Scope,
@@ -75,7 +75,8 @@
 			[7] float64,
 			[8] float64,
 			[9] object,
-			[10] float64
+			[10] object,
+			[11] float64
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_LeftShiftBit31/Scope::.ctor()
@@ -89,115 +90,143 @@
 		IL_001c: stloc.s 8
 		IL_001e: ldloc.s 8
 		IL_0020: stloc.1
-		IL_0021: ldloc.1
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: stloc.s 9
-		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002e: ldstr "mask31 is"
-		IL_0033: ldloc.s 9
-		IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_003a: pop
-		IL_003b: ldc.r8 0.0
-		IL_0044: stloc.2
-		IL_0045: ldc.r8 1
-		IL_004e: conv.i4
-		IL_004f: ldc.r8 31
-		IL_0058: conv.i4
-		IL_0059: shl
-		IL_005a: conv.r8
-		IL_005b: stloc.s 8
-		IL_005d: ldloc.2
-		IL_005e: conv.i4
-		IL_005f: ldloc.s 8
-		IL_0061: conv.i4
-		IL_0062: or
-		IL_0063: conv.r8
-		IL_0064: stloc.s 8
-		IL_0066: ldloc.s 8
-		IL_0068: stloc.2
-		IL_0069: ldloc.2
-		IL_006a: box [System.Runtime]System.Double
-		IL_006f: stloc.s 9
-		IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0076: ldstr "value after OR with bit 31:"
-		IL_007b: ldloc.s 9
-		IL_007d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0082: pop
-		IL_0083: ldc.r8 0.0
-		IL_008c: stloc.3
-		IL_008d: ldc.r8 0.0
-		IL_0096: stloc.s 4
-		// loop start (head: IL_0098)
-			IL_0098: ldloc.s 4
-			IL_009a: ldc.r8 32
-			IL_00a3: clt
-			IL_00a5: brfalse IL_00e1
+		IL_0021: ldstr "console"
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002b: stloc.s 9
+		IL_002d: ldloc.s 9
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0034: stloc.s 9
+		IL_0036: ldloc.1
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: stloc.s 10
+		IL_003e: ldloc.s 9
+		IL_0040: ldstr "log"
+		IL_0045: ldstr "mask31 is"
+		IL_004a: ldloc.s 10
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0051: pop
+		IL_0052: ldc.r8 0.0
+		IL_005b: stloc.2
+		IL_005c: ldc.r8 1
+		IL_0065: conv.i4
+		IL_0066: ldc.r8 31
+		IL_006f: conv.i4
+		IL_0070: shl
+		IL_0071: conv.r8
+		IL_0072: stloc.s 8
+		IL_0074: ldloc.2
+		IL_0075: conv.i4
+		IL_0076: ldloc.s 8
+		IL_0078: conv.i4
+		IL_0079: or
+		IL_007a: conv.r8
+		IL_007b: stloc.s 8
+		IL_007d: ldloc.s 8
+		IL_007f: stloc.2
+		IL_0080: ldstr "console"
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008a: stloc.s 9
+		IL_008c: ldloc.s 9
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0093: stloc.s 9
+		IL_0095: ldloc.2
+		IL_0096: box [System.Runtime]System.Double
+		IL_009b: stloc.s 10
+		IL_009d: ldloc.s 9
+		IL_009f: ldstr "log"
+		IL_00a4: ldstr "value after OR with bit 31:"
+		IL_00a9: ldloc.s 10
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00b0: pop
+		IL_00b1: ldc.r8 0.0
+		IL_00ba: stloc.3
+		IL_00bb: ldc.r8 0.0
+		IL_00c4: stloc.s 4
+		// loop start (head: IL_00c6)
+			IL_00c6: ldloc.s 4
+			IL_00c8: ldc.r8 32
+			IL_00d1: clt
+			IL_00d3: brfalse IL_010f
 
-			IL_00aa: newobj instance void Modules.BinaryOperator_LeftShiftBit31/Scope/Block_L15C29::.ctor()
-			IL_00af: stloc.s 5
-			IL_00b1: ldc.r8 1
-			IL_00ba: conv.i4
-			IL_00bb: ldloc.s 4
-			IL_00bd: conv.i4
-			IL_00be: shl
-			IL_00bf: conv.r8
-			IL_00c0: stloc.s 8
-			IL_00c2: ldloc.3
-			IL_00c3: conv.i4
-			IL_00c4: ldloc.s 8
-			IL_00c6: conv.i4
-			IL_00c7: or
-			IL_00c8: conv.r8
-			IL_00c9: stloc.s 8
-			IL_00cb: ldloc.s 8
-			IL_00cd: stloc.3
-			IL_00ce: ldloc.s 4
-			IL_00d0: ldc.r8 1
-			IL_00d9: add
-			IL_00da: stloc.s 4
-			IL_00dc: br IL_0098
+			IL_00d8: newobj instance void Modules.BinaryOperator_LeftShiftBit31/Scope/Block_L15C29::.ctor()
+			IL_00dd: stloc.s 5
+			IL_00df: ldc.r8 1
+			IL_00e8: conv.i4
+			IL_00e9: ldloc.s 4
+			IL_00eb: conv.i4
+			IL_00ec: shl
+			IL_00ed: conv.r8
+			IL_00ee: stloc.s 8
+			IL_00f0: ldloc.3
+			IL_00f1: conv.i4
+			IL_00f2: ldloc.s 8
+			IL_00f4: conv.i4
+			IL_00f5: or
+			IL_00f6: conv.r8
+			IL_00f7: stloc.s 8
+			IL_00f9: ldloc.s 8
+			IL_00fb: stloc.3
+			IL_00fc: ldloc.s 4
+			IL_00fe: ldc.r8 1
+			IL_0107: add
+			IL_0108: stloc.s 4
+			IL_010a: br IL_00c6
 		// end loop
 
-		IL_00e1: ldloc.3
-		IL_00e2: box [System.Runtime]System.Double
-		IL_00e7: stloc.s 9
-		IL_00e9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ee: ldstr "all 32 bits set:"
-		IL_00f3: ldloc.s 9
-		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00fa: pop
-		IL_00fb: ldc.r8 2147483648
-		IL_0104: neg
-		IL_0105: box [System.Runtime]System.Double
-		IL_010a: stloc.s 6
-		IL_010c: ldc.r8 1
-		IL_0115: conv.i4
-		IL_0116: ldc.r8 31
-		IL_011f: conv.i4
-		IL_0120: shl
-		IL_0121: conv.r8
-		IL_0122: stloc.s 8
-		IL_0124: ldloc.s 6
-		IL_0126: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_012b: stloc.s 10
-		IL_012d: ldloc.s 10
-		IL_012f: conv.i4
-		IL_0130: ldloc.s 8
-		IL_0132: conv.i4
-		IL_0133: and
-		IL_0134: conv.r8
-		IL_0135: stloc.s 8
-		IL_0137: ldloc.s 8
-		IL_0139: stloc.s 7
-		IL_013b: ldloc.s 7
-		IL_013d: box [System.Runtime]System.Double
-		IL_0142: stloc.s 9
-		IL_0144: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0149: ldstr "AND result with bit 31:"
-		IL_014e: ldloc.s 9
-		IL_0150: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0155: pop
-		IL_0156: ret
+		IL_010f: ldstr "console"
+		IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0119: stloc.s 9
+		IL_011b: ldloc.s 9
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0122: stloc.s 9
+		IL_0124: ldloc.3
+		IL_0125: box [System.Runtime]System.Double
+		IL_012a: stloc.s 10
+		IL_012c: ldloc.s 9
+		IL_012e: ldstr "log"
+		IL_0133: ldstr "all 32 bits set:"
+		IL_0138: ldloc.s 10
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_013f: pop
+		IL_0140: ldc.r8 2147483648
+		IL_0149: neg
+		IL_014a: box [System.Runtime]System.Double
+		IL_014f: stloc.s 6
+		IL_0151: ldc.r8 1
+		IL_015a: conv.i4
+		IL_015b: ldc.r8 31
+		IL_0164: conv.i4
+		IL_0165: shl
+		IL_0166: conv.r8
+		IL_0167: stloc.s 8
+		IL_0169: ldloc.s 6
+		IL_016b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0170: stloc.s 11
+		IL_0172: ldloc.s 11
+		IL_0174: conv.i4
+		IL_0175: ldloc.s 8
+		IL_0177: conv.i4
+		IL_0178: and
+		IL_0179: conv.r8
+		IL_017a: stloc.s 8
+		IL_017c: ldloc.s 8
+		IL_017e: stloc.s 7
+		IL_0180: ldstr "console"
+		IL_0185: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_018a: stloc.s 9
+		IL_018c: ldloc.s 9
+		IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0193: stloc.s 9
+		IL_0195: ldloc.s 7
+		IL_0197: box [System.Runtime]System.Double
+		IL_019c: stloc.s 10
+		IL_019e: ldloc.s 9
+		IL_01a0: ldstr "log"
+		IL_01a5: ldstr "AND result with bit 31:"
+		IL_01aa: ldloc.s 10
+		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01b1: pop
+		IL_01b2: ret
 	} // end of method BinaryOperator_LeftShiftBit31::__js_module_init__
 
 } // end of class Modules.BinaryOperator_LeftShiftBit31
@@ -209,7 +238,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c5
+		// Method begins at RVA 0x2221
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

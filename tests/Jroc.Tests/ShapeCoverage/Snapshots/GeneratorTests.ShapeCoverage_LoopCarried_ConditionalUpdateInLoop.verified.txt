@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2126
+			// Method begins at RVA 0x213d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2141
+					// Method begins at RVA 0x2158
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2138
+				// Method begins at RVA 0x214f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -78,7 +78,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212f
+			// Method begins at RVA 0x2146
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -104,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 202 (0xca)
+		// Code size: 225 (0xe1)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ShapeCoverage_LoopCarried_ConditionalUpdateInLoop/Scope,
@@ -114,7 +114,8 @@
 			[4] class Modules.ShapeCoverage_LoopCarried_ConditionalUpdateInLoop/Scope_For_L7C5/Block_L7C28/Block_L8C19,
 			[5] float64,
 			[6] float64,
-			[7] object
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.ShapeCoverage_LoopCarried_ConditionalUpdateInLoop/Scope::.ctor()
@@ -181,11 +182,18 @@
 			IL_00b8: br IL_0024
 		// end loop
 
-		IL_00bd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c2: ldloc.1
-		IL_00c3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c8: pop
-		IL_00c9: ret
+		IL_00bd: ldstr "console"
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c7: stloc.s 8
+		IL_00c9: ldloc.s 8
+		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d0: stloc.s 8
+		IL_00d2: ldloc.s 8
+		IL_00d4: ldstr "log"
+		IL_00d9: ldloc.1
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00df: pop
+		IL_00e0: ret
 	} // end of method ShapeCoverage_LoopCarried_ConditionalUpdateInLoop::__js_module_init__
 
 } // end of class Modules.ShapeCoverage_LoopCarried_ConditionalUpdateInLoop
@@ -197,7 +205,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214a
+		// Method begins at RVA 0x2161
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

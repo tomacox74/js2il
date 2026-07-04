@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x229f
+				// Method begins at RVA 0x22c6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -52,11 +52,12 @@
 			)
 			// Method begins at RVA 0x2148
 			// Header size: 12
-			// Code size: 72 (0x48)
+			// Code size: 91 (0x5b)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
 			IL_0000: ldarg.1
@@ -79,13 +80,20 @@
 			IL_002e: ldstr "b"
 			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 			IL_0038: stloc.1
-			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003e: ldloc.0
-			IL_003f: ldloc.1
-			IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0045: pop
-			IL_0046: ldnull
-			IL_0047: ret
+			IL_0039: ldstr "console"
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0043: stloc.2
+			IL_0044: ldloc.2
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004a: stloc.2
+			IL_004b: ldloc.2
+			IL_004c: ldstr "log"
+			IL_0051: ldloc.0
+			IL_0052: ldloc.1
+			IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0058: pop
+			IL_0059: ldnull
+			IL_005a: ret
 		} // end of method show::__js_call__
 
 	} // end of class show
@@ -111,7 +119,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22b1
+					// Method begins at RVA 0x22d8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -134,7 +142,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22a8
+				// Method begins at RVA 0x22cf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -158,9 +166,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x219c
+			// Method begins at RVA 0x21b0
 			// Header size: 12
-			// Code size: 238 (0xee)
+			// Code size: 257 (0x101)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -169,9 +177,8 @@
 				[3] class Modules.Function_ParameterDestructuring_Object/config/Scope/Block_L10C67,
 				[4] object,
 				[5] object,
-				[6] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[7] bool,
-				[8] object
+				[6] bool,
+				[7] object
 			)
 
 			IL_0000: ldarg.1
@@ -232,39 +239,44 @@
 
 			IL_0091: newobj instance void Modules.Function_ParameterDestructuring_Object/config/Scope/Block_L10C67::.ctor()
 			IL_0096: stloc.3
-			IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_009c: stloc.s 6
-			IL_009e: ldloc.2
-			IL_009f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_00a4: stloc.s 7
-			IL_00a6: ldloc.s 7
-			IL_00a8: brfalse IL_00b9
+			IL_0097: ldstr "console"
+			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a1: stloc.s 5
+			IL_00a3: ldloc.s 5
+			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00aa: stloc.s 5
+			IL_00ac: ldloc.2
+			IL_00ad: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_00b2: stloc.s 6
+			IL_00b4: ldloc.s 6
+			IL_00b6: brfalse IL_00c7
 
-			IL_00ad: ldstr "https://"
-			IL_00b2: stloc.s 4
-			IL_00b4: br IL_00c0
+			IL_00bb: ldstr "https://"
+			IL_00c0: stloc.s 4
+			IL_00c2: br IL_00ce
 
-			IL_00b9: ldstr "http://"
-			IL_00be: stloc.s 4
+			IL_00c7: ldstr "http://"
+			IL_00cc: stloc.s 4
 
-			IL_00c0: ldloc.s 4
-			IL_00c2: ldloc.0
-			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00c8: stloc.s 8
-			IL_00ca: ldloc.s 8
-			IL_00cc: ldstr ":"
+			IL_00ce: ldloc.s 4
+			IL_00d0: ldloc.0
 			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00d6: stloc.s 8
-			IL_00d8: ldloc.s 8
-			IL_00da: ldloc.1
-			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00e0: stloc.s 8
-			IL_00e2: ldloc.s 6
-			IL_00e4: ldloc.s 8
-			IL_00e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00eb: pop
-			IL_00ec: ldnull
-			IL_00ed: ret
+			IL_00d6: stloc.s 7
+			IL_00d8: ldloc.s 7
+			IL_00da: ldstr ":"
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00e4: stloc.s 7
+			IL_00e6: ldloc.s 7
+			IL_00e8: ldloc.1
+			IL_00e9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00ee: stloc.s 7
+			IL_00f0: ldloc.s 5
+			IL_00f2: ldstr "log"
+			IL_00f7: ldloc.s 7
+			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00fe: pop
+			IL_00ff: ldnull
+			IL_0100: ret
 		} // end of method config::__js_call__
 
 	} // end of class config
@@ -285,7 +297,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2296
+			// Method begins at RVA 0x22bd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -407,7 +419,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ba
+		// Method begins at RVA 0x22e1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

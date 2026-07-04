@@ -1,4 +1,4 @@
-// IL code: Classes_ClassStaticBlock_DeclarationOrder
+﻿// IL code: Classes_ClassStaticBlock_DeclarationOrder
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2172
+				// Method begins at RVA 0x21b2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2140
+			// Method begins at RVA 0x2180
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -67,7 +67,7 @@
 		.method private hidebysig specialname rtspecialname static 
 			void .cctor () cil managed 
 		{
-			// Method begins at RVA 0x215c
+			// Method begins at RVA 0x219c
 			// Header size: 1
 			// Code size: 1 (0x1)
 			.maxstack 8
@@ -91,7 +91,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x215e
+			// Method begins at RVA 0x219e
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -120,7 +120,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 225 (0xe1)
+		// Code size: 290 (0x122)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassStaticBlock_DeclarationOrder/Scope,
@@ -169,37 +169,58 @@
 		IL_0077: ldc.i4.1
 		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
 		IL_007d: pop
-		IL_007e: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_0083: stloc.3
-		IL_0084: ldstr "block:"
+		IL_007e: ldstr "console"
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0088: stloc.3
 		IL_0089: ldloc.3
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_008f: stloc.s 5
-		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0096: ldloc.s 5
-		IL_0098: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009d: pop
-		IL_009e: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_00a3: stloc.3
-		IL_00a4: ldloc.3
-		IL_00a5: ldc.r8 3
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-		IL_00b3: stloc.s 5
-		IL_00b5: ldloc.s 5
-		IL_00b7: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-		IL_00bc: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
-		IL_00c1: stloc.3
-		IL_00c2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c7: ldloc.3
-		IL_00c8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cd: pop
-		IL_00ce: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
-		IL_00d3: stloc.3
-		IL_00d4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d9: ldloc.3
-		IL_00da: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00df: pop
-		IL_00e0: ret
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008f: stloc.3
+		IL_0090: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_0095: stloc.s 4
+		IL_0097: ldstr "block:"
+		IL_009c: ldloc.s 4
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00a3: stloc.s 5
+		IL_00a5: ldloc.3
+		IL_00a6: ldstr "log"
+		IL_00ab: ldloc.s 5
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b2: pop
+		IL_00b3: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_00b8: stloc.3
+		IL_00b9: ldloc.3
+		IL_00ba: ldc.r8 3
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_00c8: stloc.s 5
+		IL_00ca: ldloc.s 5
+		IL_00cc: stsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
+		IL_00d1: ldstr "console"
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00db: stloc.3
+		IL_00dc: ldloc.3
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00e2: stloc.3
+		IL_00e3: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::'value'
+		IL_00e8: stloc.s 4
+		IL_00ea: ldloc.3
+		IL_00eb: ldstr "log"
+		IL_00f0: ldloc.s 4
+		IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f7: pop
+		IL_00f8: ldstr "console"
+		IL_00fd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0102: stloc.s 4
+		IL_0104: ldloc.s 4
+		IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010b: stloc.s 4
+		IL_010d: ldsfld object Modules.Classes_ClassStaticBlock_DeclarationOrder/Example::after
+		IL_0112: stloc.3
+		IL_0113: ldloc.s 4
+		IL_0115: ldstr "log"
+		IL_011a: ldloc.3
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0120: pop
+		IL_0121: ret
 	} // end of method Classes_ClassStaticBlock_DeclarationOrder::__js_module_init__
 
 } // end of class Modules.Classes_ClassStaticBlock_DeclarationOrder
@@ -211,7 +232,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217b
+		// Method begins at RVA 0x21bb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

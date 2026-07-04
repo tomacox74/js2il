@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2138
+			// Method begins at RVA 0x217d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 220 (0xdc)
+		// Code size: 289 (0x121)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Hypot_Infinity_NaN/Scope,
@@ -48,7 +48,8 @@
 			[2] float64,
 			[3] float64,
 			[4] float64,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_Hypot_Infinity_NaN/Scope::.ctor()
@@ -101,28 +102,49 @@
 		IL_0097: stloc.s 4
 		IL_0099: ldloc.s 4
 		IL_009b: stloc.3
-		IL_009c: ldloc.1
-		IL_009d: box [System.Runtime]System.Double
-		IL_00a2: stloc.s 5
-		IL_00a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a9: ldloc.s 5
-		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00b0: pop
-		IL_00b1: ldloc.2
+		IL_009c: ldstr "console"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a6: stloc.s 5
+		IL_00a8: ldloc.s 5
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00af: stloc.s 5
+		IL_00b1: ldloc.1
 		IL_00b2: box [System.Runtime]System.Double
-		IL_00b7: stloc.s 5
-		IL_00b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00be: ldloc.s 5
-		IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c5: pop
-		IL_00c6: ldloc.3
-		IL_00c7: box [System.Runtime]System.Double
-		IL_00cc: stloc.s 5
-		IL_00ce: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d3: ldloc.s 5
-		IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00da: pop
-		IL_00db: ret
+		IL_00b7: stloc.s 6
+		IL_00b9: ldloc.s 5
+		IL_00bb: ldstr "log"
+		IL_00c0: ldloc.s 6
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c7: pop
+		IL_00c8: ldstr "console"
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00d2: stloc.s 5
+		IL_00d4: ldloc.s 5
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00db: stloc.s 5
+		IL_00dd: ldloc.2
+		IL_00de: box [System.Runtime]System.Double
+		IL_00e3: stloc.s 6
+		IL_00e5: ldloc.s 5
+		IL_00e7: ldstr "log"
+		IL_00ec: ldloc.s 6
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f3: pop
+		IL_00f4: ldstr "console"
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00fe: stloc.s 5
+		IL_0100: ldloc.s 5
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0107: stloc.s 5
+		IL_0109: ldloc.3
+		IL_010a: box [System.Runtime]System.Double
+		IL_010f: stloc.s 6
+		IL_0111: ldloc.s 5
+		IL_0113: ldstr "log"
+		IL_0118: ldloc.s 6
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_011f: pop
+		IL_0120: ret
 	} // end of method Math_Hypot_Infinity_NaN::__js_module_init__
 
 } // end of class Modules.Math_Hypot_Infinity_NaN
@@ -134,7 +156,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2141
+		// Method begins at RVA 0x2186
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

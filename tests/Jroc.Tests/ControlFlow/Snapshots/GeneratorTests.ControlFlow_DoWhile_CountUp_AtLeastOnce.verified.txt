@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20b1
+				// Method begins at RVA 0x20c6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a8
+			// Method begins at RVA 0x20bd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,13 +62,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 97 (0x61)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_CountUp_AtLeastOnce/Scope,
 			[1] float64,
 			[2] class Modules.ControlFlow_DoWhile_CountUp_AtLeastOnce/Scope/Block_L4C3,
-			[3] object
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_CountUp_AtLeastOnce/Scope::.ctor()
@@ -82,22 +83,29 @@
 			IL_0017: ldc.r8 1
 			IL_0020: add
 			IL_0021: stloc.1
-			IL_0022: ldloc.1
-			IL_0023: box [System.Runtime]System.Double
-			IL_0028: stloc.3
-			IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_002e: ldloc.3
-			IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0034: pop
-			IL_0035: ldloc.1
-			IL_0036: ldc.r8 3
-			IL_003f: clt
-			IL_0041: brfalse IL_004b
+			IL_0022: ldstr "console"
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002c: stloc.3
+			IL_002d: ldloc.3
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0033: stloc.3
+			IL_0034: ldloc.1
+			IL_0035: box [System.Runtime]System.Double
+			IL_003a: stloc.s 4
+			IL_003c: ldloc.3
+			IL_003d: ldstr "log"
+			IL_0042: ldloc.s 4
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0049: pop
+			IL_004a: ldloc.1
+			IL_004b: ldc.r8 3
+			IL_0054: clt
+			IL_0056: brfalse IL_0060
 
-			IL_0046: br IL_0010
+			IL_005b: br IL_0010
 		// end loop
 
-		IL_004b: ret
+		IL_0060: ret
 	} // end of method ControlFlow_DoWhile_CountUp_AtLeastOnce::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_CountUp_AtLeastOnce
@@ -109,7 +117,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ba
+		// Method begins at RVA 0x20cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

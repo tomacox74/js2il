@@ -1,4 +1,4 @@
-// IL code: Stream_PassThrough_Basic
+﻿// IL code: Stream_PassThrough_Basic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2265
+				// Method begins at RVA 0x22b1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -72,7 +72,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x226e
+				// Method begins at RVA 0x22ba
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,37 +100,68 @@
 			)
 			// Method begins at RVA 0x21e4
 			// Header size: 12
-			// Code size: 108 (0x6c)
+			// Code size: 184 (0xb8)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "finish"
-			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_000f: pop
-			IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0015: ldarg.0
-			IL_0016: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_PassThrough_Basic/Scope::written
-			IL_001b: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_0020: conv.r8
-			IL_0021: box [System.Runtime]System.Double
-			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002b: pop
-			IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0031: ldarg.0
-			IL_0032: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_PassThrough_Basic/Scope::written
-			IL_0037: ldc.r8 0.0
-			IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_004a: pop
-			IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0050: ldarg.0
-			IL_0051: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_PassThrough_Basic/Scope::written
-			IL_0056: ldc.r8 1
-			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0069: pop
-			IL_006a: ldnull
-			IL_006b: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "finish"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0022: pop
+			IL_0023: ldstr "console"
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002d: stloc.0
+			IL_002e: ldloc.0
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0034: stloc.0
+			IL_0035: ldloc.0
+			IL_0036: ldstr "log"
+			IL_003b: ldarg.0
+			IL_003c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_PassThrough_Basic/Scope::written
+			IL_0041: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+			IL_0046: conv.r8
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0051: pop
+			IL_0052: ldstr "console"
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005c: stloc.0
+			IL_005d: ldloc.0
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0063: stloc.0
+			IL_0064: ldloc.0
+			IL_0065: ldstr "log"
+			IL_006a: ldarg.0
+			IL_006b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_PassThrough_Basic/Scope::written
+			IL_0070: ldc.r8 0.0
+			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0083: pop
+			IL_0084: ldstr "console"
+			IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_008e: stloc.0
+			IL_008f: ldloc.0
+			IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0095: stloc.0
+			IL_0096: ldloc.0
+			IL_0097: ldstr "log"
+			IL_009c: ldarg.0
+			IL_009d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_PassThrough_Basic/Scope::written
+			IL_00a2: ldc.r8 1
+			IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00b5: pop
+			IL_00b6: ldnull
+			IL_00b7: ret
 		} // end of method FunctionExpression_L14C22::__js_call__
 
 	} // end of class FunctionExpression_L14C22
@@ -149,7 +180,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x225c
+			// Method begins at RVA 0x22a8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -330,7 +361,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2277
+		// Method begins at RVA 0x22c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

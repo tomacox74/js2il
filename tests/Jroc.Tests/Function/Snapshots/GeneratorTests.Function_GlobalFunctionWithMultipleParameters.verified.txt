@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b2
+				// Method begins at RVA 0x244d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,19 +42,29 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2207
-			// Header size: 1
-			// Code size: 24 (0x18)
+			// Method begins at RVA 0x2208
+			// Header size: 12
+			// Code size: 43 (0x2b)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "f1"
-			IL_000a: ldarg.1
-			IL_000b: box [System.Runtime]System.Double
-			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0015: pop
-			IL_0016: ldnull
-			IL_0017: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "f1"
+			IL_001d: ldarg.1
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0028: pop
+			IL_0029: ldnull
+			IL_002a: ret
 		} // end of method f1::__js_call__
 
 	} // end of class f1
@@ -70,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23bb
+				// Method begins at RVA 0x2456
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -95,21 +105,31 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2220
-			// Header size: 1
-			// Code size: 30 (0x1e)
+			// Method begins at RVA 0x2240
+			// Header size: 12
+			// Code size: 49 (0x31)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "f2"
-			IL_000a: ldarg.1
-			IL_000b: box [System.Runtime]System.Double
-			IL_0010: ldarg.2
-			IL_0011: box [System.Runtime]System.Double
-			IL_0016: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_001b: pop
-			IL_001c: ldnull
-			IL_001d: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "f2"
+			IL_001d: ldarg.1
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: ldarg.2
+			IL_0024: box [System.Runtime]System.Double
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_002e: pop
+			IL_002f: ldnull
+			IL_0030: ret
 		} // end of method f2::__js_call__
 
 	} // end of class f2
@@ -125,7 +145,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c4
+				// Method begins at RVA 0x245f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -151,37 +171,47 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x223f
-			// Header size: 1
-			// Code size: 54 (0x36)
+			// Method begins at RVA 0x2280
+			// Header size: 12
+			// Code size: 73 (0x49)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.4
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "f3"
-			IL_0012: stelem.ref
-			IL_0013: dup
-			IL_0014: ldc.i4.1
-			IL_0015: ldarg.1
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stelem.ref
-			IL_001c: dup
-			IL_001d: ldc.i4.2
-			IL_001e: ldarg.2
-			IL_001f: box [System.Runtime]System.Double
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.3
-			IL_0027: ldarg.3
-			IL_0028: box [System.Runtime]System.Double
-			IL_002d: stelem.ref
-			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0033: pop
-			IL_0034: ldnull
-			IL_0035: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldc.i4.4
+			IL_0019: newarr [System.Runtime]System.Object
+			IL_001e: dup
+			IL_001f: ldc.i4.0
+			IL_0020: ldstr "f3"
+			IL_0025: stelem.ref
+			IL_0026: dup
+			IL_0027: ldc.i4.1
+			IL_0028: ldarg.1
+			IL_0029: box [System.Runtime]System.Double
+			IL_002e: stelem.ref
+			IL_002f: dup
+			IL_0030: ldc.i4.2
+			IL_0031: ldarg.2
+			IL_0032: box [System.Runtime]System.Double
+			IL_0037: stelem.ref
+			IL_0038: dup
+			IL_0039: ldc.i4.3
+			IL_003a: ldarg.3
+			IL_003b: box [System.Runtime]System.Double
+			IL_0040: stelem.ref
+			IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0046: pop
+			IL_0047: ldnull
+			IL_0048: ret
 		} // end of method f3::__js_call__
 
 	} // end of class f3
@@ -197,7 +227,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23cd
+				// Method begins at RVA 0x2468
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -224,42 +254,52 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2278
+			// Method begins at RVA 0x22d8
 			// Header size: 12
-			// Code size: 64 (0x40)
+			// Code size: 83 (0x53)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.5
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "f4"
-			IL_0012: stelem.ref
-			IL_0013: dup
-			IL_0014: ldc.i4.1
-			IL_0015: ldarg.1
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stelem.ref
-			IL_001c: dup
-			IL_001d: ldc.i4.2
-			IL_001e: ldarg.2
-			IL_001f: box [System.Runtime]System.Double
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.3
-			IL_0027: ldarg.3
-			IL_0028: box [System.Runtime]System.Double
-			IL_002d: stelem.ref
-			IL_002e: dup
-			IL_002f: ldc.i4.4
-			IL_0030: ldarg.s d
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldc.i4.5
+			IL_0019: newarr [System.Runtime]System.Object
+			IL_001e: dup
+			IL_001f: ldc.i4.0
+			IL_0020: ldstr "f4"
+			IL_0025: stelem.ref
+			IL_0026: dup
+			IL_0027: ldc.i4.1
+			IL_0028: ldarg.1
+			IL_0029: box [System.Runtime]System.Double
+			IL_002e: stelem.ref
+			IL_002f: dup
+			IL_0030: ldc.i4.2
+			IL_0031: ldarg.2
 			IL_0032: box [System.Runtime]System.Double
 			IL_0037: stelem.ref
-			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_003d: pop
-			IL_003e: ldnull
-			IL_003f: ret
+			IL_0038: dup
+			IL_0039: ldc.i4.3
+			IL_003a: ldarg.3
+			IL_003b: box [System.Runtime]System.Double
+			IL_0040: stelem.ref
+			IL_0041: dup
+			IL_0042: ldc.i4.4
+			IL_0043: ldarg.s d
+			IL_0045: box [System.Runtime]System.Double
+			IL_004a: stelem.ref
+			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0050: pop
+			IL_0051: ldnull
+			IL_0052: ret
 		} // end of method f4::__js_call__
 
 	} // end of class f4
@@ -275,7 +315,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23d6
+				// Method begins at RVA 0x2471
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -303,47 +343,57 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22c4
+			// Method begins at RVA 0x2338
 			// Header size: 12
-			// Code size: 74 (0x4a)
+			// Code size: 93 (0x5d)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldc.i4.6
-			IL_0006: newarr [System.Runtime]System.Object
-			IL_000b: dup
-			IL_000c: ldc.i4.0
-			IL_000d: ldstr "f5"
-			IL_0012: stelem.ref
-			IL_0013: dup
-			IL_0014: ldc.i4.1
-			IL_0015: ldarg.1
-			IL_0016: box [System.Runtime]System.Double
-			IL_001b: stelem.ref
-			IL_001c: dup
-			IL_001d: ldc.i4.2
-			IL_001e: ldarg.2
-			IL_001f: box [System.Runtime]System.Double
-			IL_0024: stelem.ref
-			IL_0025: dup
-			IL_0026: ldc.i4.3
-			IL_0027: ldarg.3
-			IL_0028: box [System.Runtime]System.Double
-			IL_002d: stelem.ref
-			IL_002e: dup
-			IL_002f: ldc.i4.4
-			IL_0030: ldarg.s d
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldc.i4.6
+			IL_0019: newarr [System.Runtime]System.Object
+			IL_001e: dup
+			IL_001f: ldc.i4.0
+			IL_0020: ldstr "f5"
+			IL_0025: stelem.ref
+			IL_0026: dup
+			IL_0027: ldc.i4.1
+			IL_0028: ldarg.1
+			IL_0029: box [System.Runtime]System.Double
+			IL_002e: stelem.ref
+			IL_002f: dup
+			IL_0030: ldc.i4.2
+			IL_0031: ldarg.2
 			IL_0032: box [System.Runtime]System.Double
 			IL_0037: stelem.ref
 			IL_0038: dup
-			IL_0039: ldc.i4.5
-			IL_003a: ldarg.s e
-			IL_003c: box [System.Runtime]System.Double
-			IL_0041: stelem.ref
-			IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0047: pop
-			IL_0048: ldnull
-			IL_0049: ret
+			IL_0039: ldc.i4.3
+			IL_003a: ldarg.3
+			IL_003b: box [System.Runtime]System.Double
+			IL_0040: stelem.ref
+			IL_0041: dup
+			IL_0042: ldc.i4.4
+			IL_0043: ldarg.s d
+			IL_0045: box [System.Runtime]System.Double
+			IL_004a: stelem.ref
+			IL_004b: dup
+			IL_004c: ldc.i4.5
+			IL_004d: ldarg.s e
+			IL_004f: box [System.Runtime]System.Double
+			IL_0054: stelem.ref
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_005a: pop
+			IL_005b: ldnull
+			IL_005c: ret
 		} // end of method f5::__js_call__
 
 	} // end of class f5
@@ -359,7 +409,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23df
+				// Method begins at RVA 0x247a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -388,64 +438,72 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x231c
+			// Method begins at RVA 0x23a4
 			// Header size: 12
-			// Code size: 129 (0x81)
+			// Code size: 148 (0x94)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
-			IL_0000: ldstr "f6 "
-			IL_0005: ldarg.1
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr " "
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0017: stloc.0
-			IL_0018: ldloc.0
-			IL_0019: ldarg.2
-			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_001f: stloc.0
-			IL_0020: ldloc.0
-			IL_0021: ldstr " "
-			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002b: stloc.0
-			IL_002c: ldloc.0
-			IL_002d: ldarg.3
-			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0033: stloc.0
-			IL_0034: ldloc.0
-			IL_0035: ldstr " "
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_003f: stloc.0
-			IL_0040: ldloc.0
-			IL_0041: ldarg.s d
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0048: stloc.0
-			IL_0049: ldloc.0
-			IL_004a: ldstr " "
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0054: stloc.0
-			IL_0055: ldloc.0
-			IL_0056: ldarg.s e
-			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_005d: stloc.0
-			IL_005e: ldloc.0
-			IL_005f: ldstr " "
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0069: stloc.0
-			IL_006a: ldloc.0
-			IL_006b: ldarg.s f
-			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_0072: stloc.0
-			IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0078: ldloc.0
-			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_007e: pop
-			IL_007f: ldnull
-			IL_0080: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldstr "f6 "
+			IL_0017: ldarg.1
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_001d: stloc.1
+			IL_001e: ldloc.1
+			IL_001f: ldstr " "
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: ldarg.2
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0031: stloc.1
+			IL_0032: ldloc.1
+			IL_0033: ldstr " "
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003d: stloc.1
+			IL_003e: ldloc.1
+			IL_003f: ldarg.3
+			IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0045: stloc.1
+			IL_0046: ldloc.1
+			IL_0047: ldstr " "
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0051: stloc.1
+			IL_0052: ldloc.1
+			IL_0053: ldarg.s d
+			IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_005a: stloc.1
+			IL_005b: ldloc.1
+			IL_005c: ldstr " "
+			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0066: stloc.1
+			IL_0067: ldloc.1
+			IL_0068: ldarg.s e
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_006f: stloc.1
+			IL_0070: ldloc.1
+			IL_0071: ldstr " "
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_007b: stloc.1
+			IL_007c: ldloc.1
+			IL_007d: ldarg.s f
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+			IL_0084: stloc.1
+			IL_0085: ldloc.0
+			IL_0086: ldstr "log"
+			IL_008b: ldloc.1
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0091: pop
+			IL_0092: ldnull
+			IL_0093: ret
 		} // end of method f6::__js_call__
 
 	} // end of class f6
@@ -471,7 +529,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23a9
+			// Method begins at RVA 0x2444
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -635,7 +693,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23e8
+		// Method begins at RVA 0x2483
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

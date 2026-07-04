@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d1
+			// Method begins at RVA 0x210a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,47 +40,69 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 117 (0x75)
+		// Code size: 174 (0xae)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Module_Loaded/Scope,
-			[1] bool,
-			[2] object
+			[1] object,
+			[2] bool,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Module_Loaded/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: ldstr "module.loaded during execution:"
-		IL_0010: ldarg.2
-		IL_0011: ldstr "loaded"
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_001b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0020: pop
-		IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0026: ldstr "module.loaded type:"
-		IL_002b: ldarg.2
-		IL_002c: ldstr "loaded"
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0036: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0040: pop
-		IL_0041: ldarg.2
-		IL_0042: ldstr "loaded"
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_004c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0051: ldstr "boolean"
-		IL_0056: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_005b: stloc.1
-		IL_005c: ldloc.1
-		IL_005d: box [System.Runtime]System.Boolean
-		IL_0062: stloc.2
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldstr "module.loaded is boolean:"
-		IL_006d: ldloc.2
-		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0073: pop
-		IL_0074: ret
+		IL_0006: ldstr "console"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0017: stloc.1
+		IL_0018: ldloc.1
+		IL_0019: ldstr "log"
+		IL_001e: ldstr "module.loaded during execution:"
+		IL_0023: ldarg.2
+		IL_0024: ldstr "loaded"
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0033: pop
+		IL_0034: ldstr "console"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_003e: stloc.1
+		IL_003f: ldloc.1
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0045: stloc.1
+		IL_0046: ldloc.1
+		IL_0047: ldstr "log"
+		IL_004c: ldstr "module.loaded type:"
+		IL_0051: ldarg.2
+		IL_0052: ldstr "loaded"
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_005c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0066: pop
+		IL_0067: ldstr "console"
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0071: stloc.1
+		IL_0072: ldloc.1
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0078: stloc.1
+		IL_0079: ldarg.2
+		IL_007a: ldstr "loaded"
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0084: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0089: ldstr "boolean"
+		IL_008e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0093: stloc.2
+		IL_0094: ldloc.2
+		IL_0095: box [System.Runtime]System.Boolean
+		IL_009a: stloc.3
+		IL_009b: ldloc.1
+		IL_009c: ldstr "log"
+		IL_00a1: ldstr "module.loaded is boolean:"
+		IL_00a6: ldloc.3
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00ac: pop
+		IL_00ad: ret
 	} // end of method CommonJS_Module_Loaded::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Loaded
@@ -92,7 +114,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20da
+		// Method begins at RVA 0x2113
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

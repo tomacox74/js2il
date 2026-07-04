@@ -1,4 +1,4 @@
-// IL code: Promise_All_MixedValues
+﻿// IL code: Promise_All_MixedValues
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216a
+				// Method begins at RVA 0x217d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,46 +51,54 @@
 			)
 			// Method begins at RVA 0x2100
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 104 (0x68)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
-			IL_0000: ldarg.1
-			IL_0001: ldc.r8 0.0
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_000f: stloc.0
-			IL_0010: ldarg.1
-			IL_0011: ldc.r8 1
-			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_001f: stloc.1
-			IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0025: ldc.i4.4
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldstr "Mixed results:"
-			IL_0032: stelem.ref
-			IL_0033: dup
-			IL_0034: ldc.i4.1
-			IL_0035: ldloc.0
-			IL_0036: stelem.ref
-			IL_0037: dup
-			IL_0038: ldc.i4.2
-			IL_0039: ldloc.1
-			IL_003a: stelem.ref
-			IL_003b: dup
-			IL_003c: ldc.i4.3
-			IL_003d: ldarg.1
-			IL_003e: ldc.r8 2
-			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-			IL_004c: stelem.ref
-			IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0052: pop
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.1
+			IL_0013: ldc.r8 0.0
+			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0021: stloc.1
+			IL_0022: ldarg.1
+			IL_0023: ldc.r8 1
+			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_0031: stloc.2
+			IL_0032: ldloc.0
+			IL_0033: ldstr "log"
+			IL_0038: ldc.i4.4
+			IL_0039: newarr [System.Runtime]System.Object
+			IL_003e: dup
+			IL_003f: ldc.i4.0
+			IL_0040: ldstr "Mixed results:"
+			IL_0045: stelem.ref
+			IL_0046: dup
+			IL_0047: ldc.i4.1
+			IL_0048: ldloc.1
+			IL_0049: stelem.ref
+			IL_004a: dup
+			IL_004b: ldc.i4.2
+			IL_004c: ldloc.2
+			IL_004d: stelem.ref
+			IL_004e: dup
+			IL_004f: ldc.i4.3
+			IL_0050: ldarg.1
+			IL_0051: ldc.r8 2
+			IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+			IL_005f: stelem.ref
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0065: pop
+			IL_0066: ldnull
+			IL_0067: ret
 		} // end of method ArrowFunction_L7C36::__js_call__
 
 	} // end of class ArrowFunction_L7C36
@@ -102,7 +110,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2161
+			// Method begins at RVA 0x2174
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -209,7 +217,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2173
+		// Method begins at RVA 0x2186
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f4
+				// Method begins at RVA 0x2125
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,24 +45,41 @@
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
 			// Method begins at RVA 0x20bc
-			// Header size: 1
-			// Code size: 46 (0x2e)
+			// Header size: 12
+			// Code size: 84 (0x54)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Global message:"
-			IL_000a: ldarg.0
-			IL_000b: ldfld string Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalMessage
-			IL_0010: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0015: pop
-			IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001b: ldstr "Global number:"
-			IL_0020: ldarg.0
-			IL_0021: ldfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
-			IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_002b: pop
-			IL_002c: ldnull
-			IL_002d: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Global message:"
+			IL_001d: ldarg.0
+			IL_001e: ldfld string Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalMessage
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0028: pop
+			IL_0029: ldstr "console"
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0033: stloc.0
+			IL_0034: ldloc.0
+			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_003a: stloc.0
+			IL_003b: ldloc.0
+			IL_003c: ldstr "log"
+			IL_0041: ldstr "Global number:"
+			IL_0046: ldarg.0
+			IL_0047: ldfld object Modules.Function_GlobalFunctionLogsGlobalVariable/Scope::globalNumber
+			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0051: pop
+			IL_0052: ldnull
+			IL_0053: ret
 		} // end of method logGlobalValues::__js_call__
 
 	} // end of class logGlobalValues
@@ -88,7 +105,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20eb
+			// Method begins at RVA 0x211c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -168,7 +185,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fd
+		// Method begins at RVA 0x212e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
