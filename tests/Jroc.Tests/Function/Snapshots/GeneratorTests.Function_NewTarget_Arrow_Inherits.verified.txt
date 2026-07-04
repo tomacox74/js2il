@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x217b
+					// Method begins at RVA 0x2190
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -48,40 +48,48 @@
 				)
 				// Method begins at RVA 0x2124
 				// Header size: 12
-				// Code size: 57 (0x39)
+				// Code size: 78 (0x4e)
 				.maxstack 8
 				.locals init (
 					[0] object,
 					[1] object,
-					[2] bool,
-					[3] object
+					[2] object,
+					[3] bool,
+					[4] object
 				)
 
-				IL_0000: ldarg.1
-				IL_0001: stloc.0
-				IL_0002: ldarg.0
-				IL_0003: ldc.i4.0
-				IL_0004: ldelem.ref
-				IL_0005: castclass Modules.Function_NewTarget_Arrow_Inherits/Scope
-				IL_000a: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
-				IL_000f: stloc.1
-				IL_0010: ldstr "Outer"
-				IL_0015: ldloc.1
-				IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-				IL_001b: stloc.1
-				IL_001c: ldloc.0
-				IL_001d: ldloc.1
-				IL_001e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_0023: stloc.2
-				IL_0024: ldloc.2
-				IL_0025: box [System.Runtime]System.Boolean
-				IL_002a: stloc.3
-				IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0030: ldloc.3
-				IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0036: pop
-				IL_0037: ldnull
-				IL_0038: ret
+				IL_0000: ldstr "console"
+				IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_000a: stloc.0
+				IL_000b: ldloc.0
+				IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0011: stloc.0
+				IL_0012: ldarg.1
+				IL_0013: stloc.1
+				IL_0014: ldarg.0
+				IL_0015: ldc.i4.0
+				IL_0016: ldelem.ref
+				IL_0017: castclass Modules.Function_NewTarget_Arrow_Inherits/Scope
+				IL_001c: ldfld object Modules.Function_NewTarget_Arrow_Inherits/Scope::Outer
+				IL_0021: stloc.2
+				IL_0022: ldstr "Outer"
+				IL_0027: ldloc.2
+				IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+				IL_002d: stloc.2
+				IL_002e: ldloc.1
+				IL_002f: ldloc.2
+				IL_0030: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0035: stloc.3
+				IL_0036: ldloc.3
+				IL_0037: box [System.Runtime]System.Boolean
+				IL_003c: stloc.s 4
+				IL_003e: ldloc.0
+				IL_003f: ldstr "log"
+				IL_0044: ldloc.s 4
+				IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_004b: pop
+				IL_004c: ldnull
+				IL_004d: ret
 			} // end of method ArrowFunction_L4C19::__js_call__
 
 		} // end of class ArrowFunction_L4C19
@@ -93,7 +101,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2172
+				// Method begins at RVA 0x2187
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -189,7 +197,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2169
+			// Method begins at RVA 0x217e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -268,7 +276,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2184
+		// Method begins at RVA 0x2199
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

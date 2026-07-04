@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2143
+			// Method begins at RVA 0x215e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 231 (0xe7)
+		// Code size: 258 (0x102)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Log_Exp_Identity/Scope,
@@ -54,7 +54,9 @@
 			[8] object,
 			[9] object,
 			[10] object,
-			[11] object
+			[11] object,
+			[12] object,
+			[13] object[]
 		)
 
 		IL_0000: newobj instance void Modules.Math_Log_Exp_Identity/Scope::.ctor()
@@ -95,47 +97,56 @@
 		IL_008c: stloc.s 6
 		IL_008e: ldloc.s 6
 		IL_0090: stloc.s 5
-		IL_0092: ldloc.1
-		IL_0093: box [System.Runtime]System.Double
-		IL_0098: stloc.s 7
-		IL_009a: ldloc.2
-		IL_009b: box [System.Runtime]System.Double
-		IL_00a0: stloc.s 8
-		IL_00a2: ldloc.3
-		IL_00a3: box [System.Runtime]System.Double
-		IL_00a8: stloc.s 9
-		IL_00aa: ldloc.s 4
-		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: stloc.s 10
-		IL_00b3: ldloc.s 5
-		IL_00b5: box [System.Runtime]System.Double
-		IL_00ba: stloc.s 11
-		IL_00bc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c1: ldc.i4.5
-		IL_00c2: newarr [System.Runtime]System.Object
-		IL_00c7: dup
-		IL_00c8: ldc.i4.0
-		IL_00c9: ldloc.s 7
-		IL_00cb: stelem.ref
-		IL_00cc: dup
-		IL_00cd: ldc.i4.1
-		IL_00ce: ldloc.s 8
-		IL_00d0: stelem.ref
-		IL_00d1: dup
-		IL_00d2: ldc.i4.2
-		IL_00d3: ldloc.s 9
-		IL_00d5: stelem.ref
-		IL_00d6: dup
-		IL_00d7: ldc.i4.3
-		IL_00d8: ldloc.s 10
-		IL_00da: stelem.ref
-		IL_00db: dup
-		IL_00dc: ldc.i4.4
-		IL_00dd: ldloc.s 11
-		IL_00df: stelem.ref
-		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e5: pop
-		IL_00e6: ret
+		IL_0092: ldstr "console"
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009c: stloc.s 8
+		IL_009e: ldloc.s 8
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a5: stloc.s 8
+		IL_00a7: ldloc.1
+		IL_00a8: box [System.Runtime]System.Double
+		IL_00ad: stloc.s 7
+		IL_00af: ldloc.2
+		IL_00b0: box [System.Runtime]System.Double
+		IL_00b5: stloc.s 9
+		IL_00b7: ldloc.3
+		IL_00b8: box [System.Runtime]System.Double
+		IL_00bd: stloc.s 10
+		IL_00bf: ldloc.s 4
+		IL_00c1: box [System.Runtime]System.Double
+		IL_00c6: stloc.s 11
+		IL_00c8: ldloc.s 5
+		IL_00ca: box [System.Runtime]System.Double
+		IL_00cf: stloc.s 12
+		IL_00d1: ldc.i4.5
+		IL_00d2: newarr [System.Runtime]System.Object
+		IL_00d7: dup
+		IL_00d8: ldc.i4.0
+		IL_00d9: ldloc.s 7
+		IL_00db: stelem.ref
+		IL_00dc: dup
+		IL_00dd: ldc.i4.1
+		IL_00de: ldloc.s 9
+		IL_00e0: stelem.ref
+		IL_00e1: dup
+		IL_00e2: ldc.i4.2
+		IL_00e3: ldloc.s 10
+		IL_00e5: stelem.ref
+		IL_00e6: dup
+		IL_00e7: ldc.i4.3
+		IL_00e8: ldloc.s 11
+		IL_00ea: stelem.ref
+		IL_00eb: dup
+		IL_00ec: ldc.i4.4
+		IL_00ed: ldloc.s 12
+		IL_00ef: stelem.ref
+		IL_00f0: stloc.s 13
+		IL_00f2: ldloc.s 8
+		IL_00f4: ldstr "log"
+		IL_00f9: ldloc.s 13
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0100: pop
+		IL_0101: ret
 	} // end of method Math_Log_Exp_Identity::__js_module_init__
 
 } // end of class Modules.Math_Log_Exp_Identity
@@ -147,7 +158,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x2167
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

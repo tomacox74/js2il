@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22de
+				// Method begins at RVA 0x232d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,33 +42,41 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2250
+			// Method begins at RVA 0x2278
 			// Header size: 12
-			// Code size: 51 (0x33)
+			// Code size: 70 (0x46)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
-			IL_0000: ldstr "data:"
-			IL_0005: ldarg.1
-			IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_000b: stloc.0
-			IL_000c: ldloc.0
-			IL_000d: ldstr ":"
-			IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0017: stloc.0
-			IL_0018: ldloc.0
-			IL_0019: ldarg.1
-			IL_001a: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0024: stloc.0
-			IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_002a: ldloc.0
-			IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0030: pop
-			IL_0031: ldnull
-			IL_0032: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldstr "data:"
+			IL_0017: ldarg.1
+			IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_001d: stloc.1
+			IL_001e: ldloc.1
+			IL_001f: ldstr ":"
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0029: stloc.1
+			IL_002a: ldloc.1
+			IL_002b: ldarg.1
+			IL_002c: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0036: stloc.1
+			IL_0037: ldloc.0
+			IL_0038: ldstr "log"
+			IL_003d: ldloc.1
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0043: pop
+			IL_0044: ldnull
+			IL_0045: ret
 		} // end of method FunctionExpression_L15C20::__js_call__
 
 	} // end of class FunctionExpression_L15C20
@@ -84,7 +92,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e7
+				// Method begins at RVA 0x2336
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,36 +118,44 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2290
+			// Method begins at RVA 0x22cc
 			// Header size: 12
-			// Code size: 57 (0x39)
+			// Code size: 76 (0x4c)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] object
+				[1] object,
+				[2] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-			IL_0006: stloc.0
-			IL_0007: ldstr "readable"
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0012: stloc.0
-			IL_0013: ldloc.0
-			IL_0014: ldstr "readableEncoding"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001e: stloc.0
-			IL_001f: ldstr "encoding:"
-			IL_0024: ldloc.0
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_002a: stloc.1
-			IL_002b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0030: ldloc.1
-			IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0036: pop
-			IL_0037: ldnull
-			IL_0038: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.0
+			IL_0013: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+			IL_0018: stloc.1
+			IL_0019: ldstr "readable"
+			IL_001e: ldloc.1
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0024: stloc.1
+			IL_0025: ldloc.1
+			IL_0026: ldstr "readableEncoding"
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0030: stloc.1
+			IL_0031: ldstr "encoding:"
+			IL_0036: ldloc.1
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_003c: stloc.2
+			IL_003d: ldloc.0
+			IL_003e: ldstr "log"
+			IL_0043: ldloc.2
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0049: pop
+			IL_004a: ldnull
+			IL_004b: ret
 		} // end of method FunctionExpression_L19C19::__js_call__
 
 	} // end of class FunctionExpression_L19C19
@@ -158,7 +174,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22d5
+			// Method begins at RVA 0x2324
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -184,7 +200,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 499 (0x1f3)
+		// Code size: 537 (0x219)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Stream_Readable_SetEncoding_Utf8/Scope,
@@ -271,92 +287,106 @@
 		IL_00f0: stloc.3
 		IL_00f1: ldloc.3
 		IL_00f2: stloc.2
-		IL_00f3: ldstr "buffered:"
-		IL_00f8: ldloc.2
-		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00fe: stloc.s 5
-		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0105: ldloc.s 5
-		IL_0107: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_010c: pop
-		IL_010d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0112: ldstr "buffered-type:"
-		IL_0117: ldloc.2
-		IL_0118: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_011d: call string [System.Runtime]System.String::Concat(string, string)
-		IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0127: pop
-		IL_0128: ldloc.0
-		IL_0129: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0133: stloc.3
-		IL_0134: ldnull
-		IL_0135: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L15C20::__js_call__(object, object)
-		IL_013b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0140: ldc.i4.1
-		IL_0141: conv.r8
-		IL_0142: ldstr ""
-		IL_0147: ldc.i4.0
-		IL_0148: ldc.i4.1
-		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_014e: stloc.s 6
-		IL_0150: ldloc.3
-		IL_0151: ldstr "on"
-		IL_0156: ldstr "data"
-		IL_015b: ldloc.s 6
-		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0162: pop
-		IL_0163: ldloc.0
-		IL_0164: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_016e: stloc.s 6
-		IL_0170: ldc.i4.1
-		IL_0171: newarr [System.Runtime]System.Object
-		IL_0176: dup
-		IL_0177: ldc.i4.0
-		IL_0178: ldloc.0
-		IL_0179: stelem.ref
-		IL_017a: ldc.i4.0
-		IL_017b: ldelem.ref
-		IL_017c: castclass Modules.Stream_Readable_SetEncoding_Utf8/Scope
-		IL_0181: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L19C19::__js_call__(class Modules.Stream_Readable_SetEncoding_Utf8/Scope, object)
-		IL_0187: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_018c: ldc.i4.0
-		IL_018d: conv.r8
-		IL_018e: ldstr ""
-		IL_0193: ldc.i4.0
-		IL_0194: ldc.i4.1
-		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_019a: stloc.3
-		IL_019b: ldloc.s 6
-		IL_019d: ldstr "on"
-		IL_01a2: ldstr "end"
-		IL_01a7: ldloc.3
-		IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_01ad: pop
-		IL_01ae: ldloc.0
-		IL_01af: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
-		IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01b9: stloc.3
-		IL_01ba: ldstr " ok"
-		IL_01bf: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
-		IL_01c4: stloc.s 4
-		IL_01c6: ldloc.3
-		IL_01c7: ldstr "push"
-		IL_01cc: ldloc.s 4
-		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f3: ldstr "console"
+		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00fd: stloc.3
+		IL_00fe: ldloc.3
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0104: stloc.3
+		IL_0105: ldstr "buffered:"
+		IL_010a: ldloc.2
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0110: stloc.s 5
+		IL_0112: ldloc.3
+		IL_0113: ldstr "log"
+		IL_0118: ldloc.s 5
+		IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_011f: pop
+		IL_0120: ldstr "console"
+		IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_012a: stloc.3
+		IL_012b: ldloc.3
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0131: stloc.3
+		IL_0132: ldloc.3
+		IL_0133: ldstr "log"
+		IL_0138: ldstr "buffered-type:"
+		IL_013d: ldloc.2
+		IL_013e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0143: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_014d: pop
+		IL_014e: ldloc.0
+		IL_014f: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0159: stloc.3
+		IL_015a: ldnull
+		IL_015b: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L15C20::__js_call__(object, object)
+		IL_0161: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0166: ldc.i4.1
+		IL_0167: conv.r8
+		IL_0168: ldstr ""
+		IL_016d: ldc.i4.0
+		IL_016e: ldc.i4.1
+		IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0174: stloc.s 6
+		IL_0176: ldloc.3
+		IL_0177: ldstr "on"
+		IL_017c: ldstr "data"
+		IL_0181: ldloc.s 6
+		IL_0183: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0188: pop
+		IL_0189: ldloc.0
+		IL_018a: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_018f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0194: stloc.s 6
+		IL_0196: ldc.i4.1
+		IL_0197: newarr [System.Runtime]System.Object
+		IL_019c: dup
+		IL_019d: ldc.i4.0
+		IL_019e: ldloc.0
+		IL_019f: stelem.ref
+		IL_01a0: ldc.i4.0
+		IL_01a1: ldelem.ref
+		IL_01a2: castclass Modules.Stream_Readable_SetEncoding_Utf8/Scope
+		IL_01a7: ldftn object Modules.Stream_Readable_SetEncoding_Utf8/FunctionExpression_L19C19::__js_call__(class Modules.Stream_Readable_SetEncoding_Utf8/Scope, object)
+		IL_01ad: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_01b2: ldc.i4.0
+		IL_01b3: conv.r8
+		IL_01b4: ldstr ""
+		IL_01b9: ldc.i4.0
+		IL_01ba: ldc.i4.1
+		IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_01c0: stloc.3
+		IL_01c1: ldloc.s 6
+		IL_01c3: ldstr "on"
+		IL_01c8: ldstr "end"
+		IL_01cd: ldloc.3
+		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
 		IL_01d3: pop
 		IL_01d4: ldloc.0
 		IL_01d5: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
 		IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_01df: stloc.3
-		IL_01e0: ldloc.3
-		IL_01e1: ldstr "push"
-		IL_01e6: ldc.i4.0
-		IL_01e7: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_01ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01f1: pop
-		IL_01f2: ret
+		IL_01e0: ldstr " ok"
+		IL_01e5: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer [JavaScriptRuntime]JavaScriptRuntime.Node.Buffer::from(object)
+		IL_01ea: stloc.s 4
+		IL_01ec: ldloc.3
+		IL_01ed: ldstr "push"
+		IL_01f2: ldloc.s 4
+		IL_01f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01f9: pop
+		IL_01fa: ldloc.0
+		IL_01fb: ldfld object Modules.Stream_Readable_SetEncoding_Utf8/Scope::readable
+		IL_0200: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0205: stloc.3
+		IL_0206: ldloc.3
+		IL_0207: ldstr "push"
+		IL_020c: ldc.i4.0
+		IL_020d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0212: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0217: pop
+		IL_0218: ret
 	} // end of method Stream_Readable_SetEncoding_Utf8::__js_module_init__
 
 } // end of class Modules.Stream_Readable_SetEncoding_Utf8
@@ -368,7 +398,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22f0
+		// Method begins at RVA 0x233f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

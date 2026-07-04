@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ca
+			// Method begins at RVA 0x20df
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,15 +40,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 110 (0x6e)
+		// Code size: 131 (0x83)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_ExecSync_Quoted/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] bool,
-			[5] object
+			[4] object,
+			[5] bool,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_ChildProcess_ExecSync_Quoted/Scope::.ctor()
@@ -74,21 +75,28 @@
 		IL_0040: stloc.3
 		IL_0041: ldloc.3
 		IL_0042: stloc.2
-		IL_0043: ldloc.2
-		IL_0044: stloc.3
-		IL_0045: ldloc.3
-		IL_0046: ldstr "quoted-ok"
-		IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0050: stloc.s 4
-		IL_0052: ldloc.s 4
-		IL_0054: box [System.Runtime]System.Boolean
-		IL_0059: stloc.s 5
-		IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0060: ldstr "quoted output ok:"
-		IL_0065: ldloc.s 5
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_006c: pop
-		IL_006d: ret
+		IL_0043: ldstr "console"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004d: stloc.3
+		IL_004e: ldloc.3
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0054: stloc.3
+		IL_0055: ldloc.2
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.s 4
+		IL_005a: ldstr "quoted-ok"
+		IL_005f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0064: stloc.s 5
+		IL_0066: ldloc.s 5
+		IL_0068: box [System.Runtime]System.Boolean
+		IL_006d: stloc.s 6
+		IL_006f: ldloc.3
+		IL_0070: ldstr "log"
+		IL_0075: ldstr "quoted output ok:"
+		IL_007a: ldloc.s 6
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method Require_ChildProcess_ExecSync_Quoted::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_ExecSync_Quoted
@@ -100,7 +108,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d3
+		// Method begins at RVA 0x20e8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

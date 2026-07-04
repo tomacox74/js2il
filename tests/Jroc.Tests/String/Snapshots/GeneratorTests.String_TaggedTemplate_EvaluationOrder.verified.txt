@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2224
+				// Method begins at RVA 0x2263
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,24 +42,32 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2174
+			// Method begins at RVA 0x218c
 			// Header size: 12
-			// Code size: 42 (0x2a)
+			// Code size: 61 (0x3d)
 			.maxstack 8
 			.locals init (
-				[0] object
+				[0] object,
+				[1] object
 			)
 
 			IL_0000: ldc.r8 1
 			IL_0009: box [System.Runtime]System.Double
 			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CollectRestArguments(object)
 			IL_0013: stloc.0
-			IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0019: ldstr "tag called"
-			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0023: pop
-			IL_0024: ldstr "result"
-			IL_0029: ret
+			IL_0014: ldstr "console"
+			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_001e: stloc.1
+			IL_001f: ldloc.1
+			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0025: stloc.1
+			IL_0026: ldloc.1
+			IL_0027: ldstr "log"
+			IL_002c: ldstr "tag called"
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0036: pop
+			IL_0037: ldstr "result"
+			IL_003c: ret
 		} // end of method tag::__js_call__
 
 	} // end of class tag
@@ -75,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222d
+				// Method begins at RVA 0x226c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,55 +109,63 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x21ac
+			// Method begins at RVA 0x21d8
 			// Header size: 12
-			// Code size: 99 (0x63)
+			// Code size: 118 (0x76)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] float64,
-				[2] object
+				[1] object,
+				[2] float64,
+				[3] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_0006: stloc.0
-			IL_0007: ldstr "counter"
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0012: stloc.0
-			IL_0013: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0018: ldstr "getValue called:"
-			IL_001d: ldloc.0
-			IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0023: pop
-			IL_0024: ldarg.0
-			IL_0025: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_002a: stloc.0
-			IL_002b: ldstr "counter"
-			IL_0030: ldloc.0
-			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0036: stloc.0
-			IL_0037: ldloc.0
-			IL_0038: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.0
+			IL_0013: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0018: stloc.1
+			IL_0019: ldstr "counter"
+			IL_001e: ldloc.1
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0024: stloc.1
+			IL_0025: ldloc.0
+			IL_0026: ldstr "log"
+			IL_002b: ldstr "getValue called:"
+			IL_0030: ldloc.1
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0036: pop
+			IL_0037: ldarg.0
+			IL_0038: ldfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
 			IL_003d: stloc.1
-			IL_003e: ldloc.1
-			IL_003f: box [System.Runtime]System.Double
-			IL_0044: stloc.2
-			IL_0045: ldloc.2
-			IL_0046: stloc.0
-			IL_0047: ldloc.1
-			IL_0048: ldc.r8 1
-			IL_0051: add
-			IL_0052: stloc.1
-			IL_0053: ldloc.1
-			IL_0054: box [System.Runtime]System.Double
-			IL_0059: stloc.2
-			IL_005a: ldarg.0
-			IL_005b: ldloc.2
-			IL_005c: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
-			IL_0061: ldloc.0
-			IL_0062: ret
+			IL_003e: ldstr "counter"
+			IL_0043: ldloc.1
+			IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0049: stloc.1
+			IL_004a: ldloc.1
+			IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0050: stloc.2
+			IL_0051: ldloc.2
+			IL_0052: box [System.Runtime]System.Double
+			IL_0057: stloc.3
+			IL_0058: ldloc.3
+			IL_0059: stloc.1
+			IL_005a: ldloc.2
+			IL_005b: ldc.r8 1
+			IL_0064: add
+			IL_0065: stloc.2
+			IL_0066: ldloc.2
+			IL_0067: box [System.Runtime]System.Double
+			IL_006c: stloc.3
+			IL_006d: ldarg.0
+			IL_006e: ldloc.3
+			IL_006f: stfld object Modules.String_TaggedTemplate_EvaluationOrder/Scope::counter
+			IL_0074: ldloc.1
+			IL_0075: ret
 		} // end of method getValue::__js_call__
 
 	} // end of class getValue
@@ -172,7 +188,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x221b
+			// Method begins at RVA 0x225a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -198,7 +214,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 278 (0x116)
+		// Code size: 301 (0x12d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.String_TaggedTemplate_EvaluationOrder/Scope,
@@ -321,12 +337,19 @@
 		IL_00ff: stloc.s 4
 		IL_0101: ldloc.s 4
 		IL_0103: stloc.3
-		IL_0104: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0109: ldstr "final result:"
-		IL_010e: ldloc.3
-		IL_010f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0114: pop
-		IL_0115: ret
+		IL_0104: ldstr "console"
+		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_010e: stloc.s 4
+		IL_0110: ldloc.s 4
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0117: stloc.s 4
+		IL_0119: ldloc.s 4
+		IL_011b: ldstr "log"
+		IL_0120: ldstr "final result:"
+		IL_0125: ldloc.3
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_012b: pop
+		IL_012c: ret
 	} // end of method String_TaggedTemplate_EvaluationOrder::__js_module_init__
 
 } // end of class Modules.String_TaggedTemplate_EvaluationOrder
@@ -338,7 +361,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2236
+		// Method begins at RVA 0x2275
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

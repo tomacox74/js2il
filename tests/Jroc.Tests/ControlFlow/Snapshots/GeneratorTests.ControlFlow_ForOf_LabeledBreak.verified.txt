@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2194
+			// Method begins at RVA 0x21ac
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21a6
+				// Method begins at RVA 0x21be
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,7 +66,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x21c1
+						// Method begins at RVA 0x21d9
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -84,7 +84,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21b8
+					// Method begins at RVA 0x21d0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -102,7 +102,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21af
+				// Method begins at RVA 0x21c7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -120,7 +120,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x219d
+			// Method begins at RVA 0x21b5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -146,7 +146,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 294 (0x126)
+		// Code size: 317 (0x13d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_LabeledBreak/Scope,
@@ -196,7 +196,7 @@
 				IL_0044: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
 				IL_0049: stloc.s 11
 				IL_004b: ldloc.s 11
-				IL_004d: brtrue IL_010a
+				IL_004d: brtrue IL_0121
 
 				IL_0052: ldloc.s 10
 				IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
@@ -217,70 +217,77 @@
 					IL_0083: ldloc.s 13
 					IL_0085: ldc.r8 1
 					IL_008e: clt
-					IL_0090: brfalse IL_00f7
+					IL_0090: brfalse IL_010e
 
 					IL_0095: newobj instance void Modules.ControlFlow_ForOf_LabeledBreak/Scope_ForOf_L5C12/Scope_For_L6C7/Block_L6C30::.ctor()
 					IL_009a: stloc.s 8
-					IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_00a1: ldloc.s 5
-					IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-					IL_00a8: pop
-					IL_00a9: ldloc.s 5
-					IL_00ab: stloc.s 10
-					IL_00ad: ldloc.s 10
-					IL_00af: ldstr "b"
-					IL_00b4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-					IL_00b9: stloc.s 11
-					IL_00bb: ldloc.s 11
-					IL_00bd: brfalse IL_00ce
+					IL_009c: ldstr "console"
+					IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+					IL_00a6: stloc.s 10
+					IL_00a8: ldloc.s 10
+					IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+					IL_00af: stloc.s 10
+					IL_00b1: ldloc.s 10
+					IL_00b3: ldstr "log"
+					IL_00b8: ldloc.s 5
+					IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+					IL_00bf: pop
+					IL_00c0: ldloc.s 5
+					IL_00c2: stloc.s 10
+					IL_00c4: ldloc.s 10
+					IL_00c6: ldstr "b"
+					IL_00cb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+					IL_00d0: stloc.s 11
+					IL_00d2: ldloc.s 11
+					IL_00d4: brfalse IL_00e5
 
-					IL_00c2: newobj instance void Modules.ControlFlow_ForOf_LabeledBreak/Scope_ForOf_L5C12/Scope_For_L6C7/Block_L6C30/Block_L8C19::.ctor()
-					IL_00c7: stloc.s 9
-					IL_00c9: br IL_00fc
+					IL_00d9: newobj instance void Modules.ControlFlow_ForOf_LabeledBreak/Scope_ForOf_L5C12/Scope_For_L6C7/Block_L6C30/Block_L8C19::.ctor()
+					IL_00de: stloc.s 9
+					IL_00e0: br IL_0113
 
-					IL_00ce: ldloc.s 7
-					IL_00d0: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-					IL_00d5: stloc.s 13
-					IL_00d7: ldloc.s 13
-					IL_00d9: ldc.r8 1
-					IL_00e2: add
-					IL_00e3: stloc.s 13
-					IL_00e5: ldloc.s 13
-					IL_00e7: box [System.Runtime]System.Double
-					IL_00ec: stloc.s 12
-					IL_00ee: ldloc.s 12
-					IL_00f0: stloc.s 7
-					IL_00f2: br IL_0076
+					IL_00e5: ldloc.s 7
+					IL_00e7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+					IL_00ec: stloc.s 13
+					IL_00ee: ldloc.s 13
+					IL_00f0: ldc.r8 1
+					IL_00f9: add
+					IL_00fa: stloc.s 13
+					IL_00fc: ldloc.s 13
+					IL_00fe: box [System.Runtime]System.Double
+					IL_0103: stloc.s 12
+					IL_0105: ldloc.s 12
+					IL_0107: stloc.s 7
+					IL_0109: br IL_0076
 				// end loop
 
-				IL_00f7: br IL_003a
+				IL_010e: br IL_003a
 			// end loop
 
-			IL_00fc: ldloc.2
-			IL_00fd: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-			IL_0102: ldc.i4.1
-			IL_0103: stloc.s 4
-			IL_0105: leave IL_0125
+			IL_0113: ldloc.2
+			IL_0114: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_0119: ldc.i4.1
+			IL_011a: stloc.s 4
+			IL_011c: leave IL_013c
 
-			IL_010a: ldc.i4.1
-			IL_010b: stloc.3
-			IL_010c: leave IL_0125
+			IL_0121: ldc.i4.1
+			IL_0122: stloc.3
+			IL_0123: leave IL_013c
 		} // end .try
 		finally
 		{
-			IL_0111: ldloc.3
-			IL_0112: brtrue IL_0124
+			IL_0128: ldloc.3
+			IL_0129: brtrue IL_013b
 
-			IL_0117: ldloc.s 4
-			IL_0119: brtrue IL_0124
+			IL_012e: ldloc.s 4
+			IL_0130: brtrue IL_013b
 
-			IL_011e: ldloc.2
-			IL_011f: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+			IL_0135: ldloc.2
+			IL_0136: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-			IL_0124: endfinally
+			IL_013b: endfinally
 		} // end handler
 
-		IL_0125: ret
+		IL_013c: ret
 	} // end of method ControlFlow_ForOf_LabeledBreak::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_LabeledBreak
@@ -292,7 +299,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ca
+		// Method begins at RVA 0x21e2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x34b3
+					// Method begins at RVA 0x3557
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x34aa
+				// Method begins at RVA 0x354e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,9 +66,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
-			// Method begins at RVA 0x23e4
+			// Method begins at RVA 0x2410
 			// Header size: 12
-			// Code size: 164 (0xa4)
+			// Code size: 175 (0xaf)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Import_ExportNamedFrom/__jroc_esm_mark/Scope/Block_L13C70,
@@ -77,63 +77,70 @@
 				[3] bool
 			)
 
-			IL_0000: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-			IL_0005: ldstr "prototype"
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_000f: ldstr "hasOwnProperty"
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_001e: stloc.1
-			IL_001f: ldarg.0
-			IL_0020: ldfld object Modules.Import_ExportNamedFrom/Scope::exports
-			IL_0025: stloc.2
-			IL_0026: ldstr "exports"
-			IL_002b: ldloc.2
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0031: stloc.2
-			IL_0032: ldloc.1
-			IL_0033: ldstr "call"
-			IL_0038: ldloc.2
-			IL_0039: ldstr "__esModule"
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0043: stloc.2
-			IL_0044: ldloc.2
-			IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_004a: ldc.i4.0
-			IL_004b: ceq
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: brfalse IL_00a2
+			IL_0000: ldstr "Object"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.1
+			IL_000b: ldloc.1
+			IL_000c: ldstr "prototype"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldstr "hasOwnProperty"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0029: stloc.1
+			IL_002a: ldarg.0
+			IL_002b: ldfld object Modules.Import_ExportNamedFrom/Scope::exports
+			IL_0030: stloc.2
+			IL_0031: ldstr "exports"
+			IL_0036: ldloc.2
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_003c: stloc.2
+			IL_003d: ldloc.1
+			IL_003e: ldstr "call"
+			IL_0043: ldloc.2
+			IL_0044: ldstr "__esModule"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_004e: stloc.2
+			IL_004f: ldloc.2
+			IL_0050: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0055: ldc.i4.0
+			IL_0056: ceq
+			IL_0058: stloc.3
+			IL_0059: ldloc.3
+			IL_005a: brfalse IL_00ad
 
-			IL_0054: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_mark/Scope/Block_L13C70::.ctor()
-			IL_0059: stloc.0
-			IL_005a: ldarg.0
-			IL_005b: ldfld object Modules.Import_ExportNamedFrom/Scope::exports
-			IL_0060: stloc.2
-			IL_0061: ldstr "exports"
-			IL_0066: ldloc.2
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_006c: stloc.2
-			IL_006d: ldloc.2
-			IL_006e: ldstr "__esModule"
-			IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0078: dup
-			IL_0079: ldstr "value"
-			IL_007e: ldc.i4.1
-			IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0084: dup
-			IL_0085: ldstr "enumerable"
-			IL_008a: ldc.i4.0
-			IL_008b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0090: dup
-			IL_0091: ldstr "configurable"
-			IL_0096: ldc.i4.1
-			IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_00a1: pop
+			IL_005f: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_mark/Scope/Block_L13C70::.ctor()
+			IL_0064: stloc.0
+			IL_0065: ldarg.0
+			IL_0066: ldfld object Modules.Import_ExportNamedFrom/Scope::exports
+			IL_006b: stloc.2
+			IL_006c: ldstr "exports"
+			IL_0071: ldloc.2
+			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0077: stloc.2
+			IL_0078: ldloc.2
+			IL_0079: ldstr "__esModule"
+			IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0083: dup
+			IL_0084: ldstr "value"
+			IL_0089: ldc.i4.1
+			IL_008a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_008f: dup
+			IL_0090: ldstr "enumerable"
+			IL_0095: ldc.i4.0
+			IL_0096: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_009b: dup
+			IL_009c: ldstr "configurable"
+			IL_00a1: ldc.i4.1
+			IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_00ac: pop
 
-			IL_00a2: ldnull
-			IL_00a3: ret
+			IL_00ad: ldnull
+			IL_00ae: ret
 		} // end of method __jroc_esm_mark::__js_call__
 
 	} // end of class __jroc_esm_mark
@@ -149,7 +156,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x34bc
+				// Method begins at RVA 0x3560
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -173,9 +180,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2494
+			// Method begins at RVA 0x24cc
 			// Header size: 12
-			// Code size: 121 (0x79)
+			// Code size: 132 (0x84)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -197,41 +204,48 @@
 			IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_001a: stloc.0
 			IL_001b: ldloc.0
-			IL_001c: brfalse IL_005a
+			IL_001c: brfalse IL_0065
 
-			IL_0021: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-			IL_0026: ldstr "prototype"
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0030: ldstr "hasOwnProperty"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_003f: stloc.2
-			IL_0040: ldloc.2
-			IL_0041: ldstr "call"
-			IL_0046: ldarg.1
-			IL_0047: ldstr "default"
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0051: stloc.2
-			IL_0052: ldloc.2
-			IL_0053: stloc.s 4
-			IL_0055: br IL_005d
+			IL_0021: ldstr "Object"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002b: stloc.2
+			IL_002c: ldloc.2
+			IL_002d: ldstr "prototype"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0037: stloc.2
+			IL_0038: ldloc.2
+			IL_0039: ldstr "hasOwnProperty"
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0043: stloc.2
+			IL_0044: ldloc.2
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004a: stloc.2
+			IL_004b: ldloc.2
+			IL_004c: ldstr "call"
+			IL_0051: ldarg.1
+			IL_0052: ldstr "default"
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_005c: stloc.2
+			IL_005d: ldloc.2
+			IL_005e: stloc.s 4
+			IL_0060: br IL_0068
 
-			IL_005a: ldloc.1
-			IL_005b: stloc.s 4
+			IL_0065: ldloc.1
+			IL_0066: stloc.s 4
 
-			IL_005d: ldloc.s 4
-			IL_005f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0064: stloc.0
-			IL_0065: ldloc.0
-			IL_0066: brfalse IL_0077
+			IL_0068: ldloc.s 4
+			IL_006a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_006f: stloc.0
+			IL_0070: ldloc.0
+			IL_0071: brfalse IL_0082
 
-			IL_006b: ldarg.1
-			IL_006c: ldstr "default"
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0076: ret
+			IL_0076: ldarg.1
+			IL_0077: ldstr "default"
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0081: ret
 
-			IL_0077: ldarg.1
-			IL_0078: ret
+			IL_0082: ldarg.1
+			IL_0083: ret
 		} // end of method __jroc_esm_default::__js_call__
 
 	} // end of class __jroc_esm_default
@@ -247,7 +261,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x34c5
+				// Method begins at RVA 0x3569
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -272,7 +286,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2519
+			// Method begins at RVA 0x255c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -300,7 +314,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x34f2
+					// Method begins at RVA 0x3596
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -324,7 +338,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2ac8
+				// Method begins at RVA 0x2b30
 				// Header size: 12
 				// Code size: 28 (0x1c)
 				.maxstack 8
@@ -359,7 +373,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x34fb
+					// Method begins at RVA 0x359f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -383,7 +397,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2af0
+				// Method begins at RVA 0x2b58
 				// Header size: 12
 				// Code size: 28 (0x1c)
 				.maxstack 8
@@ -422,7 +436,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3528
+						// Method begins at RVA 0x35cc
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -446,7 +460,7 @@
 					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x2bbc
+					// Method begins at RVA 0x2c24
 					// Header size: 12
 					// Code size: 62 (0x3e)
 					.maxstack 8
@@ -498,7 +512,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x351f
+					// Method begins at RVA 0x35c3
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -523,7 +537,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2b18
+				// Method begins at RVA 0x2b80
 				// Header size: 12
 				// Code size: 149 (0x95)
 				.maxstack 8
@@ -620,7 +634,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x34d7
+					// Method begins at RVA 0x357b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -640,7 +654,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x34e0
+					// Method begins at RVA 0x3584
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -660,7 +674,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x34e9
+					// Method begins at RVA 0x358d
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -684,7 +698,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x350d
+						// Method begins at RVA 0x35b1
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -704,7 +718,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x3516
+						// Method begins at RVA 0x35ba
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -722,7 +736,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3504
+					// Method begins at RVA 0x35a8
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -742,7 +756,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3531
+					// Method begins at RVA 0x35d5
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -762,7 +776,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x353a
+					// Method begins at RVA 0x35de
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -784,7 +798,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x34ce
+				// Method begins at RVA 0x3572
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -811,9 +825,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
-			// Method begins at RVA 0x2524
+			// Method begins at RVA 0x2568
 			// Header size: 12
-			// Code size: 1295 (0x50f)
+			// Code size: 1329 (0x531)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope,
@@ -978,357 +992,371 @@
 			IL_0163: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 			IL_0168: ret
 
-			IL_0169: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-			IL_016e: ldstr "prototype"
-			IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0178: ldstr "hasOwnProperty"
-			IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0187: stloc.s 15
-			IL_0189: ldloc.0
-			IL_018a: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
-			IL_018f: stloc.s 24
+			IL_0169: ldstr "Object"
+			IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0173: stloc.s 15
+			IL_0175: ldloc.s 15
+			IL_0177: ldstr "prototype"
+			IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0181: stloc.s 15
+			IL_0183: ldloc.s 15
+			IL_0185: ldstr "hasOwnProperty"
+			IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_018f: stloc.s 15
 			IL_0191: ldloc.s 15
-			IL_0193: ldstr "call"
-			IL_0198: ldloc.s 24
-			IL_019a: ldstr "__jroc_esm_namespace"
-			IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_01a4: stloc.s 24
-			IL_01a6: ldloc.s 24
-			IL_01a8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_01ad: stloc.s 16
-			IL_01af: ldloc.s 16
-			IL_01b1: brfalse IL_01cd
+			IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0198: stloc.s 15
+			IL_019a: ldloc.0
+			IL_019b: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
+			IL_01a0: stloc.s 24
+			IL_01a2: ldloc.s 15
+			IL_01a4: ldstr "call"
+			IL_01a9: ldloc.s 24
+			IL_01ab: ldstr "__jroc_esm_namespace"
+			IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_01b5: stloc.s 24
+			IL_01b7: ldloc.s 24
+			IL_01b9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_01be: stloc.s 16
+			IL_01c0: ldloc.s 16
+			IL_01c2: brfalse IL_01de
 
-			IL_01b6: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L32C75::.ctor()
-			IL_01bb: stloc.3
-			IL_01bc: ldloc.0
-			IL_01bd: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
-			IL_01c2: ldstr "__jroc_esm_namespace"
-			IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01cc: ret
-
+			IL_01c7: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L32C75::.ctor()
+			IL_01cc: stloc.3
 			IL_01cd: ldloc.0
-			IL_01ce: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_01d3: stfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
-			IL_01d8: ldloc.0
-			IL_01d9: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
-			IL_01de: stloc.s 24
-			IL_01e0: ldc.i4.2
-			IL_01e1: newarr [System.Runtime]System.Object
-			IL_01e6: dup
-			IL_01e7: ldc.i4.0
-			IL_01e8: ldarg.0
-			IL_01e9: stelem.ref
-			IL_01ea: dup
-			IL_01eb: ldc.i4.1
-			IL_01ec: ldloc.0
-			IL_01ed: stelem.ref
-			IL_01ee: ldftn object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/FunctionExpression_L37C86::__js_call__(object[], object)
-			IL_01f4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_01f9: ldc.i4.0
-			IL_01fa: conv.r8
-			IL_01fb: ldstr ""
-			IL_0200: ldc.i4.0
-			IL_0201: ldc.i4.1
-			IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0207: stloc.s 15
-			IL_0209: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_020e: dup
-			IL_020f: ldstr "enumerable"
-			IL_0214: ldc.i4.1
-			IL_0215: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_021a: dup
-			IL_021b: ldstr "configurable"
-			IL_0220: ldc.i4.1
-			IL_0221: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0226: dup
-			IL_0227: ldstr "get"
-			IL_022c: ldloc.s 15
-			IL_022e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0233: stloc.s 25
-			IL_0235: ldloc.s 24
-			IL_0237: ldstr "default"
-			IL_023c: ldloc.s 25
-			IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_0243: pop
-			IL_0244: ldloc.0
-			IL_0245: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
-			IL_024a: stloc.s 24
-			IL_024c: ldc.i4.2
-			IL_024d: newarr [System.Runtime]System.Object
-			IL_0252: dup
-			IL_0253: ldc.i4.0
-			IL_0254: ldarg.0
-			IL_0255: stelem.ref
-			IL_0256: dup
-			IL_0257: ldc.i4.1
-			IL_0258: ldloc.0
-			IL_0259: stelem.ref
-			IL_025a: ldftn object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/FunctionExpression_L38C93::__js_call__(object[], object)
-			IL_0260: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0265: ldc.i4.0
-			IL_0266: conv.r8
-			IL_0267: ldstr ""
-			IL_026c: ldc.i4.0
-			IL_026d: ldc.i4.1
-			IL_026e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0273: stloc.s 15
-			IL_0275: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_027a: dup
-			IL_027b: ldstr "enumerable"
-			IL_0280: ldc.i4.1
-			IL_0281: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0286: dup
-			IL_0287: ldstr "configurable"
-			IL_028c: ldc.i4.1
-			IL_028d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0292: dup
-			IL_0293: ldstr "get"
-			IL_0298: ldloc.s 15
-			IL_029a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_029f: stloc.s 25
-			IL_02a1: ldloc.s 24
-			IL_02a3: ldstr "module.exports"
-			IL_02a8: ldloc.s 25
-			IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_02af: pop
-			IL_02b0: ldloc.0
-			IL_02b1: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
-			IL_02b6: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
-			IL_02bb: stloc.s 4
-			// loop start (head: IL_02bd)
-				IL_02bd: ldloc.s 4
-				IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-				IL_02c4: stloc.s 24
-				IL_02c6: ldloc.s 24
-				IL_02c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-				IL_02cd: stloc.s 16
-				IL_02cf: ldloc.s 16
-				IL_02d1: brtrue IL_0465
+			IL_01ce: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
+			IL_01d3: ldstr "__jroc_esm_namespace"
+			IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01dd: ret
 
-				IL_02d6: ldloc.s 24
-				IL_02d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-				IL_02dd: stloc.s 24
-				IL_02df: ldloc.s 24
-				IL_02e1: stloc.s 5
-				IL_02e3: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L40C25::.ctor()
-				IL_02e8: stloc.s 6
-				IL_02ea: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-				IL_02ef: ldstr "prototype"
-				IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_02f9: ldstr "hasOwnProperty"
-				IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0308: stloc.s 24
-				IL_030a: ldloc.s 24
-				IL_030c: ldstr "call"
-				IL_0311: ldloc.0
-				IL_0312: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
-				IL_0317: ldloc.s 5
-				IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_031e: stloc.s 24
-				IL_0320: ldloc.s 24
-				IL_0322: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-				IL_0327: ldc.i4.0
-				IL_0328: ceq
-				IL_032a: stloc.s 16
-				IL_032c: ldloc.s 16
-				IL_032e: brfalse IL_033f
+			IL_01de: ldloc.0
+			IL_01df: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01e4: stfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
+			IL_01e9: ldloc.0
+			IL_01ea: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
+			IL_01ef: stloc.s 24
+			IL_01f1: ldc.i4.2
+			IL_01f2: newarr [System.Runtime]System.Object
+			IL_01f7: dup
+			IL_01f8: ldc.i4.0
+			IL_01f9: ldarg.0
+			IL_01fa: stelem.ref
+			IL_01fb: dup
+			IL_01fc: ldc.i4.1
+			IL_01fd: ldloc.0
+			IL_01fe: stelem.ref
+			IL_01ff: ldftn object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/FunctionExpression_L37C86::__js_call__(object[], object)
+			IL_0205: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_020a: ldc.i4.0
+			IL_020b: conv.r8
+			IL_020c: ldstr ""
+			IL_0211: ldc.i4.0
+			IL_0212: ldc.i4.1
+			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0218: stloc.s 15
+			IL_021a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_021f: dup
+			IL_0220: ldstr "enumerable"
+			IL_0225: ldc.i4.1
+			IL_0226: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_022b: dup
+			IL_022c: ldstr "configurable"
+			IL_0231: ldc.i4.1
+			IL_0232: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0237: dup
+			IL_0238: ldstr "get"
+			IL_023d: ldloc.s 15
+			IL_023f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0244: stloc.s 25
+			IL_0246: ldloc.s 24
+			IL_0248: ldstr "default"
+			IL_024d: ldloc.s 25
+			IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_0254: pop
+			IL_0255: ldloc.0
+			IL_0256: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
+			IL_025b: stloc.s 24
+			IL_025d: ldc.i4.2
+			IL_025e: newarr [System.Runtime]System.Object
+			IL_0263: dup
+			IL_0264: ldc.i4.0
+			IL_0265: ldarg.0
+			IL_0266: stelem.ref
+			IL_0267: dup
+			IL_0268: ldc.i4.1
+			IL_0269: ldloc.0
+			IL_026a: stelem.ref
+			IL_026b: ldftn object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/FunctionExpression_L38C93::__js_call__(object[], object)
+			IL_0271: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0276: ldc.i4.0
+			IL_0277: conv.r8
+			IL_0278: ldstr ""
+			IL_027d: ldc.i4.0
+			IL_027e: ldc.i4.1
+			IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0284: stloc.s 15
+			IL_0286: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_028b: dup
+			IL_028c: ldstr "enumerable"
+			IL_0291: ldc.i4.1
+			IL_0292: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0297: dup
+			IL_0298: ldstr "configurable"
+			IL_029d: ldc.i4.1
+			IL_029e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_02a3: dup
+			IL_02a4: ldstr "get"
+			IL_02a9: ldloc.s 15
+			IL_02ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_02b0: stloc.s 25
+			IL_02b2: ldloc.s 24
+			IL_02b4: ldstr "module.exports"
+			IL_02b9: ldloc.s 25
+			IL_02bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_02c0: pop
+			IL_02c1: ldloc.0
+			IL_02c2: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
+			IL_02c7: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+			IL_02cc: stloc.s 4
+			// loop start (head: IL_02ce)
+				IL_02ce: ldloc.s 4
+				IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+				IL_02d5: stloc.s 24
+				IL_02d7: ldloc.s 24
+				IL_02d9: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+				IL_02de: stloc.s 16
+				IL_02e0: ldloc.s 16
+				IL_02e2: brtrue IL_0487
 
-				IL_0333: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L40C25/Block_L41C61::.ctor()
-				IL_0338: stloc.s 7
-				IL_033a: br IL_0460
+				IL_02e7: ldloc.s 24
+				IL_02e9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+				IL_02ee: stloc.s 24
+				IL_02f0: ldloc.s 24
+				IL_02f2: stloc.s 5
+				IL_02f4: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L40C25::.ctor()
+				IL_02f9: stloc.s 6
+				IL_02fb: ldstr "Object"
+				IL_0300: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0305: stloc.s 24
+				IL_0307: ldloc.s 24
+				IL_0309: ldstr "prototype"
+				IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0313: stloc.s 24
+				IL_0315: ldloc.s 24
+				IL_0317: ldstr "hasOwnProperty"
+				IL_031c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0321: stloc.s 24
+				IL_0323: ldloc.s 24
+				IL_0325: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_032a: stloc.s 24
+				IL_032c: ldloc.s 24
+				IL_032e: ldstr "call"
+				IL_0333: ldloc.0
+				IL_0334: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
+				IL_0339: ldloc.s 5
+				IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0340: stloc.s 24
+				IL_0342: ldloc.s 24
+				IL_0344: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+				IL_0349: ldc.i4.0
+				IL_034a: ceq
+				IL_034c: stloc.s 16
+				IL_034e: ldloc.s 16
+				IL_0350: brfalse IL_0361
 
-				IL_033f: ldloc.s 5
-				IL_0341: stloc.s 24
-				IL_0343: ldloc.s 24
-				IL_0345: ldstr "default"
-				IL_034a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_034f: stloc.s 16
-				IL_0351: ldloc.s 16
-				IL_0353: box [System.Runtime]System.Boolean
-				IL_0358: stloc.s 17
-				IL_035a: ldloc.s 17
-				IL_035c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0361: stloc.s 16
-				IL_0363: ldloc.s 16
-				IL_0365: brtrue IL_038e
+				IL_0355: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L40C25/Block_L41C61::.ctor()
+				IL_035a: stloc.s 7
+				IL_035c: br IL_0482
 
-				IL_036a: ldloc.s 5
-				IL_036c: stloc.s 24
-				IL_036e: ldloc.s 24
-				IL_0370: ldstr "module.exports"
-				IL_0375: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_037a: stloc.s 16
-				IL_037c: ldloc.s 16
-				IL_037e: box [System.Runtime]System.Boolean
-				IL_0383: stloc.s 18
-				IL_0385: ldloc.s 18
-				IL_0387: stloc.s 26
-				IL_0389: br IL_0392
+				IL_0361: ldloc.s 5
+				IL_0363: stloc.s 24
+				IL_0365: ldloc.s 24
+				IL_0367: ldstr "default"
+				IL_036c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0371: stloc.s 16
+				IL_0373: ldloc.s 16
+				IL_0375: box [System.Runtime]System.Boolean
+				IL_037a: stloc.s 17
+				IL_037c: ldloc.s 17
+				IL_037e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0383: stloc.s 16
+				IL_0385: ldloc.s 16
+				IL_0387: brtrue IL_03b0
 
-				IL_038e: ldloc.s 17
-				IL_0390: stloc.s 26
+				IL_038c: ldloc.s 5
+				IL_038e: stloc.s 24
+				IL_0390: ldloc.s 24
+				IL_0392: ldstr "module.exports"
+				IL_0397: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_039c: stloc.s 16
+				IL_039e: ldloc.s 16
+				IL_03a0: box [System.Runtime]System.Boolean
+				IL_03a5: stloc.s 18
+				IL_03a7: ldloc.s 18
+				IL_03a9: stloc.s 26
+				IL_03ab: br IL_03b4
 
-				IL_0392: ldloc.s 26
-				IL_0394: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0399: stloc.s 16
-				IL_039b: ldloc.s 16
-				IL_039d: brtrue IL_03c6
+				IL_03b0: ldloc.s 17
+				IL_03b2: stloc.s 26
 
-				IL_03a2: ldloc.s 5
-				IL_03a4: stloc.s 24
-				IL_03a6: ldloc.s 24
-				IL_03a8: ldstr "__esModule"
-				IL_03ad: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_03b2: stloc.s 16
-				IL_03b4: ldloc.s 16
-				IL_03b6: box [System.Runtime]System.Boolean
-				IL_03bb: stloc.s 17
-				IL_03bd: ldloc.s 17
-				IL_03bf: stloc.s 26
-				IL_03c1: br IL_03c6
+				IL_03b4: ldloc.s 26
+				IL_03b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_03bb: stloc.s 16
+				IL_03bd: ldloc.s 16
+				IL_03bf: brtrue IL_03e8
 
-				IL_03c6: ldloc.s 26
-				IL_03c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_03cd: stloc.s 16
-				IL_03cf: ldloc.s 16
-				IL_03d1: brtrue IL_03fa
+				IL_03c4: ldloc.s 5
+				IL_03c6: stloc.s 24
+				IL_03c8: ldloc.s 24
+				IL_03ca: ldstr "__esModule"
+				IL_03cf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_03d4: stloc.s 16
+				IL_03d6: ldloc.s 16
+				IL_03d8: box [System.Runtime]System.Boolean
+				IL_03dd: stloc.s 17
+				IL_03df: ldloc.s 17
+				IL_03e1: stloc.s 26
+				IL_03e3: br IL_03e8
 
-				IL_03d6: ldloc.s 5
-				IL_03d8: stloc.s 24
-				IL_03da: ldloc.s 24
-				IL_03dc: ldstr "__jroc_esm_namespace"
-				IL_03e1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_03e6: stloc.s 16
-				IL_03e8: ldloc.s 16
-				IL_03ea: box [System.Runtime]System.Boolean
-				IL_03ef: stloc.s 17
-				IL_03f1: ldloc.s 17
-				IL_03f3: stloc.s 26
-				IL_03f5: br IL_03fa
+				IL_03e8: ldloc.s 26
+				IL_03ea: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_03ef: stloc.s 16
+				IL_03f1: ldloc.s 16
+				IL_03f3: brtrue IL_041c
 
-				IL_03fa: ldloc.s 26
-				IL_03fc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0401: stloc.s 16
-				IL_0403: ldloc.s 16
-				IL_0405: brfalse IL_0416
+				IL_03f8: ldloc.s 5
+				IL_03fa: stloc.s 24
+				IL_03fc: ldloc.s 24
+				IL_03fe: ldstr "__jroc_esm_namespace"
+				IL_0403: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0408: stloc.s 16
+				IL_040a: ldloc.s 16
+				IL_040c: box [System.Runtime]System.Boolean
+				IL_0411: stloc.s 17
+				IL_0413: ldloc.s 17
+				IL_0415: stloc.s 26
+				IL_0417: br IL_041c
 
-				IL_040a: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L40C25/Block_L44C117::.ctor()
-				IL_040f: stloc.s 8
-				IL_0411: br IL_0460
+				IL_041c: ldloc.s 26
+				IL_041e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0423: stloc.s 16
+				IL_0425: ldloc.s 16
+				IL_0427: brfalse IL_0438
 
-				IL_0416: ldc.i4.2
-				IL_0417: newarr [System.Runtime]System.Object
-				IL_041c: dup
-				IL_041d: ldc.i4.0
-				IL_041e: ldarg.0
-				IL_041f: stelem.ref
-				IL_0420: dup
-				IL_0421: ldc.i4.1
-				IL_0422: ldloc.0
-				IL_0423: stelem.ref
-				IL_0424: ldftn object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/FunctionExpression_L47C9::__js_call__(object[], object, object)
-				IL_042a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-				IL_042f: ldc.i4.1
-				IL_0430: conv.r8
-				IL_0431: ldstr ""
-				IL_0436: ldc.i4.0
-				IL_0437: ldc.i4.1
-				IL_0438: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_043d: stloc.s 24
-				IL_043f: ldc.i4.1
-				IL_0440: newarr [System.Runtime]System.Object
-				IL_0445: dup
-				IL_0446: ldc.i4.0
-				IL_0447: ldloc.s 5
-				IL_0449: stelem.ref
-				IL_044a: stloc.s 29
-				IL_044c: ldloc.s 24
-				IL_044e: ldc.i4.1
-				IL_044f: newarr [System.Runtime]System.Object
-				IL_0454: dup
-				IL_0455: ldc.i4.0
-				IL_0456: ldarg.0
-				IL_0457: stelem.ref
-				IL_0458: ldloc.s 29
-				IL_045a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_045f: pop
+				IL_042c: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L40C25/Block_L44C117::.ctor()
+				IL_0431: stloc.s 8
+				IL_0433: br IL_0482
 
-				IL_0460: br IL_02bd
+				IL_0438: ldc.i4.2
+				IL_0439: newarr [System.Runtime]System.Object
+				IL_043e: dup
+				IL_043f: ldc.i4.0
+				IL_0440: ldarg.0
+				IL_0441: stelem.ref
+				IL_0442: dup
+				IL_0443: ldc.i4.1
+				IL_0444: ldloc.0
+				IL_0445: stelem.ref
+				IL_0446: ldftn object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/FunctionExpression_L47C9::__js_call__(object[], object, object)
+				IL_044c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+				IL_0451: ldc.i4.1
+				IL_0452: conv.r8
+				IL_0453: ldstr ""
+				IL_0458: ldc.i4.0
+				IL_0459: ldc.i4.1
+				IL_045a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_045f: stloc.s 24
+				IL_0461: ldc.i4.1
+				IL_0462: newarr [System.Runtime]System.Object
+				IL_0467: dup
+				IL_0468: ldc.i4.0
+				IL_0469: ldloc.s 5
+				IL_046b: stelem.ref
+				IL_046c: stloc.s 29
+				IL_046e: ldloc.s 24
+				IL_0470: ldc.i4.1
+				IL_0471: newarr [System.Runtime]System.Object
+				IL_0476: dup
+				IL_0477: ldc.i4.0
+				IL_0478: ldarg.0
+				IL_0479: stelem.ref
+				IL_047a: ldloc.s 29
+				IL_047c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+				IL_0481: pop
+
+				IL_0482: br IL_02ce
 			// end loop
 			.try
 			{
-				IL_0465: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L52C8::.ctor()
-				IL_046a: stloc.s 9
-				IL_046c: ldloc.0
-				IL_046d: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
-				IL_0472: stloc.s 24
-				IL_0474: ldloc.s 24
-				IL_0476: ldstr "__jroc_esm_namespace"
-				IL_047b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0480: dup
-				IL_0481: ldstr "value"
-				IL_0486: ldloc.0
-				IL_0487: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
-				IL_048c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0491: dup
-				IL_0492: ldstr "enumerable"
-				IL_0497: ldc.i4.0
-				IL_0498: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_049d: dup
-				IL_049e: ldstr "configurable"
-				IL_04a3: ldc.i4.0
-				IL_04a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04a9: dup
-				IL_04aa: ldstr "writable"
-				IL_04af: ldc.i4.0
-				IL_04b0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-				IL_04ba: pop
-				IL_04bb: leave IL_0502
+				IL_0487: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L52C8::.ctor()
+				IL_048c: stloc.s 9
+				IL_048e: ldloc.0
+				IL_048f: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::mod
+				IL_0494: stloc.s 24
+				IL_0496: ldloc.s 24
+				IL_0498: ldstr "__jroc_esm_namespace"
+				IL_049d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_04a2: dup
+				IL_04a3: ldstr "value"
+				IL_04a8: ldloc.0
+				IL_04a9: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
+				IL_04ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_04b3: dup
+				IL_04b4: ldstr "enumerable"
+				IL_04b9: ldc.i4.0
+				IL_04ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04bf: dup
+				IL_04c0: ldstr "configurable"
+				IL_04c5: ldc.i4.0
+				IL_04c6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04cb: dup
+				IL_04cc: ldstr "writable"
+				IL_04d1: ldc.i4.0
+				IL_04d2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+				IL_04dc: pop
+				IL_04dd: leave IL_0524
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_04c0: stloc.s 10
-				IL_04c2: ldloc.s 10
-				IL_04c4: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_04c9: dup
-				IL_04ca: brtrue IL_04e0
+				IL_04e2: stloc.s 10
+				IL_04e4: ldloc.s 10
+				IL_04e6: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_04eb: dup
+				IL_04ec: brtrue IL_0502
 
-				IL_04cf: pop
-				IL_04d0: ldloc.s 10
-				IL_04d2: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_04d7: dup
-				IL_04d8: brtrue IL_04ec
+				IL_04f1: pop
+				IL_04f2: ldloc.s 10
+				IL_04f4: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_04f9: dup
+				IL_04fa: brtrue IL_050e
 
-				IL_04dd: pop
-				IL_04de: rethrow
+				IL_04ff: pop
+				IL_0500: rethrow
 
-				IL_04e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_04e5: stloc.s 11
-				IL_04e7: br IL_04ee
+				IL_0502: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0507: stloc.s 11
+				IL_0509: br IL_0510
 
-				IL_04ec: stloc.s 11
+				IL_050e: stloc.s 11
 
-				IL_04ee: ldloc.s 11
-				IL_04f0: stloc.s 24
-				IL_04f2: ldloc.s 24
-				IL_04f4: stloc.s 12
-				IL_04f6: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L54C16::.ctor()
-				IL_04fb: stloc.s 13
-				IL_04fd: leave IL_0502
+				IL_0510: ldloc.s 11
+				IL_0512: stloc.s 24
+				IL_0514: ldloc.s 24
+				IL_0516: stloc.s 12
+				IL_0518: newobj instance void Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope/Block_L54C16::.ctor()
+				IL_051d: stloc.s 13
+				IL_051f: leave IL_0524
 			} // end handler
 
-			IL_0502: ldloc.0
-			IL_0503: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
-			IL_0508: ret
+			IL_0524: ldloc.0
+			IL_0525: ldfld object Modules.Import_ExportNamedFrom/__jroc_esm_namespace/Scope::ns
+			IL_052a: ret
 
-			IL_0509: ldnull
-			IL_050a: stloc.s 14
-			IL_050c: ldloc.s 14
-			IL_050e: ret
+			IL_052b: ldnull
+			IL_052c: stloc.s 14
+			IL_052e: ldloc.s 14
+			IL_0530: ret
 		} // end of method __jroc_esm_namespace::__js_call__
 
 	} // end of class __jroc_esm_namespace
@@ -1344,7 +1372,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3543
+				// Method begins at RVA 0x35e7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1372,7 +1400,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 1a 00 00 02
 			)
-			// Method begins at RVA 0x2a50
+			// Method begins at RVA 0x2ab8
 			// Header size: 12
 			// Code size: 106 (0x6a)
 			.maxstack 8
@@ -1445,7 +1473,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x34a1
+			// Method begins at RVA 0x3545
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -1471,7 +1499,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 382 (0x17e)
+		// Code size: 428 (0x1ac)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_ExportNamedFrom/Scope,
@@ -1481,7 +1509,8 @@
 			[4] object,
 			[5] object,
 			[6] object,
-			[7] object[]
+			[7] object[],
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Import_ExportNamedFrom/Scope::.ctor()
@@ -1585,46 +1614,60 @@
 		IL_00fa: stloc.s 6
 		IL_00fc: ldloc.s 6
 		IL_00fe: stloc.s 5
-		IL_0100: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0105: stloc.s 7
-		IL_0107: ldloc.2
-		IL_0108: ldloc.s 7
-		IL_010a: ldloc.s 5
-		IL_010c: ldstr "value"
-		IL_0111: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0116: stloc.s 6
-		IL_0118: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_011d: ldstr "value:"
-		IL_0122: ldloc.s 6
-		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0129: pop
-		IL_012a: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_012f: stloc.s 7
-		IL_0131: ldloc.2
-		IL_0132: ldloc.s 7
-		IL_0134: ldloc.s 5
-		IL_0136: ldstr "doubled"
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
-		IL_0140: stloc.s 6
-		IL_0142: ldc.i4.1
-		IL_0143: newarr [System.Runtime]System.Object
-		IL_0148: dup
-		IL_0149: ldc.i4.0
-		IL_014a: ldc.r8 5
-		IL_0153: box [System.Runtime]System.Double
-		IL_0158: stelem.ref
-		IL_0159: stloc.s 7
-		IL_015b: ldloc.s 6
-		IL_015d: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0162: ldloc.s 7
-		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-		IL_0169: stloc.s 6
-		IL_016b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0170: ldstr "doubled:"
-		IL_0175: ldloc.s 6
-		IL_0177: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_017c: pop
-		IL_017d: ret
+		IL_0100: ldstr "console"
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_010a: stloc.s 6
+		IL_010c: ldloc.s 6
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0113: stloc.s 6
+		IL_0115: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_011a: stloc.s 7
+		IL_011c: ldloc.2
+		IL_011d: ldloc.s 7
+		IL_011f: ldloc.s 5
+		IL_0121: ldstr "value"
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_012b: stloc.s 8
+		IL_012d: ldloc.s 6
+		IL_012f: ldstr "log"
+		IL_0134: ldstr "value:"
+		IL_0139: ldloc.s 8
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0140: pop
+		IL_0141: ldstr "console"
+		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_014b: stloc.s 8
+		IL_014d: ldloc.s 8
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0154: stloc.s 8
+		IL_0156: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_015b: stloc.s 7
+		IL_015d: ldloc.2
+		IL_015e: ldloc.s 7
+		IL_0160: ldloc.s 5
+		IL_0162: ldstr "doubled"
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs2(object, object[], object, object)
+		IL_016c: stloc.s 6
+		IL_016e: ldc.i4.1
+		IL_016f: newarr [System.Runtime]System.Object
+		IL_0174: dup
+		IL_0175: ldc.i4.0
+		IL_0176: ldc.r8 5
+		IL_017f: box [System.Runtime]System.Double
+		IL_0184: stelem.ref
+		IL_0185: stloc.s 7
+		IL_0187: ldloc.s 6
+		IL_0189: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_018e: ldloc.s 7
+		IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+		IL_0195: stloc.s 6
+		IL_0197: ldloc.s 8
+		IL_0199: ldstr "log"
+		IL_019e: ldstr "doubled:"
+		IL_01a3: ldloc.s 6
+		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01aa: pop
+		IL_01ab: ret
 	} // end of method Import_ExportNamedFrom::__js_module_init__
 
 } // end of class Modules.Import_ExportNamedFrom
@@ -1644,7 +1687,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3555
+				// Method begins at RVA 0x35f9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1670,7 +1713,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 2d 00 00 02
 			)
-			// Method begins at RVA 0x2c08
+			// Method begins at RVA 0x2c70
 			// Header size: 12
 			// Code size: 33 (0x21)
 			.maxstack 8
@@ -1706,7 +1749,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x355e
+				// Method begins at RVA 0x3602
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1732,7 +1775,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 2d 00 00 02
 			)
-			// Method begins at RVA 0x2c38
+			// Method begins at RVA 0x2ca0
 			// Header size: 12
 			// Code size: 33 (0x21)
 			.maxstack 8
@@ -1772,7 +1815,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3570
+					// Method begins at RVA 0x3614
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -1790,7 +1833,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3567
+				// Method begins at RVA 0x360b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1816,9 +1859,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 2d 00 00 02
 			)
-			// Method begins at RVA 0x2c68
+			// Method begins at RVA 0x2cd0
 			// Header size: 12
-			// Code size: 164 (0xa4)
+			// Code size: 175 (0xaf)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Import_ExportNamedFrom_LibB/__jroc_esm_mark/Scope/Block_L12C70,
@@ -1827,63 +1870,70 @@
 				[3] bool
 			)
 
-			IL_0000: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-			IL_0005: ldstr "prototype"
-			IL_000a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_000f: ldstr "hasOwnProperty"
-			IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_001e: stloc.1
-			IL_001f: ldarg.0
-			IL_0020: ldfld object Modules.Import_ExportNamedFrom_LibB/Scope::exports
-			IL_0025: stloc.2
-			IL_0026: ldstr "exports"
-			IL_002b: ldloc.2
-			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0031: stloc.2
-			IL_0032: ldloc.1
-			IL_0033: ldstr "call"
-			IL_0038: ldloc.2
-			IL_0039: ldstr "__esModule"
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0043: stloc.2
-			IL_0044: ldloc.2
-			IL_0045: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_004a: ldc.i4.0
-			IL_004b: ceq
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: brfalse IL_00a2
+			IL_0000: ldstr "Object"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.1
+			IL_000b: ldloc.1
+			IL_000c: ldstr "prototype"
+			IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0016: stloc.1
+			IL_0017: ldloc.1
+			IL_0018: ldstr "hasOwnProperty"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0022: stloc.1
+			IL_0023: ldloc.1
+			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0029: stloc.1
+			IL_002a: ldarg.0
+			IL_002b: ldfld object Modules.Import_ExportNamedFrom_LibB/Scope::exports
+			IL_0030: stloc.2
+			IL_0031: ldstr "exports"
+			IL_0036: ldloc.2
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_003c: stloc.2
+			IL_003d: ldloc.1
+			IL_003e: ldstr "call"
+			IL_0043: ldloc.2
+			IL_0044: ldstr "__esModule"
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_004e: stloc.2
+			IL_004f: ldloc.2
+			IL_0050: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0055: ldc.i4.0
+			IL_0056: ceq
+			IL_0058: stloc.3
+			IL_0059: ldloc.3
+			IL_005a: brfalse IL_00ad
 
-			IL_0054: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_mark/Scope/Block_L12C70::.ctor()
-			IL_0059: stloc.0
-			IL_005a: ldarg.0
-			IL_005b: ldfld object Modules.Import_ExportNamedFrom_LibB/Scope::exports
-			IL_0060: stloc.2
-			IL_0061: ldstr "exports"
-			IL_0066: ldloc.2
-			IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_006c: stloc.2
-			IL_006d: ldloc.2
-			IL_006e: ldstr "__esModule"
-			IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0078: dup
-			IL_0079: ldstr "value"
-			IL_007e: ldc.i4.1
-			IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0084: dup
-			IL_0085: ldstr "enumerable"
-			IL_008a: ldc.i4.0
-			IL_008b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0090: dup
-			IL_0091: ldstr "configurable"
-			IL_0096: ldc.i4.1
-			IL_0097: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_00a1: pop
+			IL_005f: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_mark/Scope/Block_L12C70::.ctor()
+			IL_0064: stloc.0
+			IL_0065: ldarg.0
+			IL_0066: ldfld object Modules.Import_ExportNamedFrom_LibB/Scope::exports
+			IL_006b: stloc.2
+			IL_006c: ldstr "exports"
+			IL_0071: ldloc.2
+			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0077: stloc.2
+			IL_0078: ldloc.2
+			IL_0079: ldstr "__esModule"
+			IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0083: dup
+			IL_0084: ldstr "value"
+			IL_0089: ldc.i4.1
+			IL_008a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_008f: dup
+			IL_0090: ldstr "enumerable"
+			IL_0095: ldc.i4.0
+			IL_0096: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_009b: dup
+			IL_009c: ldstr "configurable"
+			IL_00a1: ldc.i4.1
+			IL_00a2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_00ac: pop
 
-			IL_00a2: ldnull
-			IL_00a3: ret
+			IL_00ad: ldnull
+			IL_00ae: ret
 		} // end of method __jroc_esm_mark::__js_call__
 
 	} // end of class __jroc_esm_mark
@@ -1899,7 +1949,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3579
+				// Method begins at RVA 0x361d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -1923,9 +1973,9 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2d18
+			// Method begins at RVA 0x2d8c
 			// Header size: 12
-			// Code size: 121 (0x79)
+			// Code size: 132 (0x84)
 			.maxstack 8
 			.locals init (
 				[0] bool,
@@ -1947,41 +1997,48 @@
 			IL_0015: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_001a: stloc.0
 			IL_001b: ldloc.0
-			IL_001c: brfalse IL_005a
+			IL_001c: brfalse IL_0065
 
-			IL_0021: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-			IL_0026: ldstr "prototype"
-			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0030: ldstr "hasOwnProperty"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_003f: stloc.2
-			IL_0040: ldloc.2
-			IL_0041: ldstr "call"
-			IL_0046: ldarg.1
-			IL_0047: ldstr "default"
-			IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0051: stloc.2
-			IL_0052: ldloc.2
-			IL_0053: stloc.s 4
-			IL_0055: br IL_005d
+			IL_0021: ldstr "Object"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002b: stloc.2
+			IL_002c: ldloc.2
+			IL_002d: ldstr "prototype"
+			IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0037: stloc.2
+			IL_0038: ldloc.2
+			IL_0039: ldstr "hasOwnProperty"
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0043: stloc.2
+			IL_0044: ldloc.2
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004a: stloc.2
+			IL_004b: ldloc.2
+			IL_004c: ldstr "call"
+			IL_0051: ldarg.1
+			IL_0052: ldstr "default"
+			IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_005c: stloc.2
+			IL_005d: ldloc.2
+			IL_005e: stloc.s 4
+			IL_0060: br IL_0068
 
-			IL_005a: ldloc.1
-			IL_005b: stloc.s 4
+			IL_0065: ldloc.1
+			IL_0066: stloc.s 4
 
-			IL_005d: ldloc.s 4
-			IL_005f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0064: stloc.0
-			IL_0065: ldloc.0
-			IL_0066: brfalse IL_0077
+			IL_0068: ldloc.s 4
+			IL_006a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_006f: stloc.0
+			IL_0070: ldloc.0
+			IL_0071: brfalse IL_0082
 
-			IL_006b: ldarg.1
-			IL_006c: ldstr "default"
-			IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0076: ret
+			IL_0076: ldarg.1
+			IL_0077: ldstr "default"
+			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0081: ret
 
-			IL_0077: ldarg.1
-			IL_0078: ret
+			IL_0082: ldarg.1
+			IL_0083: ret
 		} // end of method __jroc_esm_default::__js_call__
 
 	} // end of class __jroc_esm_default
@@ -1997,7 +2054,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3582
+				// Method begins at RVA 0x3626
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2022,7 +2079,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2d9d
+			// Method begins at RVA 0x2e1c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -2050,7 +2107,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35af
+					// Method begins at RVA 0x3653
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2074,7 +2131,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x334c
+				// Method begins at RVA 0x33f0
 				// Header size: 12
 				// Code size: 28 (0x1c)
 				.maxstack 8
@@ -2109,7 +2166,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35b8
+					// Method begins at RVA 0x365c
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2133,7 +2190,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x3374
+				// Method begins at RVA 0x3418
 				// Header size: 12
 				// Code size: 28 (0x1c)
 				.maxstack 8
@@ -2172,7 +2229,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x35e5
+						// Method begins at RVA 0x3689
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2196,7 +2253,7 @@
 					.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 						01 00 02 00 00 00 00 00
 					)
-					// Method begins at RVA 0x3440
+					// Method begins at RVA 0x34e4
 					// Header size: 12
 					// Code size: 62 (0x3e)
 					.maxstack 8
@@ -2248,7 +2305,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35dc
+					// Method begins at RVA 0x3680
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2273,7 +2330,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x339c
+				// Method begins at RVA 0x3440
 				// Header size: 12
 				// Code size: 149 (0x95)
 				.maxstack 8
@@ -2370,7 +2427,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x3594
+					// Method begins at RVA 0x3638
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2390,7 +2447,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x359d
+					// Method begins at RVA 0x3641
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2410,7 +2467,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35a6
+					// Method begins at RVA 0x364a
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2434,7 +2491,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x35ca
+						// Method begins at RVA 0x366e
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2454,7 +2511,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x35d3
+						// Method begins at RVA 0x3677
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -2472,7 +2529,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35c1
+					// Method begins at RVA 0x3665
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2492,7 +2549,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35ee
+					// Method begins at RVA 0x3692
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2512,7 +2569,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x35f7
+					// Method begins at RVA 0x369b
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -2534,7 +2591,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x358b
+				// Method begins at RVA 0x362f
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -2561,9 +2618,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 2d 00 00 02
 			)
-			// Method begins at RVA 0x2da8
+			// Method begins at RVA 0x2e28
 			// Header size: 12
-			// Code size: 1295 (0x50f)
+			// Code size: 1329 (0x531)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope,
@@ -2728,357 +2785,371 @@
 			IL_0163: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
 			IL_0168: ret
 
-			IL_0169: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-			IL_016e: ldstr "prototype"
-			IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0178: ldstr "hasOwnProperty"
-			IL_017d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0187: stloc.s 15
-			IL_0189: ldloc.0
-			IL_018a: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
-			IL_018f: stloc.s 24
+			IL_0169: ldstr "Object"
+			IL_016e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0173: stloc.s 15
+			IL_0175: ldloc.s 15
+			IL_0177: ldstr "prototype"
+			IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0181: stloc.s 15
+			IL_0183: ldloc.s 15
+			IL_0185: ldstr "hasOwnProperty"
+			IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_018f: stloc.s 15
 			IL_0191: ldloc.s 15
-			IL_0193: ldstr "call"
-			IL_0198: ldloc.s 24
-			IL_019a: ldstr "__jroc_esm_namespace"
-			IL_019f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_01a4: stloc.s 24
-			IL_01a6: ldloc.s 24
-			IL_01a8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_01ad: stloc.s 16
-			IL_01af: ldloc.s 16
-			IL_01b1: brfalse IL_01cd
+			IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0198: stloc.s 15
+			IL_019a: ldloc.0
+			IL_019b: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
+			IL_01a0: stloc.s 24
+			IL_01a2: ldloc.s 15
+			IL_01a4: ldstr "call"
+			IL_01a9: ldloc.s 24
+			IL_01ab: ldstr "__jroc_esm_namespace"
+			IL_01b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_01b5: stloc.s 24
+			IL_01b7: ldloc.s 24
+			IL_01b9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_01be: stloc.s 16
+			IL_01c0: ldloc.s 16
+			IL_01c2: brfalse IL_01de
 
-			IL_01b6: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L31C75::.ctor()
-			IL_01bb: stloc.3
-			IL_01bc: ldloc.0
-			IL_01bd: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
-			IL_01c2: ldstr "__jroc_esm_namespace"
-			IL_01c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01cc: ret
-
+			IL_01c7: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L31C75::.ctor()
+			IL_01cc: stloc.3
 			IL_01cd: ldloc.0
-			IL_01ce: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_01d3: stfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
-			IL_01d8: ldloc.0
-			IL_01d9: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
-			IL_01de: stloc.s 24
-			IL_01e0: ldc.i4.2
-			IL_01e1: newarr [System.Runtime]System.Object
-			IL_01e6: dup
-			IL_01e7: ldc.i4.0
-			IL_01e8: ldarg.0
-			IL_01e9: stelem.ref
-			IL_01ea: dup
-			IL_01eb: ldc.i4.1
-			IL_01ec: ldloc.0
-			IL_01ed: stelem.ref
-			IL_01ee: ldftn object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/FunctionExpression_L36C86::__js_call__(object[], object)
-			IL_01f4: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_01f9: ldc.i4.0
-			IL_01fa: conv.r8
-			IL_01fb: ldstr ""
-			IL_0200: ldc.i4.0
-			IL_0201: ldc.i4.1
-			IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0207: stloc.s 15
-			IL_0209: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_020e: dup
-			IL_020f: ldstr "enumerable"
-			IL_0214: ldc.i4.1
-			IL_0215: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_021a: dup
-			IL_021b: ldstr "configurable"
-			IL_0220: ldc.i4.1
-			IL_0221: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0226: dup
-			IL_0227: ldstr "get"
-			IL_022c: ldloc.s 15
-			IL_022e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_0233: stloc.s 25
-			IL_0235: ldloc.s 24
-			IL_0237: ldstr "default"
-			IL_023c: ldloc.s 25
-			IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_0243: pop
-			IL_0244: ldloc.0
-			IL_0245: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
-			IL_024a: stloc.s 24
-			IL_024c: ldc.i4.2
-			IL_024d: newarr [System.Runtime]System.Object
-			IL_0252: dup
-			IL_0253: ldc.i4.0
-			IL_0254: ldarg.0
-			IL_0255: stelem.ref
-			IL_0256: dup
-			IL_0257: ldc.i4.1
-			IL_0258: ldloc.0
-			IL_0259: stelem.ref
-			IL_025a: ldftn object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/FunctionExpression_L37C93::__js_call__(object[], object)
-			IL_0260: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-			IL_0265: ldc.i4.0
-			IL_0266: conv.r8
-			IL_0267: ldstr ""
-			IL_026c: ldc.i4.0
-			IL_026d: ldc.i4.1
-			IL_026e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0273: stloc.s 15
-			IL_0275: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_027a: dup
-			IL_027b: ldstr "enumerable"
-			IL_0280: ldc.i4.1
-			IL_0281: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0286: dup
-			IL_0287: ldstr "configurable"
-			IL_028c: ldc.i4.1
-			IL_028d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0292: dup
-			IL_0293: ldstr "get"
-			IL_0298: ldloc.s 15
-			IL_029a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-			IL_029f: stloc.s 25
-			IL_02a1: ldloc.s 24
-			IL_02a3: ldstr "module.exports"
-			IL_02a8: ldloc.s 25
-			IL_02aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-			IL_02af: pop
-			IL_02b0: ldloc.0
-			IL_02b1: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
-			IL_02b6: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
-			IL_02bb: stloc.s 4
-			// loop start (head: IL_02bd)
-				IL_02bd: ldloc.s 4
-				IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-				IL_02c4: stloc.s 24
-				IL_02c6: ldloc.s 24
-				IL_02c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-				IL_02cd: stloc.s 16
-				IL_02cf: ldloc.s 16
-				IL_02d1: brtrue IL_0465
+			IL_01ce: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
+			IL_01d3: ldstr "__jroc_esm_namespace"
+			IL_01d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01dd: ret
 
-				IL_02d6: ldloc.s 24
-				IL_02d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-				IL_02dd: stloc.s 24
-				IL_02df: ldloc.s 24
-				IL_02e1: stloc.s 5
-				IL_02e3: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L39C25::.ctor()
-				IL_02e8: stloc.s 6
-				IL_02ea: call class [System.Runtime]System.Func`3<object[], object, object> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Object()
-				IL_02ef: ldstr "prototype"
-				IL_02f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_02f9: ldstr "hasOwnProperty"
-				IL_02fe: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-				IL_0303: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0308: stloc.s 24
-				IL_030a: ldloc.s 24
-				IL_030c: ldstr "call"
-				IL_0311: ldloc.0
-				IL_0312: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
-				IL_0317: ldloc.s 5
-				IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-				IL_031e: stloc.s 24
-				IL_0320: ldloc.s 24
-				IL_0322: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-				IL_0327: ldc.i4.0
-				IL_0328: ceq
-				IL_032a: stloc.s 16
-				IL_032c: ldloc.s 16
-				IL_032e: brfalse IL_033f
+			IL_01de: ldloc.0
+			IL_01df: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_01e4: stfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
+			IL_01e9: ldloc.0
+			IL_01ea: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
+			IL_01ef: stloc.s 24
+			IL_01f1: ldc.i4.2
+			IL_01f2: newarr [System.Runtime]System.Object
+			IL_01f7: dup
+			IL_01f8: ldc.i4.0
+			IL_01f9: ldarg.0
+			IL_01fa: stelem.ref
+			IL_01fb: dup
+			IL_01fc: ldc.i4.1
+			IL_01fd: ldloc.0
+			IL_01fe: stelem.ref
+			IL_01ff: ldftn object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/FunctionExpression_L36C86::__js_call__(object[], object)
+			IL_0205: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_020a: ldc.i4.0
+			IL_020b: conv.r8
+			IL_020c: ldstr ""
+			IL_0211: ldc.i4.0
+			IL_0212: ldc.i4.1
+			IL_0213: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0218: stloc.s 15
+			IL_021a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_021f: dup
+			IL_0220: ldstr "enumerable"
+			IL_0225: ldc.i4.1
+			IL_0226: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_022b: dup
+			IL_022c: ldstr "configurable"
+			IL_0231: ldc.i4.1
+			IL_0232: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0237: dup
+			IL_0238: ldstr "get"
+			IL_023d: ldloc.s 15
+			IL_023f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_0244: stloc.s 25
+			IL_0246: ldloc.s 24
+			IL_0248: ldstr "default"
+			IL_024d: ldloc.s 25
+			IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_0254: pop
+			IL_0255: ldloc.0
+			IL_0256: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
+			IL_025b: stloc.s 24
+			IL_025d: ldc.i4.2
+			IL_025e: newarr [System.Runtime]System.Object
+			IL_0263: dup
+			IL_0264: ldc.i4.0
+			IL_0265: ldarg.0
+			IL_0266: stelem.ref
+			IL_0267: dup
+			IL_0268: ldc.i4.1
+			IL_0269: ldloc.0
+			IL_026a: stelem.ref
+			IL_026b: ldftn object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/FunctionExpression_L37C93::__js_call__(object[], object)
+			IL_0271: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+			IL_0276: ldc.i4.0
+			IL_0277: conv.r8
+			IL_0278: ldstr ""
+			IL_027d: ldc.i4.0
+			IL_027e: ldc.i4.1
+			IL_027f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0284: stloc.s 15
+			IL_0286: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_028b: dup
+			IL_028c: ldstr "enumerable"
+			IL_0291: ldc.i4.1
+			IL_0292: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0297: dup
+			IL_0298: ldstr "configurable"
+			IL_029d: ldc.i4.1
+			IL_029e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_02a3: dup
+			IL_02a4: ldstr "get"
+			IL_02a9: ldloc.s 15
+			IL_02ab: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+			IL_02b0: stloc.s 25
+			IL_02b2: ldloc.s 24
+			IL_02b4: ldstr "module.exports"
+			IL_02b9: ldloc.s 25
+			IL_02bb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+			IL_02c0: pop
+			IL_02c1: ldloc.0
+			IL_02c2: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
+			IL_02c7: call class [JavaScriptRuntime]JavaScriptRuntime.IJavaScriptIterator [JavaScriptRuntime]JavaScriptRuntime.Object::EnumerateObjectProperties(object)
+			IL_02cc: stloc.s 4
+			// loop start (head: IL_02ce)
+				IL_02ce: ldloc.s 4
+				IL_02d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
+				IL_02d5: stloc.s 24
+				IL_02d7: ldloc.s 24
+				IL_02d9: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
+				IL_02de: stloc.s 16
+				IL_02e0: ldloc.s 16
+				IL_02e2: brtrue IL_0487
 
-				IL_0333: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L39C25/Block_L40C61::.ctor()
-				IL_0338: stloc.s 7
-				IL_033a: br IL_0460
+				IL_02e7: ldloc.s 24
+				IL_02e9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
+				IL_02ee: stloc.s 24
+				IL_02f0: ldloc.s 24
+				IL_02f2: stloc.s 5
+				IL_02f4: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L39C25::.ctor()
+				IL_02f9: stloc.s 6
+				IL_02fb: ldstr "Object"
+				IL_0300: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0305: stloc.s 24
+				IL_0307: ldloc.s 24
+				IL_0309: ldstr "prototype"
+				IL_030e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0313: stloc.s 24
+				IL_0315: ldloc.s 24
+				IL_0317: ldstr "hasOwnProperty"
+				IL_031c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0321: stloc.s 24
+				IL_0323: ldloc.s 24
+				IL_0325: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_032a: stloc.s 24
+				IL_032c: ldloc.s 24
+				IL_032e: ldstr "call"
+				IL_0333: ldloc.0
+				IL_0334: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
+				IL_0339: ldloc.s 5
+				IL_033b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+				IL_0340: stloc.s 24
+				IL_0342: ldloc.s 24
+				IL_0344: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+				IL_0349: ldc.i4.0
+				IL_034a: ceq
+				IL_034c: stloc.s 16
+				IL_034e: ldloc.s 16
+				IL_0350: brfalse IL_0361
 
-				IL_033f: ldloc.s 5
-				IL_0341: stloc.s 24
-				IL_0343: ldloc.s 24
-				IL_0345: ldstr "default"
-				IL_034a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_034f: stloc.s 16
-				IL_0351: ldloc.s 16
-				IL_0353: box [System.Runtime]System.Boolean
-				IL_0358: stloc.s 17
-				IL_035a: ldloc.s 17
-				IL_035c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0361: stloc.s 16
-				IL_0363: ldloc.s 16
-				IL_0365: brtrue IL_038e
+				IL_0355: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L39C25/Block_L40C61::.ctor()
+				IL_035a: stloc.s 7
+				IL_035c: br IL_0482
 
-				IL_036a: ldloc.s 5
-				IL_036c: stloc.s 24
-				IL_036e: ldloc.s 24
-				IL_0370: ldstr "module.exports"
-				IL_0375: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_037a: stloc.s 16
-				IL_037c: ldloc.s 16
-				IL_037e: box [System.Runtime]System.Boolean
-				IL_0383: stloc.s 18
-				IL_0385: ldloc.s 18
-				IL_0387: stloc.s 26
-				IL_0389: br IL_0392
+				IL_0361: ldloc.s 5
+				IL_0363: stloc.s 24
+				IL_0365: ldloc.s 24
+				IL_0367: ldstr "default"
+				IL_036c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0371: stloc.s 16
+				IL_0373: ldloc.s 16
+				IL_0375: box [System.Runtime]System.Boolean
+				IL_037a: stloc.s 17
+				IL_037c: ldloc.s 17
+				IL_037e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0383: stloc.s 16
+				IL_0385: ldloc.s 16
+				IL_0387: brtrue IL_03b0
 
-				IL_038e: ldloc.s 17
-				IL_0390: stloc.s 26
+				IL_038c: ldloc.s 5
+				IL_038e: stloc.s 24
+				IL_0390: ldloc.s 24
+				IL_0392: ldstr "module.exports"
+				IL_0397: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_039c: stloc.s 16
+				IL_039e: ldloc.s 16
+				IL_03a0: box [System.Runtime]System.Boolean
+				IL_03a5: stloc.s 18
+				IL_03a7: ldloc.s 18
+				IL_03a9: stloc.s 26
+				IL_03ab: br IL_03b4
 
-				IL_0392: ldloc.s 26
-				IL_0394: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0399: stloc.s 16
-				IL_039b: ldloc.s 16
-				IL_039d: brtrue IL_03c6
+				IL_03b0: ldloc.s 17
+				IL_03b2: stloc.s 26
 
-				IL_03a2: ldloc.s 5
-				IL_03a4: stloc.s 24
-				IL_03a6: ldloc.s 24
-				IL_03a8: ldstr "__esModule"
-				IL_03ad: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_03b2: stloc.s 16
-				IL_03b4: ldloc.s 16
-				IL_03b6: box [System.Runtime]System.Boolean
-				IL_03bb: stloc.s 17
-				IL_03bd: ldloc.s 17
-				IL_03bf: stloc.s 26
-				IL_03c1: br IL_03c6
+				IL_03b4: ldloc.s 26
+				IL_03b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_03bb: stloc.s 16
+				IL_03bd: ldloc.s 16
+				IL_03bf: brtrue IL_03e8
 
-				IL_03c6: ldloc.s 26
-				IL_03c8: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_03cd: stloc.s 16
-				IL_03cf: ldloc.s 16
-				IL_03d1: brtrue IL_03fa
+				IL_03c4: ldloc.s 5
+				IL_03c6: stloc.s 24
+				IL_03c8: ldloc.s 24
+				IL_03ca: ldstr "__esModule"
+				IL_03cf: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_03d4: stloc.s 16
+				IL_03d6: ldloc.s 16
+				IL_03d8: box [System.Runtime]System.Boolean
+				IL_03dd: stloc.s 17
+				IL_03df: ldloc.s 17
+				IL_03e1: stloc.s 26
+				IL_03e3: br IL_03e8
 
-				IL_03d6: ldloc.s 5
-				IL_03d8: stloc.s 24
-				IL_03da: ldloc.s 24
-				IL_03dc: ldstr "__jroc_esm_namespace"
-				IL_03e1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_03e6: stloc.s 16
-				IL_03e8: ldloc.s 16
-				IL_03ea: box [System.Runtime]System.Boolean
-				IL_03ef: stloc.s 17
-				IL_03f1: ldloc.s 17
-				IL_03f3: stloc.s 26
-				IL_03f5: br IL_03fa
+				IL_03e8: ldloc.s 26
+				IL_03ea: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_03ef: stloc.s 16
+				IL_03f1: ldloc.s 16
+				IL_03f3: brtrue IL_041c
 
-				IL_03fa: ldloc.s 26
-				IL_03fc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_0401: stloc.s 16
-				IL_0403: ldloc.s 16
-				IL_0405: brfalse IL_0416
+				IL_03f8: ldloc.s 5
+				IL_03fa: stloc.s 24
+				IL_03fc: ldloc.s 24
+				IL_03fe: ldstr "__jroc_esm_namespace"
+				IL_0403: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0408: stloc.s 16
+				IL_040a: ldloc.s 16
+				IL_040c: box [System.Runtime]System.Boolean
+				IL_0411: stloc.s 17
+				IL_0413: ldloc.s 17
+				IL_0415: stloc.s 26
+				IL_0417: br IL_041c
 
-				IL_040a: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L39C25/Block_L43C117::.ctor()
-				IL_040f: stloc.s 8
-				IL_0411: br IL_0460
+				IL_041c: ldloc.s 26
+				IL_041e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0423: stloc.s 16
+				IL_0425: ldloc.s 16
+				IL_0427: brfalse IL_0438
 
-				IL_0416: ldc.i4.2
-				IL_0417: newarr [System.Runtime]System.Object
-				IL_041c: dup
-				IL_041d: ldc.i4.0
-				IL_041e: ldarg.0
-				IL_041f: stelem.ref
-				IL_0420: dup
-				IL_0421: ldc.i4.1
-				IL_0422: ldloc.0
-				IL_0423: stelem.ref
-				IL_0424: ldftn object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/FunctionExpression_L46C9::__js_call__(object[], object, object)
-				IL_042a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-				IL_042f: ldc.i4.1
-				IL_0430: conv.r8
-				IL_0431: ldstr ""
-				IL_0436: ldc.i4.0
-				IL_0437: ldc.i4.1
-				IL_0438: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_043d: stloc.s 24
-				IL_043f: ldc.i4.1
-				IL_0440: newarr [System.Runtime]System.Object
-				IL_0445: dup
-				IL_0446: ldc.i4.0
-				IL_0447: ldloc.s 5
-				IL_0449: stelem.ref
-				IL_044a: stloc.s 29
-				IL_044c: ldloc.s 24
-				IL_044e: ldc.i4.1
-				IL_044f: newarr [System.Runtime]System.Object
-				IL_0454: dup
-				IL_0455: ldc.i4.0
-				IL_0456: ldarg.0
-				IL_0457: stelem.ref
-				IL_0458: ldloc.s 29
-				IL_045a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
-				IL_045f: pop
+				IL_042c: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L39C25/Block_L43C117::.ctor()
+				IL_0431: stloc.s 8
+				IL_0433: br IL_0482
 
-				IL_0460: br IL_02bd
+				IL_0438: ldc.i4.2
+				IL_0439: newarr [System.Runtime]System.Object
+				IL_043e: dup
+				IL_043f: ldc.i4.0
+				IL_0440: ldarg.0
+				IL_0441: stelem.ref
+				IL_0442: dup
+				IL_0443: ldc.i4.1
+				IL_0444: ldloc.0
+				IL_0445: stelem.ref
+				IL_0446: ldftn object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/FunctionExpression_L46C9::__js_call__(object[], object, object)
+				IL_044c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+				IL_0451: ldc.i4.1
+				IL_0452: conv.r8
+				IL_0453: ldstr ""
+				IL_0458: ldc.i4.0
+				IL_0459: ldc.i4.1
+				IL_045a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_045f: stloc.s 24
+				IL_0461: ldc.i4.1
+				IL_0462: newarr [System.Runtime]System.Object
+				IL_0467: dup
+				IL_0468: ldc.i4.0
+				IL_0469: ldloc.s 5
+				IL_046b: stelem.ref
+				IL_046c: stloc.s 29
+				IL_046e: ldloc.s 24
+				IL_0470: ldc.i4.1
+				IL_0471: newarr [System.Runtime]System.Object
+				IL_0476: dup
+				IL_0477: ldc.i4.0
+				IL_0478: ldarg.0
+				IL_0479: stelem.ref
+				IL_047a: ldloc.s 29
+				IL_047c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
+				IL_0481: pop
+
+				IL_0482: br IL_02ce
 			// end loop
 			.try
 			{
-				IL_0465: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L51C8::.ctor()
-				IL_046a: stloc.s 9
-				IL_046c: ldloc.0
-				IL_046d: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
-				IL_0472: stloc.s 24
-				IL_0474: ldloc.s 24
-				IL_0476: ldstr "__jroc_esm_namespace"
-				IL_047b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-				IL_0480: dup
-				IL_0481: ldstr "value"
-				IL_0486: ldloc.0
-				IL_0487: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
-				IL_048c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-				IL_0491: dup
-				IL_0492: ldstr "enumerable"
-				IL_0497: ldc.i4.0
-				IL_0498: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_049d: dup
-				IL_049e: ldstr "configurable"
-				IL_04a3: ldc.i4.0
-				IL_04a4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04a9: dup
-				IL_04aa: ldstr "writable"
-				IL_04af: ldc.i4.0
-				IL_04b0: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-				IL_04b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
-				IL_04ba: pop
-				IL_04bb: leave IL_0502
+				IL_0487: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L51C8::.ctor()
+				IL_048c: stloc.s 9
+				IL_048e: ldloc.0
+				IL_048f: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::mod
+				IL_0494: stloc.s 24
+				IL_0496: ldloc.s 24
+				IL_0498: ldstr "__jroc_esm_namespace"
+				IL_049d: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+				IL_04a2: dup
+				IL_04a3: ldstr "value"
+				IL_04a8: ldloc.0
+				IL_04a9: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
+				IL_04ae: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_04b3: dup
+				IL_04b4: ldstr "enumerable"
+				IL_04b9: ldc.i4.0
+				IL_04ba: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04bf: dup
+				IL_04c0: ldstr "configurable"
+				IL_04c5: ldc.i4.0
+				IL_04c6: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04cb: dup
+				IL_04cc: ldstr "writable"
+				IL_04d1: ldc.i4.0
+				IL_04d2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+				IL_04d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::defineProperty(object, object, object)
+				IL_04dc: pop
+				IL_04dd: leave IL_0524
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
-				IL_04c0: stloc.s 10
-				IL_04c2: ldloc.s 10
-				IL_04c4: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-				IL_04c9: dup
-				IL_04ca: brtrue IL_04e0
+				IL_04e2: stloc.s 10
+				IL_04e4: ldloc.s 10
+				IL_04e6: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+				IL_04eb: dup
+				IL_04ec: brtrue IL_0502
 
-				IL_04cf: pop
-				IL_04d0: ldloc.s 10
-				IL_04d2: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-				IL_04d7: dup
-				IL_04d8: brtrue IL_04ec
+				IL_04f1: pop
+				IL_04f2: ldloc.s 10
+				IL_04f4: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+				IL_04f9: dup
+				IL_04fa: brtrue IL_050e
 
-				IL_04dd: pop
-				IL_04de: rethrow
+				IL_04ff: pop
+				IL_0500: rethrow
 
-				IL_04e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-				IL_04e5: stloc.s 11
-				IL_04e7: br IL_04ee
+				IL_0502: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+				IL_0507: stloc.s 11
+				IL_0509: br IL_0510
 
-				IL_04ec: stloc.s 11
+				IL_050e: stloc.s 11
 
-				IL_04ee: ldloc.s 11
-				IL_04f0: stloc.s 24
-				IL_04f2: ldloc.s 24
-				IL_04f4: stloc.s 12
-				IL_04f6: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L53C16::.ctor()
-				IL_04fb: stloc.s 13
-				IL_04fd: leave IL_0502
+				IL_0510: ldloc.s 11
+				IL_0512: stloc.s 24
+				IL_0514: ldloc.s 24
+				IL_0516: stloc.s 12
+				IL_0518: newobj instance void Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope/Block_L53C16::.ctor()
+				IL_051d: stloc.s 13
+				IL_051f: leave IL_0524
 			} // end handler
 
-			IL_0502: ldloc.0
-			IL_0503: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
-			IL_0508: ret
+			IL_0524: ldloc.0
+			IL_0525: ldfld object Modules.Import_ExportNamedFrom_LibB/__jroc_esm_namespace/Scope::ns
+			IL_052a: ret
 
-			IL_0509: ldnull
-			IL_050a: stloc.s 14
-			IL_050c: ldloc.s 14
-			IL_050e: ret
+			IL_052b: ldnull
+			IL_052c: stloc.s 14
+			IL_052e: ldloc.s 14
+			IL_0530: ret
 		} // end of method __jroc_esm_namespace::__js_call__
 
 	} // end of class __jroc_esm_namespace
@@ -3094,7 +3165,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3600
+				// Method begins at RVA 0x36a4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3122,7 +3193,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 2d 00 00 02
 			)
-			// Method begins at RVA 0x32d4
+			// Method begins at RVA 0x3378
 			// Header size: 12
 			// Code size: 106 (0x6a)
 			.maxstack 8
@@ -3196,7 +3267,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x354c
+			// Method begins at RVA 0x35f0
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -3220,7 +3291,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21dc
+		// Method begins at RVA 0x2208
 		// Header size: 12
 		// Code size: 397 (0x18d)
 		.maxstack 8
@@ -3408,7 +3479,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x3612
+				// Method begins at RVA 0x36b6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -3432,7 +3503,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x348a
+			// Method begins at RVA 0x352e
 			// Header size: 1
 			// Code size: 22 (0x16)
 			.maxstack 8
@@ -3454,7 +3525,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x3609
+			// Method begins at RVA 0x36ad
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -3478,7 +3549,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2378
+		// Method begins at RVA 0x23a4
 		// Header size: 12
 		// Code size: 93 (0x5d)
 		.maxstack 8
@@ -3531,7 +3602,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x361b
+		// Method begins at RVA 0x36bf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

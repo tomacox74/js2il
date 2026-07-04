@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21c1
+				// Method begins at RVA 0x21f1
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b8
+			// Method begins at RVA 0x21e8
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 332 (0x14c)
+		// Code size: 378 (0x17a)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral/Scope,
@@ -146,7 +146,7 @@
 				IL_00be: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
 				IL_00c3: stloc.s 10
 				IL_00c5: ldloc.s 10
-				IL_00c7: brtrue IL_0122
+				IL_00c7: brtrue IL_0139
 
 				IL_00cc: ldloc.s 9
 				IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
@@ -155,53 +155,67 @@
 				IL_00d7: stloc.s 6
 				IL_00d9: newobj instance void Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral/Scope/Block_L6C44::.ctor()
 				IL_00de: stloc.s 7
-				IL_00e0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00e5: ldloc.s 6
-				IL_00e7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_00ec: pop
-				IL_00ed: ldloc.2
-				IL_00ee: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_00f3: stloc.s 11
-				IL_00f5: ldloc.s 11
-				IL_00f7: ldc.r8 1
-				IL_0100: add
-				IL_0101: stloc.s 11
-				IL_0103: ldloc.s 11
-				IL_0105: box [System.Runtime]System.Double
-				IL_010a: stloc.s 12
-				IL_010c: ldloc.s 12
-				IL_010e: stloc.2
-				IL_010f: br IL_00b4
+				IL_00e0: ldstr "console"
+				IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_00ea: stloc.s 9
+				IL_00ec: ldloc.s 9
+				IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_00f3: stloc.s 9
+				IL_00f5: ldloc.s 9
+				IL_00f7: ldstr "log"
+				IL_00fc: ldloc.s 6
+				IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0103: pop
+				IL_0104: ldloc.2
+				IL_0105: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_010a: stloc.s 11
+				IL_010c: ldloc.s 11
+				IL_010e: ldc.r8 1
+				IL_0117: add
+				IL_0118: stloc.s 11
+				IL_011a: ldloc.s 11
+				IL_011c: box [System.Runtime]System.Double
+				IL_0121: stloc.s 12
+				IL_0123: ldloc.s 12
+				IL_0125: stloc.2
+				IL_0126: br IL_00b4
 			// end loop
-			IL_0114: ldloc.3
-			IL_0115: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
-			IL_011a: ldc.i4.1
-			IL_011b: stloc.s 5
-			IL_011d: leave IL_013f
+			IL_012b: ldloc.3
+			IL_012c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorClose(object)
+			IL_0131: ldc.i4.1
+			IL_0132: stloc.s 5
+			IL_0134: leave IL_0156
 
-			IL_0122: ldc.i4.1
-			IL_0123: stloc.s 4
-			IL_0125: leave IL_013f
+			IL_0139: ldc.i4.1
+			IL_013a: stloc.s 4
+			IL_013c: leave IL_0156
 		} // end .try
 		finally
 		{
-			IL_012a: ldloc.s 4
-			IL_012c: brtrue IL_013e
+			IL_0141: ldloc.s 4
+			IL_0143: brtrue IL_0155
 
-			IL_0131: ldloc.s 5
-			IL_0133: brtrue IL_013e
+			IL_0148: ldloc.s 5
+			IL_014a: brtrue IL_0155
 
-			IL_0138: ldloc.3
-			IL_0139: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
+			IL_014f: ldloc.3
+			IL_0150: call void [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorCloseForThrowCompletion(object)
 
-			IL_013e: endfinally
+			IL_0155: endfinally
 		} // end handler
 
-		IL_013f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0144: ldloc.2
-		IL_0145: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_014a: pop
-		IL_014b: ret
+		IL_0156: ldstr "console"
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0160: stloc.s 9
+		IL_0162: ldloc.s 9
+		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0169: stloc.s 9
+		IL_016b: ldloc.s 9
+		IL_016d: ldstr "log"
+		IL_0172: ldloc.2
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0178: pop
+		IL_0179: ret
 	} // end of method ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_Array_SymbolIterator_SparseLiteral
@@ -213,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ca
+		// Method begins at RVA 0x21fa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

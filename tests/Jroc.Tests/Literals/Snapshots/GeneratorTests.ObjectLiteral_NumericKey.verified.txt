@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ab
+			// Method begins at RVA 0x20be
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,11 +40,12 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 98 (0x62)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectLiteral_NumericKey/Scope,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_NumericKey/Scope::.ctor()
@@ -59,13 +60,20 @@
 		IL_0025: ldc.r8 2
 		IL_002e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
 		IL_0033: stloc.1
-		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0039: ldloc.1
-		IL_003a: ldc.r8 10
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_004d: pop
-		IL_004e: ret
+		IL_0034: ldstr "console"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_003e: stloc.2
+		IL_003f: ldloc.2
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0045: stloc.2
+		IL_0046: ldloc.2
+		IL_0047: ldstr "log"
+		IL_004c: ldloc.1
+		IL_004d: ldc.r8 10
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0060: pop
+		IL_0061: ret
 	} // end of method ObjectLiteral_NumericKey::__js_module_init__
 
 } // end of class Modules.ObjectLiteral_NumericKey
@@ -77,7 +85,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x20c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2177
+				// Method begins at RVA 0x21c0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x216e
+			// Method begins at RVA 0x21b7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 274 (0x112)
+		// Code size: 347 (0x15b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CompoundAssignment_MultiplicationAssignment/Scope,
@@ -71,7 +71,9 @@
 			[3] object,
 			[4] class Modules.CompoundAssignment_MultiplicationAssignment/Scope/Block_L10C29,
 			[5] float64,
-			[6] object
+			[6] object,
+			[7] object,
+			[8] object[]
 		)
 
 		IL_0000: newobj instance void Modules.CompoundAssignment_MultiplicationAssignment/Scope::.ctor()
@@ -91,86 +93,109 @@
 		IL_0032: stloc.s 6
 		IL_0034: ldloc.s 6
 		IL_0036: stloc.1
-		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003c: ldstr "x after 5 *= 3:"
-		IL_0041: ldloc.1
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0047: pop
-		IL_0048: ldc.r8 2
-		IL_0051: box [System.Runtime]System.Double
-		IL_0056: stloc.2
-		IL_0057: ldc.r8 1
-		IL_0060: box [System.Runtime]System.Double
-		IL_0065: stloc.3
-		// loop start (head: IL_0066)
-			IL_0066: ldloc.3
-			IL_0067: stloc.s 6
-			IL_0069: ldloc.s 6
-			IL_006b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0070: stloc.s 5
-			IL_0072: ldloc.s 5
-			IL_0074: ldc.r8 4
-			IL_007d: cgt
-			IL_007f: ldc.i4.0
-			IL_0080: ceq
-			IL_0082: brfalse IL_0100
+		IL_0037: ldstr "console"
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0041: stloc.s 7
+		IL_0043: ldloc.s 7
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004a: stloc.s 7
+		IL_004c: ldloc.s 7
+		IL_004e: ldstr "log"
+		IL_0053: ldstr "x after 5 *= 3:"
+		IL_0058: ldloc.1
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_005e: pop
+		IL_005f: ldc.r8 2
+		IL_0068: box [System.Runtime]System.Double
+		IL_006d: stloc.2
+		IL_006e: ldc.r8 1
+		IL_0077: box [System.Runtime]System.Double
+		IL_007c: stloc.3
+		// loop start (head: IL_007d)
+			IL_007d: ldloc.3
+			IL_007e: stloc.s 6
+			IL_0080: ldloc.s 6
+			IL_0082: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0087: stloc.s 5
+			IL_0089: ldloc.s 5
+			IL_008b: ldc.r8 4
+			IL_0094: cgt
+			IL_0096: ldc.i4.0
+			IL_0097: ceq
+			IL_0099: brfalse IL_0132
 
-			IL_0087: newobj instance void Modules.CompoundAssignment_MultiplicationAssignment/Scope/Block_L10C29::.ctor()
-			IL_008c: stloc.s 4
-			IL_008e: ldloc.2
-			IL_008f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0094: stloc.s 5
-			IL_0096: ldloc.s 5
-			IL_0098: ldc.r8 2
-			IL_00a1: mul
-			IL_00a2: stloc.s 5
-			IL_00a4: ldloc.s 5
-			IL_00a6: box [System.Runtime]System.Double
-			IL_00ab: stloc.s 6
-			IL_00ad: ldloc.s 6
-			IL_00af: stloc.2
-			IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b5: ldc.i4.4
-			IL_00b6: newarr [System.Runtime]System.Object
-			IL_00bb: dup
-			IL_00bc: ldc.i4.0
-			IL_00bd: ldstr "product after iteration"
-			IL_00c2: stelem.ref
-			IL_00c3: dup
-			IL_00c4: ldc.i4.1
-			IL_00c5: ldloc.3
-			IL_00c6: stelem.ref
-			IL_00c7: dup
-			IL_00c8: ldc.i4.2
-			IL_00c9: ldstr ":"
-			IL_00ce: stelem.ref
-			IL_00cf: dup
-			IL_00d0: ldc.i4.3
-			IL_00d1: ldloc.2
-			IL_00d2: stelem.ref
-			IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00d8: pop
-			IL_00d9: ldloc.3
-			IL_00da: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00df: stloc.s 5
-			IL_00e1: ldloc.s 5
-			IL_00e3: ldc.r8 1
-			IL_00ec: add
-			IL_00ed: stloc.s 5
-			IL_00ef: ldloc.s 5
-			IL_00f1: box [System.Runtime]System.Double
-			IL_00f6: stloc.s 6
-			IL_00f8: ldloc.s 6
-			IL_00fa: stloc.3
-			IL_00fb: br IL_0066
+			IL_009e: newobj instance void Modules.CompoundAssignment_MultiplicationAssignment/Scope/Block_L10C29::.ctor()
+			IL_00a3: stloc.s 4
+			IL_00a5: ldloc.2
+			IL_00a6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00ab: stloc.s 5
+			IL_00ad: ldloc.s 5
+			IL_00af: ldc.r8 2
+			IL_00b8: mul
+			IL_00b9: stloc.s 5
+			IL_00bb: ldloc.s 5
+			IL_00bd: box [System.Runtime]System.Double
+			IL_00c2: stloc.s 6
+			IL_00c4: ldloc.s 6
+			IL_00c6: stloc.2
+			IL_00c7: ldstr "console"
+			IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00d1: stloc.s 7
+			IL_00d3: ldloc.s 7
+			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00da: stloc.s 7
+			IL_00dc: ldc.i4.4
+			IL_00dd: newarr [System.Runtime]System.Object
+			IL_00e2: dup
+			IL_00e3: ldc.i4.0
+			IL_00e4: ldstr "product after iteration"
+			IL_00e9: stelem.ref
+			IL_00ea: dup
+			IL_00eb: ldc.i4.1
+			IL_00ec: ldloc.3
+			IL_00ed: stelem.ref
+			IL_00ee: dup
+			IL_00ef: ldc.i4.2
+			IL_00f0: ldstr ":"
+			IL_00f5: stelem.ref
+			IL_00f6: dup
+			IL_00f7: ldc.i4.3
+			IL_00f8: ldloc.2
+			IL_00f9: stelem.ref
+			IL_00fa: stloc.s 8
+			IL_00fc: ldloc.s 7
+			IL_00fe: ldstr "log"
+			IL_0103: ldloc.s 8
+			IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_010a: pop
+			IL_010b: ldloc.3
+			IL_010c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0111: stloc.s 5
+			IL_0113: ldloc.s 5
+			IL_0115: ldc.r8 1
+			IL_011e: add
+			IL_011f: stloc.s 5
+			IL_0121: ldloc.s 5
+			IL_0123: box [System.Runtime]System.Double
+			IL_0128: stloc.s 6
+			IL_012a: ldloc.s 6
+			IL_012c: stloc.3
+			IL_012d: br IL_007d
 		// end loop
 
-		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0105: ldstr "final product:"
-		IL_010a: ldloc.2
-		IL_010b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0110: pop
-		IL_0111: ret
+		IL_0132: ldstr "console"
+		IL_0137: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_013c: stloc.s 7
+		IL_013e: ldloc.s 7
+		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0145: stloc.s 7
+		IL_0147: ldloc.s 7
+		IL_0149: ldstr "log"
+		IL_014e: ldstr "final product:"
+		IL_0153: ldloc.2
+		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0159: pop
+		IL_015a: ret
 	} // end of method CompoundAssignment_MultiplicationAssignment::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_MultiplicationAssignment
@@ -182,7 +207,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2180
+		// Method begins at RVA 0x21c9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

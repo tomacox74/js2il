@@ -1,4 +1,4 @@
-// IL code: Classes_ClassWithMethod_HelloWorld
+﻿// IL code: Classes_ClassWithMethod_HelloWorld
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e4
+				// Method begins at RVA 0x2102
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ed
+				// Method begins at RVA 0x210b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,16 +76,26 @@
 				01 00 00 00 00 00 00 00
 			)
 			// Method begins at RVA 0x20c8
-			// Header size: 1
-			// Code size: 18 (0x12)
+			// Header size: 12
+			// Code size: 37 (0x25)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Hello world from Greeter"
-			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_000f: pop
-			IL_0010: ldnull
-			IL_0011: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Hello world from Greeter"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0022: pop
+			IL_0023: ldnull
+			IL_0024: ret
 		} // end of method Greeter::helloWorld
 
 	} // end of class Greeter
@@ -97,7 +107,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20db
+			// Method begins at RVA 0x20f9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -178,7 +188,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f6
+		// Method begins at RVA 0x2114
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

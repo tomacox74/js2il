@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219e
+				// Method begins at RVA 0x21e7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2195
+			// Method begins at RVA 0x21de
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,7 +62,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 313 (0x139)
+		// Code size: 386 (0x182)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CompoundAssignment_LeftShiftAssignment/Scope,
@@ -71,7 +71,9 @@
 			[3] object,
 			[4] class Modules.CompoundAssignment_LeftShiftAssignment/Scope/Block_L10C28,
 			[5] float64,
-			[6] object
+			[6] object,
+			[7] object,
+			[8] object[]
 		)
 
 		IL_0000: newobj instance void Modules.CompoundAssignment_LeftShiftAssignment/Scope::.ctor()
@@ -94,99 +96,122 @@
 		IL_0035: stloc.s 6
 		IL_0037: ldloc.s 6
 		IL_0039: stloc.1
-		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003f: ldstr "x after 1 <<= 3:"
-		IL_0044: ldloc.1
-		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_004a: pop
-		IL_004b: ldc.r8 1
-		IL_0054: box [System.Runtime]System.Double
-		IL_0059: stloc.2
-		IL_005a: ldc.r8 0.0
-		IL_0063: box [System.Runtime]System.Double
-		IL_0068: stloc.3
-		// loop start (head: IL_0069)
-			IL_0069: ldloc.3
-			IL_006a: stloc.s 6
-			IL_006c: ldloc.s 6
-			IL_006e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0073: stloc.s 5
-			IL_0075: ldloc.s 5
-			IL_0077: ldc.r8 5
-			IL_0080: clt
-			IL_0082: brfalse IL_0127
+		IL_003a: ldstr "console"
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0044: stloc.s 7
+		IL_0046: ldloc.s 7
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_004d: stloc.s 7
+		IL_004f: ldloc.s 7
+		IL_0051: ldstr "log"
+		IL_0056: ldstr "x after 1 <<= 3:"
+		IL_005b: ldloc.1
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0061: pop
+		IL_0062: ldc.r8 1
+		IL_006b: box [System.Runtime]System.Double
+		IL_0070: stloc.2
+		IL_0071: ldc.r8 0.0
+		IL_007a: box [System.Runtime]System.Double
+		IL_007f: stloc.3
+		// loop start (head: IL_0080)
+			IL_0080: ldloc.3
+			IL_0081: stloc.s 6
+			IL_0083: ldloc.s 6
+			IL_0085: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_008a: stloc.s 5
+			IL_008c: ldloc.s 5
+			IL_008e: ldc.r8 5
+			IL_0097: clt
+			IL_0099: brfalse IL_0159
 
-			IL_0087: newobj instance void Modules.CompoundAssignment_LeftShiftAssignment/Scope/Block_L10C28::.ctor()
-			IL_008c: stloc.s 4
-			IL_008e: ldloc.2
-			IL_008f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0094: stloc.s 5
-			IL_0096: ldloc.s 5
-			IL_0098: conv.i4
-			IL_0099: ldc.r8 1
-			IL_00a2: conv.i4
-			IL_00a3: shl
-			IL_00a4: conv.r8
-			IL_00a5: stloc.s 5
-			IL_00a7: ldloc.s 5
-			IL_00a9: box [System.Runtime]System.Double
-			IL_00ae: stloc.s 6
-			IL_00b0: ldloc.s 6
-			IL_00b2: stloc.2
-			IL_00b3: ldloc.3
-			IL_00b4: stloc.s 6
-			IL_00b6: ldloc.s 6
-			IL_00b8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00bd: stloc.s 5
-			IL_00bf: ldloc.s 5
-			IL_00c1: ldc.r8 1
-			IL_00ca: add
-			IL_00cb: stloc.s 5
-			IL_00cd: ldloc.s 5
-			IL_00cf: box [System.Runtime]System.Double
-			IL_00d4: stloc.s 6
-			IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00db: ldc.i4.4
-			IL_00dc: newarr [System.Runtime]System.Object
-			IL_00e1: dup
-			IL_00e2: ldc.i4.0
-			IL_00e3: ldstr "value after shift"
-			IL_00e8: stelem.ref
-			IL_00e9: dup
-			IL_00ea: ldc.i4.1
-			IL_00eb: ldloc.s 6
-			IL_00ed: stelem.ref
-			IL_00ee: dup
-			IL_00ef: ldc.i4.2
-			IL_00f0: ldstr ":"
-			IL_00f5: stelem.ref
-			IL_00f6: dup
-			IL_00f7: ldc.i4.3
-			IL_00f8: ldloc.2
-			IL_00f9: stelem.ref
-			IL_00fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00ff: pop
-			IL_0100: ldloc.3
-			IL_0101: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0106: stloc.s 5
-			IL_0108: ldloc.s 5
-			IL_010a: ldc.r8 1
-			IL_0113: add
-			IL_0114: stloc.s 5
-			IL_0116: ldloc.s 5
-			IL_0118: box [System.Runtime]System.Double
-			IL_011d: stloc.s 6
-			IL_011f: ldloc.s 6
-			IL_0121: stloc.3
-			IL_0122: br IL_0069
+			IL_009e: newobj instance void Modules.CompoundAssignment_LeftShiftAssignment/Scope/Block_L10C28::.ctor()
+			IL_00a3: stloc.s 4
+			IL_00a5: ldloc.2
+			IL_00a6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00ab: stloc.s 5
+			IL_00ad: ldloc.s 5
+			IL_00af: conv.i4
+			IL_00b0: ldc.r8 1
+			IL_00b9: conv.i4
+			IL_00ba: shl
+			IL_00bb: conv.r8
+			IL_00bc: stloc.s 5
+			IL_00be: ldloc.s 5
+			IL_00c0: box [System.Runtime]System.Double
+			IL_00c5: stloc.s 6
+			IL_00c7: ldloc.s 6
+			IL_00c9: stloc.2
+			IL_00ca: ldstr "console"
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00d4: stloc.s 7
+			IL_00d6: ldloc.s 7
+			IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00dd: stloc.s 7
+			IL_00df: ldloc.3
+			IL_00e0: stloc.s 6
+			IL_00e2: ldloc.s 6
+			IL_00e4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00e9: stloc.s 5
+			IL_00eb: ldloc.s 5
+			IL_00ed: ldc.r8 1
+			IL_00f6: add
+			IL_00f7: stloc.s 5
+			IL_00f9: ldloc.s 5
+			IL_00fb: box [System.Runtime]System.Double
+			IL_0100: stloc.s 6
+			IL_0102: ldc.i4.4
+			IL_0103: newarr [System.Runtime]System.Object
+			IL_0108: dup
+			IL_0109: ldc.i4.0
+			IL_010a: ldstr "value after shift"
+			IL_010f: stelem.ref
+			IL_0110: dup
+			IL_0111: ldc.i4.1
+			IL_0112: ldloc.s 6
+			IL_0114: stelem.ref
+			IL_0115: dup
+			IL_0116: ldc.i4.2
+			IL_0117: ldstr ":"
+			IL_011c: stelem.ref
+			IL_011d: dup
+			IL_011e: ldc.i4.3
+			IL_011f: ldloc.2
+			IL_0120: stelem.ref
+			IL_0121: stloc.s 8
+			IL_0123: ldloc.s 7
+			IL_0125: ldstr "log"
+			IL_012a: ldloc.s 8
+			IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_0131: pop
+			IL_0132: ldloc.3
+			IL_0133: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0138: stloc.s 5
+			IL_013a: ldloc.s 5
+			IL_013c: ldc.r8 1
+			IL_0145: add
+			IL_0146: stloc.s 5
+			IL_0148: ldloc.s 5
+			IL_014a: box [System.Runtime]System.Double
+			IL_014f: stloc.s 6
+			IL_0151: ldloc.s 6
+			IL_0153: stloc.3
+			IL_0154: br IL_0080
 		// end loop
 
-		IL_0127: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_012c: ldstr "final value:"
-		IL_0131: ldloc.2
-		IL_0132: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0137: pop
-		IL_0138: ret
+		IL_0159: ldstr "console"
+		IL_015e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0163: stloc.s 7
+		IL_0165: ldloc.s 7
+		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_016c: stloc.s 7
+		IL_016e: ldloc.s 7
+		IL_0170: ldstr "log"
+		IL_0175: ldstr "final value:"
+		IL_017a: ldloc.2
+		IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0180: pop
+		IL_0181: ret
 	} // end of method CompoundAssignment_LeftShiftAssignment::__js_module_init__
 
 } // end of class Modules.CompoundAssignment_LeftShiftAssignment
@@ -198,7 +223,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a7
+		// Method begins at RVA 0x21f0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

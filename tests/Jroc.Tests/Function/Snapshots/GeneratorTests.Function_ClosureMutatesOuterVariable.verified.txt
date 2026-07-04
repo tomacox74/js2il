@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21c6
+					// Method begins at RVA 0x2206
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x2154
+				// Method begins at RVA 0x2194
 				// Header size: 12
 				// Code size: 84 (0x54)
 				.maxstack 8
@@ -107,7 +107,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21bd
+				// Method begins at RVA 0x21fd
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -134,7 +134,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2108
+			// Method begins at RVA 0x2148
 			// Header size: 12
 			// Code size: 62 (0x3e)
 			.maxstack 8
@@ -192,7 +192,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21b4
+			// Method begins at RVA 0x21f4
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -218,14 +218,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 171 (0xab)
+		// Code size: 236 (0xec)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ClosureMutatesOuterVariable/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object[]
+			[4] object[],
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Function_ClosureMutatesOuterVariable/Scope::.ctor()
@@ -260,34 +261,55 @@
 		IL_0050: stloc.3
 		IL_0051: ldloc.3
 		IL_0052: stloc.2
-		IL_0053: ldloc.2
-		IL_0054: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_005e: stloc.3
-		IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0064: ldstr "First increment:"
-		IL_0069: ldloc.3
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_006f: pop
-		IL_0070: ldloc.2
-		IL_0071: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_007b: stloc.3
-		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0081: ldstr "Second increment:"
-		IL_0086: ldloc.3
-		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_008c: pop
-		IL_008d: ldloc.2
-		IL_008e: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0098: stloc.3
-		IL_0099: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009e: ldstr "Third increment:"
-		IL_00a3: ldloc.3
-		IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_00a9: pop
-		IL_00aa: ret
+		IL_0053: ldstr "console"
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_005d: stloc.3
+		IL_005e: ldloc.3
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0064: stloc.3
+		IL_0065: ldloc.2
+		IL_0066: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_0070: stloc.s 5
+		IL_0072: ldloc.3
+		IL_0073: ldstr "log"
+		IL_0078: ldstr "First increment:"
+		IL_007d: ldloc.s 5
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0084: pop
+		IL_0085: ldstr "console"
+		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008f: stloc.s 5
+		IL_0091: ldloc.s 5
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0098: stloc.s 5
+		IL_009a: ldloc.2
+		IL_009b: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00a5: stloc.3
+		IL_00a6: ldloc.s 5
+		IL_00a8: ldstr "log"
+		IL_00ad: ldstr "Second increment:"
+		IL_00b2: ldloc.3
+		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00b8: pop
+		IL_00b9: ldstr "console"
+		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c3: stloc.3
+		IL_00c4: ldloc.3
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ca: stloc.3
+		IL_00cb: ldloc.2
+		IL_00cc: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00d6: stloc.s 5
+		IL_00d8: ldloc.3
+		IL_00d9: ldstr "log"
+		IL_00de: ldstr "Third increment:"
+		IL_00e3: ldloc.s 5
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00ea: pop
+		IL_00eb: ret
 	} // end of method Function_ClosureMutatesOuterVariable::__js_module_init__
 
 } // end of class Modules.Function_ClosureMutatesOuterVariable
@@ -299,7 +321,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21cf
+		// Method begins at RVA 0x220f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

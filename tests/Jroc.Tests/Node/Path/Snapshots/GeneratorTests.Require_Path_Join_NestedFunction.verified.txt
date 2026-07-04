@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2127
+				// Method begins at RVA 0x213b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20e8
+			// Method begins at RVA 0x20fc
 			// Header size: 12
 			// Code size: 42 (0x2a)
 			.maxstack 8
@@ -92,7 +92,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211e
+			// Method begins at RVA 0x2132
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -118,7 +118,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 140 (0x8c)
+		// Code size: 159 (0x9f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Path_Join_NestedFunction/Scope,
@@ -176,11 +176,18 @@
 		IL_007c: stloc.3
 		IL_007d: ldloc.3
 		IL_007e: stloc.2
-		IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0084: ldloc.2
-		IL_0085: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_008a: pop
-		IL_008b: ret
+		IL_007f: ldstr "console"
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0089: stloc.3
+		IL_008a: ldloc.3
+		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0090: stloc.3
+		IL_0091: ldloc.3
+		IL_0092: ldstr "log"
+		IL_0097: ldloc.2
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_009d: pop
+		IL_009e: ret
 	} // end of method Require_Path_Join_NestedFunction::__js_module_init__
 
 } // end of class Modules.Require_Path_Join_NestedFunction
@@ -192,7 +199,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x2144
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

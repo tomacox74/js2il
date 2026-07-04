@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2159
+				// Method begins at RVA 0x2181
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x216b
+					// Method begins at RVA 0x2193
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -67,7 +67,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2162
+				// Method begins at RVA 0x218a
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -95,13 +95,14 @@
 			)
 			// Method begins at RVA 0x20c0
 			// Header size: 12
-			// Code size: 132 (0x84)
+			// Code size: 172 (0xac)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Call_Spread_StringIterable/dump/Scope,
 				[1] float64,
 				[2] class Modules.Function_Call_Spread_StringIterable/dump/Scope_For_L5C9/Block_L5C47,
-				[3] float64
+				[3] object,
+				[4] float64
 			)
 
 			IL_0000: newobj instance void Modules.Function_Call_Spread_StringIterable/dump/Scope::.ctor()
@@ -113,44 +114,58 @@
 			IL_000a: ldc.i4.1
 			IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.ArgumentsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateArgumentsObject(object, string[], bool, bool)
 			IL_0010: stfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
-			IL_0015: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_001a: ldloc.0
-			IL_001b: ldfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
-			IL_0020: ldstr "length"
-			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_002f: pop
-			IL_0030: ldc.r8 0.0
-			IL_0039: stloc.1
-			// loop start (head: IL_003a)
-				IL_003a: ldloc.1
-				IL_003b: stloc.3
-				IL_003c: ldloc.3
-				IL_003d: ldloc.0
-				IL_003e: ldfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
-				IL_0043: ldstr "length"
-				IL_0048: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
-				IL_004d: clt
-				IL_004f: brfalse IL_0082
+			IL_0015: ldstr "console"
+			IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_001f: stloc.3
+			IL_0020: ldloc.3
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0026: stloc.3
+			IL_0027: ldloc.3
+			IL_0028: ldstr "log"
+			IL_002d: ldloc.0
+			IL_002e: ldfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
+			IL_0033: ldstr "length"
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0042: pop
+			IL_0043: ldc.r8 0.0
+			IL_004c: stloc.1
+			// loop start (head: IL_004d)
+				IL_004d: ldloc.1
+				IL_004e: stloc.s 4
+				IL_0050: ldloc.s 4
+				IL_0052: ldloc.0
+				IL_0053: ldfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
+				IL_0058: ldstr "length"
+				IL_005d: call float64 [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemAsNumber(object, object)
+				IL_0062: clt
+				IL_0064: brfalse IL_00aa
 
-				IL_0054: newobj instance void Modules.Function_Call_Spread_StringIterable/dump/Scope_For_L5C9/Block_L5C47::.ctor()
-				IL_0059: stloc.2
-				IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_005f: ldloc.0
-				IL_0060: ldfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
-				IL_0065: ldloc.1
-				IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
-				IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-				IL_0070: pop
-				IL_0071: ldloc.1
-				IL_0072: ldc.r8 1
-				IL_007b: add
-				IL_007c: stloc.1
-				IL_007d: br IL_003a
+				IL_0069: newobj instance void Modules.Function_Call_Spread_StringIterable/dump/Scope_For_L5C9/Block_L5C47::.ctor()
+				IL_006e: stloc.2
+				IL_006f: ldstr "console"
+				IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_0079: stloc.3
+				IL_007a: ldloc.3
+				IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0080: stloc.3
+				IL_0081: ldloc.3
+				IL_0082: ldstr "log"
+				IL_0087: ldloc.0
+				IL_0088: ldfld object Modules.Function_Call_Spread_StringIterable/dump/Scope::arguments
+				IL_008d: ldloc.1
+				IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, float64)
+				IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_0098: pop
+				IL_0099: ldloc.1
+				IL_009a: ldc.r8 1
+				IL_00a3: add
+				IL_00a4: stloc.1
+				IL_00a5: br IL_004d
 			// end loop
 
-			IL_0082: ldnull
-			IL_0083: ret
+			IL_00aa: ldnull
+			IL_00ab: ret
 		} // end of method dump::__js_call__
 
 	} // end of class dump
@@ -169,7 +184,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2150
+			// Method begins at RVA 0x2178
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -256,7 +271,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2174
+		// Method begins at RVA 0x219c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

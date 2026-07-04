@@ -48,7 +48,7 @@ public static class AsyncFunction
     {
         ArgumentNullException.ThrowIfNull(functionValue);
 
-        if (PrototypeChain.GetPrototypeOrNull(functionValue) == null)
+        if (!ReferenceEquals(PrototypeChain.GetPrototypeOrNull(functionValue), Prototype))
         {
             PrototypeChain.SetPrototype(functionValue, Prototype);
         }

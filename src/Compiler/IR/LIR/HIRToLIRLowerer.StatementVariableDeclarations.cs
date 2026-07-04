@@ -57,6 +57,18 @@ public sealed partial class HIRToLIRLowerer
     private bool TryLowerVariableDeclaration(HIRVariableDeclaration exprStmt)
     {
         // Variable declarations define a new binding in the current scope.
+        // Use BindingInfo as key for correct shadowing behavior.
+        var binding = exprStmt.Name.BindingInfo;
+
+        // `var` declarations without an initializer are runtime no-ops on redeclaration.
+        // Avoid clobbering an existing head-assigned loop value (e.g., for-of `var x` + body `var x;`).
+        if (exprStmt.Initializer == null
+            && binding.Kind == BindingKind.Var
+            && _variableMap.ContainsKey(binding))
+        {
+            return true;
+        }
+
         TempVariable value;
 
         if (exprStmt.Initializer != null)
@@ -95,9 +107,6 @@ public sealed partial class HIRToLIRLowerer
             value = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(value));
         }
-
-        // Use BindingInfo as key for correct shadowing behavior
-        var binding = exprStmt.Name.BindingInfo;
 
         bool initializerProvesUnboxedDouble = exprStmt.Initializer != null
             && GetTempStorage(value).Kind == ValueStorageKind.UnboxedValue

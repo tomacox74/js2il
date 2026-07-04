@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x211f
+						// Method begins at RVA 0x21a9
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2116
+					// Method begins at RVA 0x21a0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -62,7 +62,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210d
+				// Method begins at RVA 0x2197
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -80,7 +80,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x218e
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -106,7 +106,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 168 (0xa8)
+		// Code size: 306 (0x132)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_LetNestedShadowingChain/Scope,
@@ -117,7 +117,8 @@
 			[5] object,
 			[6] class Modules.Variable_LetNestedShadowingChain/Scope/Block_L4C0/Block_L7C2/Block_L10C4,
 			[7] object,
-			[8] object
+			[8] object,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_LetNestedShadowingChain/Scope::.ctor()
@@ -129,44 +130,86 @@
 		IL_0016: ldc.r8 1
 		IL_001f: box [System.Runtime]System.Double
 		IL_0024: stloc.3
-		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002a: ldloc.3
-		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0030: pop
-		IL_0031: newobj instance void Modules.Variable_LetNestedShadowingChain/Scope/Block_L4C0/Block_L7C2::.ctor()
-		IL_0036: stloc.s 4
-		IL_0038: ldc.r8 2
-		IL_0041: box [System.Runtime]System.Double
-		IL_0046: stloc.s 5
-		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004d: ldloc.s 5
-		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0054: pop
-		IL_0055: newobj instance void Modules.Variable_LetNestedShadowingChain/Scope/Block_L4C0/Block_L7C2/Block_L10C4::.ctor()
-		IL_005a: stloc.s 6
-		IL_005c: ldc.r8 3
-		IL_0065: box [System.Runtime]System.Double
-		IL_006a: stloc.s 7
-		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0071: ldloc.s 7
-		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0078: pop
-		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007e: ldloc.s 5
-		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0085: pop
-		IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008b: ldloc.3
-		IL_008c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0091: pop
-		IL_0092: ldloc.1
+		IL_0025: ldstr "console"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_002f: stloc.s 8
+		IL_0031: ldloc.s 8
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0038: stloc.s 8
+		IL_003a: ldloc.s 8
+		IL_003c: ldstr "log"
+		IL_0041: ldloc.3
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0047: pop
+		IL_0048: newobj instance void Modules.Variable_LetNestedShadowingChain/Scope/Block_L4C0/Block_L7C2::.ctor()
+		IL_004d: stloc.s 4
+		IL_004f: ldc.r8 2
+		IL_0058: box [System.Runtime]System.Double
+		IL_005d: stloc.s 5
+		IL_005f: ldstr "console"
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0069: stloc.s 8
+		IL_006b: ldloc.s 8
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0072: stloc.s 8
+		IL_0074: ldloc.s 8
+		IL_0076: ldstr "log"
+		IL_007b: ldloc.s 5
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0082: pop
+		IL_0083: newobj instance void Modules.Variable_LetNestedShadowingChain/Scope/Block_L4C0/Block_L7C2/Block_L10C4::.ctor()
+		IL_0088: stloc.s 6
+		IL_008a: ldc.r8 3
 		IL_0093: box [System.Runtime]System.Double
-		IL_0098: stloc.s 8
-		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009f: ldloc.s 8
-		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a6: pop
-		IL_00a7: ret
+		IL_0098: stloc.s 7
+		IL_009a: ldstr "console"
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a4: stloc.s 8
+		IL_00a6: ldloc.s 8
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ad: stloc.s 8
+		IL_00af: ldloc.s 8
+		IL_00b1: ldstr "log"
+		IL_00b6: ldloc.s 7
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00bd: pop
+		IL_00be: ldstr "console"
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c8: stloc.s 8
+		IL_00ca: ldloc.s 8
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d1: stloc.s 8
+		IL_00d3: ldloc.s 8
+		IL_00d5: ldstr "log"
+		IL_00da: ldloc.s 5
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e1: pop
+		IL_00e2: ldstr "console"
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ec: stloc.s 8
+		IL_00ee: ldloc.s 8
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f5: stloc.s 8
+		IL_00f7: ldloc.s 8
+		IL_00f9: ldstr "log"
+		IL_00fe: ldloc.3
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0104: pop
+		IL_0105: ldstr "console"
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_010f: stloc.s 8
+		IL_0111: ldloc.s 8
+		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0118: stloc.s 8
+		IL_011a: ldloc.1
+		IL_011b: box [System.Runtime]System.Double
+		IL_0120: stloc.s 9
+		IL_0122: ldloc.s 8
+		IL_0124: ldstr "log"
+		IL_0129: ldloc.s 9
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0130: pop
+		IL_0131: ret
 	} // end of method Variable_LetNestedShadowingChain::__js_module_init__
 
 } // end of class Modules.Variable_LetNestedShadowingChain
@@ -178,7 +221,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2128
+		// Method begins at RVA 0x21b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

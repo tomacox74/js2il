@@ -26,7 +26,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x21c3
+						// Method begins at RVA 0x21d7
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -44,7 +44,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21ba
+					// Method begins at RVA 0x21ce
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -64,7 +64,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21cc
+					// Method begins at RVA 0x21e0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b1
+				// Method begins at RVA 0x21c5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -108,7 +108,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x2100
 			// Header size: 12
 			// Code size: 159 (0x9f)
 			.maxstack 8
@@ -218,7 +218,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21a8
+			// Method begins at RVA 0x21bc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -244,12 +244,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 88 (0x58)
+		// Code size: 107 (0x6b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_OptionalChain_InNestedFunction/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.CommonJS_Require_OptionalChain_InNestedFunction/Scope::.ctor()
@@ -278,15 +279,22 @@
 		IL_003c: stloc.2
 		IL_003d: ldloc.2
 		IL_003e: stloc.1
-		IL_003f: ldloc.1
-		IL_0040: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_004a: stloc.2
-		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0050: ldloc.2
-		IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0056: pop
-		IL_0057: ret
+		IL_003f: ldstr "console"
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0049: stloc.2
+		IL_004a: ldloc.2
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0050: stloc.2
+		IL_0051: ldloc.1
+		IL_0052: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_005c: stloc.3
+		IL_005d: ldloc.2
+		IL_005e: ldstr "log"
+		IL_0063: ldloc.3
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0069: pop
+		IL_006a: ret
 	} // end of method CommonJS_Require_OptionalChain_InNestedFunction::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_OptionalChain_InNestedFunction
@@ -302,7 +310,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d5
+			// Method begins at RVA 0x21e9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -326,7 +334,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x20c8
 		// Header size: 12
 		// Code size: 43 (0x2b)
 		.maxstack 8
@@ -361,7 +369,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21de
+		// Method begins at RVA 0x21f2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

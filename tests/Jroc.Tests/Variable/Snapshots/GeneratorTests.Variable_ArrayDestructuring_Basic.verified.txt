@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2190
+			// Method begins at RVA 0x21bc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 289 (0x121)
+		// Code size: 335 (0x14f)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ArrayDestructuring_Basic/Scope,
@@ -161,17 +161,31 @@
 			IL_00fb: endfinally
 		} // end handler
 
-		IL_00fc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0101: ldstr "a="
-		IL_0106: ldloc.s 5
-		IL_0108: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_010d: pop
-		IL_010e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0113: ldstr "b="
-		IL_0118: ldloc.s 6
-		IL_011a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_011f: pop
-		IL_0120: ret
+		IL_00fc: ldstr "console"
+		IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0106: stloc.s 7
+		IL_0108: ldloc.s 7
+		IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010f: stloc.s 7
+		IL_0111: ldloc.s 7
+		IL_0113: ldstr "log"
+		IL_0118: ldstr "a="
+		IL_011d: ldloc.s 5
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0124: pop
+		IL_0125: ldstr "console"
+		IL_012a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_012f: stloc.s 7
+		IL_0131: ldloc.s 7
+		IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0138: stloc.s 7
+		IL_013a: ldloc.s 7
+		IL_013c: ldstr "log"
+		IL_0141: ldstr "b="
+		IL_0146: ldloc.s 6
+		IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_014d: pop
+		IL_014e: ret
 	} // end of method Variable_ArrayDestructuring_Basic::__js_module_init__
 
 } // end of class Modules.Variable_ArrayDestructuring_Basic
@@ -183,7 +197,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2199
+		// Method begins at RVA 0x21c5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

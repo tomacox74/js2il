@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fb
+			// Method begins at RVA 0x211f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 159 (0x9f)
+		// Code size: 195 (0xc3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Process_Stdout_Stderr_Write/Scope,
@@ -49,47 +49,67 @@
 
 		IL_0000: newobj instance void Modules.Process_Stdout_Stderr_Write/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_000b: ldstr "stdout"
-		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_001a: stloc.1
-		IL_001b: ldloc.1
-		IL_001c: ldstr "write"
-		IL_0021: ldstr "stdout"
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_002b: pop
-		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0031: ldstr "stdout"
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0040: stloc.1
-		IL_0041: ldloc.1
-		IL_0042: ldstr "write"
-		IL_0047: ldstr " ok\n"
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0051: pop
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0057: ldstr "stderr"
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0066: stloc.1
-		IL_0067: ldloc.1
-		IL_0068: ldstr "write"
-		IL_006d: ldstr "stderr"
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0077: pop
-		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_007d: ldstr "stderr"
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_008c: stloc.1
-		IL_008d: ldloc.1
-		IL_008e: ldstr "write"
-		IL_0093: ldstr " ok\n"
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_009d: pop
-		IL_009e: ret
+		IL_0006: ldstr "process"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: ldstr "stdout"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_001c: stloc.1
+		IL_001d: ldloc.1
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0023: stloc.1
+		IL_0024: ldloc.1
+		IL_0025: ldstr "write"
+		IL_002a: ldstr "stdout"
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0034: pop
+		IL_0035: ldstr "process"
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_003f: stloc.1
+		IL_0040: ldloc.1
+		IL_0041: ldstr "stdout"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_004b: stloc.1
+		IL_004c: ldloc.1
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0052: stloc.1
+		IL_0053: ldloc.1
+		IL_0054: ldstr "write"
+		IL_0059: ldstr " ok\n"
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0063: pop
+		IL_0064: ldstr "process"
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_006e: stloc.1
+		IL_006f: ldloc.1
+		IL_0070: ldstr "stderr"
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_007a: stloc.1
+		IL_007b: ldloc.1
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0081: stloc.1
+		IL_0082: ldloc.1
+		IL_0083: ldstr "write"
+		IL_0088: ldstr "stderr"
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0092: pop
+		IL_0093: ldstr "process"
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_009d: stloc.1
+		IL_009e: ldloc.1
+		IL_009f: ldstr "stderr"
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00a9: stloc.1
+		IL_00aa: ldloc.1
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b0: stloc.1
+		IL_00b1: ldloc.1
+		IL_00b2: ldstr "write"
+		IL_00b7: ldstr " ok\n"
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c1: pop
+		IL_00c2: ret
 	} // end of method Process_Stdout_Stderr_Write::__js_module_init__
 
 } // end of class Modules.Process_Stdout_Stderr_Write
@@ -101,7 +121,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x2128
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

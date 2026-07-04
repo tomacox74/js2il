@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28cc
+				// Method begins at RVA 0x298b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -110,7 +110,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28d5
+				// Method begins at RVA 0x2994
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -139,337 +139,402 @@
 			)
 			// Method begins at RVA 0x2430
 			// Header size: 12
-			// Code size: 912 (0x390)
+			// Code size: 1094 (0x446)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] float64,
-				[2] bool,
-				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object,
+				[2] float64,
+				[3] bool,
+				[4] object,
 				[5] object,
 				[6] object,
 				[7] object,
-				[8] object,
-				[9] object
+				[8] object
 			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_0006: stloc.0
-			IL_0007: ldstr "fileStats"
-			IL_000c: ldloc.0
-			IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0012: stloc.0
-			IL_0013: ldloc.0
-			IL_0014: ldstr "size"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001e: stloc.0
-			IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0024: ldstr "FileSize:"
-			IL_0029: ldloc.0
-			IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_002f: pop
-			IL_0030: ldarg.0
-			IL_0031: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_0036: stloc.0
-			IL_0037: ldstr "fileStats"
-			IL_003c: ldloc.0
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0042: stloc.0
-			IL_0043: ldloc.0
-			IL_0044: ldstr "mode"
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_004e: stloc.0
-			IL_004f: ldloc.0
-			IL_0050: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0055: stloc.1
-			IL_0056: ldloc.1
-			IL_0057: conv.i4
-			IL_0058: ldc.r8 32768
-			IL_0061: conv.i4
-			IL_0062: and
-			IL_0063: conv.r8
-			IL_0064: stloc.1
-			IL_0065: ldloc.1
-			IL_0066: ldc.r8 32768
-			IL_006f: ceq
-			IL_0071: stloc.2
-			IL_0072: ldloc.2
-			IL_0073: box [System.Runtime]System.Boolean
-			IL_0078: stloc.3
-			IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_007e: ldstr "FileModeHasRegularBit:"
-			IL_0083: ldloc.3
-			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0089: pop
-			IL_008a: ldarg.0
-			IL_008b: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_0090: stloc.0
-			IL_0091: ldstr "fileStats"
-			IL_0096: ldloc.0
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_009c: stloc.0
-			IL_009d: ldloc.0
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a3: stloc.0
-			IL_00a4: ldloc.0
-			IL_00a5: ldstr "isFile"
-			IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_00af: stloc.0
-			IL_00b0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00b5: ldstr "FileIsFile:"
-			IL_00ba: ldloc.0
-			IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_00c0: pop
-			IL_00c1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00c6: stloc.s 4
-			IL_00c8: ldarg.0
-			IL_00c9: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_00ce: stloc.0
-			IL_00cf: ldstr "fileStats"
-			IL_00d4: ldloc.0
-			IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_00da: stloc.0
-			IL_00db: ldloc.0
-			IL_00dc: ldstr "birthtimeMs"
-			IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00e6: stloc.0
-			IL_00e7: ldloc.0
-			IL_00e8: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_00ed: ldstr "number"
-			IL_00f2: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00f7: stloc.2
-			IL_00f8: ldloc.2
-			IL_00f9: box [System.Runtime]System.Boolean
-			IL_00fe: stloc.3
-			IL_00ff: ldloc.3
-			IL_0100: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_0105: stloc.2
-			IL_0106: ldloc.2
-			IL_0107: brfalse IL_0150
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.0
+			IL_0013: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_0018: stloc.1
+			IL_0019: ldstr "fileStats"
+			IL_001e: ldloc.1
+			IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0024: stloc.1
+			IL_0025: ldloc.1
+			IL_0026: ldstr "size"
+			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0030: stloc.1
+			IL_0031: ldloc.0
+			IL_0032: ldstr "log"
+			IL_0037: ldstr "FileSize:"
+			IL_003c: ldloc.1
+			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0042: pop
+			IL_0043: ldstr "console"
+			IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_004d: stloc.1
+			IL_004e: ldloc.1
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0054: stloc.1
+			IL_0055: ldarg.0
+			IL_0056: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_005b: stloc.0
+			IL_005c: ldstr "fileStats"
+			IL_0061: ldloc.0
+			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0067: stloc.0
+			IL_0068: ldloc.0
+			IL_0069: ldstr "mode"
+			IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0073: stloc.0
+			IL_0074: ldloc.0
+			IL_0075: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_007a: stloc.2
+			IL_007b: ldloc.2
+			IL_007c: conv.i4
+			IL_007d: ldc.r8 32768
+			IL_0086: conv.i4
+			IL_0087: and
+			IL_0088: conv.r8
+			IL_0089: stloc.2
+			IL_008a: ldloc.2
+			IL_008b: ldc.r8 32768
+			IL_0094: ceq
+			IL_0096: stloc.3
+			IL_0097: ldloc.3
+			IL_0098: box [System.Runtime]System.Boolean
+			IL_009d: stloc.s 4
+			IL_009f: ldloc.1
+			IL_00a0: ldstr "log"
+			IL_00a5: ldstr "FileModeHasRegularBit:"
+			IL_00aa: ldloc.s 4
+			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00b1: pop
+			IL_00b2: ldstr "console"
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00bc: stloc.1
+			IL_00bd: ldloc.1
+			IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c3: stloc.1
+			IL_00c4: ldarg.0
+			IL_00c5: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_00ca: stloc.0
+			IL_00cb: ldstr "fileStats"
+			IL_00d0: ldloc.0
+			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00d6: stloc.0
+			IL_00d7: ldloc.0
+			IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00dd: stloc.0
+			IL_00de: ldloc.0
+			IL_00df: ldstr "isFile"
+			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_00e9: stloc.0
+			IL_00ea: ldloc.1
+			IL_00eb: ldstr "log"
+			IL_00f0: ldstr "FileIsFile:"
+			IL_00f5: ldloc.0
+			IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00fb: pop
+			IL_00fc: ldstr "console"
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0106: stloc.0
+			IL_0107: ldloc.0
+			IL_0108: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_010d: stloc.0
+			IL_010e: ldarg.0
+			IL_010f: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_0114: stloc.1
+			IL_0115: ldstr "fileStats"
+			IL_011a: ldloc.1
+			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0120: stloc.1
+			IL_0121: ldloc.1
+			IL_0122: ldstr "birthtimeMs"
+			IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_012c: stloc.1
+			IL_012d: ldloc.1
+			IL_012e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_0133: ldstr "number"
+			IL_0138: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_013d: stloc.3
+			IL_013e: ldloc.3
+			IL_013f: box [System.Runtime]System.Boolean
+			IL_0144: stloc.s 4
+			IL_0146: ldloc.s 4
+			IL_0148: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_014d: stloc.3
+			IL_014e: ldloc.3
+			IL_014f: brfalse IL_0198
 
-			IL_010c: ldarg.0
-			IL_010d: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_0112: stloc.0
-			IL_0113: ldstr "fileStats"
-			IL_0118: ldloc.0
-			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_011e: stloc.0
-			IL_011f: ldloc.0
-			IL_0120: ldstr "birthtimeMs"
-			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_012a: stloc.0
-			IL_012b: ldloc.0
-			IL_012c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0131: stloc.1
-			IL_0132: ldloc.1
-			IL_0133: ldc.r8 0.0
-			IL_013c: cgt
-			IL_013e: stloc.2
-			IL_013f: ldloc.2
-			IL_0140: box [System.Runtime]System.Boolean
-			IL_0145: stloc.s 5
-			IL_0147: ldloc.s 5
-			IL_0149: stloc.s 7
-			IL_014b: br IL_0153
+			IL_0154: ldarg.0
+			IL_0155: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_015a: stloc.1
+			IL_015b: ldstr "fileStats"
+			IL_0160: ldloc.1
+			IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0166: stloc.1
+			IL_0167: ldloc.1
+			IL_0168: ldstr "birthtimeMs"
+			IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0172: stloc.1
+			IL_0173: ldloc.1
+			IL_0174: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0179: stloc.2
+			IL_017a: ldloc.2
+			IL_017b: ldc.r8 0.0
+			IL_0184: cgt
+			IL_0186: stloc.3
+			IL_0187: ldloc.3
+			IL_0188: box [System.Runtime]System.Boolean
+			IL_018d: stloc.s 5
+			IL_018f: ldloc.s 5
+			IL_0191: stloc.s 7
+			IL_0193: br IL_019c
 
-			IL_0150: ldloc.3
-			IL_0151: stloc.s 7
+			IL_0198: ldloc.s 4
+			IL_019a: stloc.s 7
 
-			IL_0153: ldloc.s 4
-			IL_0155: ldstr "FileHasBirthtimeMs:"
-			IL_015a: ldloc.s 7
-			IL_015c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0161: pop
-			IL_0162: ldarg.0
-			IL_0163: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_0168: stloc.0
-			IL_0169: ldstr "fileStats"
-			IL_016e: ldloc.0
-			IL_016f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0174: stloc.0
-			IL_0175: ldloc.0
-			IL_0176: ldstr "birthtime"
-			IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0180: stloc.0
-			IL_0181: ldloc.0
-			IL_0182: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0187: stloc.0
-			IL_0188: ldloc.0
-			IL_0189: ldstr "toISOString"
-			IL_018e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_0193: stloc.0
-			IL_0194: ldloc.0
-			IL_0195: ldstr "length"
-			IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_019f: stloc.0
-			IL_01a0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01a5: ldstr "FileBirthtimeIsoLength:"
-			IL_01aa: ldloc.0
-			IL_01ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01b0: pop
-			IL_01b1: ldarg.0
-			IL_01b2: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
-			IL_01b7: stloc.0
-			IL_01b8: ldstr "fileStats"
-			IL_01bd: ldloc.0
-			IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_01c3: stloc.0
-			IL_01c4: ldloc.0
-			IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_01ca: stloc.0
-			IL_01cb: ldloc.0
-			IL_01cc: ldstr "isCharacterDevice"
-			IL_01d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_01d6: stloc.0
-			IL_01d7: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_01dc: ldstr "FileIsCharacterDevice:"
-			IL_01e1: ldloc.0
-			IL_01e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_01e7: pop
-			IL_01e8: ldarg.2
-			IL_01e9: ldstr "mode"
-			IL_01ee: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_01f3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_01f8: conv.i4
-			IL_01f9: ldc.r8 16384
-			IL_0202: conv.i4
-			IL_0203: and
-			IL_0204: conv.r8
-			IL_0205: stloc.1
-			IL_0206: ldloc.1
-			IL_0207: ldc.r8 16384
-			IL_0210: ceq
-			IL_0212: stloc.2
-			IL_0213: ldloc.2
-			IL_0214: box [System.Runtime]System.Boolean
-			IL_0219: stloc.3
-			IL_021a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_021f: ldstr "DirModeHasDirectoryBit:"
-			IL_0224: ldloc.3
-			IL_0225: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_022a: pop
-			IL_022b: ldarg.2
-			IL_022c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0231: stloc.0
-			IL_0232: ldloc.0
-			IL_0233: ldstr "isDirectory"
-			IL_0238: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_023d: stloc.0
-			IL_023e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0243: ldstr "DirIsDirectory:"
-			IL_0248: ldloc.0
-			IL_0249: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_024e: pop
-			IL_024f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0254: stloc.s 4
-			IL_0256: ldarg.2
-			IL_0257: ldstr "ctimeMs"
-			IL_025c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0261: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-			IL_0266: ldstr "number"
-			IL_026b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_0270: stloc.2
-			IL_0271: ldloc.2
-			IL_0272: box [System.Runtime]System.Boolean
-			IL_0277: stloc.3
-			IL_0278: ldloc.3
-			IL_0279: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_027e: stloc.2
-			IL_027f: ldloc.2
-			IL_0280: brfalse IL_02ac
-
-			IL_0285: ldarg.2
-			IL_0286: ldstr "ctimeMs"
-			IL_028b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0290: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0295: ldc.r8 0.0
-			IL_029e: cgt
-			IL_02a0: box [System.Runtime]System.Boolean
-			IL_02a5: stloc.s 8
-			IL_02a7: br IL_02af
-
-			IL_02ac: ldloc.3
-			IL_02ad: stloc.s 8
-
-			IL_02af: ldloc.s 4
-			IL_02b1: ldstr "DirHasCtimeMs:"
-			IL_02b6: ldloc.s 8
-			IL_02b8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_02bd: pop
-			IL_02be: ldarg.2
+			IL_019c: ldloc.0
+			IL_019d: ldstr "log"
+			IL_01a2: ldstr "FileHasBirthtimeMs:"
+			IL_01a7: ldloc.s 7
+			IL_01a9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_01ae: pop
+			IL_01af: ldstr "console"
+			IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_01b9: stloc.0
+			IL_01ba: ldloc.0
+			IL_01bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01c0: stloc.0
+			IL_01c1: ldarg.0
+			IL_01c2: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_01c7: stloc.1
+			IL_01c8: ldstr "fileStats"
+			IL_01cd: ldloc.1
+			IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_01d3: stloc.1
+			IL_01d4: ldloc.1
+			IL_01d5: ldstr "birthtime"
+			IL_01da: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01df: stloc.1
+			IL_01e0: ldloc.1
+			IL_01e1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_01e6: stloc.1
+			IL_01e7: ldloc.1
+			IL_01e8: ldstr "toISOString"
+			IL_01ed: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_01f2: stloc.1
+			IL_01f3: ldloc.1
+			IL_01f4: ldstr "length"
+			IL_01f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_01fe: stloc.1
+			IL_01ff: ldloc.0
+			IL_0200: ldstr "log"
+			IL_0205: ldstr "FileBirthtimeIsoLength:"
+			IL_020a: ldloc.1
+			IL_020b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0210: pop
+			IL_0211: ldstr "console"
+			IL_0216: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_021b: stloc.1
+			IL_021c: ldloc.1
+			IL_021d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0222: stloc.1
+			IL_0223: ldarg.0
+			IL_0224: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::fileStats
+			IL_0229: stloc.0
+			IL_022a: ldstr "fileStats"
+			IL_022f: ldloc.0
+			IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0235: stloc.0
+			IL_0236: ldloc.0
+			IL_0237: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_023c: stloc.0
+			IL_023d: ldloc.0
+			IL_023e: ldstr "isCharacterDevice"
+			IL_0243: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_0248: stloc.0
+			IL_0249: ldloc.1
+			IL_024a: ldstr "log"
+			IL_024f: ldstr "FileIsCharacterDevice:"
+			IL_0254: ldloc.0
+			IL_0255: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_025a: pop
+			IL_025b: ldstr "console"
+			IL_0260: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0265: stloc.0
+			IL_0266: ldloc.0
+			IL_0267: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_026c: stloc.0
+			IL_026d: ldarg.2
+			IL_026e: ldstr "mode"
+			IL_0273: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0278: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_027d: conv.i4
+			IL_027e: ldc.r8 16384
+			IL_0287: conv.i4
+			IL_0288: and
+			IL_0289: conv.r8
+			IL_028a: stloc.2
+			IL_028b: ldloc.2
+			IL_028c: ldc.r8 16384
+			IL_0295: ceq
+			IL_0297: stloc.3
+			IL_0298: ldloc.3
+			IL_0299: box [System.Runtime]System.Boolean
+			IL_029e: stloc.s 4
+			IL_02a0: ldloc.0
+			IL_02a1: ldstr "log"
+			IL_02a6: ldstr "DirModeHasDirectoryBit:"
+			IL_02ab: ldloc.s 4
+			IL_02ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_02b2: pop
+			IL_02b3: ldstr "console"
+			IL_02b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02bd: stloc.0
+			IL_02be: ldloc.0
 			IL_02bf: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_02c4: stloc.0
-			IL_02c5: ldloc.0
-			IL_02c6: ldstr "isFIFO"
-			IL_02cb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_02d0: stloc.0
-			IL_02d1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_02d6: ldstr "DirIsFIFO:"
-			IL_02db: ldloc.0
-			IL_02dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_02e1: pop
-			IL_02e2: ldarg.0
-			IL_02e3: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
-			IL_02e8: stloc.0
-			IL_02e9: ldstr "syncFs"
-			IL_02ee: ldloc.0
-			IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_02f4: stloc.0
-			IL_02f5: ldloc.0
+			IL_02c5: ldarg.2
+			IL_02c6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_02cb: stloc.1
+			IL_02cc: ldloc.1
+			IL_02cd: ldstr "isDirectory"
+			IL_02d2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_02d7: stloc.1
+			IL_02d8: ldloc.0
+			IL_02d9: ldstr "log"
+			IL_02de: ldstr "DirIsDirectory:"
+			IL_02e3: ldloc.1
+			IL_02e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_02e9: pop
+			IL_02ea: ldstr "console"
+			IL_02ef: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_02f4: stloc.1
+			IL_02f5: ldloc.1
 			IL_02f6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_02fb: stloc.0
-			IL_02fc: ldarg.0
-			IL_02fd: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::file
-			IL_0302: stloc.s 9
-			IL_0304: ldstr "file"
-			IL_0309: ldloc.s 9
-			IL_030b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0310: stloc.s 9
-			IL_0312: ldloc.0
-			IL_0313: ldstr "rmSync"
-			IL_0318: ldloc.s 9
-			IL_031a: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_031f: dup
-			IL_0320: ldstr "force"
-			IL_0325: ldc.i4.1
-			IL_0326: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_032b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0330: pop
-			IL_0331: ldarg.0
-			IL_0332: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
-			IL_0337: stloc.s 9
-			IL_0339: ldstr "syncFs"
-			IL_033e: ldloc.s 9
-			IL_0340: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0345: stloc.s 9
-			IL_0347: ldloc.s 9
-			IL_0349: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_034e: stloc.s 9
-			IL_0350: ldarg.0
-			IL_0351: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::dir
-			IL_0356: stloc.0
-			IL_0357: ldstr "dir"
-			IL_035c: ldloc.0
-			IL_035d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0362: stloc.0
-			IL_0363: ldloc.s 9
-			IL_0365: ldstr "rmSync"
-			IL_036a: ldloc.0
-			IL_036b: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0370: dup
-			IL_0371: ldstr "force"
-			IL_0376: ldc.i4.1
-			IL_0377: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_037c: dup
-			IL_037d: ldstr "recursive"
-			IL_0382: ldc.i4.1
-			IL_0383: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0388: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_038d: pop
-			IL_038e: ldnull
-			IL_038f: ret
+			IL_02fb: stloc.1
+			IL_02fc: ldarg.2
+			IL_02fd: ldstr "ctimeMs"
+			IL_0302: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0307: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+			IL_030c: ldstr "number"
+			IL_0311: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0316: stloc.3
+			IL_0317: ldloc.3
+			IL_0318: box [System.Runtime]System.Boolean
+			IL_031d: stloc.s 4
+			IL_031f: ldloc.s 4
+			IL_0321: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0326: stloc.3
+			IL_0327: ldloc.3
+			IL_0328: brfalse IL_0354
+
+			IL_032d: ldarg.2
+			IL_032e: ldstr "ctimeMs"
+			IL_0333: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0338: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_033d: ldc.r8 0.0
+			IL_0346: cgt
+			IL_0348: box [System.Runtime]System.Boolean
+			IL_034d: stloc.s 8
+			IL_034f: br IL_0358
+
+			IL_0354: ldloc.s 4
+			IL_0356: stloc.s 8
+
+			IL_0358: ldloc.1
+			IL_0359: ldstr "log"
+			IL_035e: ldstr "DirHasCtimeMs:"
+			IL_0363: ldloc.s 8
+			IL_0365: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_036a: pop
+			IL_036b: ldstr "console"
+			IL_0370: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0375: stloc.1
+			IL_0376: ldloc.1
+			IL_0377: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_037c: stloc.1
+			IL_037d: ldarg.2
+			IL_037e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0383: stloc.0
+			IL_0384: ldloc.0
+			IL_0385: ldstr "isFIFO"
+			IL_038a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+			IL_038f: stloc.0
+			IL_0390: ldloc.1
+			IL_0391: ldstr "log"
+			IL_0396: ldstr "DirIsFIFO:"
+			IL_039b: ldloc.0
+			IL_039c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_03a1: pop
+			IL_03a2: ldarg.0
+			IL_03a3: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
+			IL_03a8: stloc.0
+			IL_03a9: ldstr "syncFs"
+			IL_03ae: ldloc.0
+			IL_03af: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_03b4: stloc.0
+			IL_03b5: ldloc.0
+			IL_03b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_03bb: stloc.0
+			IL_03bc: ldarg.0
+			IL_03bd: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::file
+			IL_03c2: stloc.1
+			IL_03c3: ldstr "file"
+			IL_03c8: ldloc.1
+			IL_03c9: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_03ce: stloc.1
+			IL_03cf: ldloc.0
+			IL_03d0: ldstr "rmSync"
+			IL_03d5: ldloc.1
+			IL_03d6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_03db: dup
+			IL_03dc: ldstr "force"
+			IL_03e1: ldc.i4.1
+			IL_03e2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_03e7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_03ec: pop
+			IL_03ed: ldarg.0
+			IL_03ee: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
+			IL_03f3: stloc.1
+			IL_03f4: ldstr "syncFs"
+			IL_03f9: ldloc.1
+			IL_03fa: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_03ff: stloc.1
+			IL_0400: ldloc.1
+			IL_0401: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0406: stloc.1
+			IL_0407: ldarg.0
+			IL_0408: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::dir
+			IL_040d: stloc.0
+			IL_040e: ldstr "dir"
+			IL_0413: ldloc.0
+			IL_0414: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0419: stloc.0
+			IL_041a: ldloc.1
+			IL_041b: ldstr "rmSync"
+			IL_0420: ldloc.0
+			IL_0421: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0426: dup
+			IL_0427: ldstr "force"
+			IL_042c: ldc.i4.1
+			IL_042d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_0432: dup
+			IL_0433: ldstr "recursive"
+			IL_0438: ldc.i4.1
+			IL_0439: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_043e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0443: pop
+			IL_0444: ldnull
+			IL_0445: ret
 		} // end of method ArrowFunction_L21C9::__js_call__
 
 	} // end of class ArrowFunction_L21C9
@@ -492,7 +557,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x28de
+				// Method begins at RVA 0x299d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -519,101 +584,105 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 06 00 00 02
 			)
-			// Method begins at RVA 0x27cc
+			// Method begins at RVA 0x2884
 			// Header size: 12
-			// Code size: 235 (0xeb)
+			// Code size: 242 (0xf2)
 			.maxstack 8
 			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[0] object,
 				[1] bool,
 				[2] object,
 				[3] object,
-				[4] object,
-				[5] object
+				[4] object
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.0
-			IL_0006: ldarg.2
-			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_000c: stloc.1
-			IL_000d: ldloc.1
-			IL_000e: brfalse IL_0024
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldarg.2
+			IL_0013: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0018: stloc.1
+			IL_0019: ldloc.1
+			IL_001a: brfalse IL_0030
 
-			IL_0013: ldarg.2
-			IL_0014: ldstr "message"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001e: stloc.3
-			IL_001f: br IL_0026
+			IL_001f: ldarg.2
+			IL_0020: ldstr "message"
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002a: stloc.3
+			IL_002b: br IL_0032
 
-			IL_0024: ldarg.2
-			IL_0025: stloc.3
+			IL_0030: ldarg.2
+			IL_0031: stloc.3
 
-			IL_0026: ldloc.0
-			IL_0027: ldstr "Error:"
-			IL_002c: ldloc.3
-			IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_0032: pop
-			IL_0033: ldarg.0
-			IL_0034: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
-			IL_0039: stloc.s 4
-			IL_003b: ldstr "syncFs"
-			IL_0040: ldloc.s 4
-			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0047: stloc.s 4
-			IL_0049: ldloc.s 4
-			IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0050: stloc.s 4
-			IL_0052: ldarg.0
-			IL_0053: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::file
-			IL_0058: stloc.s 5
-			IL_005a: ldstr "file"
-			IL_005f: ldloc.s 5
-			IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0066: stloc.s 5
-			IL_0068: ldloc.s 4
-			IL_006a: ldstr "rmSync"
-			IL_006f: ldloc.s 5
-			IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_0076: dup
-			IL_0077: ldstr "force"
-			IL_007c: ldc.i4.1
-			IL_007d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_0087: pop
-			IL_0088: ldarg.0
-			IL_0089: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
-			IL_008e: stloc.s 5
-			IL_0090: ldstr "syncFs"
-			IL_0095: ldloc.s 5
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_009c: stloc.s 5
-			IL_009e: ldloc.s 5
-			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a5: stloc.s 5
-			IL_00a7: ldarg.0
-			IL_00a8: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::dir
-			IL_00ad: stloc.s 4
-			IL_00af: ldstr "dir"
-			IL_00b4: ldloc.s 4
-			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_00bb: stloc.s 4
-			IL_00bd: ldloc.s 5
-			IL_00bf: ldstr "rmSync"
-			IL_00c4: ldloc.s 4
-			IL_00c6: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-			IL_00cb: dup
-			IL_00cc: ldstr "force"
-			IL_00d1: ldc.i4.1
-			IL_00d2: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_00d7: dup
-			IL_00d8: ldstr "recursive"
-			IL_00dd: ldc.i4.1
-			IL_00de: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
-			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00e8: pop
-			IL_00e9: ldnull
-			IL_00ea: ret
+			IL_0032: ldloc.0
+			IL_0033: ldstr "log"
+			IL_0038: ldstr "Error:"
+			IL_003d: ldloc.3
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0043: pop
+			IL_0044: ldarg.0
+			IL_0045: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
+			IL_004a: stloc.0
+			IL_004b: ldstr "syncFs"
+			IL_0050: ldloc.0
+			IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0056: stloc.0
+			IL_0057: ldloc.0
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_005d: stloc.0
+			IL_005e: ldarg.0
+			IL_005f: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::file
+			IL_0064: stloc.s 4
+			IL_0066: ldstr "file"
+			IL_006b: ldloc.s 4
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0072: stloc.s 4
+			IL_0074: ldloc.0
+			IL_0075: ldstr "rmSync"
+			IL_007a: ldloc.s 4
+			IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_0081: dup
+			IL_0082: ldstr "force"
+			IL_0087: ldc.i4.1
+			IL_0088: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0092: pop
+			IL_0093: ldarg.0
+			IL_0094: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::syncFs
+			IL_0099: stloc.s 4
+			IL_009b: ldstr "syncFs"
+			IL_00a0: ldloc.s 4
+			IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00a7: stloc.s 4
+			IL_00a9: ldloc.s 4
+			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00b0: stloc.s 4
+			IL_00b2: ldarg.0
+			IL_00b3: ldfld object Modules.FSPromises_Stat_RichMetadata/Scope::dir
+			IL_00b8: stloc.0
+			IL_00b9: ldstr "dir"
+			IL_00be: ldloc.0
+			IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00c4: stloc.0
+			IL_00c5: ldloc.s 4
+			IL_00c7: ldstr "rmSync"
+			IL_00cc: ldloc.0
+			IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+			IL_00d2: dup
+			IL_00d3: ldstr "force"
+			IL_00d8: ldc.i4.1
+			IL_00d9: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_00de: dup
+			IL_00df: ldstr "recursive"
+			IL_00e4: ldc.i4.1
+			IL_00e5: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetBoolean(string, bool)
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00ef: pop
+			IL_00f0: ldnull
+			IL_00f1: ret
 		} // end of method ArrowFunction_L36C10::__js_call__
 
 	} // end of class ArrowFunction_L36C10
@@ -640,7 +709,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x28c3
+			// Method begins at RVA 0x2982
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -999,7 +1068,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x28e7
+		// Method begins at RVA 0x29a6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

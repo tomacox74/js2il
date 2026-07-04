@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20ce
+				// Method begins at RVA 0x20fc
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20d7
+				// Method begins at RVA 0x2105
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c5
+			// Method begins at RVA 0x20f3
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 151 (0x97)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_If_NotEqual/Scope,
@@ -90,7 +90,8 @@
 			[2] float64,
 			[3] class Modules.ControlFlow_If_NotEqual/Scope/Block_L5C12,
 			[4] class Modules.ControlFlow_If_NotEqual/Scope/Block_L7C7,
-			[5] float64
+			[5] float64,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_If_NotEqual/Scope::.ctor()
@@ -106,28 +107,42 @@
 		IL_0020: ceq
 		IL_0022: ldc.i4.0
 		IL_0023: ceq
-		IL_0025: brfalse IL_004b
+		IL_0025: brfalse IL_0062
 
 		IL_002a: newobj instance void Modules.ControlFlow_If_NotEqual/Scope/Block_L5C12::.ctor()
 		IL_002f: stloc.3
-		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldstr "branch"
-		IL_003a: ldc.i4.1
-		IL_003b: box [System.Runtime]System.Boolean
-		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0045: pop
-		IL_0046: br IL_0068
+		IL_0030: ldstr "console"
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_003a: stloc.s 6
+		IL_003c: ldloc.s 6
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0043: stloc.s 6
+		IL_0045: ldloc.s 6
+		IL_0047: ldstr "log"
+		IL_004c: ldstr "branch"
+		IL_0051: ldc.i4.1
+		IL_0052: box [System.Runtime]System.Boolean
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_005c: pop
+		IL_005d: br IL_0096
 
-		IL_004b: newobj instance void Modules.ControlFlow_If_NotEqual/Scope/Block_L7C7::.ctor()
-		IL_0050: stloc.s 4
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldstr "branch"
-		IL_005c: ldc.i4.0
-		IL_005d: box [System.Runtime]System.Boolean
-		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0067: pop
+		IL_0062: newobj instance void Modules.ControlFlow_If_NotEqual/Scope/Block_L7C7::.ctor()
+		IL_0067: stloc.s 4
+		IL_0069: ldstr "console"
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0073: stloc.s 6
+		IL_0075: ldloc.s 6
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007c: stloc.s 6
+		IL_007e: ldloc.s 6
+		IL_0080: ldstr "log"
+		IL_0085: ldstr "branch"
+		IL_008a: ldc.i4.0
+		IL_008b: box [System.Runtime]System.Boolean
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0095: pop
 
-		IL_0068: ret
+		IL_0096: ret
 	} // end of method ControlFlow_If_NotEqual::__js_module_init__
 
 } // end of class Modules.ControlFlow_If_NotEqual
@@ -139,7 +154,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x210e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

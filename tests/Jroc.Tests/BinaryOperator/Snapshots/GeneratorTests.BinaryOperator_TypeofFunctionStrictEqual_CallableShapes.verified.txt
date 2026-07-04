@@ -1,4 +1,4 @@
-// IL code: BinaryOperator_TypeofFunctionStrictEqual_CallableShapes
+﻿// IL code: BinaryOperator_TypeofFunctionStrictEqual_CallableShapes
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2177
+				// Method begins at RVA 0x21e7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2158
+			// Method begins at RVA 0x21c8
 			// Header size: 12
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2180
+				// Method begins at RVA 0x21f0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -96,7 +96,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2189
+				// Method begins at RVA 0x21f9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -116,7 +116,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2192
+				// Method begins at RVA 0x2202
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -136,7 +136,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219b
+				// Method begins at RVA 0x220b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -157,7 +157,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x216e
+			// Method begins at RVA 0x21de
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -183,7 +183,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 252 (0xfc)
+		// Code size: 361 (0x169)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope,
@@ -225,55 +225,90 @@
 		IL_0051: stloc.2
 		IL_0052: ldloc.2
 		IL_0053: isinst [System.Runtime]System.Delegate
-		IL_0058: brfalse IL_0073
+		IL_0058: brfalse IL_008a
 
 		IL_005d: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L9C33::.ctor()
 		IL_0062: stloc.3
-		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0068: ldstr "bound function"
-		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0072: pop
+		IL_0063: ldstr "console"
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_006d: stloc.s 7
+		IL_006f: ldloc.s 7
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0076: stloc.s 7
+		IL_0078: ldloc.s 7
+		IL_007a: ldstr "log"
+		IL_007f: ldstr "bound function"
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0089: pop
 
-		IL_0073: ldarg.1
-		IL_0074: isinst [System.Runtime]System.Delegate
-		IL_0079: brfalse IL_0095
+		IL_008a: ldarg.1
+		IL_008b: isinst [System.Runtime]System.Delegate
+		IL_0090: brfalse IL_00c3
 
-		IL_007e: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L13C35::.ctor()
-		IL_0083: stloc.s 4
-		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008a: ldstr "require function"
-		IL_008f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0094: pop
+		IL_0095: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L13C35::.ctor()
+		IL_009a: stloc.s 4
+		IL_009c: ldstr "console"
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a6: stloc.s 7
+		IL_00a8: ldloc.s 7
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00af: stloc.s 7
+		IL_00b1: ldloc.s 7
+		IL_00b3: ldstr "log"
+		IL_00b8: ldstr "require function"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c2: pop
 
-		IL_0095: ldarg.2
-		IL_0096: ldstr "require"
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00a0: isinst [System.Runtime]System.Delegate
-		IL_00a5: brfalse IL_00c1
+		IL_00c3: ldarg.2
+		IL_00c4: ldstr "require"
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ce: isinst [System.Runtime]System.Delegate
+		IL_00d3: brfalse IL_0106
 
-		IL_00aa: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L17C42::.ctor()
-		IL_00af: stloc.s 5
-		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b6: ldstr "module.require function"
-		IL_00bb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c0: pop
+		IL_00d8: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L17C42::.ctor()
+		IL_00dd: stloc.s 5
+		IL_00df: ldstr "console"
+		IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00e9: stloc.s 7
+		IL_00eb: ldloc.s 7
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f2: stloc.s 7
+		IL_00f4: ldloc.s 7
+		IL_00f6: ldstr "log"
+		IL_00fb: ldstr "module.require function"
+		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0105: pop
 
-		IL_00c1: call class [System.Runtime]System.Func`3<object[], object, class [System.Runtime]System.Delegate> [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Function()
-		IL_00c6: ldstr "prototype"
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00d0: ldstr "bind"
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00da: isinst [System.Runtime]System.Delegate
-		IL_00df: brfalse IL_00fb
+		IL_0106: ldstr "Function"
+		IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0110: stloc.s 7
+		IL_0112: ldloc.s 7
+		IL_0114: ldstr "prototype"
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_011e: stloc.s 7
+		IL_0120: ldloc.s 7
+		IL_0122: ldstr "bind"
+		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012c: stloc.s 7
+		IL_012e: ldloc.s 7
+		IL_0130: isinst [System.Runtime]System.Delegate
+		IL_0135: brfalse IL_0168
 
-		IL_00e4: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L21C51::.ctor()
-		IL_00e9: stloc.s 6
-		IL_00eb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f0: ldstr "prototype bind function"
-		IL_00f5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fa: pop
+		IL_013a: newobj instance void Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes/Scope/Block_L21C51::.ctor()
+		IL_013f: stloc.s 6
+		IL_0141: ldstr "console"
+		IL_0146: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_014b: stloc.s 7
+		IL_014d: ldloc.s 7
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0154: stloc.s 7
+		IL_0156: ldloc.s 7
+		IL_0158: ldstr "log"
+		IL_015d: ldstr "prototype bind function"
+		IL_0162: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0167: pop
 
-		IL_00fb: ret
+		IL_0168: ret
 	} // end of method BinaryOperator_TypeofFunctionStrictEqual_CallableShapes::__js_module_init__
 
 } // end of class Modules.BinaryOperator_TypeofFunctionStrictEqual_CallableShapes
@@ -285,7 +320,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a4
+		// Method begins at RVA 0x2214
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22ad
+				// Method begins at RVA 0x22e5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 			)
 			// Method begins at RVA 0x21b0
 			// Header size: 12
-			// Code size: 202 (0xca)
+			// Code size: 225 (0xe1)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -93,47 +93,54 @@
 			IL_005a: stloc.s 4
 			IL_005c: ldloc.s 4
 			IL_005e: stloc.0
-			IL_005f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0064: ldstr "Written content:"
-			IL_0069: ldloc.0
-			IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_006f: pop
-			IL_0070: ldarg.0
-			IL_0071: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
-			IL_0076: stloc.1
-			IL_0077: ldstr "require"
-			IL_007c: ldloc.1
-			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0082: stloc.s 4
-			IL_0084: ldc.i4.1
-			IL_0085: newarr [System.Runtime]System.Object
-			IL_008a: dup
-			IL_008b: ldc.i4.0
-			IL_008c: ldarg.0
-			IL_008d: stelem.ref
-			IL_008e: stloc.3
-			IL_008f: ldloc.s 4
-			IL_0091: ldloc.3
-			IL_0092: ldstr "fs"
-			IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-			IL_009c: stloc.s 4
-			IL_009e: ldloc.s 4
-			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a5: stloc.s 4
-			IL_00a7: ldarg.0
-			IL_00a8: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
-			IL_00ad: stloc.2
-			IL_00ae: ldstr "testFile"
-			IL_00b3: ldloc.2
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_00b9: stloc.2
-			IL_00ba: ldloc.s 4
-			IL_00bc: ldstr "rmSync"
-			IL_00c1: ldloc.2
-			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00c7: pop
-			IL_00c8: ldnull
-			IL_00c9: ret
+			IL_005f: ldstr "console"
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0069: stloc.s 4
+			IL_006b: ldloc.s 4
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0072: stloc.s 4
+			IL_0074: ldloc.s 4
+			IL_0076: ldstr "log"
+			IL_007b: ldstr "Written content:"
+			IL_0080: ldloc.0
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0086: pop
+			IL_0087: ldarg.0
+			IL_0088: ldfld class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate Modules.FSPromises_WriteFile_Utf8/Scope::require
+			IL_008d: stloc.1
+			IL_008e: ldstr "require"
+			IL_0093: ldloc.1
+			IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0099: stloc.s 4
+			IL_009b: ldc.i4.1
+			IL_009c: newarr [System.Runtime]System.Object
+			IL_00a1: dup
+			IL_00a2: ldc.i4.0
+			IL_00a3: ldarg.0
+			IL_00a4: stelem.ref
+			IL_00a5: stloc.3
+			IL_00a6: ldloc.s 4
+			IL_00a8: ldloc.3
+			IL_00a9: ldstr "fs"
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+			IL_00b3: stloc.s 4
+			IL_00b5: ldloc.s 4
+			IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00bc: stloc.s 4
+			IL_00be: ldarg.0
+			IL_00bf: ldfld object Modules.FSPromises_WriteFile_Utf8/Scope::testFile
+			IL_00c4: stloc.2
+			IL_00c5: ldstr "testFile"
+			IL_00ca: ldloc.2
+			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00d0: stloc.2
+			IL_00d1: ldloc.s 4
+			IL_00d3: ldstr "rmSync"
+			IL_00d8: ldloc.2
+			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00de: pop
+			IL_00df: ldnull
+			IL_00e0: ret
 		} // end of method ArrowFunction_L7C63::__js_call__
 
 	} // end of class ArrowFunction_L7C63
@@ -156,7 +163,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22b6
+				// Method begins at RVA 0x22ee
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -180,20 +187,30 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2286
-			// Header size: 1
-			// Code size: 29 (0x1d)
+			// Method begins at RVA 0x22a0
+			// Header size: 12
+			// Code size: 48 (0x30)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Error:"
-			IL_000a: ldarg.1
-			IL_000b: ldstr "message"
-			IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::'error'(object, object)
-			IL_001a: pop
-			IL_001b: ldnull
-			IL_001c: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "error"
+			IL_0018: ldstr "Error:"
+			IL_001d: ldarg.1
+			IL_001e: ldstr "message"
+			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_002d: pop
+			IL_002e: ldnull
+			IL_002f: ret
 		} // end of method ArrowFunction_L11C10::__js_call__
 
 	} // end of class ArrowFunction_L11C10
@@ -214,7 +231,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22a4
+			// Method begins at RVA 0x22dc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -381,7 +398,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22bf
+		// Method begins at RVA 0x22f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

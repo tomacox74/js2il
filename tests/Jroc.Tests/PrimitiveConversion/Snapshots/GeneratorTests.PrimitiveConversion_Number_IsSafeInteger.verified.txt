@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211d
+			// Method begins at RVA 0x217c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,71 +40,107 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 193 (0xc1)
+		// Code size: 288 (0x120)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PrimitiveConversion_Number_IsSafeInteger/Scope,
-			[1] bool,
-			[2] object
+			[1] object,
+			[2] bool,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.PrimitiveConversion_Number_IsSafeInteger/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.r8 3
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
-		IL_0019: stloc.1
-		IL_001a: ldloc.1
-		IL_001b: box [System.Runtime]System.Boolean
-		IL_0020: stloc.2
-		IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0026: ldloc.2
-		IL_0027: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_002c: pop
-		IL_002d: ldc.r8 3.1
-		IL_0036: box [System.Runtime]System.Double
-		IL_003b: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
-		IL_0040: stloc.1
-		IL_0041: ldloc.1
-		IL_0042: box [System.Runtime]System.Boolean
-		IL_0047: stloc.2
-		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004d: ldloc.2
-		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0053: pop
-		IL_0054: ldc.r8 9007199254740991
-		IL_005d: box [System.Runtime]System.Double
-		IL_0062: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
-		IL_0067: stloc.1
-		IL_0068: ldloc.1
-		IL_0069: box [System.Runtime]System.Boolean
-		IL_006e: stloc.2
-		IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0074: ldloc.2
-		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_007a: pop
-		IL_007b: ldc.r8 9007199254740992
-		IL_0084: box [System.Runtime]System.Double
-		IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
-		IL_008e: stloc.1
-		IL_008f: ldloc.1
-		IL_0090: box [System.Runtime]System.Boolean
-		IL_0095: stloc.2
-		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009b: ldloc.2
-		IL_009c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a1: pop
-		IL_00a2: ldstr "3"
-		IL_00a7: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
-		IL_00ac: stloc.1
-		IL_00ad: ldloc.1
-		IL_00ae: box [System.Runtime]System.Boolean
-		IL_00b3: stloc.2
-		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b9: ldloc.2
-		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00bf: pop
-		IL_00c0: ret
+		IL_0006: ldstr "console"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0017: stloc.1
+		IL_0018: ldc.r8 3
+		IL_0021: box [System.Runtime]System.Double
+		IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
+		IL_002b: stloc.2
+		IL_002c: ldloc.2
+		IL_002d: box [System.Runtime]System.Boolean
+		IL_0032: stloc.3
+		IL_0033: ldloc.1
+		IL_0034: ldstr "log"
+		IL_0039: ldloc.3
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_003f: pop
+		IL_0040: ldstr "console"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004a: stloc.1
+		IL_004b: ldloc.1
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0051: stloc.1
+		IL_0052: ldc.r8 3.1
+		IL_005b: box [System.Runtime]System.Double
+		IL_0060: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
+		IL_0065: stloc.2
+		IL_0066: ldloc.2
+		IL_0067: box [System.Runtime]System.Boolean
+		IL_006c: stloc.3
+		IL_006d: ldloc.1
+		IL_006e: ldstr "log"
+		IL_0073: ldloc.3
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0079: pop
+		IL_007a: ldstr "console"
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0084: stloc.1
+		IL_0085: ldloc.1
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008b: stloc.1
+		IL_008c: ldc.r8 9007199254740991
+		IL_0095: box [System.Runtime]System.Double
+		IL_009a: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
+		IL_009f: stloc.2
+		IL_00a0: ldloc.2
+		IL_00a1: box [System.Runtime]System.Boolean
+		IL_00a6: stloc.3
+		IL_00a7: ldloc.1
+		IL_00a8: ldstr "log"
+		IL_00ad: ldloc.3
+		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b3: pop
+		IL_00b4: ldstr "console"
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00be: stloc.1
+		IL_00bf: ldloc.1
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c5: stloc.1
+		IL_00c6: ldc.r8 9007199254740992
+		IL_00cf: box [System.Runtime]System.Double
+		IL_00d4: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
+		IL_00d9: stloc.2
+		IL_00da: ldloc.2
+		IL_00db: box [System.Runtime]System.Boolean
+		IL_00e0: stloc.3
+		IL_00e1: ldloc.1
+		IL_00e2: ldstr "log"
+		IL_00e7: ldloc.3
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00ed: pop
+		IL_00ee: ldstr "console"
+		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00f8: stloc.1
+		IL_00f9: ldloc.1
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ff: stloc.1
+		IL_0100: ldstr "3"
+		IL_0105: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isSafeInteger(object)
+		IL_010a: stloc.2
+		IL_010b: ldloc.2
+		IL_010c: box [System.Runtime]System.Boolean
+		IL_0111: stloc.3
+		IL_0112: ldloc.1
+		IL_0113: ldstr "log"
+		IL_0118: ldloc.3
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_011e: pop
+		IL_011f: ret
 	} // end of method PrimitiveConversion_Number_IsSafeInteger::__js_module_init__
 
 } // end of class Modules.PrimitiveConversion_Number_IsSafeInteger
@@ -116,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2126
+		// Method begins at RVA 0x2185
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

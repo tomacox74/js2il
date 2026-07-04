@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20bb
+			// Method begins at RVA 0x20e9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,13 +40,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 95 (0x5f)
+		// Code size: 141 (0x8d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_LiteralSpread_Empty/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_LiteralSpread_Empty/Scope::.ctor()
@@ -62,28 +63,42 @@
 		IL_0016: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
 		IL_001b: ldloc.3
 		IL_001c: stloc.2
-		IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0022: ldloc.2
-		IL_0023: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-		IL_0028: conv.r8
-		IL_0029: box [System.Runtime]System.Double
-		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0033: pop
-		IL_0034: ldc.i4.0
-		IL_0035: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_003a: stloc.3
-		IL_003b: ldloc.3
-		IL_003c: ldc.i4.0
-		IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0042: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004c: ldloc.3
-		IL_004d: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-		IL_0052: conv.r8
-		IL_0053: box [System.Runtime]System.Double
-		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005d: pop
-		IL_005e: ret
+		IL_001d: ldstr "console"
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0027: stloc.s 4
+		IL_0029: ldloc.s 4
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0030: stloc.s 4
+		IL_0032: ldloc.s 4
+		IL_0034: ldstr "log"
+		IL_0039: ldloc.2
+		IL_003a: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+		IL_003f: conv.r8
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_004a: pop
+		IL_004b: ldstr "console"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0055: stloc.s 4
+		IL_0057: ldloc.s 4
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005e: stloc.s 4
+		IL_0060: ldc.i4.0
+		IL_0061: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0066: stloc.3
+		IL_0067: ldloc.3
+		IL_0068: ldc.i4.0
+		IL_0069: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_006e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_0073: ldloc.s 4
+		IL_0075: ldstr "log"
+		IL_007a: ldloc.3
+		IL_007b: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
+		IL_0080: conv.r8
+		IL_0081: box [System.Runtime]System.Double
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_008b: pop
+		IL_008c: ret
 	} // end of method Array_LiteralSpread_Empty::__js_module_init__
 
 } // end of class Modules.Array_LiteralSpread_Empty
@@ -95,7 +110,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x20f2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

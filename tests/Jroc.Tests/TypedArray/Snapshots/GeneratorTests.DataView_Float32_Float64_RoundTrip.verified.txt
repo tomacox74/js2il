@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2154
+			// Method begins at RVA 0x2182
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 248 (0xf8)
+		// Code size: 294 (0x126)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.DataView_Float32_Float64_RoundTrip/Scope,
@@ -48,7 +48,8 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.DataView,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.ArrayBuffer,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.DataView,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.DataView_Float32_Float64_RoundTrip/Scope::.ctor()
@@ -88,35 +89,49 @@
 		IL_0084: box [System.Runtime]System.Boolean
 		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
 		IL_008e: pop
-		IL_008f: ldloc.2
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0095: stloc.s 5
-		IL_0097: ldloc.s 5
-		IL_0099: ldstr "getFloat32"
-		IL_009e: ldc.r8 0.0
-		IL_00a7: box [System.Runtime]System.Double
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00b1: stloc.s 5
-		IL_00b3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b8: ldloc.s 5
-		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00bf: pop
-		IL_00c0: ldloc.2
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c6: stloc.s 5
+		IL_008f: ldstr "console"
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0099: stloc.s 5
+		IL_009b: ldloc.s 5
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a2: stloc.s 5
+		IL_00a4: ldloc.2
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00aa: stloc.s 6
+		IL_00ac: ldloc.s 6
+		IL_00ae: ldstr "getFloat32"
+		IL_00b3: ldc.r8 0.0
+		IL_00bc: box [System.Runtime]System.Double
+		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c6: stloc.s 6
 		IL_00c8: ldloc.s 5
-		IL_00ca: ldstr "getFloat64"
-		IL_00cf: ldc.r8 8
-		IL_00d8: box [System.Runtime]System.Double
-		IL_00dd: ldc.i4.1
-		IL_00de: box [System.Runtime]System.Boolean
-		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00e8: stloc.s 5
-		IL_00ea: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ef: ldloc.s 5
-		IL_00f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00f6: pop
-		IL_00f7: ret
+		IL_00ca: ldstr "log"
+		IL_00cf: ldloc.s 6
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d6: pop
+		IL_00d7: ldstr "console"
+		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00e1: stloc.s 6
+		IL_00e3: ldloc.s 6
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ea: stloc.s 6
+		IL_00ec: ldloc.2
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00f2: stloc.s 5
+		IL_00f4: ldloc.s 5
+		IL_00f6: ldstr "getFloat64"
+		IL_00fb: ldc.r8 8
+		IL_0104: box [System.Runtime]System.Double
+		IL_0109: ldc.i4.1
+		IL_010a: box [System.Runtime]System.Boolean
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0114: stloc.s 5
+		IL_0116: ldloc.s 6
+		IL_0118: ldstr "log"
+		IL_011d: ldloc.s 5
+		IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0124: pop
+		IL_0125: ret
 	} // end of method DataView_Float32_Float64_RoundTrip::__js_module_init__
 
 } // end of class Modules.DataView_Float32_Float64_RoundTrip
@@ -128,7 +143,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215d
+		// Method begins at RVA 0x218b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

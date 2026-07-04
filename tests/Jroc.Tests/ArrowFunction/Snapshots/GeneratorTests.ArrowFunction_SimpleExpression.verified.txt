@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e2
+				// Method begins at RVA 0x20f5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,7 +51,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20cf
+			// Method begins at RVA 0x20e2
 			// Header size: 1
 			// Code size: 9 (0x9)
 			.maxstack 8
@@ -72,7 +72,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20d9
+			// Method begins at RVA 0x20ec
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -98,12 +98,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 115 (0x73)
+		// Code size: 134 (0x86)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_SimpleExpression/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_SimpleExpression/Scope::.ctor()
@@ -133,17 +134,24 @@
 		IL_0045: stloc.2
 		IL_0046: ldloc.2
 		IL_0047: stloc.1
-		IL_0048: ldnull
-		IL_0049: ldc.r8 1
-		IL_0052: ldc.r8 2
-		IL_005b: call object Modules.ArrowFunction_SimpleExpression/ArrowFunction_L3C13::__js_call__(object, float64, float64)
-		IL_0060: stloc.2
-		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0066: ldstr "x is "
-		IL_006b: ldloc.2
-		IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0071: pop
-		IL_0072: ret
+		IL_0048: ldstr "console"
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0052: stloc.2
+		IL_0053: ldloc.2
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0059: stloc.2
+		IL_005a: ldnull
+		IL_005b: ldc.r8 1
+		IL_0064: ldc.r8 2
+		IL_006d: call object Modules.ArrowFunction_SimpleExpression/ArrowFunction_L3C13::__js_call__(object, float64, float64)
+		IL_0072: stloc.3
+		IL_0073: ldloc.2
+		IL_0074: ldstr "log"
+		IL_0079: ldstr "x is "
+		IL_007e: ldloc.3
+		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0084: pop
+		IL_0085: ret
 	} // end of method ArrowFunction_SimpleExpression::__js_module_init__
 
 } // end of class Modules.ArrowFunction_SimpleExpression
@@ -155,7 +163,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20eb
+		// Method begins at RVA 0x20fe
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

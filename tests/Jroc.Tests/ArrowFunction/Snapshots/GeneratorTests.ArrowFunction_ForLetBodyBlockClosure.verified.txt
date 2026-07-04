@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x223f
+					// Method begins at RVA 0x226f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21f0
+				// Method begins at RVA 0x2220
 				// Header size: 12
 				// Code size: 31 (0x1f)
 				.maxstack 8
@@ -76,7 +76,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2224
+				// Method begins at RVA 0x2254
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -108,7 +108,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2236
+					// Method begins at RVA 0x2266
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -126,7 +126,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x222d
+				// Method begins at RVA 0x225d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -152,7 +152,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2120
+			// Method begins at RVA 0x2150
 			// Header size: 12
 			// Code size: 196 (0xc4)
 			.maxstack 8
@@ -258,7 +258,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x221b
+			// Method begins at RVA 0x224b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -284,7 +284,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 196 (0xc4)
+		// Code size: 242 (0xf2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_ForLetBodyBlockClosure/Scope,
@@ -293,7 +293,8 @@
 			[3] object,
 			[4] object,
 			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Modules.ArrowFunction_ForLetBodyBlockClosure/Scope::.ctor()
@@ -346,23 +347,37 @@
 		IL_007e: ldc.r8 1
 		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
 		IL_008c: stloc.s 4
-		IL_008e: ldloc.3
-		IL_008f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0099: stloc.s 5
-		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a0: ldloc.s 5
-		IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a7: pop
-		IL_00a8: ldloc.s 4
-		IL_00aa: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00b4: stloc.s 5
-		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00bb: ldloc.s 5
-		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00c2: pop
-		IL_00c3: ret
+		IL_008e: ldstr "console"
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0098: stloc.s 5
+		IL_009a: ldloc.s 5
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a1: stloc.s 5
+		IL_00a3: ldloc.3
+		IL_00a4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00ae: stloc.s 7
+		IL_00b0: ldloc.s 5
+		IL_00b2: ldstr "log"
+		IL_00b7: ldloc.s 7
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00be: pop
+		IL_00bf: ldstr "console"
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c9: stloc.s 7
+		IL_00cb: ldloc.s 7
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d2: stloc.s 7
+		IL_00d4: ldloc.s 4
+		IL_00d6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00e0: stloc.s 5
+		IL_00e2: ldloc.s 7
+		IL_00e4: ldstr "log"
+		IL_00e9: ldloc.s 5
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f0: pop
+		IL_00f1: ret
 	} // end of method ArrowFunction_ForLetBodyBlockClosure::__js_module_init__
 
 } // end of class Modules.ArrowFunction_ForLetBodyBlockClosure
@@ -374,7 +389,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2248
+		// Method begins at RVA 0x2278
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

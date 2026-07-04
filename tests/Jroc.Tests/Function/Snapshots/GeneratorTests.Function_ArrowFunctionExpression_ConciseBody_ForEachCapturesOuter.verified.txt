@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2162
+				// Method begins at RVA 0x2176
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,7 +51,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2130
+			// Method begins at RVA 0x2144
 			// Header size: 12
 			// Code size: 29 (0x1d)
 			.maxstack 8
@@ -91,7 +91,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2159
+			// Method begins at RVA 0x216d
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -117,13 +117,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 210 (0xd2)
+		// Code size: 231 (0xe7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope,
 			[1] object,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[3] string
+			[2] object,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[4] string
 		)
 
 		IL_0000: newobj instance void Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::.ctor()
@@ -132,69 +133,76 @@
 		IL_0007: ldc.r8 1
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope::'add'
-		IL_001a: ldc.i4.1
-		IL_001b: newarr [System.Runtime]System.Object
-		IL_0020: dup
-		IL_0021: ldc.i4.0
-		IL_0022: ldloc.0
-		IL_0023: stelem.ref
-		IL_0024: ldc.i4.0
-		IL_0025: ldelem.ref
-		IL_0026: castclass Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope
-		IL_002b: ldftn object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27::__js_call__(class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope, object, object)
-		IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldloc.0
-		IL_003f: stelem.ref
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_004a: ldc.i4.1
-		IL_004b: conv.r8
-		IL_004c: ldstr ""
-		IL_0051: ldc.i4.0
-		IL_0052: ldc.i4.1
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_005d: stloc.1
-		IL_005e: ldc.i4.3
-		IL_005f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0064: dup
-		IL_0065: ldc.r8 1
-		IL_006e: box [System.Runtime]System.Double
-		IL_0073: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_0078: dup
-		IL_0079: ldc.r8 2
-		IL_0082: box [System.Runtime]System.Double
-		IL_0087: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_008c: dup
-		IL_008d: ldc.r8 3
-		IL_0096: box [System.Runtime]System.Double
-		IL_009b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
-		IL_00a0: ldc.i4.1
-		IL_00a1: newarr [System.Runtime]System.Object
-		IL_00a6: dup
-		IL_00a7: ldc.i4.0
-		IL_00a8: ldloc.1
-		IL_00a9: stelem.ref
-		IL_00aa: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_00af: stloc.2
-		IL_00b0: ldloc.2
-		IL_00b1: ldc.i4.1
-		IL_00b2: newarr [System.Runtime]System.Object
-		IL_00b7: dup
-		IL_00b8: ldc.i4.0
-		IL_00b9: ldstr ","
-		IL_00be: stelem.ref
-		IL_00bf: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00c4: stloc.3
-		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ca: ldloc.3
-		IL_00cb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00d0: pop
-		IL_00d1: ret
+		IL_001a: ldstr "console"
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0024: stloc.1
+		IL_0025: ldloc.1
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_002b: stloc.1
+		IL_002c: ldc.i4.1
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldloc.0
+		IL_0035: stelem.ref
+		IL_0036: ldc.i4.0
+		IL_0037: ldelem.ref
+		IL_0038: castclass Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope
+		IL_003d: ldftn object Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/ArrowFunction_L5C27::__js_call__(class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter/Scope, object, object)
+		IL_0043: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_005c: ldc.i4.1
+		IL_005d: conv.r8
+		IL_005e: ldstr ""
+		IL_0063: ldc.i4.0
+		IL_0064: ldc.i4.1
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_006f: stloc.2
+		IL_0070: ldc.i4.3
+		IL_0071: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0076: dup
+		IL_0077: ldc.r8 1
+		IL_0080: box [System.Runtime]System.Double
+		IL_0085: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_008a: dup
+		IL_008b: ldc.r8 2
+		IL_0094: box [System.Runtime]System.Double
+		IL_0099: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_009e: dup
+		IL_009f: ldc.r8 3
+		IL_00a8: box [System.Runtime]System.Double
+		IL_00ad: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::Add(object)
+		IL_00b2: ldc.i4.1
+		IL_00b3: newarr [System.Runtime]System.Object
+		IL_00b8: dup
+		IL_00b9: ldc.i4.0
+		IL_00ba: ldloc.2
+		IL_00bb: stelem.ref
+		IL_00bc: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_00c1: stloc.3
+		IL_00c2: ldloc.3
+		IL_00c3: ldc.i4.1
+		IL_00c4: newarr [System.Runtime]System.Object
+		IL_00c9: dup
+		IL_00ca: ldc.i4.0
+		IL_00cb: ldstr ","
+		IL_00d0: stelem.ref
+		IL_00d1: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00d6: stloc.s 4
+		IL_00d8: ldloc.1
+		IL_00d9: ldstr "log"
+		IL_00de: ldloc.s 4
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e5: pop
+		IL_00e6: ret
 	} // end of method Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter::__js_module_init__
 
 } // end of class Modules.Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter
@@ -206,7 +214,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216b
+		// Method begins at RVA 0x217f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

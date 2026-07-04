@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2092
+			// Method begins at RVA 0x20a5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 54 (0x36)
+		// Code size: 73 (0x49)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Global___dirname_PrintsDirectory/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Global___dirname_PrintsDirectory/Scope::.ctor()
@@ -56,19 +57,26 @@
 		IL_0011: stloc.2
 		IL_0012: ldloc.2
 		IL_0013: stloc.1
-		IL_0014: ldloc.1
-		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_001a: stloc.2
-		IL_001b: ldloc.2
-		IL_001c: ldstr "dirname"
-		IL_0021: ldarg.s __dirname
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0028: stloc.2
-		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002e: ldloc.2
-		IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0034: pop
-		IL_0035: ret
+		IL_0014: ldstr "console"
+		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_001e: stloc.2
+		IL_001f: ldloc.2
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0025: stloc.2
+		IL_0026: ldloc.1
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_002c: stloc.3
+		IL_002d: ldloc.3
+		IL_002e: ldstr "dirname"
+		IL_0033: ldarg.s __dirname
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_003a: stloc.3
+		IL_003b: ldloc.2
+		IL_003c: ldstr "log"
+		IL_0041: ldloc.3
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0047: pop
+		IL_0048: ret
 	} // end of method Global___dirname_PrintsDirectory::__js_module_init__
 
 } // end of class Modules.Global___dirname_PrintsDirectory
@@ -80,7 +88,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209b
+		// Method begins at RVA 0x20ae
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

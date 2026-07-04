@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2418
+				// Method begins at RVA 0x245c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2421
+				// Method begins at RVA 0x2465
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -59,7 +59,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22ad
+			// Method begins at RVA 0x22f2
 			// Header size: 1
 			// Code size: 7 (0x7)
 			.maxstack 8
@@ -78,7 +78,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x22b8
+			// Method begins at RVA 0x22fc
 			// Header size: 12
 			// Code size: 331 (0x14b)
 			.maxstack 8
@@ -232,7 +232,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x240f
+			// Method begins at RVA 0x2453
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -258,7 +258,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 593 (0x251)
+		// Code size: 662 (0x296)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Generator_ClassMethod_YieldAssign/Scope,
@@ -269,7 +269,8 @@
 			[5] class [System.Runtime]System.Type,
 			[6] object[],
 			[7] object,
-			[8] class Modules.Generator_ClassMethod_YieldAssign/Gen
+			[8] class Modules.Generator_ClassMethod_YieldAssign/Gen,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.Generator_ClassMethod_YieldAssign/Scope::.ctor()
@@ -402,108 +403,129 @@
 		IL_013f: stloc.s 7
 		IL_0141: ldloc.s 7
 		IL_0143: stloc.s 4
-		IL_0145: ldloc.s 4
-		IL_0147: ldstr "value"
-		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0151: stloc.s 7
-		IL_0153: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0158: ldc.i4.4
-		IL_0159: newarr [System.Runtime]System.Object
-		IL_015e: dup
-		IL_015f: ldc.i4.0
-		IL_0160: ldstr "y1:"
-		IL_0165: stelem.ref
-		IL_0166: dup
-		IL_0167: ldc.i4.1
+		IL_0145: ldstr "console"
+		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_014f: stloc.s 7
+		IL_0151: ldloc.s 7
+		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0158: stloc.s 7
+		IL_015a: ldloc.s 4
+		IL_015c: ldstr "value"
+		IL_0161: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0166: stloc.s 9
 		IL_0168: ldloc.s 7
-		IL_016a: stelem.ref
-		IL_016b: dup
-		IL_016c: ldc.i4.2
-		IL_016d: ldstr "done:"
-		IL_0172: stelem.ref
-		IL_0173: dup
-		IL_0174: ldc.i4.3
-		IL_0175: ldloc.s 4
-		IL_0177: ldstr "done"
-		IL_017c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_016a: ldstr "log"
+		IL_016f: ldc.i4.4
+		IL_0170: newarr [System.Runtime]System.Object
+		IL_0175: dup
+		IL_0176: ldc.i4.0
+		IL_0177: ldstr "y1:"
+		IL_017c: stelem.ref
+		IL_017d: dup
+		IL_017e: ldc.i4.1
+		IL_017f: ldloc.s 9
 		IL_0181: stelem.ref
-		IL_0182: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0187: pop
-		IL_0188: ldloc.3
-		IL_0189: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_018e: stloc.s 7
-		IL_0190: ldloc.s 7
-		IL_0192: ldstr "next"
-		IL_0197: ldc.r8 42
-		IL_01a0: box [System.Runtime]System.Double
-		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01aa: stloc.s 7
-		IL_01ac: ldloc.s 7
-		IL_01ae: stloc.s 4
-		IL_01b0: ldloc.s 4
-		IL_01b2: ldstr "value"
-		IL_01b7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01bc: stloc.s 7
-		IL_01be: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01c3: ldc.i4.4
-		IL_01c4: newarr [System.Runtime]System.Object
-		IL_01c9: dup
-		IL_01ca: ldc.i4.0
-		IL_01cb: ldstr "y2:"
-		IL_01d0: stelem.ref
-		IL_01d1: dup
-		IL_01d2: ldc.i4.1
+		IL_0182: dup
+		IL_0183: ldc.i4.2
+		IL_0184: ldstr "done:"
+		IL_0189: stelem.ref
+		IL_018a: dup
+		IL_018b: ldc.i4.3
+		IL_018c: ldloc.s 4
+		IL_018e: ldstr "done"
+		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0198: stelem.ref
+		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_019e: pop
+		IL_019f: ldloc.3
+		IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01a5: stloc.s 7
+		IL_01a7: ldloc.s 7
+		IL_01a9: ldstr "next"
+		IL_01ae: ldc.r8 42
+		IL_01b7: box [System.Runtime]System.Double
+		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_01c1: stloc.s 7
+		IL_01c3: ldloc.s 7
+		IL_01c5: stloc.s 4
+		IL_01c7: ldstr "console"
+		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_01d1: stloc.s 7
 		IL_01d3: ldloc.s 7
-		IL_01d5: stelem.ref
-		IL_01d6: dup
-		IL_01d7: ldc.i4.2
-		IL_01d8: ldstr "done:"
-		IL_01dd: stelem.ref
-		IL_01de: dup
-		IL_01df: ldc.i4.3
-		IL_01e0: ldloc.s 4
-		IL_01e2: ldstr "done"
-		IL_01e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_01ec: stelem.ref
-		IL_01ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_01f2: pop
-		IL_01f3: ldloc.3
-		IL_01f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01f9: stloc.s 7
-		IL_01fb: ldloc.s 7
-		IL_01fd: ldstr "next"
-		IL_0202: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0207: stloc.s 7
-		IL_0209: ldloc.s 7
-		IL_020b: stloc.s 4
-		IL_020d: ldloc.s 4
-		IL_020f: ldstr "value"
-		IL_0214: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0219: stloc.s 7
-		IL_021b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0220: ldc.i4.4
-		IL_0221: newarr [System.Runtime]System.Object
-		IL_0226: dup
-		IL_0227: ldc.i4.0
-		IL_0228: ldstr "y3:"
-		IL_022d: stelem.ref
-		IL_022e: dup
-		IL_022f: ldc.i4.1
-		IL_0230: ldloc.s 7
-		IL_0232: stelem.ref
-		IL_0233: dup
-		IL_0234: ldc.i4.2
-		IL_0235: ldstr "done:"
-		IL_023a: stelem.ref
-		IL_023b: dup
-		IL_023c: ldc.i4.3
-		IL_023d: ldloc.s 4
-		IL_023f: ldstr "done"
-		IL_0244: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0249: stelem.ref
-		IL_024a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_024f: pop
-		IL_0250: ret
+		IL_01d5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01da: stloc.s 7
+		IL_01dc: ldloc.s 4
+		IL_01de: ldstr "value"
+		IL_01e3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_01e8: stloc.s 9
+		IL_01ea: ldloc.s 7
+		IL_01ec: ldstr "log"
+		IL_01f1: ldc.i4.4
+		IL_01f2: newarr [System.Runtime]System.Object
+		IL_01f7: dup
+		IL_01f8: ldc.i4.0
+		IL_01f9: ldstr "y2:"
+		IL_01fe: stelem.ref
+		IL_01ff: dup
+		IL_0200: ldc.i4.1
+		IL_0201: ldloc.s 9
+		IL_0203: stelem.ref
+		IL_0204: dup
+		IL_0205: ldc.i4.2
+		IL_0206: ldstr "done:"
+		IL_020b: stelem.ref
+		IL_020c: dup
+		IL_020d: ldc.i4.3
+		IL_020e: ldloc.s 4
+		IL_0210: ldstr "done"
+		IL_0215: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_021a: stelem.ref
+		IL_021b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0220: pop
+		IL_0221: ldloc.3
+		IL_0222: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0227: stloc.s 7
+		IL_0229: ldloc.s 7
+		IL_022b: ldstr "next"
+		IL_0230: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0235: stloc.s 7
+		IL_0237: ldloc.s 7
+		IL_0239: stloc.s 4
+		IL_023b: ldstr "console"
+		IL_0240: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0245: stloc.s 7
+		IL_0247: ldloc.s 7
+		IL_0249: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_024e: stloc.s 7
+		IL_0250: ldloc.s 4
+		IL_0252: ldstr "value"
+		IL_0257: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_025c: stloc.s 9
+		IL_025e: ldloc.s 7
+		IL_0260: ldstr "log"
+		IL_0265: ldc.i4.4
+		IL_0266: newarr [System.Runtime]System.Object
+		IL_026b: dup
+		IL_026c: ldc.i4.0
+		IL_026d: ldstr "y3:"
+		IL_0272: stelem.ref
+		IL_0273: dup
+		IL_0274: ldc.i4.1
+		IL_0275: ldloc.s 9
+		IL_0277: stelem.ref
+		IL_0278: dup
+		IL_0279: ldc.i4.2
+		IL_027a: ldstr "done:"
+		IL_027f: stelem.ref
+		IL_0280: dup
+		IL_0281: ldc.i4.3
+		IL_0282: ldloc.s 4
+		IL_0284: ldstr "done"
+		IL_0289: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_028e: stelem.ref
+		IL_028f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0294: pop
+		IL_0295: ret
 	} // end of method Generator_ClassMethod_YieldAssign::__js_module_init__
 
 } // end of class Modules.Generator_ClassMethod_YieldAssign
@@ -515,7 +537,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x242a
+		// Method begins at RVA 0x246e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

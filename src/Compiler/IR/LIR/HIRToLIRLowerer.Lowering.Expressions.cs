@@ -747,34 +747,11 @@ public sealed partial class HIRToLIRLowerer
                         }
                     }
 
-                    // Intrinsic globals (e.g., console, process, Infinity, NaN) are exposed via JavaScriptRuntime.GlobalThis.
-                    // If this identifier is a Global binding and maps to a GlobalThis static property, emit a load.
+                    // Global bindings are resolved through the runtime global object so user code can
+                    // observe mutations like `globalThis.Object = fakeObject`.
                     if (varExpr.Name.Kind == BindingKind.Global)
                     {
                         var globalName = varExpr.Name.Name;
-                        var gvType = typeof(JavaScriptRuntime.GlobalThis);
-                        var gvProp = gvType.GetProperty(globalName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                        if (gvProp != null)
-                        {
-                            resultTempVar = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal(globalName, resultTempVar));
-                            // Track the concrete CLR type when known (e.g., console -> JavaScriptRuntime.Console)
-                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, gvProp.PropertyType));
-                            return true;
-                        }
-
-                        // Global functions (GlobalThis static methods) may also be referenced as values.
-                        // e.g., window.setTimeout = setTimeout
-                        var gvMethod = gvType.GetMethod(
-                            globalName,
-                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                        if (gvMethod != null)
-                        {
-                            resultTempVar = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobalFunction(globalName, resultTempVar));
-                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                            return true;
-                        }
 
                         var keyTemp = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRConstString(globalName, keyTemp));

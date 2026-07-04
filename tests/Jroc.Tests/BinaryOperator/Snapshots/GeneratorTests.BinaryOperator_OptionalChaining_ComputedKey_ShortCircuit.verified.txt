@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2147
+				// Method begins at RVA 0x2173
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20f8
+			// Method begins at RVA 0x2124
 			// Header size: 12
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -96,7 +96,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213e
+			// Method begins at RVA 0x216a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -122,14 +122,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 156 (0x9c)
+		// Code size: 199 (0xc7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::.ctor()
@@ -161,38 +161,50 @@
 		IL_0047: ldc.i4.0
 		IL_0048: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
 		IL_004d: stloc.2
-		IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0053: stloc.s 4
-		IL_0055: ldloc.2
-		IL_0056: brfalse IL_007f
+		IL_004e: ldstr "console"
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0058: stloc.3
+		IL_0059: ldloc.3
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005f: stloc.3
+		IL_0060: ldloc.2
+		IL_0061: brfalse IL_008d
 
-		IL_005b: ldloc.2
-		IL_005c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0061: brtrue IL_007f
+		IL_0066: ldloc.2
+		IL_0067: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_006c: brtrue IL_008d
 
-		IL_0066: ldloc.1
-		IL_0067: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_0071: stloc.3
-		IL_0072: ldloc.2
-		IL_0073: ldloc.3
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_0079: stloc.3
-		IL_007a: br IL_0081
+		IL_0071: ldloc.1
+		IL_0072: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_007c: stloc.s 4
+		IL_007e: ldloc.2
+		IL_007f: ldloc.s 4
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+		IL_0086: stloc.s 4
+		IL_0088: br IL_0090
 
-		IL_007f: ldnull
-		IL_0080: stloc.3
+		IL_008d: ldnull
+		IL_008e: stloc.s 4
 
-		IL_0081: ldloc.s 4
-		IL_0083: ldloc.3
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_0089: pop
-		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008f: ldloc.0
-		IL_0090: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
-		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_009a: pop
-		IL_009b: ret
+		IL_0090: ldloc.3
+		IL_0091: ldstr "log"
+		IL_0096: ldloc.s 4
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_009d: pop
+		IL_009e: ldstr "console"
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a8: stloc.s 4
+		IL_00aa: ldloc.s 4
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b1: stloc.s 4
+		IL_00b3: ldloc.s 4
+		IL_00b5: ldstr "log"
+		IL_00ba: ldloc.0
+		IL_00bb: ldfld object Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit/Scope::called
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c5: pop
+		IL_00c6: ret
 	} // end of method BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit::__js_module_init__
 
 } // end of class Modules.BinaryOperator_OptionalChaining_ComputedKey_ShortCircuit
@@ -204,7 +216,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2150
+		// Method begins at RVA 0x217c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

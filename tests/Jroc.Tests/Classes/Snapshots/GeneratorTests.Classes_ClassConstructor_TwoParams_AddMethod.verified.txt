@@ -1,4 +1,4 @@
-// IL code: Classes_ClassConstructor_TwoParams_AddMethod
+﻿// IL code: Classes_ClassConstructor_TwoParams_AddMethod
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d9
+				// Method begins at RVA 0x2209
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21e2
+				// Method begins at RVA 0x2212
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21eb
+				// Method begins at RVA 0x221b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2199
+			// Method begins at RVA 0x21c7
 			// Header size: 1
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -108,7 +108,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21b0
+			// Method begins at RVA 0x21e0
 			// Header size: 12
 			// Code size: 20 (0x14)
 			.maxstack 8
@@ -135,7 +135,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21d0
+			// Method begins at RVA 0x2200
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -161,14 +161,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 317 (0x13d)
+		// Code size: 363 (0x16b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassConstructor_TwoParams_AddMethod/Scope,
 			[1] object,
 			[2] object,
 			[3] class Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassConstructor_TwoParams_AddMethod/Scope::.ctor()
@@ -225,51 +226,65 @@
 		IL_00bb: call void [JavaScriptRuntime]JavaScriptRuntime.PrototypeChain::SetPrototype(object, object)
 		IL_00c0: ldloc.3
 		IL_00c1: stloc.2
-		IL_00c2: ldloc.1
-		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c8: stloc.s 4
-		IL_00ca: ldloc.s 4
-		IL_00cc: isinst Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
-		IL_00d1: dup
-		IL_00d2: brfalse IL_00e3
+		IL_00c2: ldstr "console"
+		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00cc: stloc.s 4
+		IL_00ce: ldloc.s 4
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d5: stloc.s 4
+		IL_00d7: ldloc.1
+		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00dd: stloc.s 5
+		IL_00df: ldloc.s 5
+		IL_00e1: isinst Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
+		IL_00e6: dup
+		IL_00e7: brfalse IL_00f8
 
-		IL_00d7: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
-		IL_00dc: stloc.s 4
-		IL_00de: br IL_00f2
+		IL_00ec: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
+		IL_00f1: stloc.s 5
+		IL_00f3: br IL_0107
 
-		IL_00e3: pop
-		IL_00e4: ldloc.s 4
-		IL_00e6: ldstr "add"
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_00f0: stloc.s 4
+		IL_00f8: pop
+		IL_00f9: ldloc.s 5
+		IL_00fb: ldstr "add"
+		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0105: stloc.s 5
 
-		IL_00f2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f7: ldloc.s 4
-		IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fe: pop
-		IL_00ff: ldloc.2
-		IL_0100: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0105: stloc.s 4
 		IL_0107: ldloc.s 4
-		IL_0109: isinst Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
-		IL_010e: dup
-		IL_010f: brfalse IL_0120
+		IL_0109: ldstr "log"
+		IL_010e: ldloc.s 5
+		IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0115: pop
+		IL_0116: ldstr "console"
+		IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0120: stloc.s 5
+		IL_0122: ldloc.s 5
+		IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0129: stloc.s 5
+		IL_012b: ldloc.2
+		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0131: stloc.s 4
+		IL_0133: ldloc.s 4
+		IL_0135: isinst Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder
+		IL_013a: dup
+		IL_013b: brfalse IL_014c
 
-		IL_0114: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
-		IL_0119: stloc.s 4
-		IL_011b: br IL_012f
+		IL_0140: callvirt instance object Modules.Classes_ClassConstructor_TwoParams_AddMethod/Adder::'add'()
+		IL_0145: stloc.s 4
+		IL_0147: br IL_015b
 
-		IL_0120: pop
-		IL_0121: ldloc.s 4
-		IL_0123: ldstr "add"
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_012d: stloc.s 4
+		IL_014c: pop
+		IL_014d: ldloc.s 4
+		IL_014f: ldstr "add"
+		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_0159: stloc.s 4
 
-		IL_012f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0134: ldloc.s 4
-		IL_0136: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_013b: pop
-		IL_013c: ret
+		IL_015b: ldloc.s 5
+		IL_015d: ldstr "log"
+		IL_0162: ldloc.s 4
+		IL_0164: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0169: pop
+		IL_016a: ret
 	} // end of method Classes_ClassConstructor_TwoParams_AddMethod::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_TwoParams_AddMethod
@@ -281,7 +296,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21f4
+		// Method begins at RVA 0x2224
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

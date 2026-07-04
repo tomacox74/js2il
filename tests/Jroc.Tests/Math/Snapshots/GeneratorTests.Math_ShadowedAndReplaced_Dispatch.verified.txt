@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2212
+					// Method begins at RVA 0x2249
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -45,7 +45,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21ea
+				// Method begins at RVA 0x2221
 				// Header size: 1
 				// Code size: 10 (0xa)
 				.maxstack 8
@@ -67,7 +67,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x221b
+					// Method begins at RVA 0x2252
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -90,7 +90,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 00 00 00 00 00 00
 				)
-				// Method begins at RVA 0x21f5
+				// Method begins at RVA 0x222c
 				// Header size: 1
 				// Code size: 10 (0xa)
 				.maxstack 8
@@ -108,7 +108,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2209
+				// Method begins at RVA 0x2240
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -134,16 +134,17 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 07 00 00 02
 			)
-			// Method begins at RVA 0x2104
+			// Method begins at RVA 0x2124
 			// Header size: 12
-			// Code size: 207 (0xcf)
+			// Code size: 230 (0xe6)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Math_ShadowedAndReplaced_Dispatch/FunctionExpression_L1C1/Scope,
 				[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 				[2] object,
 				[3] object,
-				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject
+				[4] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+				[5] object
 			)
 
 			IL_0000: newobj instance void Modules.Math_ShadowedAndReplaced_Dispatch/FunctionExpression_L1C1/Scope::.ctor()
@@ -184,35 +185,42 @@
 			IL_006d: stloc.s 4
 			IL_006f: ldloc.s 4
 			IL_0071: stloc.1
-			IL_0072: ldloc.1
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0078: stloc.3
-			IL_0079: ldloc.3
-			IL_007a: ldstr "abs"
-			IL_007f: ldc.r8 1
-			IL_0088: neg
-			IL_0089: box [System.Runtime]System.Double
-			IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0093: stloc.3
-			IL_0094: ldloc.1
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_009a: stloc.2
-			IL_009b: ldloc.2
-			IL_009c: ldstr "round"
-			IL_00a1: ldc.r8 0.0
-			IL_00aa: box [System.Runtime]System.Double
-			IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00b4: stloc.2
-			IL_00b5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00ba: ldloc.3
-			IL_00bb: ldloc.2
-			IL_00bc: ldloc.1
-			IL_00bd: ldstr "PI"
-			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object, object)
-			IL_00cc: pop
-			IL_00cd: ldnull
-			IL_00ce: ret
+			IL_0072: ldstr "console"
+			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_007c: stloc.3
+			IL_007d: ldloc.3
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0083: stloc.3
+			IL_0084: ldloc.1
+			IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_008a: stloc.2
+			IL_008b: ldloc.2
+			IL_008c: ldstr "abs"
+			IL_0091: ldc.r8 1
+			IL_009a: neg
+			IL_009b: box [System.Runtime]System.Double
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00a5: stloc.2
+			IL_00a6: ldloc.1
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ac: stloc.s 5
+			IL_00ae: ldloc.s 5
+			IL_00b0: ldstr "round"
+			IL_00b5: ldc.r8 0.0
+			IL_00be: box [System.Runtime]System.Double
+			IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00c8: stloc.s 5
+			IL_00ca: ldloc.3
+			IL_00cb: ldstr "log"
+			IL_00d0: ldloc.2
+			IL_00d1: ldloc.s 5
+			IL_00d3: ldloc.1
+			IL_00d4: ldstr "PI"
+			IL_00d9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+			IL_00e3: pop
+			IL_00e4: ldnull
+			IL_00e5: ret
 		} // end of method FunctionExpression_L1C1::__js_call__
 
 	} // end of class FunctionExpression_L1C1
@@ -228,7 +236,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2224
+				// Method begins at RVA 0x225b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -251,7 +259,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21df
+			// Method begins at RVA 0x2216
 			// Header size: 1
 			// Code size: 10 (0xa)
 			.maxstack 8
@@ -269,7 +277,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2200
+			// Method begins at RVA 0x2237
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -295,12 +303,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 165 (0xa5)
+		// Code size: 198 (0xc6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_ShadowedAndReplaced_Dispatch/Scope,
 			[1] object,
-			[2] object[]
+			[2] object[],
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.Math_ShadowedAndReplaced_Dispatch/Scope::.ctor()
@@ -331,37 +340,50 @@
 		IL_003e: ldloc.2
 		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs(object, object[], object[])
 		IL_0044: pop
-		IL_0045: ldnull
-		IL_0046: ldftn float64 Modules.Math_ShadowedAndReplaced_Dispatch/FunctionExpression_L11C11::__js_call__(object)
-		IL_004c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
-		IL_0051: ldc.i4.0
-		IL_0052: conv.r8
-		IL_0053: ldstr ""
-		IL_0058: ldc.i4.0
-		IL_0059: ldc.i4.0
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_005f: stloc.1
-		IL_0060: call class [System.Runtime]System.Type [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Math()
-		IL_0065: ldstr "abs"
-		IL_006a: ldloc.1
-		IL_006b: ldc.i4.0
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0071: pop
-		IL_0072: call class [System.Runtime]System.Type [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Math()
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007c: stloc.1
-		IL_007d: ldloc.1
-		IL_007e: ldstr "abs"
-		IL_0083: ldc.r8 1
-		IL_008c: neg
-		IL_008d: box [System.Runtime]System.Double
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0097: stloc.1
-		IL_0098: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldstr "Math"
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_004f: stloc.1
+		IL_0050: ldnull
+		IL_0051: ldftn float64 Modules.Math_ShadowedAndReplaced_Dispatch/FunctionExpression_L11C11::__js_call__(object)
+		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsDoubleFuncNoScopes0::.ctor(object, native int)
+		IL_005c: ldc.i4.0
+		IL_005d: conv.r8
+		IL_005e: ldstr ""
+		IL_0063: ldc.i4.0
+		IL_0064: ldc.i4.0
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_006a: stloc.3
+		IL_006b: ldloc.1
+		IL_006c: ldstr "abs"
+		IL_0071: ldloc.3
+		IL_0072: ldc.i4.0
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0078: pop
+		IL_0079: ldstr "console"
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0083: stloc.3
+		IL_0084: ldloc.3
+		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008a: stloc.3
+		IL_008b: ldstr "Math"
+		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0095: stloc.1
+		IL_0096: ldloc.1
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_009c: stloc.1
 		IL_009d: ldloc.1
-		IL_009e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00a3: pop
-		IL_00a4: ret
+		IL_009e: ldstr "abs"
+		IL_00a3: ldc.r8 1
+		IL_00ac: neg
+		IL_00ad: box [System.Runtime]System.Double
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b7: stloc.1
+		IL_00b8: ldloc.3
+		IL_00b9: ldstr "log"
+		IL_00be: ldloc.1
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c4: pop
+		IL_00c5: ret
 	} // end of method Math_ShadowedAndReplaced_Dispatch::__js_module_init__
 
 } // end of class Modules.Math_ShadowedAndReplaced_Dispatch
@@ -373,7 +395,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x222d
+		// Method begins at RVA 0x2264
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

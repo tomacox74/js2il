@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2229
+				// Method begins at RVA 0x2255
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2232
+				// Method begins at RVA 0x225e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x223b
+				// Method begins at RVA 0x2267
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -76,7 +76,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2220
+			// Method begins at RVA 0x224c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -102,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 434 (0x1b2)
+		// Code size: 480 (0x1e0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.PerfHooks_PerformanceNow_Basic/Scope,
@@ -265,35 +265,49 @@
 		IL_0158: stloc.s 18
 		IL_015a: ldloc.s 18
 		IL_015c: stloc.s 13
-		IL_015e: ldloc.s 7
-		IL_0160: box [System.Runtime]System.Boolean
-		IL_0165: stloc.s 19
-		IL_0167: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_016c: ldstr "hasNow="
-		IL_0171: ldloc.s 19
-		IL_0173: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0178: pop
-		IL_0179: ldloc.s 13
-		IL_017b: stloc.s 18
-		IL_017d: ldloc.s 18
-		IL_017f: ldc.r8 0.0
-		IL_0188: clt
-		IL_018a: stloc.s 17
-		IL_018c: ldloc.s 17
-		IL_018e: ldc.i4.0
-		IL_018f: ceq
-		IL_0191: stloc.s 17
-		IL_0193: ldloc.s 17
-		IL_0195: box [System.Runtime]System.Boolean
-		IL_019a: stloc.s 19
-		IL_019c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01a1: ldstr "elapsedMsNonNegative="
-		IL_01a6: ldloc.s 19
-		IL_01a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_01ad: pop
-		IL_01ae: ldnull
-		IL_01af: stloc.s 14
-		IL_01b1: ret
+		IL_015e: ldstr "console"
+		IL_0163: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0168: stloc.s 15
+		IL_016a: ldloc.s 15
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0171: stloc.s 15
+		IL_0173: ldloc.s 7
+		IL_0175: box [System.Runtime]System.Boolean
+		IL_017a: stloc.s 19
+		IL_017c: ldloc.s 15
+		IL_017e: ldstr "log"
+		IL_0183: ldstr "hasNow="
+		IL_0188: ldloc.s 19
+		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_018f: pop
+		IL_0190: ldstr "console"
+		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_019a: stloc.s 15
+		IL_019c: ldloc.s 15
+		IL_019e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01a3: stloc.s 15
+		IL_01a5: ldloc.s 13
+		IL_01a7: stloc.s 18
+		IL_01a9: ldloc.s 18
+		IL_01ab: ldc.r8 0.0
+		IL_01b4: clt
+		IL_01b6: stloc.s 17
+		IL_01b8: ldloc.s 17
+		IL_01ba: ldc.i4.0
+		IL_01bb: ceq
+		IL_01bd: stloc.s 17
+		IL_01bf: ldloc.s 17
+		IL_01c1: box [System.Runtime]System.Boolean
+		IL_01c6: stloc.s 19
+		IL_01c8: ldloc.s 15
+		IL_01ca: ldstr "log"
+		IL_01cf: ldstr "elapsedMsNonNegative="
+		IL_01d4: ldloc.s 19
+		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_01db: pop
+		IL_01dc: ldnull
+		IL_01dd: stloc.s 14
+		IL_01df: ret
 	} // end of method PerfHooks_PerformanceNow_Basic::__js_module_init__
 
 } // end of class Modules.PerfHooks_PerformanceNow_Basic
@@ -305,7 +319,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2244
+		// Method begins at RVA 0x2270
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

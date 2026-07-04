@@ -1,4 +1,4 @@
-// IL code: Classes_ClassWithStaticProperty_DefaultAndLog
+﻿// IL code: Classes_ClassWithStaticProperty_DefaultAndLog
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20e3
+				// Method begins at RVA 0x20fb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -45,7 +45,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 02 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20bc
+			// Method begins at RVA 0x20d4
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -66,7 +66,7 @@
 		.method private hidebysig specialname rtspecialname static 
 			void .cctor () cil managed 
 		{
-			// Method begins at RVA 0x20d8
+			// Method begins at RVA 0x20f0
 			// Header size: 1
 			// Code size: 1 (0x1)
 			.maxstack 8
@@ -83,7 +83,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20da
+			// Method begins at RVA 0x20f2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -109,14 +109,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 95 (0x5f)
+		// Code size: 118 (0x76)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Classes_ClassWithStaticProperty_DefaultAndLog/Scope,
 			[1] object,
 			[2] object[],
 			[3] class [System.Runtime]System.Type,
-			[4] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.Classes_ClassWithStaticProperty_DefaultAndLog/Scope::.ctor()
@@ -143,13 +144,20 @@
 		IL_003f: stloc.1
 		IL_0040: ldstr "Hi from static"
 		IL_0045: stsfld object Modules.Classes_ClassWithStaticProperty_DefaultAndLog/Greeter::message
-		IL_004a: ldsfld object Modules.Classes_ClassWithStaticProperty_DefaultAndLog/Greeter::message
-		IL_004f: stloc.s 4
-		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004a: ldstr "console"
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0054: stloc.s 4
 		IL_0056: ldloc.s 4
-		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_005d: pop
-		IL_005e: ret
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005d: stloc.s 4
+		IL_005f: ldsfld object Modules.Classes_ClassWithStaticProperty_DefaultAndLog/Greeter::message
+		IL_0064: stloc.s 5
+		IL_0066: ldloc.s 4
+		IL_0068: ldstr "log"
+		IL_006d: ldloc.s 5
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0074: pop
+		IL_0075: ret
 	} // end of method Classes_ClassWithStaticProperty_DefaultAndLog::__js_module_init__
 
 } // end of class Modules.Classes_ClassWithStaticProperty_DefaultAndLog
@@ -161,7 +169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ec
+		// Method begins at RVA 0x2104
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

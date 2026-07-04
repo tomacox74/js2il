@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218a
+			// Method begins at RVA 0x21cf
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 302 (0x12e)
+		// Code size: 371 (0x173)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Util_Types_IsArray/Scope,
@@ -48,7 +48,8 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
 			[4] string,
-			[5] object
+			[5] object,
+			[6] object
 		)
 
 		IL_0000: newobj instance void Modules.Require_Util_Types_IsArray/Scope::.ctor()
@@ -90,49 +91,70 @@
 		IL_009a: stloc.3
 		IL_009b: ldstr "hello"
 		IL_00a0: stloc.s 4
-		IL_00a2: ldloc.1
-		IL_00a3: ldstr "types"
-		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b2: stloc.s 5
-		IL_00b4: ldloc.s 5
-		IL_00b6: ldstr "isArray"
-		IL_00bb: ldloc.2
-		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c1: stloc.s 5
-		IL_00c3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c8: ldloc.s 5
-		IL_00ca: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00cf: pop
-		IL_00d0: ldloc.1
-		IL_00d1: ldstr "types"
-		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e0: stloc.s 5
-		IL_00e2: ldloc.s 5
-		IL_00e4: ldstr "isArray"
-		IL_00e9: ldloc.3
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ef: stloc.s 5
-		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f6: ldloc.s 5
-		IL_00f8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_00fd: pop
-		IL_00fe: ldloc.1
-		IL_00ff: ldstr "types"
-		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_010e: stloc.s 5
-		IL_0110: ldloc.s 5
-		IL_0112: ldstr "isArray"
-		IL_0117: ldloc.s 4
-		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011e: stloc.s 5
-		IL_0120: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0125: ldloc.s 5
-		IL_0127: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-		IL_012c: pop
-		IL_012d: ret
+		IL_00a2: ldstr "console"
+		IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00ac: stloc.s 5
+		IL_00ae: ldloc.s 5
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b5: stloc.s 5
+		IL_00b7: ldloc.1
+		IL_00b8: ldstr "types"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c7: stloc.s 6
+		IL_00c9: ldloc.s 6
+		IL_00cb: ldstr "isArray"
+		IL_00d0: ldloc.2
+		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00d6: stloc.s 6
+		IL_00d8: ldloc.s 5
+		IL_00da: ldstr "log"
+		IL_00df: ldloc.s 6
+		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e6: pop
+		IL_00e7: ldstr "console"
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00f1: stloc.s 6
+		IL_00f3: ldloc.s 6
+		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fa: stloc.s 6
+		IL_00fc: ldloc.1
+		IL_00fd: ldstr "types"
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010c: stloc.s 5
+		IL_010e: ldloc.s 5
+		IL_0110: ldstr "isArray"
+		IL_0115: ldloc.3
+		IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_011b: stloc.s 5
+		IL_011d: ldloc.s 6
+		IL_011f: ldstr "log"
+		IL_0124: ldloc.s 5
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_012b: pop
+		IL_012c: ldstr "console"
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0136: stloc.s 5
+		IL_0138: ldloc.s 5
+		IL_013a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_013f: stloc.s 5
+		IL_0141: ldloc.1
+		IL_0142: ldstr "types"
+		IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0151: stloc.s 6
+		IL_0153: ldloc.s 6
+		IL_0155: ldstr "isArray"
+		IL_015a: ldloc.s 4
+		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0161: stloc.s 6
+		IL_0163: ldloc.s 5
+		IL_0165: ldstr "log"
+		IL_016a: ldloc.s 6
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0171: pop
+		IL_0172: ret
 	} // end of method Require_Util_Types_IsArray::__js_module_init__
 
 } // end of class Modules.Require_Util_Types_IsArray
@@ -144,7 +166,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2193
+		// Method begins at RVA 0x21d8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x216a
+				// Method begins at RVA 0x21b6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,12 +44,13 @@
 			)
 			// Method begins at RVA 0x20d4
 			// Header size: 12
-			// Code size: 129 (0x81)
+			// Code size: 205 (0xcd)
 			.maxstack 8
 			.locals init (
 				[0] object,
 				[1] object,
-				[2] object
+				[2] object,
+				[3] object
 			)
 
 			IL_0000: ldarg.1
@@ -67,29 +68,57 @@
 			IL_002e: ceq
 			IL_0030: box [System.Runtime]System.Boolean
 			IL_0035: stloc.2
-			IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003b: ldstr "value:"
-			IL_0040: ldarg.1
-			IL_0041: box [System.Runtime]System.Double
-			IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_004b: pop
-			IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0051: ldstr "value == 3:"
-			IL_0056: ldloc.0
-			IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_005c: pop
-			IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0062: ldstr "value == 5:"
-			IL_0067: ldloc.1
-			IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_006d: pop
-			IL_006e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0073: ldstr "value == 7:"
-			IL_0078: ldloc.2
-			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-			IL_007e: pop
-			IL_007f: ldnull
-			IL_0080: ret
+			IL_0036: ldstr "console"
+			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0040: stloc.3
+			IL_0041: ldloc.3
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0047: stloc.3
+			IL_0048: ldloc.3
+			IL_0049: ldstr "log"
+			IL_004e: ldstr "value:"
+			IL_0053: ldarg.1
+			IL_0054: box [System.Runtime]System.Double
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_005e: pop
+			IL_005f: ldstr "console"
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0069: stloc.3
+			IL_006a: ldloc.3
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0070: stloc.3
+			IL_0071: ldloc.3
+			IL_0072: ldstr "log"
+			IL_0077: ldstr "value == 3:"
+			IL_007c: ldloc.0
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_0082: pop
+			IL_0083: ldstr "console"
+			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_008d: stloc.3
+			IL_008e: ldloc.3
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0094: stloc.3
+			IL_0095: ldloc.3
+			IL_0096: ldstr "log"
+			IL_009b: ldstr "value == 5:"
+			IL_00a0: ldloc.1
+			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00a6: pop
+			IL_00a7: ldstr "console"
+			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00b1: stloc.3
+			IL_00b2: ldloc.3
+			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00b8: stloc.3
+			IL_00b9: ldloc.3
+			IL_00ba: ldstr "log"
+			IL_00bf: ldstr "value == 7:"
+			IL_00c4: ldloc.2
+			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00ca: pop
+			IL_00cb: ldnull
+			IL_00cc: ret
 		} // end of method testParam::__js_call__
 
 	} // end of class testParam
@@ -108,7 +137,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2161
+			// Method begins at RVA 0x21ad
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -193,7 +222,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2173
+		// Method begins at RVA 0x21bf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

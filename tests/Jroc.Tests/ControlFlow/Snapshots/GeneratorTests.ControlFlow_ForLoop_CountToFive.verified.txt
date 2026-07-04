@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20e5
+			// Method begins at RVA 0x20fc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f7
+				// Method begins at RVA 0x210e
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ee
+			// Method begins at RVA 0x2105
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,14 +82,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 160 (0xa0)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_CountToFive/Scope,
 			[1] object,
 			[2] class Modules.ControlFlow_ForLoop_CountToFive/Scope_For_L3C5/Block_L3C28,
 			[3] object,
-			[4] float64
+			[4] float64,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_CountToFive/Scope::.ctor()
@@ -106,42 +107,49 @@
 			IL_001f: ldloc.s 4
 			IL_0021: ldc.r8 5
 			IL_002a: clt
-			IL_002c: brfalse IL_0088
+			IL_002c: brfalse IL_009f
 
 			IL_0031: newobj instance void Modules.ControlFlow_ForLoop_CountToFive/Scope_For_L3C5/Block_L3C28::.ctor()
 			IL_0036: stloc.2
-			IL_0037: ldloc.1
-			IL_0038: stloc.3
-			IL_0039: ldloc.3
-			IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003f: stloc.s 4
-			IL_0041: ldloc.s 4
-			IL_0043: ldc.r8 1
-			IL_004c: add
-			IL_004d: stloc.s 4
-			IL_004f: ldloc.s 4
-			IL_0051: box [System.Runtime]System.Double
-			IL_0056: stloc.3
-			IL_0057: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_005c: ldloc.3
-			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0062: pop
-			IL_0063: ldloc.1
-			IL_0064: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0069: stloc.s 4
-			IL_006b: ldloc.s 4
-			IL_006d: ldc.r8 1
-			IL_0076: add
-			IL_0077: stloc.s 4
-			IL_0079: ldloc.s 4
-			IL_007b: box [System.Runtime]System.Double
-			IL_0080: stloc.3
-			IL_0081: ldloc.3
-			IL_0082: stloc.1
-			IL_0083: br IL_0015
+			IL_0037: ldstr "console"
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0041: stloc.s 5
+			IL_0043: ldloc.s 5
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_004a: stloc.s 5
+			IL_004c: ldloc.1
+			IL_004d: stloc.3
+			IL_004e: ldloc.3
+			IL_004f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0054: stloc.s 4
+			IL_0056: ldloc.s 4
+			IL_0058: ldc.r8 1
+			IL_0061: add
+			IL_0062: stloc.s 4
+			IL_0064: ldloc.s 4
+			IL_0066: box [System.Runtime]System.Double
+			IL_006b: stloc.3
+			IL_006c: ldloc.s 5
+			IL_006e: ldstr "log"
+			IL_0073: ldloc.3
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0079: pop
+			IL_007a: ldloc.1
+			IL_007b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0080: stloc.s 4
+			IL_0082: ldloc.s 4
+			IL_0084: ldc.r8 1
+			IL_008d: add
+			IL_008e: stloc.s 4
+			IL_0090: ldloc.s 4
+			IL_0092: box [System.Runtime]System.Double
+			IL_0097: stloc.3
+			IL_0098: ldloc.3
+			IL_0099: stloc.1
+			IL_009a: br IL_0015
 		// end loop
 
-		IL_0088: ret
+		IL_009f: ret
 	} // end of method ControlFlow_ForLoop_CountToFive::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_CountToFive
@@ -153,7 +161,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x2117
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

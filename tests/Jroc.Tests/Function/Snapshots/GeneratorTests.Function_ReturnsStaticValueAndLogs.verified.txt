@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20c3
+				// Method begins at RVA 0x20f6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,17 +41,27 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x209f
-			// Header size: 1
-			// Code size: 26 (0x1a)
+			// Method begins at RVA 0x20b4
+			// Header size: 12
+			// Code size: 45 (0x2d)
 			.maxstack 8
+			.locals init (
+				[0] object
+			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: ldstr "Returning value"
-			IL_000a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_000f: pop
-			IL_0010: ldc.r8 5
-			IL_0019: ret
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.0
+			IL_000b: ldloc.0
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.0
+			IL_0012: ldloc.0
+			IL_0013: ldstr "log"
+			IL_0018: ldstr "Returning value"
+			IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0022: pop
+			IL_0023: ldc.r8 5
+			IL_002c: ret
 		} // end of method returnsFive::__js_call__
 
 	} // end of class returnsFive
@@ -71,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ba
+			// Method begins at RVA 0x20ed
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -97,7 +107,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 86 (0x56)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Function_ReturnsStaticValueAndLogs/Scope,
@@ -126,12 +136,19 @@
 		IL_002e: stloc.3
 		IL_002f: ldloc.3
 		IL_0030: stloc.2
-		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0036: ldstr "Output:"
-		IL_003b: ldloc.2
-		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object, object)
-		IL_0041: pop
-		IL_0042: ret
+		IL_0031: ldstr "console"
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_003b: stloc.3
+		IL_003c: ldloc.3
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0042: stloc.3
+		IL_0043: ldloc.3
+		IL_0044: ldstr "log"
+		IL_0049: ldstr "Output:"
+		IL_004e: ldloc.2
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0054: pop
+		IL_0055: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::__js_module_init__
 
 } // end of class Modules.Function_ReturnsStaticValueAndLogs
@@ -143,7 +160,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x20ff
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

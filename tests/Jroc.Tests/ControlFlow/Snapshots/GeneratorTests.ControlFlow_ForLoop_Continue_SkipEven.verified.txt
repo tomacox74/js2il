@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f4
+			// Method begins at RVA 0x210b
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2106
+				// Method begins at RVA 0x211d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fd
+			// Method begins at RVA 0x2114
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,14 +82,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 152 (0x98)
+		// Code size: 175 (0xaf)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope,
 			[1] object,
 			[2] class Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope_For_L3C5/Block_L3C29,
 			[3] object,
-			[4] float64
+			[4] float64,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope::.ctor()
@@ -106,7 +107,7 @@
 			IL_001f: ldloc.s 4
 			IL_0021: ldc.r8 10
 			IL_002a: clt
-			IL_002c: brfalse IL_0097
+			IL_002c: brfalse IL_00ae
 
 			IL_0031: newobj instance void Modules.ControlFlow_ForLoop_Continue_SkipEven/Scope_For_L3C5/Block_L3C29::.ctor()
 			IL_0036: stloc.2
@@ -124,29 +125,36 @@
 			IL_005a: ceq
 			IL_005c: brfalse IL_0066
 
-			IL_0061: br IL_0072
+			IL_0061: br IL_0089
 
-			IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006b: ldloc.1
-			IL_006c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0071: pop
+			IL_0066: ldstr "console"
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0070: stloc.s 5
+			IL_0072: ldloc.s 5
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0079: stloc.s 5
+			IL_007b: ldloc.s 5
+			IL_007d: ldstr "log"
+			IL_0082: ldloc.1
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0088: pop
 
-			IL_0072: ldloc.1
-			IL_0073: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0078: stloc.s 4
-			IL_007a: ldloc.s 4
-			IL_007c: ldc.r8 1
-			IL_0085: add
-			IL_0086: stloc.s 4
-			IL_0088: ldloc.s 4
-			IL_008a: box [System.Runtime]System.Double
-			IL_008f: stloc.3
-			IL_0090: ldloc.3
-			IL_0091: stloc.1
-			IL_0092: br IL_0015
+			IL_0089: ldloc.1
+			IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_008f: stloc.s 4
+			IL_0091: ldloc.s 4
+			IL_0093: ldc.r8 1
+			IL_009c: add
+			IL_009d: stloc.s 4
+			IL_009f: ldloc.s 4
+			IL_00a1: box [System.Runtime]System.Double
+			IL_00a6: stloc.3
+			IL_00a7: ldloc.3
+			IL_00a8: stloc.1
+			IL_00a9: br IL_0015
 		// end loop
 
-		IL_0097: ret
+		IL_00ae: ret
 	} // end of method ControlFlow_ForLoop_Continue_SkipEven::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_Continue_SkipEven
@@ -158,7 +166,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210f
+		// Method begins at RVA 0x2126
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2142
+				// Method begins at RVA 0x2159
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -42,7 +42,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x212c
+			// Method begins at RVA 0x2143
 			// Header size: 1
 			// Code size: 12 (0xc)
 			.maxstack 8
@@ -66,7 +66,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214b
+				// Method begins at RVA 0x2162
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -84,7 +84,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2139
+			// Method begins at RVA 0x2150
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,7 +110,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 208 (0xd0)
+		// Code size: 231 (0xe7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Map_Basic/Scope,
@@ -176,32 +176,39 @@
 			IL_0084: ldloc.s 9
 			IL_0086: ldloc.s 8
 			IL_0088: clt
-			IL_008a: brfalse IL_00cf
+			IL_008a: brfalse IL_00e6
 
 			IL_008f: newobj instance void Modules.Array_Map_Basic/Scope/Block_L5C41::.ctor()
 			IL_0094: stloc.s 4
-			IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_009b: ldloc.2
-			IL_009c: ldloc.3
-			IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00a7: pop
-			IL_00a8: ldloc.3
-			IL_00a9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00ae: stloc.s 8
-			IL_00b0: ldloc.s 8
-			IL_00b2: ldc.r8 1
-			IL_00bb: add
-			IL_00bc: stloc.s 8
-			IL_00be: ldloc.s 8
-			IL_00c0: box [System.Runtime]System.Double
-			IL_00c5: stloc.s 7
-			IL_00c7: ldloc.s 7
-			IL_00c9: stloc.3
-			IL_00ca: br IL_006f
+			IL_0096: ldstr "console"
+			IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00a0: stloc.s 5
+			IL_00a2: ldloc.s 5
+			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00a9: stloc.s 5
+			IL_00ab: ldloc.s 5
+			IL_00ad: ldstr "log"
+			IL_00b2: ldloc.2
+			IL_00b3: ldloc.3
+			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00be: pop
+			IL_00bf: ldloc.3
+			IL_00c0: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00c5: stloc.s 8
+			IL_00c7: ldloc.s 8
+			IL_00c9: ldc.r8 1
+			IL_00d2: add
+			IL_00d3: stloc.s 8
+			IL_00d5: ldloc.s 8
+			IL_00d7: box [System.Runtime]System.Double
+			IL_00dc: stloc.s 7
+			IL_00de: ldloc.s 7
+			IL_00e0: stloc.3
+			IL_00e1: br IL_006f
 		// end loop
 
-		IL_00cf: ret
+		IL_00e6: ret
 	} // end of method Array_Map_Basic::__js_module_init__
 
 } // end of class Modules.Array_Map_Basic
@@ -213,7 +220,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2154
+		// Method begins at RVA 0x216b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

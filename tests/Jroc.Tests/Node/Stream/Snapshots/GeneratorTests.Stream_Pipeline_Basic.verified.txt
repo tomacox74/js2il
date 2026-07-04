@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d9
+				// Method begins at RVA 0x2310
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e2
+				// Method begins at RVA 0x2319
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -115,86 +115,105 @@
 			)
 			// Method begins at RVA 0x21fc
 			// Header size: 12
-			// Code size: 200 (0xc8)
+			// Code size: 255 (0xff)
 			.maxstack 8
 			.locals init (
 				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+				[1] object,
 				[2] bool,
 				[3] object,
 				[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 				[5] object
 			)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.1
-			IL_0006: ldarg.2
-			IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_000c: stloc.2
-			IL_000d: ldloc.2
-			IL_000e: brfalse IL_0024
+			IL_0000: ldstr "console"
+			IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_000a: stloc.1
+			IL_000b: ldloc.1
+			IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0011: stloc.1
+			IL_0012: ldarg.2
+			IL_0013: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_0018: stloc.2
+			IL_0019: ldloc.2
+			IL_001a: brfalse IL_0030
 
-			IL_0013: ldarg.2
-			IL_0014: ldstr "message"
-			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_001e: stloc.0
-			IL_001f: br IL_002a
+			IL_001f: ldarg.2
+			IL_0020: ldstr "message"
+			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_002a: stloc.0
+			IL_002b: br IL_0036
 
-			IL_0024: ldstr "null"
-			IL_0029: stloc.0
+			IL_0030: ldstr "null"
+			IL_0035: stloc.0
 
-			IL_002a: ldstr "callback:"
-			IL_002f: ldloc.0
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0035: stloc.3
-			IL_0036: ldloc.1
-			IL_0037: ldloc.3
-			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_003d: pop
-			IL_003e: ldarg.0
-			IL_003f: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipeline_Basic/Scope::written
-			IL_0044: stloc.s 4
-			IL_0046: ldstr "written"
-			IL_004b: ldloc.s 4
-			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_0052: stloc.s 5
-			IL_0054: ldloc.s 5
-			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_005b: stloc.s 5
-			IL_005d: ldloc.s 5
-			IL_005f: ldstr "join"
-			IL_0064: ldstr ","
-			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_006e: stloc.s 5
-			IL_0070: ldstr "written:"
-			IL_0075: ldloc.s 5
-			IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_007c: stloc.3
-			IL_007d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0082: ldloc.3
-			IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_0088: pop
-			IL_0089: ldarg.0
-			IL_008a: ldfld object Modules.Stream_Pipeline_Basic/Scope::pass
-			IL_008f: stloc.s 5
-			IL_0091: ldstr "pass"
-			IL_0096: ldloc.s 5
-			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_009d: stloc.s 5
-			IL_009f: ldloc.s 5
-			IL_00a1: ldstr "destroyed"
-			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00ab: stloc.s 5
-			IL_00ad: ldstr "pass-destroyed:"
-			IL_00b2: ldloc.s 5
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_00b9: stloc.3
-			IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00bf: ldloc.3
-			IL_00c0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00c5: pop
-			IL_00c6: ldnull
-			IL_00c7: ret
+			IL_0036: ldstr "callback:"
+			IL_003b: ldloc.0
+			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0041: stloc.3
+			IL_0042: ldloc.1
+			IL_0043: ldstr "log"
+			IL_0048: ldloc.3
+			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_004e: pop
+			IL_004f: ldstr "console"
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0059: stloc.1
+			IL_005a: ldloc.1
+			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0060: stloc.1
+			IL_0061: ldarg.0
+			IL_0062: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipeline_Basic/Scope::written
+			IL_0067: stloc.s 4
+			IL_0069: ldstr "written"
+			IL_006e: ldloc.s 4
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_0075: stloc.s 5
+			IL_0077: ldloc.s 5
+			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_007e: stloc.s 5
+			IL_0080: ldloc.s 5
+			IL_0082: ldstr "join"
+			IL_0087: ldstr ","
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0091: stloc.s 5
+			IL_0093: ldstr "written:"
+			IL_0098: ldloc.s 5
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_009f: stloc.3
+			IL_00a0: ldloc.1
+			IL_00a1: ldstr "log"
+			IL_00a6: ldloc.3
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00ac: pop
+			IL_00ad: ldstr "console"
+			IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00b7: stloc.1
+			IL_00b8: ldloc.1
+			IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00be: stloc.1
+			IL_00bf: ldarg.0
+			IL_00c0: ldfld object Modules.Stream_Pipeline_Basic/Scope::pass
+			IL_00c5: stloc.s 5
+			IL_00c7: ldstr "pass"
+			IL_00cc: ldloc.s 5
+			IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
+			IL_00d3: stloc.s 5
+			IL_00d5: ldloc.s 5
+			IL_00d7: ldstr "destroyed"
+			IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00e1: stloc.s 5
+			IL_00e3: ldstr "pass-destroyed:"
+			IL_00e8: ldloc.s 5
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00ef: stloc.3
+			IL_00f0: ldloc.1
+			IL_00f1: ldstr "log"
+			IL_00f6: ldloc.3
+			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00fc: pop
+			IL_00fd: ldnull
+			IL_00fe: ret
 		} // end of method FunctionExpression_L14C42::__js_call__
 
 	} // end of class FunctionExpression_L14C42
@@ -215,7 +234,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22d0
+			// Method begins at RVA 0x2307
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -403,7 +422,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22eb
+		// Method begins at RVA 0x2322
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

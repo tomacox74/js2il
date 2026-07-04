@@ -88,9 +88,14 @@ namespace JavaScriptRuntime
 
         public static Uint8Array fromBase64(object? value)
         {
+            if (value is not string text)
+            {
+                throw new TypeError("Uint8Array.fromBase64 requires a string input");
+            }
+
             try
             {
-                var decoded = System.Convert.FromBase64String(DotNet2JSConversions.ToString(value));
+                var decoded = System.Convert.FromBase64String(text);
                 return new Uint8Array(new ArrayBuffer(decoded, cloneBuffer: false), 0, decoded.Length);
             }
             catch (FormatException ex)

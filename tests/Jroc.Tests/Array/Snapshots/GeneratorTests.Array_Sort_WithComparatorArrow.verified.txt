@@ -26,7 +26,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ae
+				// Method begins at RVA 0x21c6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,7 +51,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2184
+			// Method begins at RVA 0x219c
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -83,7 +83,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b7
+				// Method begins at RVA 0x21cf
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,7 +101,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21a5
+			// Method begins at RVA 0x21bd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -127,7 +127,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 295 (0x127)
+		// Code size: 318 (0x13e)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Sort_WithComparatorArrow/Scope,
@@ -209,32 +209,39 @@
 			IL_00dc: ldloc.s 7
 			IL_00de: ldloc.s 6
 			IL_00e0: clt
-			IL_00e2: brfalse IL_0126
+			IL_00e2: brfalse IL_013d
 
 			IL_00e7: newobj instance void Modules.Array_Sort_WithComparatorArrow/Scope/Block_L5C37::.ctor()
 			IL_00ec: stloc.3
-			IL_00ed: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_00f2: ldloc.1
-			IL_00f3: ldloc.2
-			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_00f9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object)
-			IL_00fe: pop
-			IL_00ff: ldloc.2
-			IL_0100: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0105: stloc.s 6
-			IL_0107: ldloc.s 6
-			IL_0109: ldc.r8 1
-			IL_0112: add
-			IL_0113: stloc.s 6
-			IL_0115: ldloc.s 6
-			IL_0117: box [System.Runtime]System.Double
-			IL_011c: stloc.s 5
-			IL_011e: ldloc.s 5
-			IL_0120: stloc.2
-			IL_0121: br IL_00c7
+			IL_00ed: ldstr "console"
+			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00f7: stloc.s 4
+			IL_00f9: ldloc.s 4
+			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0100: stloc.s 4
+			IL_0102: ldloc.s 4
+			IL_0104: ldstr "log"
+			IL_0109: ldloc.1
+			IL_010a: ldloc.2
+			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0115: pop
+			IL_0116: ldloc.2
+			IL_0117: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_011c: stloc.s 6
+			IL_011e: ldloc.s 6
+			IL_0120: ldc.r8 1
+			IL_0129: add
+			IL_012a: stloc.s 6
+			IL_012c: ldloc.s 6
+			IL_012e: box [System.Runtime]System.Double
+			IL_0133: stloc.s 5
+			IL_0135: ldloc.s 5
+			IL_0137: stloc.2
+			IL_0138: br IL_00c7
 		// end loop
 
-		IL_0126: ret
+		IL_013d: ret
 	} // end of method Array_Sort_WithComparatorArrow::__js_module_init__
 
 } // end of class Modules.Array_Sort_WithComparatorArrow
@@ -246,7 +253,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c0
+		// Method begins at RVA 0x21d8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
