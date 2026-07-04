@@ -510,6 +510,13 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
+                if (string.Equals(key, PrimitiveValuePropertyName, StringComparison.Ordinal)
+                    || string.Equals(key, JavaScriptRuntime.String.StringDataPropertyName, StringComparison.Ordinal)
+                    || string.Equals(key, JavaScriptRuntime.Number.NumberDataPropertyName, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
                 if (IsEncodedSymbolKey(key))
                 {
                     if (includeEncodedSymbolKeys)
@@ -1285,27 +1292,6 @@ namespace JavaScriptRuntime
             var wrapper = CreateOrdinaryObject();
             PrototypeChain.SetPrototype(wrapper, prototype);
             PropertyDescriptorStore.DefineOrUpdate(wrapper, PrimitiveValuePropertyName, CreatePrimitiveValueDescriptor(primitiveValue));
-
-            PropertyDescriptorStore.DefineOrUpdate(wrapper, "valueOf", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
-            });
-
-            if (includeOwnStringMethods || primitiveValue is System.Numerics.BigInteger or JavaScriptRuntime.Symbol)
-            {
-                PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
-                {
-                    Kind = JsPropertyDescriptorKind.Data,
-                    Enumerable = false,
-                    Configurable = true,
-                    Writable = true,
-                    Value = (Func<object[], object?[]?, object?>)((_, __) => DotNet2JSConversions.ToString(primitiveValue))
-                });
-            }
 
             return wrapper;
         }
