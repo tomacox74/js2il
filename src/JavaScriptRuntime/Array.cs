@@ -79,6 +79,7 @@ namespace JavaScriptRuntime
             DefinePrototypeMethod(exp, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
             DefinePrototypeMethod(exp, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
             DefinePrototypeMethod(exp, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
+            DefinePrototypeMethod(exp, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
             DefinePrototypeMethod(exp, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
             DefinePrototypeMethod(exp, "entries", prototypeEntries, 0);
             DefinePrototypeMethod(exp, "keys", prototypeKeys, 0);
@@ -693,6 +694,25 @@ namespace JavaScriptRuntime
             }
 
             return JavaScriptRuntime.ObjectRuntime.GetItem(receiver, (double)index);
+        }
+
+        private static object? PrototypeFlat(object[] scopes, object?[]? args)
+        {
+            var receiver = RequireArrayLikeReceiver("flat");
+
+            int depth = 1;
+            if (args != null && args.Length > 0 && args[0] != null)
+            {
+                depth = ToInt(args[0]!, 0);
+            }
+            if (depth < 0)
+            {
+                depth = 0;
+            }
+
+            var result = new Array();
+            FlattenIntoArrayLike(result, receiver, depth);
+            return result;
         }
 
         private static object RequireArrayLikeReceiver(string methodName)
@@ -2861,7 +2881,7 @@ namespace JavaScriptRuntime
             int depth = 1;
             if (args != null && args.Length > 0 && args[0] != null)
             {
-                depth = ToInt(args[0], 1);
+                depth = ToInt(args[0], 0);
             }
             if (depth < 0) depth = 0;
 
@@ -2887,6 +2907,29 @@ namespace JavaScriptRuntime
                 else
                 {
                     target.Add(v);
+                }
+            }
+        }
+
+        private static void FlattenIntoArrayLike(Array target, object source, int depth)
+        {
+            int length = ToArrayLikeLength(source);
+            for (int i = 0; i < length; i++)
+            {
+                var key = (double)i;
+                if (!JavaScriptRuntime.ObjectRuntime.HasPropertyIn(key, source))
+                {
+                    continue;
+                }
+
+                var value = JavaScriptRuntime.ObjectRuntime.GetItem(source, key);
+                if (depth > 0 && value is Array nestedArray)
+                {
+                    FlattenIntoArrayLike(target, nestedArray, depth - 1);
+                }
+                else
+                {
+                    target.Add(value);
                 }
             }
         }
