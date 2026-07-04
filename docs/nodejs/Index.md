@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-06-29T19:09:50Z`
+**Generated:** `2026-07-04T07:37:43Z`
 
 ## Summary
 
 - **Modules:** 20
-- **Globals:** 16
+- **Globals:** 18
   - Supported: 15
-  - Partial: 18
+  - Partial: 20
 
 ## Modules
 
@@ -44,6 +44,7 @@
 | --- | --- | --- |
 | [__dirname](__dirname.md) | supported | [Node.js](https://nodejs.org/api/modules.html#dirname) |
 | [__filename](__filename.md) | supported | [Node.js](https://nodejs.org/api/modules.html#filename) |
+| [Atomics](Atomics.md) | partial | [Node.js](https://nodejs.org/api/globals.html#class-atomics) |
 | [Buffer](Buffer.md) | supported | [Node.js](https://nodejs.org/api/buffer.html#class-buffer) |
 | [clearImmediate](clearImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearimmediateimmediate) |
 | [clearInterval](clearInterval.md) | supported | [Node.js](https://nodejs.org/api/timers.html#clearintervaltimeout) |
@@ -56,6 +57,7 @@
 | [setImmediate](setImmediate.md) | supported | [Node.js](https://nodejs.org/api/timers.html#setimmediatecallback-args) |
 | [setInterval](setInterval.md) | supported | [Node.js](https://nodejs.org/api/timers.html#setintervalcallback-delay-args) |
 | [setTimeout](setTimeout.md) | supported | [Node.js](https://nodejs.org/api/timers.html#settimeoutcallback-delay-args) |
+| [SharedArrayBuffer](SharedArrayBuffer.md) | partial | [Node.js](https://nodejs.org/api/globals.html#class-sharedarraybuffer) |
 | [URL](URL_global.md) | supported | [Node.js](https://nodejs.org/api/url.html#new-urlinput-base) |
 | [URLSearchParams](URLSearchParams.md) | partial | [Node.js](https://nodejs.org/api/url.html#class-urlsearchparams) |
 

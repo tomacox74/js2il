@@ -119,5 +119,8 @@ namespace Jroc.Tests.TypedArray
 
         [Fact]
         public Task Int32Array_GetItemAsNumber_NumericContext() { var testName = nameof(Int32Array_GetItemAsNumber_NumericContext); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task SharedArrayBuffer_Int32Array_AtomicsWait() { var testName = nameof(SharedArrayBuffer_Int32Array_AtomicsWait); return ExecutionTest(testName); }
     }
 }

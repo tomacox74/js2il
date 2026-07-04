@@ -3,7 +3,7 @@ using System;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("ArrayBuffer")]
-    public sealed class ArrayBuffer
+    public class ArrayBuffer
     {
         private readonly byte[] _bytes;
 
