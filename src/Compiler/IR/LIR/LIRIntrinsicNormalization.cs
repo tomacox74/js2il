@@ -823,9 +823,9 @@ internal static class LIRIntrinsicNormalization
     {
         return argCount switch
         {
-            0 => methodName is "charAt" or "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
-            1 => methodName is "charAt" or "charCodeAt" or "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes" or "split" or "match" or "search",
-            2 => methodName is "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes" or "replace" or "split",
+            0 => methodName is "charAt" or "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase",
+            1 => methodName is "charAt" or "charCodeAt" or "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes",
+            2 => methodName is "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes",
             _ => false
         };
     }

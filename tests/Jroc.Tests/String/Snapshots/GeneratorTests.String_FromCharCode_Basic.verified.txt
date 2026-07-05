@@ -47,7 +47,8 @@
 			[1] string,
 			[2] string,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] float64
 		)
 
 		IL_0000: newobj instance void Modules.String_FromCharCode_Basic/Scope::.ctor()
@@ -162,39 +163,39 @@
 		IL_015d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0162: stloc.s 4
 		IL_0164: ldloc.s 4
-		IL_0166: ldstr "charCodeAt"
+		IL_0166: castclass [System.Runtime]System.String
 		IL_016b: ldc.r8 0.0
-		IL_0174: box [System.Runtime]System.Double
-		IL_0179: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_017e: stloc.s 4
-		IL_0180: ldloc.3
-		IL_0181: ldstr "log"
-		IL_0186: ldloc.s 4
+		IL_0174: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_0179: stloc.s 5
+		IL_017b: ldloc.3
+		IL_017c: ldstr "log"
+		IL_0181: ldloc.s 5
+		IL_0183: box [System.Runtime]System.Double
 		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_018d: pop
 		IL_018e: ldstr "console"
 		IL_0193: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0198: stloc.s 4
-		IL_019a: ldloc.s 4
-		IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01a1: stloc.s 4
-		IL_01a3: ldc.r8 1
-		IL_01ac: neg
-		IL_01ad: box [System.Runtime]System.Double
-		IL_01b2: call string [JavaScriptRuntime]JavaScriptRuntime.String::FromCharCode(object)
-		IL_01b7: stloc.2
-		IL_01b8: ldloc.2
-		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_01be: stloc.3
-		IL_01bf: ldloc.3
-		IL_01c0: ldstr "charCodeAt"
-		IL_01c5: ldc.r8 0.0
-		IL_01ce: box [System.Runtime]System.Double
-		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_01d8: stloc.3
-		IL_01d9: ldloc.s 4
-		IL_01db: ldstr "log"
-		IL_01e0: ldloc.3
+		IL_0198: stloc.3
+		IL_0199: ldloc.3
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_019f: stloc.3
+		IL_01a0: ldc.r8 1
+		IL_01a9: neg
+		IL_01aa: box [System.Runtime]System.Double
+		IL_01af: call string [JavaScriptRuntime]JavaScriptRuntime.String::FromCharCode(object)
+		IL_01b4: stloc.2
+		IL_01b5: ldloc.2
+		IL_01b6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01bb: stloc.s 4
+		IL_01bd: ldloc.s 4
+		IL_01bf: castclass [System.Runtime]System.String
+		IL_01c4: ldc.r8 0.0
+		IL_01cd: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_01d2: stloc.s 5
+		IL_01d4: ldloc.3
+		IL_01d5: ldstr "log"
+		IL_01da: ldloc.s 5
+		IL_01dc: box [System.Runtime]System.Double
 		IL_01e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_01e6: pop
 		IL_01e7: ret

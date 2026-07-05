@@ -1165,7 +1165,11 @@ namespace JavaScriptRuntime
         {
             input ??= string.Empty;
 
-            if (double.IsNaN(index) || double.IsInfinity(index))
+            if (double.IsNaN(index))
+            {
+                index = 0d;
+            }
+            else if (double.IsInfinity(index))
             {
                 return double.NaN;
             }

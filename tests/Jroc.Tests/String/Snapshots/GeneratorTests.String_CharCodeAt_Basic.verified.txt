@@ -45,7 +45,8 @@
 		.locals init (
 			[0] class Modules.String_CharCodeAt_Basic/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] float64
 		)
 
 		IL_0000: newobj instance void Modules.String_CharCodeAt_Basic/Scope::.ctor()
@@ -60,34 +61,34 @@
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0022: stloc.2
 		IL_0023: ldloc.2
-		IL_0024: ldstr "charCodeAt"
+		IL_0024: castclass [System.Runtime]System.String
 		IL_0029: ldc.r8 0.0
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_003c: stloc.2
-		IL_003d: ldloc.1
-		IL_003e: ldstr "log"
-		IL_0043: ldloc.2
+		IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_0037: stloc.3
+		IL_0038: ldloc.1
+		IL_0039: ldstr "log"
+		IL_003e: ldloc.3
+		IL_003f: box [System.Runtime]System.Double
 		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0049: pop
 		IL_004a: ldstr "console"
 		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0054: stloc.2
-		IL_0055: ldloc.2
+		IL_0054: stloc.1
+		IL_0055: ldloc.1
 		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_005b: stloc.2
+		IL_005b: stloc.1
 		IL_005c: ldstr "ABC"
 		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0066: stloc.1
-		IL_0067: ldloc.1
-		IL_0068: ldstr "charCodeAt"
+		IL_0066: stloc.2
+		IL_0067: ldloc.2
+		IL_0068: castclass [System.Runtime]System.String
 		IL_006d: ldc.r8 2
-		IL_0076: box [System.Runtime]System.Double
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0080: stloc.1
-		IL_0081: ldloc.2
-		IL_0082: ldstr "log"
-		IL_0087: ldloc.1
+		IL_0076: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::CharCodeAt(string, float64)
+		IL_007b: stloc.3
+		IL_007c: ldloc.1
+		IL_007d: ldstr "log"
+		IL_0082: ldloc.3
+		IL_0083: box [System.Runtime]System.Double
 		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_008d: pop
 		IL_008e: ret

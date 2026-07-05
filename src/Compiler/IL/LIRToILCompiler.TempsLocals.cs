@@ -390,14 +390,14 @@ internal sealed partial class LIRToILCompiler
 
             case LIRMulDynamic mulDynamic:
                 // Emit inline dynamic multiplication
-                EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsMultiply(ilEncoder);
                 break;
             case LIRAddDynamic addDynamic:
                 // Emit inline dynamic addition
-                EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddObjectObject(ilEncoder);
                 break;
             case LIRAddDynamicDoubleObject addDynamicDoubleObject:
@@ -416,8 +416,8 @@ internal sealed partial class LIRToILCompiler
                 EmitOperatorsAddAndToNumber(addAndToNumber.Left, addAndToNumber.Right, ilEncoder, allocation, methodDescriptor);
                 break;
             case LIRBinaryDynamicOperator binaryDynamic:
-                EmitLoadTemp(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(binaryDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(binaryDynamic.Right, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsDynamicBinary(binaryDynamic.Operator, ilEncoder);
                 break;
             case LIRLoadLeafScopeField loadLeafField:

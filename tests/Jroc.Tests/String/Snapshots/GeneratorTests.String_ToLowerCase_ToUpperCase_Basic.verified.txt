@@ -45,7 +45,8 @@
 		.locals init (
 			[0] class Modules.String_ToLowerCase_ToUpperCase_Basic/Scope,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] string
 		)
 
 		IL_0000: newobj instance void Modules.String_ToLowerCase_ToUpperCase_Basic/Scope::.ctor()
@@ -60,30 +61,30 @@
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 		IL_0022: stloc.2
 		IL_0023: ldloc.2
-		IL_0024: ldstr "toLowerCase"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_002e: stloc.2
+		IL_0024: castclass [System.Runtime]System.String
+		IL_0029: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToLowerCase(string)
+		IL_002e: stloc.3
 		IL_002f: ldloc.1
 		IL_0030: ldstr "log"
-		IL_0035: ldloc.2
+		IL_0035: ldloc.3
 		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_003b: pop
 		IL_003c: ldstr "console"
 		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0046: stloc.2
-		IL_0047: ldloc.2
+		IL_0046: stloc.1
+		IL_0047: ldloc.1
 		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004d: stloc.2
+		IL_004d: stloc.1
 		IL_004e: ldstr "AbC"
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0058: stloc.1
-		IL_0059: ldloc.1
-		IL_005a: ldstr "toUpperCase"
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-		IL_0064: stloc.1
-		IL_0065: ldloc.2
+		IL_0058: stloc.2
+		IL_0059: ldloc.2
+		IL_005a: castclass [System.Runtime]System.String
+		IL_005f: call string [JavaScriptRuntime]JavaScriptRuntime.String::ToUpperCase(string)
+		IL_0064: stloc.3
+		IL_0065: ldloc.1
 		IL_0066: ldstr "log"
-		IL_006b: ldloc.1
+		IL_006b: ldloc.3
 		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0071: pop
 		IL_0072: ret
