@@ -24,10 +24,12 @@ public abstract class InMemoryExecutionTestsBase
 
     protected async Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
     {
+        var additionalScripts = GetAdditionalScripts(testName, sourceFilePath);
         var result = InMemoryTestCompiler.CompileAndExecute(
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
+            additionalScripts: additionalScripts,
             enableIRMetrics: true);
 
         await VerifyWithSnapshot(result.Output, sourceFilePath);
@@ -39,6 +41,11 @@ public abstract class InMemoryExecutionTestsBase
         [CallerFilePath] string sourceFilePath = "")
     {
         var (script, sourcePath) = GetJavaScriptAndSourcePath(testName, sourceFilePath);
+        sourcePath ??= Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Test262.Tests",
+            "CompilationFailure",
+            testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
         Exception? failure = null;
 
         var previousMetricsEnabled = IRPipelineMetrics.Enabled;
@@ -79,8 +86,14 @@ public abstract class InMemoryExecutionTestsBase
         await VerifyWithSnapshot("true" + Environment.NewLine, sourceFilePath);
     }
 
-    private static (string Script, string SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
+    private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
     {
+        if (string.Equals(testName, "node_modules\\assert\\index", StringComparison.Ordinal)
+            || string.Equals(testName, "node_modules/assert/index", StringComparison.Ordinal))
+        {
+            return (File.ReadAllText(GetAssertHarnessSourcePath(callerSourceFilePath)), null);
+        }
+
         var relativePath = testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js";
         var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath)
             ?? throw new InvalidOperationException("Unable to determine test source directory.");
@@ -91,7 +104,46 @@ public abstract class InMemoryExecutionTestsBase
             throw new FileNotFoundException($"JavaScript fixture not found at '{scriptPath}'.", scriptPath);
         }
 
-        return (File.ReadAllText(scriptPath), scriptPath);
+        var script = File.ReadAllText(scriptPath);
+        if (ShouldInjectAssertHarness(scriptPath))
+        {
+            script = "const { assert } = require('assert');" + Environment.NewLine + script;
+        }
+
+        return (script, scriptPath);
+    }
+
+    private static string[]? GetAdditionalScripts(string testName, string callerSourceFilePath)
+    {
+        var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath)
+            ?? throw new InvalidOperationException("Unable to determine test source directory.");
+        var scriptPath = Path.Combine(
+            sourceDirectory,
+            "JavaScript",
+            testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
+
+        return ShouldInjectAssertHarness(scriptPath)
+            ? ["node_modules\\assert\\index"]
+            : null;
+    }
+
+    private static bool ShouldInjectAssertHarness(string scriptPath)
+        => Path.GetFullPath(scriptPath).EndsWith(
+            Path.Combine(
+                "tests",
+                "Jroc.Test262.Tests",
+                "built-ins",
+                "Date",
+                "Section21_4",
+                "Clause_21_4_1",
+                "JavaScript",
+                "15.9.1.15-1.js"),
+            StringComparison.OrdinalIgnoreCase);
+
+    private static string GetAssertHarnessSourcePath(string callerSourceFilePath)
+    {
+        var repoRoot = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(callerSourceFilePath)!, "..", "..", "..", ".."));
+        return Path.Combine(repoRoot, "Harness", "assert.js");
     }
 
     private Task VerifyWithSnapshot(string value, string sourceFilePath)
