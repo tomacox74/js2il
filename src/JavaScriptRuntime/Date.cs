@@ -554,7 +554,8 @@ namespace JavaScriptRuntime
                 return double.NaN;
             }
 
-            return -GetLocalDateTime().Offset.TotalMinutes;
+            var offsetMinutes = -GetLocalDateTime().Offset.TotalMinutes;
+            return offsetMinutes == 0d ? 0d : offsetMinutes;
         }
 
         public object getUTCDate() => GetUtcPart(static date => date.Day);
