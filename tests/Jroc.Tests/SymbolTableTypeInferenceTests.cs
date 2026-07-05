@@ -571,6 +571,35 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_StableParameters_FunctionDeclaration_PartialEvidenceInfersStablePositions()
+    {
+        var source = @"
+                function translate(matrix, dx, dy, dz) {
+                    return matrix[0][0] + dx + dy + dz;
+                }
+
+                const identity = [[1, 0], [0, 1]];
+                const origin = { v: [1, 2, 3] };
+
+                translate(identity, -origin.v[0], -origin.v[1], -origin.v[2]);
+                translate(identity, origin.v[0], origin.v[1], origin.v[2]);
+            ";
+
+        var symbolTable = BuildSymbolTable(source);
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "translate", StringComparison.Ordinal));
+
+        Assert.NotNull(functionScope);
+        Assert.Single(functionScope!.StableParameterClrTypes);
+        AssertStableParameterType(functionScope, 0, "matrix", typeof(JavaScriptRuntime.Array));
+        AssertObjectParameter(functionScope, "dx");
+        AssertObjectParameter(functionScope, "dy");
+        AssertObjectParameter(functionScope, "dz");
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_StableParameters_EscapedArrowKeepsObjectParameters()
     {
         var source = @"
@@ -755,6 +784,38 @@ public class SymbolTableTypeInferenceTests
             methodScope!,
             ("a", typeof(double)),
             ("b", typeof(double)));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_Dromaeo3dCube_TranslateAndMMultiInferPartialArrayParameters()
+    {
+        const string resourceName = "Jroc.Tests.Integration.JavaScript.Compile_Resources_Dromaeo_3d_Cube.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+
+        using var reader = new StreamReader(stream!);
+        var source = reader.ReadToEnd();
+        var symbolTable = BuildSymbolTable(source);
+
+        var translateScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "Translate", StringComparison.Ordinal));
+        var mMultiScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function
+            && s.Parent?.Kind == ScopeKind.Global
+            && string.Equals(s.Name, "MMulti", StringComparison.Ordinal));
+
+        Assert.NotNull(translateScope);
+        Assert.NotNull(mMultiScope);
+
+        AssertStableParameterType(translateScope!, 0, "M", typeof(JavaScriptRuntime.Array));
+        AssertObjectParameter(translateScope!, "Dx");
+        AssertObjectParameter(translateScope!, "Dy");
+        AssertObjectParameter(translateScope!, "Dz");
+
+        AssertStableParameterType(mMultiScope!, 0, "M1", typeof(JavaScriptRuntime.Array));
+        AssertStableParameterType(mMultiScope!, 1, "M2", typeof(JavaScriptRuntime.Array));
     }
 
     [Fact]
@@ -1175,6 +1236,20 @@ public class SymbolTableTypeInferenceTests
             Assert.True(binding!.IsStableType);
             Assert.Equal(clrType, binding.ClrType);
         }
+    }
+
+    private static void AssertStableParameterType(
+        Jroc.SymbolTables.Scope scope,
+        int index,
+        string name,
+        Type clrType)
+    {
+        Assert.True(scope.StableParameterClrTypes.TryGetValue(index, out var actualType), $"Expected stable parameter type for '{name}' at index {index}.");
+        Assert.Equal(clrType, actualType);
+
+        Assert.True(scope.Bindings.TryGetValue(name, out var binding), $"Expected binding for parameter '{name}'.");
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(clrType, binding.ClrType);
     }
 
     private static void AssertObjectParameter(Jroc.SymbolTables.Scope scope, string parameterName)

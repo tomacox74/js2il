@@ -69,7 +69,7 @@ public partial class SymbolTableBuilder
                 && parentMap.TryGetValue(candidate.Scope.AstNode, out var parent)
                 && parent is not Acornima.Ast.MethodDefinition)
             {
-                candidate.IsUnsafe = true;
+                candidate.IsCallableUnsafe = true;
             }
         }
 
@@ -116,7 +116,7 @@ public partial class SymbolTableBuilder
                     && candidatesByScope.TryGetValue(referencedScope, out var referencedCandidate)
                     && !IsDirectIdentifierCall(id, parent))
                 {
-                    referencedCandidate.IsUnsafe = true;
+                    referencedCandidate.IsCallableUnsafe = true;
                 }
 
                 if (binding?.DeclarationNode is ClassDeclaration classDecl
@@ -141,7 +141,7 @@ public partial class SymbolTableBuilder
             {
                 foreach (var methodCandidate in methodCandidates)
                 {
-                    methodCandidate.IsUnsafe = true;
+                    methodCandidate.IsCallableUnsafe = true;
                 }
             }
         });
@@ -149,7 +149,7 @@ public partial class SymbolTableBuilder
         var changed = false;
         foreach (var candidate in candidatesByScope.Values)
         {
-            if (candidate.IsUnsafe)
+            if (candidate.IsCallableUnsafe)
             {
                 continue;
             }
@@ -190,35 +190,48 @@ public partial class SymbolTableBuilder
             ParameterNames = parameterNames;
             InferredTypes = new Type?[parameterNames.Count];
             HasEvidence = new bool[parameterNames.Count];
+            IsParameterUnsafe = new bool[parameterNames.Count];
         }
 
         public Scope Scope { get; }
         public IReadOnlyList<string> ParameterNames { get; }
         public Type?[] InferredTypes { get; }
         public bool[] HasEvidence { get; }
-        public bool IsUnsafe { get; set; }
+        public bool[] IsParameterUnsafe { get; }
+        public bool IsCallableUnsafe { get; set; }
 
         public void RecordCall(CallExpression call, Scope callScope, SymbolTableBuilder builder)
         {
             if (call.Arguments.Count < ParameterNames.Count)
             {
-                IsUnsafe = true;
+                IsCallableUnsafe = true;
                 return;
             }
 
             for (var i = 0; i < ParameterNames.Count; i++)
             {
+                if (IsParameterUnsafe[i])
+                {
+                    continue;
+                }
+
+                if (call.Arguments[i] is SpreadElement)
+                {
+                    IsCallableUnsafe = true;
+                    return;
+                }
+
                 if (call.Arguments[i] is not Node arg)
                 {
-                    IsUnsafe = true;
-                    return;
+                    MarkParameterUnsafe(i);
+                    continue;
                 }
 
                 var argType = builder.InferStableParameterArgumentClrType(arg, callScope);
                 if (!IsSupportedStableParameterType(argType))
                 {
-                    IsUnsafe = true;
-                    return;
+                    MarkParameterUnsafe(i);
+                    continue;
                 }
 
                 if (!HasEvidence[i])
@@ -228,10 +241,16 @@ public partial class SymbolTableBuilder
                 }
                 else if (InferredTypes[i] != argType)
                 {
-                    IsUnsafe = true;
-                    return;
+                    MarkParameterUnsafe(i);
                 }
             }
+        }
+
+        private void MarkParameterUnsafe(int index)
+        {
+            IsParameterUnsafe[index] = true;
+            HasEvidence[index] = false;
+            InferredTypes[index] = null;
         }
     }
 
@@ -573,7 +592,7 @@ public partial class SymbolTableBuilder
         {
             if (candidatesByScope.TryGetValue(methodScope, out var candidate))
             {
-                candidate.IsUnsafe = true;
+                candidate.IsCallableUnsafe = true;
             }
         }
     }
