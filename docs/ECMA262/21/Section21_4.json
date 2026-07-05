@@ -252,13 +252,13 @@
     {
       "clause": "21.4.3.1",
       "title": "Date.now ( )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-date.now"
     },
     {
       "clause": "21.4.3.2",
       "title": "Date.parse ( string )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-date.parse"
     },
     {
@@ -336,7 +336,7 @@
     {
       "clause": "21.4.4.10",
       "title": "Date.prototype.getTime ( )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.gettime"
     },
     {
@@ -492,7 +492,7 @@
     {
       "clause": "21.4.4.36",
       "title": "Date.prototype.toISOString ( )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.toisostring"
     },
     {
@@ -583,7 +583,7 @@
   "support": {
     "entries": [
       {
-        "clause": "21.4.1",
+        "clause": "21.4.2",
         "feature": "new Date() (current time)",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date-constructor",
@@ -593,7 +593,7 @@
         "notes": "Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally."
       },
       {
-        "clause": "21.4.1",
+        "clause": "21.4.2",
         "feature": "new Date(milliseconds)",
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date-constructor",
@@ -601,12 +601,10 @@
           "tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
         ],
         "test262Paths": [
-          "test/built-ins/Array/prototype/every/15.4.4.16-1-11.js",
-          "test/built-ins/Array/prototype/map/15.4.4.19-1-11.js",
-          "test/built-ins/Array/prototype/filter/15.4.4.20-1-11.js",
-          "test/built-ins/Array/prototype/reduce/15.4.4.21-1-11.js"
+          "test/built-ins/Date/prototype/valueOf/S9.4_A3_T1.js",
+          "test/built-ins/Date/prototype/getTime/this-value-valid-date.js"
         ],
-        "notes": "Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date."
+        "notes": "Constructs from milliseconds since Unix epoch; numeric input is TimeClipped, invalid time values propagate as NaN, and Date instances satisfy instanceof Date."
       },
       {
         "clause": "21.4.3.1",
@@ -614,7 +612,11 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.now",
         "testScripts": [
-          "tests/Jroc.Tests/Date/ExecutionTests.cs"
+          "tests/Jroc.Test262.Tests/built-ins/Date/now/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/now/15.9.4.4-0-4.js",
+          "test/built-ins/Date/now/name.js"
         ],
         "notes": "Returns current time in milliseconds since Unix epoch as a number (boxed double)."
       },
@@ -624,8 +626,14 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.parse",
         "testScripts": [
-          "tests/Jroc.Tests/Date/ExecutionTests.cs",
-          "tests/Jroc.Tests/Date/JavaScript/Date_Parse_IsoString.js"
+          "tests/Jroc.Test262.Tests/built-ins/Date/parse/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/parse/year-zero.js",
+          "test/built-ins/Date/parse/prop-desc.js",
+          "test/built-ins/Date/parse/not-a-constructor.js",
+          "test/built-ins/Date/parse/name.js",
+          "test/built-ins/Date/parse/length.js"
         ],
         "notes": "Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double)."
       },
@@ -635,7 +643,11 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.gettime",
         "testScripts": [
-          "tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
+          "tests/Jroc.Test262.Tests/built-ins/Date/prototype/getTime/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/prototype/getTime/this-value-valid-date.js",
+          "test/built-ins/Date/prototype/getTime/length.js"
         ],
         "notes": "Returns milliseconds since Unix epoch as a number (boxed double)."
       },
@@ -645,7 +657,13 @@
         "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.toisostring",
         "testScripts": [
-          "tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
+          "tests/Jroc.Test262.Tests/built-ins/Date/prototype/toISOString/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/Date/prototype/toISOString/15.9.5.43-0-16.js",
+          "test/built-ins/Date/prototype/toISOString/15.9.5.43-0-5.js",
+          "test/built-ins/Date/prototype/toISOString/15.9.5.43-0-6.js",
+          "test/built-ins/Date/prototype/toISOString/15.9.5.43-0-7.js"
         ],
         "notes": "Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'."
       },
@@ -675,10 +693,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.getfullyear",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.2.1_A2_T5.js"
+          "tests/Jroc.Test262.Tests/built-ins/Date/prototype/getFullYear/ExecutionTests.cs"
         ],
         "test262Paths": [
-          "test/built-ins/Object/S15.2.2.1_A2_T5.js"
+          "test/built-ins/Date/prototype/getFullYear/prop-desc.js",
+          "test/built-ins/Date/prototype/getFullYear/this-value-valid-date.js"
         ],
         "notes": "Implemented as a Date instance method returning the UTC calendar year from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited."
       },
@@ -688,10 +707,11 @@
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-date.prototype.getmonth",
         "testScripts": [
-          "tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.2.1_A2_T5.js"
+          "tests/Jroc.Test262.Tests/built-ins/Date/prototype/getMonth/ExecutionTests.cs"
         ],
         "test262Paths": [
-          "test/built-ins/Object/S15.2.2.1_A2_T5.js"
+          "test/built-ins/Date/prototype/getMonth/prop-desc.js",
+          "test/built-ins/Date/prototype/getMonth/this-value-valid-date.js"
         ],
         "notes": "Implemented as a Date instance method returning the UTC zero-based month from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited."
       }

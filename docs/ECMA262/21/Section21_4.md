@@ -4,7 +4,7 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-26T08:27:14Z
+> Last generated (UTC): 2026-07-05T14:20:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -54,8 +54,8 @@
 | 21.4.2 | The Date Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date-constructor) |
 | 21.4.2.1 | Date ( ... values ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date) |
 | 21.4.3 | Properties of the Date Constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-date-constructor) |
-| 21.4.3.1 | Date.now ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.now) |
-| 21.4.3.2 | Date.parse ( string ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.parse) |
+| 21.4.3.1 | Date.now ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-date.now) |
+| 21.4.3.2 | Date.parse ( string ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-date.parse) |
 | 21.4.3.3 | Date.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype) |
 | 21.4.3.4 | Date.UTC ( year [ , month [ , date [ , hours [ , minutes [ , seconds [ , ms ] ] ] ] ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.utc) |
 | 21.4.4 | Properties of the Date Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-date-prototype-object) |
@@ -68,7 +68,7 @@
 | 21.4.4.7 | Date.prototype.getMinutes ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getminutes) |
 | 21.4.4.8 | Date.prototype.getMonth ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getmonth) |
 | 21.4.4.9 | Date.prototype.getSeconds ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getseconds) |
-| 21.4.4.10 | Date.prototype.getTime ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettime) |
+| 21.4.4.10 | Date.prototype.getTime ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettime) |
 | 21.4.4.11 | Date.prototype.getTimezoneOffset ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettimezoneoffset) |
 | 21.4.4.12 | Date.prototype.getUTCDate ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getutcdate) |
 | 21.4.4.13 | Date.prototype.getUTCDay ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getutcday) |
@@ -94,7 +94,7 @@
 | 21.4.4.33 | Date.prototype.setUTCMonth ( month [ , date ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.setutcmonth) |
 | 21.4.4.34 | Date.prototype.setUTCSeconds ( sec [ , ms ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.setutcseconds) |
 | 21.4.4.35 | Date.prototype.toDateString ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.todatestring) |
-| 21.4.4.36 | Date.prototype.toISOString ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.toisostring) |
+| 21.4.4.36 | Date.prototype.toISOString ( ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.toisostring) |
 | 21.4.4.37 | Date.prototype.toJSON ( key ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.tojson) |
 | 21.4.4.38 | Date.prototype.toLocaleDateString ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.tolocaledatestring) |
 | 21.4.4.39 | Date.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-date.prototype.tolocalestring) |
@@ -114,52 +114,47 @@
 
 Feature-level support tracking with repo test references and optional test262 evidence.
 
-### 21.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-overview-of-date-objects-and-definitions-of-abstract-operations))
-
-| Feature name | Status | Test scripts | test262 evidence | Notes |
-|---|---|---|---|---|
-| new Date() (current time) | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
-| new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Array/prototype/every/15.4.4.16-1-11.js`<br>`test/built-ins/Array/prototype/map/15.4.4.19-1-11.js`<br>`test/built-ins/Array/prototype/filter/15.4.4.20-1-11.js`<br>`test/built-ins/Array/prototype/reduce/15.4.4.21-1-11.js` | Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior. The Date constructor is exposed as a global binding and Date instances satisfy instanceof Date. |
-
 ### 21.4.2 ([tc39.es](https://tc39.es/ecma262/#sec-date-constructor))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | Date constructor basics (2-7 numeric arguments, Date copy, and TimeClip -0 normalization) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/ExecutionTests.cs` | `test/built-ins/Date/construct_with_date.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T1.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T2.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T3.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T4.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T5.js`<br>`test/built-ins/Date/S15.9.3.1_A1_T6.js`<br>`test/built-ins/Date/TimeClip_negative_zero.js` | Checked-in coverage now includes representative 2-7 argument Date construction, copying an existing Date instance without observable user coercion, and TimeClip normalization of -0 to +0. Broader Date parsing, time-zone, and prototype method semantics remain limited. |
+| new Date() (current time) | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs` |  | Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally. |
+| new Date(milliseconds) | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) | `test/built-ins/Date/prototype/valueOf/S9.4_A3_T1.js`<br>`test/built-ins/Date/prototype/getTime/this-value-valid-date.js` | Constructs from milliseconds since Unix epoch; numeric input is TimeClipped, invalid time values propagate as NaN, and Date instances satisfy instanceof Date. |
 
 ### 21.4.3.1 ([tc39.es](https://tc39.es/ecma262/#sec-date.now))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.now() | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs` |  | Returns current time in milliseconds since Unix epoch as a number (boxed double). |
+| Date.now() | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/now/ExecutionTests.cs` | `test/built-ins/Date/now/15.9.4.4-0-4.js`<br>`test/built-ins/Date/now/name.js` | Returns current time in milliseconds since Unix epoch as a number (boxed double). |
 
 ### 21.4.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-date.parse))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.parse(string) | Supported | `tests/Jroc.Tests/Date/ExecutionTests.cs`<br>[`Date_Parse_IsoString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Parse_IsoString.js) |  | Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double). |
+| Date.parse(string) | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/parse/ExecutionTests.cs` | `test/built-ins/Date/parse/year-zero.js`<br>`test/built-ins/Date/parse/prop-desc.js`<br>`test/built-ins/Date/parse/not-a-constructor.js`<br>`test/built-ins/Date/parse/name.js`<br>`test/built-ins/Date/parse/length.js` | Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double). |
 
 ### 21.4.4.4 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getfullyear))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.prototype.getFullYear | Supported with Limitations | [`S15.2.2.1_A2_T5.js`](../../../tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.2.1_A2_T5.js) | `test/built-ins/Object/S15.2.2.1_A2_T5.js` | Implemented as a Date instance method returning the UTC calendar year from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited. |
+| Date.prototype.getFullYear | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/getFullYear/ExecutionTests.cs` | `test/built-ins/Date/prototype/getFullYear/prop-desc.js`<br>`test/built-ins/Date/prototype/getFullYear/this-value-valid-date.js` | Implemented as a Date instance method returning the UTC calendar year from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited. |
 
 ### 21.4.4.8 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.getmonth))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.prototype.getMonth | Supported with Limitations | [`S15.2.2.1_A2_T5.js`](../../../tests/Jroc.Test262.Tests/built-ins/Object/JavaScript/S15.2.2.1_A2_T5.js) | `test/built-ins/Object/S15.2.2.1_A2_T5.js` | Implemented as a Date instance method returning the UTC zero-based month from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited. |
+| Date.prototype.getMonth | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/getMonth/ExecutionTests.cs` | `test/built-ins/Date/prototype/getMonth/prop-desc.js`<br>`test/built-ins/Date/prototype/getMonth/this-value-valid-date.js` | Implemented as a Date instance method returning the UTC zero-based month from the internal millisecond timestamp. Broader local-time and invalid-date edge cases remain limited. |
 
 ### 21.4.4.10 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.gettime))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.prototype.getTime | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns milliseconds since Unix epoch as a number (boxed double). |
+| Date.prototype.getTime | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/getTime/ExecutionTests.cs` | `test/built-ins/Date/prototype/getTime/this-value-valid-date.js`<br>`test/built-ins/Date/prototype/getTime/length.js` | Returns milliseconds since Unix epoch as a number (boxed double). |
 
 ### 21.4.4.36 ([tc39.es](https://tc39.es/ecma262/#sec-date.prototype.toisostring))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| Date.prototype.toISOString | Supported | [`Date_Construct_FromMs_GetTime_ToISOString.js`](../../../tests/Jroc.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js) |  | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
+| Date.prototype.toISOString | Supported | `tests/Jroc.Test262.Tests/built-ins/Date/prototype/toISOString/ExecutionTests.cs` | `test/built-ins/Date/prototype/toISOString/15.9.5.43-0-16.js`<br>`test/built-ins/Date/prototype/toISOString/15.9.5.43-0-5.js`<br>`test/built-ins/Date/prototype/toISOString/15.9.5.43-0-6.js`<br>`test/built-ins/Date/prototype/toISOString/15.9.5.43-0-7.js` | Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'. |
 

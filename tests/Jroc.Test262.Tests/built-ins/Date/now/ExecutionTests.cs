@@ -9,4 +9,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.9.4.4-0-4")]
     public Task _15_9_4_4_0_4()
         => ExecutionTestFromFile("15.9.4.4-0-4");
+
+    [Fact(DisplayName = "name")]
+    public Task name()
+        => ExecutionTestFromFile("name");
 }

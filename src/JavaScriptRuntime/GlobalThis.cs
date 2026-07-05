@@ -84,6 +84,16 @@ namespace JavaScriptRuntime
             var thisValue = RuntimeServices.GetCurrentThis();
             return JavaScriptRuntime.Number.ThisNumberValue(thisValue);
         };
+        private static readonly Func<object[], object?[]?, object?> _datePrototypeGetTimeValue = static (_, __) =>
+            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).getTime();
+        private static readonly Func<object[], object?[]?, object?> _datePrototypeGetFullYearValue = static (_, __) =>
+            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).getFullYear();
+        private static readonly Func<object[], object?[]?, object?> _datePrototypeGetMonthValue = static (_, __) =>
+            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).getMonth();
+        private static readonly Func<object[], object?[]?, object?> _datePrototypeToISOStringValue = static (_, __) =>
+            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).toISOString();
+        private static readonly Func<object[], object?[]?, object?> _datePrototypeValueOfValue = static (_, __) =>
+            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).valueOf();
 
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
@@ -260,6 +270,7 @@ namespace JavaScriptRuntime
         private static readonly object _numberPrototypeValue = new JsObject();
         private static readonly object _booleanPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
+        private static readonly object _datePrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
@@ -542,6 +553,7 @@ namespace JavaScriptRuntime
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asIntN", _bigIntAsIntNValue, 2d);
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asUintN", _bigIntAsUintNValue, 2d);
             DefineDateConstructorMetadata();
+            ConfigureDateIntrinsicSurface();
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_parseIntValue);
@@ -899,6 +911,7 @@ namespace JavaScriptRuntime
 
         private static void DefineDateConstructorMetadata()
         {
+            ConfigureConstructorPrototypeSurface(typeof(JavaScriptRuntime.Date), _datePrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "name", new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
@@ -915,6 +928,22 @@ namespace JavaScriptRuntime
                 Writable = false,
                 Value = 7d
             });
+        }
+
+        private static void ConfigureDateIntrinsicSurface()
+        {
+            DefineIntrinsicToStringTagProperty(_datePrototypeValue, "Date");
+            DefineBuiltinFunctionProperty(typeof(JavaScriptRuntime.Date), "now", (Func<object[], object?[]?, object?>)((_, __) => JavaScriptRuntime.Date.now()), 0d);
+            DefineBuiltinFunctionProperty(typeof(JavaScriptRuntime.Date), "parse", (Func<object[], object?[]?, object?>)((_, args) =>
+            {
+                var input = args != null && args.Length > 0 ? args[0] : null;
+                return JavaScriptRuntime.Date.parse(DotNet2JSConversions.ToString(input));
+            }), 1d);
+            DefineBuiltinFunctionProperty(_datePrototypeValue, "getTime", _datePrototypeGetTimeValue, 0d);
+            DefineBuiltinFunctionProperty(_datePrototypeValue, "getFullYear", _datePrototypeGetFullYearValue, 0d);
+            DefineBuiltinFunctionProperty(_datePrototypeValue, "getMonth", _datePrototypeGetMonthValue, 0d);
+            DefineBuiltinFunctionProperty(_datePrototypeValue, "toISOString", _datePrototypeToISOStringValue, 0d);
+            DefineBuiltinFunctionProperty(_datePrototypeValue, "valueOf", _datePrototypeValueOfValue, 0d);
         }
 
         private static void DefineIntrinsicDataProperty(object target, string key, object? value)
@@ -1763,6 +1792,7 @@ namespace JavaScriptRuntime
         internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
         internal static object SymbolPrototypeValue => _symbolPrototypeValue;
+        internal static object DatePrototypeValue => _datePrototypeValue;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;
         internal static object EvalErrorPrototypeValue => _evalErrorPrototypeValue;
         internal static object RangeErrorPrototypeValue => _rangeErrorPrototypeValue;

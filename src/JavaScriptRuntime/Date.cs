@@ -17,48 +17,53 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Date", IntrinsicCallKind.DateToString)]
     public class Date
     {
-        private long _msSinceEpoch; // milliseconds since Unix epoch (UTC)
+        private double _msSinceEpoch; // milliseconds since Unix epoch (UTC), or NaN for invalid dates
 
-        private static long NowMs() => System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        private static double NowMs() => System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-        private static long CoerceToMs(object? value)
+        private static double TimeClipLike(double time)
+        {
+            if (double.IsNaN(time) || double.IsInfinity(time) || System.Math.Abs(time) > 8_640_000_000_000_000d)
+            {
+                return double.NaN;
+            }
+
+            var clipped = System.Math.Truncate(time);
+            return clipped == 0d ? 0d : clipped;
+        }
+
+        private static double CoerceToMs(object? value)
         {
             if (value == null) return NowMs(); // undefined -> now (best-effort minimal behavior)
             switch (value)
             {
                 case double d:
-                    if (double.IsNaN(d)) return 0; // treat NaN as +0 for minimal behavior
-                    return (long)d;
+                    return TimeClipLike(d);
                 case float f:
-                    if (float.IsNaN(f)) return 0;
-                    return (long)f;
-                case int i: return i;
-                case long l: return l;
-                case short s: return s;
-                case byte b: return b;
-                case bool bo: return bo ? 1 : 0;
-                case JsNull: return 0; // Number(null) === +0
+                    return TimeClipLike(f);
+                case int i: return TimeClipLike(i);
+                case long l: return TimeClipLike(l);
+                case short s: return TimeClipLike(s);
+                case byte b: return TimeClipLike(b);
+                case bool bo: return TimeClipLike(bo ? 1 : 0);
+                case JsNull: return 0d;
                 case Date date: return date._msSinceEpoch;
                 case string str:
-                    // Try parse as number first, then as date string
                     if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out var nd))
                     {
-                        if (double.IsNaN(nd)) return 0;
-                        return (long)nd;
+                        return TimeClipLike(nd);
                     }
-                    var parsed = ParseInternal(str);
-                    if (double.IsNaN(parsed)) return 0;
-                    return (long)parsed;
+                    return ParseInternal(str);
                 default:
                     try
                     {
                         var s = DotNet2JSConversions.ToString(value);
                         var p = ParseInternal(s);
-                        if (!double.IsNaN(p)) return (long)p;
-                        if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var nd2)) return (long)nd2;
+                        if (!double.IsNaN(p)) return p;
+                        if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var nd2)) return TimeClipLike(nd2);
                     }
                     catch { }
-                    return 0;
+                    return double.NaN;
             }
         }
 
@@ -66,16 +71,19 @@ namespace JavaScriptRuntime
         public Date()
         {
             _msSinceEpoch = NowMs();
+            PrototypeChain.SetPrototype(this, GlobalThis.DatePrototypeValue);
         }
 
         public Date(object? arg)
         {
             _msSinceEpoch = CoerceToMs(arg);
+            PrototypeChain.SetPrototype(this, GlobalThis.DatePrototypeValue);
         }
 
-        private Date(long msSinceEpoch, bool _)
+        private Date(double msSinceEpoch, bool _)
         {
             _msSinceEpoch = msSinceEpoch;
+            PrototypeChain.SetPrototype(this, GlobalThis.DatePrototypeValue);
         }
 
         public static object Construct()
@@ -112,6 +120,10 @@ namespace JavaScriptRuntime
         private static double ParseInternal(string? input)
         {
             if (string.IsNullOrWhiteSpace(input)) return double.NaN;
+            if (input.StartsWith("-000000", StringComparison.Ordinal))
+            {
+                return double.NaN;
+            }
             // Prefer DateTimeOffset parsing with invariant + Assume/Adjust to UTC
             if (System.DateTimeOffset.TryParse(
                 input,
@@ -124,7 +136,7 @@ namespace JavaScriptRuntime
             return double.NaN;
         }
 
-        private static long CoerceComponentsToMs(object[] args)
+        private static double CoerceComponentsToMs(object[] args)
         {
             double year = args.Length > 0 ? TypeUtilities.ToNumber(args[0]) : double.NaN;
             double month = args.Length > 1 ? TypeUtilities.ToNumber(args[1]) : double.NaN;
@@ -142,7 +154,7 @@ namespace JavaScriptRuntime
                 || double.IsNaN(seconds)
                 || double.IsNaN(milliseconds))
             {
-                return 0;
+                return double.NaN;
             }
 
             var yearInteger = (int)System.Math.Truncate(year);
@@ -160,11 +172,11 @@ namespace JavaScriptRuntime
                     .AddMinutes((int)System.Math.Truncate(minutes))
                     .AddSeconds((int)System.Math.Truncate(seconds))
                     .AddMilliseconds(System.Math.Truncate(milliseconds));
-                return epoch.ToUnixTimeMilliseconds();
+                return TimeClipLike(epoch.ToUnixTimeMilliseconds());
             }
             catch
             {
-                return 0;
+                return double.NaN;
             }
         }
 
@@ -176,12 +188,22 @@ namespace JavaScriptRuntime
 
         public object getFullYear()
         {
-            return (double)System.DateTimeOffset.FromUnixTimeMilliseconds(_msSinceEpoch).UtcDateTime.Year;
+            if (double.IsNaN(_msSinceEpoch))
+            {
+                return double.NaN;
+            }
+
+            return (double)System.DateTimeOffset.FromUnixTimeMilliseconds((long)_msSinceEpoch).UtcDateTime.Year;
         }
 
         public object getMonth()
         {
-            return (double)(System.DateTimeOffset.FromUnixTimeMilliseconds(_msSinceEpoch).UtcDateTime.Month - 1);
+            if (double.IsNaN(_msSinceEpoch))
+            {
+                return double.NaN;
+            }
+
+            return (double)(System.DateTimeOffset.FromUnixTimeMilliseconds((long)_msSinceEpoch).UtcDateTime.Month - 1);
         }
 
         public object valueOf()
@@ -189,11 +211,21 @@ namespace JavaScriptRuntime
             return (double)_msSinceEpoch;
         }
 
+        internal static Date ThisDateValue(object? value)
+        {
+            if (value is Date date)
+            {
+                return date;
+            }
+
+            throw new TypeError("Date.prototype method called on incompatible receiver");
+        }
+
         public string toISOString()
         {
             try
             {
-                var dto = System.DateTimeOffset.FromUnixTimeMilliseconds(_msSinceEpoch);
+                var dto = System.DateTimeOffset.FromUnixTimeMilliseconds((long)_msSinceEpoch);
                 return dto.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
             }
             catch
