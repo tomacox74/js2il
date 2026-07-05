@@ -123,7 +123,7 @@ public abstract class InMemoryExecutionTestsBase
             testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
 
         return ShouldInjectAssertHarness(scriptPath)
-            ? ["node_modules\\assert\\index"]
+            ? ["node_modules/assert/index"]
             : null;
     }
 
