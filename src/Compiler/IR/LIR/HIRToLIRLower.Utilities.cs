@@ -55,6 +55,11 @@ public sealed partial class HIRToLIRLowerer
             return lexicalValueTemp;
         }
 
+        if (_scope?.MayUseBoundWithObject != true)
+        {
+            return lexicalValueTemp;
+        }
+
         var nameTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, nameTemp));
         DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));

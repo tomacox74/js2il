@@ -35,6 +35,7 @@ namespace Jroc.SymbolTables
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
         private string _currentModulePath = string.Empty;
+        private int _activeWithDepth;
 
         private static BindingInfo? TryResolveBinding(Scope scope, string name)
         {
@@ -879,6 +880,7 @@ namespace Jroc.SymbolTables
                             // Create a pseudo-scope for the method if we compile methods as functions later
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
+                            methodScope.MayUseBoundWithObject = _activeWithDepth > 0;
 
                             // Class methods can be async/generators; propagate these flags so type generation
                             // and IL lowering can emit the correct state-machine fields.
@@ -1019,7 +1021,7 @@ namespace Jroc.SymbolTables
                         {
                             var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
                             var methodScope = new Scope(mname, ScopeKind.Function, classExprScope, mfunc);
-
+                            methodScope.MayUseBoundWithObject = _activeWithDepth > 0;
                             methodScope.IsAsync = mfunc.Async;
                             if (mfunc.Async)
                             {
@@ -1174,6 +1176,7 @@ namespace Jroc.SymbolTables
                     }
                     // Create the scope (constructor links it to the parent); no manual add to avoid duplicates
                     var funcExprScope = new Scope(funcExprName, ScopeKind.Function, currentScope, funcExpr);
+                    funcExprScope.MayUseBoundWithObject = _activeWithDepth > 0;
                     funcExprScope.IsAsync = funcExpr.Async;
                     if (funcExpr.Async)
                     {
@@ -1469,6 +1472,7 @@ namespace Jroc.SymbolTables
                     var col1Based = arrowFunc.Location.Start.Column + 1;
                     var arrowName = $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{col1Based}";
                     var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
+                    arrowScope.MayUseBoundWithObject = _activeWithDepth > 0;
                     arrowScope.IsAsync = arrowFunc.Async;
                     if (arrowFunc.Async)
                     {
@@ -1843,6 +1847,18 @@ namespace Jroc.SymbolTables
                     if (tryStmt.Finalizer != null)
                     {
                         BuildScopeRecursive(globalScope, tryStmt.Finalizer, currentScope);
+                    }
+                    break;
+                case WithStatement withStmt:
+                    BuildScopeRecursive(globalScope, withStmt.Object, currentScope);
+                    _activeWithDepth++;
+                    try
+                    {
+                        BuildScopeRecursive(globalScope, withStmt.Body, currentScope);
+                    }
+                    finally
+                    {
+                        _activeWithDepth--;
                     }
                     break;
                 default:

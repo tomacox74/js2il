@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x248b
+				// Method begins at RVA 0x2493
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2494
+				// Method begins at RVA 0x249c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x249d
+				// Method begins at RVA 0x24a5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -82,7 +82,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24af
+					// Method begins at RVA 0x24b7
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -102,7 +102,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x24b8
+					// Method begins at RVA 0x24c0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -120,7 +120,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x24a6
+				// Method begins at RVA 0x24ae
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -177,7 +177,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2478
+			// Method begins at RVA 0x2480
 			// Header size: 1
 			// Code size: 9 (0x9)
 			.maxstack 8
@@ -197,7 +197,7 @@
 			)
 			// Method begins at RVA 0x22e8
 			// Header size: 12
-			// Code size: 372 (0x174)
+			// Code size: 377 (0x179)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges/Scope_log/Block_L15C8,
@@ -209,8 +209,9 @@
 				[6] object,
 				[7] string,
 				[8] object,
-				[9] float64,
-				[10] object
+				[9] bool,
+				[10] float64,
+				[11] object
 			)
 
 			IL_0000: ldstr "console"
@@ -235,7 +236,7 @@
 				IL_0037: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
 				IL_003c: throw
 
-				IL_003d: leave IL_00fc
+				IL_003d: leave IL_0101
 			} // end .try
 			catch [System.Runtime]System.Exception
 			{
@@ -294,56 +295,57 @@
 				IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 				IL_00d3: stloc.s 8
 				IL_00d5: ldloc.s 8
-				IL_00d7: ldstr "includes"
+				IL_00d7: castclass [System.Runtime]System.String
 				IL_00dc: ldstr "without a setter"
-				IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_00e6: stloc.s 8
+				IL_00e1: call bool [JavaScriptRuntime]JavaScriptRuntime.String::Includes(string, string)
+				IL_00e6: stloc.s 9
 				IL_00e8: ldloc.s 6
 				IL_00ea: ldstr "log"
-				IL_00ef: ldloc.s 8
-				IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_00f6: pop
-				IL_00f7: leave IL_00fc
+				IL_00ef: ldloc.s 9
+				IL_00f1: box [System.Runtime]System.Boolean
+				IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_00fb: pop
+				IL_00fc: leave IL_0101
 			} // end handler
 
-			IL_00fc: ldarg.0
-			IL_00fd: ldc.r8 7
-			IL_0106: box [System.Runtime]System.Double
-			IL_010b: callvirt instance object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_set_writeOnly(object)
-			IL_0110: pop
-			IL_0111: ldstr "console"
-			IL_0116: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_011b: stloc.s 8
-			IL_011d: ldloc.s 8
-			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0124: stloc.s 8
-			IL_0126: ldloc.s 8
-			IL_0128: ldstr "log"
-			IL_012d: ldarg.0
-			IL_012e: ldfld object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::saved
-			IL_0133: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0138: pop
-			IL_0139: ldstr "console"
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0143: stloc.s 8
-			IL_0145: ldloc.s 8
-			IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_014c: stloc.s 8
-			IL_014e: ldarg.0
-			IL_014f: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_get_readOnly()
-			IL_0154: stloc.s 9
-			IL_0156: ldloc.s 9
-			IL_0158: box [System.Runtime]System.Double
-			IL_015d: stloc.s 10
-			IL_015f: ldloc.s 8
-			IL_0161: ldstr "log"
-			IL_0166: ldloc.s 10
-			IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_016d: pop
-			IL_016e: ldnull
-			IL_016f: stloc.s 5
-			IL_0171: ldloc.s 5
-			IL_0173: ret
+			IL_0101: ldarg.0
+			IL_0102: ldc.r8 7
+			IL_010b: box [System.Runtime]System.Double
+			IL_0110: callvirt instance object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_set_writeOnly(object)
+			IL_0115: pop
+			IL_0116: ldstr "console"
+			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0120: stloc.s 6
+			IL_0122: ldloc.s 6
+			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0129: stloc.s 6
+			IL_012b: ldloc.s 6
+			IL_012d: ldstr "log"
+			IL_0132: ldarg.0
+			IL_0133: ldfld object Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::saved
+			IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_013d: pop
+			IL_013e: ldstr "console"
+			IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0148: stloc.s 6
+			IL_014a: ldloc.s 6
+			IL_014c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0151: stloc.s 6
+			IL_0153: ldarg.0
+			IL_0154: callvirt instance float64 Modules.Classes_ClassPrivateAccessor_EdgeCases_Log/AccessorEdges::__jroc_priv_get_readOnly()
+			IL_0159: stloc.s 10
+			IL_015b: ldloc.s 10
+			IL_015d: box [System.Runtime]System.Double
+			IL_0162: stloc.s 11
+			IL_0164: ldloc.s 6
+			IL_0166: ldstr "log"
+			IL_016b: ldloc.s 11
+			IL_016d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0172: pop
+			IL_0173: ldnull
+			IL_0174: stloc.s 5
+			IL_0176: ldloc.s 5
+			IL_0178: ret
 		} // end of method AccessorEdges::log
 
 	} // end of class AccessorEdges
@@ -355,7 +357,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2482
+			// Method begins at RVA 0x248a
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -670,7 +672,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24c1
+		// Method begins at RVA 0x24c9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

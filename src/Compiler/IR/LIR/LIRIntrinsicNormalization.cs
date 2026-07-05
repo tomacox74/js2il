@@ -57,6 +57,7 @@ internal static class LIRIntrinsicNormalization
             || ins is LIRLoadScopeField
             || ins is LIRLoadLeafScopeField
             || ins is LIRLoadParentScopeField
+            || ins is LIRCallIntrinsicStatic
             || ins is LIRCopyTemp))
         {
             switch (instruction)
@@ -110,6 +111,19 @@ internal static class LIRIntrinsicNormalization
                     }
                     break;
 
+                case LIRCallIntrinsicStatic
+                    {
+                        IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                        MethodName: nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible)
+                    } requireObjectCoercible:
+                    if (requireObjectCoercible.Result.Index >= 0
+                        && requireObjectCoercible.Arguments.Count == 1
+                        && knownSpecializedReceiverClrTypes.TryGetValue(requireObjectCoercible.Arguments[0].Index, out var coercedReceiverType))
+                    {
+                        knownSpecializedReceiverClrTypes[requireObjectCoercible.Result.Index] = coercedReceiverType;
+                    }
+                    break;
+
                 case LIRCopyTemp copyTemp:
                     if (copyTemp.Destination.Index >= 0
                         && knownSpecializedReceiverClrTypes.TryGetValue(copyTemp.Source.Index, out var srcClrType))
@@ -129,6 +143,33 @@ internal static class LIRIntrinsicNormalization
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
             var instruction = methodBody.Instructions[i];
+
+            if (instruction is LIRCopyTemp copyTemp)
+            {
+                if (copyTemp.Destination.Index >= 0
+                    && knownSpecializedReceiverClrTypes.TryGetValue(copyTemp.Source.Index, out var copiedReceiverType))
+                {
+                    knownSpecializedReceiverClrTypes[copyTemp.Destination.Index] = copiedReceiverType;
+                }
+
+                if (copyTemp.Destination.Index >= 0
+                    && knownConstStrings.TryGetValue(copyTemp.Source.Index, out var copiedConstString))
+                {
+                    knownConstStrings[copyTemp.Destination.Index] = copiedConstString;
+                }
+            }
+
+            if (instruction is LIRCallIntrinsicStatic
+                {
+                    IntrinsicName: nameof(JavaScriptRuntime.ObjectRuntime),
+                    MethodName: nameof(JavaScriptRuntime.ObjectRuntime.RequireObjectCoercible)
+                } requireObjectCoercible
+                && requireObjectCoercible.Result.Index >= 0
+                && requireObjectCoercible.Arguments.Count == 1
+                && knownSpecializedReceiverClrTypes.TryGetValue(requireObjectCoercible.Arguments[0].Index, out var coercedReceiverType))
+            {
+                knownSpecializedReceiverClrTypes[requireObjectCoercible.Result.Index] = coercedReceiverType;
+            }
 
             if (instruction is LIRGetLength getLength)
             {
@@ -286,6 +327,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember0 callMember0)
             {
+                if (TryNormalizeArrayMemberCall(
+                        methodBody,
+                        i,
+                        callMember0.Receiver,
+                        callMember0.MethodName,
+                        Array.Empty<TempVariable>(),
+                        callMember0.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember0.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
                     || !TryResolveSafeStringIntrinsicReturnClrType(methodBody, callMember0.MethodName, Array.Empty<TempVariable>(), out var returnClrType))
@@ -309,6 +362,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember1 callMember1)
             {
+                if (TryNormalizeArrayMemberCall(
+                        methodBody,
+                        i,
+                        callMember1.Receiver,
+                        callMember1.MethodName,
+                        new[] { callMember1.A0 },
+                        callMember1.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
                 if (knownSpecializedReceiverClrTypes.TryGetValue(callMember1.Receiver.Index, out var stringReceiverType)
                     && stringReceiverType == typeof(string)
                     && TryResolveSafeStringIntrinsicReturnClrType(methodBody, callMember1.MethodName, new[] { callMember1.A0 }, out var stringReturnClrType))
@@ -346,6 +411,18 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRCallMember2 callMember2)
             {
+                if (TryNormalizeArrayMemberCall(
+                        methodBody,
+                        i,
+                        callMember2.Receiver,
+                        callMember2.MethodName,
+                        new[] { callMember2.A0, callMember2.A1 },
+                        callMember2.Result,
+                        knownSpecializedReceiverClrTypes))
+                {
+                    continue;
+                }
+
                 if (!knownSpecializedReceiverClrTypes.TryGetValue(callMember2.Receiver.Index, out var receiverType)
                     || receiverType != typeof(string)
                     || !TryResolveSafeStringIntrinsicReturnClrType(methodBody, callMember2.MethodName, new[] { callMember2.A0, callMember2.A1 }, out var returnClrType))
@@ -365,6 +442,18 @@ internal static class LIRIntrinsicNormalization
                 }
 
                 continue;
+            }
+
+            if (instruction is LIRCallMember3 callMember3)
+            {
+                TryNormalizeArrayMemberCall(
+                    methodBody,
+                    i,
+                    callMember3.Receiver,
+                    callMember3.MethodName,
+                    new[] { callMember3.A0, callMember3.A1, callMember3.A2 },
+                    callMember3.Result,
+                    knownSpecializedReceiverClrTypes);
             }
         }
 
@@ -734,9 +823,9 @@ internal static class LIRIntrinsicNormalization
     {
         return argCount switch
         {
-            0 => methodName is "charAt" or "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase" or "split" or "match" or "search",
-            1 => methodName is "charAt" or "charCodeAt" or "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes" or "split" or "match" or "search",
-            2 => methodName is "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes" or "replace" or "split",
+            0 => methodName is "charAt" or "charCodeAt" or "trim" or "trimStart" or "trimLeft" or "trimEnd" or "trimRight" or "toLowerCase" or "toUpperCase",
+            1 => methodName is "charAt" or "charCodeAt" or "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes",
+            2 => methodName is "substring" or "substr" or "slice" or "indexOf" or "lastIndexOf" or "startsWith" or "endsWith" or "includes",
             _ => false
         };
     }
@@ -748,31 +837,110 @@ internal static class LIRIntrinsicNormalization
             return;
         }
 
+        ValueStorage storage;
         if (returnClrType == typeof(bool))
         {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
-            return;
+            storage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
         }
-
-        if (returnClrType == typeof(double))
+        else if (returnClrType == typeof(double))
         {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
-            return;
+            storage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
         }
-
-        if (returnClrType == typeof(string))
+        else if (returnClrType == typeof(string))
         {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(string));
-            return;
+            storage = new ValueStorage(ValueStorageKind.Reference, typeof(string));
         }
-
-        if (returnClrType == typeof(JavaScriptRuntime.Array))
+        else if (returnClrType == typeof(JavaScriptRuntime.Array))
         {
-            methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
+            storage = new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
+        }
+        else
+        {
+            storage = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        }
+
+        methodBody.TempStorages[result.Index] = storage;
+        ApplySingleAssignmentSlotStorage(methodBody, result, storage);
+    }
+
+    private static void ApplySingleAssignmentSlotStorage(MethodBodyIR methodBody, TempVariable result, ValueStorage storage)
+    {
+        if (result.Index < 0 || result.Index >= methodBody.TempVariableSlots.Count)
+        {
             return;
         }
 
-        methodBody.TempStorages[result.Index] = new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        var slot = methodBody.TempVariableSlots[result.Index];
+        if (slot < 0
+            || slot >= methodBody.VariableStorages.Count
+            || !methodBody.SingleAssignmentSlots.Contains(slot))
+        {
+            return;
+        }
+
+        var current = methodBody.VariableStorages[slot];
+        if (current.Kind == ValueStorageKind.Reference && current.ClrType == typeof(object))
+        {
+            methodBody.VariableStorages[slot] = storage;
+        }
+    }
+
+    private static bool TryNormalizeArrayMemberCall(
+        MethodBodyIR methodBody,
+        int instructionIndex,
+        TempVariable receiver,
+        string methodName,
+        IReadOnlyList<TempVariable> arguments,
+        TempVariable result,
+        IDictionary<int, Type> knownSpecializedReceiverClrTypes)
+    {
+        if (!knownSpecializedReceiverClrTypes.TryGetValue(receiver.Index, out var receiverType)
+            || receiverType != typeof(JavaScriptRuntime.Array)
+            || !TryResolveArrayMemberReturnClrType(methodName, arguments.Count, out var returnClrType))
+        {
+            return false;
+        }
+
+        methodBody.Instructions[instructionIndex] = new LIRCallInstanceMethod(
+            Receiver: receiver,
+            ReceiverClrType: typeof(JavaScriptRuntime.Array),
+            MethodName: methodName,
+            Arguments: arguments,
+            Result: result);
+
+        ApplyResolvedIntrinsicReturnStorage(methodBody, result, returnClrType);
+        if (result.Index >= 0 && IsSpecializedReceiverClrType(returnClrType))
+        {
+            knownSpecializedReceiverClrTypes[result.Index] = returnClrType;
+        }
+
+        return true;
+    }
+
+    private static bool TryResolveArrayMemberReturnClrType(string methodName, int argCount, out Type returnClrType)
+    {
+        returnClrType = typeof(object);
+
+        switch (methodName)
+        {
+            case "push" when argCount is 0 or 1:
+            case "unshift" when argCount is 0 or 1:
+                returnClrType = typeof(double);
+                return true;
+
+            case "pop" when argCount == 0:
+            case "shift" when argCount == 0:
+                returnClrType = typeof(object);
+                return true;
+
+            case "slice" when argCount is >= 0 and <= 2:
+            case "splice" when argCount is >= 0 and <= 3:
+                returnClrType = typeof(JavaScriptRuntime.Array);
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     private static bool IsNumericDouble(MethodBodyIR methodBody, TempVariable temp)

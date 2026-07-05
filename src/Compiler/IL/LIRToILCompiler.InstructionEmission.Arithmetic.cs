@@ -38,8 +38,8 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(concatStrings.Result, ilEncoder, allocation);
                 break;
             case LIRAddDynamic addDynamic:
-                EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAddObjectObject(ilEncoder);
                 EmitStoreTemp(addDynamic.Result, ilEncoder, allocation);
                 break;
@@ -84,8 +84,8 @@ internal sealed partial class LIRToILCompiler
                 EmitStoreTemp(mulNumber.Result, ilEncoder, allocation);
                 break;
             case LIRMulDynamic mulDynamic:
-                EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTemp(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsMultiply(ilEncoder);
                 EmitStoreTemp(mulDynamic.Result, ilEncoder, allocation);
                 break;
