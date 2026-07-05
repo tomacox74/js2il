@@ -1000,6 +1000,39 @@ namespace JavaScriptRuntime.Node
                 : FsCommon.CreateZeroStats();
         }
 
+        public object unlinkSync(object file)
+        {
+            var path = file?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new Error("Path must be a non-empty string");
+            }
+
+            try
+            {
+                if (System.IO.Directory.Exists(path))
+                {
+                    throw new IOException($"Cannot unlink directory '{path}'.");
+                }
+
+                if (!System.IO.File.Exists(path))
+                {
+                    throw new FileNotFoundException(path);
+                }
+
+                System.IO.File.Delete(path);
+                return null!; // undefined
+            }
+            catch (Error)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw FsCommon.TranslateUnlinkError(path, ex);
+            }
+        }
+
         public object rmSync(object file, object? options)
         {
             var path = file?.ToString() ?? string.Empty;

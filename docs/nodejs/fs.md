@@ -24,6 +24,7 @@
 | readdirSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
 | readFileSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) |
 | rmSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) |
+| unlinkSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsunlinksyncpath) |
 | statSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) |
 | writeFileSync(path, data[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) |
 | promises | property | supported | [docs](https://nodejs.org/api/fs.html#fspromisesapi) |
@@ -86,6 +87,14 @@ Removes a file or directory (recursive). Supports options.force to ignore errors
 
 **Tests:**
 - `Jroc.Tests.Node.FS.ExecutionTests.FS_RmSync_Removes_File_And_Directory` (`tests/Jroc.Tests/Node/FS/ExecutionTests.cs`)
+
+### unlinkSync(path)
+
+Removes a file synchronously. Missing files throw ENOENT-style errors, and directory paths reject with EISDIR-style errors.
+
+**Tests:**
+- `Jroc.Tests.Node.FS.ExecutionTests.FS_UnlinkSync_ReleaseCleanup` (`tests/Jroc.Tests/Node/FS/ExecutionTests.cs`)
+- `Jroc.Tests.Node.FS.GeneratorTests.FS_UnlinkSync_ReleaseCleanup` (`tests/Jroc.Tests/Node/FS/GeneratorTests.cs`)
 
 ### statSync(path)
 
