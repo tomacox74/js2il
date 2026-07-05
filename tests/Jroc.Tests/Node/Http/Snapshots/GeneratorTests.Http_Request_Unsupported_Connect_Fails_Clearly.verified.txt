@@ -201,11 +201,11 @@
 			IL_0124: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0129: stloc.s 11
 			IL_012b: ldloc.s 11
-			IL_012d: ldstr "test"
+			IL_012d: castclass [JavaScriptRuntime]JavaScriptRuntime.RegExp
 			IL_0132: ldloc.s 6
 			IL_0134: ldstr "message"
 			IL_0139: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_013e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.RegExp::test(object)
 			IL_0143: stloc.s 11
 			IL_0145: ldstr "connect unsupported:"
 			IL_014a: ldloc.s 11

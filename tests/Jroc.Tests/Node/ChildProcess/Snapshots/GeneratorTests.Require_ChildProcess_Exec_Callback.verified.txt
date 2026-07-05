@@ -29,7 +29,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22e0
+				// Method begins at RVA 0x22d4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -60,7 +60,7 @@
 			)
 			// Method begins at RVA 0x21cc
 			// Header size: 12
-			// Code size: 244 (0xf4)
+			// Code size: 232 (0xe8)
 			.maxstack 8
 			.locals init (
 				[0] object,
@@ -133,25 +133,21 @@
 			IL_00b6: ldstr "Cannot access 'child' before initialization"
 			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
 			IL_00c0: stloc.0
-			IL_00c1: ldstr "child"
-			IL_00c6: ldloc.0
-			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::ResolveWithBindingOrDefault(object, object)
-			IL_00cc: stloc.0
-			IL_00cd: ldloc.0
-			IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c1: ldloc.0
+			IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c7: stloc.0
+			IL_00c8: ldloc.0
+			IL_00c9: ldstr "kill"
+			IL_00ce: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
 			IL_00d3: stloc.0
-			IL_00d4: ldloc.0
-			IL_00d5: ldstr "kill"
-			IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
-			IL_00df: stloc.0
-			IL_00e0: ldloc.3
-			IL_00e1: ldstr "log"
-			IL_00e6: ldstr "kill after callback:"
-			IL_00eb: ldloc.0
-			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_00f1: pop
-			IL_00f2: ldnull
-			IL_00f3: ret
+			IL_00d4: ldloc.3
+			IL_00d5: ldstr "log"
+			IL_00da: ldstr "kill after callback:"
+			IL_00df: ldloc.0
+			IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+			IL_00e5: pop
+			IL_00e6: ldnull
+			IL_00e7: ret
 		} // end of method ArrowFunction_L9C42::__js_call__
 
 	} // end of class ArrowFunction_L9C42
@@ -170,7 +166,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22cc
+			// Method begins at RVA 0x22c0
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -345,7 +341,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22e9
+		// Method begins at RVA 0x22dd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
