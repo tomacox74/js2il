@@ -6,7 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler/tests: restore direct `JavaScriptRuntime.Array` call lowering for proven array receivers in hot paths, including `push`, `pop`, `shift`, `unshift`, `slice`, and `splice`; limit `with`-binding fallback emission to callables created inside `with` bodies so unrelated scope-field reads keep their concrete receiver types.
+- runtime/tests/docs/test262: expand ECMA-262 Section 21.4 Date coverage with newly ported test262 cases, implement the covered Date constructor/prototype/static surface, move Date intrinsic descriptor setup into `Date`, normalize local timezone edge cases, and refresh the Section 21.4 support docs.
 
 ## v0.11.9 - 2026-07-04
 

@@ -25,8 +25,7 @@ internal sealed partial class LIRToILCompiler
                 $"No matching instance method found: {receiverType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
         }
 
-        // Load receiver
-        EmitLoadTemp(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        EmitLoadInstanceMethodReceiver(instruction.Receiver, receiverType, ilEncoder, allocation, methodDescriptor);
 
         var parameters = chosen.GetParameters();
         var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
@@ -95,7 +94,7 @@ internal sealed partial class LIRToILCompiler
                 $"No matching instance method found: {receiverType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
         }
 
-        EmitLoadTemp(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+        EmitLoadInstanceMethodReceiver(instruction.Receiver, receiverType, ilEncoder, allocation, methodDescriptor);
 
         var parameters = chosen.GetParameters();
         var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
@@ -163,6 +162,26 @@ internal sealed partial class LIRToILCompiler
             .ThenBy(x => x.Method.ToString(), StringComparer.Ordinal)
             .Select(x => x.Method)
             .FirstOrDefault();
+    }
+
+    private void EmitLoadInstanceMethodReceiver(
+        TempVariable receiver,
+        Type receiverType,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var receiverStorage = GetTempStorage(receiver);
+        if (receiverStorage.Kind == ValueStorageKind.Reference
+            && receiverStorage.ClrType == receiverType)
+        {
+            EmitLoadTemp(receiver, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(receiver, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(receiverType));
     }
 
     private void EmitObjectArrayFromTemps(

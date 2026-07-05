@@ -162,6 +162,12 @@ public class Scope
     public bool HasParameterExpressions { get; set; }
 
     /// <summary>
+    /// True when this callable value can be created inside a <c>with</c> statement and therefore
+    /// may need captured-with-object identifier resolution when invoked later.
+    /// </summary>
+    public bool MayUseBoundWithObject { get; set; }
+
+    /// <summary>
     /// True when this block scope is the hoisting target for <c>var</c> declarations.
     /// Used for synthetic function-body scopes created when parameter expressions require
     /// separate parameter/body environments.
