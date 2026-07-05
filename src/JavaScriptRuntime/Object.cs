@@ -3939,11 +3939,11 @@ namespace JavaScriptRuntime
                 int newTargetOffset = hasNewTarget ? 1 : 0;
                 int jsParamStart = scopeOffset + newTargetOffset;
                 int expectedJsParamCount = parameters.Length - jsParamStart;
-                var lastParameter = parameters[^1];
                 bool hasParamsArray = expectedJsParamCount > 0
-                    && (Attribute.IsDefined(lastParameter, typeof(ParamArrayAttribute))
-                        || (lastParameter.ParameterType.IsArray
-                            && lastParameter.ParameterType.GetElementType() == typeof(object)));
+                    && parameters.Length > 0
+                    && (Attribute.IsDefined(parameters[^1], typeof(ParamArrayAttribute))
+                        || (parameters[^1].ParameterType.IsArray
+                            && parameters[^1].ParameterType.GetElementType() == typeof(object)));
 
                 return System.Math.Max(0, hasParamsArray ? expectedJsParamCount - 1 : expectedJsParamCount);
             }

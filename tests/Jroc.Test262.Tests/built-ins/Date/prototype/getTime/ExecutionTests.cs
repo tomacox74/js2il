@@ -6,6 +6,10 @@ public class ExecutionTests : DiskExecutionTestsBase
 {
     public ExecutionTests() : base("built_ins.Date.prototype.getTime") { }
 
+    [Fact(DisplayName = "length")]
+    public Task length()
+        => ExecutionTestFromFile("length");
+
     [Fact(DisplayName = "this-value-valid-date")]
     public Task this_value_valid_date()
         => ExecutionTestFromFile("this-value-valid-date");

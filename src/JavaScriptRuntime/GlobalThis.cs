@@ -84,7 +84,6 @@ namespace JavaScriptRuntime
             var thisValue = RuntimeServices.GetCurrentThis();
             return JavaScriptRuntime.Number.ThisNumberValue(thisValue);
         };
-
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
 
@@ -541,7 +540,7 @@ namespace JavaScriptRuntime
             DefineUndefinedPrototypeProperty(_bigIntFunctionValue);
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asIntN", _bigIntAsIntNValue, 2d);
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asUintN", _bigIntAsUintNValue, 2d);
-            DefineDateConstructorMetadata();
+            JavaScriptRuntime.Date.InitializeIntrinsicSurface(_objectPrototypeValue);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_parseIntValue);
@@ -897,25 +896,6 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefineDateConstructorMetadata()
-        {
-            PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "Date"
-            });
-            PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 7d
-            });
-        }
 
         private static void DefineIntrinsicDataProperty(object target, string key, object? value)
         {
@@ -1763,6 +1743,7 @@ namespace JavaScriptRuntime
         internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
         internal static object SymbolPrototypeValue => _symbolPrototypeValue;
+        internal static object DatePrototypeValue => JavaScriptRuntime.Date.Prototype;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;
         internal static object EvalErrorPrototypeValue => _evalErrorPrototypeValue;
         internal static object RangeErrorPrototypeValue => _rangeErrorPrototypeValue;
