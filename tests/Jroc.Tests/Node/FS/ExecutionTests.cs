@@ -87,6 +87,17 @@ namespace Jroc.Tests.Node.FS
                 });
 
         [Fact]
+        public Task FS_UnlinkSync_ReleaseCleanup()
+            => ExecutionTest(
+                nameof(FS_UnlinkSync_ReleaseCleanup),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = System.IO.Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task FS_ExistsSync_EmptyPath_ReturnsFalse()
             => ExecutionTest(
                 nameof(FS_ExistsSync_EmptyPath_ReturnsFalse),

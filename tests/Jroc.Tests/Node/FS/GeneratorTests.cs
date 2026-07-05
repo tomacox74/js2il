@@ -93,5 +93,9 @@ namespace Jroc.Tests.Node.FS
         [Fact]
         public Task FS_Append_Rename_Unlink_Callback() => GenerateTest(
             nameof(FS_Append_Rename_Unlink_Callback));
+
+        [Fact]
+        public Task FS_UnlinkSync_ReleaseCleanup() => GenerateTest(
+            nameof(FS_UnlinkSync_ReleaseCleanup));
     }
 }

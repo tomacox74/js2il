@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/nodejs: add `fs.unlinkSync(path)` support so compiled tooling like `scripts/release.js` can delete temporary `pr-body.md` / `release-notes.md` artifacts after `gh pr create` and `gh release create`; cover the release-style cleanup flow with focused Node `fs` execution/generator tests and document the new API in the Node module docs.
 
 ## v0.11.10 - 2026-07-05
 
