@@ -428,8 +428,8 @@ namespace JavaScriptRuntime
 
             try
             {
-                var localDateTime = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Local);
-                dto = new DateTimeOffset(localDateTime);
+                var localDateTime = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
+                dto = new DateTimeOffset(localDateTime, TimeZoneInfo.Local.GetUtcOffset(localDateTime));
                 return true;
             }
             catch (ArgumentOutOfRangeException)
@@ -493,14 +493,15 @@ namespace JavaScriptRuntime
             {
                 if (useLocalTime)
                 {
-                    var localDateTime = new DateTime(yearInteger, 1, 1, 0, 0, 0, DateTimeKind.Local)
+                    var localDateTime = new DateTime(yearInteger, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)
                         .AddMonths((int)System.Math.Truncate(month))
                         .AddDays((int)System.Math.Truncate(date) - 1)
                         .AddHours((int)System.Math.Truncate(hours))
                         .AddMinutes((int)System.Math.Truncate(minutes))
                         .AddSeconds((int)System.Math.Truncate(seconds))
                         .AddMilliseconds(System.Math.Truncate(milliseconds));
-                    return TimeClipLike(new DateTimeOffset(localDateTime).ToUniversalTime().ToUnixTimeMilliseconds());
+                    var localOffset = TimeZoneInfo.Local.GetUtcOffset(localDateTime);
+                    return TimeClipLike(new DateTimeOffset(localDateTime, localOffset).ToUniversalTime().ToUnixTimeMilliseconds());
                 }
 
                 var utcDateTime = new DateTimeOffset(yearInteger, 1, 1, 0, 0, 0, TimeSpan.Zero)
@@ -793,15 +794,29 @@ namespace JavaScriptRuntime
 
             try
             {
-                var offset = useLocalTime ? current.Offset : TimeSpan.Zero;
-                var updated = new DateTimeOffset(resolvedYear, 1, 1, 0, 0, 0, offset)
-                    .AddMonths(resolvedMonth)
-                    .AddDays(resolvedDay - 1)
-                    .AddHours(resolvedHour)
-                    .AddMinutes(resolvedMinute)
-                    .AddSeconds(resolvedSecond)
-                    .AddMilliseconds(resolvedMillisecond);
-                _msSinceEpoch = TimeClipLike(updated.ToUniversalTime().ToUnixTimeMilliseconds());
+                if (useLocalTime)
+                {
+                    var localDateTime = new DateTime(resolvedYear, 1, 1, 0, 0, 0, DateTimeKind.Unspecified)
+                        .AddMonths(resolvedMonth)
+                        .AddDays(resolvedDay - 1)
+                        .AddHours(resolvedHour)
+                        .AddMinutes(resolvedMinute)
+                        .AddSeconds(resolvedSecond)
+                        .AddMilliseconds(resolvedMillisecond);
+                    var localOffset = TimeZoneInfo.Local.GetUtcOffset(localDateTime);
+                    _msSinceEpoch = TimeClipLike(new DateTimeOffset(localDateTime, localOffset).ToUniversalTime().ToUnixTimeMilliseconds());
+                }
+                else
+                {
+                    var updated = new DateTimeOffset(resolvedYear, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                        .AddMonths(resolvedMonth)
+                        .AddDays(resolvedDay - 1)
+                        .AddHours(resolvedHour)
+                        .AddMinutes(resolvedMinute)
+                        .AddSeconds(resolvedSecond)
+                        .AddMilliseconds(resolvedMillisecond);
+                    _msSinceEpoch = TimeClipLike(updated.ToUniversalTime().ToUnixTimeMilliseconds());
+                }
             }
             catch (ArgumentOutOfRangeException)
             {
