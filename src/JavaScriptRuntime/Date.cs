@@ -18,6 +18,8 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Date", IntrinsicCallKind.DateToString)]
     public class Date
     {
+        internal static readonly object Prototype = new JsObject();
+
         private static readonly Regex DateOnlyRegex = new(
             @"^(?<year>[+-]?\d{4,6})(?:-(?<month>\d{2})(?:-(?<day>\d{2}))?)?$",
             RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -135,6 +137,127 @@ namespace JavaScriptRuntime
         public static object UTC(object[] args)
         {
             return CoerceComponentsToMs(args, useLocalTime: false);
+        }
+
+        internal static void InitializeIntrinsicSurface(object objectPrototype)
+        {
+            GlobalThis.ConfigureBuiltinFunctionObject(typeof(Date));
+            PrototypeChain.SetPrototype(Prototype, objectPrototype);
+
+            PropertyDescriptorStore.DefineOrUpdate(typeof(Date), "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = Prototype
+            });
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, "constructor", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = typeof(Date)
+            });
+            PropertyDescriptorStore.DefineOrUpdate(typeof(Date), "name", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Date"
+            });
+            PropertyDescriptorStore.DefineOrUpdate(typeof(Date), "length", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = 7d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, Symbol.toStringTag.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = "Date"
+            });
+
+            DefineConstructorMethod("now", static (_, __) => now(), 0d);
+            DefineConstructorMethod("parse", static (_, args) =>
+            {
+                var input = args != null && args.Length > 0 ? args[0] : null;
+                return parse(DotNet2JSConversions.ToString(input));
+            }, 1d);
+            DefineConstructorMethod("UTC", static (_, args) => UTC(ConvertBuiltinArgs(args)), 7d);
+
+            DefinePrototypeMethod("getDate", static (date, _) => date.getDate(), 0d);
+            DefinePrototypeMethod("getDay", static (date, _) => date.getDay(), 0d);
+            DefinePrototypeMethod("getFullYear", static (date, _) => date.getFullYear(), 0d);
+            DefinePrototypeMethod("getHours", static (date, _) => date.getHours(), 0d);
+            DefinePrototypeMethod("getMilliseconds", static (date, _) => date.getMilliseconds(), 0d);
+            DefinePrototypeMethod("getMinutes", static (date, _) => date.getMinutes(), 0d);
+            DefinePrototypeMethod("getMonth", static (date, _) => date.getMonth(), 0d);
+            DefinePrototypeMethod("getSeconds", static (date, _) => date.getSeconds(), 0d);
+            DefinePrototypeMethod("getTime", static (date, _) => date.getTime(), 0d);
+            DefinePrototypeMethod("getTimezoneOffset", static (date, _) => date.getTimezoneOffset(), 0d);
+            DefinePrototypeMethod("getUTCDate", static (date, _) => date.getUTCDate(), 0d);
+            DefinePrototypeMethod("getUTCDay", static (date, _) => date.getUTCDay(), 0d);
+            DefinePrototypeMethod("getUTCFullYear", static (date, _) => date.getUTCFullYear(), 0d);
+            DefinePrototypeMethod("getUTCHours", static (date, _) => date.getUTCHours(), 0d);
+            DefinePrototypeMethod("getUTCMilliseconds", static (date, _) => date.getUTCMilliseconds(), 0d);
+            DefinePrototypeMethod("getUTCMinutes", static (date, _) => date.getUTCMinutes(), 0d);
+            DefinePrototypeMethod("getUTCMonth", static (date, _) => date.getUTCMonth(), 0d);
+            DefinePrototypeMethod("getUTCSeconds", static (date, _) => date.getUTCSeconds(), 0d);
+
+            DefinePrototypeMethod("setDate", static (date, args) => date.setDate(GetBuiltinArg(args, 0)), 1d);
+            DefinePrototypeMethod("setFullYear", static (date, args) => date.setFullYear(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
+            DefinePrototypeMethod("setHours", static (date, args) => date.setHours(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2), GetBuiltinArg(args, 3)), 4d);
+            DefinePrototypeMethod("setMilliseconds", static (date, args) => date.setMilliseconds(GetBuiltinArg(args, 0)), 1d);
+            DefinePrototypeMethod("setMinutes", static (date, args) => date.setMinutes(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
+            DefinePrototypeMethod("setMonth", static (date, args) => date.setMonth(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
+            DefinePrototypeMethod("setSeconds", static (date, args) => date.setSeconds(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
+            DefinePrototypeMethod("setTime", static (date, args) => date.setTime(GetBuiltinArg(args, 0)), 1d);
+            DefinePrototypeMethod("setUTCDate", static (date, args) => date.setUTCDate(GetBuiltinArg(args, 0)), 1d);
+            DefinePrototypeMethod("setUTCFullYear", static (date, args) => date.setUTCFullYear(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
+            DefinePrototypeMethod("setUTCHours", static (date, args) => date.setUTCHours(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2), GetBuiltinArg(args, 3)), 4d);
+            DefinePrototypeMethod("setUTCMilliseconds", static (date, args) => date.setUTCMilliseconds(GetBuiltinArg(args, 0)), 1d);
+            DefinePrototypeMethod("setUTCMinutes", static (date, args) => date.setUTCMinutes(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
+            DefinePrototypeMethod("setUTCMonth", static (date, args) => date.setUTCMonth(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
+            DefinePrototypeMethod("setUTCSeconds", static (date, args) => date.setUTCSeconds(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
+
+            DefinePrototypeMethod("toDateString", static (date, _) => date.toDateString(), 0d);
+            DefinePrototypeMethod("toISOString", static (date, _) => date.toISOString(), 0d);
+            DefinePrototypeMethod("toJSON", static (date, _) => date.toJSON(), 1d);
+            DefinePrototypeMethod("toLocaleDateString", static (date, _) => date.toLocaleDateString(), 0d);
+            DefinePrototypeMethod("toLocaleString", static (date, _) => date.toLocaleString(), 0d);
+            DefinePrototypeMethod("toLocaleTimeString", static (date, _) => date.toLocaleTimeString(), 0d);
+            DefinePrototypeMethod("toString", static (date, _) => date.toString(), 0d);
+            DefinePrototypeMethod("toTimeString", static (date, _) => date.toTimeString(), 0d);
+            DefinePrototypeMethod("toUTCString", static (date, _) => date.toUTCString(), 0d);
+            DefinePrototypeMethod("valueOf", static (date, _) => date.valueOf(), 0d);
+
+            var toPrimitive = (Func<object[], object?[]?, object?>)((_, args) =>
+                ThisDateValue(RuntimeServices.GetCurrentThis()).toPrimitive(DotNet2JSConversions.ToString(GetBuiltinArg(args, 0))));
+            Function.InitializeFunctionInstance(toPrimitive, 1d, "[Symbol.toPrimitive]");
+            PropertyDescriptorStore.DefineOrUpdate(toPrimitive, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, Symbol.toPrimitive.DebugId, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = false,
+                Value = toPrimitive
+            });
         }
 
         private static double ParseInternal(string? input)
@@ -705,6 +828,71 @@ namespace JavaScriptRuntime
 
             resolvedValue = (int)System.Math.Truncate(number);
             return true;
+        }
+
+        private static void DefineConstructorMethod(string key, Func<object[], object?[]?, object?> implementation, double length)
+        {
+            Function.InitializeFunctionInstance(implementation, length, key);
+            PropertyDescriptorStore.DefineOrUpdate(implementation, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(typeof(Date), key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = implementation
+            });
+        }
+
+        private static void DefinePrototypeMethod(string key, Func<Date, object?[]?, object?> implementation, double length)
+        {
+            Func<object[], object?[]?, object?> functionValue = (_, args) =>
+                implementation(ThisDateValue(RuntimeServices.GetCurrentThis()), args);
+            Function.InitializeFunctionInstance(functionValue, length, key);
+            PropertyDescriptorStore.DefineOrUpdate(functionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = null
+            });
+            PropertyDescriptorStore.DefineOrUpdate(Prototype, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = true,
+                Writable = true,
+                Value = functionValue
+            });
+        }
+
+        private static object? GetBuiltinArg(object?[]? args, int index)
+        {
+            return args != null && args.Length > index ? args[index] : null;
+        }
+
+        private static object[] ConvertBuiltinArgs(object?[]? args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                return global::System.Array.Empty<object>();
+            }
+
+            var converted = new object[args.Length];
+            for (var i = 0; i < args.Length; i++)
+            {
+                converted[i] = args[i]!;
+            }
+
+            return converted;
         }
     }
 }

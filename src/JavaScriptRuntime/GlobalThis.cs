@@ -84,17 +84,6 @@ namespace JavaScriptRuntime
             var thisValue = RuntimeServices.GetCurrentThis();
             return JavaScriptRuntime.Number.ThisNumberValue(thisValue);
         };
-        private static readonly Func<object[], object?[]?, object?> _datePrototypeGetTimeValue = static (_, __) =>
-            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).getTime();
-        private static readonly Func<object[], object?[]?, object?> _datePrototypeGetFullYearValue = static (_, __) =>
-            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).getFullYear();
-        private static readonly Func<object[], object?[]?, object?> _datePrototypeGetMonthValue = static (_, __) =>
-            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).getMonth();
-        private static readonly Func<object[], object?[]?, object?> _datePrototypeToISOStringValue = static (_, __) =>
-            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).toISOString();
-        private static readonly Func<object[], object?[]?, object?> _datePrototypeValueOfValue = static (_, __) =>
-            JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).valueOf();
-
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
 
@@ -270,7 +259,6 @@ namespace JavaScriptRuntime
         private static readonly object _numberPrototypeValue = new JsObject();
         private static readonly object _booleanPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
-        private static readonly object _datePrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
@@ -552,8 +540,7 @@ namespace JavaScriptRuntime
             DefineUndefinedPrototypeProperty(_bigIntFunctionValue);
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asIntN", _bigIntAsIntNValue, 2d);
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asUintN", _bigIntAsUintNValue, 2d);
-            DefineDateConstructorMetadata();
-            ConfigureDateIntrinsicSurface();
+            JavaScriptRuntime.Date.InitializeIntrinsicSurface(_objectPrototypeValue);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
             ConfigureBuiltinFunctionObject(_parseIntValue);
@@ -909,98 +896,6 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefineDateConstructorMetadata()
-        {
-            ConfigureConstructorPrototypeSurface(typeof(JavaScriptRuntime.Date), _datePrototypeValue);
-            PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "name", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = "Date"
-            });
-            PropertyDescriptorStore.DefineOrUpdate(typeof(JavaScriptRuntime.Date), "length", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = 7d
-            });
-        }
-
-        private static void ConfigureDateIntrinsicSurface()
-        {
-            DefineIntrinsicToStringTagProperty(_datePrototypeValue, "Date");
-            DefineBuiltinFunctionProperty(typeof(JavaScriptRuntime.Date), "now", (Func<object[], object?[]?, object?>)((_, __) => JavaScriptRuntime.Date.now()), 0d);
-            DefineBuiltinFunctionProperty(typeof(JavaScriptRuntime.Date), "parse", (Func<object[], object?[]?, object?>)((_, args) =>
-            {
-                var input = args != null && args.Length > 0 ? args[0] : null;
-                return JavaScriptRuntime.Date.parse(DotNet2JSConversions.ToString(input));
-            }), 1d);
-            DefineBuiltinFunctionProperty(typeof(JavaScriptRuntime.Date), "UTC", (Func<object[], object?[]?, object?>)((_, args) =>
-                JavaScriptRuntime.Date.UTC(ConvertBuiltinArgs(args))), 7d);
-
-            DefineDatePrototypeMethod("getDate", static (date, _) => date.getDate(), 0d);
-            DefineDatePrototypeMethod("getDay", static (date, _) => date.getDay(), 0d);
-            DefineDatePrototypeMethod("getFullYear", static (date, _) => date.getFullYear(), 0d);
-            DefineDatePrototypeMethod("getHours", static (date, _) => date.getHours(), 0d);
-            DefineDatePrototypeMethod("getMilliseconds", static (date, _) => date.getMilliseconds(), 0d);
-            DefineDatePrototypeMethod("getMinutes", static (date, _) => date.getMinutes(), 0d);
-            DefineDatePrototypeMethod("getMonth", static (date, _) => date.getMonth(), 0d);
-            DefineDatePrototypeMethod("getSeconds", static (date, _) => date.getSeconds(), 0d);
-            DefineDatePrototypeMethod("getTime", static (date, _) => date.getTime(), 0d);
-            DefineDatePrototypeMethod("getTimezoneOffset", static (date, _) => date.getTimezoneOffset(), 0d);
-            DefineDatePrototypeMethod("getUTCDate", static (date, _) => date.getUTCDate(), 0d);
-            DefineDatePrototypeMethod("getUTCDay", static (date, _) => date.getUTCDay(), 0d);
-            DefineDatePrototypeMethod("getUTCFullYear", static (date, _) => date.getUTCFullYear(), 0d);
-            DefineDatePrototypeMethod("getUTCHours", static (date, _) => date.getUTCHours(), 0d);
-            DefineDatePrototypeMethod("getUTCMilliseconds", static (date, _) => date.getUTCMilliseconds(), 0d);
-            DefineDatePrototypeMethod("getUTCMinutes", static (date, _) => date.getUTCMinutes(), 0d);
-            DefineDatePrototypeMethod("getUTCMonth", static (date, _) => date.getUTCMonth(), 0d);
-            DefineDatePrototypeMethod("getUTCSeconds", static (date, _) => date.getUTCSeconds(), 0d);
-
-            DefineDatePrototypeMethod("setDate", static (date, args) => date.setDate(GetBuiltinArg(args, 0)), 1d);
-            DefineDatePrototypeMethod("setFullYear", static (date, args) => date.setFullYear(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefineDatePrototypeMethod("setHours", static (date, args) => date.setHours(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2), GetBuiltinArg(args, 3)), 4d);
-            DefineDatePrototypeMethod("setMilliseconds", static (date, args) => date.setMilliseconds(GetBuiltinArg(args, 0)), 1d);
-            DefineDatePrototypeMethod("setMinutes", static (date, args) => date.setMinutes(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefineDatePrototypeMethod("setMonth", static (date, args) => date.setMonth(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-            DefineDatePrototypeMethod("setSeconds", static (date, args) => date.setSeconds(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-            DefineDatePrototypeMethod("setTime", static (date, args) => date.setTime(GetBuiltinArg(args, 0)), 1d);
-            DefineDatePrototypeMethod("setUTCDate", static (date, args) => date.setUTCDate(GetBuiltinArg(args, 0)), 1d);
-            DefineDatePrototypeMethod("setUTCFullYear", static (date, args) => date.setUTCFullYear(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefineDatePrototypeMethod("setUTCHours", static (date, args) => date.setUTCHours(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2), GetBuiltinArg(args, 3)), 4d);
-            DefineDatePrototypeMethod("setUTCMilliseconds", static (date, args) => date.setUTCMilliseconds(GetBuiltinArg(args, 0)), 1d);
-            DefineDatePrototypeMethod("setUTCMinutes", static (date, args) => date.setUTCMinutes(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1), GetBuiltinArg(args, 2)), 3d);
-            DefineDatePrototypeMethod("setUTCMonth", static (date, args) => date.setUTCMonth(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-            DefineDatePrototypeMethod("setUTCSeconds", static (date, args) => date.setUTCSeconds(GetBuiltinArg(args, 0), GetBuiltinArg(args, 1)), 2d);
-
-            DefineDatePrototypeMethod("toDateString", static (date, _) => date.toDateString(), 0d);
-            DefineDatePrototypeMethod("toISOString", static (date, _) => date.toISOString(), 0d);
-            DefineDatePrototypeMethod("toJSON", static (date, _) => date.toJSON(), 1d);
-            DefineDatePrototypeMethod("toLocaleDateString", static (date, _) => date.toLocaleDateString(), 0d);
-            DefineDatePrototypeMethod("toLocaleString", static (date, _) => date.toLocaleString(), 0d);
-            DefineDatePrototypeMethod("toLocaleTimeString", static (date, _) => date.toLocaleTimeString(), 0d);
-            DefineDatePrototypeMethod("toString", static (date, _) => date.toString(), 0d);
-            DefineDatePrototypeMethod("toTimeString", static (date, _) => date.toTimeString(), 0d);
-            DefineDatePrototypeMethod("toUTCString", static (date, _) => date.toUTCString(), 0d);
-            DefineDatePrototypeMethod("valueOf", static (date, _) => date.valueOf(), 0d);
-
-            var toPrimitive = (Func<object[], object?[]?, object?>)((_, args) =>
-                JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()).toPrimitive(DotNet2JSConversions.ToString(GetBuiltinArg(args, 0))));
-            JavaScriptRuntime.Function.InitializeFunctionInstance(toPrimitive, 1d, "[Symbol.toPrimitive]");
-            DefineUndefinedPrototypeProperty(toPrimitive);
-            PropertyDescriptorStore.DefineOrUpdate(_datePrototypeValue, global::JavaScriptRuntime.Symbol.toPrimitive.DebugId, new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = false,
-                Value = toPrimitive
-            });
-        }
 
         private static void DefineIntrinsicDataProperty(object target, string key, object? value)
         {
@@ -1043,33 +938,6 @@ namespace JavaScriptRuntime
             JavaScriptRuntime.Function.InitializeFunctionInstance(functionValue, length, key);
             DefineUndefinedPrototypeProperty(functionValue);
             DefineIntrinsicDataProperty(target, key, functionValue);
-        }
-
-        private static void DefineDatePrototypeMethod(string key, Func<JavaScriptRuntime.Date, object?[]?, object?> implementation, double length)
-        {
-            DefineBuiltinFunctionProperty(_datePrototypeValue, key, (Func<object[], object?[]?, object?>)((_, args) =>
-                implementation(JavaScriptRuntime.Date.ThisDateValue(RuntimeServices.GetCurrentThis()), args)), length);
-        }
-
-        private static object? GetBuiltinArg(object?[]? args, int index)
-        {
-            return args != null && args.Length > index ? args[index] : null;
-        }
-
-        private static object[] ConvertBuiltinArgs(object?[]? args)
-        {
-            if (args == null || args.Length == 0)
-            {
-                return global::System.Array.Empty<object>();
-            }
-
-            var converted = new object[args.Length];
-            for (var i = 0; i < args.Length; i++)
-            {
-                converted[i] = args[i]!;
-            }
-
-            return converted;
         }
 
         private static void DefineUndefinedPrototypeProperty(Delegate functionValue)
@@ -1875,7 +1743,7 @@ namespace JavaScriptRuntime
         internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
         internal static object SymbolPrototypeValue => _symbolPrototypeValue;
-        internal static object DatePrototypeValue => _datePrototypeValue;
+        internal static object DatePrototypeValue => JavaScriptRuntime.Date.Prototype;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;
         internal static object EvalErrorPrototypeValue => _evalErrorPrototypeValue;
         internal static object RangeErrorPrototypeValue => _rangeErrorPrototypeValue;
