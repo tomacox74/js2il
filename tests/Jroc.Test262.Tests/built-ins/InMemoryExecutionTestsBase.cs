@@ -128,17 +128,18 @@ public abstract class InMemoryExecutionTestsBase
     }
 
     private static bool ShouldInjectAssertHarness(string scriptPath)
-        => Path.GetFullPath(scriptPath).EndsWith(
-            Path.Combine(
-                "tests",
-                "Jroc.Test262.Tests",
-                "built-ins",
-                "Date",
-                "Section21_4",
-                "Clause_21_4_1",
-                "JavaScript",
-                "15.9.1.15-1.js"),
-            StringComparison.OrdinalIgnoreCase);
+    {
+        var normalizedPath = Path.GetFullPath(scriptPath);
+        var sectionDirectory = Path.Combine(
+            "tests",
+            "Jroc.Test262.Tests",
+            "built-ins",
+            "Date",
+            "Section21_4",
+            "");
+
+        return normalizedPath.Contains(sectionDirectory, StringComparison.OrdinalIgnoreCase);
+    }
 
     private static string GetAssertHarnessSourcePath(string callerSourceFilePath)
     {
