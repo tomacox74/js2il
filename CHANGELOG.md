@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/compiler/tests: support partial stable parameter type inference so unknown or conflicting evidence disables only the affected parameter instead of the whole callable, allowing Dromaeo 3D cube helpers like `Translate(M, Dx, Dy, Dz)` and downstream `MMulti(...)` calls to keep stable array parameter signatures.
 - runtime/tests/docs/nodejs: add `fs.unlinkSync(path)` support so compiled tooling like `scripts/release.js` can delete temporary `pr-body.md` / `release-notes.md` artifacts after `gh pr create` and `gh release create`; cover the release-style cleanup flow with focused Node `fs` execution/generator tests and document the new API in the Node module docs.
 
 ## v0.11.10 - 2026-07-05
