@@ -32,16 +32,34 @@ public sealed class RuntimeGlobalBindingDescriptor
         OverwritePolicy = overwritePolicy;
     }
 
+    /// <summary>
+    /// Gets the JavaScript global binding name exposed to hosted code.
+    /// </summary>
     public string Name { get; }
 
+    /// <summary>
+    /// Gets the fixed value used for the global binding when <see cref="ValueFactory" /> is not configured.
+    /// </summary>
     public object? Value { get; }
 
+    /// <summary>
+    /// Gets the factory used to create the global binding value for each runtime application.
+    /// </summary>
     public Func<object?>? ValueFactory { get; }
 
+    /// <summary>
+    /// Gets the JavaScript property attributes applied when the global binding is defined.
+    /// </summary>
     public RuntimeGlobalPropertyAttributes PropertyAttributes { get; }
 
+    /// <summary>
+    /// Gets the overwrite policy used when a global binding with the same name already exists.
+    /// </summary>
     public RuntimeGlobalOverwritePolicy OverwritePolicy { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this descriptor creates values through <see cref="ValueFactory" />.
+    /// </summary>
     public bool UsesFactory => ValueFactory != null;
 
     public object? CreateValue() => ValueFactory != null ? ValueFactory() : Value;
