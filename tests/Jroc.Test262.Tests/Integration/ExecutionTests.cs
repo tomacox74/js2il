@@ -90,6 +90,33 @@ public class ExecutionTests
                     pinPath)));
     }
 
+    [Fact]
+    public async Task Compile_Scripts_Test262NativeHostHelpers()
+    {
+        var sourceFilePath = Path.Combine(
+            FindRepositoryRoot(),
+            "tests",
+            "Jroc.Test262.Tests",
+            "Integration",
+            "ExecutionTests.cs");
+
+        var result = Test262SharedAssertHarness.CompileAndExecute(
+            nameof(Compile_Scripts_Test262NativeHostHelpers),
+            "Integration",
+            GetJavaScriptAndSourcePath,
+            sourceFilePath,
+            enableIRMetrics: true,
+            useNativeHostHelpers: true);
+
+        var settings = new VerifySettings(_verifySettings);
+        var directory = Path.GetDirectoryName(sourceFilePath)
+            ?? throw new InvalidOperationException("Could not resolve source directory.");
+        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
+        Directory.CreateDirectory(snapshotsDirectory);
+        settings.UseDirectory(snapshotsDirectory);
+        await Verify(result.Output, settings);
+    }
+
     private async Task ExecutionTest(
         string testName,
         string[]? additionalScripts = null,
@@ -126,6 +153,13 @@ public class ExecutionTests
                 "JavaScript",
                 "test262MetadataParser_testHarness.js"),
             nameof(Compile_Scripts_Test262Bootstrap) => Path.Combine(repoRoot, "scripts", "test262", "bootstrap.js"),
+            nameof(Compile_Scripts_Test262NativeHostHelpers) => Path.Combine(
+                repoRoot,
+                "tests",
+                "Jroc.Test262.Tests",
+                "Integration",
+                "JavaScript",
+                "test262NativeHostHelpers.js"),
             "test262/metadataParser" => Path.Combine(repoRoot, "scripts", "test262", "metadataParser.js"),
             _ => throw new ArgumentOutOfRangeException(nameof(testName), testName, "Unknown integration test script.")
         };
