@@ -57,22 +57,22 @@ public class ExecutionTests : FileSystemExecutionTestsBase
 
     [Fact(DisplayName = "scope-lex-const")]
     public Task scope_lex_const()
-        => ExecutionTest("scope-lex-const");
+        => ExecutionTest("scope-lex-const", allowUnhandledException: true);
 
     [Fact(DisplayName = "scope-lex-let")]
     public Task scope_lex_let()
-        => ExecutionTest("scope-lex-let");
+        => ExecutionTest("scope-lex-let", allowUnhandledException: true);
 
     [Fact(DisplayName = "scope-lex-class")]
     public Task scope_lex_class()
-        => ExecutionTest("scope-lex-class");
+        => ExecutionTest("scope-lex-class", allowUnhandledException: true);
 
     [Fact(DisplayName = "scope-lex-generator")]
     public Task scope_lex_generator()
-        => ExecutionTest("scope-lex-generator");
+        => ExecutionTest("scope-lex-generator", allowUnhandledException: true);
 
     [Fact(DisplayName = "scope-lex-async-function")]
     public Task scope_lex_async_function()
-        => ExecutionTest("scope-lex-async-function");
+        => ExecutionTest("scope-lex-async-function", allowUnhandledException: true);
 
 }

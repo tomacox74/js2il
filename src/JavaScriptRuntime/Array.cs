@@ -2820,7 +2820,7 @@ namespace JavaScriptRuntime
 
         public Array fill()
         {
-            return this;
+            return fill(new object[] { null! });
         }
 
         /// <summary>

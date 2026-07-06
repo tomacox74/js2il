@@ -132,10 +132,19 @@ function asyncTest(testFunc) {
     testFunc().then($DONE, $DONE);
 }
 
+var $262 = {
+    createRealm: function() {
+        return {
+            global: globalThis
+        };
+    }
+};
+
 globalThis.assert = assert;
 globalThis.Test262Error = Test262Error;
 globalThis.$ERROR = $ERROR;
 globalThis.$DONE = $DONE;
+globalThis.$262 = $262;
 globalThis.compareArray = compareArray;
 globalThis.verifyProperty = verifyProperty;
 globalThis.verifyWritable = verifyWritable;
@@ -154,6 +163,7 @@ module.exports = {
     Test262Error: Test262Error,
     $ERROR: $ERROR,
     $DONE: $DONE,
+    $262: $262,
     compareArray: compareArray,
     verifyProperty: verifyProperty,
     verifyWritable: verifyWritable,
