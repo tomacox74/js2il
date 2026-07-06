@@ -65,7 +65,13 @@ public sealed partial class HIRToLIRLowerer
                     DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
 
                     var deleted = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.DeleteProperty), new[] { EnsureObject(recvTemp), EnsureObject(keyTemp) }, deleted));
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        UsesStrictAssignmentSemantics()
+                            ? nameof(JavaScriptRuntime.ObjectRuntime.DeleteProperty)
+                            : nameof(JavaScriptRuntime.ObjectRuntime.DeletePropertyNonStrict),
+                        new[] { EnsureObject(recvTemp), EnsureObject(keyTemp) },
+                        deleted));
                     DefineTempStorage(deleted, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
                     // delete returns boolean
@@ -85,7 +91,13 @@ public sealed partial class HIRToLIRLowerer
                     }
 
                     var deleted = CreateTempVariable();
-                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(nameof(JavaScriptRuntime.ObjectRuntime), nameof(JavaScriptRuntime.ObjectRuntime.DeleteItem), new[] { EnsureObject(recvTemp), EnsureObject(indexTemp) }, deleted));
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        nameof(JavaScriptRuntime.ObjectRuntime),
+                        UsesStrictAssignmentSemantics()
+                            ? nameof(JavaScriptRuntime.ObjectRuntime.DeleteItem)
+                            : nameof(JavaScriptRuntime.ObjectRuntime.DeleteItemNonStrict),
+                        new[] { EnsureObject(recvTemp), EnsureObject(indexTemp) },
+                        deleted));
                     DefineTempStorage(deleted, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
 
                     _methodBodyIR.Instructions.Add(new LIRCopyTemp(deleted, resultTempVar));

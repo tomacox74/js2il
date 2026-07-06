@@ -1628,6 +1628,12 @@ namespace Jroc.SymbolTables
                         MarkNearestArgumentsOwnerScopeAsNeedingArguments(currentScope);
                     }
                     break;
+                case ThisExpression:
+                    if (currentScope.Kind == ScopeKind.Global)
+                    {
+                        currentScope.UsesGlobalThisValue = true;
+                    }
+                    break;
                 case CallExpression callExpr:
                     if (TryBuildDirectEvalLiteralScope(globalScope, currentScope, callExpr))
                     {

@@ -275,10 +275,12 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        // The class scope is expected to be a child scope of the declaring scope.
-        var classScope = declaringScope.Children.FirstOrDefault(s =>
-            s.Kind == ScopeKind.Class &&
-            string.Equals(s.Name, classSymbol.Name, StringComparison.Ordinal));
+        var classScope = declaringScope.Kind == ScopeKind.Class
+            && string.Equals(declaringScope.Name, classSymbol.Name, StringComparison.Ordinal)
+                ? declaringScope
+                : declaringScope.Children.FirstOrDefault(s =>
+                    s.Kind == ScopeKind.Class &&
+                    string.Equals(s.Name, classSymbol.Name, StringComparison.Ordinal));
 
         if (classScope == null)
         {

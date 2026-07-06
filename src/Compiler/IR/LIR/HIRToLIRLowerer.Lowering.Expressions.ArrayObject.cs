@@ -16,6 +16,59 @@ public sealed partial class HIRToLIRLowerer
 
         // Check if there are any spread elements
         bool hasSpreadElements = arrayExpr.Elements.Any(e => e is HIRSpreadElement);
+        bool hasArrayHoles = arrayExpr.Elements.Any(e => e is HIRArrayHoleExpression);
+
+        if (hasArrayHoles && !hasSpreadElements)
+        {
+            _methodBodyIR.Instructions.Add(new LIRNewJsArray(new List<TempVariable>(), resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+
+            var lengthKeyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString("length", lengthKeyTemp));
+            DefineTempStorage(lengthKeyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var lengthValueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNumber(arrayExpr.Elements.Length, lengthValueTemp));
+            DefineTempStorage(lengthValueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var lengthSetResult = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRSetItem(
+                resultTempVar,
+                EnsureObject(lengthKeyTemp),
+                EnsureObject(lengthValueTemp),
+                lengthSetResult,
+                ThrowOnError: true));
+            DefineTempStorage(lengthSetResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            for (int i = 0; i < arrayExpr.Elements.Length; i++)
+            {
+                var element = arrayExpr.Elements[i];
+                if (element is HIRArrayHoleExpression)
+                {
+                    continue;
+                }
+
+                if (!TryLowerExpression(element, out var elementTemp))
+                {
+                    return false;
+                }
+
+                var indexTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstNumber(i, indexTemp));
+                DefineTempStorage(indexTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+                var setResult = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRSetItem(
+                    resultTempVar,
+                    EnsureObject(indexTemp),
+                    EnsureObject(elementTemp),
+                    setResult,
+                    ThrowOnError: true));
+                DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+
+            return true;
+        }
 
         if (!hasSpreadElements)
         {

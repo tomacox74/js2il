@@ -1459,6 +1459,11 @@ namespace JavaScriptRuntime
             {
                 array.length = (double)arrayIndex + 1;
             }
+            else if (obj is JavaScriptRuntime.Array largeArray
+                && ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var largeArrayIndex))
+            {
+                largeArray.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
+            }
 
             if (obj is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
             {
@@ -3285,6 +3290,11 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (PropertyDescriptorStore.IsDeleted(target, name))
+            {
+                return false;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
             {
                 return true;
@@ -3834,6 +3844,12 @@ namespace JavaScriptRuntime
 
         private static bool TryEnsureStaticClassMethodDataProperty(object target, string propName, out JsPropertyDescriptor descriptor)
         {
+            if (PropertyDescriptorStore.IsDeleted(target, propName))
+            {
+                descriptor = null!;
+                return false;
+            }
+
             if (!TryGetStaticClassMethodOverloads(target, propName, out var staticClassType, out var methods))
             {
                 descriptor = null!;
@@ -3977,6 +3993,12 @@ namespace JavaScriptRuntime
             {
                 value = JavaScriptRuntime.Array.Prototype;
                 return true;
+            }
+
+            if (PropertyDescriptorStore.IsDeleted(target, propName))
+            {
+                value = null;
+                return false;
             }
 
             // Descriptor-defined properties (data/accessor)
@@ -5414,7 +5436,10 @@ namespace JavaScriptRuntime
             if (obj is Array indexedArray
                 && ObjectRuntime.TryParseCanonicalIndexString(name, out var arrayIndex))
             {
-                return indexedArray.HasOwnIndex(arrayIndex) ? indexedArray[arrayIndex] : null;
+                if (indexedArray.HasOwnIndex(arrayIndex))
+                {
+                    return indexedArray[arrayIndex];
+                }
             }
 
             if (obj is TypedArrayBase indexedTypedArray
@@ -5677,6 +5702,12 @@ namespace JavaScriptRuntime
                     // This is used heavily by parsers to clear buffers (e.g., buf.length = 0).
                     arr.length = JavaScriptRuntime.TypeUtilities.ToNumber(value);
                     return value;
+                }
+
+                if (obj is Array indexedArray
+                    && ObjectRuntime.TryParseCanonicalArrayIndexUInt(name, out var largeArrayIndex))
+                {
+                    indexedArray.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
                 }
 
                 if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))

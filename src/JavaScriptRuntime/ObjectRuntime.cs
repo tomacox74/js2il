@@ -48,6 +48,23 @@ namespace JavaScriptRuntime
             return Object.SetProperty(GlobalThis.globalThis, name, value, throwOnError: strict);
         }
 
+        public static void EnsureGlobalVarBinding(string name)
+        {
+            var global = GlobalThis.globalThis;
+            if (PropertyDescriptorStore.TryGetOwn(global, name, out _))
+            {
+                return;
+            }
+
+            var descriptor = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)descriptor;
+            dict["value"] = null;
+            dict["writable"] = true;
+            dict["enumerable"] = true;
+            dict["configurable"] = false;
+            Object.defineProperty(global, name, descriptor);
+        }
+
         public static bool DeleteGlobalBinding(string name)
         {
             if (!HasGlobalBinding(name))
@@ -345,6 +362,17 @@ namespace JavaScriptRuntime
         public static bool HasPropertyIn(object? key, object? obj)
             => Object.HasPropertyIn(key, obj);
 
+        public static object? ApplyResolvedWithVarInitializer(bool withHasBinding, object withObject, string name, object? assignedValue, object? fallbackBindingValue)
+        {
+            if (withHasBinding)
+            {
+                Object.SetProperty(withObject, name, assignedValue, throwOnError: true);
+                return fallbackBindingValue;
+            }
+
+            return assignedValue;
+        }
+
         public static object RequireObjectCoercible(object? value)
         {
             if (value is null || value is JsNull)
@@ -461,12 +489,45 @@ namespace JavaScriptRuntime
             return true;
         }
 
+        public static bool DeletePropertyNonStrict(object? receiver, object? propName)
+        {
+            if (receiver is null || receiver is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot convert undefined or null to object");
+            }
+
+            var key = JavaScriptRuntime.Object.ToPropertyKeyString(propName);
+
+            if (receiver is JavaScriptRuntime.Proxy proxy)
+            {
+                if (proxy.TryInvokeTrap("deleteProperty", "deleteProperty", new object?[] { proxy.GetTarget("deleteProperty"), key }, out var trapResult))
+                {
+                    return TypeUtilities.ToBoolean(trapResult);
+                }
+
+                receiver = proxy.GetTarget("deleteProperty");
+            }
+
+            if (PropertyDescriptorStore.TryGetOwn(receiver, key, out var ownDescriptor)
+                && !ownDescriptor.Configurable)
+            {
+                return false;
+            }
+
+            return DeleteProperty(receiver, key);
+        }
+
         /// <summary>
         /// Implements the JavaScript <c>delete obj[index]</c> runtime semantics (minimal).
         /// </summary>
         public static bool DeleteItem(object? receiver, object? index)
         {
             return DeleteProperty(receiver, index);
+        }
+
+        public static bool DeleteItemNonStrict(object? receiver, object? index)
+        {
+            return DeletePropertyNonStrict(receiver, index);
         }
 
         // Determines whether a computed key should be treated as an array index.
@@ -523,6 +584,23 @@ namespace JavaScriptRuntime
                 return false;
             }
             if (parsed < 0) return false;
+            return parsed.ToString(global::System.Globalization.CultureInfo.InvariantCulture) == s;
+        }
+
+        internal static bool TryParseCanonicalArrayIndexUInt(string s, out uint parsed)
+        {
+            parsed = 0;
+            if (string.IsNullOrEmpty(s)) return false;
+            if (!uint.TryParse(s, global::System.Globalization.NumberStyles.None, global::System.Globalization.CultureInfo.InvariantCulture, out parsed))
+            {
+                return false;
+            }
+
+            if (parsed >= 4294967295u)
+            {
+                return false;
+            }
+
             return parsed.ToString(global::System.Globalization.CultureInfo.InvariantCulture) == s;
         }
 
@@ -585,10 +663,9 @@ namespace JavaScriptRuntime
                 {
                     return GetProperty(array, propName)!;
                 }
-                // Bounds check: return undefined (null) when OOB to mimic JS behavior
-                if (intIndex < 0 || intIndex >= array.Count)
+                if (intIndex < 0 || intIndex >= array.Count || !array.HasOwnIndex(intIndex))
                 {
-                    return null!; // undefined
+                    return GetProperty(array, propName)!;
                 }
                 return array[intIndex]!;
             }
@@ -671,6 +748,12 @@ namespace JavaScriptRuntime
                         return null!; // undefined
                     }
 
+                    if (!array.HasOwnIndex(intIndex))
+                    {
+                        var arrayIndexKey = Object.ToPropertyKeyString(index);
+                        return GetProperty(array, arrayIndexKey)!;
+                    }
+
                     return array[intIndex]!;
                 }
 
@@ -679,10 +762,9 @@ namespace JavaScriptRuntime
                 {
                     return GetProperty(array, propName)!;
                 }
-                // Bounds check: return undefined (null) when OOB to mimic JS behavior
-                if (intIndex < 0 || intIndex >= array.Count)
+                if (intIndex < 0 || intIndex >= array.Count || !array.HasOwnIndex(intIndex))
                 {
-                    return null!; // undefined
+                    return GetProperty(array, propName)!;
                 }
                 return array[intIndex]!;
             }
@@ -767,10 +849,9 @@ namespace JavaScriptRuntime
                 {
                     return GetProperty(array, key)!;
                 }
-                // Bounds check: return undefined (null) when OOB to mimic JS behavior
-                if (intIndex < 0 || intIndex >= array.Count)
+                if (intIndex < 0 || intIndex >= array.Count || !array.HasOwnIndex(intIndex))
                 {
-                    return null!; // undefined
+                    return GetProperty(array, key)!;
                 }
                 return array[intIndex]!;
             }
@@ -883,6 +964,11 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
+                    if (TryParseCanonicalArrayIndexUInt(propName, out var largeArrayIndex))
+                    {
+                        array.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
+                    }
+
                     // Non-index keys behave like properties in JS (e.g. "length").
                     return SetProperty(array, propName, value, throwOnError);
                 }
@@ -970,6 +1056,11 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
+                    if (TryParseCanonicalArrayIndexUInt(key, out var largeArrayIndex))
+                    {
+                        array.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
+                    }
+
                     return SetProperty(array, key, value, throwOnError);
                 }
 
@@ -1055,6 +1146,11 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
+                    if (TryParseCanonicalArrayIndexUInt(key, out var largeArrayIndex))
+                    {
+                        array.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
+                    }
+
                     // Common hot path in benchmarks: ret.length = i
                     if (string.Equals(key, "length", StringComparison.Ordinal))
                     {
@@ -1141,6 +1237,15 @@ namespace JavaScriptRuntime
                 if (!isCanonicalArrayIndex)
                 {
                     var nonCanonicalIndexKey = DotNet2JSConversions.ToString(index);
+                    if (!double.IsNaN(index)
+                        && !double.IsInfinity(index)
+                        && index % 1.0 == 0.0
+                        && index >= 0
+                        && index < 4294967295d)
+                    {
+                        array.EnsureLengthAtLeast(index + 1d);
+                    }
+
                     return SetProperty(array, nonCanonicalIndexKey, value, throwOnError) ?? value;
                 }
 

@@ -92,14 +92,13 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
                     }
 
-                    // Emit: callvirt int32 JavaScriptRuntime.Array.get_Count; conv.r8
-                    var getCountMethod = _memberRefRegistry.GetOrAddMethod(
+                    // Emit: callvirt float64 JavaScriptRuntime.Array.get_length
+                    var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        "get_Count",
+                        "get_length",
                         parameterTypes: Type.EmptyTypes);
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(getCountMethod);
-                    ilEncoder.OpCode(ILOpCode.Conv_r8);
+                    ilEncoder.Token(getLengthMethod);
 
                     EmitStoreTemp(getJsArrayLength.Result, ilEncoder, allocation);
                     break;

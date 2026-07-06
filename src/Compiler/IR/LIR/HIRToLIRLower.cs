@@ -187,6 +187,7 @@ public sealed partial class HIRToLIRLowerer
         // NOTE: This must come AFTER async info is initialized, because async functions
         // with awaits need a scope instance even if there are no captured variables.
         lowerer.EmitScopeInstanceCreationIfNeeded();
+        lowerer.EmitGlobalVarBindingInitializationIfNeeded();
 
         if (!lowerer.EmitNamedFunctionExpressionBindingInitialization())
         {

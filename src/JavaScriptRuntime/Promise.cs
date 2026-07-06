@@ -181,6 +181,7 @@ public sealed class Promise
         };
 
         Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
+        Function.MarkUndefinedPrototype(executor);
 
         var promise = Object.ConstructValue(constructor, new object[] { executor });
         if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate)
@@ -214,6 +215,7 @@ public sealed class Promise
         };
 
         Function.InitializeFunctionInstance(executor, 2d, string.Empty, requiresInvocationContext: false);
+        Function.MarkUndefinedPrototype(executor);
 
         var promise = Object.ConstructValue(constructor, new object[] { executor });
         if (capabilityResolve is not Delegate resolveFunction || capabilityReject is not Delegate rejectFunction)

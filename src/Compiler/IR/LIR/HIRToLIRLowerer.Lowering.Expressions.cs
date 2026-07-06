@@ -431,22 +431,6 @@ public sealed partial class HIRToLIRLowerer
                         return true;
                     }
 
-                    if (binding.Kind == BindingKind.Const
-                        && binding.DeclaringScope.Kind == ScopeKind.Class
-                        && binding.DeclaringScope.Parent?.Bindings.TryGetValue(binding.Name, out var outerClassBinding) == true
-                        && ReferenceEquals(outerClassBinding.DeclarationNode, classDecl))
-                    {
-                        if (_variableMap.TryGetValue(outerClassBinding, out resultTempVar))
-                        {
-                            return true;
-                        }
-
-                        if (TryLoadVariable(outerClassBinding, out resultTempVar))
-                        {
-                            return true;
-                        }
-                    }
-
                     if (TryLoadVariable(binding, out resultTempVar))
                     {
                         return true;

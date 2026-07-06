@@ -2198,7 +2198,8 @@ class HIRMethodBuilder
                             ? classNameBindingInsertIndex
                             : staticInitStatements.Count;
                         var classSymbol = new Symbol(cdClassBinding);
-                        staticInitStatements.Insert(bindingInsertionIndex, new HIRVariableDeclaration(classSymbol, classConstructorValueExpr));
+                        staticInitStatements.Insert(bindingInsertionIndex, new HIRExpressionStatement(
+                            new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
                     }
 
                     hirStatement = new HIRBlock(staticInitStatements);
@@ -3866,7 +3867,7 @@ class HIRMethodBuilder
                 {
                     if (element == null)
                     {
-                        arrayElements.Add(new HIRLiteralExpression(JavascriptType.Undefined, null));
+                        arrayElements.Add(new HIRArrayHoleExpression());
                         continue;
                     }
 
