@@ -1027,6 +1027,7 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(Count);
             _items.RemoveAt(index);
             _logicalLength = _items.Count;
+            _virtualLength = _logicalLength;
         }
 
         public void RemoveRange(int index, int count)
@@ -1034,6 +1035,7 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(Count);
             _items.RemoveRange(index, count);
             _logicalLength = _items.Count;
+            _virtualLength = _logicalLength;
         }
 
         public void Reverse()
@@ -1074,6 +1076,7 @@ namespace JavaScriptRuntime
         {
             _items.Clear();
             _logicalLength = 0;
+            _virtualLength = 0;
         }
 
         public object?[] ToArray()
