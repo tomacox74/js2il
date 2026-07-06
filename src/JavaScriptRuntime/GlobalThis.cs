@@ -84,6 +84,29 @@ namespace JavaScriptRuntime
             var thisValue = RuntimeServices.GetCurrentThis();
             return JavaScriptRuntime.Number.ThisNumberValue(thisValue);
         };
+        private static readonly Func<object[], object?[]?, object?> _numberPrototypeToExponentialValue = static (_, args) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            var fractionDigits = args != null && args.Length > 0 ? args[0] : null;
+            return JavaScriptRuntime.Number.ToExponentialString(thisValue, fractionDigits);
+        };
+        private static readonly Func<object[], object?[]?, object?> _numberPrototypeToFixedValue = static (_, args) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            var fractionDigits = args != null && args.Length > 0 ? args[0] : null;
+            return JavaScriptRuntime.Number.ToFixedString(thisValue, fractionDigits);
+        };
+        private static readonly Func<object[], object?[]?, object?> _numberPrototypeToLocaleStringValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            return JavaScriptRuntime.Number.ToLocaleStringString(thisValue);
+        };
+        private static readonly Func<object[], object?[]?, object?> _numberPrototypeToPrecisionValue = static (_, args) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            var precision = args != null && args.Length > 0 ? args[0] : null;
+            return JavaScriptRuntime.Number.ToPrecisionString(thisValue, precision);
+        };
         private static readonly Func<object[], object?, Delegate> _functionConstructorValue = static (_, __) =>
             throw new JavaScriptRuntime.Error("The Function constructor only supports compile-time string literal arguments in jroc.");
 
@@ -473,6 +496,14 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(_numberPrototypeValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_booleanPrototypeValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_symbolPrototypeValue, _objectPrototypeValue);
+            PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, JavaScriptRuntime.Number.NumberDataPropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = 0d
+            });
             DefineIntrinsicDataProperty(_jsonValue, "parse", (Func<object?, object?>)JavaScriptRuntime.JSON.Parse);
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
@@ -515,22 +546,12 @@ namespace JavaScriptRuntime
             DefineUndefinedPrototypeProperty(_numberIsFiniteValue);
             DefineUndefinedPrototypeProperty(_numberIsIntegerValue);
             DefineUndefinedPrototypeProperty(_numberIsNaNValue);
-            PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, "toString", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _numberPrototypeToStringValue
-            });
-            PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, "valueOf", new JsPropertyDescriptor
-            {
-                Kind = JsPropertyDescriptorKind.Data,
-                Enumerable = false,
-                Configurable = true,
-                Writable = true,
-                Value = _numberPrototypeValueOfValue
-            });
+            DefineBuiltinFunctionProperty(_numberPrototypeValue, "toExponential", _numberPrototypeToExponentialValue, 1d);
+            DefineBuiltinFunctionProperty(_numberPrototypeValue, "toFixed", _numberPrototypeToFixedValue, 1d);
+            DefineBuiltinFunctionProperty(_numberPrototypeValue, "toLocaleString", _numberPrototypeToLocaleStringValue, 0d);
+            DefineBuiltinFunctionProperty(_numberPrototypeValue, "toPrecision", _numberPrototypeToPrecisionValue, 1d);
+            DefineBuiltinFunctionProperty(_numberPrototypeValue, "toString", _numberPrototypeToStringValue, 1d);
+            DefineBuiltinFunctionProperty(_numberPrototypeValue, "valueOf", _numberPrototypeValueOfValue, 0d);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MAX_VALUE", double.MaxValue);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MIN_VALUE", double.Epsilon);
             DefineIntrinsicConstantDataProperty(_numberFunctionValue, "MAX_SAFE_INTEGER", 9007199254740991d);
