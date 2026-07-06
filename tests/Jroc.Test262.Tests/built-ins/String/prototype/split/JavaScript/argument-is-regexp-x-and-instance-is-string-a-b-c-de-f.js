@@ -10,9 +10,6 @@ es5id: 15.5.4.14_A4_T21
 description: Argument is regexp /\X/, and instance is String("a b c de f")
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __string = new String("a b c de f");
 
 var __re = /X/;
@@ -34,4 +31,3 @@ assert.sameValue(
 );
 
 assert.sameValue(__split[0], __expected[0], 'The value of __split[0] is expected to equal the value of __expected[0]');
-

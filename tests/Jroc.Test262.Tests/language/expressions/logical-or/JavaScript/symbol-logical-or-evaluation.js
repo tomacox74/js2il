@@ -8,5 +8,5 @@ features: [Symbol]
 ---*/
 var sym = Symbol();
 
-console.log(Object.is(!sym || true, true));
-console.log(Object.is(sym || false, sym));
+assert.sameValue(!sym || true, true, "`!sym || true` is `true`");
+assert.sameValue(sym || false, sym, "`sym || false` is `sym`");

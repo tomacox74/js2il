@@ -14,12 +14,6 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-"use strict";
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 assert.throws(SyntaxError, function() {
     eval("var _13_1_2_fun = function (eval) { }");
 });
-

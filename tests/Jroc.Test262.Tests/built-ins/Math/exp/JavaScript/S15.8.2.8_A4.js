@@ -7,11 +7,6 @@ es5id: 15.8.2.8_A4
 description: Checking if Math.exp(+Infinity) is +Ifinity
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.exp(Infinity), Infinity));
+// CHECK#1
+var x = +Infinity;
+assert.sameValue(Math.exp(x), +Infinity, 'Math.exp(+Infinity) must return +Infinity');

@@ -17,9 +17,6 @@ includes: [propertyHelper.js]
 features: [class]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 const xCls = class x {};
 const cls = class {};
 const xCls2 = class { static name() {} };
@@ -33,4 +30,3 @@ verifyProperty(cls, 'name', {
   enumerable: false,
   configurable: true,
 });
-

@@ -7,7 +7,7 @@ es5id: 12.14_A3
 description: Checking if execution of "catch" catches system exceptions
 ---*/
 
-
+// CHECK#1
 try{
   y;
   throw new Test262Error('#1: "y" lead to throwing exception');
@@ -49,5 +49,3 @@ if (x3!==1){
 if (c3!==1){
   throw new Test262Error('#3.3: "finally" block must be evaluated');
 }
-
-console.log(true);

@@ -9,7 +9,6 @@ es5id: 12.6.1_A2
 description: Evaluating Statement with error Expression
 ---*/
 
-
 var __in__do;
 
 try {
@@ -26,5 +25,3 @@ if (__in__do !== "reached") {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

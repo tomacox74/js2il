@@ -11,7 +11,6 @@ description: >
     and Identifier
 ---*/
 
-
 FOR1 : for(var i=1;i<2;i++){
   FOR1NESTED : for(var j=1;j<2;j++) {
     continue
@@ -43,5 +42,3 @@ FOR4 : for(var i=1;i<2;i++){
 }
 
 assert.sameValue(j, 2, '#4: Since LineTerminator(U-2029) between continue and Identifier not allowed continue evaluates without label');
-
-console.log(true);

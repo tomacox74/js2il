@@ -9,7 +9,7 @@ description: >
     evaluates correct
 ---*/
 
-
+// CHECK#1
 try{
   try{
     throw "ex2";
@@ -167,6 +167,3 @@ catch(er1){
   if (er1!=="ex1") throw new Test262Error('#7.3: Exception === "ex1". Actual:  Exception ==='+er1);
 }
 if (c7!==4) throw new Test262Error('#7.4: "finally" block must be evaluated');
-
-
-console.log("pass");

@@ -6,12 +6,8 @@ es5id: 15.12.1.1-g1-2
 description: The JSON lexical grammar treats <CR> as a whitespace character
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 assert.sameValue(JSON.parse('\r1234'), 1234, '<cr> should be ignored');
 
 assert.throws(SyntaxError, function() {
     JSON.parse('12\r34');
 }, '<CR> should produce a syntax error as whitespace results in two tokens');
-

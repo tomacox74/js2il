@@ -6,7 +6,6 @@ esid: sec-for-statement
 es6id: 13.7.4
 ---*/
 
-
 var iterCount = 0;
 var first = true;
 
@@ -16,6 +15,3 @@ for (var x; first; first = false) {
 }
 
 assert.sameValue(iterCount, 1);
-
-
-console.log("pass");

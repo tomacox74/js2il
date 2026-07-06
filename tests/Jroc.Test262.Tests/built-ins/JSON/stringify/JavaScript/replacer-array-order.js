@@ -24,9 +24,6 @@ info: |
     a. Let K be PropertyList.
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var replacer = ['c', 'b', 'a'];
 
 assert.sameValue(
@@ -38,4 +35,3 @@ assert.sameValue(
   JSON.stringify({a: {b: 2, c: 3}}, replacer),
   '{"a":{"c":3,"b":2}}'
 );
-

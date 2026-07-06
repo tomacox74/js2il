@@ -6,10 +6,7 @@ es5id: 15.3.4.5-2-13
 description: Function.prototype.bind throws TypeError if 'Target' is a number
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+
 assert.throws(TypeError, function() {
   Function.prototype.bind.call(5);
 });
-

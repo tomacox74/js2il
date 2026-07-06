@@ -10,5 +10,3 @@ flags: [noStrict]
 ---*/
 
 yield: 1;
-
-console.log(true);

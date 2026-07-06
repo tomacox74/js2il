@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (C) 2021 Rick Waldron. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
@@ -29,18 +27,18 @@ const s = new Set([
   bigint,
 ]);
 
-console.log(Object.is(s.size, 2));
-console.log(Object.is(s.has(number), true));
-console.log(Object.is(s.has(bigint), true));
+assert.sameValue(s.size, 2);
+assert.sameValue(s.has(number), true);
+assert.sameValue(s.has(bigint), true);
 
 s.delete(number);
-console.log(Object.is(s.size, 1));
-console.log(Object.is(s.has(number), false));
+assert.sameValue(s.size, 1);
+assert.sameValue(s.has(number), false);
 s.delete(bigint);
-console.log(Object.is(s.size, 0));
-console.log(Object.is(s.has(bigint), false));
+assert.sameValue(s.size, 0);
+assert.sameValue(s.has(bigint), false);
 
 s.add(number);
-console.log(Object.is(s.size, 1));
+assert.sameValue(s.size, 1);
 s.add(bigint);
-console.log(Object.is(s.size, 2));
+assert.sameValue(s.size, 2);

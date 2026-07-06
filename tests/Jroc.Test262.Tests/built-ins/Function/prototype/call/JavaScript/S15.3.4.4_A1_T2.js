@@ -12,9 +12,6 @@ description: >
     property.  Prototype of the object is Function.prototype
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function FACTORY() {}
 
 FACTORY.prototype = Function.prototype;
@@ -29,4 +26,3 @@ try {
 } catch (e) {
   assert(e instanceof TypeError, 'The result of evaluating (e instanceof TypeError) is expected to be true');
 }
-

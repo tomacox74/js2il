@@ -11,7 +11,7 @@ description: >
     cause actual exceptions
 ---*/
 
-
+// CHECK#1
 try {
   var x=0;
 }
@@ -52,5 +52,3 @@ if(x2!==1){
 if (c2!==1){
   throw new Test262Error('#3.3: "finally" block must be evaluated. Actual: finally Block has not been evaluated');
 }
-
-console.log(true);

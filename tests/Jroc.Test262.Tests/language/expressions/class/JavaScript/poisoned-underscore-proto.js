@@ -1,10 +1,22 @@
 // Copyright (C) 2019 Alexey Shvayka. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: prod-ClassExpression
+description: >
+  ClassExpression should directly set [[Prototype]] internal slot.
+info: |
+  ClassDefinitionEvaluation
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+  [...]
+  7. Let proto be ObjectCreate(protoParent).
+
+  ObjectCreate ( proto [ , internalSlotsList ] )
+
+  [...]
+  4. Set obj.[[Prototype]] to proto.
+features: [class, __proto__]
+---*/
+
 Object.defineProperty(Object.prototype, '__proto__', {
   set: function() {
     throw new Test262Error('should not be called');

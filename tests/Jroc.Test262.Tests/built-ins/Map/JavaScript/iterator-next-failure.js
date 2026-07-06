@@ -1,12 +1,18 @@
-Test262Error.prototype.name = "Test262Error";
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-map-iterable
+description: >
+  The iterator is closed when iterable `next` throws an error.
+info: |
+  Map ( [ iterable ] )
 
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(__test262FormatMessage(message, "Assertion failed"));
-    }
-};
+  ...
+  9. Repeat
+    a. Let next be IteratorStep(iter).
+    b. ReturnIfAbrupt(next).
+features: [Symbol.iterator]
+---*/
 
 var iterable = {};
 iterable[Symbol.iterator] = function() {

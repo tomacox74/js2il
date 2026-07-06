@@ -25,14 +25,11 @@ info: |
 features: [cross-realm, Proxy]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
-var handle = Proxy.revocable([], {});
+var OProxy = $262.createRealm().global.Proxy;
+var handle = OProxy.revocable([], {});
 
 handle.revoke();
 
 assert.throws(TypeError, function() {
   JSON.stringify({}, handle.proxy);
 });
-

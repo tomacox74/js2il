@@ -30,16 +30,6 @@ features: [generators, default-parameters]
 includes: [propertyHelper.js]
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
 
 var f1 = function* (x = 42) {};
 

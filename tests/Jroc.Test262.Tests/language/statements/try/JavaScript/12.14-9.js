@@ -6,7 +6,7 @@ es5id: 12.14-9
 description: catch introduces scope - name lookup finds outer variable
 ---*/
 
-function f(o) {
+  function f(o) {
     var x = 42;
 
     function innerf(o) {
@@ -22,5 +22,3 @@ function f(o) {
   }
 
 assert.sameValue(f({}), 42);
-
-console.log(true);

@@ -16,7 +16,7 @@ description: >
     shadow outer function expression
 ---*/
 
-var o = {foo : function () { return 42;}};
+  var o = {foo : function () { return 42;}};
 
   try {
     throw o;
@@ -26,5 +26,3 @@ var o = {foo : function () { return 42;}};
   }
 
 assert.sameValue(foo(), undefined);
-
-console.log(true);

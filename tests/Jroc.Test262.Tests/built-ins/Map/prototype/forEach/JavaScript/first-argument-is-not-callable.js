@@ -1,12 +1,16 @@
-Test262Error.prototype.name = "Test262Error";
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-map.prototype.foreach
+description: >
+  Throws a TypeError if first argument is not callable.
+info: |
+  Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(__test262FormatMessage(message, "Assertion failed"));
-    }
-};
+  4. If IsCallable(callbackfn) is false, throw a TypeError exception.
+  ...
+features: [Symbol]
+---*/
 
 var map = new Map();
 

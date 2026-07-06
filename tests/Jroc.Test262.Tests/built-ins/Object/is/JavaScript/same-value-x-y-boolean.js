@@ -13,11 +13,5 @@ description: >
           return true; otherwise, return false.
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(Object.is(true, true), true, "`Object.is(true, true)` returns `true`");
 assert.sameValue(Object.is(false, false), true, "`Object.is(false, false)` returns `true`");

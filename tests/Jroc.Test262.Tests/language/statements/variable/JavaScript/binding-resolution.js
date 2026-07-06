@@ -20,5 +20,5 @@ with (obj) {
   var test262id = delete obj.test262id;
 }
 
-console.log(Object.is(obj.test262id, true));
-console.log(Object.is(test262id, undefined));
+assert.sameValue(obj.test262id, true);
+assert.sameValue(test262id, undefined);

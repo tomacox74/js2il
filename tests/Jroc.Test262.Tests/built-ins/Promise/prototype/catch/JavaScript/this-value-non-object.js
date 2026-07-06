@@ -21,28 +21,6 @@ info: |
   2. Let O be ? ToObject(V).
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
-
-function checkSequence(sequence, message) {
-  var passed = true;
-  for (var i = 0; i < sequence.length; i++) {
-    if (sequence[i] !== i + 1) {
-      passed = false;
-      break;
-    }
-  }
-  __assertResult(passed, message || 'Unexpected callback sequence');
-}
-
 assert.throws(TypeError, function() {
   Promise.prototype.catch.call(undefined);
 }, 'undefined');

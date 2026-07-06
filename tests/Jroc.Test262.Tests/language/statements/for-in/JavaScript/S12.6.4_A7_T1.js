@@ -11,9 +11,6 @@ description: >
     case
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __obj, __accum, __key;
 
 __obj={aa:1,ba:2,ca:3};
@@ -54,4 +51,3 @@ function erasator_T_1000(hash_map, charactr){
 		};
 	}
 }
-

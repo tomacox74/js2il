@@ -10,9 +10,6 @@ description: >
     functions
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 __func.valueOf = function() {
   return "gnulluna"
 };
@@ -32,4 +29,3 @@ if (__func.slice(null, Function().slice(__func, 5).length) !== "gnull") {
 //////////////////////////////////////////////////////////////////////////////
 
 function __func() {};
-

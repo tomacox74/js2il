@@ -19,14 +19,17 @@ info: |
 
 features: [Array.prototype.at]
 ---*/
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
-console.log(typeof Array.prototype.at === 'function');
+let a = [1, 2, 3, 4,,5];
 
-let a = [1, 2, 3, 4, , 5];
-
-console.log(a.at(0) === 1);
-console.log(a.at(1) === 2);
-console.log(a.at(2) === 3);
-console.log(a.at(3) === 4);
-console.log(a.at(4) === undefined);
-console.log(a.at(5) === 5);
+assert.sameValue(a.at(0), 1, 'a.at(0) must return 1');
+assert.sameValue(a.at(1), 2, 'a.at(1) must return 2');
+assert.sameValue(a.at(2), 3, 'a.at(2) must return 3');
+assert.sameValue(a.at(3), 4, 'a.at(3) must return 4');
+assert.sameValue(a.at(4), undefined, 'a.at(4) returns undefined');
+assert.sameValue(a.at(5), 5, 'a.at(5) must return 5');

@@ -18,5 +18,3 @@ x.length = 0;
 if (x.join() !== "") {
   throw new Test262Error('#2: x = []; x[0] = 1; x.length = 0; x.join() === "". Actual: ' + (x.join()));
 }
-
-console.log(true);

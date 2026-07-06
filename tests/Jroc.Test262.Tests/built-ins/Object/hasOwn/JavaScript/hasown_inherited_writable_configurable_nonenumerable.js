@@ -10,12 +10,6 @@ author: Jamie Kyle
 features: [Object.hasOwn]
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 var base = {};
 Object.defineProperty(base, "foo", {
   value: 42,

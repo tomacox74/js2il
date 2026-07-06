@@ -9,6 +9,7 @@ es5id: 10.1.1_A1_T2
 description: Creating function dynamically by using a FunctionExpression
 ---*/
 
+//CHECK#1
 var x=function f1(){return 1;}();
 if(x!==1)
   throw new Test262Error('#1: Create function dynamically either by using a FunctionExpression');
@@ -24,4 +25,3 @@ var z = (function(){return 3;})();
 if(z!==3){
   throw new Test262Error('#3: Create an anonymous function dynamically either by using a FunctionExpression wrapped in a group operator');
 }
-console.log(true);

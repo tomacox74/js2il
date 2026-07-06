@@ -1,12 +1,21 @@
-Test262Error.prototype.name = "Test262Error";
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-map.prototype.clear
+description: >
+  Clears a Map.
+info: |
+  Map.prototype.clear ( )
 
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(__test262FormatMessage(message, "Assertion failed"));
-    }
-};
+  ...
+  4. Let entries be the List that is the value of M’s [[MapData]] internal slot.
+  5. Repeat for each Record {[[key]], [[value]]} p that is an element of
+  entries,
+    a. Set p.[[key]] to empty.
+    b. Set p.[[value]] to empty.
+  6. Return undefined.
+features: [Symbol]
+---*/
 
 var m1 = new Map([
   ['foo', 'bar'],

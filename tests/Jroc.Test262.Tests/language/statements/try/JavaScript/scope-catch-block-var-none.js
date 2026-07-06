@@ -9,7 +9,6 @@ info: |
     [...]
 ---*/
 
-
 var x = 1;
 var probeBefore = function() { return x; };
 var probeInside;
@@ -24,6 +23,3 @@ try {
 assert.sameValue(probeBefore(), 2, 'reference preceding statement');
 assert.sameValue(probeInside(), 2, 'reference within statement');
 assert.sameValue(x, 2, 'reference following statement');
-
-
-console.log("pass");

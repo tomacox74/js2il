@@ -7,7 +7,6 @@ es5id: 12.13_A3_T4
 description: Evaluating array expression
 ---*/
 
-
 var mycars = new Array();
 mycars[0] = "Saab";
 mycars[1] = "Volvo";
@@ -53,5 +52,3 @@ catch(e){
     if (e[i]!==mycars2[i-3]) throw new Test262Error('#3.'+i+': Exception['+i+']===mycars2['+(i-3)+'](operation .concat(new)). Actual:  Exception['+i+']==='+ e[i] );
   }
 }
-
-console.log(true);

@@ -9,8 +9,12 @@ description: Checking with "="
 
 //CHECK#1
 var x = 0; 
-console.log(!(((x = 1) != x) !== false));
+if (((x = 1) != x) !== false) {
+  throw new Test262Error('#1: var x = 0; ((x = 1) != x) === false');
+}
 
 //CHECK#2
 var x = 0; 
-console.log(!((x != (x = 1)) !== true));
+if ((x != (x = 1)) !== true) {
+  throw new Test262Error('#2: var x = 0; (x != (x = 1)) === true');
+}

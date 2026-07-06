@@ -12,9 +12,6 @@ es5id: 15.5.4.14_A1_T7
 description: Argument is undefined, and instance is String
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __split = String("undefinedd").split(undefined);
 
 assert.sameValue(typeof __split, "object", 'The value of `typeof __split` is "object"');
@@ -27,4 +24,3 @@ assert.sameValue(
 
 assert.sameValue(__split.length, 1, 'The value of __split.length is 1');
 assert.sameValue(__split[0], "undefinedd", 'The value of __split[0] is "undefinedd"');
-

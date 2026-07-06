@@ -1,10 +1,14 @@
 // Copyright (C) 2015 Caitlin Potter. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+description: >
+    Functions created using ClassExpression syntactic form do not
+    have own properties "caller" or "arguments", but inherit them from
+    %FunctionPrototype%.
+es6id: 16.1
+---*/
+
 var BaseClass = class {};
 
 assert.sameValue(
@@ -30,7 +34,7 @@ assert.throws(TypeError, function() {
   BaseClass.arguments = {};
 });
 
-var SubClass = class {};
+var SubClass = class extends BaseClass {};
 
 assert.sameValue(
   SubClass.hasOwnProperty('caller'), false, 'No "caller" own property'

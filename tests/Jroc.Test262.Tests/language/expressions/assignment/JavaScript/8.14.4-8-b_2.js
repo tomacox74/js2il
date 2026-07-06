@@ -7,13 +7,7 @@ description: Non-writable property on a prototype written to in strict mode.
 flags: [onlyStrict]
 ---*/
 
-"use strict";
-
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-function foo() {};
+    function foo() {};
     Object.defineProperty(foo.prototype, "bar", {value: "unwritable"}); 
     
     var o = new foo(); 

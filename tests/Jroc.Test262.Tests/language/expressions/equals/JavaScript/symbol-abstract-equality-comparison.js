@@ -1,10 +1,11 @@
 // Copyright (C) 2013 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+es6id: 7.2.12
+description: >
+    Abstract Equality Comparison: Symbol
+features: [Symbol]
+---*/
 var symA = Symbol('66');
 var symB = Symbol('66');
 
@@ -17,3 +18,4 @@ assert.sameValue(symB == symB.valueOf(), true, "The result of `symB == symB.valu
 assert.sameValue(symB.valueOf() == symB, true, "The result of `symB.valueOf() == symB` is `true`");
 
 assert.sameValue(symA == symB, false, "The result of `symA == symB` is `false`");
+

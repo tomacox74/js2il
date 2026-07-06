@@ -9,9 +9,6 @@ description: >
     undefined variable
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __instance = new Boolean;
 
 __instance.slice = String.prototype.slice;
@@ -29,4 +26,3 @@ if (__instance.slice(function() {
 //////////////////////////////////////////////////////////////////////////////
 
 var x;
-

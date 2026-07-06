@@ -31,12 +31,8 @@ features: [arrow-function]
 includes: [compareArray.js]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var fn = () => {};
 fn.a = 1;
 Object.defineProperty(fn, "name", {enumerable: true});
 var fnKeys = Object.entries(fn).map(e => e[0]);
 assert.compareArray(fnKeys, ["name", "a"]);
-

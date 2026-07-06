@@ -16,7 +16,7 @@ description: >
     visible outside when name different from catch parameter
 ---*/
 
-try {
+  try {
     throw new Error();
   }
   catch (e) {
@@ -24,5 +24,3 @@ try {
   }
 
 assert.sameValue(foo, "declaration in catch");
-
-console.log(true);

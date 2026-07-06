@@ -29,5 +29,3 @@ if (pop !== undefined) {
 if (x.length !== 0) {
   throw new Test262Error('#4: var x = new Array(1,2,3); x.length = 0; x.pop(); x.length === 0. Actual: ' + (x.length));
 }
-
-console.log(true);

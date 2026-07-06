@@ -5,10 +5,6 @@ es6id: 13.1
 description: >
     catch parameter shadowing let declaration
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 {
   let a = 3;
   try {
@@ -21,5 +17,4 @@ var assert = function assert(condition) {
   }
   assert.sameValue(a, 3);
 }
-
 

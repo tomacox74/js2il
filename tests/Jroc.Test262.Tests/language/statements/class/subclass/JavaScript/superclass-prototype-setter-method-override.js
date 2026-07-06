@@ -1,11 +1,10 @@
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Assertion failed");
-    }
-};
-
+// Copyright (C) 2014 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+es6id: 14.5
+description: >
+    superclass prototype override
+---*/
 function Base() {}
 
 Base.prototype = {

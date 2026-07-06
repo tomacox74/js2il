@@ -9,7 +9,8 @@ es5id: 12.6.3_A13
 description: Declaring variable in "for" ExpressionNoIn
 ---*/
 
-
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
 try {
 	index = index;
 } catch (e) {
@@ -22,6 +23,3 @@ try {
 for(var index=0; index<6; index++) {
 	;
 }
-
-
-console.log("pass");

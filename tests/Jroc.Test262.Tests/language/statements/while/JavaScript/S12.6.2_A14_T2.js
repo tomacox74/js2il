@@ -9,10 +9,6 @@ description: Using function call as an Expression
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 while(function __func(){return 1;}()){
     var __reached = 1;
    break;
@@ -27,5 +23,3 @@ if (__reached !== 1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

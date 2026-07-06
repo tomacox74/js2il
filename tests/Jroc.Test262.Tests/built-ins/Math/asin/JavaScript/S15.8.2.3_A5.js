@@ -7,11 +7,4 @@ es5id: 15.8.2.3_A5
 description: Checking if Math.asin(-0) equals to -0
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.asin(-0), -0));
+assert.sameValue(Math.asin(-0), -0);

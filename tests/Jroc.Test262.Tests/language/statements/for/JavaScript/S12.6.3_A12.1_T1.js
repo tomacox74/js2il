@@ -10,7 +10,6 @@ es5id: 12.6.3_A12.1_T1
 description: Breaking a loop with "break"
 ---*/
 
-
 var __str;
 __str=""
 
@@ -22,6 +21,3 @@ for(var index=0; index<10; index+=1) {
 if (__str!=="012345") {
 	throw new Test262Error('#1: __str === "012345". Actual:  __str ==='+ __str  );
 }
-
-
-console.log("pass");

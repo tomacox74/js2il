@@ -9,7 +9,6 @@ es5id: 12.6.1_A4_T5
 description: Using labeled "break" in order to continue a loop
 ---*/
 
-
 var i = 0;
 woohoo:{
   do {
@@ -22,5 +21,3 @@ woohoo:{
   throw new Test262Error('This code should be unreacheable');
 }
 assert.sameValue(i, 10);
-
-console.log(true);

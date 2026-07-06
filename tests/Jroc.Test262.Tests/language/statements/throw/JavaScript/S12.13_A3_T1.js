@@ -13,7 +13,7 @@ try{
   throw b&&false;
 }
 catch(e){
-  console.log(!(e!==false));
+  if (e!==false) throw new Test262Error('#1: Exception === false(operaton &&). Actual:  Exception ==='+ e );
 }
 
 // CHECK#2
@@ -22,7 +22,7 @@ try{
   throw b||false;
 }
 catch(e){
-  console.log(!(e!==true));
+  if (e!==true) throw new Test262Error('#2: Exception === true(operaton ||). Actual:  Exception ==='+ e );
 }
 
 // CHECK#3
@@ -30,7 +30,7 @@ try{
   throw !false;
 }
 catch(e){
-  console.log(!(e!==true));
+  if (e!==true) throw new Test262Error('#3: Exception === true(operaton !). Actual:  Exception ==='+ e );
 }
 
 // CHECK#4
@@ -39,5 +39,5 @@ try{
   throw !(b&&false);
 }
 catch(e){
-  console.log(!(e!==true));
+  if (e!==true) throw new Test262Error('#4: Exception === true(operaton &&). Actual:  Exception ==='+ e );
 }

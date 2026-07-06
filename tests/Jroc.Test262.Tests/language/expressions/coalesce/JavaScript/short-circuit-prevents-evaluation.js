@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright (C) 2019 Leo Balter. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -60,8 +54,3 @@ assert.sameValue(x, 42);
 x = undefined;
 x = 42 ?? poison();
 assert.sameValue(x, 42);
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
-}

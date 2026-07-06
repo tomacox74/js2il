@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
@@ -9,4 +7,4 @@ description: >
   Map property of the global object.
 ---*/
 
-console.log(Object.is(typeof Map, 'function'));
+assert.sameValue(typeof Map, 'function', 'typeof Map is "function"');

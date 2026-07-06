@@ -9,10 +9,6 @@ info: |
     values.
 features: [TypedArray]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var iterationCount = 0;
 var array = new Int8Array([3, 2, 4, 1]);

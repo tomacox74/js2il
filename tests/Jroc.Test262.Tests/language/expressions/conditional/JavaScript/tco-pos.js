@@ -1,10 +1,13 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: Expression is a candidate for tail-call optimization.
+esid: sec-static-semantics-hascallintailposition
+flags: [onlyStrict]
+features: [tail-call-optimization]
+includes: [tcoHelper.js]
+---*/
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
 var callCount = 0;
 (function f(n) {
   if (n === 0) {

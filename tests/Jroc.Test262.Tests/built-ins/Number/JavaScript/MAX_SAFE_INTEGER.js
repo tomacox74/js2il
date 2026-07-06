@@ -13,10 +13,10 @@ includes: [propertyHelper.js]
 
 var desc = Object.getOwnPropertyDescriptor(Number, 'MAX_SAFE_INTEGER');
 
-console.log(desc !== undefined);
-console.log(desc !== undefined && desc.set === undefined);
-console.log(desc !== undefined && desc.get === undefined);
-console.log(desc !== undefined && desc.value === 9007199254740991);
-console.log(desc !== undefined && desc.enumerable === false);
-console.log(desc !== undefined && desc.writable === false);
-console.log(desc !== undefined && desc.configurable === false);
+assert.sameValue(desc.set, undefined, 'Does not define a `get` accessor');
+assert.sameValue(desc.get, undefined, 'Does not define a `set` accessor');
+assert.sameValue(desc.value, 9007199254740991);
+
+verifyNotEnumerable(Number, 'MAX_SAFE_INTEGER');
+verifyNotWritable(Number, 'MAX_SAFE_INTEGER');
+verifyNotConfigurable(Number, 'MAX_SAFE_INTEGER');

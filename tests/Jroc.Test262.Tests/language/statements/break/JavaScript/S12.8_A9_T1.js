@@ -9,10 +9,6 @@ es5id: 12.8_A9_T1
 description: Using "continue Identifier" within "catch" statement
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 var x=0,y=0;
 
 (function(){
@@ -34,5 +30,3 @@ if (x!==1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

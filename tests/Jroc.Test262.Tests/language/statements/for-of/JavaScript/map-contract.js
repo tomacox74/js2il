@@ -7,10 +7,6 @@ description: >
 es6id: 13.6.4
 features: [Map]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var map = new Map();
 var iterationCount = 0;

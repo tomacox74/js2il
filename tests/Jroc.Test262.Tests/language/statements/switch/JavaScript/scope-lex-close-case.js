@@ -27,6 +27,6 @@ switch (null) {
     probe2 = function() { return x; };
 }
 
-console.log(Object.is(probe1(), 'inside'));
-console.log(Object.is(probe2(), 'inside'));
-console.log(Object.is(x, 'outside'));
+assert.sameValue(probe1(), 'inside', 'from first `case` clause');
+assert.sameValue(probe2(), 'inside', 'from second `case` clause');
+assert.sameValue(x, 'outside');

@@ -34,13 +34,13 @@ info: |
 features: [BigInt, numeric-separator-literal]
 ---*/
 
-console.log(Object.is(1_0n, 10n));
-console.log(Object.is(1_1n, 11n));
-console.log(Object.is(1_2n, 12n));
-console.log(Object.is(1_3n, 13n));
-console.log(Object.is(1_4n, 14n));
-console.log(Object.is(1_5n, 15n));
-console.log(Object.is(1_6n, 16n));
-console.log(Object.is(1_7n, 17n));
-console.log(Object.is(1_8n, 18n));
-console.log(Object.is(1_9n, 19n));
+assert.sameValue(1_0n, 10n);
+assert.sameValue(1_1n, 11n);
+assert.sameValue(1_2n, 12n);
+assert.sameValue(1_3n, 13n);
+assert.sameValue(1_4n, 14n);
+assert.sameValue(1_5n, 15n);
+assert.sameValue(1_6n, 16n);
+assert.sameValue(1_7n, 17n);
+assert.sameValue(1_8n, 18n);
+assert.sameValue(1_9n, 19n);

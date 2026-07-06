@@ -10,9 +10,9 @@ info: |
     patterns
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+// Explicitly define an "own" property to avoid Annex B "__proto__ Property
+// Names in Object Initializers" semantics (in environments which implement
+// that extension)
 var value = Object.defineProperty({}, '__proto__', { value: 123 });
 var result, x, y;
 
@@ -30,4 +30,3 @@ result = ({ __proto__: x, __proto__: y } = value);
 assert.sameValue(result, value);
 assert.sameValue(x, 123, 'first AssignmentProperty (CPEAAPL)');
 assert.sameValue(y, 123, 'second AssignmentProperty (CPEAAPL)');
-

@@ -6,10 +6,6 @@ description: >
     Uint8Array instances should be able to be traversed using a `for..of` loop.
 features: [TypedArray]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var iterationCount = 0;
 var array = new Uint8Array([3, 2, 4, 1]);

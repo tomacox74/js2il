@@ -9,4 +9,3 @@ description: >
 ---*/
 
 Object.getOwnPropertyDescriptor(true, "foo");
-console.log(true);

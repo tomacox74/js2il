@@ -38,16 +38,16 @@ var x;
 
 x = undefined;
 x = (null ?? 41) && 42;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '(null ?? 41) && 42');
 
 x = undefined;
 x = null ?? (41 && 42);
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, 'null ?? (41 && 42)`');
 
 x = undefined;
 x = (41 && 42) ?? null;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '(41 && 42) ?? null');
 
 x = undefined;
 x = 41 && (null ?? 42);
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '41 && (null ?? 42)`');

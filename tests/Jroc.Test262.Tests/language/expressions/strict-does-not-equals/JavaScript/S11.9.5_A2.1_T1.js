@@ -8,24 +8,34 @@ description: Either Type is not Reference or GetBase is not null
 ---*/
 
 //CHECK#1
-console.log(!(1 !== 1));
+if (1 !== 1) {
+  throw new Test262Error('#1: 1 === 1');
+}
 
 //CHECK#2
 var x = 1;
-console.log(!(x !== 1));
+if (x !== 1) {
+  throw new Test262Error('#2: var x = 1; x === 1');
+}
 
 //CHECK#3
 var y = 1;
-console.log(!(1 !== y));
+if (1 !== y) {
+  throw new Test262Error('#3: var y = 1; 1 === y');
+}
 
 //CHECK#4
 var x = 1;
 var y = 1;
-console.log(!(x !== y));
+if (x !== y) {
+  throw new Test262Error('#4: var x = 1; var y = 1; x === y');
+}
 
 //CHECK#5
 var objectx = new Object();
 var objecty = new Object();
 objectx.prop = 1;
 objecty.prop = 1;
-console.log(!(objectx.prop !== objecty.prop));
+if (objectx.prop !== objecty.prop) {
+  throw new Test262Error('#5: var objectx = new Object(); var objecty = new Object(); objectx.prop = 1; objecty.prop = 1; objectx.prop === objecty.prop');
+}

@@ -19,4 +19,4 @@ let str = '';
 for (const key in obj?.inner) {
   str += key;
 }
-console.log(Object.is('ab', str));
+assert.sameValue('ab', str);

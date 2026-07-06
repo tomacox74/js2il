@@ -14,8 +14,4 @@ info: |
   and the StringValue of IdentifierName is "await".
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var C = class aw\u0061it {};
-

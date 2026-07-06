@@ -6,9 +6,4 @@ description: >
     const declarations with initialisers in statement positions:
     case Expression : StatementList
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 switch (true) { case true: const x = 1; }
-

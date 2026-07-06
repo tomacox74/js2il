@@ -1,10 +1,14 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: Non-strict equality comparison of BigInt and Number values
+esid: sec-abstract-equality-comparison
+info: |
+  12. If Type(x) is BigInt and Type(y) is Number, or if Type(x) is Number and Type(y) is BigInt,
+    b. If the mathematical value of x is equal to the mathematical value of y, return true, otherwise return false.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+features: [BigInt]
+---*/
 assert.sameValue(0n == 0, true, 'The result of (0n == 0) is true');
 assert.sameValue(0 == 0n, true, 'The result of (0 == 0n) is true');
 assert.sameValue(0n == -0, true, 'The result of (0n == -0) is true');

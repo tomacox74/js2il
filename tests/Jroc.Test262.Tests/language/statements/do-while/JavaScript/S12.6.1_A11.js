@@ -7,10 +7,6 @@ es5id: 12.6.1_A11
 description: Checking if execution of "do {} while({})" passes
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 do {
     var __in__do=1;
     if(__in__do)break;
@@ -23,5 +19,3 @@ if (__in__do !== 1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

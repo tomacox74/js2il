@@ -9,7 +9,6 @@ es5id: 12.13_A2_T6
 description: Throwing object
 ---*/
 
-
 var myObj = {p1: 'a', 
              p2: 'b', 
              p3: 'c',
@@ -44,5 +43,3 @@ try{
 }
 catch(e){}
 if (myObj.i!==6) throw new Test262Error('#4: Handling of catch must be correct');
-
-console.log(true);

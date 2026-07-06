@@ -9,7 +9,7 @@ es5id: 12.14_A10_T5
 description: Throw some exceptions from different place of loop body
 ---*/
 
-
+// CHECK#1
 var c=0, i=0;
 var fin=0;
 while(i<10){
@@ -37,6 +37,3 @@ while(i<10){
 if(fin!==10){
   throw new Test262Error('#1.4: "finally" block must be evaluated');
 }
-
-
-console.log("pass");

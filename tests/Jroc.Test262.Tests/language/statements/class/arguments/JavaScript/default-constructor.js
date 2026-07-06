@@ -5,10 +5,6 @@ es6id: 14.5
 description: >
     class default constructor arguments
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var args, that;
 class Base {
   constructor() {
@@ -32,4 +28,3 @@ assert.sameValue(
 var arr = new Array(100);
 var obj = {};
 assert.throws(TypeError, function() {Derived.apply(obj, arr);});
-

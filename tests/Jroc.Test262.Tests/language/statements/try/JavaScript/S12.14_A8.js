@@ -7,7 +7,7 @@ es5id: 12.14_A8
 description: Throwing exception within an "if" statement
 ---*/
 
-
+// CHECK#1
 var c1=1;
 try{
   if(c1===1){
@@ -31,5 +31,3 @@ if(c2===1){
     if(er1!="ex1") throw new Test262Error('#2.2: Exception ==="ex1". Actual:  Exception ==='+er1);
   }
 }
-
-console.log(true);

@@ -1,10 +1,13 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: Non-strict equality comparison of BigInt and String values
+esid: sec-abstract-equality-comparison
+info: |
+  1. If Type(x) is different from Type(y), return false.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+features: [BigInt]
+---*/
 assert.sameValue(0n == '', true, 'The result of (0n == "") is true');
 assert.sameValue('' == 0n, true, 'The result of ("" == 0n) is true');
 assert.sameValue(0n == '-0', true, 'The result of (0n == "-0") is true');

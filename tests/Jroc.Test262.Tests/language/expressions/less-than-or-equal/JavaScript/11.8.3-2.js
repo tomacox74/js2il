@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -30,8 +24,3 @@ var obj2 = {
 
 assert.sameValue(obj1 <= obj2, false, 'The result of (obj1 <= obj2) is false');
 assert.sameValue(accessed, true, 'The value of accessed is true');
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
-}

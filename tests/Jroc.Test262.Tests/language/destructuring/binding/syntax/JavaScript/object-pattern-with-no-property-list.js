@@ -16,8 +16,4 @@ info: |
 features: [destructuring-binding]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function fn({}) {}
-

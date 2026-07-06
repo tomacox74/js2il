@@ -8,6 +8,7 @@ info: |
 es5id: 12.6.4_A4
 description: Using Object as an Expression is appropriate. Eval is used
 ---*/
+
 var __str, __evaluated, hash, ind;
 __str="";
 
@@ -28,5 +29,3 @@ if (__str !== __evaluated) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

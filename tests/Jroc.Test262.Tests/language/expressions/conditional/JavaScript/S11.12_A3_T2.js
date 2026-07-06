@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -22,9 +16,4 @@ if ((0 ? 0 : 1) !== 1) {
 var z = new Number(1);
 if ((0 ? 1 : z) !== z) {
   throw new Test262Error('#2: (var y = new Number(1); (0 ? 1 : z) === z');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

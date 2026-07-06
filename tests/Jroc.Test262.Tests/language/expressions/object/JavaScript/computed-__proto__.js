@@ -1,10 +1,33 @@
 // Copyright (C) 2017 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: prod-PropertyDefinition
+description: >
+  computed __proto__ property key is assigned to an own property
+info: |
+  12.2.6 Object Initializer
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+  PropertyDefinition[Yield, Await] :
+    PropertyName[?Yield, ?Await] : AssignmentExpression[+In, ?Yield, ?Await]
+
+  PropertyName[Yield, Await] :
+    LiteralPropertyName
+    ComputedPropertyName[?Yield, ?Await]
+
+  ComputedPropertyName[Yield, Await] :
+    [ AssignmentExpression[+In, ?Yield, ?Await] ]
+
+  B.3.1__proto__ Property Names in Object Initializers
+
+  ...
+  5. If propKey is the String value "__proto__" and if IsComputedPropertyKey(propKey)
+    is false, then
+    a. If Type(propValue) is either Object or Null, then
+        i. Return object.[[SetPrototypeOf]](propValue).
+    b. Return NormalCompletion(empty).
+features: [Symbol]
+---*/
+
 var obj;
 var sample = {};
 

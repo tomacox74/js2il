@@ -2,17 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: Set entry insertion during traversal using for..of
+description: Set entry insertaion during traversal using for..of
 info: |
     New entries inserted into a Set instance during traversal should be
     visited.
 es6id: 13.6.4
 features: [Set]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var set = new Set();
 var iterationCount = 0;

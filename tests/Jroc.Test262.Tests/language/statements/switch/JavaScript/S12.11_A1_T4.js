@@ -9,10 +9,6 @@ es5id: 12.11_A1_T4
 description: Using case with isNaN and isNaN(value)
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 function SwitchTest(value){
   var result = 0;
   
@@ -83,5 +79,3 @@ if(!(SwitchTest(NaN) === 32)){
 if(!(SwitchTest(Infinity) === 768)){
   throw new Test262Error("#10: SwitchTest(NaN) === 768. Actual:  SwitchTest(NaN) ==="+ SwitchTest(NaN)  );
 }
-
-console.log(true);

@@ -9,9 +9,9 @@ description: >
     returned string
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+//since ToInteger(null) yelds 0
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
 if (function() {
     return "gnulluna"
   }().slice(null, -3) !== "gnull") {
@@ -21,4 +21,3 @@ if (function() {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-

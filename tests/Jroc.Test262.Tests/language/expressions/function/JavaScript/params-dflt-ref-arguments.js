@@ -47,9 +47,6 @@ info: |
        FormalParameter using iteratorRecord and environment as the arguments.
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var callCount = 0;
 var f;
 f = function(x = arguments[2], y = arguments[3], z) {
@@ -62,4 +59,3 @@ f = function(x = arguments[2], y = arguments[3], z) {
 f(undefined, undefined, 'third', 'fourth');
 
 assert.sameValue(callCount, 1, 'function invoked exactly once');
-

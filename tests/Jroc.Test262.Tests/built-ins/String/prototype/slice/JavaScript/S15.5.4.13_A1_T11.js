@@ -8,6 +8,7 @@ description: >
     Arguments are objects, and instance is string, objects have
     overrided valueOf function, that return exception
 ---*/
+
 var __obj = {
   valueOf: function() {
     throw "instart";
@@ -32,5 +33,3 @@ try {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

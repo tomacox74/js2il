@@ -7,5 +7,3 @@ es5id: 12.5_A7
 ---*/
 
 if(1);
-
-console.log(true);

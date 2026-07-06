@@ -9,6 +9,13 @@ es5id: 15.5.4.11_A2_T6
 description: Don`t use $ in replaceValue, searchValue is regular expression /sh/
 ---*/
 
-var value = 'She sells seashells by the seashore.';
-var re = /sh/;
-console.log(value.replace(re, 'sch') === 'She sells seaschells by the seashore.');
+var __str = 'She sells seashells by the seashore.';
+var __re = /sh/;
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+if (__str.replace(__re, 'sch') !== 'She sells seaschells by the seashore.') {
+  throw new Test262Error('#1: var __str = \'She sells seashells by the seashore.\'; var __re = /sh/; __str.replace(__re, \'sch\')===\'She sells seaschells by the seashore.\'. Actual: ' + __str.replace(__re, 'sch'));
+}
+//
+//////////////////////////////////////////////////////////////////////////////

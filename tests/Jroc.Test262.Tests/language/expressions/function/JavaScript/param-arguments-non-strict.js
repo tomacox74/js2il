@@ -8,6 +8,5 @@ description: >
     function expression
 flags: [noStrict]
 ---*/
-(function foo(arguments){});
 
-console.log(true);
+(function foo(arguments){});

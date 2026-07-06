@@ -17,10 +17,6 @@ info: |
     for ( ForDeclaration[?Yield] of AssignmentExpression[+In, ?Yield] )
       Statement[?Yield, ?Return]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var value;
 

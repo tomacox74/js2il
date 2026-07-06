@@ -22,11 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Math.cos.length === 1);
+verifyProperty(Math.cos, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

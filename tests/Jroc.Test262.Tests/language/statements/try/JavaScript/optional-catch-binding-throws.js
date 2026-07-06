@@ -16,7 +16,6 @@ info: |
     Return Completion(B).
 ---*/
 
-
 assert.throws(Test262Error, function() {
     try {
         throw new Error();
@@ -24,6 +23,3 @@ assert.throws(Test262Error, function() {
         throw new Test262Error();
     }
 });
-
-
-console.log("pass");

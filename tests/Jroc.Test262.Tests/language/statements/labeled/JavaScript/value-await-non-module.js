@@ -12,5 +12,3 @@ info: |
 ---*/
 
 await: 1;
-
-console.log(true);

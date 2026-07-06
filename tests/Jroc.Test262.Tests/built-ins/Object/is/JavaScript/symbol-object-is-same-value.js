@@ -6,12 +6,6 @@ description: >
     Object.is/SameValue: Symbol
 features: [Object.is, Symbol]
 ---*/
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 var symA = Symbol('66');
 var symB = Symbol('66');
 

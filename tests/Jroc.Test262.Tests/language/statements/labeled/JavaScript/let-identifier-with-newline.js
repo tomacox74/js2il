@@ -12,11 +12,8 @@ info: |
 flags: [noStrict]
 ---*/
 
-
 // Wrapped in an if-statement to avoid reference errors at runtime.
 if (false) {
     L: let // ASI
     x = 1;
 }
-
-console.log(true);

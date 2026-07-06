@@ -9,7 +9,7 @@ es5id: 12.14_A5
 description: Checking "catch" catches the Identifier in appropriate way
 ---*/
 
-
+// CHECK#1
 try {
   throw "catchme";	
   throw "dontcatchme";
@@ -49,5 +49,3 @@ function SwitchTest1(value){
 }
 if (SwitchTest1(1)!==4) throw new Test262Error('#2.3: "finally" block must be evaluated');
 if (SwitchTest1(4)!==64)throw new Test262Error('#2.4: "finally" block must be evaluated');
-
-console.log(true);

@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -11,4 +9,4 @@ description: Checking if Math.abs(-Infinity) equals to +Infinity
 
 // CHECK#1
 var x = -Infinity;
-console.log(Object.is(Math.abs(x), +Infinity));
+assert.sameValue(Math.abs(x), +Infinity, 'Math.abs(-Infinity) must return +Infinity');

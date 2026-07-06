@@ -39,5 +39,3 @@ if (x[1] !== 1) {
 if (x.length !== 2) {
   throw new Test262Error('#6: x = new Array(1,2); x.reverse(); x.length === 2. Actual: ' + (x.length));
 }
-
-console.log(true);

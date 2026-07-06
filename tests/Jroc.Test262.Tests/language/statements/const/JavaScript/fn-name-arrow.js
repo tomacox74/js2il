@@ -16,9 +16,6 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 const arrow = () => {};
 
 verifyProperty(arrow, "name", {
@@ -27,4 +24,3 @@ verifyProperty(arrow, "name", {
   enumerable: false,
   configurable: true,
 });
-

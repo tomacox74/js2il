@@ -9,9 +9,6 @@ info: |
 flags: [noStrict]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var i = 0;
 
 (function() {
@@ -23,4 +20,3 @@ var i = 0;
 }(0, 'a', true, false, null, undefined, NaN));
 
 assert.sameValue(i, 7, 'Visits all arguments');
-

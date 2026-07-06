@@ -7,7 +7,7 @@ es5id: 12.14_A18_T5
 description: Catching Number
 ---*/
 
-
+// CHECK#1
 try{
   throw 13;
 }
@@ -98,6 +98,3 @@ try{
 catch(e){
   assert.sameValue(e, -0);
 }
-
-
-console.log("pass");

@@ -9,5 +9,3 @@ flags: [noStrict]
 ---*/
 
 var arguments;
-
-console.log(true);

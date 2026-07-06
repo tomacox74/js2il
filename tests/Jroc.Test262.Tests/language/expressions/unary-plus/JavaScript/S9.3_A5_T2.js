@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -130,9 +124,4 @@ var myobj5 = {
 
 if (isNaN(+(myobj5)) !== true){
   throw new Test262Error("#15: +(myobj5) calls ToPrimitive with hint +. Exptected: 12345. Actual: " + (+(myobj5)));
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

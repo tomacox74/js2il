@@ -18,9 +18,6 @@ info: |
         set item to ? ToString(v).
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var num = new Number(10);
 num.toString = function() { return 'toString'; };
 num.valueOf = function() { throw new Test262Error('should not be called'); };
@@ -32,4 +29,3 @@ var value = {
 };
 
 assert.sameValue(JSON.stringify(value, [num]), '{"toString":2}');
-

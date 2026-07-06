@@ -8,12 +8,6 @@ author: Jamie Kyle
 features: [Object.hasOwn]
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 var o = {
   set foo(x) {
   }

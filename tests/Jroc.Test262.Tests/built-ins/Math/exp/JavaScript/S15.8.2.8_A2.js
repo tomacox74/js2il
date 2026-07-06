@@ -7,11 +7,6 @@ es5id: 15.8.2.8_A2
 description: Checking if Math.exp(+0) is 1
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.exp(0), 1));
+// CHECK#1
+var x = +0;
+assert.sameValue(Math.exp(x), 1, 'Math.exp(+0) must return 1');

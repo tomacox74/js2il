@@ -1,11 +1,15 @@
-// test262: test/built-ins/BigInt/asUintN/arithmetic.js
-var assert = {
-    sameValue: function (actual, expected) {
-        if (actual !== expected) {
-            throw new Error("Expected same value");
-        }
-    }
-};
+// Copyright (C) 2017 Josh Wolfe. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-bigint.asuintn
+description: BigInt.asUintN arithmetic test cases
+info: |
+  BigInt.asUintN ( bits, bigint )
+
+  3. Return a BigInt representing bigint modulo 2**bits.
+
+features: [BigInt]
+---*/
 
 assert.sameValue(BigInt.asUintN(0, -2n), 0n);
 assert.sameValue(BigInt.asUintN(0, -1n), 0n);
@@ -48,16 +52,18 @@ assert.sameValue(BigInt.asUintN(65, 0xabcdef0123456789abcdefn), 0x10123456789abc
 
 assert.sameValue(BigInt.asUintN(200,
     0xbffffffffffffffffffffffffffffffffffffffffffffffffffn),
-    0x0ffffffffffffffffffffffffffffffffffffffffffffffffffn);
+  0x0ffffffffffffffffffffffffffffffffffffffffffffffffffn
+);
 assert.sameValue(BigInt.asUintN(201,
     0xbffffffffffffffffffffffffffffffffffffffffffffffffffn),
-    0x1ffffffffffffffffffffffffffffffffffffffffffffffffffn);
+  0x1ffffffffffffffffffffffffffffffffffffffffffffffffffn
+);
 
 assert.sameValue(BigInt.asUintN(200,
     0xb89e081df68b65fedb32cffea660e55df9605650a603ad5fc54n),
-    0x089e081df68b65fedb32cffea660e55df9605650a603ad5fc54n);
+  0x089e081df68b65fedb32cffea660e55df9605650a603ad5fc54n
+);
 assert.sameValue(BigInt.asUintN(201,
     0xb89e081df68b65fedb32cffea660e55df9605650a603ad5fc54n),
-    0x189e081df68b65fedb32cffea660e55df9605650a603ad5fc54n);
-
-console.log("done");
+  0x189e081df68b65fedb32cffea660e55df9605650a603ad5fc54n
+);

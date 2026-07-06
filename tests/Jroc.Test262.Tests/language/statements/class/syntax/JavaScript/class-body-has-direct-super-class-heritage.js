@@ -12,10 +12,6 @@ description: >
         2. If constructor is empty, return false.
         3. Return HasDirectSuper of constructor.
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 class A {}
 class B extends A {
   constructor() {
@@ -25,4 +21,3 @@ class B extends A {
 
 
 assert.sameValue(typeof B, "function");
-

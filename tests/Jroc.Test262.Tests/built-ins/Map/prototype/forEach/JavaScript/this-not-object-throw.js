@@ -1,12 +1,17 @@
-Test262Error.prototype.name = "Test262Error";
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-map.prototype.foreach
+description: >
+  Throws a TypeError if `this` is not an Object.
+info: |
+  Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(__test262FormatMessage(message, "Assertion failed"));
-    }
-};
+  1. Let M be the this value.
+  2. If Type(M) is not Object, throw a TypeError exception.
+  ...
+features: [Symbol]
+---*/
 
 assert.throws(TypeError, function() {
   Map.prototype.forEach.call(false, function() {});

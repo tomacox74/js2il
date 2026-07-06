@@ -31,9 +31,7 @@ info: |
 features: [destructuring-binding]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+// BindingElement w/ SingleNameBinding
 function fna({x: y}) {}
 
 // BindingElement w/ SingleNameBinding with initializer
@@ -46,4 +44,3 @@ function fnd({x: {y}}) {}
 // BindingElement w/ BindingPattern w/ initializer
 function fne({x: {} = 42}) {}
 function fnf({x: {y} = 42}) {}
-

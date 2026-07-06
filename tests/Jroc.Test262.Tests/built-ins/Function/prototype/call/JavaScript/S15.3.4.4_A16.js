@@ -10,9 +10,6 @@ description: >
     it as a valid this value.
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var re = (/x/);
 if (typeof re === 'function') {
   Function.prototype.call.call(re, undefined, 'x');
@@ -25,4 +22,3 @@ if (typeof re === 'function') {
     assert(e instanceof TypeError, 'The result of evaluating (e instanceof TypeError) is expected to be true');
   }
 }
-

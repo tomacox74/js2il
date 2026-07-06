@@ -9,25 +9,18 @@ es5id: 12.14_A12_T1
 description: Loop inside try Block, where throw exception
 ---*/
 
+var x;
+var mycars = new Array();
+mycars[0] = "Saab";
+mycars[1] = "Volvo";
+mycars[2] = "BMW";
 
-try {
-  var x;
-  var mycars = new Array();
-  mycars[0] = "Saab";
-  mycars[1] = "Volvo";
-  mycars[2] = "BMW";
-
-  // CHECK#1
-  try{
-    for (x in mycars){
-      if (mycars[x]==="BMW") throw "ex";
-    }
+// CHECK#1
+try{
+  for (x in mycars){
+    if (mycars[x]==="BMW") throw "ex";
   }
-  catch(e){
-    if(e!=="ex")throw new Test262Error('#1: Exception ==="ex". Actual:  Exception ==='+ e  );
-  }
-
-  console.log(true);
-} catch (error) {
-  console.log(false);
+}
+catch(e){
+  if(e!=="ex")throw new Test262Error('#1: Exception ==="ex". Actual:  Exception ==='+ e  );
 }

@@ -48,5 +48,3 @@ if (x[5] !== -1) {
 if (x.length !== 6) {
   throw new Test262Error('#9: x = []; x[0] = 0; x.push(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x.length === 6. Actual: ' + (x.length));
 }
-
-console.log(true);

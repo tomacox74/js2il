@@ -9,17 +9,6 @@ es6id: 12.1.1
 features: [generators]
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
-
 var result;
 var g = function*() {
   ({ get yield() { return 1 } });

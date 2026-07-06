@@ -5,10 +5,6 @@ es6id: 14.5
 description: >
     class basics
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var C = class C {}
 assert.sameValue(typeof C, 'function', "`typeof C` is `'function'`");
 assert.sameValue(
@@ -45,4 +41,3 @@ assert.sameValue(E.name, 'E', "The value of `E.name` is `'E'`");
 
 var F = class { constructor() {} };
 assert.sameValue(F.name, 'F', "The value of `F.name` is `'F'`");
-

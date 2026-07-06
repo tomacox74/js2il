@@ -6,9 +6,6 @@ esid: sec-array.prototype.every
 description: Array.prototype.every applied to number primitive
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var accessed = false;
 
 function callbackfn(val, idx, obj) {
@@ -21,4 +18,3 @@ Number.prototype.length = 1;
 
 assert(Array.prototype.every.call(2.5, callbackfn), 'Array.prototype.every.call(2.5, callbackfn) !== true');
 assert(accessed, 'accessed !== true');
-

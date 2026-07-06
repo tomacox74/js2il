@@ -7,7 +7,7 @@ es5id: 12.14_A13_T1
 description: Using try/catch syntax construction
 ---*/
 
-
+// CHECK#1
 function myFunction1(){
   try{
     return 1;
@@ -75,6 +75,3 @@ catch(e){
     throw new Test262Error('#4.3: Exception ==="ex2". Actual:  Exception ==='+ e  );
   }
 }
-
-
-console.log("pass");

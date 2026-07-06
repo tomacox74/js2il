@@ -20,5 +20,18 @@ var __str = String(new Array);
 // restore old toString method just in case
 Array.prototype.toString = __old__Array__prototype__toString;
 
-console.log(typeof __str === "string");
-console.log(__str === "__ARRAY__");
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+if (typeof __str !== "string") {
+  throw new Test262Error('#1: __str = String(new Array); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#2
+if (__str !== "__ARRAY__") {
+  throw new Test262Error('#2: Array.prototype.toString=function(){return "__ARRAY__";}; __str = String(new Array); __str === "__ARRAY__". Actual: __str ===' + __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////

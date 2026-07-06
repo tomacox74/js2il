@@ -1,3 +1,15 @@
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: |
+    Compute the longest prefix of Result(2), which might be Result(2) itself,
+    which satisfies the syntax of a StrDecimalLiteral
+esid: sec-parsefloat-string
+description: With ExponentIndicator
+---*/
+
+//CHECK#1
 if (parseFloat("1ex") !== 1) {
   throw new Test262Error('#1: parseFloat("1ex") === 1. Actual: ' + (parseFloat("1ex")));
 }
@@ -21,6 +33,3 @@ if (parseFloat("1e-1x") !== 0.1) {
 if (parseFloat("0.1e-1x") !== 0.01) {
   throw new Test262Error('#5: parseFloat("0.1e-1x") === 0.01. Actual: ' + (parseFloat("0.1e-1x")));
 }
-
-
-console.log(true);

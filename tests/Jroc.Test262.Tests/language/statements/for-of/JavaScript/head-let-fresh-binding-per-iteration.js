@@ -5,10 +5,6 @@ es6id: 13.6.4.13
 description: >
     let ForDeclaration: creates a fresh binding per iteration
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 let s = 0;
 let f = [undefined, undefined, undefined];

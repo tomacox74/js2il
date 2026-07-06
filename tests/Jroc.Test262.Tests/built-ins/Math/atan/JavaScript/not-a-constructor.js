@@ -21,17 +21,9 @@ includes: [isConstructor.js]
 features: [Reflect.construct, arrow-function]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
+assert.sameValue(isConstructor(Math.atan), false, 'isConstructor(Math.atan) must return false');
 
-var threw = false;
-try {
-    new Math.atan();
-} catch (error) {
-    threw = error instanceof TypeError;
-}
-check(threw);
+assert.throws(TypeError, () => {
+  new Math.atan();
+});
+

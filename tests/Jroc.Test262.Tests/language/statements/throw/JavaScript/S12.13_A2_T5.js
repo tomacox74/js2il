@@ -14,7 +14,7 @@ try{
   throw 13;
 }
 catch(e){
-  console.log(!(e!==13));
+  if (e!==13) throw new Test262Error('#1: Exception ===13. Actual:  Exception ==='+ e );
 }
 
 // CHECK#2
@@ -23,7 +23,7 @@ try{
   throw b;
 }
 catch(e){
-  console.log(!(e!==13));
+  if (e!==13) throw new Test262Error('#2: Exception ===13. Actual:  Exception ==='+ e );
 }
 
 // CHECK#3
@@ -31,7 +31,7 @@ try{
   throw 2.13;
 }
 catch(e){
-  console.log(!(e!==2.13));
+  if (e!==2.13) throw new Test262Error('#3: Exception ===2.13. Actual:  Exception ==='+ e );
 }
 
 // CHECK#4
@@ -47,7 +47,7 @@ try{
   throw +Infinity;
 }
 catch(e){
-  console.log(!(e!==+Infinity));
+  if (e!==+Infinity) throw new Test262Error('#5: Exception ===+Infinity. Actual:  Exception ==='+ e );
 }
 
 // CHECK#6
@@ -55,7 +55,7 @@ try{
   throw -Infinity;
 }
 catch(e){
-  console.log(!(e!==-Infinity));
+  if (e!==-Infinity) throw new Test262Error('#6: Exception ===-Infinity. Actual:  Exception ==='+ e );
 }
 
 // CHECK#7
@@ -63,7 +63,7 @@ try{
   throw +0;
 }
 catch(e){
-  console.log(!(e!==+0));
+  if (e!==+0) throw new Test262Error('#7: Exception ===+0. Actual:  Exception ==='+ e );
 }
 
 // CHECK#8

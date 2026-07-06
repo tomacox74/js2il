@@ -12,10 +12,10 @@ let exprCallCount = 0;
 let evalValue = {};
 
 let foo = function(eval) {
-  console.log(Object.is(eval, evalValue));
+  assert.sameValue(eval, evalValue);
   exprCallCount += 1;
 };
 
 foo(evalValue);
 
-console.log(Object.is(exprCallCount, 1));
+assert.sameValue(exprCallCount, 1);

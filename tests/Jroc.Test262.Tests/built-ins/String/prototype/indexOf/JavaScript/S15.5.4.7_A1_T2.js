@@ -8,6 +8,7 @@ description: >
     Arguments are boolean equation, function and null, and instance is
     Boolean object
 ---*/
+
 var __instance = new Boolean;
 
 __instance.indexOf = String.prototype.indexOf;
@@ -23,5 +24,3 @@ if (__instance.indexOf("A" !== "\u0041", function() {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

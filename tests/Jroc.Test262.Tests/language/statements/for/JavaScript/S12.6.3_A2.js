@@ -9,7 +9,8 @@ es5id: 12.6.3_A2
 description: Using "(function(){throw "NoInExpression"})()" as ExpressionNoIn
 ---*/
 
-
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
 try {
 	for((function(){throw "NoInExpression";})(); (function(){throw "FirstExpression";})(); (function(){throw "SecondExpression";})()) {
 		var in_for = "reached";
@@ -30,6 +31,3 @@ if (in_for !== undefined) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-
-console.log("pass");

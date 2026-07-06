@@ -23,9 +23,9 @@ features: [destructuring-binding]
 
 function fn({}) { return true; }
 
-console.log(!!(fn(0)));
-console.log(!!(fn(NaN)));
-console.log(!!(fn('')));
-console.log(!!(fn(false)));
-console.log(!!(fn({})));
-console.log(!!(fn([])));
+assert(fn(0));
+assert(fn(NaN));
+assert(fn(''));
+assert(fn(false));
+assert(fn({}));
+assert(fn([]));

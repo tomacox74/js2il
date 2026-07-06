@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -51,9 +45,4 @@ if ((Number.MAX_VALUE > Number.NaN) !== false) {
 //CHECK#8
 if ((Number.MIN_VALUE > Number.NaN) !== false) {
   throw new Test262Error('#8: (Number.MIN_VALUE > NaN) === false');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

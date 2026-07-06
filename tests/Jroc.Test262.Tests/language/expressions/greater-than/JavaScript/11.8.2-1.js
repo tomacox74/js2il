@@ -1,10 +1,13 @@
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+es5id: 11.8.2-1
+description: >
+  11.8.2 Greater-than Operator - Partial left to right order
+  enforced when using Greater-than operator: valueOf > valueOf
+---*/
+
 var accessed = false;
 var obj1 = {
   valueOf: function () {

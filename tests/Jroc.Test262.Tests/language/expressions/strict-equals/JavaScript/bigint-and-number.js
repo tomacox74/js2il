@@ -1,10 +1,13 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: Strict equality comparison of BigInt and Number values
+esid: sec-strict-equality-comparison
+info: |
+  1. If Type(x) is different from Type(y), return false.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+features: [BigInt]
+---*/
 assert.sameValue(0n === 0, false, 'The result of (0n === 0) is false');
 assert.sameValue(0 === 0n, false, 'The result of (0 === 0n) is false');
 assert.sameValue(0n === -0, false, 'The result of (0n === -0) is false');

@@ -9,7 +9,7 @@ description: >
     "throw"
 ---*/
 
-
+// CHECK#1
 try {
   throw "catchme";	
   throw new Test262Error('#1: throw "catchme" lead to throwing exception');
@@ -50,5 +50,3 @@ if (x3!==1){
 if (c3!==1){
   throw new Test262Error('#3.3: "finally" block must be evaluated');
 }
-
-console.log(true);

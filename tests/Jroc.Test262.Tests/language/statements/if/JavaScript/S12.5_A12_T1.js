@@ -8,10 +8,6 @@ description: Using embedded "if/else" into "if/else" constructions
 ---*/
 
 //CHECK# 1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 if(true)
   if (false)
     throw new Test262Error('#1.1: At embedded "if/else" constructions engine must select right branches');
@@ -58,5 +54,3 @@ else
     throw new Test262Error('#4.3: At embedded "if/else" constructions engine must select right branches');
   else
     ;
-
-console.log(true);

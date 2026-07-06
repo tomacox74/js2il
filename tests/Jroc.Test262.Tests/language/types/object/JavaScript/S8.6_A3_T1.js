@@ -13,6 +13,6 @@ var __map={foo:'bar'};
 //CHECK#1
 
 ++__map.foo;
-console.log(Object.is(__map.foo, NaN));
+assert.sameValue(__map.foo, NaN);
 //
 //////////////////////////////////////////////////////////////////////////////

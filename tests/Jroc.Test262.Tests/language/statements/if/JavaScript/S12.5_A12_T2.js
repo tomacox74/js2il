@@ -7,7 +7,7 @@ es5id: 12.5_A12_T2
 description: Using embedded "if" into "if/else" constructions
 ---*/
 
-
+//CHECK# 1
 if(true){
   if (false)
     throw new Test262Error('#1.1: At embedded "if/else" constructions engine must select right branches');
@@ -46,5 +46,3 @@ else{
   if (false)
     throw new Test262Error('#4.3: At embedded "if/else" constructions engine must select right branches');
 }
-
-console.log(true);

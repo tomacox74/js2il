@@ -9,8 +9,4 @@ description: >
 flags: [noStrict]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 (function foo(eval){});
-

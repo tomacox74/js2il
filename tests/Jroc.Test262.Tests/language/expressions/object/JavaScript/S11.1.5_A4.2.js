@@ -4,8 +4,8 @@
 /*---
 info: The PropertyName is not really a nullLiteral
 es5id: 11.1.5_A4.2
-description: "Checking if execution of "var object = {null : true}" does not fail"
+description: "Checking if execution of \"var object = {null : true}\" does not fail"
 ---*/
 
+//CHECK#1
 var object = {null : true};
-console.log(object["null"] === true);

@@ -56,5 +56,3 @@ if (pop !== 0) {
 if (x.length !== 0) {
   throw new Test262Error('#10: x = []; x[0] = 0; x[3] = 3; x.pop(); x.length = 1; x.pop(); x.length === 0. Actual: ' + (x.length));
 }
-
-console.log(true);

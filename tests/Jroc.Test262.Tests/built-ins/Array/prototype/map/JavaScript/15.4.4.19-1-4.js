@@ -6,9 +6,6 @@ esid: sec-array.prototype.map
 description: Array.prototype.map - applied to Boolean object
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function callbackfn(val, idx, obj) {
   return obj instanceof Boolean;
 }
@@ -22,4 +19,3 @@ var testResult = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');
 assert.sameValue(testResult[1], true, 'testResult[1]');
-

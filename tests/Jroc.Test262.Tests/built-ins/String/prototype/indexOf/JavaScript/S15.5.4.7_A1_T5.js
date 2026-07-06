@@ -8,6 +8,10 @@ description: >
     Call indexOf(searchString, position) function with null argument
     of function object
 ---*/
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+//since ToString(null) evaluates to "null" indexOf(null) evaluates to indexOf("",0)
 if (function() {
     return "gnulluna"
   }().indexOf(null) !== 1) {
@@ -17,5 +21,3 @@ if (function() {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

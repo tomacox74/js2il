@@ -8,12 +8,8 @@ es6id: 14.4.13
 features: [generators]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var method = { *method() {} }.method;
 
 assert.throws(TypeError, function() {
   var instance = new method();
 });
-

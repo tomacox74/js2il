@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -48,9 +42,4 @@ if (("1.0" == "1") !== false) {
 //CHECK#7
 if (("0xff" == "255") !== false) {
   throw new Test262Error('#7: ("0xff" == "255") === false');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

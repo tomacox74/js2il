@@ -14,9 +14,6 @@ description: >
     overrided toString function
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __obj = {
   toString: function() {}
 };
@@ -33,4 +30,3 @@ assert.sameValue(
 
 assert.sameValue(__split.length, 1, 'The value of __split.length is 1');
 assert.sameValue(__split[0], "undefined", 'The value of __split[0] is "undefined"');
-

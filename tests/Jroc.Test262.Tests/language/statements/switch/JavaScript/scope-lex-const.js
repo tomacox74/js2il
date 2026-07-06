@@ -18,12 +18,5 @@ negative:
   type: ReferenceError
 ---*/
 
-
-try {
-  switch (0) { default: const x = 1; }
-  x;
-
-  console.log(false);
-} catch (error) {
-  console.log(error instanceof ReferenceError);
-}
+switch (0) { default: const x = 1; }
+x;

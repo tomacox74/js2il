@@ -9,7 +9,7 @@ es5id: 12.6.3_A14
 description: Using +,*,/, as the second Expression
 ---*/
 
-
+//CHECK#1
 for(var i=0;i<10;i++){}
 if (i!==10)	throw new Test262Error('#1: i === 10. Actual:  i ==='+ i  );
 
@@ -44,6 +44,3 @@ for(var i=2;i<10;i*=i){
 }
 if (i!==16)  throw new Test262Error('#5.1: i === 16. Actual:  i ==='+ i  );
 if (j!==2)  throw new Test262Error('#5.2: j === 2. Actual:  j ==='+ j  );
-
-
-console.log("pass");

@@ -1,14 +1,23 @@
-"use strict";
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-map.prototype.foreach
+description: >
+  If a thisArg is not provided, undefined will be used as the this value for
+  each invocation of callbackfn.
+info: |
+  Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
-Test262Error.prototype.name = "Test262Error";
-
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(__test262FormatMessage(message, "Assertion failed"));
-    }
-};
+  ...
+  5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+  6. Let entries be the List that is the value of M’s [[MapData]] internal slot.
+  7. Repeat for each Record {[[key]], [[value]]} e that is an element of
+  entries, in original key insertion order
+    a. If e.[[key]] is not empty, then
+      i. Let funcResult be Call(callbackfn, T, «e.[[value]], e.[[key]], M»).
+  ...
+flags: [onlyStrict]
+---*/
 
 var _this = [];
 var map = new Map();

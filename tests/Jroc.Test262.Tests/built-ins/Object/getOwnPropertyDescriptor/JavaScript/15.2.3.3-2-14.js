@@ -8,9 +8,6 @@ description: >
     converts to a string (value is +Infinity)
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var obj = {
   "Infinity": 1
 };
@@ -18,4 +15,3 @@ var obj = {
 var desc = Object.getOwnPropertyDescriptor(obj, +Infinity);
 
 assert.sameValue(desc.value, 1, 'desc.value');
-

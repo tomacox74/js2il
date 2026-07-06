@@ -7,9 +7,6 @@ esid: sec-automatic-semicolon-insertion
 features: [class, class-fields-public]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var C = class {
   x = "lol"
   [1]
@@ -18,4 +15,3 @@ var C = class {
 var c = new C();
 
 assert.sameValue(c.x, 'o');
-

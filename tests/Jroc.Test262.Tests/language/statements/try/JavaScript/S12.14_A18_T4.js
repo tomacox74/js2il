@@ -7,7 +7,7 @@ es5id: 12.14_A18_T4
 description: Catching string
 ---*/
 
-
+// CHECK#1
 try{
   throw "exception #1";
 }
@@ -41,6 +41,3 @@ try{
 catch(e){
   if (e!=="exception #1") throw new Test262Error('#4: Exception ==="exception #1". Actual:  Exception ==='+ e  );
 }
-
-
-console.log("pass");

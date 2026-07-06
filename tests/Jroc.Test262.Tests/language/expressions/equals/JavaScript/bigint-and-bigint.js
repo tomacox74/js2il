@@ -1,10 +1,19 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: Non-strict equality comparison of BigInt values
+esid: sec-abstract-equality-comparison
+info: |
+  1. If Type(x) is the same as Type(y), then
+    a. Return the result of performing Strict Equality Comparison x === y.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+  sec-numeric-types-bigint-equal
+  BigInt::equal (x, y)
+
+    The abstract operation BigInt::equal with two arguments x and y of BigInt type returns true if x and y have the same mathematical integer value and false otherwise.
+
+features: [BigInt]
+---*/
 assert.sameValue(0n == 0n, true, 'The result of (0n == 0n) is true');
 assert.sameValue(1n == 1n, true, 'The result of (1n == 1n) is true');
 assert.sameValue(-1n == -1n, true, 'The result of (-1n == -1n) is true');

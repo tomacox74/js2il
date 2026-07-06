@@ -37,13 +37,13 @@ features: [coalesce-expression]
 var x;
 
 x = null ?? 42 & 43;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, 'null ?? 42 & 43');
 
 x = undefined ?? 42 & 43;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, 'null ?? 42 & 43');
 
 x = false ?? 42 & 43;
-console.log(Object.is(x, false));
+assert.sameValue(x, false, 'false ?? 42 & 43');
 
 x = true ?? 42 & 43;
-console.log(Object.is(x, true));
+assert.sameValue(x, true, 'true ?? 42 & 43');

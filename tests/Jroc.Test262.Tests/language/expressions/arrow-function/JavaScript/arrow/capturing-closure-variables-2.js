@@ -1,10 +1,12 @@
 // Copyright 2015 Microsoft Corporation. All rights reserved.
 // This code is governed by the license found in the LICENSE file.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+description: Capturing closure variables - with
+es6id: 14.2
+flags: [noStrict]
+---*/
+
 function foo(){
     var a = {a : 10};
     with(a){

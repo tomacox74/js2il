@@ -8,10 +8,10 @@ flags: [noStrict]
 ---*/
 
     function foo() {};
-    Object.defineProperty(foo.prototype, "bar", {value: "unwritable"});
+    Object.defineProperty(foo.prototype, "bar", {value: "unwritable"}); 
+    
+    var o = new foo(); 
+    o.bar = "overridden"; 
 
-    var o = new foo();
-    o.bar = "overridden";
-
-console.log(Object.is(o.hasOwnProperty("bar"), false));
-console.log(Object.is(o.bar, "unwritable"));
+assert.sameValue(o.hasOwnProperty("bar"), false, 'o.hasOwnProperty("bar")');
+assert.sameValue(o.bar, "unwritable", 'o.bar');

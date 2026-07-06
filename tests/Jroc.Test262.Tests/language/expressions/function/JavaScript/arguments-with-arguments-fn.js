@@ -26,5 +26,5 @@ var f = function(x = args = arguments) {
 
 f();
 
-console.log(Object.is(typeof args, 'object'));
-console.log(Object.is(args.length, 0));
+assert.sameValue(typeof args, 'object');
+assert.sameValue(args.length, 0);

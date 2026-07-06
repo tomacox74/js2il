@@ -10,17 +10,6 @@ description: can create generator function expressions (no name)
 features: [generators]
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
-
 var a = [function *(a) { yield a+1; return; }];
 var f = a[0];
 

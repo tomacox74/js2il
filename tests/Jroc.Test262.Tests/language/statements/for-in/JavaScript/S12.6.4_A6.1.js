@@ -11,9 +11,6 @@ description: >
     appropriate. The prototype is "{feat:2,hint:"protohint"}"
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __accum;
 
 function FACTORY(){this.prop=1;this.hint="hinted"};
@@ -43,4 +40,3 @@ if (__accum.indexOf("hintprotohint")!==-1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-

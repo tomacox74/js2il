@@ -9,9 +9,9 @@ description: >
     new String object, where x is undefined variable
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+//since ToString(undefined) evaluates to "" indexOf(undefined) evaluates to indexOf("",0)
 if (new String("undefined").indexOf(x) !== 0) {
   throw new Test262Error('#1: var x; new String("undefined").indexOf(x) === 0. Actual: ' + new String("undefined").indexOf(x));
 }
@@ -19,4 +19,3 @@ if (new String("undefined").indexOf(x) !== 0) {
 //////////////////////////////////////////////////////////////////////////////
 
 var x;
-

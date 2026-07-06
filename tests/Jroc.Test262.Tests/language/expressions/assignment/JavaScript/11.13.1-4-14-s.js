@@ -9,12 +9,7 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-"use strict";
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 assert.throws(TypeError, function() {
     Number.MAX_VALUE = 42;
 });
-

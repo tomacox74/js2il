@@ -23,5 +23,3 @@ if (x[0] !== undefined) {
 if (x[1] !== undefined) {
   throw new Test262Error('#3: var x = new Array(2); x.sort(); x[1] === undefined. Actual: ' + (x[1]));
 }
-
-console.log(true);

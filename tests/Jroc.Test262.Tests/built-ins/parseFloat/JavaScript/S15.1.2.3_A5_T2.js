@@ -1,3 +1,13 @@
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: Return the number value for the MV of Result(4)
+esid: sec-parsefloat-string
+description: Checking DecimalDigits . DecimalDigits_opt ExponentPart_opt
+---*/
+
+//CHECK#1
 if (parseFloat("-11.") !== -11) {
   throw new Test262Error('#1: parseFloat("-11.") === -11. Actual: ' + (parseFloat("-11.")));
 }
@@ -46,6 +56,3 @@ if (parseFloat("001.") !== 1) {
 if (parseFloat("010.") !== 10) {
   throw new Test262Error('#10: parseFloat("010.") === 10. Actual: ' + (parseFloat("010.")));
 }
-
-
-console.log(true);

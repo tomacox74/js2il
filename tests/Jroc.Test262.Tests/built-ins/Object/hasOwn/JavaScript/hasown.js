@@ -15,11 +15,5 @@ author: Jamie Kyle
 features: [Object.hasOwn]
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(typeof Object.hasOwn, 'function');
 assert(Object.hasOwn(Object, 'hasOwn'));

@@ -7,6 +7,8 @@ es5id: 12.6.4_A1
 description: Checking if execution of "for(key in undefined)" passes
 ---*/
 
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
 try {
 	for(__key in undefined){
 	    var key=__key;
@@ -25,4 +27,3 @@ if (key!==undefined) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-console.log(true);

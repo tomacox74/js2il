@@ -32,16 +32,6 @@ info: |
 
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
 
 var callCount = 0;
 // Stores a reference `ref` for case evaluation

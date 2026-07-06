@@ -1,10 +1,10 @@
 // Copyright (C) 2017 Robin Templeton. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+esid: sec-addition-operator-plus-runtime-semantics-evaluation
+description: BigInt addition arithmetic
+features: [BigInt]
+---*/
 assert.sameValue(
   0xFEDCBA9876543210n + 0xFEDCBA9876543210n,
   0x1FDB97530ECA86420n,

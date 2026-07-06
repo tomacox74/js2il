@@ -3,21 +3,27 @@
 /*---
 esid: sec-array.prototype-@@unscopables
 description: >
-    Initial value of `Symbol.unscopables` property includes copy-by-change methods
+    Initial value of `Symbol.unscopables` property
+info: |
+    22.1.3.32 Array.prototype [ @@unscopables ]
+
+    ...
+    12. Perform ! CreateDataPropertyOrThrow(unscopableList, "toReversed", true).
+    13. Perform ! CreateDataPropertyOrThrow(unscopableList, "toSorted", true).
+    14. Perform ! CreateDataPropertyOrThrow(unscopableList, "toSpliced", true).
+    ...
+includes: [propertyHelper.js]
 features: [Symbol.unscopables, change-array-by-copy]
 ---*/
 
-let unscopables = Array.prototype[Symbol.unscopables];
+var unscopables = Array.prototype[Symbol.unscopables];
 
-function verifyUnscopable(name) {
-  let descriptor = Object.getOwnPropertyDescriptor(unscopables, name);
-  console.log(unscopables[name] === true);
-  console.log(typeof descriptor === "object");
-  console.log(descriptor.writable === true);
-  console.log(descriptor.configurable === true);
-}
+for (const unscopable of ["toReversed", "toSorted", "toSpliced"]) {
+    verifyProperty(unscopables, unscopable, {
+        value: true,
+        writable: true,
+        configurable: true
+    })
+};
 
-verifyUnscopable("toReversed");
-verifyUnscopable("toSorted");
-verifyUnscopable("toSpliced");
-console.log(Object.prototype.hasOwnProperty.call(unscopables, "with") === false);
+assert(!Object.prototype.hasOwnProperty.call(unscopables, "with"), "does not have `with`");

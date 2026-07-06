@@ -33,5 +33,5 @@ var obj = {
 
 var desc = Object.getOwnPropertyDescriptor(obj, '__proto__');
 
-console.log(Object.is(desc.get(), 33));
-console.log(Object.is(desc.set(), 44));
+assert.sameValue(desc.get(), 33);
+assert.sameValue(desc.set(), 44);

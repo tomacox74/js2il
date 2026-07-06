@@ -9,6 +9,7 @@ description: >
     overrided valueOf and toString functions.  Second object have
     overrided toString function, that return exception
 ---*/
+
 var __obj = {
   valueOf: function() {
     return {};
@@ -35,5 +36,3 @@ try {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

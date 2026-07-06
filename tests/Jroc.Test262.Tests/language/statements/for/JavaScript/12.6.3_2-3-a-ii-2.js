@@ -13,10 +13,7 @@ description: >
     Expression is a Boolean object
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
-var accessed = false;
+        var accessed = false;
         var boolObj = new Boolean(false);
         for (var i = 0; boolObj;) {
             accessed = true;
@@ -24,4 +21,3 @@ var accessed = false;
         }
 
 assert(accessed, 'accessed !== true');
-

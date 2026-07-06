@@ -11,10 +11,6 @@ description: >
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 if(function __func(){return 0;}){
     ;
 }else {
@@ -22,5 +18,3 @@ if(function __func(){return 0;}){
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

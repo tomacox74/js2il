@@ -13,14 +13,10 @@ description: >
     Expression is a string (value is '1')
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
-var accessed = false;
+        var accessed = false;
         for (var i = 0; "1";) {
             accessed = true;
             break;
         }
 
 assert(accessed, 'accessed !== true');
-

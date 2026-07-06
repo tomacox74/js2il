@@ -17,5 +17,3 @@ try {
 }
 
 assert.sameValue(inCatch, true);
-
-console.log(true);

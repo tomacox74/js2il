@@ -1,12 +1,20 @@
-Test262Error.prototype.name = "Test262Error";
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-map.prototype.entries
+description: >
+  Returns an iterator.
+info: |
+  Map.prototype.entries ( )
 
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(__test262FormatMessage(message, "Assertion failed"));
-    }
-};
+  ...
+  2. Return CreateMapIterator(M, "key+value").
+
+  23.1.5.1 CreateMapIterator Abstract Operation
+
+  ...
+  7. Return iterator.
+---*/
 
 var map = new Map();
 map.set('a',1);

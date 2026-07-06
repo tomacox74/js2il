@@ -13,9 +13,9 @@ includes: [propertyHelper.js]
 features: [Symbol.toStringTag, Reflect]
 ---*/
 
-var desc = Object.getOwnPropertyDescriptor(Reflect, Symbol.toStringTag);
-console.log(Reflect[Symbol.toStringTag] === "Reflect");
-console.log(desc !== undefined);
-console.log(desc !== undefined && desc.writable === false);
-console.log(desc !== undefined && desc.enumerable === false);
-console.log(desc !== undefined && desc.configurable === true);
+verifyProperty(Reflect, Symbol.toStringTag, {
+  value: 'Reflect',
+  enumerable: false,
+  writable: false,
+  configurable: true,
+});

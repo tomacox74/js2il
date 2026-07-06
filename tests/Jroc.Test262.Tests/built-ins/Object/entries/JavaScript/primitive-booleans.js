@@ -7,9 +7,6 @@ description: Object.entries accepts boolean primitives.
 author: Jordan Harband
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var trueResult = Object.entries(true);
 
 assert.sameValue(Array.isArray(trueResult), true, 'trueResult is an array');
@@ -19,4 +16,3 @@ var falseResult = Object.entries(false);
 
 assert.sameValue(Array.isArray(falseResult), true, 'falseResult is an array');
 assert.sameValue(falseResult.length, 0, 'falseResult has 0 items');
-

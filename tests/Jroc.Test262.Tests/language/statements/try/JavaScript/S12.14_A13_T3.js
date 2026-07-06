@@ -7,7 +7,7 @@ es5id: 12.14_A13_T3
 description: Using try/catch/finally syntax construction
 ---*/
 
-
+// CHECK#1
 var c1=0;
 function myFunction1(){
   try{
@@ -182,6 +182,3 @@ try{
 }
 catch(e){}
 if(c7!==1) throw new Test262Error('#7.2: "finally" block must be evaluated');
-
-
-console.log("pass");

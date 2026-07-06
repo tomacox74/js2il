@@ -8,6 +8,5 @@ description: >
     parameter list
 flags: [noStrict]
 ---*/
-(function foo(a,a){});
 
-console.log(true);
+(function foo(a,a){});

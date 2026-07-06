@@ -10,6 +10,8 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
 if (!(String.prototype.indexOf.hasOwnProperty('length'))) {
   throw new Test262Error('#1: String.prototype.indexOf.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.indexOf.hasOwnProperty('length'));
 }
@@ -29,4 +31,3 @@ if (String.prototype.indexOf.length !== __obj) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-console.log(true);

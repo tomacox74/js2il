@@ -9,10 +9,4 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-"use strict";
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var _13_0_4_17_fun = new Function('eval = 42;');
-

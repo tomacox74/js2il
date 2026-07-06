@@ -8,7 +8,7 @@ description: >
     have a LineTerminator before the semi-colon
 ---*/
 
-var sum = 0;
+        var sum = 0;
         for (var i = 1; i <= 10; i++) {
             if (i === 6) {
                 break
@@ -18,5 +18,3 @@ var sum = 0;
         }
 
 assert.sameValue(sum, 15, 'sum');
-
-console.log(true);

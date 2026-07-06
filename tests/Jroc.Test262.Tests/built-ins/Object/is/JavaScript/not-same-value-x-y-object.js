@@ -9,12 +9,6 @@ description: >
     10. Return true if x and y are the same Object value. Otherwise, return false.
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(Object.is({}, {}), false, "`Object.is({}, {})` returns `false`");
 assert.sameValue(
   Object.is(Object(), Object()),

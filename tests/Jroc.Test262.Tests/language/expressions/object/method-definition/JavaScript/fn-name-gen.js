@@ -15,9 +15,6 @@ includes: [propertyHelper.js]
 features: [generators, Symbol]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var namedSym = Symbol('test262');
 var anonSym = Symbol();
 var o;
@@ -48,4 +45,3 @@ verifyProperty(o[namedSym], 'name', {
   enumerable: false,
   configurable: true,
 });
-

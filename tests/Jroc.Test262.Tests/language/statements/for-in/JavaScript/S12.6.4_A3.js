@@ -10,6 +10,7 @@ description: >
     Using an array as an Expression is appropriate. Here Expression is
     an array of numbers. Eval is used
 ---*/
+
 var __str, __evaluated, arr, ind;
 __str="";
 
@@ -30,5 +31,3 @@ if (!( (__str.indexOf("2")!==-1)&&(__str.indexOf("1")!==-1)&&(__str.indexOf("4")
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

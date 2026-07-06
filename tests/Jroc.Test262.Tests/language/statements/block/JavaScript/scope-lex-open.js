@@ -22,5 +22,5 @@ var probeInside;
   probeInside = function() { return x; };
 }
 
-console.log(Object.is(probeBefore(), 'outside'));
-console.log(Object.is(probeInside(), 'inside'));
+assert.sameValue(probeBefore(), 'outside');
+assert.sameValue(probeInside(), 'inside');

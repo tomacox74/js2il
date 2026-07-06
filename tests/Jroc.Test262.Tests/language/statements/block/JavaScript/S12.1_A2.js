@@ -12,18 +12,11 @@ description: Throwing exception within a Block
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-try {
+assert.throws(ReferenceError, function() {
 	{
-		throw { name: "ReferenceError" };
+		x();
 	}
-	console.log(false);
-} catch (error) {
-	console.log(error && error.name === "ReferenceError");
-}
+});
 
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -41,5 +34,3 @@ try {
 
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

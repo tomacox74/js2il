@@ -15,12 +15,6 @@ description: >
     ...
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(Object.is(NaN, NaN), true, "`Object.is(NaN, NaN)` returns `true`");
 assert.sameValue(Object.is(-0, -0), true, "`Object.is(-0, -0)` returns `true`");
 assert.sameValue(Object.is(+0, +0), true, "`Object.is(+0, +0)` returns `true`");

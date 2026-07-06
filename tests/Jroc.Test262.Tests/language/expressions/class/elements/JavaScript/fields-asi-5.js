@@ -7,9 +7,6 @@ esid: sec-automatic-semicolon-insertion
 features: [class, class-fields-public]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var x = 0;
 var y = 1;
 var z = [42];
@@ -29,4 +26,3 @@ assert.sameValue(c.a, true, 'a = x in z');
 assert.sameValue(c.b, false, 'b = y in z');
 assert(!Object.prototype.hasOwnProperty.call(c, "in"), "'in' is not parsed as a field declaration");
 assert(!Object.prototype.hasOwnProperty.call(c, "z"), "'z' is not parsed as a field declaration");
-

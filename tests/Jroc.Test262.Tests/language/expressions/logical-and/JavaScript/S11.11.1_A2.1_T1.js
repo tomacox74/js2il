@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -65,9 +59,4 @@ objectx.prop = 0;
 objecty.prop = true;
 if ((objectx.prop && objecty.prop) !== objectx.prop) {
   throw new Test262Error('#8: var objectx = new Object(); var objecty = new Object(); objectx.prop = 0; objecty.prop = true; (objectx.prop && objecty.prop) === objectx.prop');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

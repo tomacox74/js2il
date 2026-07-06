@@ -7,7 +7,6 @@ es5id: 12.14_A19_T2
 description: Testing try/catch/finally syntax construction
 ---*/
 
-
 var fin=0;
 // CHECK#1
 try{
@@ -99,6 +98,3 @@ finally{
   fin=1;
 }
 if (fin!==1) throw new Test262Error('#7.2: "finally" block must be evaluated');
-
-
-console.log("pass");

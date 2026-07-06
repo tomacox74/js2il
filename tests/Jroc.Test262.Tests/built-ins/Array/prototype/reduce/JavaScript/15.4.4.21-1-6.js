@@ -6,9 +6,6 @@ esid: sec-array.prototype.reduce
 description: Array.prototype.reduce applied to Number object
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function callbackfn(prevVal, curVal, idx, obj) {
   return obj instanceof Number;
 }
@@ -19,4 +16,3 @@ obj[0] = 11;
 obj[1] = 12;
 
 assert(Array.prototype.reduce.call(obj, callbackfn, 1), 'Array.prototype.reduce.call(obj, callbackfn, 1) !== true');
-

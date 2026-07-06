@@ -8,7 +8,4 @@ description: >
 flags: [noStrict]
 ---*/
 
-
 yi\u0065ld: 1;
-
-console.log(true);

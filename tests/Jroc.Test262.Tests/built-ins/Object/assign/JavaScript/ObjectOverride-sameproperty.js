@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright 2015 Microsoft Corporation. All rights reserved.
 // This code is governed by the license found in the LICENSE file.
 
@@ -19,4 +17,4 @@ var result = Object.assign(target, {
   a: "c"
 });
 
-console.log(Object.is(result.a, "c"));
+assert.sameValue(result.a, "c", "The value should be 'c'.");

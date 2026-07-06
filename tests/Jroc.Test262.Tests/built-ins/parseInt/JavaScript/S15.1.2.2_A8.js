@@ -1,3 +1,18 @@
+// Copyright 2009 the Sputnik authors.  All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+
+/*---
+info: |
+    parseInt may interpret only a leading portion of the string as
+    a number value; it ignores any characters that cannot be interpreted as part
+    of the notation of an decimal literal, and no indication is given that any such
+    characters were ignored.
+esid: sec-parseint-string-radix
+description: Complex test without eval
+includes: [decimalToHexString.js]
+---*/
+
+//CHECK
 var errorCount = 0;
 var count = 0;
 var indexP;
@@ -41,6 +56,3 @@ if (errorCount > 0) {
   }
   throw new Test262Error('Total error: ' + errorCount + ' bad Unicode character in ' + count + ' ');
 }
-
-
-console.log(true);

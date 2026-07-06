@@ -12,15 +12,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-var desc = Object.getOwnPropertyDescriptor(Math, 'exp');
-check(!!desc);
-check(desc.writable === true);
-check(desc.enumerable === false);
-check(desc.configurable === true);
+verifyProperty(Math, "exp", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

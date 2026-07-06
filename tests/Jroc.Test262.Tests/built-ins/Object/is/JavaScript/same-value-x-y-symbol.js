@@ -13,12 +13,6 @@ description: >
 features: [Symbol]
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 var a = Symbol();
 var b = Symbol("description");
 

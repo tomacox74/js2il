@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (C) 2016 The V8 Project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -14,11 +12,11 @@ info: |
   has positive sign.
 ---*/
 
-console.log(Object.is(Math.abs(-42), 42));
-console.log(Object.is(Math.abs(42), 42));
-console.log(Object.is(Math.abs(-0.000001), 0.000001));
-console.log(Object.is(Math.abs(0.000001), 0.000001));
-console.log(Object.is(Math.abs(-1e-17), 1e-17));
-console.log(Object.is(Math.abs(1e-17), 1e-17));
-console.log(Object.is(Math.abs(-9007199254740991), 9007199254740991));
-console.log(Object.is(Math.abs(9007199254740991), 9007199254740991));
+assert.sameValue(Math.abs(-42), 42, "-42");
+assert.sameValue(Math.abs(42), 42, "42");
+assert.sameValue(Math.abs(-0.000001), 0.000001, "-0.000001");
+assert.sameValue(Math.abs(0.000001), 0.000001, "0.000001");
+assert.sameValue(Math.abs(-1e-17), 1e-17, "-1e-17");
+assert.sameValue(Math.abs(1e-17), 1e-17, "1e-17");
+assert.sameValue(Math.abs(-9007199254740991), 9007199254740991, "-(2**53-1)");
+assert.sameValue(Math.abs(9007199254740991), 9007199254740991, "2**53-1");

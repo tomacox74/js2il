@@ -7,10 +7,6 @@ description: >
 es6id: 13.6.4
 features: [Set]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var set = new Set();
 var iterationCount = 0;

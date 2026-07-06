@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright (C) 2019 Leo Balter. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -86,8 +80,3 @@ assert.sameValue(x, s, 'undefined ?? s ?? null');
 x = undefined;
 x = undefined ?? s ?? undefined;
 assert.sameValue(x, s, 'undefined ?? s ?? undefined');
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
-}

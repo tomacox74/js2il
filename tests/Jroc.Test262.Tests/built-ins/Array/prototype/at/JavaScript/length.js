@@ -12,11 +12,15 @@ info: |
 includes: [propertyHelper.js]
 features: [Array.prototype.at]
 ---*/
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
-console.log(typeof Array.prototype.at === 'function');
-
-let descriptor = Object.getOwnPropertyDescriptor(Array.prototype.at, "length");
-console.log(descriptor.value === 1);
-console.log(descriptor.writable === false);
-console.log(descriptor.enumerable === false);
-console.log(descriptor.configurable === true);
+verifyProperty(Array.prototype.at, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -13,11 +13,5 @@ description: >
 
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(Object.is(undefined, undefined), true, "`Object.is(undefined, undefined)` returns `true`");
 assert.sameValue(Object.is(undefined), true, "`Object.is(undefined)` returns `true`");

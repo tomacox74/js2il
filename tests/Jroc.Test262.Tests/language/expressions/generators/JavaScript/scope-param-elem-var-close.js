@@ -16,17 +16,6 @@ flags: [noStrict]
 features: [generators]
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
-
 var x = 'outside';
 var probe1, probe2, probeBody;
 

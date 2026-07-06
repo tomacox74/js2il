@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -14,4 +12,4 @@ description: JSON must be a built-in object
 
 var o = JSON;
 
-console.log(Object.is(typeof(o), "object"));
+assert.sameValue(typeof(o), "object", 'typeof(o)');

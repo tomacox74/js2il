@@ -1,10 +1,12 @@
 // Copyright 2015 Microsoft Corporation. All rights reserved.
 // This code is governed by the license found in the LICENSE file.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+description: this binding tests
+flags: [noStrict]
+es6id: 14.2
+---*/
+
 function foo(){
     return eval("()=>this");
  }

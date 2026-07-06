@@ -16,7 +16,7 @@ description: >
     (properties)
 ---*/
 
-var o = {foo: 42};
+  var o = {foo: 42};
 
   try {
     throw o;
@@ -26,5 +26,3 @@ var o = {foo: 42};
   }
 
 assert.sameValue(o.foo, 42);
-
-console.log(true);

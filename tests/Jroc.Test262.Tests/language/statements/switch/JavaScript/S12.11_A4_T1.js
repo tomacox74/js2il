@@ -7,10 +7,6 @@ es5id: 12.11_A4_T1
 description: Nesting one "switch" statement into StatementList of the other's
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 function SwitchTest(value){
   var result = 0;
   
@@ -36,5 +32,3 @@ function SwitchTest(value){
 
 var x = SwitchTest(0);
 if(x!==6) throw new Test262Error("#1: SwitchTest(0) === 6. Actual:  SwitchTest(0) ==="+ SwitchTest(0)  );
-
-console.log(true);

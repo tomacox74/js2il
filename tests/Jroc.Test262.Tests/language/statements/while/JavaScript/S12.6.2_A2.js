@@ -9,7 +9,6 @@ es5id: 12.6.2_A2
 description: Evaluating Statement with error Expression
 ---*/
 
-
 try {
 	while ((function(){throw 1})()) __in__while = "reached"; 
 	throw new Test262Error('#1: \'while ((function(){throw 1})()) __in__while = "reached"\' lead to throwing exception');
@@ -26,5 +25,3 @@ if (typeof __in__while !== "undefined") {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

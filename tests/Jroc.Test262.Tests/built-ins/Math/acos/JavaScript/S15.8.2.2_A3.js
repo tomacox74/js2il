@@ -7,13 +7,6 @@ es5id: 15.8.2.2_A3
 description: Checking if Math.acos(x) is NaN, where x is less than -1
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.acos(-1.000000000000001), NaN));
-check(Object.is(Math.acos(-2), NaN));
-check(Object.is(Math.acos(-Infinity), NaN));
+assert.sameValue(Math.acos(-1.000000000000001), NaN, "-1.000000000000001");
+assert.sameValue(Math.acos(-2), NaN, "-2");
+assert.sameValue(Math.acos(-Infinity), NaN, "-Infinity");

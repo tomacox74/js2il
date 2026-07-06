@@ -7,7 +7,7 @@ es5id: 12.14_A19_T1
 description: Testing try/catch syntax construction
 ---*/
 
-
+// CHECK#1
 try{
   throw (Error("hello"));
 }
@@ -64,6 +64,3 @@ try{
 catch(e){
   if (e.toString()!=="URIError: message") throw new Test262Error('#7: Exception.toString()==="URIError: message". Actual: Exception is '+e);
 }
-
-
-console.log("pass");

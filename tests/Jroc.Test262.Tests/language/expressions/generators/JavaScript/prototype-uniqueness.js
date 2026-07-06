@@ -8,17 +8,6 @@ es6id: 25.2.1
 features: [generators]
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
-
 var g1 = function*() {};
 var g2 = function*() {};
 

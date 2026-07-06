@@ -9,7 +9,6 @@ es5id: 12.8_A4_T1
 description: Using "break Identifier" within labaeled loop
 ---*/
 
-
 LABEL_OUT : var x=0, y=0;
 (function(){
 LABEL_DO_LOOP : do {
@@ -34,5 +33,3 @@ if ((x!==1)&&(y!==0)) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

@@ -9,7 +9,7 @@ description: >
     varying values within
 ---*/
 
-
+// CHECK#1
 var c1=0;
 try {
   c1+=1;
@@ -65,5 +65,3 @@ finally{
 if (c4!==2){
   throw new Test262Error('#4: Sequence evaluation of commands try/catch/finally(without exception) is 1. try, 2. finally');
 }
-
-console.log(true);

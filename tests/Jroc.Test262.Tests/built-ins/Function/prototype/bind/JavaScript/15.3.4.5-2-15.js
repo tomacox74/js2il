@@ -8,10 +8,7 @@ description: >
     without Call internal method
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+
 assert.throws(TypeError, function() {
   Function.prototype.bind.call({});
 });
-

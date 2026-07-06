@@ -41,5 +41,3 @@ if (x[1] !== -1) {
 if (x.length !== 2) {
   throw new Test262Error('#7: x = new Array(); x.push(1); x.push(); x.push(-1); x.length === 2. Actual: ' + (x.length));
 }
-
-console.log(true);

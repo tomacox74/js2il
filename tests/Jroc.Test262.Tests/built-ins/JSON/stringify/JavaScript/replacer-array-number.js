@@ -16,9 +16,6 @@ info: |
       d. Else if Type(v) is Number, set item to ! ToString(v).
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var obj = {
   '0': 0,
   '1': 1,
@@ -41,4 +38,3 @@ assert.sameValue(
   JSON.stringify(obj, replacer),
   JSON.stringify(obj)
 );
-

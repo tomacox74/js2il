@@ -7,7 +7,7 @@ es5id: 12.14_A13_T2
 description: Using try/finally syntax construction
 ---*/
 
-
+// CHECK#1
 var c1=0;
 function myFunction1(){
   try{
@@ -178,6 +178,3 @@ catch(ex1){
 if (c8!==1){
   throw new Test262Error('#8: "finally" block must be evaluated');
 }
-
-
-console.log("pass");

@@ -14,9 +14,10 @@ includes: [propertyHelper.js]
 features: [Symbol.toStringTag]
 ---*/
 
-var desc = Object.getOwnPropertyDescriptor(Math, Symbol.toStringTag);
-console.log(Math[Symbol.toStringTag] === "Math");
-console.log(desc !== undefined);
-console.log(desc !== undefined && desc.writable === false);
-console.log(desc !== undefined && desc.enumerable === false);
-console.log(desc !== undefined && desc.configurable === true);
+assert.sameValue(Math[Symbol.toStringTag], 'Math');
+
+verifyProperty(Math, Symbol.toStringTag, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

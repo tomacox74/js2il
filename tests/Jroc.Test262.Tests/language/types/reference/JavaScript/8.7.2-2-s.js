@@ -10,4 +10,4 @@ description: >
 
         var b = 11;
 
-console.log(Object.is(b, 11));
+assert.sameValue(b, 11, 'b');

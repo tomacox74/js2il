@@ -9,7 +9,7 @@ description: >
     evaluates correct
 ---*/
 
-
+// CHECK#1
 try{
   try{
     throw "ex2";
@@ -150,5 +150,3 @@ catch(er1){
   if (er1!=="ex3") throw new Test262Error('#7.1: Exception === "ex3". Actual:  Exception ==='+er1 );
 }
 if (c7!==2) throw new Test262Error('#7.2: Embedded "try/finally" blocks must be evaluated');
-
-console.log(true);

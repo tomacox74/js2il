@@ -25,6 +25,6 @@ try{
 }
 catch(e){
   for (var i=0;i<3;i++){
-    console.log(!(e[i]!==mycars[i]));
+    if (e[i]!==mycars[i]) throw new Test262Error('#1.'+i+': Exception['+i+'] === mycars['+i+']. Actual:  Exception['+i+'] ==='+ e[i]  );
   }
 }

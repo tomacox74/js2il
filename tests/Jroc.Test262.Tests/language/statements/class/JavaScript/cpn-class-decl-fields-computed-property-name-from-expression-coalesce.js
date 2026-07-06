@@ -1,13 +1,38 @@
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
+// This file was procedurally generated from the following sources:
+// - src/computed-property-names/computed-property-name-from-expression-coalesce.case
+// - src/computed-property-names/evaluation/class-declaration-fields.template
+/*---
+description: Computed property name from coalesce (ComputedPropertyName in ClassExpression)
+esid: prod-ComputedPropertyName
+features: [computed-property-names, class-fields-public, class-static-fields-public]
+flags: [generated]
+info: |
+    ClassExpression:
+      classBindingIdentifier opt ClassTail
 
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Assertion failed");
-    }
-};
+    ClassTail:
+      ClassHeritage opt { ClassBody opt }
 
+    ClassBody:
+      ClassElementList
+
+    ClassElementList:
+      ClassElement
+
+    ClassElement:
+      MethodDefinition
+
+    MethodDefinition:
+      PropertyName ...
+      get PropertyName ...
+      set PropertyName ...
+
+    PropertyName:
+      ComputedPropertyName
+
+    ComputedPropertyName:
+      [ AssignmentExpression ]
+---*/
 let x;
 
 

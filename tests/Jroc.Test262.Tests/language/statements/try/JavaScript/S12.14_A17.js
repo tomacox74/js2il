@@ -7,7 +7,6 @@ es5id: 12.14_A17
 description: Creating exceptions within constructor
 ---*/
 
-
 var i=1;
 function Integer( value, exception ) {
   try{
@@ -42,6 +41,3 @@ new Integer(Infinity, false);
 new Integer(-1.23, true);
 // CHECK#6
 new Integer(Math.LN2, true);
-
-
-console.log("pass");

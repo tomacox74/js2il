@@ -11,12 +11,10 @@ description: >
     Identifier
 ---*/
 
-var afterBreak1, afterBreak2, afterBreak3, afterBreak4;
-
 FOR1 : for(var i=1;i<2;i++){
   LABEL1 : do {
     break
-afterBreak1;
+FOR1;
   } while(0);
 }
 
@@ -24,7 +22,7 @@ assert.sameValue(i, 2, '#1: Since LineTerminator(U-000A) between break and Ident
 
 FOR2 : for(var i=1;i<2;i++){
   LABEL2 : do {
-    breakafterBreak2;
+    breakFOR2;
   } while(0);
 }
 
@@ -32,7 +30,7 @@ assert.sameValue(i, 2, '#2: Since LineTerminator(U-000D) between break and Ident
 
 FOR3 : for(var i=1;i<2;i++){
   LABEL3 : do {
-    break afterBreak3;
+    break FOR3;
   } while(0);
 }
 
@@ -40,11 +38,8 @@ assert.sameValue(i, 2, '#3: Since LineTerminator(U-2028) between break and Ident
 
 FOR4 : for(var i=1;i<2;i++){
   LABEL4 : do {
-    break afterBreak4;
+    break FOR4;
   } while(0);
 }
 
 assert.sameValue(i, 2, '#4: Since LineTerminator(U-2029) between break and Identifier not allowed break evaluates without label');
-
-console.log(true);
-

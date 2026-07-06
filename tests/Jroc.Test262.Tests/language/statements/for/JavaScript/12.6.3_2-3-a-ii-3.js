@@ -13,10 +13,7 @@ description: >
     Expression is a Number object (value is NaN)
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
-var accessed = false;
+        var accessed = false;
         var numObj = new Number(NaN);
         for (var i = 0; numObj;) {
             accessed = true;
@@ -24,4 +21,3 @@ var accessed = false;
         }
 
 assert(accessed, 'accessed !== true');
-

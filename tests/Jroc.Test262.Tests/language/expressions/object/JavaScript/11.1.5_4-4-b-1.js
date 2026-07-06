@@ -8,8 +8,4 @@ description: >
     followed by get accessor definition with the same name
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
-({foo : 1, get foo(){}});
-
+  eval("({foo : 1, get foo(){}});");

@@ -7,11 +7,4 @@ es5id: 15.8.2.2_A4
 description: Checking if Math.acos(1) equals to +0
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.acos(1), 0));
+assert.sameValue(Math.acos(1), 0);

@@ -9,9 +9,6 @@ description: >
     of string object
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __obj = {
   toString: function() {}
 };
@@ -24,4 +21,3 @@ if (String(__obj).indexOf(void 0) !== 0) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-

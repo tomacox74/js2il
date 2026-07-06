@@ -13,5 +13,6 @@ description: >
       continue label;
     }
   }
-  console.log(Object.is(x, 'outer'));
+  assert.sameValue(x, 'outer');
 })('outer');
+

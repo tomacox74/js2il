@@ -25,5 +25,5 @@ switch (probeExpr = function() { return x; }) {
     let x = 'inside';
 }
 
-console.log(Object.is(probeExpr(), 'outside'));
-console.log(Object.is(probeStmt(), 'inside'));
+assert.sameValue(probeExpr(), 'outside');
+assert.sameValue(probeStmt(), 'inside');

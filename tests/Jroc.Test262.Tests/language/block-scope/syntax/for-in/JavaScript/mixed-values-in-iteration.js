@@ -5,10 +5,6 @@ es6id: 13.1
 description: >
     Mixed values in iteration
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function fn(x) {
   let a = [];
   for (let p in x) {
@@ -21,5 +17,4 @@ function fn(x) {
   }
 }
 fn({a : [0], b : 1, c : {v : 1}, get d() {}, set e(x) {}});
-
 

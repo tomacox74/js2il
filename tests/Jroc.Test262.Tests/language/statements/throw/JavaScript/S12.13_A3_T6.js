@@ -7,7 +7,7 @@ es5id: 12.13_A3_T6
 description: Evaluating functions
 ---*/
 
-
+// CHECK#1
 var i=0;
 function adding1(){
   i++;
@@ -54,5 +54,3 @@ try{
 catch(e){
   if (e!==2) throw new Test262Error('#4: Exception ===2. Actual:  Exception ==='+ e);
 }
-
-console.log(true);

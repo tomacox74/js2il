@@ -6,10 +6,7 @@ esid: sec-array.prototype.every
 description: Array.prototype.every applied to null throws a TypeError
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+
 assert.throws(TypeError, function() {
   Array.prototype.every.call(null); // TypeError is thrown if value is null
 });
-

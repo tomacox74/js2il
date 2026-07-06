@@ -10,4 +10,3 @@ flags: [noStrict]
 ---*/
 
 (function arguments (){});
-console.log(true);

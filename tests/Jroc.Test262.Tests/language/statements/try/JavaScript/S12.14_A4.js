@@ -8,7 +8,7 @@ description: Checking if deleting an exception fails
 flags: [noStrict]
 ---*/
 
-
+// CHECK#1
 try {
   throw "catchme";
   throw new Test262Error('#1.1: throw "catchme" lead to throwing exception');
@@ -33,5 +33,3 @@ try{
   throw new Test262Error('#2.2: Deleting catching exception after ending "catch" block');
 }
 catch(err){}
-
-console.log(true);

@@ -7,10 +7,6 @@ esid: sec-for-in-and-for-of-statements-static-semantics-early-errors
 es6id: 13.7.5
 flags: [noStrict]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
 
 var iterCount = 0;
 

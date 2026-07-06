@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -17,9 +11,4 @@ description: If ToBoolean(x) is true and GetBase(z) is null, return y
 var y = new Object();
 if ((true ? y : z) !== y) {
   throw new Test262Error('#1: var y = new Object(); (true ? y : z) === y');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

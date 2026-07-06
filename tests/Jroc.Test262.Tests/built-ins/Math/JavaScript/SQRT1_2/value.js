@@ -10,12 +10,5 @@ info: |
     The precision of this approximation is host-defined.
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(typeof Math.SQRT1_2 === 'number');
-check(!Object.is(Math.SQRT1_2, NaN));
+assert.sameValue(typeof Math.SQRT1_2, 'number');
+assert.notSameValue(Math.SQRT1_2, NaN);

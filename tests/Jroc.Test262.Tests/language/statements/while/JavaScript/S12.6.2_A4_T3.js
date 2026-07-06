@@ -9,7 +9,6 @@ es5id: 12.6.2_A4_T3
 description: "\"break\" and VariableDeclaration within a \"while\" Statement"
 ---*/
 
-
 do_out : while(1===1) {
     if (__in__do__before__break) break;
     var __in__do__before__break="once";
@@ -28,5 +27,3 @@ if (!(__in__do__before__break&&__in__do__IN__before__break&&!__in__do__IN__after
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

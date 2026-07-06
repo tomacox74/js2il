@@ -13,10 +13,4 @@ description: >
 
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(Object.is(), true, "`Object.is()` returns `true`");

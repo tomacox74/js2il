@@ -14,6 +14,5 @@ info: |
     [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 features: [destructuring-binding]
 ---*/
-function fn([]) {}
 
-console.log(true);
+function fn([]) {}

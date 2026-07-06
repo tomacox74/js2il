@@ -8,9 +8,6 @@ description: >
     converts to a string (value is negative number)
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var obj = {
   "-20": 1
 };
@@ -18,4 +15,3 @@ var obj = {
 var desc = Object.getOwnPropertyDescriptor(obj, -20);
 
 assert.sameValue(desc.value, 1, 'desc.value');
-

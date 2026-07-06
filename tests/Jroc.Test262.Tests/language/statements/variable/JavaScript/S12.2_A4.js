@@ -9,10 +9,6 @@ description: Create and use unicode characters in variable Identifier
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
 try {
 	__var=__var;
 } catch (e) {
@@ -30,5 +26,3 @@ if (__var !== 1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

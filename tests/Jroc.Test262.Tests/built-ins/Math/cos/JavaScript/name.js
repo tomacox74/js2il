@@ -19,11 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Math.cos.name === 'cos');
+verifyProperty(Math.cos, "name", {
+  value: "cos",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

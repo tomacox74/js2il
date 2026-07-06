@@ -7,7 +7,6 @@ es5id: 12.14_A18_T7
 description: Catching Array
 ---*/
 
-
 var mycars = new Array();
 mycars[0] = "Saab";
 mycars[1] = "Volvo";
@@ -63,6 +62,3 @@ catch(e){
     if (e[i]!==mycars2[i-3]) throw new Test262Error('#4.'+i+': Exception['+i+']===mycars2['+(i-3)+']. Actual:  Exception['+i+']==='+ e[i]);
   }
 }
-
-
-console.log("pass");

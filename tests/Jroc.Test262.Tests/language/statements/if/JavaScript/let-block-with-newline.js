@@ -12,8 +12,5 @@ info: |
 flags: [noStrict]
 ---*/
 
-
 if (false) let // ASI
 {}
-
-console.log(true);

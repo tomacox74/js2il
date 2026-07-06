@@ -22,9 +22,6 @@ info: |
 features: [generators]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var yieldSet, C, iter;
 function* g() {
   class C_ {
@@ -46,4 +43,3 @@ assert.sameValue(C.first, 'get yield');
 C.second = 'set yield';
 
 assert.sameValue(yieldSet, 'set yield');
-

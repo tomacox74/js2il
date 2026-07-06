@@ -10,17 +10,6 @@ flags: [async]
 features: [async-iteration]
 ---*/
 
-function __sameValue(actual, expected) {
-  return Object.is(actual, expected);
-}
-
-function __assertResult(passed, message) {
-  console.log(!!passed);
-  if (!passed) {
-    throw new Error(message || 'Assertion failed');
-  }
-}
-
 var g = async function*() {
   yield
   1;

@@ -2,10 +2,15 @@
 // Copyright (C) 2024 Sony Interactive Entertainment Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+esid: sec-assignment-operators
+description: Assignment Operator evaluates its operands from left to right (formerly S11.13.1_A7_T3)
+info: |
+  The left-hand side expression is evaluated before the right-hand side.
+  Left-hand side expression is MemberExpression: base[prop].
+  ToPropertyKey(prop) occurs after both sides are evaluated.
+---*/
+
 function DummyError() { }
 
 assert.throws(DummyError, function() {

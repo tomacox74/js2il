@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -34,9 +28,4 @@ if ((0 && new Number(-1)) !== 0) {
 //CHECK#3
 if ((isNaN(NaN && 1)) !== true) {
   throw new Test262Error('#3: (NaN && 1) === Not-a-Number');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

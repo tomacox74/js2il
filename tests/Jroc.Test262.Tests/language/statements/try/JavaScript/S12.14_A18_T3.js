@@ -7,7 +7,7 @@ es5id: 12.14_A18_T3
 description: Catching boolean
 ---*/
 
-
+// CHECK#1
 try{
   throw true;
 }
@@ -58,6 +58,3 @@ try{
 catch(e){
   if (e!==true) throw new Test262Error('#6: Exception ===true. Actual:  Exception ==='+ e  );
 }
-
-
-console.log("pass");

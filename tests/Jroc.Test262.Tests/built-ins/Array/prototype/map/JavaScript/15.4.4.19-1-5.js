@@ -6,9 +6,6 @@ esid: sec-array.prototype.map
 description: Array.prototype.map - applied to number primitive
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function callbackfn(val, idx, obj) {
   return obj instanceof Number;
 }
@@ -19,4 +16,3 @@ Number.prototype.length = 1;
 var testResult = Array.prototype.map.call(2.5, callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');
-

@@ -14,8 +14,4 @@ info: |
     catch Block[?Yield, ?Await, ?Return]
 ---*/
 
-
 try {} catch {} finally {}
-
-
-console.log("pass");

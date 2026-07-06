@@ -7,6 +7,5 @@ description: >
     Object.getOwnPropertyDescriptor - TypeError is not thrown when
     first param is a number
 ---*/
-Object.getOwnPropertyDescriptor(-2, "foo");
 
-console.log(true);
+Object.getOwnPropertyDescriptor(-2, "foo");

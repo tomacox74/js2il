@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -44,9 +38,4 @@ objectx.prop = 1;
 objecty.prop = 1;
 if (objectx.prop / objecty.prop !== 1) {
   throw new Test262Error('#5: var objectx = new Object(); var objecty = new Object(); objectx.prop = 1; objecty.prop = 1; objectx.prop / objecty.prop === 1. Actual: ' + (objectx.prop / objecty.prop));
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

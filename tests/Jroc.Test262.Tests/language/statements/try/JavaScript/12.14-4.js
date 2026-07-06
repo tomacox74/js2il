@@ -14,7 +14,7 @@ es5id: 12.14-4
 description: catch introduces scope - block-local vars must shadow outer vars
 ---*/
 
-var o = { foo : 42};
+  var o = { foo : 42};
 
   try {
     throw o;
@@ -24,5 +24,3 @@ var o = { foo : 42};
   }
 
 assert.sameValue(foo, undefined);
-
-console.log(true);

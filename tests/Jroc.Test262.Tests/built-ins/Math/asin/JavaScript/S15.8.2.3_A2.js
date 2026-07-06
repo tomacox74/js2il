@@ -7,13 +7,6 @@ es5id: 15.8.2.3_A2
 description: Checking if Math.asin(x) is NaN, where x is greater than 1
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.asin(1.000000000000001), NaN));
-check(Object.is(Math.asin(2), NaN));
-check(Object.is(Math.asin(Infinity), NaN));
+assert.sameValue(Math.asin(1.000000000000001), NaN, "1.000000000000001");
+assert.sameValue(Math.asin(2), NaN, "2");
+assert.sameValue(Math.asin(Infinity), NaN, "Infinity");

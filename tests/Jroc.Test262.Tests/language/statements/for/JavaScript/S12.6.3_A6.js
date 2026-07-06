@@ -9,7 +9,8 @@ es5id: 12.6.3_A6
 description: Using "(function(){throw "SecondExpression";})()" as an Expression
 ---*/
 
-
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
 try {
 	for(;;(function(){throw "SecondExpression";})()){
         var __in__for = "reached";
@@ -30,6 +31,3 @@ if (__in__for !== "reached") {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-
-console.log("pass");

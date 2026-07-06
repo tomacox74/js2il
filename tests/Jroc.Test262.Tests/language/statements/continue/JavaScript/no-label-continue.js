@@ -13,5 +13,3 @@ for (let x = 0; x < 10;) {
 }
 assert.sameValue(count, 10, "The value of `count` is `10`");
 
-
-console.log(true);

@@ -28,9 +28,7 @@ info: |
 includes: [compareArray.js]
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
+
 var log = [];
 
 function source() {
@@ -75,4 +73,3 @@ assert.compareArray(log, [
     "target", "target-key",
     "get", "target-key-tostring", "set",
 ]);
-

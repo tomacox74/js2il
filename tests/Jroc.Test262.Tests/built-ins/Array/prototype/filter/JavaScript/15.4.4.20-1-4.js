@@ -6,9 +6,6 @@ esid: sec-array.prototype.filter
 description: Array.prototype.filter applied to Boolean Object
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function callbackfn(val, idx, obj) {
   return obj instanceof Boolean;
 }
@@ -22,4 +19,3 @@ var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr[0], 11, 'newArr[0]');
 assert.sameValue(newArr[1], 12, 'newArr[1]');
-

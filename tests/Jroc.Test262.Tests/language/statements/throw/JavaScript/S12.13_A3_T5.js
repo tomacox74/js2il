@@ -7,7 +7,7 @@ es5id: 12.13_A3_T5
 description: Evaluating equation expression
 ---*/
 
-
+// CHECK#1
 var a=true;
 var b=false;
 try{
@@ -16,5 +16,3 @@ try{
 catch(e){
   if (e!=="exception") throw new Test262Error('#1: Exception ==="exception"(operaton ? , ). Actual:  Exception ==='+e  );
 }
-
-console.log(true);

@@ -21,4 +21,4 @@ o = {
   __proto__: function () {},
 };
 
-console.log(!!(Object.getPrototypeOf(o).name !== "__proto__"));
+assert(Object.getPrototypeOf(o).name !== "__proto__");

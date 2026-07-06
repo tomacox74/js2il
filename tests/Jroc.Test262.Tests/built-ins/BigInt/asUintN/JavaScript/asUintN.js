@@ -1,8 +1,21 @@
-// test262: test/built-ins/BigInt/asUintN/asUintN.js
-var descriptor = Object.getOwnPropertyDescriptor(BigInt, "asUintN");
+// Copyright (C) 2017 Josh Wolfe. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-bigint.asuintn
+description: BigInt.asUintN property descriptor
+info: |
+  BigInt.asUintN ( bits, bigint )
 
-console.log(typeof BigInt.asUintN === "function");
-console.log(typeof descriptor === "object");
-console.log(descriptor.enumerable === false);
-console.log(descriptor.writable === true);
-console.log(descriptor.configurable === true);
+  17 ECMAScript Standard Built-in Objects
+
+includes: [propertyHelper.js]
+features: [BigInt]
+---*/
+
+assert.sameValue(typeof BigInt.asUintN, 'function');
+
+verifyProperty(BigInt, "asUintN", {
+  enumerable: false,
+  writable: true,
+  configurable: true
+});

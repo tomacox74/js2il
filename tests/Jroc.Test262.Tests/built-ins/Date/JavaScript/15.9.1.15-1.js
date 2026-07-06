@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -17,4 +15,4 @@ var dateObj = new Date("1970");
 var dateStr = dateObj.toISOString();
 result = dateStr === expectedDateTimeStr;
 
-console.log(!!(result, 'result !== true'));
+assert(result, 'result !== true');

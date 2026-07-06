@@ -5,10 +5,6 @@ es6id: 13.1
 description: >
     verify context in finally block 1
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 function f() {}
 
 (function(x) {
@@ -22,4 +18,3 @@ function f() {}
     assert.sameValue(x, 'outer');
   }
 })('outer');
-

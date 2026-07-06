@@ -9,7 +9,6 @@ es5id: 12.8_A4_T2
 description: Using embedded and labeled loops, breaking to nested loop
 ---*/
 
-
 LABEL_OUT : var x=0, y=0, xx=0, yy=0;
 (function(){
 LABEL_DO_LOOP : do {
@@ -40,5 +39,3 @@ if ((x!==1)&&(y!==1)&&(xx!==1)&(yy!==0)) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

@@ -8,24 +8,34 @@ description: Either Type is not Reference or GetBase is not null
 ---*/
 
 //CHECK#1
-console.log(!(-4 >> 1 !== -2));
+if (-4 >> 1 !== -2) {
+  throw new Test262Error('#1: -4 >> 1 === -2. Actual: ' + (-4 >> 1));
+}
 
 //CHECK#2
 var x = -4;
-console.log(!(x >> 1 !== -2));
+if (x >> 1 !== -2) {
+  throw new Test262Error('#2: var x = -4; x >> 1 === -2. Actual: ' + (x >> 1));
+}
 
 //CHECK#3
 var y = 1;
-console.log(!(-4 >> y !== -2));
+if (-4 >> y !== -2) {
+  throw new Test262Error('#3: var y = 1; -4 >> y === -2. Actual: ' + (-4 >> y));
+}
 
 //CHECK#4
 var x = -4;
 var y = 1;
-console.log(!(x >> y !== -2));
+if (x >> y !== -2) {
+  throw new Test262Error('#4: var x = -4; var y = 1; x >> y === -2. Actual: ' + (x >> y));
+}
 
 //CHECK#5
 var objectx = new Object();
 var objecty = new Object();
 objectx.prop = -4;
 objecty.prop = 1;
-console.log(!(objectx.prop >> objecty.prop !== -2));
+if (objectx.prop >> objecty.prop !== -2) {
+  throw new Test262Error('#5: var objectx = new Object(); var objecty = new Object(); objectx.prop = -4; objecty.prop = 1; objectx.prop >> objecty.prop === -2. Actual: ' + (objectx.prop >> objecty.prop));
+}

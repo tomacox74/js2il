@@ -10,9 +10,6 @@ es5id: 15.5.4.14_A4_T19
 description: Argument is regexp /\s/, and instance is String("a b c de f")
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var __string = new String("a b c de f");
 
 var __re = /\s/;
@@ -47,4 +44,3 @@ for (var index = 0; index < __expected.length; index++) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-

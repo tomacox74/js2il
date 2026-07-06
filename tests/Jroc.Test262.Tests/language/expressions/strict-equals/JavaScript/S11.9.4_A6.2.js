@@ -1,9 +1,3 @@
-var assert = function assert(value, message) {
-    if (!value) {
-        throw new Test262Error(message || "Assertion failed");
-    }
-};
-try {
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -16,9 +10,4 @@ description: null === null
 //CHECK#1
 if (!(null === null)) {
   throw new Test262Error('#1: null === null');
-}
-
-    console.log(true);
-} catch (error) {
-    console.log(false);
 }

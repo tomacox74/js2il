@@ -32,7 +32,6 @@ info: |
 features: [Symbol.iterator, Object.fromEntries]
 ---*/
 
-var returned = false;
 var iterable = {
   [Symbol.iterator]: function() {
     return {
@@ -40,19 +39,13 @@ var iterable = {
         return null;
       },
       return: function() {
-        returned = true;
+        throw new Test262Error('should not call return');
       },
     };
   },
 };
 
-var threwTypeError = false;
-try {
+assert.sameValue(typeof Object.fromEntries, 'function');
+assert.throws(TypeError, function() {
   Object.fromEntries(iterable);
-} catch (error) {
-  threwTypeError = error instanceof TypeError;
-}
-
-console.log(typeof Object.fromEntries === 'function');
-console.log(threwTypeError);
-console.log(returned === false);
+});

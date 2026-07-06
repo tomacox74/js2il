@@ -5,10 +5,6 @@ es6id: 13.1
 description: >
     global and block scope const
 ---*/
-
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 const z = 4;
 
 // Block local
@@ -22,5 +18,4 @@ if (true) {
   const z = 1;
   assert.sameValue(z, 1);
 }
-
 

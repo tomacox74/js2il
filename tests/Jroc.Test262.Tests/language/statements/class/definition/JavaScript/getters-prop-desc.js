@@ -1,10 +1,11 @@
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Assertion failed");
-    }
-};
+// Copyright (C) 2014 the V8 project authors. All rights reserved.
+// This code is governed by the BSD license found in the LICENSE file.
+/*---
+esid: sec-class-definitions
+es6id: 14.5
+description: Class methods - "get" accessors
+includes: [propertyHelper.js]
+---*/
 
 function assertGetterDescriptor(object, name) {
   var desc = Object.getOwnPropertyDescriptor(object, name);

@@ -10,9 +10,6 @@ info: |
 es6id: 13.6.4
 ---*/
 
-var assert = function assert(condition) {
-  console.log(!!condition);
-};
 var array = [0];
 var iterationCount = 0;
 
@@ -26,4 +23,3 @@ for (var x of array) {
 }
 
 assert.sameValue(iterationCount, 1);
-

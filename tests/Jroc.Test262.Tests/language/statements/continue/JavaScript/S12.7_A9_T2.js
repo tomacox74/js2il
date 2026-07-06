@@ -7,7 +7,6 @@ es5id: 12.7_A9_T2
 description: Using "continue" within catch Block that is within a loop
 ---*/
 
-
 var x=0,y=0;
 
 (function(){
@@ -29,5 +28,3 @@ if (x!==10) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

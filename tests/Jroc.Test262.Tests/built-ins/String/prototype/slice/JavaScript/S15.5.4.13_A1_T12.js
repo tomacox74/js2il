@@ -10,6 +10,7 @@ description: >
     exception.  Second object have overrided valueOf function, that
     return exception
 ---*/
+
 var __obj = {
   valueOf: function() {
     return {};
@@ -37,5 +38,3 @@ try {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

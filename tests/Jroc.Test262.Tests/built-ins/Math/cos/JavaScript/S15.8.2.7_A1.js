@@ -7,11 +7,4 @@ es5id: 15.8.2.7_A1
 description: Checking if Math.cos(NaN) is NaN
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.cos(NaN), NaN));
+assert.sameValue(Math.cos(NaN), NaN);

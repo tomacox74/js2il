@@ -15,10 +15,4 @@ description: >
 
 ---*/
 
-
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
 assert.sameValue(Object.is(null, null), true, "`Object.is(null, null)` returns `true`");

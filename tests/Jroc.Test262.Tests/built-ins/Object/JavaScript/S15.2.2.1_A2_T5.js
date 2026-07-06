@@ -10,8 +10,9 @@ description: The value is a Date object
 ---*/
 
 var obj = new Date(1978, 3);
+
 var n_obj = new Object(obj);
 
-console.log(n_obj === obj);
-console.log(n_obj.getFullYear() === 1978);
-console.log(n_obj.getMonth() === 3);
+assert.sameValue(n_obj, obj, 'The value of n_obj is expected to equal the value of obj');
+assert.sameValue(n_obj.getFullYear(), 1978, 'n_obj.getFullYear() must return 1978');
+assert.sameValue(n_obj.getMonth(), 3, 'n_obj.getMonth() must return 3');

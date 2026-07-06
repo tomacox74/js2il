@@ -7,6 +7,5 @@ description: >
     Object.getOwnPropertyDescriptor does not throw TypeError if type
     of first param is not Object
 ---*/
-Object.getOwnPropertyDescriptor(0, "foo");
 
-console.log(true);
+Object.getOwnPropertyDescriptor(0, "foo");

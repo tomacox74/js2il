@@ -1,10 +1,17 @@
 // Copyright (C) 2018 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
+/*---
+esid: sec-addition-operator-plus-runtime-semantics-evaluation
+description: Mixing BigInt and Number produces a TypeError for addition operator
+features: [BigInt]
+info: |
+  Let lprim be ? ToPrimitive(lval).
+  Let rprim be ? ToPrimitive(rval).
+  ...
+  Let lnum be ? ToNumeric(lprim)
+  Let rnum be ? ToNumeric(rprim)
+  If Type(lnum) does not equal Type(rnum), throw a TypeError exception.
+---*/
 assert.throws(TypeError, function() {
   1n + 1;
 }, '1n + 1 throws TypeError');

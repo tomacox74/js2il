@@ -9,19 +9,12 @@ es5id: 12.14_A11_T1
 description: Loop inside try Block, where throw exception
 ---*/
 
-
-try {
-  // CHECK#1
-  try{
-    for(var i=0;i<10;i++){
-      if(i===5) throw i;
-    }
+// CHECK#1
+try{
+  for(var i=0;i<10;i++){
+    if(i===5) throw i;
   }
-  catch(e){
-    if(e!==5)throw new Test262Error('#1: Exception === 5. Actual:  Exception ==='+ e  );
-  }
-
-  console.log(true);
-} catch (error) {
-  console.log(false);
+}
+catch(e){
+  if(e!==5)throw new Test262Error('#1: Exception === 5. Actual:  Exception ==='+ e  );
 }
