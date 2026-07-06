@@ -24,8 +24,6 @@ public interface IRuntimeIntrinsicCatalog
 
 public sealed class RuntimeIntrinsicCatalog : IRuntimeIntrinsicCatalog
 {
-    private static readonly RuntimeGlobalPropertyAttributes BuiltInGlobalAttributes = new();
-
     private readonly ReadOnlyDictionary<string, RuntimeGlobalBindingDescriptor> _globals;
     private readonly ReadOnlyDictionary<string, RuntimeIntrinsicObjectDescriptor> _intrinsicObjects;
     private readonly ReadOnlyDictionary<string, RuntimeModuleBindingDescriptor> _modules;
@@ -119,9 +117,10 @@ public sealed class RuntimeIntrinsicCatalog : IRuntimeIntrinsicCatalog
 
     private static Dictionary<string, RuntimeGlobalBindingDescriptor> BuildBuiltInGlobalBindings()
     {
+        var builtInGlobalAttributes = new RuntimeGlobalPropertyAttributes();
         var globals = new Dictionary<string, RuntimeGlobalBindingDescriptor>(StringComparer.Ordinal)
         {
-            ["undefined"] = RuntimeGlobalBindingDescriptor.ForValue("undefined", null, BuiltInGlobalAttributes)
+            ["undefined"] = RuntimeGlobalBindingDescriptor.ForValue("undefined", null, builtInGlobalAttributes)
         };
 
         foreach (var property in typeof(GlobalThis).GetProperties(BindingFlags.Public | BindingFlags.Static))
@@ -134,20 +133,20 @@ public sealed class RuntimeIntrinsicCatalog : IRuntimeIntrinsicCatalog
             globals[property.Name] = RuntimeGlobalBindingDescriptor.ForFactory(
                 property.Name,
                 () => property.GetValue(null),
-                BuiltInGlobalAttributes);
+                builtInGlobalAttributes);
         }
 
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setTimeout), () => (Func<object, object, object[], object>)GlobalThis.setTimeout);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearTimeout), () => (Func<object, object?>)GlobalThis.clearTimeout);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setImmediate), () => (Func<object, object[], object>)GlobalThis.setImmediate);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setInterval), () => (Func<object, object, object[], object>)GlobalThis.setInterval);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearImmediate), () => (Func<object, object?>)GlobalThis.clearImmediate);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearInterval), () => (Func<object, object?>)GlobalThis.clearInterval);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.gc), () => (Func<object?>)GlobalThis.gc);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseInt), () => (Func<object?, object?, double>)GlobalThis.parseInt);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseFloat), () => (Func<object?, double>)GlobalThis.parseFloat);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isFinite), () => (Func<object?, bool>)GlobalThis.isFinite);
-        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isNaN), () => (Func<object?, bool>)GlobalThis.isNaN);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setTimeout), () => (Func<object, object, object[], object>)GlobalThis.setTimeout, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearTimeout), () => (Func<object, object?>)GlobalThis.clearTimeout, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setImmediate), () => (Func<object, object[], object>)GlobalThis.setImmediate, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.setInterval), () => (Func<object, object, object[], object>)GlobalThis.setInterval, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearImmediate), () => (Func<object, object?>)GlobalThis.clearImmediate, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.clearInterval), () => (Func<object, object?>)GlobalThis.clearInterval, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.gc), () => (Func<object?>)GlobalThis.gc, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseInt), () => (Func<object?, object?, double>)GlobalThis.parseInt, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.parseFloat), () => (Func<object?, double>)GlobalThis.parseFloat, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isFinite), () => (Func<object?, bool>)GlobalThis.isFinite, builtInGlobalAttributes);
+        AddBuiltInGlobalFunction(globals, nameof(GlobalThis.isNaN), () => (Func<object?, bool>)GlobalThis.isNaN, builtInGlobalAttributes);
 
         return globals;
     }
@@ -238,9 +237,10 @@ public sealed class RuntimeIntrinsicCatalog : IRuntimeIntrinsicCatalog
     private static void AddBuiltInGlobalFunction(
         Dictionary<string, RuntimeGlobalBindingDescriptor> globals,
         string name,
-        Func<object?> valueFactory)
+        Func<object?> valueFactory,
+        RuntimeGlobalPropertyAttributes propertyAttributes)
     {
-        globals[name] = RuntimeGlobalBindingDescriptor.ForFactory(name, valueFactory, BuiltInGlobalAttributes);
+        globals[name] = RuntimeGlobalBindingDescriptor.ForFactory(name, valueFactory, propertyAttributes);
     }
 
     private static string NormalizeModuleSpecifier(string specifier)
