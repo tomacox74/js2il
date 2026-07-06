@@ -1,4 +1,5 @@
 using JavaScriptRuntime;
+using Jroc.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
@@ -40,6 +41,36 @@ public sealed class CompilerRuntimeIntrinsicCatalogTests
         {
             try { Directory.Delete(outputPath, recursive: true); } catch { }
         }
+    }
+
+    [Fact]
+    public void CompileAndLoadModule_AllowsScriptToInvokeCSharpHostAssert()
+    {
+        var callCount = 0;
+        var hostIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+            .AddGlobalValue(
+                "assert",
+                (Action<object>)(message =>
+                {
+                    callCount++;
+                    Assert.Equal("called from JavaScript", message);
+                }))
+            .Build();
+
+        using var module = JrocInMemoryCompiler.CompileAndLoadModule(
+            new JrocInMemoryCompileRequest(Path.Combine(Path.GetTempPath(), "host-assert-module.js"))
+            {
+                SourceText = "\"use strict\";\nassert(\"called from JavaScript\");\nexports.ok = true;\n",
+                HostRuntimeIntrinsics = hostIntrinsics
+            },
+            options: new JsModuleLoadOptions
+            {
+                HostRuntimeIntrinsics = hostIntrinsics
+            });
+
+        dynamic exports = module.Exports;
+        Assert.True((bool)exports.ok);
+        Assert.Equal(1, callCount);
     }
 
     [Fact]

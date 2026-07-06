@@ -84,7 +84,8 @@ public static class JrocInMemoryCompiler
             Verbose = request.Verbose,
             DiagnosticFilePath = request.DiagnosticFilePath,
             AnalyzeUnused = request.AnalyzeUnused,
-            GenerateModuleExportContracts = request.GenerateModuleExportContracts
+            GenerateModuleExportContracts = request.GenerateModuleExportContracts,
+            HostRuntimeIntrinsics = request.HostRuntimeIntrinsics
         };
 
         var effectiveFileSystem = CreateEffectiveFileSystem(request);
