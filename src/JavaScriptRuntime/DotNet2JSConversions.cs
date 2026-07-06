@@ -101,12 +101,33 @@ namespace JavaScriptRuntime
             return value!.ToString()!;
         }
 
+        // Cached strings for small non-negative integers. Array index keys and other
+        // small integer-to-string conversions are extremely common on hot paths
+        // (e.g. computed member access); caching avoids a heap allocation per conversion.
+        private static readonly string[] SmallIntStrings = CreateSmallIntStrings();
+
+        private static string[] CreateSmallIntStrings()
+        {
+            var cache = new string[1024];
+            for (int i = 0; i < cache.Length; i++)
+            {
+                cache[i] = i.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return cache;
+        }
+
         private static string NumberToString(double value)
         {
             if (double.IsNaN(value)) return "NaN";
             if (double.IsPositiveInfinity(value)) return "Infinity";
             if (double.IsNegativeInfinity(value)) return "-Infinity";
             if (value == 0.0) return "0";
+
+            if (value >= 1.0 && value < SmallIntStrings.Length && double.IsInteger(value))
+            {
+                return SmallIntStrings[(int)value];
+            }
 
             var abs = global::System.Math.Abs(value);
             if (double.IsInteger(value))

@@ -611,6 +611,18 @@ namespace JavaScriptRuntime
                 throw new TypeError("Cannot read properties of null or undefined");
             }
 
+            // Boxed numeric indices take the numeric fast path, which avoids
+            // materializing the property key string for dense array reads.
+            if (index is double doubleIndex)
+            {
+                return GetItem(obj, doubleIndex);
+            }
+
+            if (index is int int32Index)
+            {
+                return GetItem(obj, (double)int32Index);
+            }
+
             var propName = Object.ToPropertyKeyString(index);
 
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)

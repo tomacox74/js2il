@@ -6,9 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/runtime/compiler: cut jroc-execute allocations for array/property hot paths (dromaeo-3d-cube: ~12.9 MB → ~4.9 MB per op, ~40% faster steady-state): allocation-free `PropertyDescriptorStore.HasAny`, cached small-integer number-to-string conversions, numeric fast path in `ObjectRuntime.GetItem(object, object)`, lazy index-key materialization in the `Array` double indexer, allocation-free prototype-chain cycle detection in property stores, and elision of runtime scope instances for binding-less block/switch scopes.
 - test262: migrated `tests/Jroc.Test262.Tests` execution fixtures to the shared in-memory assert harness, removed copied per-fixture assert/helper blocks across the suite, and restored fixture files toward their upstream `test262` sources.
-
-_Nothing yet._
 
 ## v0.11.11 - 2026-07-05
 
