@@ -130,6 +130,7 @@ internal sealed class JsMethodCompiler
     private readonly AnonymousCallableTypeMetadataRegistry _anonymousCallableTypeMetadataRegistry;
     private readonly Services.NestedTypeRelationshipRegistry _nestedTypeRelationshipRegistry;
     private readonly Services.ModuleTypeMetadataRegistry _moduleTypeRegistry;
+    private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
 
     public JsMethodCompiler(
         MetadataBuilder metadataBuilder,
@@ -141,6 +142,7 @@ internal sealed class JsMethodCompiler
         AnonymousCallableTypeMetadataRegistry anonymousCallableTypeMetadataRegistry,
         Services.NestedTypeRelationshipRegistry nestedTypeRelationshipRegistry,
         Services.ModuleTypeMetadataRegistry moduleTypeRegistry,
+        JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
         IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
@@ -152,6 +154,7 @@ internal sealed class JsMethodCompiler
         _anonymousCallableTypeMetadataRegistry = anonymousCallableTypeMetadataRegistry;
         _nestedTypeRelationshipRegistry = nestedTypeRelationshipRegistry;
         _moduleTypeRegistry = moduleTypeRegistry;
+        _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog;
         _serviceProvider = serviceProvider;
     }
 
@@ -1004,7 +1007,7 @@ internal sealed class JsMethodCompiler
 
         var classRegistry = _serviceProvider.GetService<Jroc.Services.ClassRegistry>();
         var callableRegistry = _serviceProvider.GetService<CallableRegistry>();
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId, isDerivedConstructor: isDerivedConstructor, callableRegistry: callableRegistry))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId, isDerivedConstructor: isDerivedConstructor, callableRegistry: callableRegistry, runtimeIntrinsicCatalog: _runtimeIntrinsicCatalog))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;

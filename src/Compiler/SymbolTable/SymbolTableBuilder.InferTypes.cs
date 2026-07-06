@@ -2100,7 +2100,9 @@ public partial class SymbolTableBuilder
             // If the callee name maps to an intrinsic runtime type, infer that CLR type.
             // This enables strongly-typed class fields for patterns like: this.buf = new Int32Array(n)
             // (and similar intrinsic constructors).
-            return JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeId.Name);
+            return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(calleeId.Name, out var intrinsic) && intrinsic != null
+                ? intrinsic.Type
+                : null;
         }
 
         Type? InferClassFieldExpressionClrType(Node expr)
@@ -2469,7 +2471,9 @@ public partial class SymbolTableBuilder
                 // new <Intrinsic>(...) (e.g., Int32Array)
                 if (ne.Callee is Identifier intrinsicCtorId)
                 {
-                    return JavaScriptRuntime.IntrinsicObjectRegistry.Get(intrinsicCtorId.Name);
+                    return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicCtorId.Name, out var intrinsic) && intrinsic != null
+                        ? intrinsic.Type
+                        : null;
                 }
 
                 return null;

@@ -10,11 +10,11 @@ public class IntrinsicDiscoveryTests
     {
         var method = typeof(SymbolTableBuilder).GetMethod(
             "IsKnownGlobalIntrinsic",
-            BindingFlags.NonPublic | BindingFlags.Static);
+            BindingFlags.NonPublic | BindingFlags.Instance);
 
         Assert.NotNull(method);
 
-        return (bool)method!.Invoke(null, new object[] { name })!;
+        return (bool)method!.Invoke(new SymbolTableBuilder(), new object[] { name })!;
     }
 
     [Theory]

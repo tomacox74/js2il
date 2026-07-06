@@ -18,6 +18,12 @@ public class CompilerOptions
     public bool GenerateModuleExportContracts { get; set; } = true;
 
     /// <summary>
+    /// Host-provided runtime intrinsics that should be visible during compilation.
+    /// </summary>
+    public JavaScriptRuntime.HostRuntimeIntrinsicDescriptors HostRuntimeIntrinsics { get; set; } =
+        JavaScriptRuntime.HostRuntimeIntrinsicDescriptors.Empty;
+
+    /// <summary>
     /// Computed per compilation. When true, the compiler emits a runtime prologue that enables
     /// prototype-chain behavior. This is automatically determined based on whether the code
     /// uses prototype-related features (e.g. __proto__, Object.getPrototypeOf, Object.setPrototypeOf).

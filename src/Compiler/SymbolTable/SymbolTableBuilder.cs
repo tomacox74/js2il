@@ -19,6 +19,17 @@ namespace Jroc.SymbolTables
         private readonly HashSet<Node> _visitedFunctionExpressions = new();
         private readonly HashSet<Node> _visitedClasses = new();
         private readonly JavaScriptParser _parser = new();
+        private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
+
+        public SymbolTableBuilder()
+            : this(new JavaScriptRuntime.RuntimeIntrinsicCatalog())
+        {
+        }
+
+        public SymbolTableBuilder(JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog)
+        {
+            _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog ?? throw new ArgumentNullException(nameof(runtimeIntrinsicCatalog));
+        }
 
         private static string BuildClassRegistryNamespace(Scope globalScope, Scope currentScope, Node classNode, bool forceUniqueSuffix)
         {
@@ -357,7 +368,7 @@ namespace Jroc.SymbolTables
         /// Recursively checks if an AST node contains any identifier that isn't in the local variables set.
         /// Stops at nested function boundaries.
         /// </summary>
-        private static bool ContainsFreeVariable(Node? node, HashSet<string> localVariables)
+        private bool ContainsFreeVariable(Node? node, HashSet<string> localVariables)
         {
             if (node == null) return false;
 
@@ -658,7 +669,7 @@ namespace Jroc.SymbolTables
         /// <summary>
         /// Checks if an identifier is a known global intrinsic that doesn't require scope access.
         /// </summary>
-        private static bool IsKnownGlobalIntrinsic(string name)
+        private bool IsKnownGlobalIntrinsic(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
 
@@ -669,7 +680,10 @@ namespace Jroc.SymbolTables
                 return true;
             }
 
-            return KnownGlobalIntrinsicNames.Value.Contains(name);
+            return KnownGlobalIntrinsicNames.Value.Contains(name)
+                || _runtimeIntrinsicCatalog.TryGetGlobalBinding(name, out _)
+                || _runtimeIntrinsicCatalog.TryGetKnownGlobal(name, out _)
+                || _runtimeIntrinsicCatalog.TryGetIntrinsicObject(name, out _);
         }
 
         private static readonly Lazy<HashSet<string>> KnownGlobalIntrinsicNames =
@@ -722,9 +736,11 @@ namespace Jroc.SymbolTables
             return JavaScriptRuntime.Node.NodeModuleRegistry.NormalizeModuleName(s);
         }
 
-        private static Type? ResolveNodeModuleType(string key)
+        private Type? ResolveNodeModuleType(string key)
         {
-            return JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleType(key, out var type) ? type : null;
+            return _runtimeIntrinsicCatalog.TryGetModuleBinding(key, out var descriptor) && descriptor != null
+                ? descriptor.ModuleType
+                : null;
         }
 
         private static string SanitizeForMetadata(string name)
@@ -736,7 +752,7 @@ namespace Jroc.SymbolTables
             return result;
         }
 
-        private static void TryAssignClrTypeForRequireInit(VariableDeclarator decl, BindingInfo binding)
+        private void TryAssignClrTypeForRequireInit(VariableDeclarator decl, BindingInfo binding)
         {
             // Pattern: const name = require('path') or require("path")
             var init = decl.Init;

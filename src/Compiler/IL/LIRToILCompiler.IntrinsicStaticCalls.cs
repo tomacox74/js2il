@@ -15,11 +15,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
-        if (intrinsicType == null)
-        {
-            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
-        }
+        var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
 
         var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
         var chosen = allMethods
@@ -68,11 +64,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
-        if (intrinsicType == null)
-        {
-            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
-        }
+        var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
 
         var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
         var chosen = allMethods
@@ -112,11 +104,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
-        if (intrinsicType == null)
-        {
-            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
-        }
+        var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
 
         // Resolve the static method using the same heuristics as the legacy pipeline:
         // 1. Exact arity match first
@@ -187,11 +175,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
-        if (intrinsicType == null)
-        {
-            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
-        }
+        var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
 
         var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
         var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -251,11 +235,7 @@ internal sealed partial class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor)
     {
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
-        if (intrinsicType == null)
-        {
-            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
-        }
+        var intrinsicType = GetIntrinsicRuntimeType(instruction.IntrinsicName);
 
         // Resolve the static method (same logic as EmitIntrinsicStaticCall)
         var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);

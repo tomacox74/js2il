@@ -23,6 +23,7 @@ public class ModuleLoader
     private readonly JavaScriptAstValidator _validator;
     private readonly IFileSystem _fileSystem;
     private readonly NodeModuleResolver _moduleResolver;
+    private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private readonly ICompilerOutput _ux;
     private readonly Microsoft.Extensions.Logging.ILogger<ModuleLoader> _diagnosticLogger;
 
@@ -34,9 +35,27 @@ public class ModuleLoader
         NodeModuleResolver moduleResolver,
         ICompilerOutput ux,
         Microsoft.Extensions.Logging.ILogger<ModuleLoader>? diagnosticLogger = null)
+        : this(
+            options,
+            fileSystem,
+            moduleResolver,
+            new JavaScriptRuntime.RuntimeIntrinsicCatalog(options.HostRuntimeIntrinsics),
+            ux,
+            diagnosticLogger)
+    {
+    }
+
+    public ModuleLoader(
+        CompilerOptions options,
+        IFileSystem fileSystem,
+        NodeModuleResolver moduleResolver,
+        JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog,
+        ICompilerOutput ux,
+        Microsoft.Extensions.Logging.ILogger<ModuleLoader>? diagnosticLogger = null)
     {
         _diagnosticsEnabled = options.DiagnosticsEnabled;
-        _validator = new JavaScriptAstValidator();
+        _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog;
+        _validator = new JavaScriptAstValidator(runtimeIntrinsicCatalog);
         _fileSystem = fileSystem;
         _moduleResolver = moduleResolver;
         _ux = ux;
@@ -2211,14 +2230,14 @@ function __jroc_esm_export(name, getter) {
         return s;
     }
 
-    private static bool IsBuiltInModuleSpecifier(string specifier)
+    private bool IsBuiltInModuleSpecifier(string specifier)
     {
         if (string.IsNullOrWhiteSpace(specifier))
         {
             return false;
         }
 
-        return JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleType(specifier, out _);
+        return _runtimeIntrinsicCatalog.TryGetModuleBinding(specifier, out _);
     }
 
     private static bool IsBarePackageSpecifier(string specifier)
