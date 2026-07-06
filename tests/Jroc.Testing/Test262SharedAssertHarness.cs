@@ -13,11 +13,15 @@ public static class Test262SharedAssertHarness
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
+        bool useNativeHostHelpers = false,
         int timeoutMs = 30000)
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
-        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath);
+        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath, useNativeHostHelpers);
+        var hostRuntimeIntrinsics = useNativeHostHelpers
+            ? Test262HostRuntimeIntrinsics.Create()
+            : null;
 
         return InMemoryTestCompiler.CompileAndExecute(
             testName,
@@ -32,10 +36,15 @@ public static class Test262SharedAssertHarness
             enableIRMetrics: enableIRMetrics,
             allowUnhandledException: allowUnhandledException,
             addMocks: addMocks,
+            hostRuntimeIntrinsics: hostRuntimeIntrinsics,
             timeoutMs: timeoutMs);
     }
 
-    private static string BuildPreparedEntryScript(string entryScript, FrontmatterMetadata metadata, string callerSourceFilePath)
+    private static string BuildPreparedEntryScript(
+        string entryScript,
+        FrontmatterMetadata metadata,
+        string callerSourceFilePath,
+        bool useNativeHostHelpers)
     {
         var (prefix, remainder, hasUseStrictDirective) = SplitDirectivePrologue(entryScript);
         var scriptBuilder = new System.Text.StringBuilder();
@@ -46,7 +55,9 @@ public static class Test262SharedAssertHarness
             scriptBuilder.AppendLine("\"use strict\";");
         }
 
-        var helperFiles = new List<string> { "assert.js" };
+        var helperFiles = useNativeHostHelpers
+            ? new List<string>()
+            : new List<string> { "assert.js" };
         helperFiles.AddRange(GetInlineHarnessFileNames(metadata.Includes));
 
         foreach (var helperFile in helperFiles.Distinct(StringComparer.Ordinal))

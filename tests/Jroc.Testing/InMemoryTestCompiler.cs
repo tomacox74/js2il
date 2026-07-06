@@ -18,6 +18,7 @@ public static class InMemoryTestCompiler
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
+        HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics = null,
         int timeoutMs = 30000)
     {
         var (script, sourcePath) = getJavaScriptAndSourcePath(testName);
@@ -114,7 +115,8 @@ public static class InMemoryTestCompiler
                     SourceText = entrySourceText,
                     FileSystem = fileSystem,
                     RootModuleIdOverride = rootModuleIdOverride,
-                    EmitPdb = true
+                    EmitPdb = true,
+                    HostRuntimeIntrinsics = hostRuntimeIntrinsics ?? HostRuntimeIntrinsicDescriptors.Empty
                 });
         }
         finally
@@ -126,7 +128,7 @@ public static class InMemoryTestCompiler
         }
 
         using var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
-        var output = ExecuteLoadedAssembly(loadedAssembly.Assembly, testName, allowUnhandledException, addMocks, timeoutMs);
+        var output = ExecuteLoadedAssembly(loadedAssembly.Assembly, testName, allowUnhandledException, addMocks, hostRuntimeIntrinsics, timeoutMs);
         return new InMemoryTestExecutionResult(output, loadedAssembly.LoadContextWeakReference);
     }
 
@@ -135,6 +137,7 @@ public static class InMemoryTestCompiler
         string testName,
         bool allowUnhandledException,
         Action<ServiceContainer>? addMocks,
+        HostRuntimeIntrinsicDescriptors? hostRuntimeIntrinsics,
         int timeoutMs)
     {
         var output = new InMemoryConsoleOutput();
@@ -145,6 +148,11 @@ public static class InMemoryTestCompiler
             ErrorOutput = output
         });
         serviceProvider.RegisterInstance<IEnvironment>(new CapturingEnvironment());
+        if (hostRuntimeIntrinsics is not null)
+        {
+            serviceProvider.Replace(hostRuntimeIntrinsics);
+        }
+
         addMocks?.Invoke(serviceProvider);
 
         ExceptionDispatchInfo? threadException = null;
