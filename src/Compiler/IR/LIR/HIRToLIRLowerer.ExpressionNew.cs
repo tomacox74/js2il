@@ -147,7 +147,9 @@ public sealed partial class HIRToLIRLowerer
         }
 
         // PL3.3g: generic intrinsic constructor support (Date/RegExp/Set/Promise/Int32Array/etc.)
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(ctorName);
+        var intrinsicType = _runtimeIntrinsicCatalog.TryGetIntrinsicObject(ctorName, out var intrinsic) && intrinsic != null
+            ? intrinsic.Type
+            : null;
         if (intrinsicType != null)
         {
             bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;

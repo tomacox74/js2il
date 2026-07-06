@@ -329,10 +329,14 @@ namespace Jroc.Services.ILGenerators
                     // and emitted as a CLR base type reference.
                     try
                     {
-                        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(superId.Name);
-                        if (intrinsicType != null && intrinsicType.IsClass && !intrinsicType.IsSealed)
+                        var runtimeIntrinsicCatalog = _serviceProvider.GetService(typeof(JavaScriptRuntime.IRuntimeIntrinsicCatalog)) as JavaScriptRuntime.IRuntimeIntrinsicCatalog;
+                        if (runtimeIntrinsicCatalog != null
+                            && runtimeIntrinsicCatalog.TryGetIntrinsicObject(superId.Name, out var intrinsic)
+                            && intrinsic != null
+                            && intrinsic.Type.IsClass
+                            && !intrinsic.Type.IsSealed)
                         {
-                            baseTypeHandle = _bcl.TypeReferenceRegistry.GetOrAdd(intrinsicType);
+                            baseTypeHandle = _bcl.TypeReferenceRegistry.GetOrAdd(intrinsic.Type);
                         }
                     }
                     catch

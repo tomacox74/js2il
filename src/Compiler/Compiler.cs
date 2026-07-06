@@ -10,7 +10,7 @@ public class Compiler
     private readonly string? outputDirectory;
     private readonly bool diagnosticsEnabled;
 
-    private readonly SymbolTableBuilder _symbolTableBuilder = new SymbolTableBuilder();
+    private readonly SymbolTableBuilder _symbolTableBuilder;
 
     private readonly ModuleLoader _moduleLoader;
 
@@ -22,6 +22,7 @@ public class Compiler
         IServiceProvider serviceProvider,
         CompilerOptions options,
         ModuleLoader moduleLoader,
+        SymbolTableBuilder symbolTableBuilder,
         ICompilerOutput ux,
         Microsoft.Extensions.Logging.ILogger<Compiler> diagnosticLogger)
     {
@@ -29,6 +30,7 @@ public class Compiler
         this.diagnosticsEnabled = options.DiagnosticsEnabled;
         this.analyzeUnused = options.AnalyzeUnused;
         this._moduleLoader = moduleLoader;
+        this._symbolTableBuilder = symbolTableBuilder;
         this._serviceProvider = serviceProvider;
         this._ux = ux;
         this._diagnosticLogger = diagnosticLogger;

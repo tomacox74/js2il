@@ -243,7 +243,9 @@ public sealed partial class HIRToLIRLowerer
                     return true;
                 }
 
-                var intrinsicInfo = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
+                var intrinsicInfo = _runtimeIntrinsicCatalog.TryGetIntrinsicObject(name, out var catalogIntrinsic) && catalogIntrinsic != null
+                    ? catalogIntrinsic
+                    : null;
                 if (intrinsicInfo != null && intrinsicInfo.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
                 {
                     switch (intrinsicInfo.CallKind)
@@ -766,7 +768,9 @@ public sealed partial class HIRToLIRLowerer
                 || IsStableGlobalMathBinding(calleeGlobalVar.Name);
 
             // Try to resolve the intrinsic type via IntrinsicObjectRegistry
-            var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(intrinsicName);
+            var intrinsicType = _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
+                ? intrinsic.Type
+                : null;
             if (intrinsicType != null && canUseIntrinsicStatic)
             {
                 // Check if there's a matching static method

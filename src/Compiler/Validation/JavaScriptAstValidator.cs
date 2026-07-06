@@ -12,6 +12,8 @@ namespace Jroc.Validation;
 
 public class JavaScriptAstValidator : IAstValidator
 {
+    private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
+
     private static readonly HashSet<string> SupportedDirectEvalLiteralSources = new(StringComparer.Ordinal)
     {
         // Deliberately narrow direct-eval support for test262 lexical-environment ports.
@@ -25,22 +27,15 @@ public class JavaScriptAstValidator : IAstValidator
         "o = {set foo(arg){}};"
     };
 
-    private static readonly Lazy<HashSet<string>> SupportedRequireModules = new(() =>
+    public JavaScriptAstValidator()
+        : this(new JavaScriptRuntime.RuntimeIntrinsicCatalog())
     {
-        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        try
-        {
-            foreach (var name in JavaScriptRuntime.Node.NodeModuleRegistry.GetSupportedModuleNames())
-            {
-                if (!string.IsNullOrWhiteSpace(name))
-                {
-                    set.Add(name);
-                }
-            }
-        }
-        catch { /* Ignore reflection errors; result will be empty set */ }
-        return set;
-    });
+    }
+
+    public JavaScriptAstValidator(JavaScriptRuntime.IRuntimeIntrinsicCatalog runtimeIntrinsicCatalog)
+    {
+        _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog ?? throw new ArgumentNullException(nameof(runtimeIntrinsicCatalog));
+    }
 
     public ValidationResult Validate(Acornima.Ast.Program ast)
     {
@@ -930,7 +925,11 @@ public class JavaScriptAstValidator : IAstValidator
                             }
 
                             // Locals and known built-in constants are always allowed.
-                            if (IsDeclared(name) || KnownGlobalConstants.Value.Contains(name))
+                            if (IsDeclared(name)
+                                || KnownGlobalConstants.Value.Contains(name)
+                                || _runtimeIntrinsicCatalog.TryGetGlobalBinding(name, out _)
+                                || _runtimeIntrinsicCatalog.TryGetKnownGlobal(name, out _)
+                                || _runtimeIntrinsicCatalog.TryGetIntrinsicObject(name, out _))
                             {
                                 break;
                             }
@@ -1551,7 +1550,7 @@ public class JavaScriptAstValidator : IAstValidator
                     // Explicit node: prefix indicates a Node built-in module.
                     // If it is not supported by the runtime, report an error.
                     if (modName.TrimStart().StartsWith("node:", StringComparison.OrdinalIgnoreCase)
-                        && !SupportedRequireModules.Value.Contains(normalizedName))
+                        && !_runtimeIntrinsicCatalog.TryGetModuleBinding(normalizedName, out _))
                     {
                         result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
                         result.IsValid = false;

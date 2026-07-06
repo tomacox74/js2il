@@ -509,7 +509,7 @@ internal sealed partial class LIRToILCompiler
                 }
                 break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
-                // Emit inline: call IntrinsicObjectRegistry.GetOrDefault
+                // Emit inline: call GlobalThis.GetFunctionValue("name")
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 break;
             case LIRGetIntrinsicGlobalFunction getIntrinsicGlobalFunction:
@@ -2164,8 +2164,7 @@ internal sealed partial class LIRToILCompiler
 
     private void EmitNewIntrinsicObjectCore(LIRNewIntrinsicObject newIntrinsic, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
-        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(newIntrinsic.IntrinsicName)
-            ?? throw new InvalidOperationException($"Unknown intrinsic type: {newIntrinsic.IntrinsicName}");
+        var intrinsicType = GetIntrinsicRuntimeType(newIntrinsic.IntrinsicName);
 
         bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
         if (isStaticClass)

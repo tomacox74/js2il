@@ -919,6 +919,9 @@ public static class HIRBuilder
 
 class HIRMethodBuilder
 {
+    private static readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog DefaultRuntimeIntrinsicCatalog =
+        new JavaScriptRuntime.RuntimeIntrinsicCatalog();
+
     /// <summary>
     /// JavaScript global constants that can be compiled as literals when not shadowed.
     /// </summary>
@@ -3398,7 +3401,10 @@ class HIRMethodBuilder
                 bool isBooleanCtor = string.Equals(calleeName, "Boolean", StringComparison.Ordinal);
                 bool isNumberCtor = string.Equals(calleeName, "Number", StringComparison.Ordinal);
                 bool isFunctionCtor = string.Equals(calleeName, "Function", StringComparison.Ordinal);
-                var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeName);
+                var intrinsicType = DefaultRuntimeIntrinsicCatalog.TryGetIntrinsicObject(calleeName, out var intrinsic)
+                    && intrinsic != null
+                    ? intrinsic.Type
+                    : null;
 
                 var globalThisProperty = typeof(JavaScriptRuntime.GlobalThis).GetProperty(
                     calleeName,

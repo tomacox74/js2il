@@ -31,6 +31,7 @@ internal sealed partial class LIRToILCompiler
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly MemberReferenceRegistry _memberRefRegistry;
     private readonly ScopeMetadataRegistry _scopeMetadataRegistry;
+    private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
@@ -689,12 +690,23 @@ internal sealed partial class LIRToILCompiler
         ScopeMetadataRegistry scopeMetadataRegistry,
         IServiceProvider serviceProvider)
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+
         _serviceProvider = serviceProvider;
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
         _memberRefRegistry = memberReferenceRegistry;
         _scopeMetadataRegistry = scopeMetadataRegistry;
+        _runtimeIntrinsicCatalog = serviceProvider.GetService(typeof(JavaScriptRuntime.IRuntimeIntrinsicCatalog)) as JavaScriptRuntime.IRuntimeIntrinsicCatalog
+            ?? new JavaScriptRuntime.RuntimeIntrinsicCatalog();
+    }
+
+    private Type GetIntrinsicRuntimeType(string intrinsicName)
+    {
+        return _runtimeIntrinsicCatalog.TryGetIntrinsicObject(intrinsicName, out var intrinsic) && intrinsic != null
+            ? intrinsic.Type
+            : throw new InvalidOperationException($"Unknown intrinsic type: {intrinsicName}");
     }
 
     // Public API moved to LIRToILCompiler.PublicApi.cs

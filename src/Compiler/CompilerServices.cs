@@ -9,6 +9,7 @@ using Jroc.Services.VariableBindings;
 using Jroc.Services;
 using Jroc.DebugSymbols;
 using Jroc.Diagnostics;
+using Jroc.SymbolTables;
  
 namespace Jroc;
  
@@ -39,6 +40,9 @@ public static class CompilerServices
 
         // compiler and compiler options
         services.AddSingleton(options);
+        services.AddSingleton(options.HostRuntimeIntrinsics);
+        services.AddSingleton<JavaScriptRuntime.IRuntimeIntrinsicCatalog>(
+            _ => new JavaScriptRuntime.RuntimeIntrinsicCatalog(options.HostRuntimeIntrinsics));
 
         services.AddLogging(builder =>
         {
@@ -63,6 +67,7 @@ public static class CompilerServices
         });
 
         services.AddSingleton<Compiler>();
+        services.AddSingleton<SymbolTableBuilder>();
 
         // Debug symbol collection (Portable PDB)
         services.AddSingleton<DebugSymbolRegistry>();
