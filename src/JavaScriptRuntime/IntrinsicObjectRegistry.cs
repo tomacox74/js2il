@@ -23,6 +23,11 @@ namespace JavaScriptRuntime
             return map.TryGetValue(name, out var info) ? info : null;
         }
 
+        public static IReadOnlyCollection<IntrinsicObjectInfo> GetAll()
+        {
+            return EnsureMap().Values.ToArray();
+        }
+
         private static Dictionary<string, IntrinsicObjectInfo> EnsureMap()
         {
             var map = _byName;
