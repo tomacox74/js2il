@@ -92,9 +92,8 @@ public class GlobalThisTests
     public void GlobalObject_AppliesHostGlobalBindingsWithConfiguredPropertyAttributes()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();
-        serviceProvider.Replace(new GlobalThisOptions
-        {
-            HostRuntimeIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+        serviceProvider.Replace(
+            new HostRuntimeIntrinsicDescriptorsBuilder()
                 .AddGlobalValue(
                     "assert",
                     "native assert",
@@ -102,8 +101,7 @@ public class GlobalThisTests
                         Enumerable: true,
                         Configurable: false,
                         Writable: false))
-                .Build()
-        });
+                .Build());
 
         try
         {
@@ -128,12 +126,10 @@ public class GlobalThisTests
     public void GlobalObject_HostGlobalBindingsDoNotReplaceBuiltInsByDefault()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();
-        serviceProvider.Replace(new GlobalThisOptions
-        {
-            HostRuntimeIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+        serviceProvider.Replace(
+            new HostRuntimeIntrinsicDescriptorsBuilder()
                 .AddGlobalValue(nameof(GlobalThis.Array), "host array")
-                .Build()
-        });
+                .Build());
 
         try
         {
@@ -152,15 +148,13 @@ public class GlobalThisTests
     public void GlobalObject_HostGlobalBindingsCanExplicitlyReplaceBuiltIns()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();
-        serviceProvider.Replace(new GlobalThisOptions
-        {
-            HostRuntimeIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+        serviceProvider.Replace(
+            new HostRuntimeIntrinsicDescriptorsBuilder()
                 .AddGlobalValue(
                     nameof(GlobalThis.Array),
                     "host array",
                     overwritePolicy: RuntimeGlobalOverwritePolicy.ReplaceExisting)
-                .Build()
-        });
+                .Build());
 
         try
         {
@@ -184,16 +178,10 @@ public class GlobalThisTests
             .Build();
 
         var firstServiceProvider = RuntimeServices.BuildServiceProvider();
-        firstServiceProvider.Replace(new GlobalThisOptions
-        {
-            HostRuntimeIntrinsics = hostIntrinsics
-        });
+        firstServiceProvider.Replace(hostIntrinsics);
 
         var secondServiceProvider = RuntimeServices.BuildServiceProvider();
-        secondServiceProvider.Replace(new GlobalThisOptions
-        {
-            HostRuntimeIntrinsics = hostIntrinsics
-        });
+        secondServiceProvider.Replace(hostIntrinsics);
 
         try
         {

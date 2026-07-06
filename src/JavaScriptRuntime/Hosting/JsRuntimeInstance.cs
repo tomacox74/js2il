@@ -241,12 +241,7 @@ internal sealed class JsRuntimeInstance : IDisposable
 
             if (_options?.HostRuntimeIntrinsics != null)
             {
-                var existingOptions = serviceProvider.Resolve<GlobalThisOptions>();
-                serviceProvider.Replace(new GlobalThisOptions
-                {
-                    ExposeGc = existingOptions.ExposeGc,
-                    HostRuntimeIntrinsics = _options.HostRuntimeIntrinsics
-                });
+                serviceProvider.Replace(_options.HostRuntimeIntrinsics);
             }
 
             if (_options?.ChildProcessLauncher != null)

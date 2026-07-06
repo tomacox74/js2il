@@ -1188,13 +1188,13 @@ namespace JavaScriptRuntime
         {
             var serviceProvider = ServiceProvider;
             if (serviceProvider == null
-                || !serviceProvider.TryResolve<GlobalThisOptions>(out var options)
-                || options == null)
+                || !serviceProvider.TryResolve<HostRuntimeIntrinsicDescriptors>(out var hostRuntimeIntrinsics)
+                || hostRuntimeIntrinsics == null)
             {
                 return;
             }
 
-            foreach (var descriptor in options.HostRuntimeIntrinsics.GlobalBindings)
+            foreach (var descriptor in hostRuntimeIntrinsics.GlobalBindings)
             {
                 if (dict.ContainsKey(descriptor.Name)
                     && descriptor.OverwritePolicy == RuntimeGlobalOverwritePolicy.PreserveExisting)
