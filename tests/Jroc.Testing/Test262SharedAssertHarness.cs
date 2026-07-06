@@ -37,7 +37,15 @@ public static class Test262SharedAssertHarness
 
     private static string BuildPreparedEntryScript(string entryScript, FrontmatterMetadata metadata, string callerSourceFilePath)
     {
+        var (prefix, remainder, hasUseStrictDirective) = SplitDirectivePrologue(entryScript);
         var scriptBuilder = new System.Text.StringBuilder();
+        scriptBuilder.Append(prefix);
+
+        if (metadata.OnlyStrict && !hasUseStrictDirective)
+        {
+            scriptBuilder.AppendLine("\"use strict\";");
+        }
+
         var helperFiles = new List<string> { "assert.js" };
         helperFiles.AddRange(GetInlineHarnessFileNames(metadata.Includes));
 
@@ -47,12 +55,7 @@ public static class Test262SharedAssertHarness
             scriptBuilder.AppendLine(BuildInlineHarnessBlock(helperFile, helperScript));
         }
 
-        if (metadata.OnlyStrict)
-        {
-            scriptBuilder.AppendLine("\"use strict\";");
-        }
-
-        scriptBuilder.Append(entryScript);
+        scriptBuilder.Append(remainder);
         return scriptBuilder.ToString();
     }
 
@@ -164,6 +167,122 @@ public static class Test262SharedAssertHarness
             script,
             @"(?ms)^\s*module\.exports\s*=\s*\{.*?\};\s*$",
             string.Empty);
+    }
+
+    private static (string Prefix, string Remainder, bool HasUseStrictDirective) SplitDirectivePrologue(string script)
+    {
+        var index = 0;
+        var prefixEnd = 0;
+        var hasUseStrictDirective = false;
+
+        SkipTrivia(script, ref index);
+        prefixEnd = index;
+
+        while (TryConsumeDirective(script, ref index, out var directiveValue))
+        {
+            if (string.Equals(directiveValue, "use strict", StringComparison.Ordinal))
+            {
+                hasUseStrictDirective = true;
+            }
+
+            SkipTrivia(script, ref index);
+            prefixEnd = index;
+        }
+
+        return (script[..prefixEnd], script[prefixEnd..], hasUseStrictDirective);
+    }
+
+    private static void SkipTrivia(string script, ref int index)
+    {
+        while (index < script.Length)
+        {
+            if (char.IsWhiteSpace(script[index]))
+            {
+                index++;
+                continue;
+            }
+
+            if (index + 1 < script.Length && script[index] == '/' && script[index + 1] == '/')
+            {
+                index += 2;
+                while (index < script.Length && script[index] != '\r' && script[index] != '\n')
+                {
+                    index++;
+                }
+
+                continue;
+            }
+
+            if (index + 1 < script.Length && script[index] == '/' && script[index + 1] == '*')
+            {
+                index += 2;
+                while (index + 1 < script.Length && !(script[index] == '*' && script[index + 1] == '/'))
+                {
+                    index++;
+                }
+
+                if (index + 1 < script.Length)
+                {
+                    index += 2;
+                }
+
+                continue;
+            }
+
+            break;
+        }
+    }
+
+    private static bool TryConsumeDirective(string script, ref int index, out string directiveValue)
+    {
+        directiveValue = string.Empty;
+        if (index >= script.Length)
+        {
+            return false;
+        }
+
+        var quote = script[index];
+        if (quote != '"' && quote != '\'')
+        {
+            return false;
+        }
+
+        var literalStart = index;
+        index++;
+        while (index < script.Length)
+        {
+            if (script[index] == '\\')
+            {
+                index += 2;
+                continue;
+            }
+
+            if (script[index] == quote)
+            {
+                directiveValue = script[(literalStart + 1)..index];
+                index++;
+                while (index < script.Length && (script[index] == ' ' || script[index] == '\t'))
+                {
+                    index++;
+                }
+
+                if (index < script.Length && script[index] == ';')
+                {
+                    index++;
+                }
+
+                return true;
+            }
+
+            if (script[index] == '\r' || script[index] == '\n')
+            {
+                return false;
+            }
+
+            index++;
+        }
+
+        return false;
     }
 
     private static IEnumerable<string> GetInlineHarnessFileNames(IReadOnlyList<string> includeFileNames)
