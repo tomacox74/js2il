@@ -101,6 +101,10 @@ public static class InMemoryTestCompiler
             IRPipelineMetrics.Reset();
         }
 
+        var rootModuleIdOverride = executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 }
+            ? NormalizeModuleId(Path.GetFileNameWithoutExtension(entryPath) ?? "__bootstrap__")
+            : NormalizeModuleId(testName);
+
         JrocCompiledAssemblyArtifact artifact;
         try
         {
@@ -109,7 +113,7 @@ public static class InMemoryTestCompiler
                 {
                     SourceText = entrySourceText,
                     FileSystem = fileSystem,
-                    RootModuleIdOverride = NormalizeModuleId(testName),
+                    RootModuleIdOverride = rootModuleIdOverride,
                     EmitPdb = true
                 });
         }
