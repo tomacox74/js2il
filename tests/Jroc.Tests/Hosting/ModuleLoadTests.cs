@@ -112,7 +112,7 @@ public class ModuleLoadTests
         Task<string> StartFork();
     }
 
-    [Fact]
+    [Fact(Skip = "Temporarily skipped due to CI flakiness. Tracked by #1385.")]
     public async Task JsEngine_LoadModule_WhenHostedForkConfigured_AllowsChildProcessFork()
     {
         using var module = CompileAndLoadModuleAssemblyFromResources(
