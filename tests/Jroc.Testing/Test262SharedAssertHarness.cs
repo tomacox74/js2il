@@ -5,9 +5,6 @@ namespace Jroc.Tests;
 
 public static class Test262SharedAssertHarness
 {
-    private const string AssertModuleId = "node_modules/assert/index";
-    private const string HarnessModulePrefix = "test262-harness/";
-
     public static InMemoryTestExecutionResult CompileAndExecute(
         string testName,
         string testCategory,
@@ -20,20 +17,7 @@ public static class Test262SharedAssertHarness
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
         var metadata = ParseFrontmatter(entryScript);
-        var preparedEntryScript = metadata.OnlyStrict
-            ? "\"use strict\";\n" + entryScript
-            : entryScript;
-        var additionalScripts = new List<string> { AssertModuleId };
-        foreach (var include in metadata.Includes)
-        {
-            var harnessModuleId = GetHarnessModuleId(include);
-            if (harnessModuleId == null)
-            {
-                continue;
-            }
-
-            additionalScripts.Add(harnessModuleId);
-        }
+        var preparedEntryScript = BuildPreparedEntryScript(entryScript, metadata, callerSourceFilePath);
 
         return InMemoryTestCompiler.CompileAndExecute(
             testName,
@@ -45,12 +29,31 @@ public static class Test262SharedAssertHarness
                 entrySourcePath,
                 callerSourceFilePath,
                 getJavaScriptAndSourcePath),
-            additionalScripts: additionalScripts.ToArray(),
-            executeAdditionalScriptsBeforeEntry: true,
             enableIRMetrics: enableIRMetrics,
             allowUnhandledException: allowUnhandledException,
             addMocks: addMocks,
             timeoutMs: timeoutMs);
+    }
+
+    private static string BuildPreparedEntryScript(string entryScript, FrontmatterMetadata metadata, string callerSourceFilePath)
+    {
+        var scriptBuilder = new System.Text.StringBuilder();
+        var helperFiles = new List<string> { "assert.js" };
+        helperFiles.AddRange(GetInlineHarnessFileNames(metadata.Includes));
+
+        foreach (var helperFile in helperFiles.Distinct(StringComparer.Ordinal))
+        {
+            var helperScript = File.ReadAllText(GetHarnessSourcePath(callerSourceFilePath, helperFile));
+            scriptBuilder.AppendLine(BuildInlineHarnessBlock(helperFile, helperScript));
+        }
+
+        if (metadata.OnlyStrict)
+        {
+            scriptBuilder.AppendLine("\"use strict\";");
+        }
+
+        scriptBuilder.Append(entryScript);
+        return scriptBuilder.ToString();
     }
 
     private static (string Script, string? SourcePath) ResolveJavaScriptAndSourcePath(
@@ -64,19 +67,6 @@ public static class Test262SharedAssertHarness
         if (string.Equals(requestedScriptName, entryTestName, StringComparison.Ordinal))
         {
             return (preparedEntryScript, entrySourcePath);
-        }
-
-        if (string.Equals(requestedScriptName, AssertModuleId, StringComparison.Ordinal)
-            || string.Equals(requestedScriptName, "node_modules\\assert\\index", StringComparison.Ordinal))
-        {
-            return (File.ReadAllText(GetAssertHarnessSourcePath(callerSourceFilePath)), null);
-        }
-
-        var harnessFileName = TryGetHarnessFileName(requestedScriptName);
-        if (harnessFileName != null)
-        {
-            var harnessScript = File.ReadAllText(GetHarnessSourcePath(callerSourceFilePath, harnessFileName));
-            return (AppendGlobalDefineExports(harnessScript), null);
         }
 
         return getJavaScriptAndSourcePath(requestedScriptName);
@@ -113,27 +103,27 @@ public static class Test262SharedAssertHarness
             .ToArray();
     }
 
-    private static string AppendGlobalDefineExports(string script)
+    private static string BuildInlineHarnessBlock(string harnessFileName, string script)
     {
+        var scriptWithoutExports = StripModuleExports(script);
         var defines = ParseDefines(script);
-        if (defines.Count == 0)
+        var assignmentLines = defines.Count == 0
+            ? string.Empty
+            : string.Join(
+                "\n",
+                defines.Select(name => $"if (typeof {name} !== 'undefined') globalThis.{name} = {name};"));
+
+        var block = new System.Text.StringBuilder();
+        block.AppendLine($"// Inlined test262 harness helper: {harnessFileName}");
+        block.AppendLine(";(() => {");
+        block.AppendLine(scriptWithoutExports);
+        if (!string.IsNullOrWhiteSpace(assignmentLines))
         {
-            return script;
+            block.AppendLine(assignmentLines);
         }
 
-        var assignmentLines = string.Join(
-            "\n",
-            defines.Select(name => $"if (typeof {name} !== 'undefined') globalThis.{name} = {name};"));
-        var exportEntries = string.Join(
-            ", ",
-            defines.Select(name => $"{name}: (typeof {name} !== 'undefined' ? {name} : undefined)"));
-
-        return script
-            + "\n;(() => {\n"
-            + assignmentLines
-            + "\nif (typeof module !== 'undefined' && module && module.exports) {\n"
-            + $"  Object.assign(module.exports, {{ {exportEntries} }});\n"
-            + "}\n})();\n";
+        block.AppendLine("})();");
+        return block.ToString();
     }
 
     private static IReadOnlyList<string> ParseDefines(string script)
@@ -168,30 +158,30 @@ public static class Test262SharedAssertHarness
             .ToArray();
     }
 
-    private static string? GetHarnessModuleId(string includeFileName)
+    private static string StripModuleExports(string script)
     {
-        if (string.Equals(includeFileName, "assert.js", StringComparison.Ordinal)
-            || string.Equals(includeFileName, "compareArray.js", StringComparison.Ordinal)
-            || string.Equals(includeFileName, "isConstructor.js", StringComparison.Ordinal)
-            || string.Equals(includeFileName, "wellKnownIntrinsicObjects.js", StringComparison.Ordinal)
-            || string.Equals(includeFileName, "sta.js", StringComparison.Ordinal))
+        return Regex.Replace(
+            script,
+            @"(?ms)^\s*module\.exports\s*=\s*\{.*?\};\s*$",
+            string.Empty);
+    }
+
+    private static IEnumerable<string> GetInlineHarnessFileNames(IReadOnlyList<string> includeFileNames)
+    {
+        foreach (var includeFileName in includeFileNames)
         {
-            return null;
+            if (string.Equals(includeFileName, "assert.js", StringComparison.Ordinal)
+                || string.Equals(includeFileName, "compareArray.js", StringComparison.Ordinal)
+                || string.Equals(includeFileName, "isConstructor.js", StringComparison.Ordinal)
+                || string.Equals(includeFileName, "wellKnownIntrinsicObjects.js", StringComparison.Ordinal)
+                || string.Equals(includeFileName, "sta.js", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            yield return includeFileName;
         }
-
-        return HarnessModulePrefix + includeFileName.Replace('\\', '/');
     }
-
-    private static string? TryGetHarnessFileName(string requestedScriptName)
-    {
-        var normalized = requestedScriptName.Replace('\\', '/');
-        return normalized.StartsWith(HarnessModulePrefix, StringComparison.Ordinal)
-            ? normalized.Substring(HarnessModulePrefix.Length)
-            : null;
-    }
-
-    private static string GetAssertHarnessSourcePath(string callerSourceFilePath)
-        => GetHarnessSourcePath(callerSourceFilePath, "assert.js");
 
     private static string GetHarnessSourcePath(string callerSourceFilePath, string harnessFileName)
     {
