@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2115
+				// Method begins at RVA 0x210b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x210c
+			// Method begins at RVA 0x2102
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,15 +62,14 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 176 (0xb0)
+		// Code size: 166 (0xa6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope,
 			[1] float64,
-			[2] class Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope/Switch_L5C0,
-			[3] object,
-			[4] bool,
-			[5] object
+			[2] object,
+			[3] bool,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope::.ctor()
@@ -79,53 +78,51 @@
 		IL_000f: stloc.1
 		IL_0010: ldloc.1
 		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.3
-		IL_0017: newobj instance void Modules.ControlFlow_Switch_MultiCaseSharedBody/Scope/Switch_L5C0::.ctor()
-		IL_001c: stloc.2
-		IL_001d: ldloc.3
-		IL_001e: ldc.r8 1
-		IL_0027: box [System.Runtime]System.Double
-		IL_002c: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0031: stloc.s 4
-		IL_0033: ldloc.s 4
-		IL_0035: brtrue IL_005c
+		IL_0016: stloc.2
+		IL_0017: ldloc.2
+		IL_0018: ldc.r8 1
+		IL_0021: box [System.Runtime]System.Double
+		IL_0026: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_002b: stloc.3
+		IL_002c: ldloc.3
+		IL_002d: brtrue IL_0052
 
-		IL_003a: ldloc.3
-		IL_003b: ldc.r8 2
-		IL_0044: box [System.Runtime]System.Double
-		IL_0049: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_004e: stloc.s 4
-		IL_0050: ldloc.s 4
-		IL_0052: brtrue IL_005c
+		IL_0032: ldloc.2
+		IL_0033: ldc.r8 2
+		IL_003c: box [System.Runtime]System.Double
+		IL_0041: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0046: stloc.3
+		IL_0047: ldloc.3
+		IL_0048: brtrue IL_0052
 
-		IL_0057: br IL_0088
+		IL_004d: br IL_007e
 
-		IL_005c: ldstr "console"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0066: stloc.s 5
-		IL_0068: ldloc.s 5
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_006f: stloc.s 5
-		IL_0071: ldloc.s 5
-		IL_0073: ldstr "log"
-		IL_0078: ldstr "hit"
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0082: pop
-		IL_0083: br IL_00af
+		IL_0052: ldstr "console"
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_005c: stloc.s 4
+		IL_005e: ldloc.s 4
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0065: stloc.s 4
+		IL_0067: ldloc.s 4
+		IL_0069: ldstr "log"
+		IL_006e: ldstr "hit"
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0078: pop
+		IL_0079: br IL_00a5
 
-		IL_0088: ldstr "console"
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0092: stloc.s 5
-		IL_0094: ldloc.s 5
-		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009b: stloc.s 5
-		IL_009d: ldloc.s 5
-		IL_009f: ldstr "log"
-		IL_00a4: ldstr "miss"
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ae: pop
+		IL_007e: ldstr "console"
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0088: stloc.s 4
+		IL_008a: ldloc.s 4
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0091: stloc.s 4
+		IL_0093: ldloc.s 4
+		IL_0095: ldstr "log"
+		IL_009a: ldstr "miss"
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a4: pop
 
-		IL_00af: ret
+		IL_00a5: ret
 	} // end of method ControlFlow_Switch_MultiCaseSharedBody::__js_module_init__
 
 } // end of class Modules.ControlFlow_Switch_MultiCaseSharedBody
@@ -137,7 +134,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211e
+		// Method begins at RVA 0x2114
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
