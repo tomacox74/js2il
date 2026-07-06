@@ -2062,16 +2062,6 @@ class HIRMethodBuilder
         return new HIRBlock(statements, scopeName);
     }
 
-    /// <summary>
-    /// Determines whether a block/switch scope needs a runtime scope instance.
-    /// Block scopes without any bindings have no runtime-observable lexical environment:
-    /// TypeGenerator emits no fields for them and EnvironmentLayoutBuilder elides them
-    /// from descendant scope chains, so materializing an instance is pure allocation
-    /// overhead (especially inside hot loops).
-    /// </summary>
-    private static bool BlockScopeRequiresRuntimeInstance(Scope scope)
-        => scope.Bindings.Count > 0;
-
     public bool TryParseParameters(in NodeList<Node> parameters, [NotNullWhen(true)] out IReadOnlyList<HIRPattern>? hirParameters)
     {
         hirParameters = null;
@@ -2173,9 +2163,7 @@ class HIRMethodBuilder
                 _currentScope = previousScope;
                 hirStatement = new HIRBlock(
                     blockStatements,
-                    blockScope != null && BlockScopeRequiresRuntimeInstance(blockScope)
-                        ? ScopeNaming.GetRegistryScopeName(blockScope)
-                        : null);
+                    blockScope != null ? ScopeNaming.GetRegistryScopeName(blockScope) : null);
                 return true;
 
             case FunctionDeclaration:
@@ -2730,9 +2718,7 @@ class HIRMethodBuilder
                     hirStatement = new HIRSwitchStatement(
                         discriminant!,
                         cases,
-                        switchScope != null && BlockScopeRequiresRuntimeInstance(switchScope)
-                            ? ScopeNaming.GetRegistryScopeName(switchScope)
-                            : null);
+                        switchScope != null ? ScopeNaming.GetRegistryScopeName(switchScope) : null);
                     return true;
                 }
 
