@@ -89,6 +89,129 @@ public class GlobalThisTests
     }
 
     [Fact]
+    public void GlobalObject_AppliesHostGlobalBindingsWithConfiguredPropertyAttributes()
+    {
+        var serviceProvider = RuntimeServices.BuildServiceProvider();
+        serviceProvider.Replace(new GlobalThisOptions
+        {
+            HostRuntimeIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+                .AddGlobalValue(
+                    "assert",
+                    "native assert",
+                    new RuntimeGlobalPropertyAttributes(
+                        Enumerable: true,
+                        Configurable: false,
+                        Writable: false))
+                .Build()
+        });
+
+        try
+        {
+            GlobalThis.ServiceProvider = serviceProvider;
+
+            var globalObject = (GlobalThis)GlobalThis.globalThis;
+            Assert.Equal("native assert", globalObject["assert"]);
+
+            Assert.True(PropertyDescriptorStore.TryGetOwn(globalObject, "assert", out var descriptor));
+            Assert.Equal("native assert", descriptor.Value);
+            Assert.True(descriptor.Enumerable);
+            Assert.False(descriptor.Configurable);
+            Assert.False(descriptor.Writable);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void GlobalObject_HostGlobalBindingsDoNotReplaceBuiltInsByDefault()
+    {
+        var serviceProvider = RuntimeServices.BuildServiceProvider();
+        serviceProvider.Replace(new GlobalThisOptions
+        {
+            HostRuntimeIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+                .AddGlobalValue(nameof(GlobalThis.Array), "host array")
+                .Build()
+        });
+
+        try
+        {
+            GlobalThis.ServiceProvider = serviceProvider;
+
+            var globalObject = (GlobalThis)GlobalThis.globalThis;
+            Assert.Same(GlobalThis.Array, globalObject[nameof(GlobalThis.Array)]);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void GlobalObject_HostGlobalBindingsCanExplicitlyReplaceBuiltIns()
+    {
+        var serviceProvider = RuntimeServices.BuildServiceProvider();
+        serviceProvider.Replace(new GlobalThisOptions
+        {
+            HostRuntimeIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+                .AddGlobalValue(
+                    nameof(GlobalThis.Array),
+                    "host array",
+                    overwritePolicy: RuntimeGlobalOverwritePolicy.ReplaceExisting)
+                .Build()
+        });
+
+        try
+        {
+            GlobalThis.ServiceProvider = serviceProvider;
+
+            var globalObject = (GlobalThis)GlobalThis.globalThis;
+            Assert.Equal("host array", globalObject[nameof(GlobalThis.Array)]);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void GlobalObject_HostGlobalFactoriesCreateValuesPerRuntime()
+    {
+        var factoryCalls = 0;
+        var hostIntrinsics = new HostRuntimeIntrinsicDescriptorsBuilder()
+            .AddGlobalFactory("assert", () => ++factoryCalls)
+            .Build();
+
+        var firstServiceProvider = RuntimeServices.BuildServiceProvider();
+        firstServiceProvider.Replace(new GlobalThisOptions
+        {
+            HostRuntimeIntrinsics = hostIntrinsics
+        });
+
+        var secondServiceProvider = RuntimeServices.BuildServiceProvider();
+        secondServiceProvider.Replace(new GlobalThisOptions
+        {
+            HostRuntimeIntrinsics = hostIntrinsics
+        });
+
+        try
+        {
+            GlobalThis.ServiceProvider = firstServiceProvider;
+            var firstGlobalObject = (GlobalThis)GlobalThis.globalThis;
+            Assert.Equal(1, firstGlobalObject["assert"]);
+
+            GlobalThis.ServiceProvider = secondServiceProvider;
+            var secondGlobalObject = (GlobalThis)GlobalThis.globalThis;
+            Assert.Equal(2, secondGlobalObject["assert"]);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
     public void GlobalObject_ExposesTypeErrorConstructor_WithPrototypeBackReferences()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();

@@ -239,6 +239,16 @@ internal sealed class JsRuntimeInstance : IDisposable
                 compiledAssemblyPath: _options?.CompiledAssemblyPath);
             _serviceProvider = serviceProvider;
 
+            if (_options?.HostRuntimeIntrinsics != null)
+            {
+                var existingOptions = serviceProvider.Resolve<GlobalThisOptions>();
+                serviceProvider.Replace(new GlobalThisOptions
+                {
+                    ExposeGc = existingOptions.ExposeGc,
+                    HostRuntimeIntrinsics = _options.HostRuntimeIntrinsics
+                });
+            }
+
             if (_options?.ChildProcessLauncher != null)
             {
                 serviceProvider.RegisterInstance<IChildProcessLauncher>(_options.ChildProcessLauncher);
