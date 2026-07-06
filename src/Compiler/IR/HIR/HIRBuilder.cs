@@ -2194,12 +2194,11 @@ class HIRMethodBuilder
                     {
                         var cdRegistryClassName = GetRegistryClassName(classScope);
                         var classConstructorValueExpr = new HIRInitializedUserClassTypeExpression(cdRegistryClassName, classScope, []);
-                        var classSymbol = new Symbol(cdClassBinding);
                         var bindingInsertionIndex = classNameBindingInsertIndex >= 0
                             ? classNameBindingInsertIndex
                             : staticInitStatements.Count;
-                        staticInitStatements.Insert(bindingInsertionIndex, new HIRExpressionStatement(
-                            new HIRAssignmentExpression(classSymbol, Acornima.Operator.Assignment, classConstructorValueExpr)));
+                        var classSymbol = new Symbol(cdClassBinding);
+                        staticInitStatements.Insert(bindingInsertionIndex, new HIRVariableDeclaration(classSymbol, classConstructorValueExpr));
                     }
 
                     hirStatement = new HIRBlock(staticInitStatements);

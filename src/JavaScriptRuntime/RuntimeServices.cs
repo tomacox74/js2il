@@ -21,6 +21,7 @@ public class RuntimeServices
     private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
+    private static readonly ConcurrentDictionary<ClassConstructorCacheKey, ClassConstructorValue> _classConstructorValues = new();
 
     // ABI compatibility: when a callee doesn't need scopes, we still pass a 1-element scopes array.
     // NOTE: Consumers must treat scopes arrays as immutable.
@@ -35,6 +36,57 @@ public class RuntimeServices
     private sealed class LazyClassMetadataSlot
     {
         public readonly List<LazyClassMethodDataProperty> Methods = new();
+    }
+
+    private sealed class ClassConstructorCacheKey : IEquatable<ClassConstructorCacheKey>
+    {
+        private readonly Type _type;
+        private readonly int _formalParameterCount;
+        private readonly object?[] _scopes;
+        private readonly int _hashCode;
+
+        public ClassConstructorCacheKey(Type type, object?[] scopes, int formalParameterCount)
+        {
+            _type = type;
+            _formalParameterCount = formalParameterCount;
+            _scopes = (object?[])scopes.Clone();
+
+            var hash = new HashCode();
+            hash.Add(type);
+            hash.Add(formalParameterCount);
+            hash.Add(_scopes.Length);
+            foreach (var scope in _scopes)
+            {
+                hash.Add(scope == null ? 0 : RuntimeHelpers.GetHashCode(scope));
+            }
+
+            _hashCode = hash.ToHashCode();
+        }
+
+        public bool Equals(ClassConstructorCacheKey? other)
+        {
+            if (other == null
+                || !ReferenceEquals(_type, other._type)
+                || _formalParameterCount != other._formalParameterCount
+                || _scopes.Length != other._scopes.Length)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < _scopes.Length; i++)
+            {
+                if (!ReferenceEquals(_scopes[i], other._scopes[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object? obj) => Equals(obj as ClassConstructorCacheKey);
+
+        public override int GetHashCode() => _hashCode;
     }
 
     private sealed record LazyClassMethodDataProperty(
@@ -157,7 +209,8 @@ public class RuntimeServices
         if (formalParamCountValue is double d) length = (int)d;
 
         var scopes = scopesValue as object[] ?? EmptyScopes;
-        return new ClassConstructorValue(type, scopes, length);
+        var cacheKey = new ClassConstructorCacheKey(type, scopes, length);
+        return _classConstructorValues.GetOrAdd(cacheKey, _ => new ClassConstructorValue(type, scopes, length));
     }
 
     public static object? ValidateClassHeritage(object? heritage)

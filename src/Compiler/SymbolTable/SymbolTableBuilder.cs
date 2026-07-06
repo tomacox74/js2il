@@ -867,6 +867,7 @@ namespace Jroc.SymbolTables
                     classScope.DotNetNamespace = BuildClassRegistryNamespace(globalScope, currentScope, classDecl, forceUniqueSuffix: currentScope.Kind != ScopeKind.Global);
                     classScope.DotNetTypeName = SanitizeForMetadata(className);
                     currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, currentScope, classDecl);
+                    classScope.Bindings[className] = new BindingInfo(className, BindingKind.Const, classScope, classDecl);
                     if (UnwrapExpression(classDecl.SuperClass) is FunctionExpression classSuperFunction)
                     {
                         BuildScopeRecursive(globalScope, classSuperFunction, classScope);

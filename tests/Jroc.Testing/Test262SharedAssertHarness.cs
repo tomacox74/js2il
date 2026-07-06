@@ -75,7 +75,8 @@ public static class Test262SharedAssertHarness
         var harnessFileName = TryGetHarnessFileName(requestedScriptName);
         if (harnessFileName != null)
         {
-            return (File.ReadAllText(GetHarnessSourcePath(callerSourceFilePath, harnessFileName)), null);
+            var harnessScript = File.ReadAllText(GetHarnessSourcePath(callerSourceFilePath, harnessFileName));
+            return (AppendGlobalDefineExports(harnessScript), null);
         }
 
         return getJavaScriptAndSourcePath(requestedScriptName);
@@ -109,6 +110,61 @@ public static class Test262SharedAssertHarness
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(entry => entry.Trim().Trim('\'', '"'))
             .Where(entry => !string.IsNullOrWhiteSpace(entry))
+            .ToArray();
+    }
+
+    private static string AppendGlobalDefineExports(string script)
+    {
+        var defines = ParseDefines(script);
+        if (defines.Count == 0)
+        {
+            return script;
+        }
+
+        var assignmentLines = string.Join(
+            "\n",
+            defines.Select(name => $"if (typeof {name} !== 'undefined') globalThis.{name} = {name};"));
+        var exportEntries = string.Join(
+            ", ",
+            defines.Select(name => $"{name}: (typeof {name} !== 'undefined' ? {name} : undefined)"));
+
+        return script
+            + "\n;(() => {\n"
+            + assignmentLines
+            + "\nif (typeof module !== 'undefined' && module && module.exports) {\n"
+            + $"  Object.assign(module.exports, {{ {exportEntries} }});\n"
+            + "}\n})();\n";
+    }
+
+    private static IReadOnlyList<string> ParseDefines(string script)
+    {
+        var match = Regex.Match(script, @"/\*---(?<body>.*?)---\*/", RegexOptions.Singleline);
+        if (!match.Success)
+        {
+            return Array.Empty<string>();
+        }
+
+        var body = match.Groups["body"].Value;
+        var inline = ParseArrayValue(body, "defines");
+        if (inline.Count > 0)
+        {
+            return inline;
+        }
+
+        var blockMatch = Regex.Match(
+            body,
+            @"(?ms)^\s*defines\s*:\s*\r?\n(?<value>(?:\s*-\s*[^\r\n]+\r?\n?)*)");
+        if (!blockMatch.Success)
+        {
+            return Array.Empty<string>();
+        }
+
+        return blockMatch.Groups["value"].Value
+            .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(line => line.Trim())
+            .Where(line => line.StartsWith("- ", StringComparison.Ordinal))
+            .Select(line => line.Substring(2).Split('#')[0].Trim())
+            .Where(line => !string.IsNullOrWhiteSpace(line))
             .ToArray();
     }
 
