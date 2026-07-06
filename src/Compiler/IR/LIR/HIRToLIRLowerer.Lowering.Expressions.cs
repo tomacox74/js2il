@@ -1504,7 +1504,7 @@ public sealed partial class HIRToLIRLowerer
             UsesMappedArgumentsObject = false,
             ArgumentsParameterNames = Array.Empty<string>(),
             IncludeCalleeInArgumentsObject = false,
-            HasRestrictedFunctionProperties = true,
+            HasRestrictedFunctionProperties = false,
             AstNode = arrowExpr
         };
         return true;

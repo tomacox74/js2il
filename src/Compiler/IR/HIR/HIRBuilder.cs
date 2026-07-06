@@ -181,9 +181,14 @@ public static class HIRBuilder
                 HIRCallExpression callExpression => callExpression.Callee is HIRSuperExpression
                     || ExpressionContainsDirectSuperCall(callExpression.Callee)
                     || callExpression.Arguments.Any(ExpressionContainsDirectSuperCall),
+                HIROptionalCallExpression optionalCallExpression => ExpressionContainsDirectSuperCall(optionalCallExpression.Callee)
+                    || optionalCallExpression.Arguments.Any(ExpressionContainsDirectSuperCall),
                 HIRIndexAccessExpression indexAccessExpression => ExpressionContainsDirectSuperCall(indexAccessExpression.Object)
                     || ExpressionContainsDirectSuperCall(indexAccessExpression.Index),
+                HIROptionalIndexAccessExpression optionalIndexAccessExpression => ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Object)
+                    || ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Index),
                 HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
+                HIROptionalPropertyAccessExpression optionalPropertyAccessExpression => ExpressionContainsDirectSuperCall(optionalPropertyAccessExpression.Object),
                 _ => false
             };
 
@@ -3791,7 +3796,7 @@ class HIRMethodBuilder
                     NeedsArgumentsObject = arrowScope.NeedsArgumentsObject,
                     HasRestParameters = arrowScope.HasRestParameters,
                     IncludeCalleeInArgumentsObject = false,
-                    HasRestrictedFunctionProperties = true,
+                    HasRestrictedFunctionProperties = false,
                     AstNode = arrowExpr
                 };
 

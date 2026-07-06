@@ -115,9 +115,9 @@ public static class Test262SharedAssertHarness
     private static string? GetHarnessModuleId(string includeFileName)
     {
         if (string.Equals(includeFileName, "assert.js", StringComparison.Ordinal)
-            || string.Equals(includeFileName, "propertyHelper.js", StringComparison.Ordinal)
             || string.Equals(includeFileName, "compareArray.js", StringComparison.Ordinal)
             || string.Equals(includeFileName, "isConstructor.js", StringComparison.Ordinal)
+            || string.Equals(includeFileName, "wellKnownIntrinsicObjects.js", StringComparison.Ordinal)
             || string.Equals(includeFileName, "sta.js", StringComparison.Ordinal))
         {
             return null;
