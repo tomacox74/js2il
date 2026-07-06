@@ -294,6 +294,24 @@ public static class Test262HostRuntimeIntrinsics
             return false;
         }
 
+        try
+        {
+            if (Operators.InstanceOf(error, expectedErrorConstructor))
+            {
+                return true;
+            }
+        }
+        catch (TypeError)
+        {
+        }
+
+        if (error is not null
+            && error is not JsNull
+            && ReferenceEquals(ObjectRuntime.GetItem(error, "constructor"), expectedErrorConstructor))
+        {
+            return true;
+        }
+
         var expectedName = ObjectRuntime.GetItem(expectedErrorConstructor, "name") as string;
         if (!string.IsNullOrEmpty(expectedName)
             && string.Equals(GetErrorName(error), expectedName, StringComparison.Ordinal))
