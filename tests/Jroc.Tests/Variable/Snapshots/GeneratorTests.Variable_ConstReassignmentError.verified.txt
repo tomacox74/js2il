@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2125
+				// Method begins at RVA 0x212d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212e
+				// Method begins at RVA 0x2136
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211c
+			// Method begins at RVA 0x2124
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,17 +82,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 174 (0xae)
+		// Code size: 183 (0xb7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Variable_ConstReassignmentError/Scope,
 			[1] float64,
-			[2] class [System.Runtime]System.Exception,
-			[3] object,
+			[2] class Modules.Variable_ConstReassignmentError/Scope/Block_L4C4,
+			[3] class [System.Runtime]System.Exception,
 			[4] object,
-			[5] class Modules.Variable_ConstReassignmentError/Scope/Block_L7C12,
-			[6] object,
-			[7] object
+			[5] object,
+			[6] class Modules.Variable_ConstReassignmentError/Scope/Block_L7C12,
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Variable_ConstReassignmentError/Scope::.ctor()
@@ -101,69 +102,71 @@
 		IL_000f: stloc.1
 		.try
 		{
-			IL_0010: ldstr "Assignment to constant variable."
-			IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-			IL_001a: throw
+			IL_0010: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L4C4::.ctor()
+			IL_0015: stloc.2
+			IL_0016: ldstr "Assignment to constant variable."
+			IL_001b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+			IL_0020: throw
 
-			IL_001b: ldstr "console"
-			IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0025: stloc.s 7
-			IL_0027: ldloc.s 7
-			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_002e: stloc.s 7
-			IL_0030: ldloc.s 7
-			IL_0032: ldstr "log"
-			IL_0037: ldstr "NO_ERROR"
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0041: pop
-			IL_0042: leave IL_00aa
+			IL_0021: ldstr "console"
+			IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_002b: stloc.s 8
+			IL_002d: ldloc.s 8
+			IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0034: stloc.s 8
+			IL_0036: ldloc.s 8
+			IL_0038: ldstr "log"
+			IL_003d: ldstr "NO_ERROR"
+			IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0047: pop
+			IL_0048: leave IL_00b3
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0047: stloc.2
-			IL_0048: ldloc.2
-			IL_0049: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_004e: dup
-			IL_004f: brtrue IL_0064
+			IL_004d: stloc.3
+			IL_004e: ldloc.3
+			IL_004f: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0054: dup
+			IL_0055: brtrue IL_006a
 
-			IL_0054: pop
-			IL_0055: ldloc.2
-			IL_0056: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_005b: dup
-			IL_005c: brtrue IL_006f
+			IL_005a: pop
+			IL_005b: ldloc.3
+			IL_005c: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0061: dup
+			IL_0062: brtrue IL_0076
 
-			IL_0061: pop
-			IL_0062: rethrow
+			IL_0067: pop
+			IL_0068: rethrow
 
-			IL_0064: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0069: stloc.3
-			IL_006a: br IL_0070
+			IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_006f: stloc.s 4
+			IL_0071: br IL_0078
 
-			IL_006f: stloc.3
+			IL_0076: stloc.s 4
 
-			IL_0070: ldloc.3
-			IL_0071: stloc.s 7
-			IL_0073: ldloc.s 7
-			IL_0075: stloc.s 4
-			IL_0077: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L7C12::.ctor()
-			IL_007c: stloc.s 5
-			IL_007e: ldstr "console"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0088: stloc.s 7
-			IL_008a: ldloc.s 7
-			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0091: stloc.s 7
-			IL_0093: ldloc.s 7
-			IL_0095: ldstr "log"
-			IL_009a: ldstr "CONST_REASSIGN_ERROR"
-			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00a4: pop
-			IL_00a5: leave IL_00aa
+			IL_0078: ldloc.s 4
+			IL_007a: stloc.s 8
+			IL_007c: ldloc.s 8
+			IL_007e: stloc.s 5
+			IL_0080: newobj instance void Modules.Variable_ConstReassignmentError/Scope/Block_L7C12::.ctor()
+			IL_0085: stloc.s 6
+			IL_0087: ldstr "console"
+			IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0091: stloc.s 8
+			IL_0093: ldloc.s 8
+			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_009a: stloc.s 8
+			IL_009c: ldloc.s 8
+			IL_009e: ldstr "log"
+			IL_00a3: ldstr "CONST_REASSIGN_ERROR"
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00ad: pop
+			IL_00ae: leave IL_00b3
 		} // end handler
 
-		IL_00aa: ldnull
-		IL_00ab: stloc.s 6
-		IL_00ad: ret
+		IL_00b3: ldnull
+		IL_00b4: stloc.s 7
+		IL_00b6: ret
 	} // end of method Variable_ConstReassignmentError::__js_module_init__
 
 } // end of class Modules.Variable_ConstReassignmentError
@@ -175,7 +178,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2137
+		// Method begins at RVA 0x213f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

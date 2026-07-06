@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2195
+				// Method begins at RVA 0x219d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x219e
+				// Method begins at RVA 0x21a6
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x218c
+			// Method begins at RVA 0x2194
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,17 +82,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 287 (0x11f)
+		// Code size: 296 (0x128)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] class [System.Runtime]System.Exception,
-			[3] object,
+			[2] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L5C4,
+			[3] class [System.Runtime]System.Exception,
 			[4] object,
-			[5] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L8C12,
-			[6] object,
-			[7] object
+			[5] object,
+			[6] class Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L8C12,
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope::.ctor()
@@ -114,83 +115,85 @@
 		IL_0048: stloc.1
 		.try
 		{
-			IL_0049: ldloc.1
-			IL_004a: ldc.r8 3.5
-			IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
-			IL_0058: ldstr "console"
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0062: stloc.s 7
-			IL_0064: ldloc.s 7
-			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_006b: stloc.s 7
-			IL_006d: ldloc.s 7
-			IL_006f: ldstr "log"
-			IL_0074: ldstr "no-throw"
-			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_007e: pop
-			IL_007f: leave IL_00ee
+			IL_0049: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L5C4::.ctor()
+			IL_004e: stloc.2
+			IL_004f: ldloc.1
+			IL_0050: ldc.r8 3.5
+			IL_0059: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_length(float64)
+			IL_005e: ldstr "console"
+			IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0068: stloc.s 8
+			IL_006a: ldloc.s 8
+			IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0071: stloc.s 8
+			IL_0073: ldloc.s 8
+			IL_0075: ldstr "log"
+			IL_007a: ldstr "no-throw"
+			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0084: pop
+			IL_0085: leave IL_00f7
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0084: stloc.2
-			IL_0085: ldloc.2
-			IL_0086: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_008b: dup
-			IL_008c: brtrue IL_00a1
+			IL_008a: stloc.3
+			IL_008b: ldloc.3
+			IL_008c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0091: dup
+			IL_0092: brtrue IL_00a7
 
-			IL_0091: pop
-			IL_0092: ldloc.2
-			IL_0093: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0098: dup
-			IL_0099: brtrue IL_00ac
+			IL_0097: pop
+			IL_0098: ldloc.3
+			IL_0099: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_009e: dup
+			IL_009f: brtrue IL_00b3
 
-			IL_009e: pop
-			IL_009f: rethrow
+			IL_00a4: pop
+			IL_00a5: rethrow
 
-			IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_00a6: stloc.3
-			IL_00a7: br IL_00ad
+			IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_00ac: stloc.s 4
+			IL_00ae: br IL_00b5
 
-			IL_00ac: stloc.3
+			IL_00b3: stloc.s 4
 
-			IL_00ad: ldloc.3
-			IL_00ae: stloc.s 7
-			IL_00b0: ldloc.s 7
-			IL_00b2: stloc.s 4
-			IL_00b4: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L8C12::.ctor()
-			IL_00b9: stloc.s 5
-			IL_00bb: ldstr "console"
-			IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00c5: stloc.s 7
-			IL_00c7: ldloc.s 7
-			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00ce: stloc.s 7
-			IL_00d0: ldloc.s 7
-			IL_00d2: ldstr "log"
-			IL_00d7: ldloc.s 4
-			IL_00d9: ldstr "name"
-			IL_00de: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00e8: pop
-			IL_00e9: leave IL_00ee
+			IL_00b5: ldloc.s 4
+			IL_00b7: stloc.s 8
+			IL_00b9: ldloc.s 8
+			IL_00bb: stloc.s 5
+			IL_00bd: newobj instance void Modules.Array_Length_Set_Fractional_ThrowsRangeError/Scope/Block_L8C12::.ctor()
+			IL_00c2: stloc.s 6
+			IL_00c4: ldstr "console"
+			IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00ce: stloc.s 8
+			IL_00d0: ldloc.s 8
+			IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00d7: stloc.s 8
+			IL_00d9: ldloc.s 8
+			IL_00db: ldstr "log"
+			IL_00e0: ldloc.s 5
+			IL_00e2: ldstr "name"
+			IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+			IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00f1: pop
+			IL_00f2: leave IL_00f7
 		} // end handler
 
-		IL_00ee: ldstr "console"
-		IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00f8: stloc.s 7
-		IL_00fa: ldloc.s 7
-		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0101: stloc.s 7
-		IL_0103: ldloc.s 7
-		IL_0105: ldstr "log"
-		IL_010a: ldloc.1
-		IL_010b: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-		IL_0110: box [System.Runtime]System.Double
-		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_011a: pop
-		IL_011b: ldnull
-		IL_011c: stloc.s 6
-		IL_011e: ret
+		IL_00f7: ldstr "console"
+		IL_00fc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0101: stloc.s 8
+		IL_0103: ldloc.s 8
+		IL_0105: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_010a: stloc.s 8
+		IL_010c: ldloc.s 8
+		IL_010e: ldstr "log"
+		IL_0113: ldloc.1
+		IL_0114: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+		IL_0119: box [System.Runtime]System.Double
+		IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0123: pop
+		IL_0124: ldnull
+		IL_0125: stloc.s 7
+		IL_0127: ret
 	} // end of method Array_Length_Set_Fractional_ThrowsRangeError::__js_module_init__
 
 } // end of class Modules.Array_Length_Set_Fractional_ThrowsRangeError
@@ -202,7 +205,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a7
+		// Method begins at RVA 0x21af
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

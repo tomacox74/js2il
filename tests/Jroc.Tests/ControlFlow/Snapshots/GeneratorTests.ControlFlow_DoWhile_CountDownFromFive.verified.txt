@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20cd
+				// Method begins at RVA 0x20d5
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20c4
+			// Method begins at RVA 0x20cc
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -62,14 +62,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 104 (0x68)
+		// Code size: 112 (0x70)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_CountDownFromFive/Scope,
 			[1] float64,
-			[2] object,
+			[2] class Modules.ControlFlow_DoWhile_CountDownFromFive/Scope/Block_L4C13,
 			[3] object,
-			[4] float64
+			[4] object,
+			[5] float64
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_CountDownFromFive/Scope::.ctor()
@@ -78,39 +79,41 @@
 		IL_000f: stloc.1
 		// loop start (head: IL_0010)
 			IL_0010: ldc.i4.1
-			IL_0011: brfalse IL_0067
+			IL_0011: brfalse IL_006f
 
-			IL_0016: ldstr "console"
-			IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0020: stloc.2
-			IL_0021: ldloc.2
-			IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0027: stloc.2
-			IL_0028: ldloc.1
-			IL_0029: box [System.Runtime]System.Double
-			IL_002e: stloc.3
-			IL_002f: ldloc.2
-			IL_0030: ldstr "log"
-			IL_0035: ldloc.3
-			IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003b: pop
-			IL_003c: ldloc.1
-			IL_003d: ldc.r8 1
-			IL_0046: sub
-			IL_0047: stloc.1
-			IL_0048: ldloc.1
-			IL_0049: stloc.s 4
-			IL_004b: ldloc.s 4
-			IL_004d: ldc.r8 0.0
-			IL_0056: ceq
-			IL_0058: brfalse IL_0062
+			IL_0016: newobj instance void Modules.ControlFlow_DoWhile_CountDownFromFive/Scope/Block_L4C13::.ctor()
+			IL_001b: stloc.2
+			IL_001c: ldstr "console"
+			IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0026: stloc.3
+			IL_0027: ldloc.3
+			IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_002d: stloc.3
+			IL_002e: ldloc.1
+			IL_002f: box [System.Runtime]System.Double
+			IL_0034: stloc.s 4
+			IL_0036: ldloc.3
+			IL_0037: ldstr "log"
+			IL_003c: ldloc.s 4
+			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0043: pop
+			IL_0044: ldloc.1
+			IL_0045: ldc.r8 1
+			IL_004e: sub
+			IL_004f: stloc.1
+			IL_0050: ldloc.1
+			IL_0051: stloc.s 5
+			IL_0053: ldloc.s 5
+			IL_0055: ldc.r8 0.0
+			IL_005e: ceq
+			IL_0060: brfalse IL_006a
 
-			IL_005d: br IL_0067
+			IL_0065: br IL_006f
 
-			IL_0062: br IL_0010
+			IL_006a: br IL_0010
 		// end loop
 
-		IL_0067: ret
+		IL_006f: ret
 	} // end of method ControlFlow_DoWhile_CountDownFromFive::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_CountDownFromFive
@@ -122,7 +125,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d6
+		// Method begins at RVA 0x20de
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

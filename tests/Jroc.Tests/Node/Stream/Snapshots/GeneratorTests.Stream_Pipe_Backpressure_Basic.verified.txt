@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23b4
+				// Method begins at RVA 0x23c0
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -72,7 +72,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23bd
+				// Method begins at RVA 0x23c9
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -131,7 +131,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23c6
+				// Method begins at RVA 0x23d2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -223,7 +223,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23d8
+					// Method begins at RVA 0x23e4
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -243,7 +243,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x23e1
+					// Method begins at RVA 0x23ed
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -261,7 +261,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x23cf
+				// Method begins at RVA 0x23db
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -289,11 +289,13 @@
 			)
 			// Method begins at RVA 0x2310
 			// Header size: 12
-			// Code size: 143 (0x8f)
+			// Code size: 155 (0x9b)
 			.maxstack 8
 			.locals init (
-				[0] object,
-				[1] float64
+				[0] class Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L29C29,
+				[1] class Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L31C9,
+				[2] object,
+				[3] float64
 			)
 
 			IL_0000: ldarg.0
@@ -306,45 +308,49 @@
 			IL_001b: stfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
 			IL_0020: ldarg.0
 			IL_0021: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_0026: stloc.0
+			IL_0026: stloc.2
 			IL_0027: ldarg.0
 			IL_0028: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
 			IL_002d: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
-			IL_0032: stloc.1
-			IL_0033: ldloc.0
+			IL_0032: stloc.3
+			IL_0033: ldloc.2
 			IL_0034: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0039: ldloc.1
+			IL_0039: ldloc.3
 			IL_003a: clt
-			IL_003c: brfalse IL_006f
+			IL_003c: brfalse IL_0075
 
-			IL_0041: ldarg.0
-			IL_0042: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_004c: stloc.0
-			IL_004d: ldloc.0
-			IL_004e: ldstr "push"
-			IL_0053: ldarg.0
-			IL_0054: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_0041: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L29C29::.ctor()
+			IL_0046: stloc.0
+			IL_0047: ldarg.0
+			IL_0048: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0052: stloc.2
+			IL_0053: ldloc.2
+			IL_0054: ldstr "push"
 			IL_0059: ldarg.0
-			IL_005a: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
-			IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0069: pop
-			IL_006a: br IL_008d
+			IL_005a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.Stream_Pipe_Backpressure_Basic/Scope::chunks
+			IL_005f: ldarg.0
+			IL_0060: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::index
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_006f: pop
+			IL_0070: br IL_0099
 
-			IL_006f: ldarg.0
-			IL_0070: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
-			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_007a: stloc.0
-			IL_007b: ldloc.0
-			IL_007c: ldstr "push"
-			IL_0081: ldc.i4.0
-			IL_0082: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_008c: pop
+			IL_0075: newobj instance void Modules.Stream_Pipe_Backpressure_Basic/FunctionExpression_L27C21/Scope/Block_L31C9::.ctor()
+			IL_007a: stloc.1
+			IL_007b: ldarg.0
+			IL_007c: ldfld object Modules.Stream_Pipe_Backpressure_Basic/Scope::readable
+			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0086: stloc.2
+			IL_0087: ldloc.2
+			IL_0088: ldstr "push"
+			IL_008d: ldc.i4.0
+			IL_008e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0098: pop
 
-			IL_008d: ldnull
-			IL_008e: ret
+			IL_0099: ldnull
+			IL_009a: ret
 		} // end of method FunctionExpression_L27C21::__js_call__
 
 	} // end of class FunctionExpression_L27C21
@@ -369,7 +375,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x23ab
+			// Method begins at RVA 0x23b7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -590,7 +596,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23ea
+		// Method begins at RVA 0x23f6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
