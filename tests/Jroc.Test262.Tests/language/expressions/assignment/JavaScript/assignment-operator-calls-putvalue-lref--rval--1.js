@@ -1,35 +1,21 @@
 // Copyright (C) 2020 Rick Waldron. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-function Test262Error(message) {
-    this.message = message || "";
-    this.name = "Test262Error";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-assert.sameValue = function(actual, expected) {
-    console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected) {
-    console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func) {
-    try {
-        func();
-        console.log(false);
-    } catch (error) {
-        console.log(error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor);
-    }
-};
-assert.compareArray = function(actual, expected) {
-    console.log(actual.length === expected.length && actual.every(function(value, index) {
-        return Object.is(value, expected[index]);
-    }));
-};
+/*---
+esid: sec-object-environment-records-setmutablebinding-n-v-s
+description: >
+  Assignment Operator calls PutValue(lref, rval) (formerly S11.13.1_A5_T5)
+info: |
+  The concrete Environment Record method SetMutableBinding for object Environment
+  Records attempts to set the value of the Environment Record's associated binding
+  object's property whose name is the value of the argument N to the value of argument V.
+  A property named N normally already exists but if it does not or is not currently writable,
+  error handling is determined by the value of the Boolean argument S.
+
+  Let stillExists be ? HasProperty(bindings, N).
+  If stillExists is false and S is true, throw a ReferenceError exception.
+flags: [noStrict]
+---*/
 
 var count = 0;
 var global = this;
@@ -52,3 +38,4 @@ Object.defineProperty(this, "x", {
 assert.sameValue(count, 2);
 assert(!('x' in this));
 assert(!('x' in global));
+

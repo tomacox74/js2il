@@ -9,33 +9,6 @@ es5id: 12.5_A1.1_T2
 description: Using "if/else" construction
 ---*/
 
-
-function assert(value, message) {
-  if (!value) {
-    throw new Test262Error(message || 'Assertion failed');
-  }
-}
-
-assert.sameValue = function(actual, expected, message) {
-  if (!Object.is(actual, expected)) {
-    throw new Test262Error(message || ('Expected SameValue but got ' + actual + ' and ' + expected));
-  }
-};
-
-assert.notSameValue = function(actual, unexpected, message) {
-  if (Object.is(actual, unexpected)) {
-    throw new Test262Error(message || ('Expected different value but got ' + actual));
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var c=0;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
@@ -96,5 +69,3 @@ else
 if (c!=6) throw new Test262Error('#6.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

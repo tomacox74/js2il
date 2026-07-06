@@ -11,7 +11,8 @@ try {
       let x = 'inner';
       throw 0;
     } finally {
-      console.log(Object.is(x, 'outer'));
+      assert.sameValue(x, 'outer');
     }
   })('outer');
 } catch (e) {}
+

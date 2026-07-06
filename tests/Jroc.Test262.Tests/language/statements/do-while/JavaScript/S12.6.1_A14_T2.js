@@ -11,13 +11,6 @@ description: >
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 do{
     var __reached = 1;
    break;
@@ -32,5 +25,3 @@ if (__reached !== 1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

@@ -9,13 +9,6 @@ es5id: 12.6.1_A10
 description: Also this a test on FunctionExpression
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var check = 0;
 do {    
   if(typeof(f) === "function"){
@@ -34,5 +27,3 @@ if (check !== 1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

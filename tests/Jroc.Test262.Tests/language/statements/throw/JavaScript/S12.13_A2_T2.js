@@ -10,18 +10,9 @@ description: Throwing null
 ---*/
 
 // CHECK#1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 try{
   throw null;
 }
 catch(e){
   if (e!==null) throw new Test262Error('#1: Exception === null. Actual:  Exception ==='+ e  );
 }
-
-console.log(true);

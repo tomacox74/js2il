@@ -7,11 +7,4 @@ es5id: 15.8.2.7_A4
 description: Checking if Math.cos(+Infinity) is NaN
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.cos(Infinity), NaN));
+assert.sameValue(Math.cos(Infinity), NaN);

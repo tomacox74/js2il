@@ -7,11 +7,4 @@ es5id: 15.8.2.8_A5
 description: Checking if Math.exp(-Infinity) is +0
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.exp(-Infinity), 0));
+assert.sameValue(Math.exp(-Infinity), 0);

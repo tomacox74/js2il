@@ -13,10 +13,6 @@ info: |
   is an ordinary object. It does not have a [[WeakMapData]] internal slot.
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 assert.sameValue(
   Object.getPrototypeOf(WeakMap.prototype),
   Object.prototype,

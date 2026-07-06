@@ -9,5 +9,12 @@ description: >
     "abc".charAt(Number.NaN)
 ---*/
 
-console.log("abc".charAt(Number.NaN) === "a");
-console.log("abc".charAt("x") === "a");
+// CHECK#1
+if ("abc".charAt(Number.NaN) !== "a") {
+  throw new Test262Error('#1: "abc".charAt(Number.NaN) === "a". Actual: ' + ("abc".charAt(Number.NaN)));
+}
+
+// CHECK#2
+if ("abc".charAt("x") !== "a") {
+  throw new Test262Error('#2: "abc".charAt("x") === "a". Actual: ' + ("abc".charAt("x")));
+}

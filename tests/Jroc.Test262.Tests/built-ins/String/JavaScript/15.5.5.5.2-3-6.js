@@ -13,4 +13,4 @@ description: >
 
 var s = String("hello world");
 
-console.log(s[NaN] === undefined);
+assert.sameValue(s[NaN], undefined, 's[NaN]');

@@ -11,14 +11,6 @@ description: >
     with "var object = {1 : true}"
 ---*/
 
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
 var object = {1 : true};
 
 assert.sameValue(typeof object, "object");

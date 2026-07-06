@@ -10,10 +10,6 @@ info: |
     of a built-in object initially has the value true.
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 var rejectFunction;
 new Promise(function(resolve, reject) {
   rejectFunction = reject;

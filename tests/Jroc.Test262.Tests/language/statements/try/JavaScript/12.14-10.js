@@ -20,4 +20,4 @@ description: catch introduces scope - name lookup finds function parameter
     return innerf(o, 42);
   }
 
-console.log(Object.is(f({}), 42));
+assert.sameValue(f({}), 42);

@@ -6,24 +6,6 @@ es5id: 12.14-9
 description: catch introduces scope - name lookup finds outer variable
 ---*/
 
-function assert(value, message) {
-  console.log(!!value);
-}
-assert.sameValue = function(actual, expected, message) {
-  console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected, message) {
-  console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func, message) {
-  try {
-    func();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedErrorConstructor);
-  }
-};
-
   function f(o) {
     var x = 42;
 
@@ -40,5 +22,3 @@ assert.throws = function(expectedErrorConstructor, func, message) {
   }
 
 assert.sameValue(f({}), 42);
-
-console.log(true);

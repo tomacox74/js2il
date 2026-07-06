@@ -22,4 +22,4 @@ description: catch introduces scope - name lookup finds inner variable
     return innerf(o);
   }
 
-console.log(Object.is(f({}), 42));
+assert.sameValue(f({}), 42);

@@ -1,36 +1,25 @@
 // Copyright (C) 2017 Josh Wolfe. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: Non-strict equality comparison of BigInt values and non-primitive objects
+esid: sec-abstract-equality-comparison
+info: |
+  10. If Type(x) is either String, Number, BigInt, or Symbol and Type(y) is Object, return the result of the comparison x == ? ToPrimitive(y).
+  11. If Type(x) is Object and Type(y) is either String, Number, BigInt, or Symbol, return the result of the comparison ? ToPrimitive(x) == y.
 
-function Test262Error(message) {
-    this.message = message || "";
-    this.name = "Test262Error";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-assert.sameValue = function(actual, expected) {
-    console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected) {
-    console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func) {
-    try {
-        func();
-        console.log(false);
-    } catch (error) {
-        console.log(error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor);
-    }
-};
-assert.compareArray = function(actual, expected) {
-    console.log(actual.length === expected.length && actual.every(function(value, index) {
-        return Object.is(value, expected[index]);
-    }));
-};
+  then after the recursion:
 
+  1. If Type(x) is the same as Type(y), then
+    a. Return the result of performing Strict Equality Comparison x === y.
+  ...
+  6. If Type(x) is BigInt and Type(y) is String,
+    a. Let n be StringToBigInt(y).
+    b. If n is NaN, return false.
+    c. Return the result of x == n.
+  7. If Type(x) is String and Type(y) is BigInt, return the result of y == x.
+
+features: [BigInt]
+---*/
 assert.sameValue(0n == Object(0n), true, 'The result of (0n == Object(0n)) is true');
 assert.sameValue(Object(0n) == 0n, true, 'The result of (Object(0n) == 0n) is true');
 assert.sameValue(0n == Object(1n), false, 'The result of (0n == Object(1n)) is false');

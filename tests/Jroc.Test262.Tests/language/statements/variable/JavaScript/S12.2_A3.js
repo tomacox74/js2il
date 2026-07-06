@@ -7,13 +7,6 @@ es5id: 12.2_A3
 description: Using Global scope and Function scope together
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var __var = "OUT";
 
 (function(){
@@ -58,5 +51,3 @@ if (__var!=="INNERED") {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

@@ -20,15 +20,15 @@ const obj = {
     return 44;
   }
 }
-console.log(Object.is(33, fn()?.a));
-console.log(Object.is(undefined, fn()?.b));
-console.log(Object.is(44, obj?.fn()));
+assert.sameValue(33, fn()?.a);
+assert.sameValue(undefined, fn()?.b);
+assert.sameValue(44, obj?.fn());
 
 // CallExpression SuperCall
 class A {}
 class B extends A {
   constructor () {
-    console.log(Object.is(undefined, super()?.a));
+    assert.sameValue(undefined, super()?.a);
   }
 }
 new B();
@@ -44,8 +44,8 @@ function fn3 () {
     return null;
   };
 }
-console.log(Object.is(66, fn2()()?.a));
-console.log(Object.is(undefined, fn3()()?.a));
+assert.sameValue(66, fn2()()?.a);
+assert.sameValue(undefined, fn3()()?.a);
 
 // CallExpression [Expression]
 function fn4 () {
@@ -54,8 +54,8 @@ function fn4 () {
 function fn5 () {
   return [];
 }
-console.log(Object.is(77, fn4()[0]?.a));
-console.log(Object.is(undefined, fn5()[0]?.a));
+assert.sameValue(77, fn4()[0]?.a);
+assert.sameValue(undefined, fn5()[0]?.a);
 
 // CallExpression .IdentifierName
 function fn6 () {
@@ -65,11 +65,11 @@ function fn6 () {
     }
   };
 }
-console.log(Object.is(88, fn6().a?.b));
-console.log(Object.is(undefined, fn6().b?.c));
+assert.sameValue(88, fn6().a?.b);
+assert.sameValue(undefined, fn6().b?.c);
 
 // CallExpression TemplateLiteral
 function fn7 () {
   return () => {};
 }
-console.log(Object.is(undefined, fn7()`hello`?.a));
+assert.sameValue(undefined, fn7()`hello`?.a);

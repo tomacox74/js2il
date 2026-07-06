@@ -9,13 +9,6 @@ es5id: 12.11_A1_T3
 description: Using case with null, NaN, Infinity
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 function SwitchTest(value){
   var result = 0;
   
@@ -96,5 +89,3 @@ if(!(SwitchTest(NaN) === 32)){
 if(!(SwitchTest(Infinity) === 768)){
   throw new Test262Error("#10: SwitchTest(NaN) === 768. Actual:  SwitchTest(NaN) ==="+ SwitchTest(NaN)  );
 }
-
-console.log(true);

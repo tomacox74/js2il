@@ -9,10 +9,6 @@ es5id: 8.6.2_A7
 description: Checking if execution of "var objMath=new Math" passes
 ---*/
 
-let threw = false;
-try {
-  var objMath = new Math;
-} catch (error) {
-  threw = error instanceof TypeError;
-}
-console.log(threw);
+assert.throws(TypeError, function() {
+  var objMath=new Math;
+});

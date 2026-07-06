@@ -4,13 +4,17 @@
 /*---
 info: |
     The production CharacterEscape :: t evaluates by returning
-    the character 	
+    the character \u0009
 es5id: 15.10.2.10_A1.1_T1
-description: Use 	 in RegExp and 	 in tested string
+description: Use \t in RegExp and \u0009 in tested string
 ---*/
 
-var first = /	/.exec("	");
-console.log(first !== null && first[0] === "	");
+var arr = /\t/.exec("\u0009");
+if ((arr === null) || (arr[0] !== "\u0009")) {
+  throw new Test262Error('#1: var arr = /\\t/.exec("\\u0009"); arr[0] === "\\u0009". Actual. ' + (arr && arr[0]));
+}
 
-var second = /		/.exec("a		b");
-console.log(second !== null && second[0] === "		");
+var arr = /\t\t/.exec("a\u0009\u0009b");
+if ((arr === null) || (arr[0] !== "\u0009\u0009")) {
+  throw new Test262Error('#2: var arr = /\\t\\t/.exec("a\\u0009\\u0009b"); arr[0] === "\\u0009\\u0009". Actual. ' + (arr && arr[0]));
+}

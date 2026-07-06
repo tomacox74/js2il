@@ -10,4 +10,6 @@ let s = '';
 for (const x of [1, 2, 3]) {
   s += x;
 }
-console.log(Object.is(s, '123'));
+assert.sameValue(s, '123', "The value of `s` is `'123'`");
+
+

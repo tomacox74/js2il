@@ -38,24 +38,24 @@ var x;
 
 x = undefined;
 x = (null ?? 42) || 43;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '(null ?? 42) || 43');
 
 x = undefined;
 x = null ?? (42 || 43);
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, 'null ?? (42 || 43)`');
 
 x = undefined;
 x = (null || 42) ?? 43;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '(null || 42) ?? 43');
 
 x = undefined;
 x = null || (42 ?? 43);
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, 'null || (42 ?? 43)`');
 
 x = undefined;
 x = (42 || 43) ?? null;
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '(42 || 43) ?? null');
 
 x = undefined;
 x = 42 || (null ?? 43);
-console.log(Object.is(x, 42));
+assert.sameValue(x, 42, '42 || (null ?? 43)');

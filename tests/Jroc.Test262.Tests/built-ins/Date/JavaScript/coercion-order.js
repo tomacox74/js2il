@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -34,4 +32,4 @@ var ms = { toString: function() { log += 'ms'; return 0; } };
 
 new Date(year, month, date, hours,minutes, seconds, ms);
 
-console.log(Object.is(log, 'yearmonthdatehoursminutessecondsms'));
+assert.sameValue(log, 'yearmonthdatehoursminutessecondsms');

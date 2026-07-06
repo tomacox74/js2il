@@ -23,5 +23,5 @@ var probe;
 
 let x = 'outside';
 
-console.log(Object.is(x, 'outside'));
-console.log(Object.is(probe(), 'inside'));
+assert.sameValue(x, 'outside');
+assert.sameValue(probe(), 'inside');

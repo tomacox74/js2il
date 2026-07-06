@@ -11,19 +11,16 @@ info: |
 
 features: [Array.prototype.at]
 ---*/
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
-console.log(typeof Array.prototype.at === 'function');
-
-try {
+assert.throws(TypeError, () => {
   Array.prototype.at.call(undefined);
-  console.log(false);
-} catch (e) {
-  console.log(e instanceof TypeError);
-}
+}, 'Array.prototype.at.call(undefined) throws a TypeError exception');
 
-try {
+assert.throws(TypeError, () => {
   Array.prototype.at.call(null);
-  console.log(false);
-} catch (e) {
-  console.log(e instanceof TypeError);
-}
+}, 'Array.prototype.at.call(null) throws a TypeError exception');

@@ -15,4 +15,4 @@ obj.length = 2;
 obj[0] = 11;
 obj[1] = 9;
 
-console.log(Array.prototype.some.call(obj, callbackfn));
+assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');

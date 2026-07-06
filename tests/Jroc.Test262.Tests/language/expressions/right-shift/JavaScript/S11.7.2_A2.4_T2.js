@@ -12,9 +12,13 @@ var x = function () { throw "x"; };
 var y = function () { throw "y"; };
 try {
    x() >> y();
-   throw new Error("Test262 failure");
+   throw new Test262Error('#1.1: var x = function () { throw "x"; }; var y = function () { throw "y"; }; x() >> y() throw "x". Actual: ' + (x() >> y()));
 } catch (e) {
-   if (e === "y") { console.log(false); } else {
-     console.log(!(e !== "x"));
+   if (e === "y") {
+     throw new Test262Error('#1.2: First expression is evaluated first, and then second expression');
+   } else {
+     if (e !== "x") {
+       throw new Test262Error('#1.3: var x = function () { throw "x"; }; var y = function () { throw "y"; }; x() >> y() throw "x". Actual: ' + (e));
+     }
    }
 }

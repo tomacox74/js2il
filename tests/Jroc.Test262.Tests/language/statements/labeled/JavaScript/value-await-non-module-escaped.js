@@ -13,5 +13,3 @@ info: |
 ---*/
 
 aw\u0061it: 1;
-
-console.log(true);

@@ -11,8 +11,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-var desc = Object.getOwnPropertyDescriptor(Math, "LN2");
-console.log(desc !== undefined);
-console.log(desc !== undefined && desc.writable === false);
-console.log(desc !== undefined && desc.enumerable === false);
-console.log(desc !== undefined && desc.configurable === false);
+verifyProperty(Math, 'LN2', {
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

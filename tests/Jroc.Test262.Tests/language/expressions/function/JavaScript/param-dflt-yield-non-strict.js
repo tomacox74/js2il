@@ -24,4 +24,4 @@ function *g() {
 
 g().next();
 
-console.log(Object.is(paramValue, 23));
+assert.sameValue(paramValue, 23);

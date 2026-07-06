@@ -14,4 +14,4 @@ var obj = (function() {
   return arguments;
 }("a", "b"));
 
-console.log(Array.prototype.some.call(obj, callbackfn));
+assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');

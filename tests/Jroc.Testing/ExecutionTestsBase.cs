@@ -30,11 +30,11 @@ namespace Jroc.Tests
                     throw new NotSupportedException("Post-test console processing is not supported for in-memory test262 execution.");
                 }
 
-                var result = InMemoryTestCompiler.CompileAndExecute(
+                var result = Test262SharedAssertHarness.CompileAndExecute(
                     testName,
                     _testCategory,
                     name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-                    additionalScripts: additionalScripts,
+                    sourceFilePath,
                     enableIRMetrics: true,
                     allowUnhandledException: allowUnhandledException,
                     addMocks: addMocks);

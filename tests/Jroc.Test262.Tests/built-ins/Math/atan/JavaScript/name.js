@@ -19,11 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Math.atan.name === 'atan');
+verifyProperty(Math.atan, "name", {
+  value: "atan",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

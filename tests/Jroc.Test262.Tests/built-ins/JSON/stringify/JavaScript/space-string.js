@@ -13,43 +13,32 @@ info: |
     let gap be the String value consisting of the first 10 code units of space.
 ---*/
 
-function assertSameValue(actual, expected, message) {
-    var passed = Object.is(actual, expected);
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Expected SameValue");
-    }
-}
-
 var obj = {
-    a1: {
-        b1: [1, 2, 3, 4],
-        b2: {
-            c1: 1,
-            c2: 2
-        }
+  a1: {
+    b1: [1, 2, 3, 4],
+    b2: {
+      c1: 1,
+      c2: 2,
     },
-    a2: "a2"
+  },
+  a2: 'a2',
 };
 
-assertSameValue(JSON.stringify(obj, null, ""), JSON.stringify(obj));
-assertSameValue(
-    JSON.stringify(obj, null, "  "),
-    [
-        "{",
-        '  "a1": {',
-        '    "b1": [',
-        "      1,",
-        "      2,",
-        "      3,",
-        "      4",
-        "    ],",
-        '    "b2": {',
-        '      "c1": 1,',
-        '      "c2": 2',
-        "    }",
-        "  },",
-        '  "a2": "a2"',
-        "}"
-    ].join("\n")
-);
+assert.sameValue(JSON.stringify(obj, null, ''), JSON.stringify(obj));
+assert.sameValue(JSON.stringify(obj, null, '  '), [
+  '{'
+, '  "a1": {'
+, '    "b1": ['
+, '      1,'
+, '      2,'
+, '      3,'
+, '      4'
+, '    ],'
+, '    "b2": {'
+, '      "c1": 1,'
+, '      "c2": 2'
+, '    }'
+, '  },'
+, '  "a2": "a2"'
+, '}'
+].join('\n'));

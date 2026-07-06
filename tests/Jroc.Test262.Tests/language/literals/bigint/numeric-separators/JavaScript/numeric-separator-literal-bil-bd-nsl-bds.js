@@ -35,5 +35,5 @@ info: |
 features: [BigInt, numeric-separator-literal]
 ---*/
 
-console.log(Object.is(0b0_10n, 0b010n));
-console.log(Object.is(0B0_10n, 0B010n));
+assert.sameValue(0b0_10n, 0b010n);
+assert.sameValue(0B0_10n, 0B010n);

@@ -19,11 +19,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Math.asin.name === 'asin');
+verifyProperty(Math.asin, "name", {
+  value: "asin",
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

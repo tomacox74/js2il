@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (C) 2021 Rick Waldron. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
@@ -26,21 +24,21 @@ const m = new Map([
   [bigint, bigint],
 ]);
 
-console.log(Object.is(m.size, 2));
-console.log(Object.is(m.has(number), true));
-console.log(Object.is(m.has(bigint), true));
+assert.sameValue(m.size, 2);
+assert.sameValue(m.has(number), true);
+assert.sameValue(m.has(bigint), true);
 
-console.log(Object.is(m.get(number), number));
-console.log(Object.is(m.get(bigint), bigint));
+assert.sameValue(m.get(number), number);
+assert.sameValue(m.get(bigint), bigint);
 
 m.delete(number);
-console.log(Object.is(m.size, 1));
-console.log(Object.is(m.has(number), false));
+assert.sameValue(m.size, 1);
+assert.sameValue(m.has(number), false);
 m.delete(bigint);
-console.log(Object.is(m.size, 0));
-console.log(Object.is(m.has(bigint), false));
+assert.sameValue(m.size, 0);
+assert.sameValue(m.has(bigint), false);
 
 m.set(number, number);
-console.log(Object.is(m.size, 1));
+assert.sameValue(m.size, 1);
 m.set(bigint, bigint);
-console.log(Object.is(m.size, 2));
+assert.sameValue(m.size, 2);

@@ -8,10 +8,6 @@ info: |
 features: [Proxy]
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 var propNames = Object.getOwnPropertyNames(Proxy);
 var lengthIndex = propNames.indexOf("length");
 var nameIndex = propNames.indexOf("name");

@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -11,4 +9,4 @@ description: Array instances have [[Class]] set to 'Array'
 var a = [];
 var s = Object.prototype.toString.call(a);
 
-console.log(Object.is(s, '[object Array]'));
+assert.sameValue(s, '[object Array]', 'The value of s is expected to be "[object Array]"');

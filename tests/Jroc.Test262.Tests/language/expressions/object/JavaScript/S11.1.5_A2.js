@@ -9,14 +9,6 @@ es5id: 11.1.5_A2
 description: Creating property "prop" of various types(boolean, number and etc.)
 ---*/
 
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
 var x = true;
 var object = {prop : x};
 assert.sameValue(object.prop, x);

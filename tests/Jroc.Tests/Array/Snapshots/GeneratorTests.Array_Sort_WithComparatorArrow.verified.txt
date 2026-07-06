@@ -127,7 +127,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 318 (0x13e)
+		// Code size: 317 (0x13d)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Array_Sort_WithComparatorArrow/Scope,
@@ -180,7 +180,7 @@
 		IL_0092: conv.r8
 		IL_0093: ldstr ""
 		IL_0098: ldc.i4.0
-		IL_0099: ldc.i4.1
+		IL_0099: ldc.i4.0
 		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
 		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
 		IL_00a4: stloc.s 4
@@ -200,48 +200,47 @@
 			IL_00c7: ldloc.2
 			IL_00c8: stloc.s 5
 			IL_00ca: ldloc.1
-			IL_00cb: callvirt instance int32 [JavaScriptRuntime]JavaScriptRuntime.Array::get_Count()
-			IL_00d0: conv.r8
-			IL_00d1: stloc.s 6
-			IL_00d3: ldloc.s 5
-			IL_00d5: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00da: stloc.s 7
-			IL_00dc: ldloc.s 7
-			IL_00de: ldloc.s 6
-			IL_00e0: clt
-			IL_00e2: brfalse IL_013d
+			IL_00cb: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_00d0: stloc.s 6
+			IL_00d2: ldloc.s 5
+			IL_00d4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00d9: stloc.s 7
+			IL_00db: ldloc.s 7
+			IL_00dd: ldloc.s 6
+			IL_00df: clt
+			IL_00e1: brfalse IL_013c
 
-			IL_00e7: newobj instance void Modules.Array_Sort_WithComparatorArrow/Scope/Block_L5C37::.ctor()
-			IL_00ec: stloc.3
-			IL_00ed: ldstr "console"
-			IL_00f2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00f7: stloc.s 4
-			IL_00f9: ldloc.s 4
-			IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0100: stloc.s 4
-			IL_0102: ldloc.s 4
-			IL_0104: ldstr "log"
-			IL_0109: ldloc.1
-			IL_010a: ldloc.2
-			IL_010b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0115: pop
-			IL_0116: ldloc.2
-			IL_0117: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_011c: stloc.s 6
-			IL_011e: ldloc.s 6
-			IL_0120: ldc.r8 1
-			IL_0129: add
-			IL_012a: stloc.s 6
-			IL_012c: ldloc.s 6
-			IL_012e: box [System.Runtime]System.Double
-			IL_0133: stloc.s 5
-			IL_0135: ldloc.s 5
-			IL_0137: stloc.2
-			IL_0138: br IL_00c7
+			IL_00e6: newobj instance void Modules.Array_Sort_WithComparatorArrow/Scope/Block_L5C37::.ctor()
+			IL_00eb: stloc.3
+			IL_00ec: ldstr "console"
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00f6: stloc.s 4
+			IL_00f8: ldloc.s 4
+			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00ff: stloc.s 4
+			IL_0101: ldloc.s 4
+			IL_0103: ldstr "log"
+			IL_0108: ldloc.1
+			IL_0109: ldloc.2
+			IL_010a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
+			IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0114: pop
+			IL_0115: ldloc.2
+			IL_0116: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_011b: stloc.s 6
+			IL_011d: ldloc.s 6
+			IL_011f: ldc.r8 1
+			IL_0128: add
+			IL_0129: stloc.s 6
+			IL_012b: ldloc.s 6
+			IL_012d: box [System.Runtime]System.Double
+			IL_0132: stloc.s 5
+			IL_0134: ldloc.s 5
+			IL_0136: stloc.2
+			IL_0137: br IL_00c7
 		// end loop
 
-		IL_013d: ret
+		IL_013c: ret
 	} // end of method Array_Sort_WithComparatorArrow::__js_module_init__
 
 } // end of class Modules.Array_Sort_WithComparatorArrow

@@ -14,9 +14,10 @@ includes: [propertyHelper.js]
 features: [Symbol.toStringTag]
 ---*/
 
-var desc = Object.getOwnPropertyDescriptor(JSON, Symbol.toStringTag);
-console.log(JSON[Symbol.toStringTag] === "JSON");
-console.log(desc !== undefined);
-console.log(desc !== undefined && desc.writable === false);
-console.log(desc !== undefined && desc.enumerable === false);
-console.log(desc !== undefined && desc.configurable === true);
+assert.sameValue(JSON[Symbol.toStringTag], 'JSON');
+
+verifyProperty(JSON, Symbol.toStringTag, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

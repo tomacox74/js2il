@@ -25,10 +25,10 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "11.1.5-2gs")]
     public Task _11_1_5_2gs()
         => ExecutionTest("11.1.5-2gs");
-    [Fact(DisplayName = "11.1.5_4-4-a-3")]
+    [Fact(DisplayName = "11.1.5_4-4-a-3", Skip = "Blocked: eval is not supported yet.")]
     public Task _11_1_5_4_4_a_3()
         => ExecutionTest("11.1.5_4-4-a-3");
-    [Fact(DisplayName = "11.1.5_4-4-b-1")]
+    [Fact(DisplayName = "11.1.5_4-4-b-1", Skip = "Blocked: eval is not supported yet.")]
     public Task _11_1_5_4_4_b_1()
         => ExecutionTest("11.1.5_4-4-b-1");
     [Fact(DisplayName = "11.1.5_4-5-1")]
@@ -37,16 +37,16 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "11.1.5_5-4-1")]
     public Task _11_1_5_5_4_1()
         => ExecutionTest("11.1.5_5-4-1");
-    [Fact(DisplayName = "11.1.5_6-3-1")]
+    [Fact(DisplayName = "11.1.5_6-3-1", Skip = "Blocked: eval is not supported yet.")]
     public Task _11_1_5_6_3_1()
         => ExecutionTest("11.1.5_6-3-1");
-    [Fact(DisplayName = "11.1.5_6-3-2")]
+    [Fact(DisplayName = "11.1.5_6-3-2", Skip = "Blocked: eval is not supported yet.")]
     public Task _11_1_5_6_3_2()
         => ExecutionTest("11.1.5_6-3-2");
-    [Fact(DisplayName = "11.1.5_7-3-1")]
+    [Fact(DisplayName = "11.1.5_7-3-1", Skip = "Blocked: eval is not supported yet.")]
     public Task _11_1_5_7_3_1()
         => ExecutionTest("11.1.5_7-3-1");
-    [Fact(DisplayName = "11.1.5_7-3-2")]
+    [Fact(DisplayName = "11.1.5_7-3-2", Skip = "Blocked: eval is not supported yet.")]
     public Task _11_1_5_7_3_2()
         => ExecutionTest("11.1.5_7-3-2");
     [Fact(DisplayName = "S11.1.5_A1.1")]

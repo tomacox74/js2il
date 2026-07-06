@@ -1,36 +1,17 @@
 // Copyright (C) 2018 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
-function Test262Error(message) {
-    this.message = message || "";
-    this.name = "Test262Error";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-assert.sameValue = function(actual, expected) {
-    console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected) {
-    console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func) {
-    try {
-        func();
-        console.log(false);
-    } catch (error) {
-        console.log(error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor);
-    }
-};
-assert.compareArray = function(actual, expected) {
-    console.log(actual.length === expected.length && actual.every(function(value, index) {
-        return Object.is(value, expected[index]);
-    }));
-};
-
+/*---
+esid: sec-addition-operator-plus-runtime-semantics-evaluation
+description: Mixing BigInt and Number produces a TypeError for addition operator
+features: [BigInt]
+info: |
+  Let lprim be ? ToPrimitive(lval).
+  Let rprim be ? ToPrimitive(rval).
+  ...
+  Let lnum be ? ToNumeric(lprim)
+  Let rnum be ? ToNumeric(rprim)
+  If Type(lnum) does not equal Type(rnum), throw a TypeError exception.
+---*/
 assert.throws(TypeError, function() {
   1n + 1;
 }, '1n + 1 throws TypeError');

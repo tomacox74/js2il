@@ -8,11 +8,21 @@ info: |
 es5id: 15.7.1.1_A1
 description: Used values "10", 10, new String("10"), new Object(10) and "abc"
 ---*/
+assert.sameValue(typeof Number("10"), "number", 'The value of `typeof Number("10")` is expected to be "number"');
+assert.sameValue(typeof Number(10), "number", 'The value of `typeof Number(10)` is expected to be "number"');
 
-console.log(typeof Number("10") === "number");
-console.log(typeof Number(10) === "number");
-console.log(typeof Number(new String("10")) === "number");
-console.log(typeof Number(new Object(10)) === "number");
-console.log(Object.is(Number("abc"), NaN));
-console.log(Object.is(Number("INFINITY"), NaN));
-console.log(Object.is(Number("infinity"), NaN));
+assert.sameValue(
+  typeof Number(new String("10")),
+  "number",
+  'The value of `typeof Number(new String("10"))` is expected to be "number"'
+);
+
+assert.sameValue(
+  typeof Number(new Object(10)),
+  "number",
+  'The value of `typeof Number(new Object(10))` is expected to be "number"'
+);
+
+assert.sameValue(Number("abc"), NaN, 'Number("abc") returns NaN');
+assert.sameValue(Number("INFINITY"), NaN, 'Number("INFINITY") returns NaN');
+assert.sameValue(Number("infinity"), NaN, 'Number("infinity") returns NaN');

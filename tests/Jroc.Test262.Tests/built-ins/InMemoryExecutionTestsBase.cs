@@ -24,12 +24,11 @@ public abstract class InMemoryExecutionTestsBase
 
     protected async Task ExecutionTestFromFile(string testName, [CallerFilePath] string sourceFilePath = "")
     {
-        var additionalScripts = GetAdditionalScripts(testName, sourceFilePath);
-        var result = InMemoryTestCompiler.CompileAndExecute(
+        var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
-            additionalScripts: additionalScripts,
+            sourceFilePath,
             enableIRMetrics: true);
 
         await VerifyWithSnapshot(result.Output, sourceFilePath);
@@ -88,12 +87,6 @@ public abstract class InMemoryExecutionTestsBase
 
     private static (string Script, string? SourcePath) GetJavaScriptAndSourcePath(string testName, string callerSourceFilePath)
     {
-        if (string.Equals(testName, "node_modules\\assert\\index", StringComparison.Ordinal)
-            || string.Equals(testName, "node_modules/assert/index", StringComparison.Ordinal))
-        {
-            return (File.ReadAllText(GetAssertHarnessSourcePath(callerSourceFilePath)), null);
-        }
-
         var relativePath = testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js";
         var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath)
             ?? throw new InvalidOperationException("Unable to determine test source directory.");
@@ -104,47 +97,7 @@ public abstract class InMemoryExecutionTestsBase
             throw new FileNotFoundException($"JavaScript fixture not found at '{scriptPath}'.", scriptPath);
         }
 
-        var script = File.ReadAllText(scriptPath);
-        if (ShouldInjectAssertHarness(scriptPath))
-        {
-            script = "const { assert } = require('assert');" + Environment.NewLine + script;
-        }
-
-        return (script, scriptPath);
-    }
-
-    private static string[]? GetAdditionalScripts(string testName, string callerSourceFilePath)
-    {
-        var sourceDirectory = Path.GetDirectoryName(callerSourceFilePath)
-            ?? throw new InvalidOperationException("Unable to determine test source directory.");
-        var scriptPath = Path.Combine(
-            sourceDirectory,
-            "JavaScript",
-            testName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar) + ".js");
-
-        return ShouldInjectAssertHarness(scriptPath)
-            ? ["node_modules/assert/index"]
-            : null;
-    }
-
-    private static bool ShouldInjectAssertHarness(string scriptPath)
-    {
-        var normalizedPath = Path.GetFullPath(scriptPath);
-        var sectionDirectory = Path.Combine(
-            "tests",
-            "Jroc.Test262.Tests",
-            "built-ins",
-            "Date",
-            "Section21_4",
-            "");
-
-        return normalizedPath.Contains(sectionDirectory, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string GetAssertHarnessSourcePath(string callerSourceFilePath)
-    {
-        var repoRoot = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(callerSourceFilePath)!, "..", "..", "..", ".."));
-        return Path.Combine(repoRoot, "Harness", "assert.js");
+        return (File.ReadAllText(scriptPath), scriptPath);
     }
 
     private Task VerifyWithSnapshot(string value, string sourceFilePath)

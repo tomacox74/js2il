@@ -1,35 +1,24 @@
 // Copyright (C) 2017 Robin Templeton. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-function Test262Error(message) {
-    this.message = message || "";
-    this.name = "Test262Error";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-assert.sameValue = function(actual, expected) {
-    console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected) {
-    console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func) {
-    try {
-        func();
-        console.log(false);
-    } catch (error) {
-        console.log(error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor);
-    }
-};
-assert.compareArray = function(actual, expected) {
-    console.log(actual.length === expected.length && actual.every(function(value, index) {
-        return Object.is(value, expected[index]);
-    }));
-};
+/*---
+esid: sec-abstract-equality-comparison
+description: Object operands coerced without ToPrimitive hint
+info: |
+  7.2.14 Abstract Equality Comparison
+
+  ...
+  6. If Type(x) is Boolean, return the result of the comparison !
+  ToNumber(x) == y.
+  7. If Type(y) is Boolean, return the result of the comparison x == !
+  ToNumber(y).
+  8. If Type(x) is either String, Number, or Symbol and Type(y) is
+  Object, return the result of the comparison x == ToPrimitive(y).
+  9. If Type(x) is Object and Type(y) is either String, Number, or
+  Symbol, return the result of the comparison ToPrimitive(x) == y.
+  ...
+features: [Symbol.toPrimitive]
+---*/
 
 let count = 0;
 let obj = {

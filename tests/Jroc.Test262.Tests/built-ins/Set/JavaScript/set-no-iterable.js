@@ -16,10 +16,6 @@ description: >
 ---*/
 
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 assert.sameValue(new Set().size, 0, "The value of `new Set().size` is `0`");
 assert.sameValue(new Set(undefined).size, 0, "The value of `new Set(undefined).size` is `0`");
 assert.sameValue(new Set(null).size, 0, "The value of `new Set(null).size` is `0`");

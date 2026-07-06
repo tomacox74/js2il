@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (C) 2015 André Bargull. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -24,4 +22,4 @@ var obj = {
 };
 obj[Symbol.match] = true;
 
-console.log(Object.is(RegExp(obj), obj));
+assert.sameValue(RegExp(obj), obj, "RegExp returns its input argument");

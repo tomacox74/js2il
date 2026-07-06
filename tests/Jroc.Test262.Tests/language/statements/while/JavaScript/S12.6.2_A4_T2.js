@@ -9,33 +9,6 @@ es5id: 12.6.2_A4_T2
 description: "\"break\" and VariableDeclaration within a \"while\" Statement"
 ---*/
 
-
-function assert(value, message) {
-  if (!value) {
-    throw new Test262Error(message || 'Assertion failed');
-  }
-}
-
-assert.sameValue = function(actual, expected, message) {
-  if (!Object.is(actual, expected)) {
-    throw new Test262Error(message || ('Expected SameValue but got ' + actual + ' and ' + expected));
-  }
-};
-
-assert.notSameValue = function(actual, unexpected, message) {
-  if (Object.is(actual, unexpected)) {
-    throw new Test262Error(message || ('Expected different value but got ' + actual));
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 do_out : while(1===1) {
     if (__in__do__before__break) break;
     var __in__do__before__break="black";
@@ -54,5 +27,3 @@ if (!(__in__do__before__break&&__in__do__IN__before__break&&!__in__do__IN__after
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

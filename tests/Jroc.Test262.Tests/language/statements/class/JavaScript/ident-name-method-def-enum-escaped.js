@@ -1,23 +1,3 @@
-function __test262SameValue(actual, expected) {
-    return Object.is(actual, expected);
-}
-
-var assert = function assert(value, message) {
-    var passed = !!value;
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Assertion failed");
-    }
-};
-
-assert.sameValue = function(actual, expected, message) {
-    var passed = __test262SameValue(actual, expected);
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Expected SameValue");
-    }
-};
-
 // This file was procedurally generated from the following sources:
 // - src/identifier-names/enum-escaped.case
 // - src/identifier-names/default/class-statement-method-def.template

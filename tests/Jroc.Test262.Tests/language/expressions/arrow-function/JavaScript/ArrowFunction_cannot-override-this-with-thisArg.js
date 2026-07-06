@@ -19,18 +19,6 @@ description: >
 
 ---*/
 
-function assert(condition) {
-  console.log(!!condition);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
-assert.notSameValue = function(actual, unexpected) {
-  console.log(!Object.is(actual, unexpected));
-};
-
 var calls = 0;
 var usurper = {};
 

@@ -46,18 +46,12 @@ var iterable = {
         };
       },
       return: function() {
-        returned = true;
+        throw new Test262Error('should not call return');
       },
     };
   },
 };
 
-var threwDummyError = false;
-try {
+assert.throws(DummyError, function() {
   Object.fromEntries(iterable);
-} catch (error) {
-  threwDummyError = error instanceof DummyError;
-}
-
-console.log(threwDummyError);
-console.log(returned === false);
+});

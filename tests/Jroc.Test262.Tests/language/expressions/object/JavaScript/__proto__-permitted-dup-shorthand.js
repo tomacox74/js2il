@@ -21,5 +21,5 @@ var obj = {
   __proto__,
 };
 
-console.log(!!(obj.hasOwnProperty("__proto__")));
-console.log(Object.is(obj.__proto__, 2));
+assert(obj.hasOwnProperty("__proto__"));
+assert.sameValue(obj.__proto__, 2);

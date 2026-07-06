@@ -9,13 +9,6 @@ es5id: 12.6.1_A4_T1
 description: Using "break" within a "do-while" loop
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var __in__do__before__break, __in__do__after__break;
 
 do {
@@ -39,5 +32,3 @@ if (typeof __in__do__after__break !== "undefined") {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

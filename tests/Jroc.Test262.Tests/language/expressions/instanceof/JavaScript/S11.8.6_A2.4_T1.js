@@ -7,8 +7,14 @@ es5id: 11.8.6_A2.4_T1
 description: Checking with "="
 ---*/
 
+//CHECK#1 
 var OBJECT = 0;
-console.log(Object.is((OBJECT = Object, {}) instanceof OBJECT, true));
+if ((OBJECT = Object, {}) instanceof OBJECT !== true) {
+  throw new Test262Error('#1: var OBJECT = 0; (OBJECT = Object, {}) instanceof OBJECT === true');
+}
 
-var object = {};
-console.log(Object.is(object instanceof (object = 0, Object), true));
+//CHECK#2
+var object = {}; 
+if (object instanceof (object = 0, Object) !== true) {
+  throw new Test262Error('#2: var object = {};  object instanceof (object = 0, Object) === true');
+}

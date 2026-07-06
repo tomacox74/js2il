@@ -28,14 +28,14 @@ info: |
 features: [Proxy]
 ---*/
 
-console.log(Object.is(typeof new Proxy({}, {}), 'object'));
+assert.sameValue(typeof new Proxy({}, {}), 'object');
 
-console.log(Object.is(typeof new Proxy(function() {}, {}), 'function'));
+assert.sameValue(typeof new Proxy(function() {}, {}), 'function');
 
 const rp1 = Proxy.revocable({}, {});
 rp1.revoke();
-console.log(Object.is(typeof rp1.proxy, 'object'));
+assert.sameValue(typeof rp1.proxy, 'object');
 
 const rp2 = Proxy.revocable(function() {}, {});
 rp2.revoke();
-console.log(Object.is(typeof rp2.proxy, 'function'));
+assert.sameValue(typeof rp2.proxy, 'function');

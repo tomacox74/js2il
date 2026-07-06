@@ -9,8 +9,16 @@ es5id: 15.5.4.4_A2
 description: Call charAt(pos) with negative pos
 ---*/
 
-function Factory() {}
-Factory.prototype.charAt = String.prototype.charAt;
+function __FACTORY() {};
 
-var instance = new Factory();
-console.log(instance.charAt(-1) === "");
+__FACTORY.prototype.charAt = String.prototype.charAt;
+
+var __instance = new __FACTORY;
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+if (__instance.charAt(-1) !== "") {
+  throw new Test262Error('#1: __instance.charAt(-1) === "". Actual: __instance.charAt(-1) ===' + __instance.charAt(-1));
+}
+//
+//////////////////////////////////////////////////////////////////////////////

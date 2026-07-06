@@ -10,5 +10,6 @@ description: >
     let x = 'inner' + i;
     continue;
   }
-  console.log(Object.is(x, 'outer'));
+  assert.sameValue(x, 'outer');
 })('outer');
+

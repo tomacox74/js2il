@@ -9,14 +9,6 @@ description: >
     = {}"
 ---*/
 
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
 var object = {};
 
 assert.sameValue(typeof object, "object");

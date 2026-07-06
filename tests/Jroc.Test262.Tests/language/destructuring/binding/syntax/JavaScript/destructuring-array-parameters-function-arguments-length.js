@@ -26,9 +26,10 @@ info: |
 features: [destructuring-binding]
 ---*/
 
-console.log(Object.is((([a,b]) => {}).length, 1));
-console.log(Object.is((function([a,b]) {}).length, 1));
-console.log(Object.is((function * ([a,b]) {}).length, 1));
-console.log(Object.is((async ([a,b]) => {}).length, 1));
-console.log(Object.is((async function([a,b]) {}).length, 1));
-console.log(Object.is((async function * ([a,b]) {}).length, 1));
+assert.sameValue((([a,b]) => {}).length, 1);
+assert.sameValue((function([a,b]) {}).length, 1);
+assert.sameValue((function * ([a,b]) {}).length, 1);
+assert.sameValue((async ([a,b]) => {}).length, 1);
+assert.sameValue((async function([a,b]) {}).length, 1);
+assert.sameValue((async function * ([a,b]) {}).length, 1);
+

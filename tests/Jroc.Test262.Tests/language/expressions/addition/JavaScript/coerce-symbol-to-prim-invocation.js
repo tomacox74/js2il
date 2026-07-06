@@ -48,12 +48,12 @@ right[Symbol.toPrimitive] = function() {
 
 left + right;
 
-console.log(Object.is(log, 'leftright'));
+assert.sameValue(log, 'leftright', 'methods invoked in correct sequence');
 
-console.log(Object.is(leftThisVal, left));
-console.log(Object.is(leftArgs.length, 1));
-console.log(Object.is(leftArgs[0], 'default'));
+assert.sameValue(leftThisVal, left, 'left-hand side `this` value');
+assert.sameValue(leftArgs.length, 1, 'left-hand side argument length');
+assert.sameValue(leftArgs[0], 'default', 'left-hand side argument value');
 
-console.log(Object.is(rightThisVal, right));
-console.log(Object.is(rightArgs.length, 1));
-console.log(Object.is(rightArgs[0], 'default'));
+assert.sameValue(rightThisVal, right, 'right-hand side `this` value');
+assert.sameValue(rightArgs.length, 1, 'right-hand side argument length');
+assert.sameValue(rightArgs[0], 'default', 'right-hand side argument value');

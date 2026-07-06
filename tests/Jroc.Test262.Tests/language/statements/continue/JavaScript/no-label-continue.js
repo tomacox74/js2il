@@ -5,24 +5,6 @@ es6id: 13.12
 description: >
     no label continue
 ---*/
-function assert(value, message) {
-  console.log(!!value);
-}
-assert.sameValue = function(actual, expected, message) {
-  console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected, message) {
-  console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func, message) {
-  try {
-    func();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedErrorConstructor);
-  }
-};
-
 var count = 0;
 for (let x = 0; x < 10;) {
   x++;
@@ -31,5 +13,3 @@ for (let x = 0; x < 10;) {
 }
 assert.sameValue(count, 10, "The value of `count` is `10`");
 
-
-console.log(true);

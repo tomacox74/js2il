@@ -3,23 +3,34 @@
 /*---
 esid: sec-array.prototype-@@unscopables
 description: >
-    Initial value of `Symbol.unscopables` property includes findLast and findLastIndex
+    Initial value of `Symbol.unscopables` property
+info: |
+    22.1.3.32 Array.prototype [ @@unscopables ]
+
+    ...
+    7. Perform CreateDataProperty(unscopableList, "findLast", true).
+    8. Perform CreateDataProperty(unscopableList, "findLastIndex", true).
+    ...
+
+includes: [propertyHelper.js]
 features: [Symbol.unscopables, array-find-from-last]
 ---*/
 
-let unscopables = Array.prototype[Symbol.unscopables];
-console.log(Object.getPrototypeOf(unscopables) === null);
+var unscopables = Array.prototype[Symbol.unscopables];
 
-let findLastDescriptor = Object.getOwnPropertyDescriptor(unscopables, "findLast");
-console.log(unscopables.findLast === true);
-console.log(typeof findLastDescriptor === "object");
-console.log(findLastDescriptor.writable === true);
-console.log(findLastDescriptor.enumerable === true);
-console.log(findLastDescriptor.configurable === true);
+assert.sameValue(Object.getPrototypeOf(unscopables), null);
 
-let findLastIndexDescriptor = Object.getOwnPropertyDescriptor(unscopables, "findLastIndex");
-console.log(unscopables.findLastIndex === true);
-console.log(typeof findLastIndexDescriptor === "object");
-console.log(findLastIndexDescriptor.writable === true);
-console.log(findLastIndexDescriptor.enumerable === true);
-console.log(findLastIndexDescriptor.configurable === true);
+assert.sameValue(unscopables.findLast, true, '`findLast` property value');
+verifyProperty(unscopables, "findLast", {
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+
+
+assert.sameValue(unscopables.findLastIndex, true, '`findLastIndex` property value');
+verifyProperty(unscopables, "findLastIndex", {
+  writable: true,
+  enumerable: true,
+  configurable: true
+});

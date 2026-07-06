@@ -1,36 +1,23 @@
 // Copyright (C) 2017 Robin Templeton. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
-function Test262Error(message) {
-    this.message = message || "";
-    this.name = "Test262Error";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-assert.sameValue = function(actual, expected) {
-    console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected) {
-    console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func) {
-    try {
-        func();
-        console.log(false);
-    } catch (error) {
-        console.log(error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor);
-    }
-};
-assert.compareArray = function(actual, expected) {
-    console.log(actual.length === expected.length && actual.every(function(value, index) {
-        return Object.is(value, expected[index]);
-    }));
-};
-
+/*---
+description: Comparisons of BigInt and Number values
+esid: sec-abstract-relational-comparison
+info: |
+  ...
+  3. If both px and py are Strings, then
+    ...
+  4. Else,
+    a. Let nx be ? ToNumeric(px). Because px and py are primitive values evaluation order is not important.
+    b. Let ny be ? ToNumeric(py).
+    c. If Type(nx) is Type(ny), return ? Type(nx)::lessThan(nx, ny).
+    d. Assert: Type(nx) is BigInt and Type(ny) is Number, or if Type(nx) is Number and Type(ny) is BigInt.
+    e. If x or y are any of NaN, return undefined.
+    f. If x is -∞, or y is +∞, return true.
+    g. If x is +∞, or y is -∞, return false.
+    h. If the mathematical value of nx is less than the mathematical value of ny, return true, otherwise return false.
+features: [BigInt]
+---*/
 assert.sameValue(0n > 0, false, 'The result of (0n > 0) is false');
 assert.sameValue(0 > 0n, false, 'The result of (0 > 0n) is false');
 assert.sameValue(0n > -0, false, 'The result of (0n > -0) is false');

@@ -9,13 +9,6 @@ es5id: 12.11_A1_T1
 description: Simple test using switch statement
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 function SwitchTest(value){
   var result = 0;
   
@@ -78,5 +71,3 @@ if(!(SwitchTest(void 0) === 32)){
 if(!(SwitchTest('0') === 32)){
   throw new Test262Error("#10: SwitchTest('0') === 32. Actual:  SwitchTest('0') ==="+ SwitchTest('0')  );
 }
-
-console.log(true);

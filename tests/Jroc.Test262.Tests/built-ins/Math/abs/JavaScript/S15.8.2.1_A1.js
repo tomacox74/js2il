@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -9,4 +7,4 @@ es5id: 15.8.2.1_A1
 description: Checking if Math.abs(NaN) is NaN
 ---*/
 
-console.log(Object.is(Math.abs(NaN), NaN));
+assert.sameValue(Math.abs(NaN), NaN);

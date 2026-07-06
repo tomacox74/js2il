@@ -9,13 +9,6 @@ es5id: 12.11_A1_T2
 description: Switch with different types of variables
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var x = new Number(2);
 
 function SwitchTest(value){
@@ -92,5 +85,3 @@ if(!(SwitchTest('0') === 32)){
 if(!(SwitchTest(x) === 128)){
   throw new Test262Error("#10: SwitchTest(x) === 128. Actual:  SwitchTest(x) ==="+ SwitchTest(x)  );
 }
-
-console.log(true);

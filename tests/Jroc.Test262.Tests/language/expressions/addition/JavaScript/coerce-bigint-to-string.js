@@ -21,13 +21,13 @@ info: |
 features: [BigInt]
 ---*/
 
-console.log(Object.is(-1n + "", "-1"));
-console.log(Object.is("" + -1n, "-1"));
-console.log(Object.is(0n + "", "0"));
-console.log(Object.is("" + 0n, "0"));
-console.log(Object.is(1n + "", "1"));
-console.log(Object.is("" + 1n, "1"));
-console.log(Object.is(123456789000000000000000n + "", "123456789000000000000000"));
-console.log(Object.is("" + 123456789000000000000000n, "123456789000000000000000"));
-console.log(Object.is(-123456789000000000000000n + "", "-123456789000000000000000"));
-console.log(Object.is("" + -123456789000000000000000n, "-123456789000000000000000"));
+assert.sameValue(-1n + "", "-1");
+assert.sameValue("" + -1n, "-1");
+assert.sameValue(0n + "", "0");
+assert.sameValue("" + 0n, "0");
+assert.sameValue(1n + "", "1");
+assert.sameValue("" + 1n, "1");
+assert.sameValue(123456789000000000000000n + "", "123456789000000000000000");
+assert.sameValue("" + 123456789000000000000000n, "123456789000000000000000");
+assert.sameValue(-123456789000000000000000n + "", "-123456789000000000000000");
+assert.sameValue("" + -123456789000000000000000n, "-123456789000000000000000");

@@ -24,5 +24,5 @@ var cond2 = function() {
 };
 for (true ? '' in cond1() : cond2(); false; ) ;
 
-console.log(Object.is(cond1Count, 1));
-console.log(Object.is(cond2Count, 0));
+assert.sameValue(cond1Count, 1);
+assert.sameValue(cond2Count, 0);

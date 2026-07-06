@@ -13,10 +13,6 @@ info: |
 features: [Symbol, Symbol.prototype.description]
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 var symbol = Symbol.for({toString: function() { return 'test262'; }});
 
 assert.sameValue(symbol.description, 'test262');

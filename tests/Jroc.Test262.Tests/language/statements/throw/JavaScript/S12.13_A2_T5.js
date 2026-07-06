@@ -10,56 +10,11 @@ description: Throwing number
 ---*/
 
 // CHECK#1
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
-assert.notSameValue = function(actual, unexpected) {
-  console.log(!Object.is(actual, unexpected));
-};
-
-assert.compareArray = function(actual, expected) {
-  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
-    console.log(false);
-    return;
-  }
-
-  for (let i = 0; i < actual.length; i++) {
-    if (!Object.is(actual[i], expected[i])) {
-      console.log(false);
-      return;
-    }
-  }
-
-  console.log(true);
-};
-
-assert.throws = function(expectedCtor, fn) {
-  try {
-    fn();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedCtor);
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 try{
   throw 13;
 }
 catch(e){
-  console.log(!(e!==13));
+  if (e!==13) throw new Test262Error('#1: Exception ===13. Actual:  Exception ==='+ e );
 }
 
 // CHECK#2
@@ -68,7 +23,7 @@ try{
   throw b;
 }
 catch(e){
-  console.log(!(e!==13));
+  if (e!==13) throw new Test262Error('#2: Exception ===13. Actual:  Exception ==='+ e );
 }
 
 // CHECK#3
@@ -76,7 +31,7 @@ try{
   throw 2.13;
 }
 catch(e){
-  console.log(!(e!==2.13));
+  if (e!==2.13) throw new Test262Error('#3: Exception ===2.13. Actual:  Exception ==='+ e );
 }
 
 // CHECK#4
@@ -92,7 +47,7 @@ try{
   throw +Infinity;
 }
 catch(e){
-  console.log(!(e!==+Infinity));
+  if (e!==+Infinity) throw new Test262Error('#5: Exception ===+Infinity. Actual:  Exception ==='+ e );
 }
 
 // CHECK#6
@@ -100,7 +55,7 @@ try{
   throw -Infinity;
 }
 catch(e){
-  console.log(!(e!==-Infinity));
+  if (e!==-Infinity) throw new Test262Error('#6: Exception ===-Infinity. Actual:  Exception ==='+ e );
 }
 
 // CHECK#7
@@ -108,7 +63,7 @@ try{
   throw +0;
 }
 catch(e){
-  console.log(!(e!==+0));
+  if (e!==+0) throw new Test262Error('#7: Exception ===+0. Actual:  Exception ==='+ e );
 }
 
 // CHECK#8

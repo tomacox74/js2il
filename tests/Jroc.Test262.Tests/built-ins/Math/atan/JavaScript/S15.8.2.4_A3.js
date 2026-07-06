@@ -7,11 +7,4 @@ es5id: 15.8.2.4_A3
 description: Checking if Math.atan(-0) equals to -0
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Object.is(Math.atan(-0), -0));
+assert.sameValue(Math.atan(-0), -0);

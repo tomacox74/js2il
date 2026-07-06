@@ -14,4 +14,4 @@ var obj = new Error();
 obj.length = 1;
 obj[0] = 1;
 
-console.log(Array.prototype.some.call(obj, callbackfn));
+assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');

@@ -10,18 +10,9 @@ description: Throwing undefined
 ---*/
 
 // CHECK#1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 try{
   throw undefined;
 }
 catch(e){
   if (e!==undefined) throw new Test262Error('#1: Exception === undefined. Actual:  Exception ==='+ e  );
 }
-
-console.log(true);

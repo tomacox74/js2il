@@ -35,5 +35,5 @@ var func = function n() {
 
 func();
 
-console.log(Object.is(probeBefore(), 'outside'));
-console.log(Object.is(probeInside(), 'inside'));
+assert.sameValue(probeBefore(), 'outside');
+assert.sameValue(probeInside(), 'inside');

@@ -10,13 +10,6 @@ description: Throwing string
 ---*/
 
 // CHECK#1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 try{
   throw "exception #1";
 }
@@ -32,5 +25,3 @@ try{
 catch(e){
   if (e!=="exception #1") throw new Test262Error('#2: Exception ==="exception #1". Actual:  Exception ==='+ e );
 }
-
-console.log(true);

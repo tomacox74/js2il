@@ -21,10 +21,11 @@ public abstract class FileSystemExecutionTestsBase
     protected async Task ExecutionTest(string testName, bool allowUnhandledException = false, [CallerFilePath] string sourceFilePath = "")
     {
         string projectRoot = FindProjectRoot(sourceFilePath);
-        var result = InMemoryTestCompiler.CompileAndExecute(
+        var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(projectRoot, name),
+            sourceFilePath,
             enableIRMetrics: true,
             allowUnhandledException: allowUnhandledException);
 

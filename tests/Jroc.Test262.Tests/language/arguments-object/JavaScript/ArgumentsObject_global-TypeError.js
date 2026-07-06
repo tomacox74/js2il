@@ -2,6 +2,6 @@
 
 const err = new TypeError("boom");
 
-console.log(globalThis.TypeError === TypeError);
-console.log(err instanceof TypeError);
-console.log(err instanceof Error);
+assert.sameValue(globalThis.TypeError, TypeError);
+assert(err instanceof TypeError);
+assert(err instanceof Error);

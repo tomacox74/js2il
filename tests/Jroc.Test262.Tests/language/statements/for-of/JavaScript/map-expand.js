@@ -9,29 +9,6 @@ info: |
 es6id: 13.6.4
 features: [Map]
 ---*/
-// test262 execution-port helpers
-var assert = function assert(condition) {
-  console.log(Boolean(condition));
-};
-
-assert.sameValue = function (actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
-assert.notSameValue = function (actual, unexpected) {
-  console.log(!Object.is(actual, unexpected));
-};
-
-assert.throws = function (expectedError, fn) {
-  var passed = false;
-  try {
-    fn();
-  } catch (error) {
-    passed = error instanceof expectedError;
-  }
-  console.log(passed);
-};
-
 
 var map = new Map();
 var iterationCount = 0;

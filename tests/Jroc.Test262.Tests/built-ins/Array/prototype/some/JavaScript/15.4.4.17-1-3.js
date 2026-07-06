@@ -13,4 +13,4 @@ function callbackfn(val, idx, obj) {
 Boolean.prototype[0] = 1;
 Boolean.prototype.length = 1;
 
-console.log(Array.prototype.some.call(false, callbackfn));
+assert(Array.prototype.some.call(false, callbackfn), 'Array.prototype.some.call(false, callbackfn) !== true');

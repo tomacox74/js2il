@@ -15,4 +15,4 @@ do {
   count++;
   break;
 } while (obj?.a);
-console.log(Object.is(1, count));
+assert.sameValue(1, count);

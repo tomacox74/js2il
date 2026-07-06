@@ -10,11 +10,15 @@ info: |
   If k < 0 or k ≥ len, then return undefined.
 features: [Array.prototype.at]
 ---*/
-
-console.log(typeof Array.prototype.at === 'function');
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
 let a = [];
 
-console.log(a.at(-2) === undefined);
-console.log(a.at(0) === undefined);
-console.log(a.at(1) === undefined);
+assert.sameValue(a.at(-2), undefined, 'a.at(-2) returns undefined'); // wrap around the end
+assert.sameValue(a.at(0), undefined, 'a.at(0) returns undefined');
+assert.sameValue(a.at(1), undefined, 'a.at(1) returns undefined');
+

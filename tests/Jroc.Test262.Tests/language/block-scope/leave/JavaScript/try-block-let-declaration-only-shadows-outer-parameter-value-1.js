@@ -10,6 +10,7 @@ description: >
     let x = 'inner';
     throw 0;
   } catch (e) {
-    console.log(Object.is(x, 'outer'));
+    assert.sameValue(x, 'outer');
   }
 })('outer');
+

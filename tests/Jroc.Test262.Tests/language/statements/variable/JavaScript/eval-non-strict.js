@@ -8,5 +8,3 @@ flags: [noStrict]
 ---*/
 
 var eval;
-
-console.log(true);

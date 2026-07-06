@@ -28,6 +28,6 @@ description: >
             }
         }
 
-console.log(Object.is(countProp1, 1));
-console.log(Object.is(countProp2, 1));
-console.log(Object.is(countProp3, 1));
+assert.sameValue(countProp1, 1, 'countProp1');
+assert.sameValue(countProp2, 1, 'countProp2');
+assert.sameValue(countProp3, 1, 'countProp3');

@@ -7,33 +7,6 @@ es5id: 12.14_A8
 description: Throwing exception within an "if" statement
 ---*/
 
-
-function assert(value, message) {
-  if (!value) {
-    throw new Test262Error(message || 'Assertion failed');
-  }
-}
-
-assert.sameValue = function(actual, expected, message) {
-  if (!Object.is(actual, expected)) {
-    throw new Test262Error(message || ('Expected SameValue but got ' + actual + ' and ' + expected));
-  }
-};
-
-assert.notSameValue = function(actual, unexpected, message) {
-  if (Object.is(actual, unexpected)) {
-    throw new Test262Error(message || ('Expected different value but got ' + actual));
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 // CHECK#1
 var c1=1;
 try{
@@ -58,5 +31,3 @@ if(c2===1){
     if(er1!="ex1") throw new Test262Error('#2.2: Exception ==="ex1". Actual:  Exception ==='+er1);
   }
 }
-
-console.log(true);

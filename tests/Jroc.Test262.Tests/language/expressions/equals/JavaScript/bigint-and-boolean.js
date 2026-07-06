@@ -13,19 +13,19 @@ info: |
 
 features: [BigInt]
 ---*/
-console.log(Object.is(-1n == false, false));
-console.log(Object.is(false == -1n, false));
-console.log(Object.is(-1n == true, false));
-console.log(Object.is(true == -1n, false));
-console.log(Object.is(0n == false, true));
-console.log(Object.is(false == 0n, true));
-console.log(Object.is(0n == true, false));
-console.log(Object.is(true == 0n, false));
-console.log(Object.is(1n == false, false));
-console.log(Object.is(false == 1n, false));
-console.log(Object.is(1n == true, true));
-console.log(Object.is(true == 1n, true));
-console.log(Object.is(2n == false, false));
-console.log(Object.is(false == 2n, false));
-console.log(Object.is(2n == true, false));
-console.log(Object.is(true == 2n, false));
+assert.sameValue(-1n == false, false, 'The result of (-1n == false) is false');
+assert.sameValue(false == -1n, false, 'The result of (false == -1n) is false');
+assert.sameValue(-1n == true, false, 'The result of (-1n == true) is false');
+assert.sameValue(true == -1n, false, 'The result of (true == -1n) is false');
+assert.sameValue(0n == false, true, 'The result of (0n == false) is true');
+assert.sameValue(false == 0n, true, 'The result of (false == 0n) is true');
+assert.sameValue(0n == true, false, 'The result of (0n == true) is false');
+assert.sameValue(true == 0n, false, 'The result of (true == 0n) is false');
+assert.sameValue(1n == false, false, 'The result of (1n == false) is false');
+assert.sameValue(false == 1n, false, 'The result of (false == 1n) is false');
+assert.sameValue(1n == true, true, 'The result of (1n == true) is true');
+assert.sameValue(true == 1n, true, 'The result of (true == 1n) is true');
+assert.sameValue(2n == false, false, 'The result of (2n == false) is false');
+assert.sameValue(false == 2n, false, 'The result of (false == 2n) is false');
+assert.sameValue(2n == true, false, 'The result of (2n == true) is false');
+assert.sameValue(true == 2n, false, 'The result of (true == 2n) is false');

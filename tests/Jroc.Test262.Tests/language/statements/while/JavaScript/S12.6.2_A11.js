@@ -7,13 +7,6 @@ es5id: 12.6.2_A11
 description: Checking if execution of "while({}){}" passes
 ---*/
 
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 while({}){
     var __in__do=1;
     if(__in__do)break;
@@ -26,5 +19,3 @@ if (__in__do !== 1) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

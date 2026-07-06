@@ -7,24 +7,45 @@ es5id: 11.14_A2.1_T1
 description: Either Expression is not Reference or GetBase is not null
 ---*/
 
-console.log(Object.is((1, 2), 2));
+//CHECK#1
+if ((1,2) !== 2) {
+  throw new Test262Error('#1: (1,2) === 2. Actual: ' + ((1,2)));
+}
 
+//CHECK#2
 var x = 1;
-console.log(Object.is((x, 2), 2));
+if ((x, 2) !== 2) {
+  throw new Test262Error('#2: var x = 1; (x, 2) === 2. Actual: ' + ((x, 2)));
+}
 
+//CHECK#3
 var y = 2;
-console.log(Object.is((1, y), 2));
+if ((1, y) !== 2) {
+  throw new Test262Error('#3: var y = 2; (1, y) === 2. Actual: ' + ((1, y)));
+}
 
+//CHECK#4
 var x = 1;
 var y = 2;
-console.log(Object.is((x, y), 2));
+if ((x, y) !== 2) {
+  throw new Test262Error('#4: var x = 1; var y = 2; (x, y) === 2. Actual: ' + ((x, y)));
+}
 
+//CHECK#5
 var x = 1;
-console.log(Object.is((x, x), 1));
+if ((x, x) !== 1) {
+  throw new Test262Error('#5: var x = 1; (x, x) === 1. Actual: ' + ((x, x)));
+}
 
+//CHECK#6
 var objectx = new Object();
 var objecty = new Object();
 objectx.prop = true;
 objecty.prop = 1.1;
-console.log(Object.is((objectx.prop = false, objecty.prop), objecty.prop));
-console.log(Object.is(objectx.prop, false));
+if ((objectx.prop = false, objecty.prop) !== objecty.prop) {
+  throw new Test262Error('#6: var objectx = new Object(); var objecty = new Object(); objectx.prop = true; objecty.prop = 1; (objectx.prop = false, objecty.prop) === objecty.prop. Actual: ' + ((objectx.prop = false, objecty.prop)));
+} else {
+  if (objectx.prop !== false) {
+    throw new Test262Error('#6: var objectx = new Object(); var objecty = new Object(); objectx.prop = true; objecty.prop = 1; objectx.prop = false, objecty.prop; objectx.prop === false');
+  } 
+}

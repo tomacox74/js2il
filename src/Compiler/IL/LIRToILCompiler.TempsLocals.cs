@@ -684,7 +684,7 @@ internal sealed partial class LIRToILCompiler
 
             case LIRGetJsArrayLength getJsArrayLength:
                 {
-                    // Inline: receiver, callvirt get_Count, conv.r8
+                    // Inline: receiver, callvirt get_length
                     var receiverStorage = GetTempStorage(getJsArrayLength.Receiver);
                     if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
                     {
@@ -697,13 +697,12 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
                     }
 
-                    var getCountMethod = _memberRefRegistry.GetOrAddMethod(
+                    var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        "get_Count",
+                        "get_length",
                         parameterTypes: Type.EmptyTypes);
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(getCountMethod);
-                    ilEncoder.OpCode(ILOpCode.Conv_r8);
+                    ilEncoder.Token(getLengthMethod);
                     break;
                 }
 

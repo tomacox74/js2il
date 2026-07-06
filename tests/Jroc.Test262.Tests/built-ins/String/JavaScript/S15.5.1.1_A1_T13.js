@@ -9,18 +9,74 @@ es5id: 15.5.1.1_A1_T13
 description: Call String(true) and String(false)
 ---*/
 
-var value = String(true);
-console.log(typeof value === "string");
-console.log(value === "true");
+var __str = String(true);
 
-value = String(false);
-console.log(typeof value === "string");
-console.log(value === "false");
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+if (typeof __str !== "string") {
+  throw new Test262Error('#1: __str = String(true); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
 
-value = String(Boolean(true));
-console.log(typeof value === "string");
-console.log(value === "true");
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#2
+if (__str !== "true") {
+  throw new Test262Error('#2: __str = String(true); __str === "true". Actual: __str ===' + __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
 
-value = String(Boolean(false));
-console.log(typeof value === "string");
-console.log(value === "false");
+__str = String(false);
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#3
+if (typeof __str !== "string") {
+  throw new Test262Error('#3: __str = String(false); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#4
+if (__str !== "false") {
+  throw new Test262Error('#4: __str = String(false); __str === "false". Actual: __str ===' + __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
+
+__str = String(Boolean(true));
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#5
+if (typeof __str !== "string") {
+  throw new Test262Error('#5: __str = String(Boolean(true)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#6
+if (__str !== "true") {
+  throw new Test262Error('#6: __str = String(Boolean(true)); __str === "true". Actual: __str ===' + __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
+
+__str = String(Boolean(false));
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#7
+if (typeof __str !== "string") {
+  throw new Test262Error('#7: __str = String(Boolean(false)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#8
+if (__str !== "false") {
+  throw new Test262Error('#8: __str = String(Boolean(false)); __str === "false". Actual: __str ===' + __str);
+}
+//
+//////////////////////////////////////////////////////////////////////////////

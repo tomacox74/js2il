@@ -31,4 +31,4 @@ description: >
             }
         }
 
-console.log(Object.is(accessedProp, false));
+assert.sameValue(accessedProp, false, 'accessedProp');

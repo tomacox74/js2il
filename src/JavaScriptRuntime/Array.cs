@@ -18,6 +18,7 @@ namespace JavaScriptRuntime
         private static readonly object Hole = new();
         private readonly List<object?> _items;
         private int _logicalLength;
+        private double _virtualLength;
 
         internal static ExpandoObject Prototype
         {
@@ -895,18 +896,21 @@ namespace JavaScriptRuntime
         {
             _items = new List<object?>();
             _logicalLength = 0;
+            _virtualLength = 0;
             InitializeIntrinsicSurface();
         }
         public Array(int capacity)
         {
             _items = new List<object?>(capacity);
             _logicalLength = 0;
+            _virtualLength = 0;
             InitializeIntrinsicSurface();
         }
         public Array(System.Collections.IEnumerable collection)
         {
             _items = collection.Cast<object?>().ToList();
             _logicalLength = _items.Count;
+            _virtualLength = _logicalLength;
             InitializeIntrinsicSurface();
         }
 
@@ -965,6 +969,10 @@ namespace JavaScriptRuntime
                 if (index < _items.Count)
                 {
                     _items[index] = value;
+                    if (index + 1 > _virtualLength)
+                    {
+                        _virtualLength = index + 1;
+                    }
                     return;
                 }
 
@@ -975,6 +983,10 @@ namespace JavaScriptRuntime
 
                 EnsureDenseStorage(index + 1);
                 _items[index] = value;
+                if (index + 1 > _virtualLength)
+                {
+                    _virtualLength = index + 1;
+                }
             }
         }
 
@@ -1015,6 +1027,7 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(Count);
             _items.RemoveAt(index);
             _logicalLength = _items.Count;
+            _virtualLength = _logicalLength;
         }
 
         public void RemoveRange(int index, int count)
@@ -1022,6 +1035,7 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(Count);
             _items.RemoveRange(index, count);
             _logicalLength = _items.Count;
+            _virtualLength = _logicalLength;
         }
 
         public void Reverse()
@@ -1062,6 +1076,7 @@ namespace JavaScriptRuntime
         {
             _items.Clear();
             _logicalLength = 0;
+            _virtualLength = 0;
         }
 
         public object?[] ToArray()
@@ -1378,7 +1393,7 @@ namespace JavaScriptRuntime
         {
             get
             {
-                return this.Count;
+                return global::System.Math.Max(this.Count, _virtualLength);
             }
             set
             {
@@ -1412,12 +1427,19 @@ namespace JavaScriptRuntime
                 d = truncated;
                 if (d > int.MaxValue)
                 {
-                    if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
+                    if (d >= 4294967296d)
                     {
-                        System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] too-large length value={d}");
-                        System.Console.WriteLine(Environment.StackTrace);
+                        if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
+                        {
+                            System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] too-large length value={d}");
+                            System.Console.WriteLine(Environment.StackTrace);
+                        }
+
+                        throw new RangeError("Invalid array length");
                     }
-                    throw new RangeError("Invalid array length");
+
+                    _virtualLength = d;
+                    return;
                 }
 
                 int newLen = (int)d;
@@ -1433,10 +1455,20 @@ namespace JavaScriptRuntime
                         _items.RemoveRange(newLen, _items.Count - newLen);
                     }
                     _logicalLength = newLen;
+                    _virtualLength = newLen;
                     return;
                 }
 
                 _logicalLength = newLen;
+                _virtualLength = newLen;
+            }
+        }
+
+        internal void EnsureLengthAtLeast(double length)
+        {
+            if (length > _virtualLength)
+            {
+                _virtualLength = length;
             }
         }
 
@@ -2820,7 +2852,7 @@ namespace JavaScriptRuntime
 
         public Array fill()
         {
-            return this;
+            return fill(new object[] { null! });
         }
 
         /// <summary>
@@ -2961,9 +2993,14 @@ namespace JavaScriptRuntime
         /// </summary>
         public Array toReversed(object[]? args)
         {
-            var copy = new Array(this);
-            copy.Reverse();
-            return copy;
+            var len = ToArrayLikeLength(this);
+            var result = new Array(len);
+            for (int k = 0; k < len; k++)
+            {
+                result[k] = JavaScriptRuntime.ObjectRuntime.GetItem(this, (double)(len - k - 1));
+            }
+
+            return result;
         }
 
         public Array toReversed()

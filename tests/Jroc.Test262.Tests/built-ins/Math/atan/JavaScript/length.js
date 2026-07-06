@@ -22,11 +22,9 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-check(Math.atan.length === 1);
+verifyProperty(Math.atan, "length", {
+  value: 1,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});

@@ -9,7 +9,7 @@ description: >
 ---*/
 
     var tempObj = {};
-
+    
     Object.defineProperty(tempObj, "reduce", { get: function() {return 456;}, enumerable:false, set: function() {;}});
     var origDesc = Object.getOwnPropertyDescriptor(tempObj, "reduce");
 
@@ -18,11 +18,11 @@ description: >
         tempObj.reduce = 123;
         newDesc = Object.getOwnPropertyDescriptor(tempObj, "reduce");
         var descArray = [origDesc, newDesc];
-
+        
         for (var j in descArray) {
             for (var i in descArray[j]) {
-                console.log(Object.is(origDesc[i], newDesc[i]));
+                assert.sameValue(origDesc[i], newDesc[i], 'origDesc[i]');
             }
         }
 
-console.log(Object.is(tempObj.reduce, 456));
+assert.sameValue(tempObj.reduce, 456, 'tempObj.reduce');

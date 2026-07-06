@@ -3,8 +3,8 @@
 
 /*---
 info: |
-    Refer 12.6.3;
-    The production
+    Refer 12.6.3; 
+    The production 
     IterationStatement : for ( var VariableDeclarationListNoIn ; Expressionopt ; Expressionopt ) Statement
     is evaluated as follows:
 es5id: 12.6.3_2-3-a-ii-10
@@ -20,4 +20,4 @@ description: >
             break;
         }
 
-console.log(!!(accessed, 'accessed !== true'));
+assert(accessed, 'accessed !== true');

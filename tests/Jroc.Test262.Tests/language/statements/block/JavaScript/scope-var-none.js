@@ -22,6 +22,6 @@ var probeInside;
   probeInside = function() { return x; };
 }
 
-console.log(Object.is(probeBefore(), 'inside'));
-console.log(Object.is(probeInside(), 'inside'));
-console.log(Object.is(x, 'inside'));
+assert.sameValue(probeBefore(), 'inside', 'reference preceding statement');
+assert.sameValue(probeInside(), 'inside', 'reference within statement');
+assert.sameValue(x, 'inside', 'reference following statement');

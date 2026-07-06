@@ -32,7 +32,7 @@ var iterable = {
     return {
       next: function() {
         if (advanced) {
-          throw new Error('should only advance once');
+          throw new Test262Error('should only advance once');
         }
         advanced = true;
         return {
@@ -49,7 +49,7 @@ var iterable = {
       },
       return: function() {
         if (returned) {
-          throw new Error('should only return once');
+          throw new Test262Error('should only return once');
         }
         returned = true;
       },
@@ -57,12 +57,8 @@ var iterable = {
   },
 };
 
-var threwDummyError = false;
-try {
+assert.throws(DummyError, function() {
   Object.fromEntries(iterable);
-} catch (error) {
-  threwDummyError = error instanceof DummyError;
-}
+});
 
-console.log(threwDummyError);
-console.log(returned);
+assert(returned, 'iterator should be closed when entry value property access throws');

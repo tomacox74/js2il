@@ -11,13 +11,6 @@ description: Throwing exceptions within embedded/sequence Blocks
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-var Test262Error = function(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-};
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 try {
 	throw 1;
     throw 2;
@@ -61,5 +54,3 @@ try {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

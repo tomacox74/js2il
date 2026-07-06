@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -12,4 +10,4 @@ description: >
 
 var regObj = new RegExp();
 var regExpObj = new RegExp(regObj, "g");
-console.log(!!(regExpObj.global));
+assert(regExpObj.global);

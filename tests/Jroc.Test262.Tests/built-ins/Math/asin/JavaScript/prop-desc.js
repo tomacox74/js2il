@@ -11,15 +11,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-function check(value) {
-    console.log(value);
-    if (!value) {
-        throw new Error('check failed');
-    }
-}
-
-var desc = Object.getOwnPropertyDescriptor(Math, 'asin');
-check(!!desc);
-check(desc.writable === true);
-check(desc.enumerable === false);
-check(desc.configurable === true);
+verifyProperty(Math, "asin", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

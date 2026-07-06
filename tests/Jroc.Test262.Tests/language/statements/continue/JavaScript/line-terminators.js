@@ -11,33 +11,6 @@ description: >
     and Identifier
 ---*/
 
-
-function assert(value, message) {
-  if (!value) {
-    throw new Test262Error(message || 'Assertion failed');
-  }
-}
-
-assert.sameValue = function(actual, expected, message) {
-  if (!Object.is(actual, expected)) {
-    throw new Test262Error(message || ('Expected SameValue but got ' + actual + ' and ' + expected));
-  }
-};
-
-assert.notSameValue = function(actual, unexpected, message) {
-  if (Object.is(actual, unexpected)) {
-    throw new Test262Error(message || ('Expected different value but got ' + actual));
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 FOR1 : for(var i=1;i<2;i++){
   FOR1NESTED : for(var j=1;j<2;j++) {
     continue
@@ -69,5 +42,3 @@ FOR4 : for(var i=1;i<2;i++){
 }
 
 assert.sameValue(j, 2, '#4: Since LineTerminator(U-2029) between continue and Identifier not allowed continue evaluates without label');
-
-console.log(true);

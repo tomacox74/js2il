@@ -7,52 +7,6 @@ es5id: 12.14_A17
 description: Creating exceptions within constructor
 ---*/
 
-
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
-assert.notSameValue = function(actual, unexpected) {
-  console.log(!Object.is(actual, unexpected));
-};
-
-assert.compareArray = function(actual, expected) {
-  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
-    console.log(false);
-    return;
-  }
-
-  for (var i = 0; i < actual.length; i++) {
-    if (!Object.is(actual[i], expected[i])) {
-      console.log(false);
-      return;
-    }
-  }
-
-  console.log(true);
-};
-
-assert.throws = function(expectedCtor, fn) {
-  try {
-    fn();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedCtor);
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var i=1;
 function Integer( value, exception ) {
   try{
@@ -87,6 +41,3 @@ new Integer(Infinity, false);
 new Integer(-1.23, true);
 // CHECK#6
 new Integer(Math.LN2, true);
-
-
-console.log("pass");

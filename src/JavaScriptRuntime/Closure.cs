@@ -565,7 +565,7 @@ namespace JavaScriptRuntime
             }
 
             var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
-            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget, BoundDelegateKind.ScopeBinding, hasRestrictedProperties: true);
+            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget, BoundDelegateKind.ScopeBinding, hasRestrictedProperties: false);
         }
 
         internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)

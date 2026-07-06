@@ -10,6 +10,31 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private void EmitGlobalVarBindingInitializationIfNeeded()
+    {
+        if (_scope == null || _scope.Kind != ScopeKind.Global || !_scope.UsesGlobalThisValue)
+        {
+            return;
+        }
+
+        foreach (var binding in _scope.Bindings.Values)
+        {
+            if (binding.Kind != BindingKind.Var)
+            {
+                continue;
+            }
+
+            var nameTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, nameTemp));
+            DefineTempStorage(nameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.EnsureGlobalVarBinding),
+                new[] { EnsureObject(nameTemp) }));
+        }
+    }
+
     private bool TryApplyInferredNameToDeclarationValue(HIRVariableDeclaration declaration, TempVariable value, out TempVariable namedValue)
     {
         namedValue = value;
@@ -70,6 +95,27 @@ public sealed partial class HIRToLIRLowerer
         }
 
         TempVariable value;
+        TempVariable? withResolvedVarNameTemp = null;
+        TempVariable? withResolvedVarShadowedTemp = null;
+
+        if (exprStmt.Initializer != null
+            && binding.Kind == BindingKind.Var
+            && _activeWithObjects.Count > 0)
+        {
+            var preResolvedWithNameTemp = CreateTempVariable();
+            withResolvedVarNameTemp = preResolvedWithNameTemp;
+            _methodBodyIR.Instructions.Add(new LIRConstString(binding.Name, preResolvedWithNameTemp));
+            DefineTempStorage(preResolvedWithNameTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var preResolvedShadowedTemp = CreateTempVariable();
+            withResolvedVarShadowedTemp = preResolvedShadowedTemp;
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.HasPropertyIn),
+                new[] { EnsureObject(preResolvedWithNameTemp), _activeWithObjects.Peek() },
+                preResolvedShadowedTemp));
+            DefineTempStorage(preResolvedShadowedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        }
 
         if (exprStmt.Initializer != null)
         {
@@ -106,6 +152,34 @@ public sealed partial class HIRToLIRLowerer
             // No initializer means 'undefined'
             value = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstUndefined(value));
+            DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
+
+        if (exprStmt.Initializer != null
+            && binding.Kind == BindingKind.Var
+            && withResolvedVarNameTemp is TempVariable withNameTemp
+            && withResolvedVarShadowedTemp is TempVariable shadowedTemp)
+        {
+            TempVariable fallbackValueTemp;
+            if (_variableMap.TryGetValue(binding, out var existingBindingValue))
+            {
+                fallbackValueTemp = EnsureObject(existingBindingValue);
+            }
+            else
+            {
+                fallbackValueTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(fallbackValueTemp));
+                DefineTempStorage(fallbackValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+
+            var withResolvedValueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                nameof(JavaScriptRuntime.ObjectRuntime),
+                nameof(JavaScriptRuntime.ObjectRuntime.ApplyResolvedWithVarInitializer),
+                new[] { shadowedTemp, _activeWithObjects.Peek(), EnsureObject(withNameTemp), EnsureObject(value), EnsureObject(fallbackValueTemp) },
+                withResolvedValueTemp));
+            DefineTempStorage(withResolvedValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            value = withResolvedValueTemp;
         }
 
         bool initializerProvesUnboxedDouble = exprStmt.Initializer != null

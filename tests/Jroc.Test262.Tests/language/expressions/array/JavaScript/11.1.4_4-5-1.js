@@ -21,5 +21,6 @@ description: >
                 configurable: true
             });
             var arr = [101];
-console.log(Boolean(arr.hasOwnProperty("0")));
-console.log(Object.is(arr[0], 101));
+
+assert(arr.hasOwnProperty("0"), 'arr.hasOwnProperty("0") !== true');
+assert.sameValue(arr[0], 101, 'arr[0]');

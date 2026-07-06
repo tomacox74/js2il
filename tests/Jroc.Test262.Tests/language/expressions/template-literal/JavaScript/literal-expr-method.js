@@ -14,4 +14,4 @@ var object = {
   fn: function() { return 'result'; }
 };
 
-console.log(Object.is(`foo ${object.fn()} bar`, 'foo result bar'));
+assert.sameValue(`foo ${object.fn()} bar`, 'foo result bar');

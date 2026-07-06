@@ -13,4 +13,4 @@ info: |
 
 function fn() { return 'result'; }
 
-console.log(Object.is(`foo ${fn()} bar`, 'foo result bar'));
+assert.sameValue(`foo ${fn()} bar`, 'foo result bar');

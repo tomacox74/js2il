@@ -19,35 +19,21 @@ info: |
       i. Set value to ? Call(toJSON, value, « key »).
 ---*/
 
-function assertSameValue(actual, expected, message) {
-    var passed = Object.is(actual, expected);
-    console.log(passed);
-    if (!passed) {
-        throw new Error(message || "Expected SameValue");
-    }
-}
-
-assertSameValue(
-    JSON.stringify({
-        toJSON: function() {
-            return [false];
-        }
-    }),
-    "[false]"
+assert.sameValue(
+  JSON.stringify({
+    toJSON: function() { return [false]; },
+  }),
+  '[false]'
 );
 
 var arr = [true];
 arr.toJSON = function() {};
-assertSameValue(JSON.stringify(arr), undefined);
+assert.sameValue(JSON.stringify(arr), undefined);
 
-var str = new String("str");
-str.toJSON = function() {
-    return null;
-};
-assertSameValue(JSON.stringify({ key: str }), '{"key":null}');
+var str = new String('str');
+str.toJSON = function() { return null; };
+assert.sameValue(JSON.stringify({key: str}), '{"key":null}');
 
 var num = new Number(14);
-num.toJSON = function() {
-    return { key: 7 };
-};
-assertSameValue(JSON.stringify([num]), '[{"key":7}]');
+num.toJSON = function() { return {key: 7}; };
+assert.sameValue(JSON.stringify([num]), '[{"key":7}]');

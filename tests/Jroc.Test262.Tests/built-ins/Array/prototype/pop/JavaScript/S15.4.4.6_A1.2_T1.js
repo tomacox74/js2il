@@ -9,53 +9,6 @@ esid: sec-array.prototype.pop
 description: Checking this use new Array() and []
 ---*/
 
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
-assert.notSameValue = function(actual, unexpected) {
-  console.log(!Object.is(actual, unexpected));
-};
-
-function compareArray(actual, expected) {
-  if (!Array.isArray(actual) || !Array.isArray(expected) || actual.length !== expected.length) {
-    return false;
-  }
-
-  for (let i = 0; i < actual.length; i++) {
-    if (!Object.is(actual[i], expected[i])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-assert.compareArray = function(actual, expected) {
-  console.log(compareArray(actual, expected));
-};
-
-assert.throws = function(expectedCtor, fn) {
-  try {
-    fn();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedCtor);
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var x = new Array(0, 1, 2, 3);
 var pop = x.pop();
 if (pop !== 3) {
@@ -103,5 +56,3 @@ if (pop !== 0) {
 if (x.length !== 0) {
   throw new Test262Error('#10: x = []; x[0] = 0; x[3] = 3; x.pop(); x.length = 1; x.pop(); x.length === 0. Actual: ' + (x.length));
 }
-
-console.log(true);

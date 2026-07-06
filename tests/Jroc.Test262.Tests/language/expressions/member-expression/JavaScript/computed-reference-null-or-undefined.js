@@ -1,35 +1,25 @@
 // Copyright (C) 2024 Sony Interactive Entertainment Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
-function Test262Error(message) {
-    this.message = message || "";
-    this.name = "Test262Error";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-var $MAX_ITERATIONS = typeof $MAX_ITERATIONS === "undefined" ? 100000 : $MAX_ITERATIONS;
-var assert = function assert(value) {
-    console.log(!!value);
-};
-assert.sameValue = function(actual, expected) {
-    console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected) {
-    console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func) {
-    try {
-        func();
-        console.log(false);
-    } catch (error) {
-        console.log(error instanceof expectedErrorConstructor || error.constructor === expectedErrorConstructor);
-    }
-};
-assert.compareArray = function(actual, expected) {
-    console.log(actual.length === expected.length && actual.every(function(value, index) {
-        return Object.is(value, expected[index]);
-    }));
-};
+/*---
+esid: sec-evaluate-property-access-with-expression-key
+description: When getting the value of o[p], ToObject(o) precedes ToPropertyKey(p).
+info: |
+  13.3.3 EvaluatePropertyAccessWithExpressionKey ( baseValue, expression, strict )
+    1. Let _propertyNameReference_ be ? Evaluation of _expression_.
+    2. Let _propertyNameValue_ be ? GetValue(_propertyNameReference_).
+    ...
+    4. Return the Reference Record { [[Base]]: _baseValue_, [[ReferencedName]]: _propertyNameValue_, [[Strict]]: _strict_, [[ThisValue]]: ~empty~ }.
+
+  6.2.5.5 GetValue ( V )
+    1. If V is not a Reference Record, return V.
+    ...
+    3. If IsPropertyReference(V) is true, then
+      a. Let baseObj be ? ToObject(V.[[Base]]).
+      ...
+      c. If V.[[ReferencedName]] is neither a String nor a Symbol, then
+        i. Let referencedName be ? ToPropertyKey(V.[[ReferencedName]]).
+---*/
 
 assert.throws(TypeError, function() {
   var base = null;

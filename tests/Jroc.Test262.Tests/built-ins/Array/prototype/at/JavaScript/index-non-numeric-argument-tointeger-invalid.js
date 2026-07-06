@@ -11,14 +11,14 @@ info: |
 
 features: [Array.prototype.at]
 ---*/
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
-console.log(typeof Array.prototype.at === 'function');
+let a = [0,1,2,3];
 
-let a = [0, 1, 2, 3];
-
-try {
+assert.throws(TypeError, () => {
   a.at(Symbol());
-  console.log(false);
-} catch (e) {
-  console.log(e instanceof TypeError);
-}
+}, 'a.at(Symbol()) throws a TypeError exception');

@@ -9,13 +9,6 @@ features: [change-array-by-copy]
 includes: [compareArray.js]
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function(actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function(actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-function compareArray(actual, expected) { if (actual == null || expected == null || actual.length !== expected.length) return false; for (let i = 0; i < actual.length; i++) { if (!Object.is(actual[i], expected[i])) return false; } return true; }
-assert.compareArray = function(actual, expected) { console.log(compareArray(actual, expected)); };
-
-
 var arr = [2, 0, 1];
 arr.toSorted();
 

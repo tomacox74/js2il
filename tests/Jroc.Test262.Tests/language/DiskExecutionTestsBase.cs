@@ -20,10 +20,11 @@ public abstract class DiskExecutionTestsBase
         Action<VerifySettings>? configureSettings = null,
         [CallerFilePath] string sourceFilePath = "")
     {
-        var result = InMemoryTestCompiler.CompileAndExecute(
+        var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
             _testCategory,
             name => GetJavaScriptAndSourcePath(name, sourceFilePath),
+            sourceFilePath,
             enableIRMetrics: true,
             allowUnhandledException: allowUnhandledException);
 

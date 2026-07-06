@@ -1,5 +1,3 @@
-"use strict";
-
 // Copyright (c) 2012 Ecma International.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
@@ -13,4 +11,4 @@ description: >
 var a = [];
 a[4294967295] = "not an array element";
 
-console.log(Object.is(a[4294967295], "not an array element"));
+assert.sameValue(a[4294967295], "not an array element", 'The value of a[4294967295] is expected to be "not an array element"');

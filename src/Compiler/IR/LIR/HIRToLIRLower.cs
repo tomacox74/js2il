@@ -187,6 +187,7 @@ public sealed partial class HIRToLIRLowerer
         // NOTE: This must come AFTER async info is initialized, because async functions
         // with awaits need a scope instance even if there are no captured variables.
         lowerer.EmitScopeInstanceCreationIfNeeded();
+        lowerer.EmitGlobalVarBindingInitializationIfNeeded();
 
         if (!lowerer.EmitNamedFunctionExpressionBindingInitialization())
         {
@@ -299,7 +300,27 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var superSymbol = current.FindSymbol(superId.Name);
-        if (superSymbol.BindingInfo.DeclarationNode is not ClassDeclaration baseDecl || baseDecl.Id == null)
+
+        Acornima.Ast.Node? baseClassNode = null;
+        string? expectedScopeName = null;
+
+        switch (superSymbol.BindingInfo.DeclarationNode)
+        {
+            case ClassDeclaration baseDecl when baseDecl.Id != null:
+                baseClassNode = baseDecl;
+                expectedScopeName = baseDecl.Id.Name;
+                break;
+            case ClassExpression baseExpr:
+                baseClassNode = baseExpr;
+                expectedScopeName = baseExpr.Id?.Name ?? superId.Name;
+                break;
+            case VariableDeclarator variableDeclarator when variableDeclarator.Init is ClassExpression initClassExpr:
+                baseClassNode = initClassExpr;
+                expectedScopeName = initClassExpr.Id?.Name ?? superId.Name;
+                break;
+        }
+
+        if (baseClassNode == null)
         {
             return false;
         }
@@ -310,7 +331,19 @@ public sealed partial class HIRToLIRLowerer
             return false;
         }
 
-        var baseClassScope = declaringScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Class && string.Equals(s.Name, baseDecl.Id.Name, StringComparison.Ordinal));
+        var rootScope = declaringScope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        var baseClassScope = FindScopeByDeclarationNode(baseClassNode, rootScope);
+        if (baseClassScope?.Kind != ScopeKind.Class && expectedScopeName != null)
+        {
+            baseClassScope = declaringScope.Children.FirstOrDefault(s =>
+                s.Kind == ScopeKind.Class && string.Equals(s.Name, expectedScopeName, StringComparison.Ordinal));
+        }
+
         if (baseClassScope == null)
         {
             return false;

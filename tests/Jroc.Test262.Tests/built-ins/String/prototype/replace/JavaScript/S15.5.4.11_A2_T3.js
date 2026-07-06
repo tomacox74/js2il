@@ -9,6 +9,13 @@ es5id: 15.5.4.11_A2_T3
 description: Use $& in replaceValue, searchValue is regular expression /sh/g
 ---*/
 
-var value = 'She sells seashells by the seashore.';
-var re = /sh/g;
-console.log(value.replace(re, "$&" + 'sch') === 'She sells seashschells by the seashschore.');
+var __str = 'She sells seashells by the seashore.';
+var __re = /sh/g;
+
+//////////////////////////////////////////////////////////////////////////////
+//CHECK#1
+if (__str.replace(__re, "$&" + 'sch') !== 'She sells seashschells by the seashschore.') {
+  throw new Test262Error('#1: var __str = \'She sells seashells by the seashore.\'; var __re = /sh/g; __str.replace(__re,"$&" + \'sch\')===\'She sells seashschells by the seashschore.\'. Actual: ' + __str.replace(__re, "$&" + 'sch'));
+}
+//
+//////////////////////////////////////////////////////////////////////////////

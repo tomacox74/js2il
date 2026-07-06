@@ -14,14 +14,14 @@ description: >
         Array.prototype.reduce = function () {;};
         newDesc = Object.getOwnPropertyDescriptor(Array.prototype, "reduce");
         var descArray = [origDesc, newDesc];
-
+        
         for (var j in descArray) {  //Ensure no attributes are magically added to newDesc
             for (var i in descArray[j]) {
                 if (i==="value") {
-                    console.log(!Object.is(origDesc[i], newDesc[i]));
+                    assert.notSameValue(origDesc[i], newDesc[i], 'origDesc[i]');
                 }
                 else {
-                    console.log(Object.is(origDesc[i], newDesc[i]));
+                    assert.sameValue(origDesc[i], newDesc[i], 'origDesc[i]');
                 }
             }
         }

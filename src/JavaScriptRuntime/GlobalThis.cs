@@ -260,6 +260,7 @@ namespace JavaScriptRuntime
         private static readonly object _booleanPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
+        private static readonly object _arrayBufferPrototypeValue = new JsObject();
         private static readonly Func<object[], object?[]?, object?> _symbolFunctionValue = SymbolCall;
 
         // TypedArray intrinsic constructor and prototype
@@ -274,6 +275,10 @@ namespace JavaScriptRuntime
             static (_, args) => new Float32Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _int32ArrayConstructorValue = 
             static (_, args) => new Int32Array(args ?? global::System.Array.Empty<object?>());
+        private static readonly Func<object[], object?[], object?> _arrayBufferConstructorValue =
+            static (_, args) => args != null && args.Length > 1
+                ? new ArrayBuffer(args[0], args[1])
+                : new ArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly Func<object[], object?[], object?> _sharedArrayBufferConstructorValue =
             static (_, args) => new SharedArrayBuffer(args != null && args.Length > 0 ? args[0] : null);
         private static readonly Func<object[], object?[], object?> _int16ArrayConstructorValue = 
@@ -728,6 +733,7 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue);
             ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
             ConfigureTypedArrayInstancePrototype(_uint8ArrayConstructorValue, JavaScriptRuntime.Uint8Array.Prototype);
+            ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, _arrayBufferPrototypeValue);
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);
         }
@@ -1003,6 +1009,9 @@ namespace JavaScriptRuntime
             dict.TryAdd(nameof(GlobalThis.SharedArrayBuffer), SharedArrayBuffer);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.SharedArrayBuffer), dict[nameof(GlobalThis.SharedArrayBuffer)]);
 
+            dict.TryAdd(nameof(GlobalThis.ArrayBuffer), ArrayBuffer);
+            DefineNonEnumerableDataProperty(nameof(GlobalThis.ArrayBuffer), dict[nameof(GlobalThis.ArrayBuffer)]);
+
             dict.TryAdd(nameof(GlobalThis.Atomics), Atomics);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.Atomics), dict[nameof(GlobalThis.Atomics)]);
 
@@ -1222,6 +1231,7 @@ namespace JavaScriptRuntime
         public static Func<object[], object?, Delegate> Function => _functionConstructorValue;
 
         public static Delegate SharedArrayBuffer => _sharedArrayBufferConstructorValue;
+        public static Delegate ArrayBuffer => _arrayBufferConstructorValue;
 
         public static object Atomics => _atomicsValue;
 

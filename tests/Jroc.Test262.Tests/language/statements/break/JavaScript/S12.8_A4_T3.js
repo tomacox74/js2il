@@ -9,33 +9,6 @@ es5id: 12.8_A4_T3
 description: Using embedded and labeled loops, breaking to outer loop
 ---*/
 
-
-function assert(value, message) {
-  if (!value) {
-    throw new Test262Error(message || 'Assertion failed');
-  }
-}
-
-assert.sameValue = function(actual, expected, message) {
-  if (!Object.is(actual, expected)) {
-    throw new Test262Error(message || ('Expected SameValue but got ' + actual + ' and ' + expected));
-  }
-};
-
-assert.notSameValue = function(actual, unexpected, message) {
-  if (Object.is(actual, unexpected)) {
-    throw new Test262Error(message || ('Expected different value but got ' + actual));
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 LABEL_OUT : var x=0, y=0, xx=0, yy=0;
 (function(){
 LABEL_DO_LOOP : do {
@@ -66,5 +39,3 @@ if ((x!==1)&&(y!==0)&&(xx!==1)&(yy!==0)) {
 }
 //
 //////////////////////////////////////////////////////////////////////////////
-
-console.log(true);

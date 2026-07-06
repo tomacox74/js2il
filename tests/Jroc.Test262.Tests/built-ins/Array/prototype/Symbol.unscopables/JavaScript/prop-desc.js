@@ -7,11 +7,12 @@ description: >
 info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: true }.
+includes: [propertyHelper.js]
 features: [Symbol.unscopables]
 ---*/
 
-let descriptor = Object.getOwnPropertyDescriptor(Array.prototype, Symbol.unscopables);
-console.log(typeof descriptor === "object");
-console.log(descriptor.writable === false);
-console.log(descriptor.enumerable === false);
-console.log(descriptor.configurable === true);
+verifyProperty(Array.prototype, Symbol.unscopables, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

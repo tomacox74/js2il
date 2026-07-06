@@ -131,11 +131,6 @@ public sealed class CallableDiscovery
         }
         else if (astNode is ArrowFunctionExpression arrowExpr)
         {
-            if (IsClassHeritageArrow(functionScope, arrowExpr))
-            {
-                return;
-            }
-
             var location = SourceLocation.FromNode(arrowExpr);
             // Count only regular parameters (excluding rest parameters)
             var paramCount = CountJsParameters(arrowExpr.Params);
@@ -151,7 +146,7 @@ public sealed class CallableDiscovery
                 HasRestParameters = functionScope.HasRestParameters,
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
-                HasRestrictedFunctionProperties = true,
+                HasRestrictedFunctionProperties = false,
                 AstNode = arrowExpr
             };
             
@@ -163,16 +158,6 @@ public sealed class CallableDiscovery
             var scopeName = $"{parentScopeName}/ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
             DiscoverFromScope(functionScope, scopeName);
         }
-    }
-
-    private static bool IsClassHeritageArrow(Scope functionScope, ArrowFunctionExpression arrowExpr)
-    {
-        return functionScope.Parent?.AstNode switch
-        {
-            ClassExpression classExpression => ReferenceEquals(UnwrapClassHeritageExpression(classExpression.SuperClass), arrowExpr),
-            ClassDeclaration classDeclaration => ReferenceEquals(UnwrapClassHeritageExpression(classDeclaration.SuperClass), arrowExpr),
-            _ => false
-        };
     }
 
     private static Expression? UnwrapClassHeritageExpression(Expression? expression)
@@ -218,11 +203,6 @@ public sealed class CallableDiscovery
         };
         superClassExpression = UnwrapExpression(superClassExpression);
 
-        if (superClassExpression is ArrowFunctionExpression)
-        {
-            return;
-        }
-
         if (superClassExpression is FunctionExpression superFunc
             && TryFindDescendantScopeForAstNode(classScope, superFunc, out var superFuncScope))
         {
@@ -267,7 +247,7 @@ public sealed class CallableDiscovery
                 UsesMappedArgumentsObject = ctorScope != null && ArgumentsObjectSemantics.UsesMappedArgumentsObject(ctorScope),
                 ArgumentsParameterNames = ctorScope != null ? ArgumentsObjectSemantics.GetMappedParameterNames(ctorScope) : Array.Empty<string>(),
                 IncludeCalleeInArgumentsObject = ctorNeedsArgumentsObject && ctorScope != null && !ArgumentsObjectSemantics.IsStrictScope(ctorScope),
-                HasRestrictedFunctionProperties = true,
+                HasRestrictedFunctionProperties = false,
                 AstNode = ctor
             };
             
@@ -286,7 +266,7 @@ public sealed class CallableDiscovery
                 HasRestParameters = false,
                 UsesMappedArgumentsObject = false,
                 IncludeCalleeInArgumentsObject = false,
-                HasRestrictedFunctionProperties = true,
+                HasRestrictedFunctionProperties = false,
                 // For synthetic callables we still want a stable AST node for indexing,
                 // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
                 // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
