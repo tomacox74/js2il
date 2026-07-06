@@ -3857,7 +3857,10 @@ namespace JavaScriptRuntime
             }
 
             Func<object[], object?[]?, object?> functionValue = (unusedScopes, args) =>
-                CallMember(target, propName, (object[]?)args);
+            {
+                TryCallStaticClassMethod(target, propName, (object[]?)args ?? System.Array.Empty<object>(), out var result);
+                return result;
+            };
 
             GlobalThis.ConfigureBuiltinFunctionObject(functionValue);
             PropertyDescriptorStore.DefineOrUpdate(functionValue, "name", new JsPropertyDescriptor
