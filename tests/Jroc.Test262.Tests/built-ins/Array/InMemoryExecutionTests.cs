@@ -25,7 +25,7 @@ public sealed class InMemoryExecutionTests
     private static IReadOnlyList<WeakReference> RunRepresentativeArrayFixtures([CallerFilePath] string sourceFilePath = "")
     {
         var weakReferences = new List<WeakReference>();
-        foreach (var testName in new[] { "constructor", "S15.4.5.2_A1_T1", "S15.4.5.2_A2_T1" })
+        foreach (var testName in new[] { "constructor", "S15.4.5.2_A1_T2", "S15.4.5.2_A2_T1" })
         {
             var result = Test262SharedAssertHarness.CompileAndExecute(
                 testName,
