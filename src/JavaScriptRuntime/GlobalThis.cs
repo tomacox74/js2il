@@ -902,6 +902,18 @@ namespace JavaScriptRuntime
             });
         }
 
+        private void DefineDataProperty(string key, object? value, RuntimeGlobalPropertyAttributes attributes)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = attributes.Enumerable,
+                Configurable = attributes.Configurable,
+                Writable = attributes.Writable,
+                Value = value
+            });
+        }
+
 
         private static void DefineIntrinsicDataProperty(object target, string key, object? value)
         {
@@ -1168,6 +1180,32 @@ namespace JavaScriptRuntime
 
             dict.TryAdd(nameof(GlobalThis.isNaN), _isNaNValue);
             DefineNonEnumerableDataProperty(nameof(GlobalThis.isNaN), dict[nameof(GlobalThis.isNaN)]);
+
+            ApplyHostGlobalBindings(dict);
+        }
+
+        private void ApplyHostGlobalBindings(IDictionary<string, object?> dict)
+        {
+            var serviceProvider = ServiceProvider;
+            if (serviceProvider == null
+                || !serviceProvider.TryResolve<HostRuntimeIntrinsicDescriptors>(out var hostRuntimeIntrinsics)
+                || hostRuntimeIntrinsics == null)
+            {
+                return;
+            }
+
+            foreach (var descriptor in hostRuntimeIntrinsics.GlobalBindings)
+            {
+                if (dict.ContainsKey(descriptor.Name)
+                    && descriptor.OverwritePolicy == RuntimeGlobalOverwritePolicy.PreserveExisting)
+                {
+                    continue;
+                }
+
+                var value = descriptor.CreateValue();
+                dict[descriptor.Name] = value;
+                DefineDataProperty(descriptor.Name, value, descriptor.PropertyAttributes);
+            }
         }
 
         /// <summary>

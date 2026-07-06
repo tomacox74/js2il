@@ -1158,6 +1158,7 @@ public class RuntimeServices
     {
         var container = new ServiceContainer();
         container.RegisterInstance(new GlobalThisOptions());
+        container.RegisterInstance(HostRuntimeIntrinsicDescriptors.Empty);
         container.RegisterInstance(new ConsoleOutputSinks());
         
         // Register default engine dependencies

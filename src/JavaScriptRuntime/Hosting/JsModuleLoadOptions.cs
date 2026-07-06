@@ -1,3 +1,4 @@
+using JavaScriptRuntime;
 using JavaScriptRuntime.Node;
 
 namespace Jroc.Runtime;
@@ -14,4 +15,9 @@ public sealed class JsModuleLoadOptions
     /// Optional host-controlled process launcher used for hosted <c>child_process.fork()</c> calls.
     /// </summary>
     public IChildProcessLauncher? ChildProcessLauncher { get; init; }
+
+    /// <summary>
+    /// Optional host-provided runtime intrinsics applied to the hosted JavaScript global object.
+    /// </summary>
+    public HostRuntimeIntrinsicDescriptors HostRuntimeIntrinsics { get; init; } = HostRuntimeIntrinsicDescriptors.Empty;
 }
