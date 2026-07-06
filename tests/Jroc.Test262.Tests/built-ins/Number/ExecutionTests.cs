@@ -90,4 +90,51 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task S15_7_1_1_A1()
         => ExecutionTestFromFile("S15.7.1.1_A1");
 
+    [Fact(DisplayName = "S15.7.2.1_A1")]
+    public Task S15_7_2_1_A1()
+        => ExecutionTestFromFile("S15.7.2.1_A1");
+
+    [Fact(DisplayName = "S15.7.2.1_A2")]
+    public Task S15_7_2_1_A2()
+        => ExecutionTestFromFile("S15.7.2.1_A2");
+
+    [Fact(DisplayName = "S15.7.3_A1")]
+    public Task S15_7_3_A1()
+        => ExecutionTestFromFile("S15.7.3_A1");
+
+    [Fact(DisplayName = "S15.7.3_A2")]
+    public Task S15_7_3_A2()
+        => ExecutionTestFromFile("S15.7.3_A2");
+
+    [Fact(DisplayName = "S15.7.3_A3")]
+    public Task S15_7_3_A3()
+        => ExecutionTestFromFile("S15.7.3_A3");
+
+    [Fact(DisplayName = "S15.7.3_A4")]
+    public Task S15_7_3_A4()
+        => ExecutionTestFromFile("S15.7.3_A4");
+
+    [Fact(DisplayName = "S15.7.5_A1_T01")]
+    public Task S15_7_5_A1_T01()
+        => ExecutionTestFromFile("S15.7.5_A1_T01");
+
+    [Fact(DisplayName = "S15.7.5_A1_T02")]
+    public Task S15_7_5_A1_T02()
+        => ExecutionTestFromFile("S15.7.5_A1_T02");
+
+    [Fact(DisplayName = "MAX_VALUE/S15.7.3.2_A3")]
+    public Task MAX_VALUE_S15_7_3_2_A3()
+        => ExecutionTestFromFile("MAX_VALUE/S15.7.3.2_A3");
+
+    [Fact(DisplayName = "MAX_VALUE/value")]
+    public Task MAX_VALUE_value()
+        => ExecutionTestFromFile("MAX_VALUE/value");
+
+    [Fact(DisplayName = "MIN_VALUE/S15.7.3.3_A3")]
+    public Task MIN_VALUE_S15_7_3_3_A3()
+        => ExecutionTestFromFile("MIN_VALUE/S15.7.3.3_A3");
+
+    [Fact(DisplayName = "MIN_VALUE/value")]
+    public Task MIN_VALUE_value()
+        => ExecutionTestFromFile("MIN_VALUE/value");
 }
