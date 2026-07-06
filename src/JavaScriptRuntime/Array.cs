@@ -1118,7 +1118,6 @@ namespace JavaScriptRuntime
         {
             get
             {
-                var indexKey = DotNet2JSConversions.ToString(index);
                 var isDenseIndex = !double.IsNaN(index)
                     && !double.IsInfinity(index)
                     && index % 1.0 == 0.0
@@ -1126,7 +1125,7 @@ namespace JavaScriptRuntime
                     && index <= int.MaxValue;
                 if (!isDenseIndex)
                 {
-                    return JavaScriptRuntime.ObjectRuntime.GetProperty(this, indexKey);
+                    return JavaScriptRuntime.ObjectRuntime.GetProperty(this, DotNet2JSConversions.ToString(index));
                 }
 
                 int intIndex = (int)index;
@@ -1139,7 +1138,6 @@ namespace JavaScriptRuntime
             }
             set
             {
-                var indexKey = DotNet2JSConversions.ToString(index);
                 var isDenseIndex = !double.IsNaN(index)
                     && !double.IsInfinity(index)
                     && index % 1.0 == 0.0
@@ -1147,7 +1145,7 @@ namespace JavaScriptRuntime
                     && index <= int.MaxValue;
                 if (!isDenseIndex)
                 {
-                    JavaScriptRuntime.ObjectRuntime.SetProperty(this, indexKey, value);
+                    JavaScriptRuntime.ObjectRuntime.SetProperty(this, DotNet2JSConversions.ToString(index), value);
                     return;
                 }
 

@@ -300,7 +300,35 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     bool IPropertyDescriptorStore.HasAny(object target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        return GetOwnKeysForRuntimeStore(target).Any();
+
+        if (!_overrideSlots.TryGetValue(target, out var slot))
+        {
+            // No overrides for this target: intrinsic descriptors decide the answer
+            // without materializing the ordered key list.
+            return _intrinsicStore.HasAny(target);
+        }
+
+        foreach (var key in _intrinsicStore.GetOwnKeys(target))
+        {
+            if (!IsIntrinsicKeySuppressedByOverride(target, key))
+            {
+                return true;
+            }
+        }
+
+        lock (slot.SyncRoot)
+        {
+            foreach (var key in slot.KeyOrder)
+            {
+                if (slot.Overrides.TryGetValue(key, out var entry)
+                    && entry.Kind != PropertyDescriptorOverrideKind.Delete)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     void IPropertyDescriptorStore.DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)

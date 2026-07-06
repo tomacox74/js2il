@@ -4282,15 +4282,15 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            // Only allocate cycle-detection state if there is a chain to walk.
-            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance)
-            {
-                receiver
-            };
+            // Allocation-free cycle detection: bound the walk by a generous depth
+            // limit instead of tracking visited nodes. Prototype chains are short
+            // in practice; a cycle simply exhausts the budget and returns false.
+            const int MaxPrototypeChainDepth = 1024;
+            int depth = 0;
 
             while (proto is not null && proto is not JsNull)
             {
-                if (!visited.Add(proto))
+                if (ReferenceEquals(proto, receiver) || ++depth > MaxPrototypeChainDepth)
                 {
                     return false;
                 }
