@@ -10,13 +10,7 @@ public static class Test262HostRuntimeIntrinsics
             .AddGlobalFactory("assert", CreateAssert)
             .AddGlobalFactory("Test262Error", CreateTest262ErrorConstructor)
             .AddGlobalValue("$ERROR", (Action<object?>)(message => throw CreateTest262Error(message)))
-            .AddGlobalValue("$DONE", (Action<object?>)(error =>
-            {
-                if (error is not null)
-                {
-                    throw error as Exception ?? new Error(ToMessage(error));
-                }
-            }))
+            .AddGlobalValue("$DONE", CreateDoneFunction())
             .AddGlobalFactory("$262", Create262Object)
             .AddGlobalValue("compareArray", (Func<object?, object?, bool>)CompareArray)
             .AddGlobalValue("verifyProperty", (Action<object?, object?, object?>)VerifyProperty)
@@ -26,6 +20,10 @@ public static class Test262HostRuntimeIntrinsics
             .AddGlobalValue("verifyNotEnumerable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "enumerable", false)))
             .AddGlobalValue("verifyConfigurable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", true)))
             .AddGlobalValue("verifyNotConfigurable", (Action<object?, object?>)((target, name) => VerifyAttribute(target, name, "configurable", false)))
+            .AddGlobalValue("assertRelativeDateMs", (Action<object?, object?>)AssertRelativeDateMs)
+            .AddGlobalValue("getWellKnownIntrinsicObject", (Func<object?, object?>)GetWellKnownIntrinsicObject)
+            .AddGlobalValue("isConstructor", (Func<object?, bool>)JavaScriptRuntime.Object.IsConstructibleValue)
+            .AddGlobalValue("asyncTest", (Action<object?>)AsyncTest)
             .Build();
 
     private static object CreateAssert()
@@ -69,7 +67,7 @@ public static class Test262HostRuntimeIntrinsics
             }
             catch (Exception error)
             {
-                passed = IsExpectedError(error, expectedErrorConstructor);
+                passed = IsExpectedError(error is JsThrownValueException thrown ? thrown.Value : error, expectedErrorConstructor);
             }
 
             Log(passed);
@@ -132,11 +130,18 @@ public static class Test262HostRuntimeIntrinsics
     private static object Create262Object()
     {
         var result = new ExpandoObject();
-        ObjectRuntime.SetItem(result, "createRealm", Unsupported262("$262.createRealm"));
+        ObjectRuntime.SetItem(result, "createRealm", (Func<object>)CreateRealm);
         ObjectRuntime.SetItem(result, "detachArrayBuffer", Unsupported262("$262.detachArrayBuffer"));
         ObjectRuntime.SetItem(result, "evalScript", Unsupported262("$262.evalScript"));
         ObjectRuntime.SetItem(result, "gc", Unsupported262("$262.gc"));
         return result;
+    }
+
+    private static object CreateRealm()
+    {
+        var realm = new ExpandoObject();
+        ObjectRuntime.SetItem(realm, "global", GlobalThis.globalThis);
+        return realm;
     }
 
     private static Action Unsupported262(string name)
@@ -235,11 +240,76 @@ public static class Test262HostRuntimeIntrinsics
         return true;
     }
 
-    private static bool IsExpectedError(Exception error, object? expectedErrorConstructor)
+    private static void AssertRelativeDateMs(object? date, object? expectedMs)
+    {
+        var actualMs = ObjectRuntime.CallMember(date!, "valueOf", global::System.Array.Empty<object>());
+        var timezoneOffsetMinutes = ObjectRuntime.CallMember(date!, "getTimezoneOffset", global::System.Array.Empty<object>());
+        var normalizedActualMs = TypeUtilities.ToNumber(actualMs) - TypeUtilities.ToNumber(timezoneOffsetMinutes) * 60_000d;
+        var passed = JavaScriptRuntime.Object.@is(normalizedActualMs, TypeUtilities.ToNumber(expectedMs));
+        Log(passed);
+        if (!passed)
+        {
+            ThrowAssertion($"Expected date value {ToMessage(expectedMs)}");
+        }
+    }
+
+    private static object? GetWellKnownIntrinsicObject(object? name)
+    {
+        return ToMessage(name) switch
+        {
+            "%AsyncFunction%" => GetStaticFieldValue(typeof(AsyncFunction), "ConstructorValue"),
+            "%GeneratorFunction%" => GetStaticFieldValue(typeof(GeneratorObject), "_generatorFunctionConstructor"),
+            var unsupported => throw CreateTest262Error($"Unsupported intrinsic {unsupported}")
+        };
+    }
+
+    private static object GetStaticFieldValue(Type type, string fieldName)
+    {
+        var field = type.GetField(fieldName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+            ?? throw new InvalidOperationException($"Unable to resolve {type.FullName}.{fieldName}.");
+        return field.GetValue(null)
+            ?? throw new InvalidOperationException($"Resolved {type.FullName}.{fieldName} to null.");
+    }
+
+    private static void AsyncTest(object? testFunc)
+    {
+        var result = Closure.InvokeWithArgs(testFunc!, RuntimeServices.EmptyScopes);
+        var done = CreateDoneFunction();
+        ObjectRuntime.CallMember(result!, "then", new object[] { done, done });
+    }
+
+    private static Action<object?> CreateDoneFunction()
+        => error =>
+        {
+            if (error is not null)
+            {
+                throw error as Exception ?? new Error(ToMessage(error));
+            }
+        };
+
+    private static bool IsExpectedError(object? error, object? expectedErrorConstructor)
     {
         if (expectedErrorConstructor is null)
         {
             return false;
+        }
+
+        try
+        {
+            if (Operators.InstanceOf(error, expectedErrorConstructor))
+            {
+                return true;
+            }
+        }
+        catch (TypeError)
+        {
+        }
+
+        if (error is not null
+            && error is not JsNull
+            && ReferenceEquals(ObjectRuntime.GetItem(error, "constructor"), expectedErrorConstructor))
+        {
+            return true;
         }
 
         var expectedName = ObjectRuntime.GetItem(expectedErrorConstructor, "name") as string;
@@ -252,11 +322,13 @@ public static class Test262HostRuntimeIntrinsics
         return false;
     }
 
-    private static string GetErrorName(Exception error)
+    private static string GetErrorName(object? error)
         => error switch
         {
             Error jsError => jsError.name,
-            _ => error.GetType().Name
+            null => string.Empty,
+            JsNull => string.Empty,
+            _ => ObjectRuntime.GetItem(error, "name") as string ?? error.GetType().Name
         };
 
     private static bool HasOwn(object? target, string name)

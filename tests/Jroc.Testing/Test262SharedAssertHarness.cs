@@ -13,7 +13,7 @@ public static class Test262SharedAssertHarness
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
-        bool useNativeHostHelpers = false,
+        bool useNativeHostHelpers = true,
         int timeoutMs = 30000)
     {
         var (entryScript, entrySourcePath) = getJavaScriptAndSourcePath(testName);
@@ -300,6 +300,8 @@ public static class Test262SharedAssertHarness
     {
         foreach (var includeFileName in includeFileNames)
         {
+            // Native C# host intrinsics replace these helper groups. Other include files
+            // continue to use the JavaScript fallback until their full helper surfaces are ported.
             if (string.Equals(includeFileName, "assert.js", StringComparison.Ordinal)
                 || string.Equals(includeFileName, "compareArray.js", StringComparison.Ordinal)
                 || string.Equals(includeFileName, "isConstructor.js", StringComparison.Ordinal)

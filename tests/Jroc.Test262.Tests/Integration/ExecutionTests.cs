@@ -105,8 +105,7 @@ public class ExecutionTests
             "Integration",
             GetJavaScriptAndSourcePath,
             sourceFilePath,
-            enableIRMetrics: true,
-            useNativeHostHelpers: true);
+            enableIRMetrics: true);
 
         var settings = new VerifySettings(_verifySettings);
         var directory = Path.GetDirectoryName(sourceFilePath)
