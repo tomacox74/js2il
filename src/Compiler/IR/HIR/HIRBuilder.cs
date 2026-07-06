@@ -123,6 +123,9 @@ public static class HIRBuilder
                 && superClassExpression != null;
         }
 
+        static bool HasStaticallyInvalidArrowHeritage(Node classNode)
+            => UnwrapExpression(GetClassSuperClass(classNode)) is ArrowFunctionExpression;
+
         static string GetRegistryClassName(Scope classScope)
         {
             var ns = classScope.DotNetNamespace ?? "Classes";
@@ -230,7 +233,7 @@ public static class HIRBuilder
                     var ctorStatements = new List<HIRStatement>();
 
                     var superClassNode = UnwrapExpression(GetClassSuperClass(enclosingClassNode));
-                    var isDerivedConstructor = superClassNode != null;
+                    var isDerivedConstructor = superClassNode != null && superClassNode is not ArrowFunctionExpression;
                     var emitImplicitSuperCall = isDerivedConstructor;
 
                     static int GetMaxSuperCtorArgCount(Scope classScope, Node classNode)
@@ -465,7 +468,8 @@ public static class HIRBuilder
                     }
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
-                    var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null;
+                    var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null
+                        && !HasStaticallyInvalidArrowHeritage(enclosingClassNode);
                     HIRExpression? superClassExpression = null;
                     if (isDerivedConstructor
                         && !TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))
@@ -683,7 +687,8 @@ public static class HIRBuilder
                     }
 
                     var registryClassName = GetRegistryClassName(enclosingClassScope);
-                    var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null;
+                    var isDerivedConstructor = GetClassSuperClass(enclosingClassNode) != null
+                        && !HasStaticallyInvalidArrowHeritage(enclosingClassNode);
                     HIRExpression? superClassExpression = null;
                     if (isDerivedConstructor
                         && !TryParseSuperClassExpression(enclosingClassScope, enclosingClassNode, out superClassExpression))

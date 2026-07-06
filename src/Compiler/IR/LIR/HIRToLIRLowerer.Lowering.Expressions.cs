@@ -1026,7 +1026,8 @@ public sealed partial class HIRToLIRLowerer
         // can fall back to a simple LIRGetUserClassType without leaving orphaned IR instructions.
         // This happens in static CLR methods (property getters/setters) that have ScopesSource.None.
         var scopesTemp = CreateTempVariable();
-        if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp))
+        var allowEmptyOnUnmappedGlobal = !DoesClassNeedParentScopes(classScope);
+        if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp, allowEmptyOnUnmappedGlobal))
         {
             resultTempVar = default;
             return false;
