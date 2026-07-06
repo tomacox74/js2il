@@ -15,10 +15,6 @@ info: |
   ...
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 var counter = 0;
 var set = WeakMap.prototype.set;
 WeakMap.prototype.set = function(value) {

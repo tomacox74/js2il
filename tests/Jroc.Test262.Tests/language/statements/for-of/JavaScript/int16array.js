@@ -7,10 +7,6 @@ description: >
 features: [TypedArray]
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 var iterationCount = 0;
 var array = new Int16Array([3, 2, 4, 1]);
 

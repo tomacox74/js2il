@@ -42,10 +42,11 @@ public class ExecutionTests
             throw new FileNotFoundException($"JavaScript fixture not found: {jsPath}", jsPath);
         }
 
-        var result = InMemoryTestCompiler.CompileAndExecute(
+        var result = Test262SharedAssertHarness.CompileAndExecute(
             testName,
             "language.expressions.unary-minus",
             _ => (File.ReadAllText(jsPath), jsPath),
+            sourceFilePath,
             enableIRMetrics: true);
         await VerifyWithSnapshot(result.Output, sourceFilePath);
     }

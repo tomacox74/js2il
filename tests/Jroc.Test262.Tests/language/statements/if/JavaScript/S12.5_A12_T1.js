@@ -12,9 +12,6 @@ var Test262Error = function(message) {
   this.name = 'Test262Error';
   this.message = message || '';
 };
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 if(true)
   if (false)
     throw new Test262Error('#1.1: At embedded "if/else" constructions engine must select right branches');

@@ -13,9 +13,6 @@ var Test262Error = function(message) {
   this.name = 'Test262Error';
   this.message = message || '';
 };
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 var object = {p1: 1, p2: 1};
 var result = 0;
 lbl: for(var i in object){

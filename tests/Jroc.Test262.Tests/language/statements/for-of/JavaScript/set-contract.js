@@ -12,25 +12,6 @@ var assert = function assert(condition) {
   console.log(Boolean(condition));
 };
 
-assert.sameValue = function (actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
-assert.notSameValue = function (actual, unexpected) {
-  console.log(!Object.is(actual, unexpected));
-};
-
-assert.throws = function (expectedError, fn) {
-  var passed = false;
-  try {
-    fn();
-  } catch (error) {
-    passed = error instanceof expectedError;
-  }
-  console.log(passed);
-};
-
-
 var set = new Set();
 var iterationCount = 0;
 

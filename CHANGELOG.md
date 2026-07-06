@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- test262: migrated `tests/Jroc.Test262.Tests` execution fixtures to the shared in-memory assert harness, removed copied per-fixture assert/helper blocks across the suite, and restored fixture files toward their upstream `test262` sources.
+
 _Nothing yet._
 
 ## v0.11.11 - 2026-07-05

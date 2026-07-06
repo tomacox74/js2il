@@ -114,57 +114,12 @@ var assert = function assert(condition) {
   console.log(Boolean(condition));
 };
 
-assert.sameValue = function (actual, expected) {
-  console.log(__test262_Object_is(actual, expected));
-};
-
-assert.notSameValue = function (actual, unexpected) {
-  console.log(!__test262_Object_is(actual, unexpected));
-};
-
-assert.compareArray = function (actual, expected) {
-  console.log(__test262_compareArray(actual, expected));
-};
-
 assert.deepEqual = function (actual, expected) {
   console.log(__test262_deepEqual(actual, expected));
 };
 
-assert.throws = function (expectedError, fn) {
-  var passed = false;
-  try {
-    fn();
-  } catch (error) {
-    passed = error instanceof expectedError;
-  }
-  console.log(passed);
-};
-
-function compareArray(actual, expected) {
-  return __test262_compareArray(actual, expected);
-}
-
 function deepEqual(actual, expected) {
   return __test262_deepEqual(actual, expected);
-}
-
-function verifyProperty(obj, name, desc) {
-  var actual = __test262_getOwnPropertyDescriptor(obj, name);
-  var passed = !!actual;
-  if ("value" in desc) {
-    passed = passed && __test262_Object_is(actual.value, desc.value);
-  }
-  if ("writable" in desc) {
-    passed = passed && actual.writable === desc.writable;
-  }
-  if ("enumerable" in desc) {
-    passed = passed && actual.enumerable === desc.enumerable;
-  }
-  if ("configurable" in desc) {
-    passed = passed && actual.configurable === desc.configurable;
-  }
-  console.log(passed);
-  return passed;
 }
 
 function verifyEqualTo(obj, name, value) {
@@ -174,58 +129,13 @@ function verifyEqualTo(obj, name, value) {
   return passed;
 }
 
-function verifyWritable(obj, name, verifyProp, value) {
-  var passed = __test262_isWritable(obj, name, verifyProp, value);
-  console.log(passed);
-  return passed;
-}
-
-function verifyNotWritable(obj, name, verifyProp, value) {
-  var passed = !__test262_isWritable(obj, name, verifyProp, value);
-  console.log(passed);
-  return passed;
-}
-
-function verifyEnumerable(obj, name) {
-  var passed = __test262_isEnumerable(obj, name);
-  console.log(passed);
-  return passed;
-}
-
-function verifyNotEnumerable(obj, name) {
-  var passed = !__test262_isEnumerable(obj, name);
-  console.log(passed);
-  return passed;
-}
-
-function verifyConfigurable(obj, name) {
-  var passed = __test262_isConfigurable(obj, name);
-  console.log(passed);
-  return passed;
-}
-
-function verifyNotConfigurable(obj, name) {
-  var passed = !__test262_isConfigurable(obj, name);
-  console.log(passed);
-  return passed;
-}
-
 function reportCompare() {
 }
 
-function Test262Error(message) {
-  this.message = message || "";
-}
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
 Test262Error.prototype.name = "Test262Error";
 
 function print() {
   console.log.apply(console, arguments);
-}
-
-function $ERROR() {
-  console.log(false);
 }
 
 var x = "prototype";

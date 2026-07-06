@@ -70,23 +70,84 @@ function verifyProperty(object, name, desc) {
     if (!passed) { throw new Error('verifyProperty failed for ' + name); }
 }
 
+function verifyWritable(object, name) {
+    var actual = Object.getOwnPropertyDescriptor(object, name);
+    var passed = !!actual && actual.writable === true;
+    console.log(passed);
+    if (!passed) { throw new Error('verifyWritable failed for ' + String(name)); }
+}
+
+function verifyNotWritable(object, name) {
+    var actual = Object.getOwnPropertyDescriptor(object, name);
+    var passed = !!actual && actual.writable === false;
+    console.log(passed);
+    if (!passed) { throw new Error('verifyNotWritable failed for ' + String(name)); }
+}
+
+function verifyEnumerable(object, name) {
+    var actual = Object.getOwnPropertyDescriptor(object, name);
+    var passed = !!actual && actual.enumerable === true;
+    console.log(passed);
+    if (!passed) { throw new Error('verifyEnumerable failed for ' + String(name)); }
+}
+
+function verifyNotEnumerable(object, name) {
+    var actual = Object.getOwnPropertyDescriptor(object, name);
+    var passed = !!actual && actual.enumerable === false;
+    console.log(passed);
+    if (!passed) { throw new Error('verifyNotEnumerable failed for ' + String(name)); }
+}
+
+function verifyConfigurable(object, name) {
+    var actual = Object.getOwnPropertyDescriptor(object, name);
+    var passed = !!actual && actual.configurable === true;
+    console.log(passed);
+    if (!passed) { throw new Error('verifyConfigurable failed for ' + String(name)); }
+}
+
+function verifyNotConfigurable(object, name) {
+    var actual = Object.getOwnPropertyDescriptor(object, name);
+    var passed = !!actual && actual.configurable === false;
+    console.log(passed);
+    if (!passed) { throw new Error('verifyNotConfigurable failed for ' + String(name)); }
+}
+
 function assertRelativeDateMs(date, expectedMs) {
     var passed = Object.is(date.valueOf(), expectedMs);
     console.log(passed);
     if (!passed) { throw new Error('Expected date value ' + expectedMs); }
 }
 
+function getWellKnownIntrinsicObject(name) {
+    if (name === '%AsyncFunction%') { return async function() {}.constructor; }
+    if (name === '%GeneratorFunction%') { return function*() {}.constructor; }
+    throw new Test262Error('Unsupported intrinsic ' + name);
+}
+
 function isConstructor(fn) {
     try { Reflect.construct(Object, [], fn); return true; } catch (error) { return false; }
 }
 
+function asyncTest(testFunc) {
+    testFunc().then($DONE, $DONE);
+}
+
+globalThis.assert = assert;
 globalThis.Test262Error = Test262Error;
 globalThis.$ERROR = $ERROR;
 globalThis.$DONE = $DONE;
 globalThis.compareArray = compareArray;
 globalThis.verifyProperty = verifyProperty;
+globalThis.verifyWritable = verifyWritable;
+globalThis.verifyNotWritable = verifyNotWritable;
+globalThis.verifyEnumerable = verifyEnumerable;
+globalThis.verifyNotEnumerable = verifyNotEnumerable;
+globalThis.verifyConfigurable = verifyConfigurable;
+globalThis.verifyNotConfigurable = verifyNotConfigurable;
 globalThis.assertRelativeDateMs = assertRelativeDateMs;
+globalThis.getWellKnownIntrinsicObject = getWellKnownIntrinsicObject;
 globalThis.isConstructor = isConstructor;
+globalThis.asyncTest = asyncTest;
 
 module.exports = {
     assert: assert,
@@ -95,6 +156,14 @@ module.exports = {
     $DONE: $DONE,
     compareArray: compareArray,
     verifyProperty: verifyProperty,
+    verifyWritable: verifyWritable,
+    verifyNotWritable: verifyNotWritable,
+    verifyEnumerable: verifyEnumerable,
+    verifyNotEnumerable: verifyNotEnumerable,
+    verifyConfigurable: verifyConfigurable,
+    verifyNotConfigurable: verifyNotConfigurable,
     assertRelativeDateMs: assertRelativeDateMs,
-    isConstructor: isConstructor
+    getWellKnownIntrinsicObject: getWellKnownIntrinsicObject,
+    isConstructor: isConstructor,
+    asyncTest: asyncTest
 };

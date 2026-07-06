@@ -14,30 +14,82 @@ public static class InMemoryTestCompiler
         string testCategory,
         Func<string, (string Script, string? SourcePath)> getJavaScriptAndSourcePath,
         string[]? additionalScripts = null,
+        bool executeAdditionalScriptsBeforeEntry = false,
         bool enableIRMetrics = false,
         bool allowUnhandledException = false,
         Action<ServiceContainer>? addMocks = null,
         int timeoutMs = 30000)
     {
         var (script, sourcePath) = getJavaScriptAndSourcePath(testName);
-        var entryPath = sourcePath ?? Path.Combine(
-            Path.GetTempPath(),
-            "Jroc.Tests",
-            "InMemory",
-            testCategory,
-            Guid.NewGuid().ToString("N"),
-            $"{testName}.js");
-
         var fileSystem = new MockFileSystem();
-        fileSystem.AddFile(entryPath, script, sourcePath);
+        string entryPath;
+        string entrySourceText;
 
-        if (additionalScripts != null)
+        if (executeAdditionalScriptsBeforeEntry && additionalScripts is { Length: > 0 })
         {
+            var workingDirectory = sourcePath != null
+                ? Path.Combine(Path.GetDirectoryName(sourcePath) ?? string.Empty, "__test262_harness__")
+                : Path.Combine(
+                    Path.GetTempPath(),
+                    "Jroc.Tests",
+                    "InMemory",
+                    testCategory,
+                    Guid.NewGuid().ToString("N"));
+
+            var testLogicalPath = sourcePath != null
+                ? Path.Combine(workingDirectory, Path.GetFileName(sourcePath))
+                : Path.Combine(workingDirectory, "__test_entry__.js");
+            fileSystem.AddFile(testLogicalPath, script, sourcePath);
+
+            var bootstrapScript = new System.Text.StringBuilder();
             foreach (var scriptName in additionalScripts)
             {
                 var (additionalScript, additionalSourcePath) = getJavaScriptAndSourcePath(scriptName);
-                var additionalPath = additionalSourcePath ?? Path.Combine(Path.GetDirectoryName(entryPath) ?? string.Empty, $"{scriptName}.js");
-                fileSystem.AddFile(additionalPath, additionalScript, additionalSourcePath);
+                var normalizedModuleId = NormalizeModuleId(scriptName);
+                var logicalPath = Path.Combine(
+                    workingDirectory,
+                    normalizedModuleId.Replace('/', Path.DirectorySeparatorChar) + ".js");
+                fileSystem.AddFile(logicalPath, additionalScript, additionalSourcePath);
+                if (string.Equals(normalizedModuleId, "node_modules/assert/index", StringComparison.Ordinal))
+                {
+                    bootstrapScript.AppendLine(additionalScript);
+                    continue;
+                }
+
+                bootstrapScript.Append("require('./")
+                    .Append(normalizedModuleId)
+                    .AppendLine(".js');");
+            }
+
+            var entrySpecifier = "./" + Path.GetFileName(testLogicalPath).Replace('\\', '/');
+            bootstrapScript.Append("require('")
+                .Append(entrySpecifier)
+                .AppendLine("');");
+
+            entryPath = Path.Combine(workingDirectory, "__bootstrap__.js");
+            entrySourceText = bootstrapScript.ToString();
+            fileSystem.AddFile(entryPath, entrySourceText);
+        }
+        else
+        {
+            entryPath = sourcePath ?? Path.Combine(
+                Path.GetTempPath(),
+                "Jroc.Tests",
+                "InMemory",
+                testCategory,
+                Guid.NewGuid().ToString("N"),
+                $"{testName}.js");
+            entrySourceText = script;
+            fileSystem.AddFile(entryPath, script, sourcePath);
+
+            if (additionalScripts != null)
+            {
+                foreach (var scriptName in additionalScripts)
+                {
+                    var (additionalScript, additionalSourcePath) = getJavaScriptAndSourcePath(scriptName);
+                    var additionalPath = additionalSourcePath ?? Path.Combine(Path.GetDirectoryName(entryPath) ?? string.Empty, $"{scriptName}.js");
+                    fileSystem.AddFile(additionalPath, additionalScript, additionalSourcePath);
+                }
             }
         }
 
@@ -55,7 +107,7 @@ public static class InMemoryTestCompiler
             artifact = JrocInMemoryCompiler.Compile(
                 new JrocInMemoryCompileRequest(entryPath)
                 {
-                    SourceText = script,
+                    SourceText = entrySourceText,
                     FileSystem = fileSystem,
                     RootModuleIdOverride = NormalizeModuleId(testName),
                     EmitPdb = true

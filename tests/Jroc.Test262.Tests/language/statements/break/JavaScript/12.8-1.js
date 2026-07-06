@@ -8,25 +8,7 @@ description: >
     have a LineTerminator before the semi-colon
 ---*/
 
-function assert(value, message) {
-  console.log(!!value);
-}
-assert.sameValue = function(actual, expected, message) {
-  console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected, message) {
-  console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func, message) {
-  try {
-    func();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedErrorConstructor);
-  }
-};
-
-        var sum = 0;
+var sum = 0;
         for (var i = 1; i <= 10; i++) {
             if (i === 6) {
                 break

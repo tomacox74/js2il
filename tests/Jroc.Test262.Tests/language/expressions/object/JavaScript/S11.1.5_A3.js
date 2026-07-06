@@ -9,14 +9,6 @@ description: >
     o : {}}"
 ---*/
 
-function assert(value) {
-  console.log(!!value);
-}
-
-assert.sameValue = function(actual, expected) {
-  console.log(Object.is(actual, expected));
-};
-
 var object = {0 : 1, "1" : "x", o : {}};
 
 assert.sameValue(object[0], 1);

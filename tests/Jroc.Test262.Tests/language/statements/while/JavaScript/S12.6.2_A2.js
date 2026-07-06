@@ -10,32 +10,6 @@ description: Evaluating Statement with error Expression
 ---*/
 
 
-function assert(value, message) {
-  if (!value) {
-    throw new Test262Error(message || 'Assertion failed');
-  }
-}
-
-assert.sameValue = function(actual, expected, message) {
-  if (!Object.is(actual, expected)) {
-    throw new Test262Error(message || ('Expected SameValue but got ' + actual + ' and ' + expected));
-  }
-};
-
-assert.notSameValue = function(actual, unexpected, message) {
-  if (Object.is(actual, unexpected)) {
-    throw new Test262Error(message || ('Expected different value but got ' + actual));
-  }
-};
-
-function Test262Error(message) {
-  this.name = 'Test262Error';
-  this.message = message || '';
-}
-
-Test262Error.prototype = Object.create(Error.prototype);
-Test262Error.prototype.constructor = Test262Error;
-
 try {
 	while ((function(){throw 1})()) __in__while = "reached"; 
 	throw new Test262Error('#1: \'while ((function(){throw 1})()) __in__while = "reached"\' lead to throwing exception');

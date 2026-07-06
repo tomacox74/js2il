@@ -19,10 +19,6 @@ info: |
   8. If iter is undefined, return map.
 ---*/
 
-function assert(value) { console.log(!!value); }
-assert.sameValue = function (actual, expected) { console.log(Object.is(actual, expected)); };
-assert.notSameValue = function (actual, unexpected) { console.log(!Object.is(actual, unexpected)); };
-
 var m1 = new Map();
 var m2 = new Map(undefined);
 var m3 = new Map(null);

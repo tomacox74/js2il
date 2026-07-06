@@ -16,25 +16,7 @@ description: >
     visible outside when name different from catch parameter
 ---*/
 
-function assert(value, message) {
-  console.log(!!value);
-}
-assert.sameValue = function(actual, expected, message) {
-  console.log(Object.is(actual, expected));
-};
-assert.notSameValue = function(actual, unexpected, message) {
-  console.log(!Object.is(actual, unexpected));
-};
-assert.throws = function(expectedErrorConstructor, func, message) {
-  try {
-    func();
-    console.log(false);
-  } catch (error) {
-    console.log(error instanceof expectedErrorConstructor);
-  }
-};
-
-  try {
+try {
     throw new Error();
   }
   catch (e) {
