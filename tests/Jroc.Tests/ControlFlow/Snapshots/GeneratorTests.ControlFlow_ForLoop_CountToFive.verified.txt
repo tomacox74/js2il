@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20fc
+			// Method begins at RVA 0x20d1
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x210e
+				// Method begins at RVA 0x20e3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2105
+			// Method begins at RVA 0x20da
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,74 +82,59 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 160 (0xa0)
+		// Code size: 117 (0x75)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_ForLoop_CountToFive/Scope,
-			[1] object,
+			[1] float64,
 			[2] class Modules.ControlFlow_ForLoop_CountToFive/Scope_For_L3C5/Block_L3C28,
-			[3] object,
-			[4] float64,
+			[3] float64,
+			[4] object,
 			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_ForLoop_CountToFive/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 0.0
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: stloc.1
-		// loop start (head: IL_0015)
-			IL_0015: ldloc.1
-			IL_0016: stloc.3
-			IL_0017: ldloc.3
-			IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001d: stloc.s 4
-			IL_001f: ldloc.s 4
-			IL_0021: ldc.r8 5
-			IL_002a: clt
-			IL_002c: brfalse IL_009f
+		IL_000f: stloc.1
+		// loop start (head: IL_0010)
+			IL_0010: ldloc.1
+			IL_0011: stloc.3
+			IL_0012: ldloc.3
+			IL_0013: ldc.r8 5
+			IL_001c: clt
+			IL_001e: brfalse IL_0074
 
-			IL_0031: newobj instance void Modules.ControlFlow_ForLoop_CountToFive/Scope_For_L3C5/Block_L3C28::.ctor()
-			IL_0036: stloc.2
-			IL_0037: ldstr "console"
-			IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0041: stloc.s 5
-			IL_0043: ldloc.s 5
-			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_004a: stloc.s 5
-			IL_004c: ldloc.1
-			IL_004d: stloc.3
-			IL_004e: ldloc.3
-			IL_004f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0054: stloc.s 4
-			IL_0056: ldloc.s 4
-			IL_0058: ldc.r8 1
-			IL_0061: add
-			IL_0062: stloc.s 4
-			IL_0064: ldloc.s 4
-			IL_0066: box [System.Runtime]System.Double
-			IL_006b: stloc.3
-			IL_006c: ldloc.s 5
-			IL_006e: ldstr "log"
-			IL_0073: ldloc.3
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0079: pop
-			IL_007a: ldloc.1
-			IL_007b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0080: stloc.s 4
-			IL_0082: ldloc.s 4
-			IL_0084: ldc.r8 1
-			IL_008d: add
-			IL_008e: stloc.s 4
-			IL_0090: ldloc.s 4
-			IL_0092: box [System.Runtime]System.Double
-			IL_0097: stloc.3
-			IL_0098: ldloc.3
-			IL_0099: stloc.1
-			IL_009a: br IL_0015
+			IL_0023: newobj instance void Modules.ControlFlow_ForLoop_CountToFive/Scope_For_L3C5/Block_L3C28::.ctor()
+			IL_0028: stloc.2
+			IL_0029: ldstr "console"
+			IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0033: stloc.s 4
+			IL_0035: ldloc.s 4
+			IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_003c: stloc.s 4
+			IL_003e: ldloc.1
+			IL_003f: stloc.3
+			IL_0040: ldloc.3
+			IL_0041: ldc.r8 1
+			IL_004a: add
+			IL_004b: stloc.3
+			IL_004c: ldloc.3
+			IL_004d: box [System.Runtime]System.Double
+			IL_0052: stloc.s 5
+			IL_0054: ldloc.s 4
+			IL_0056: ldstr "log"
+			IL_005b: ldloc.s 5
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0062: pop
+			IL_0063: ldloc.1
+			IL_0064: ldc.r8 1
+			IL_006d: add
+			IL_006e: stloc.1
+			IL_006f: br IL_0010
 		// end loop
 
-		IL_009f: ret
+		IL_0074: ret
 	} // end of method ControlFlow_ForLoop_CountToFive::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForLoop_CountToFive
@@ -161,7 +146,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2117
+		// Method begins at RVA 0x20ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

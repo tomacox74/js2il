@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2178
+			// Method begins at RVA 0x214f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -34,7 +34,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2181
+			// Method begins at RVA 0x2158
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -60,17 +60,16 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 284 (0x11c)
+		// Code size: 243 (0xf3)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Int32Array_FromArray_CopyAndCoerce/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
-			[2] object,
+			[2] float64,
 			[3] object,
 			[4] class [JavaScriptRuntime]JavaScriptRuntime.Int32Array,
 			[5] object,
-			[6] float64,
-			[7] float64
+			[6] float64
 		)
 
 		IL_0000: newobj instance void Modules.Int32Array_FromArray_CopyAndCoerce/Scope::.ctor()
@@ -115,53 +114,38 @@
 		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0096: pop
 		IL_0097: ldc.r8 0.0
-		IL_00a0: box [System.Runtime]System.Double
-		IL_00a5: stloc.2
-		// loop start (head: IL_00a6)
-			IL_00a6: ldloc.2
-			IL_00a7: stloc.3
-			IL_00a8: ldloc.1
-			IL_00a9: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
-			IL_00ae: stloc.s 6
-			IL_00b0: ldloc.3
-			IL_00b1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00b6: stloc.s 7
-			IL_00b8: ldloc.s 7
-			IL_00ba: ldloc.s 6
-			IL_00bc: clt
-			IL_00be: brfalse IL_011b
+		IL_00a0: stloc.2
+		// loop start (head: IL_00a1)
+			IL_00a1: ldloc.2
+			IL_00a2: stloc.s 6
+			IL_00a4: ldloc.s 6
+			IL_00a6: ldloc.1
+			IL_00a7: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_length()
+			IL_00ac: clt
+			IL_00ae: brfalse IL_00f2
 
-			IL_00c3: ldstr "console"
-			IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_00cd: stloc.s 5
-			IL_00cf: ldloc.s 5
-			IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00d6: stloc.s 5
-			IL_00d8: ldloc.s 5
-			IL_00da: ldstr "log"
-			IL_00df: ldloc.1
-			IL_00e0: ldloc.2
-			IL_00e1: unbox.any [System.Runtime]System.Double
-			IL_00e6: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
-			IL_00eb: box [System.Runtime]System.Double
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00f5: pop
-			IL_00f6: ldloc.2
-			IL_00f7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00fc: stloc.s 6
-			IL_00fe: ldloc.s 6
-			IL_0100: ldc.r8 1
-			IL_0109: add
-			IL_010a: stloc.s 6
-			IL_010c: ldloc.s 6
-			IL_010e: box [System.Runtime]System.Double
-			IL_0113: stloc.3
-			IL_0114: ldloc.3
-			IL_0115: stloc.2
-			IL_0116: br IL_00a6
+			IL_00b3: ldstr "console"
+			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_00bd: stloc.s 5
+			IL_00bf: ldloc.s 5
+			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_00c6: stloc.s 5
+			IL_00c8: ldloc.s 5
+			IL_00ca: ldstr "log"
+			IL_00cf: ldloc.1
+			IL_00d0: ldloc.2
+			IL_00d1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Int32Array::get_Item(float64)
+			IL_00d6: box [System.Runtime]System.Double
+			IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00e0: pop
+			IL_00e1: ldloc.2
+			IL_00e2: ldc.r8 1
+			IL_00eb: add
+			IL_00ec: stloc.2
+			IL_00ed: br IL_00a1
 		// end loop
 
-		IL_011b: ret
+		IL_00f2: ret
 	} // end of method Int32Array_FromArray_CopyAndCoerce::__js_module_init__
 
 } // end of class Modules.Int32Array_FromArray_CopyAndCoerce
@@ -173,7 +157,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218a
+		// Method begins at RVA 0x2161
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
