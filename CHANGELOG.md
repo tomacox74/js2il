@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests/docs/test262: expand ECMA-262 Section 21.3 Math coverage with new test262 ports across the previously untracked Math intrinsics, add ES2025 `Math.f16round` / `Math.sumPrecise` callable surface, fix `Math.pow(..., NaN)`, preserve signed zero in `Math.expm1` / `Math.log1p`, correct `ToUint32`-driven `Math.clz32` behavior for large negative inputs, and refresh the Section 21.3 support docs.
 
 ## v0.11.13 - 2026-07-07
 

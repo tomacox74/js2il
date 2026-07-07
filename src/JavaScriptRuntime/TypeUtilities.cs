@@ -153,10 +153,11 @@ namespace JavaScriptRuntime
             }
 
             const double two32 = 4294967296.0;
-            var uint32bit = global::System.Math.Floor(global::System.Math.Abs(number)) % two32;
-            if (number < 0)
+            var integer = global::System.Math.Truncate(number);
+            var uint32bit = integer % two32;
+            if (uint32bit < 0)
             {
-                uint32bit = two32 - uint32bit;
+                uint32bit += two32;
             }
 
             return (uint)uint32bit;
