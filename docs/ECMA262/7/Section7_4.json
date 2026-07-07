@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "7.4",
   "title": "Operations on Iterator Objects",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-operations-on-iterator-objects",
   "parent": {
     "clause": "7"
@@ -36,7 +36,7 @@
     {
       "clause": "7.4.5",
       "title": "GetIteratorFlattenable ( obj , primitiveHandling )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-getiteratorflattenable"
     },
     {
@@ -66,7 +66,7 @@
     {
       "clause": "7.4.10",
       "title": "IteratorStepValue ( iteratorRecord )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorstepvalue"
     },
     {
@@ -78,7 +78,7 @@
     {
       "clause": "7.4.12",
       "title": "IteratorCloseAll ( iters , completion )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratorcloseall"
     },
     {
@@ -108,18 +108,68 @@
     {
       "clause": "7.4.17",
       "title": "CreateListIteratorRecord ( list )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createlistiteratorRecord"
     },
     {
       "clause": "7.4.18",
       "title": "IteratorToList ( iteratorRecord )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-iteratortolist"
     }
   ],
   "support": {
     "entries": [
+      {
+        "clause": "7.4",
+        "feature": "Iterator operations across sync iteration, async iteration fallback, helper adapters, abrupt-close behavior, and list materialization",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-operations-on-iterator-objects",
+        "testScripts": [
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
+          "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js",
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Cleanup.js",
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
+          "tests/Jroc.Tests/Object/JavaScript/Object_FromEntries_Basic.js"
+        ],
+        "notes": "JROC implements the iterator abstract-operation surface used by current language features and shipped iterator helpers, including sync/async acquisition, step/value/done extraction, close-on-abrupt-completion paths, and iterator-to-list style materialization. Remaining gaps are mostly proposal-edge semantics and the fact that some helpers are modeled inline through concrete iterator adapters rather than as separately named general-purpose abstract-operation entry points."
+      },
+      {
+        "clause": "7.4.1",
+        "feature": "Iterator record tracking through sync and async iterator adapters",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iterator-records",
+        "testScripts": [
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
+          "tests/Jroc.Tests/Async/JavaScript/Async_ForAwaitOf_SyncIteratorFallback_BreakCloses.js"
+        ],
+        "notes": "Iterator state is represented by concrete `IJavaScriptIterator` and `IJavaScriptAsyncIterator` adapters that preserve next/return capability and done/value flow for the covered sync and async lowering paths. The runtime does not expose a distinct public iterator-record data structure beyond those adapters."
+      },
+      {
+        "clause": "7.4.2",
+        "feature": "GetIteratorDirect for native iterator objects and iterator helpers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-getiteratordirect",
+        "testScripts": [
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js",
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js"
+        ],
+        "notes": "Native iterator objects and iterator-helper receivers can be consumed directly without re-entering `@@iterator`, matching the runtime's direct `IJavaScriptIterator` fast path. General coverage is anchored to the shipped iterator-helper surface rather than a standalone public helper."
+      },
+      {
+        "clause": "7.4.3",
+        "feature": "GetIteratorFromMethod for Symbol.iterator-based sources",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-getiteratorfrommethod",
+        "testScripts": [
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/yield/star-iterable.js"
+        ],
+        "notes": "The runtime calls user-provided `@@iterator` methods with the correct receiver across for-of, spread, and `yield*` paths for the covered iterable shapes. Unsupported or still-partial exotic iterator method scenarios remain documented as general iterator limitations rather than as a missing core path."
+      },
       {
         "clause": "7.4.4",
         "feature": "GetIterator for for..of sources",
@@ -130,6 +180,17 @@
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
         ],
         "notes": "Supports built-in iterables, user-defined Symbol.iterator sources, and IEnumerable fallback paths."
+      },
+      {
+        "clause": "7.4.5",
+        "feature": "GetIteratorFlattenable for Iterator.from and flatMap-style iterable normalization",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-getiteratorflattenable",
+        "testScripts": [
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js",
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Cleanup.js"
+        ],
+        "notes": "Iterator helpers normalize iterable and iterator-like mapper results through `Iterator.from(...)`, which covers the current flattenable acquisition behavior used by the shipped helper surface. The full `primitiveHandling` matrix and every proposal-edge flattening scenario are not yet modeled as a separate standalone helper."
       },
       {
         "clause": "7.4.6",
@@ -163,6 +224,30 @@
         "notes": "Value extraction is implemented through IteratorResultValue for native and dynamic iterator result shapes."
       },
       {
+        "clause": "7.4.9",
+        "feature": "IteratorStep across for-of, destructuring, and iterator helpers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratorstep",
+        "testScripts": [
+          "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js",
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/yield/star-iterable.js"
+        ],
+        "notes": "The runtime advances iterator records and interprets iterator result objects consistently for the covered for-of, helper, and `yield*` flows. Remaining gaps are in less common exotic iterator result edge cases rather than ordinary step semantics."
+      },
+      {
+        "clause": "7.4.10",
+        "feature": "IteratorStepValue in iterator destructuring and step/value extraction helpers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratorstepvalue",
+        "test262Paths": [
+          "test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js"
+        ],
+        "notes": "Destructuring lowering uses dedicated step/value helpers that mirror `IteratorStepValue` semantics, including skipping value access when `done` is already true. Coverage is strongest in destructuring-driven consumers rather than as a separately exposed public runtime helper."
+      },
+      {
         "clause": "7.4.11",
         "feature": "IteratorClose",
         "status": "Supported with Limitations",
@@ -170,7 +255,32 @@
         "testScripts": [
           "tests/Jroc.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_CustomIterable_IteratorProtocol.js"
         ],
-        "notes": "Break/throw paths invoke iterator return() for supported iterator forms."
+        "test262Paths": [
+          "test/built-ins/Map/iterator-items-are-not-object-close-iterator.js",
+          "test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-value-accessor.js"
+        ],
+        "notes": "Break/throw and abrupt-built-in paths invoke iterator return() for supported iterator forms while preserving the original completion behavior in the covered cases."
+      },
+      {
+        "clause": "7.4.12",
+        "feature": "IteratorCloseAll for helper pipelines with multiple active iterators",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratorcloseall",
+        "testScripts": [
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Cleanup.js"
+        ],
+        "notes": "The shipped iterator-helper pipeline closes both outer and active inner iterators in the covered flatMap and abrupt-cleanup cases, which is the current runtime analogue of `IteratorCloseAll`. JROC does not currently expose a separate reusable `IteratorCloseAll` helper outside those concrete iterator-helper consumers."
+      },
+      {
+        "clause": "7.4.13",
+        "feature": "IfAbruptCloseIterator in destructuring and iterable-consuming built-ins",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ifabruptcloseiterator",
+        "test262Paths": [
+          "test/built-ins/Map/iterator-items-are-not-object-close-iterator.js",
+          "test/built-ins/Object/fromEntries/iterator-closed-for-throwing-entry-value-accessor.js"
+        ],
+        "notes": "Abrupt completions in the covered Map and Object.fromEntries iterable-consumption paths close the active iterator before propagating the original error. The behavior is implemented inline in consumers rather than through a named public helper."
       },
       {
         "clause": "7.4.14",
@@ -204,6 +314,33 @@
           "tests/Jroc.Tests/AsyncGenerator/JavaScript/AsyncGenerator_BasicNext.js"
         ],
         "notes": "Iterator result objects are produced via IteratorResult helpers for sync and async iterator implementations."
+      },
+      {
+        "clause": "7.4.17",
+        "feature": "CreateListIteratorRecord for list-backed built-in iterators",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createlistiteratorRecord",
+        "testScripts": [
+          "tests/Jroc.Tests/Function/JavaScript/Function_Call_Spread_StringIterable.js",
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_Helper_Next_Return.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Array/prototype/values/returns-iterator.js"
+        ],
+        "notes": "Arrays, strings, typed arrays, arguments objects, and iterator helpers expose concrete list-backed iterator objects that fill the practical role of list iterator records for the covered runtime features. The implementation uses those concrete iterator classes directly rather than a separate standalone `CreateListIteratorRecord` entry point."
+      },
+      {
+        "clause": "7.4.18",
+        "feature": "IteratorToList for helper materialization and TypedArray.from source capture",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-iteratortolist",
+        "testScripts": [
+          "tests/Jroc.Tests/Iterator/JavaScript/Iterator_From_HelperChain.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/TypedArray/from/iterated-array-changed-by-tonumber.js"
+        ],
+        "notes": "Iterator results are materialized into concrete lists for the covered `Iterator.prototype.toArray()` and `%TypedArray%.from(...)` paths, including capture-before-mutation behavior for iterated sources. The runtime still models list materialization inside specific consumers instead of through a single shared public helper."
       }
     ]
   }
