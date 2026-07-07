@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs/ecma262: reclassify Section 6.2 ECMAScript Specification Types so every clause/subclause is now tracked as `Supported with Limitations` or `N/A (informational)`, documenting environment records, abstract closures, data blocks, and class static block records against current implementation evidence and rolling Section 6 up to `Supported with Limitations`.
 - runtime/tests/docs/test262: raise the Section 6.1.7 object-model coverage floor by fixing strict `NaN` equality for boxed doubles, preserving NaN across repeated ordinary-property updates, and enforcing the newly ported Proxy `[[GetOwnProperty]]` forwarding/invariant cases; refresh the Section 6.1 docs and roll-ups.
 - runtime/tests/docs/test262: expand ECMA-262 Section 21.2 BigInt coverage with newly ported prototype, prototype-method, branding, and wrapper-object test262 cases; add the covered `BigInt.prototype` surface (`toString`, `toLocaleString`, `valueOf`, `@@toStringTag`, and wrapper integration) and refresh the Section 21.2 support docs.
 - runtime/tests/docs/test262: expand ECMA-262 Section 21.3 Math coverage with new test262 ports across the previously untracked Math intrinsics, add ES2025 `Math.f16round` / `Math.sumPrecise` callable surface, fix `Math.pow(..., NaN)`, preserve signed zero in `Math.expm1` / `Math.log1p`, correct `ToUint32`-driven `Math.clz32` behavior for large negative inputs, and refresh the Section 21.3 support docs.

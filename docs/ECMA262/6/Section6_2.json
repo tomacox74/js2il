@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "6.2",
   "title": "ECMAScript Specification Types",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-specification-types",
   "parent": {
     "clause": "6"
@@ -12,19 +12,19 @@
     {
       "clause": "6.2.1",
       "title": "The Enum Specification Type",
-      "status": "Untracked",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-enum-specification-type"
     },
     {
       "clause": "6.2.2",
       "title": "The List and Record Specification Types",
-      "status": "Untracked",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-list-and-record-specification-type"
     },
     {
       "clause": "6.2.3",
       "title": "The Set and Relation Specification Types",
-      "status": "Untracked",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-set-and-relation-specification-type"
     },
     {
@@ -162,37 +162,37 @@
     {
       "clause": "6.2.7",
       "title": "The Environment Record Specification Type",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-lexical-environment-and-environment-record-specification-types"
     },
     {
       "clause": "6.2.8",
       "title": "The Abstract Closure Specification Type",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-abstract-closure"
     },
     {
       "clause": "6.2.9",
       "title": "Data Blocks",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-data-blocks"
     },
     {
       "clause": "6.2.9.1",
       "title": "CreateByteDataBlock ( size )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createbytedatablock"
     },
     {
       "clause": "6.2.9.2",
       "title": "CreateSharedByteDataBlock ( size )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createsharedbytedatablock"
     },
     {
       "clause": "6.2.9.3",
       "title": "CopyDataBlockBytes ( toBlock , toIndex , fromBlock , fromIndex , count )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-copydatablockbytes"
     },
     {
@@ -216,7 +216,7 @@
     {
       "clause": "6.2.13",
       "title": "The ClassStaticBlockDefinition Record Specification Type",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-classstaticblockdefinition-record-specification-type"
     }
   ],
@@ -225,9 +225,30 @@
       {
         "clause": "6.2",
         "feature": "ECMAScript Specification Types (overall)",
-        "status": "Incomplete",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-specification-types",
-        "notes": "This section is normative and implementation-relevant. JROC partially maps these spec types via runtime/compiler behavior, but Environment Records and several internal-spec types remain untracked."
+        "notes": "Most Section 6.2 entries are specification-only modeling constructs or are represented indirectly by the compiler/runtime rather than as first-class JS values. JROC now documents the internal-only constructs as informational where appropriate and tracks the implementation-backed areas such as environment records, closures, data blocks, private elements, and class static blocks as supported with limitations."
+      },
+      {
+        "clause": "6.2.1",
+        "feature": "The Enum Specification Type",
+        "status": "N/A (informational)",
+        "specUrl": "https://tc39.es/ecma262/#sec-enum-specification-type",
+        "notes": "This clause defines a specification meta-type used to describe finite sets of abstract values in the standard. It does not correspond to a distinct user-visible runtime object model in JROC."
+      },
+      {
+        "clause": "6.2.2",
+        "feature": "The List and Record Specification Types",
+        "status": "N/A (informational)",
+        "specUrl": "https://tc39.es/ecma262/#sec-list-and-record-specification-type",
+        "notes": "These are ECMA-262 specification modeling types, not JavaScript runtime values. JROC uses ordinary CLR and runtime data structures to realize the behaviors of algorithms that are described in the spec using Lists and Records."
+      },
+      {
+        "clause": "6.2.3",
+        "feature": "The Set and Relation Specification Types",
+        "status": "N/A (informational)",
+        "specUrl": "https://tc39.es/ecma262/#sec-set-and-relation-specification-type",
+        "notes": "This clause describes internal spec bookkeeping structures rather than a dedicated JS surface. JROC implements the affected algorithms with host/runtime data structures instead of exposing first-class spec Set/Relation values."
       },
       {
         "clause": "6.2.4",
@@ -267,11 +288,72 @@
         "notes": "Descriptor creation and usage are implemented for supported object/runtime paths via PropertyDescriptorStore; full spec parity is incomplete."
       },
       {
+        "clause": "6.2.7",
+        "feature": "Environment Record specification type",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-lexical-environment-and-environment-record-specification-types",
+        "testScripts": [
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneAccess.js",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_TemporalDeadZoneCapturedRead.js",
+          "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Export_ObjectWithClosure.js"
+        ],
+        "notes": "JROC realizes lexical/global/function bindings through its scope-as-class model, plus TDZ checks and captured-scope indirection. The behavior matches the covered lexical binding and closure scenarios, but the implementation is not a one-to-one reification of every ECMA-262 Environment Record variant."
+      },
+      {
+        "clause": "6.2.8",
+        "feature": "Abstract Closure specification type",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-abstract-closure",
+        "testScripts": [
+          "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_Export_ObjectWithClosure.js",
+          "tests/Jroc.Tests/ArrowFunction/JavaScript/ArrowFunction_LexicalThis_TopLevelCallback.js"
+        ],
+        "notes": "Functions, arrows, methods, and other callable bodies are lowered into CLR callables plus captured scope arrays, which gives JROC a practical implementation of the spec's abstract-closure behavior. The covered closure and lexical-this cases work, but the implementation remains an approximation of the spec's internal abstract type."
+      },
+      {
         "clause": "6.2.9",
         "feature": "Data Blocks",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-data-blocks",
-        "notes": "Spec-level byte data block operations depend on ArrayBuffer/SharedArrayBuffer machinery, which is not yet implemented."
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Construct_ArrayBuffer_ViewProperties.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js"
+        ],
+        "notes": "JROC implements fixed-length ArrayBuffer-backed byte storage, DataView/typed-array reads and writes, and a minimal SharedArrayBuffer-backed path sufficient for the covered Atomics.wait scenario. Resizable/detached/growable/shared-memory edge cases remain incomplete, so the clause stays supported with limitations."
+      },
+      {
+        "clause": "6.2.9.1",
+        "feature": "CreateByteDataBlock",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createbytedatablock",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/ArrayBuffer_Construct_ByteLength.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js"
+        ],
+        "notes": "ArrayBuffer allocation creates the covered fixed-length byte storage used by DataView and typed-array operations. Resizable buffers and detach semantics are not fully modeled."
+      },
+      {
+        "clause": "6.2.9.2",
+        "feature": "CreateSharedByteDataBlock",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createsharedbytedatablock",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/SharedArrayBuffer_Int32Array_AtomicsWait.js"
+        ],
+        "notes": "JROC exposes a minimal SharedArrayBuffer-backed byte store that is sufficient for constructing a shared Int32Array and exercising the covered Atomics.wait path. Full shared-memory, growable-buffer, and spec host-hook semantics remain limited."
+      },
+      {
+        "clause": "6.2.9.3",
+        "feature": "CopyDataBlockBytes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-copydatablockbytes",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Slice_Basic.js"
+        ],
+        "notes": "The covered typed-array copy and slice paths demonstrate byte copying across ArrayBuffer-backed views. The abstract operation is not exposed directly, and detached/shared/growable corner cases remain incomplete."
       },
       {
         "clause": "6.2.10",
@@ -309,9 +391,13 @@
       {
         "clause": "6.2.13",
         "feature": "ClassStaticBlockDefinition record",
-        "status": "Not Yet Supported",
+        "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-classstaticblockdefinition-record-specification-type",
-        "notes": "Class static blocks are rejected by validation."
+        "testScripts": [
+          "tests/Jroc.Tests/ValidatorTests.cs",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassStaticBlock_DeclarationOrder.js"
+        ],
+        "notes": "Class static blocks are validated, represented during compilation, and emitted into the synthesized class static constructor in declaration order. The feature is implemented for the covered cases, but it is still tracked conservatively here because class element support in JROC remains broader than this record type alone."
       }
     ]
   }
