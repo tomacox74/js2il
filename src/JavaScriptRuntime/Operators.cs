@@ -1048,6 +1048,11 @@ namespace JavaScriptRuntime
         /// </summary>
         public static bool StrictEqual(object? a, object? b)
         {
+            if (a is double leftDouble && b is double rightDouble)
+            {
+                return !double.IsNaN(leftDouble) && !double.IsNaN(rightDouble) && leftDouble == rightDouble;
+            }
+
             // Identical references
             if (ReferenceEquals(a, b))
                 return true;
@@ -1067,11 +1072,6 @@ namespace JavaScriptRuntime
                     return !double.IsNaN(left) && !double.IsNaN(right) && left == right;
                 }
                 return false;
-            }
-
-            if (a is double leftDouble && b is double rightDouble)
-            {
-                return !double.IsNaN(leftDouble) && !double.IsNaN(rightDouble) && leftDouble == rightDouble;
             }
 
             if (a is Delegate || b is Delegate)

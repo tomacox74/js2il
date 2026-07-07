@@ -51,6 +51,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         // Only CLR objects (non-expando, non-array-like) use a type chain.
         _useTypeChain = !_usePrototypeChain
             && !(root is ExpandoObject)
+            && root is not JavaScriptRuntime.Proxy
             && root is not JavaScriptRuntime.Array
             && root is not JavaScriptRuntime.TypedArrayBase
             && root is not string
@@ -199,6 +200,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
     private static List<string> GetOwnEnumerableKeysSingleTarget(object target)
     {
+        if (target is JavaScriptRuntime.Proxy)
+        {
+            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+        }
+
         // Dictionary-backed plain objects (JsObject/ExpandoObject): union descriptor keys and backing keys.
         if (target is IDictionary<string, object?>)
         {
@@ -249,6 +255,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
     private static List<string> GetOwnPropertyKeysSingleTarget(object target)
     {
+        if (target is JavaScriptRuntime.Proxy)
+        {
+            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
+        }
+
         if (target is IDictionary<string, object?> || target is IDictionary)
         {
             return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
@@ -314,6 +325,18 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
     private static bool IsEnumerableAndPresent(object target, string key)
     {
+        if (target is JavaScriptRuntime.Proxy)
+        {
+            if (!JavaScriptRuntime.Object.hasOwn(target, key))
+            {
+                return false;
+            }
+
+            var descriptor = JavaScriptRuntime.Object.getOwnPropertyDescriptor(target, key);
+            return descriptor is not null
+                && TypeUtilities.ToBoolean(JavaScriptRuntime.Object.GetProperty(descriptor, "enumerable"));
+        }
+
         // Dictionary-backed plain objects (JsObject/ExpandoObject): key is present if in backing dict
         // or descriptor store, and enumerable in descriptor semantics.
         if (target is IDictionary<string, object?> dictGeneric)

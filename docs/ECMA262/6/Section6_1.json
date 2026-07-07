@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "6.1",
   "title": "ECMAScript Language Types",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-language-types",
   "parent": {
     "clause": "6"
@@ -323,25 +323,25 @@
     {
       "clause": "6.1.7",
       "title": "The Object Type",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-type"
     },
     {
       "clause": "6.1.7.1",
       "title": "Property Attributes",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-property-attributes"
     },
     {
       "clause": "6.1.7.2",
       "title": "Object Internal Methods and Internal Slots",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-object-internal-methods-and-internal-slots"
     },
     {
       "clause": "6.1.7.3",
       "title": "Invariants of the Essential Internal Methods",
-      "status": "Incomplete",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods"
     },
     {
@@ -356,8 +356,9 @@
       {
         "clause": "6.1",
         "feature": "ECMAScript Language Types",
-        "status": "Incomplete",
-        "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-language-types"
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-ecmascript-language-types",
+        "notes": "The primitive-language-type clauses are broadly supported, and the Section 6.1.7 object-model slice is now covered well enough to raise the overall 6.1 status. Remaining limitations are concentrated in edge-case object/proxy semantics and in other already-documented subsection limitations."
       },
       {
         "clause": "6.1.1",
@@ -674,26 +675,45 @@
       {
         "clause": "6.1.7",
         "feature": "The Object Type",
-        "status": "Incomplete",
-        "specUrl": "https://tc39.es/ecma262/#sec-object-type"
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-type",
+        "test262Suites": [
+          "built-ins/Object/internals/DefineOwnProperty",
+          "built-ins/Proxy/getOwnPropertyDescriptor"
+        ],
+        "notes": "Ordinary objects, property descriptors, and the covered Proxy [[GetOwnProperty]] paths now behave correctly for the newly ported 6.1.7 slice, including NaN-preserving data-property updates, proxy own-property fallback, and key proxy invariants. JROC still has broader object-model gaps outside this slice, especially around the full proxy trap surface and unported internal-method edge cases."
       },
       {
         "clause": "6.1.7.1",
         "feature": "Property Attributes",
-        "status": "Incomplete",
-        "specUrl": "https://tc39.es/ecma262/#sec-property-attributes"
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-property-attributes",
+        "test262Paths": [
+          "test/built-ins/Object/internals/DefineOwnProperty/nan-equivalence-define-own-property-reassign.js",
+          "test/built-ins/Object/internals/DefineOwnProperty/nan-equivalence-define-own-property-reconfigure.js"
+        ],
+        "notes": "JROC now preserves descriptor-backed data-property updates across repeated NaN writes and Object.defineProperty reconfiguration in the newly ported cases. Coverage is still narrow relative to the full property-attributes clause, so the section remains documented with limitations."
       },
       {
         "clause": "6.1.7.2",
         "feature": "Object Internal Methods and Internal Slots",
-        "status": "Incomplete",
-        "specUrl": "https://tc39.es/ecma262/#sec-object-internal-methods-and-internal-slots"
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-object-internal-methods-and-internal-slots",
+        "test262Paths": [
+          "test/built-ins/Proxy/getOwnPropertyDescriptor/trap-is-undefined.js"
+        ],
+        "notes": "The covered Proxy [[GetOwnProperty]] forwarding path now matches ordinary-target behavior closely enough for descriptor lookup, hasOwnProperty/propertyIsEnumerable, and for-in enumeration in the newly ported test262 case. Other internal methods and less-common proxy/internal-slot interactions remain only partially covered."
       },
       {
         "clause": "6.1.7.3",
         "feature": "Invariants of the Essential Internal Methods",
-        "status": "Incomplete",
-        "specUrl": "https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods"
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods",
+        "test262Paths": [
+          "test/built-ins/Proxy/getOwnPropertyDescriptor/resultdesc-is-invalid-descriptor.js",
+          "test/built-ins/Proxy/getOwnPropertyDescriptor/result-is-undefined-target-is-not-extensible.js"
+        ],
+        "notes": "JROC now enforces the covered Proxy [[GetOwnProperty]] invariants for undefined results on non-extensible targets and for incompatible reported descriptors. The full invariant matrix across every essential internal method is still not exhaustively implemented or ported, so this clause remains supported with limitations."
       },
       {
         "clause": "6.1.7.4",
