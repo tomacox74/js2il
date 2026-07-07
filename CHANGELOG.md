@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- perf/compiler: extend stable CLR type inference to block scopes at module top level (for-loop head scopes and block statements), so top-level `let`/`const` loop variables like `x`/`y` in `stopwatch-modern.js` compile to unboxed float64 locals instead of boxed objects.
 - tests/docs/test262: expand ECMA-262 Section 21.1 Number coverage with newly ported constructor, constructor-property, prototype, prototype-method, and instance-shape test262 cases; implement the covered Number prototype method surface and refresh the Section 21.1 support docs.
 
 ## v0.11.12 - 2026-07-06
