@@ -19,12 +19,12 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md).
 
-> Last generated (UTC): 2026-07-07T16:50:30Z
+> Last generated (UTC): 2026-07-07T17:05:44Z
 
 ## Summary
 - Total top-level sections indexed: **29**
 - Top-level sections with tracked status: **28**
-- Status breakdown: Supported with Limitations: **8**, Incomplete: **13**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
+- Status breakdown: Supported with Limitations: **9**, Incomplete: **12**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
 - Untracked top-level sections: **1**
 
 ## Sections
@@ -50,7 +50,7 @@ Notes:
 | 17 | Error Handling and Language Extensions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-error-handling-and-language-extensions) | [Section17.md](17/Section17.md) |
 | 18 | ECMAScript Standard Built-in Objects | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) | [Section18.md](18/Section18.md) |
 | 19 | The Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-global-object) | [Section19.md](19/Section19.md) |
-| 20 | Fundamental Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-fundamental-objects) | [Section20.md](20/Section20.md) |
+| 20 | Fundamental Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-fundamental-objects) | [Section20.md](20/Section20.md) |
 | 21 | Numbers and Dates | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numbers-and-dates) | [Section21.md](21/Section21.md) |
 | 22 | Text Processing | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-text-processing) | [Section22.md](22/Section22.md) |
 | 23 | Indexed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) | [Section23.md](23/Section23.md) |

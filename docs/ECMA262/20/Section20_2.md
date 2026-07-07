@@ -4,11 +4,11 @@
 
 [Back to Section20](Section20.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:58:25Z
+> Last generated (UTC): 2026-07-07T17:05:44Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 20.2 | Function Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-function-objects) |
+| 20.2 | Function Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-function-objects) |
 
 ## Subclauses
 
