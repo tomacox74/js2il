@@ -1101,11 +1101,36 @@ public partial class SymbolTableBuilder
             return false;
         }
 
+        // Check if this is a block scope that reaches the Global (module) scope only
+        // through other block scopes (e.g., a top-level for-loop head scope or block
+        // statement). These are analyzed the same way as blocks inside functions.
+        // Valid: global -> block -> block
+        // Invalid: global -> function -> block (covered by isBlockScopeInFunction)
+        bool isBlockScopeInGlobal(Scope? scope)
+        {
+            if (scope == null || scope.Kind != ScopeKind.Block)
+                return false;
+
+            var current = scope.Parent;
+            while (current != null)
+            {
+                if (current.Kind == ScopeKind.Global)
+                    return true;
+
+                if (current.Kind != ScopeKind.Block)
+                    return false;
+
+                current = current.Parent;
+            }
+            return false;
+        }
+
         if (scope.Kind != ScopeKind.Global &&
             isClassMethod(scope) == false &&
             isBlockScopeInClassMethod(scope) == false &&
             isFunctionOrArrowFunction(scope) == false &&
-            isBlockScopeInFunction(scope) == false)
+            isBlockScopeInFunction(scope) == false &&
+            isBlockScopeInGlobal(scope) == false)
         {
             return;
         }
