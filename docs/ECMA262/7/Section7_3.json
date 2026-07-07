@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "7.3",
   "title": "Operations on Objects",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-operations-on-objects",
   "parent": {
     "clause": "7"
@@ -12,7 +12,7 @@
     {
       "clause": "7.3.1",
       "title": "MakeBasicObject ( internalSlotsList )",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-makebasicobject"
     },
     {
@@ -96,13 +96,13 @@
     {
       "clause": "7.3.15",
       "title": "SetIntegrityLevel ( O , level )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-setintegritylevel"
     },
     {
       "clause": "7.3.16",
       "title": "TestIntegrityLevel ( O , level )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-testintegritylevel"
     },
     {
@@ -120,7 +120,7 @@
     {
       "clause": "7.3.19",
       "title": "CreateListFromArrayLike ( obj [ , validElementTypes ] )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-createlistfromarraylike"
     },
     {
@@ -138,7 +138,7 @@
     {
       "clause": "7.3.22",
       "title": "SpeciesConstructor ( O , defaultConstructor )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-speciesconstructor"
     },
     {
@@ -150,7 +150,7 @@
     {
       "clause": "7.3.24",
       "title": "GetFunctionRealm ( obj )",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-getfunctionrealm"
     },
     {
@@ -174,13 +174,13 @@
     {
       "clause": "7.3.28",
       "title": "PrivateMethodOrAccessorAdd ( O , method )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-privatemethodoraccessoradd"
     },
     {
       "clause": "7.3.29",
       "title": "HostEnsureCanAddPrivateElement ( O )",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-hostensurecanaddprivateelement"
     },
     {
@@ -210,30 +210,44 @@
     {
       "clause": "7.3.34",
       "title": "AddValueToKeyedGroup ( groups , key , value )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-add-value-to-keyed-group"
     },
     {
       "clause": "7.3.35",
       "title": "GroupBy ( items , callback , keyCoercion )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-groupby"
     },
     {
       "clause": "7.3.36",
       "title": "GetOptionsObject ( options )",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-getoptionsobject"
     },
     {
       "clause": "7.3.37",
       "title": "SetterThatIgnoresPrototypeProperties ( thisValue , home , p , v )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-SetterThatIgnoresPrototypeProperties"
     }
   ],
   "support": {
     "entries": [
+      {
+        "clause": "7.3",
+        "feature": "Object operations across integrity, argument-list normalization, private elements, species accessors, and grouping",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-operations-on-objects",
+        "testScripts": [
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateMethodAndAccessor_Log.js",
+          "tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js",
+          "tests/Jroc.Tests/Promise/JavaScript/Promise_SymbolSpecies.js"
+        ],
+        "notes": "JROC covers the object-operation helpers most visible through today's runtime surface, including integrity-state transitions, current argument-list normalization paths, private elements, built-in species accessors, class field own-property definition, and Object.groupBy. Remaining limitations are concentrated in exotic object/proxy edge cases and in abstract helpers that are still modeled inline rather than as fully general standalone operations."
+      },
       {
         "clause": "7.3.2",
         "feature": "Property get on object literals and host objects",
@@ -349,6 +363,42 @@
         "notes": "Implemented for supported array-like runtime types with partial coercion behavior."
       },
       {
+        "clause": "7.3.15",
+        "feature": "SetIntegrityLevel through Object.preventExtensions, Object.seal, and Object.freeze",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-setintegritylevel",
+        "testScripts": [
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js"
+        ],
+        "notes": "Ordinary-object integrity state is tracked and enforced for the covered preventExtensions/seal/freeze paths, including strict-mode write failures after freezing. Full proxy invariants and every exotic-object integrity rule are still incomplete."
+      },
+      {
+        "clause": "7.3.16",
+        "feature": "TestIntegrityLevel through Object.isExtensible, Object.isSealed, and Object.isFrozen",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-testintegritylevel",
+        "testScripts": [
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_FreezeSeal_PreventExtensions.js",
+          "tests/Jroc.Tests/Object/JavaScript/Object_Integrity_DefineProperty_And_StrictWrites.js"
+        ],
+        "notes": "The runtime reports integrity state consistently for the covered ordinary-object transitions and descriptor combinations. Coverage is still strongest for ordinary objects rather than every proxy and host-object edge case."
+      },
+      {
+        "clause": "7.3.19",
+        "feature": "CreateListFromArrayLike in apply/construct-style argument normalization",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-createlistfromarraylike",
+        "testScripts": [
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_Basic.js",
+          "tests/Jroc.Tests/Function/JavaScript/Function_Apply_NullArgArray_TreatedAsEmpty.js"
+        ],
+        "test262Paths": [
+          "test/language/rest-parameters/rest-parameters-apply.js"
+        ],
+        "notes": "Current apply/construct normalization accepts JavaScript arrays, CLR arrays, and enumerable argument sources for the covered call sites. Generic length-indexed array-like objects and validElementTypes filtering are not yet modeled as a complete standalone abstract operation."
+      },
+      {
         "clause": "7.3.21",
         "feature": "OrdinaryHasInstance (instanceof paths)",
         "status": "Supported with Limitations",
@@ -357,6 +407,20 @@
           "tests/Jroc.Tests/BinaryOperator/JavaScript/BinaryOperator_InstanceOf_Basic.js"
         ],
         "notes": "Implemented with prototype-chain checks for supported callable constructor values; full spec hooks are incomplete."
+      },
+      {
+        "clause": "7.3.22",
+        "feature": "SpeciesConstructor through built-in @@species accessors and Promise constructor-receiver helpers",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-speciesconstructor",
+        "testScripts": [
+          "tests/Jroc.Tests/Promise/JavaScript/Promise_SymbolSpecies.js"
+        ],
+        "test262Paths": [
+          "test/built-ins/Map/Symbol.species/return-value.js",
+          "test/built-ins/Set/Symbol.species/return-value.js"
+        ],
+        "notes": "Promise, Map, and Set expose the covered @@species accessor behavior, and Promise constructor-receiver helpers honor the active constructor in the supported resolve/try paths. General species-based derived construction across all spec consumers is still incomplete."
       },
       {
         "clause": "7.3.23",
@@ -394,6 +458,21 @@
         "notes": "Private field access works for supported class forms. Supported private methods participate in receiver brand checks, including static private methods rejecting proxy receivers; private accessors and complete validation coverage remain limited."
       },
       {
+        "clause": "7.3.28",
+        "feature": "PrivateMethodOrAccessorAdd for private methods and private accessors",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-privatemethodoraccessoradd",
+        "testScripts": [
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateMethodAndAccessor_Log.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateAccessor_EdgeCases_Log.js",
+          "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateAccessor_ClassExpression_Log.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/class/elements/fields-multiple-definitions-static-private-methods-proxy.js"
+        ],
+        "notes": "JROC initializes and brands the covered private methods and private accessors, including static private method receiver checks and accessor invocation. Broader spec parity for every duplicate-definition and exotic evaluation edge case is still incomplete."
+      },
+      {
         "clause": "7.3.33",
         "feature": "InitializeInstanceElements (class fields + private fields)",
         "status": "Supported with Limitations",
@@ -403,7 +482,39 @@
           "tests/Jroc.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js",
           "tests/Jroc.Test262.Tests/language/expressions/class/JavaScript/constructor-this-tdz-during-initializers.js"
         ],
-        "notes": "Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks and supported private methods are implemented; private accessors and some inheritance details remain incomplete."
+        "notes": "Supports instance field initializers and private instance fields, including derived-constructor initialization after super() for supported class bases. Static blocks, supported private methods, and current private accessor forms are implemented; some inheritance and exotic receiver details remain incomplete."
+      },
+      {
+        "clause": "7.3.34",
+        "feature": "AddValueToKeyedGroup through Object.groupBy accumulation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-add-value-to-keyed-group",
+        "testScripts": [
+          "tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js"
+        ],
+        "notes": "The Object.groupBy implementation groups callback results under the covered property keys and appends values into the correct per-key buckets. Edge cases around the full spec key-coercion matrix and every exotic iterable input remain incomplete."
+      },
+      {
+        "clause": "7.3.35",
+        "feature": "GroupBy via Object.groupBy",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-groupby",
+        "testScripts": [
+          "tests/Jroc.Tests/Object/JavaScript/Object_GroupBy_Basic.js"
+        ],
+        "notes": "Object.groupBy provides the covered callback-driven grouping behavior over supported iterable inputs. The current implementation does not yet claim full parity for all abrupt-completion, coercion-order, and exotic iterator corner cases."
+      },
+      {
+        "clause": "7.3.37",
+        "feature": "SetterThatIgnoresPrototypeProperties behavior in class field definition and class member installation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-SetterThatIgnoresPrototypeProperties",
+        "test262Paths": [
+          "test/language/statements/class/elements/class-field-is-observable-by-proxy.js",
+          "test/language/statements/class/subclass/superclass-prototype-setter-constructor.js",
+          "test/language/statements/class/subclass/superclass-prototype-setter-method-override.js"
+        ],
+        "notes": "The covered class-field and class-member definition paths create own properties without accidentally dispatching inherited prototype setters, while still remaining observable through defineProperty-style proxy interception where the spec requires it. This documentation does not yet claim full parity for every built-in accessor that reuses the helper."
       }
     ]
   }
