@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "8.2",
   "title": "Scope Analysis",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-scope-analysis",
   "parent": {
     "clause": "8"
@@ -78,6 +78,23 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "8.2",
+        "feature": "Scope analysis across binding discovery, lexical environments, hoisting, and top-level declaration tracking",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-scope-analysis",
+        "testScripts": [
+          "tests/Jroc.Tests/SymbolTableBuilderTests.cs",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
+          "tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js"
+        ],
+        "test262Suites": [
+          "language/expressions/arrow-function",
+          "language/expressions/class",
+          "language/expressions/function"
+        ],
+        "notes": "JROC's symbol-table and scope-building pipeline covers the declaration-collection and environment-boundary analysis needed by the currently supported language surface, including destructuring bindings, lexical block scopes, loop-head scopes, hoisted var/function declarations, and top-level CommonJS-style module scope tracking. Remaining limitations mainly follow unsupported grammar/runtime forms and the fact that ESM-specific top-level semantics are still outside current support."
+      },
       {
         "clause": "8.2.1",
         "feature": "BoundNames collection for declarations and binding patterns",
