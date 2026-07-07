@@ -19,12 +19,12 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md).
 
-> Last generated (UTC): 2026-07-07T20:40:52Z
+> Last generated (UTC): 2026-07-07T21:13:28Z
 
 ## Summary
 - Total top-level sections indexed: **29**
 - Top-level sections with tracked status: **28**
-- Status breakdown: Supported with Limitations: **11**, Incomplete: **10**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
+- Status breakdown: Supported with Limitations: **12**, Incomplete: **9**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
 - Untracked top-level sections: **1**
 
 ## Sections
@@ -38,7 +38,7 @@ Notes:
 | 5 | Notational Conventions | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-notational-conventions) | [Section5.md](5/Section5.md) |
 | 6 | ECMAScript Data Types and Values | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values) | [Section6.md](6/Section6.md) |
 | 7 | Abstract Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations) | [Section7.md](7/Section7.md) |
-| 8 | Syntax-Directed Operations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) | [Section8.md](8/Section8.md) |
+| 8 | Syntax-Directed Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) | [Section8.md](8/Section8.md) |
 | 9 | Executable Code and Execution Contexts | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) | [Section9.md](9/Section9.md) |
 | 10 | Ordinary and Exotic Objects Behaviours | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ordinary-and-exotic-objects-behaviours) | [Section10.md](10/Section10.md) |
 | 11 | ECMAScript Language: Source Text | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-source-code) | [Section11.md](11/Section11.md) |
@@ -60,5 +60,4 @@ Notes:
 | 27 | Control Abstraction Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-control-abstraction-objects) | [Section27.md](27/Section27.md) |
 | 28 | Reflection | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-reflection) | [Section28.md](28/Section28.md) |
 | 29 | Memory Model | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-memory-model) | [Section29.md](29/Section29.md) |
-
 
