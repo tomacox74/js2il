@@ -4,11 +4,11 @@
 
 [Back to Section8](Section8.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-05-24T04:56:48Z
+> Last generated (UTC): 2026-07-07T21:06:59Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 8.2 | Scope Analysis | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-scope-analysis) |
+| 8.2 | Scope Analysis | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-scope-analysis) |
 
 ## Subclauses
 
@@ -29,6 +29,12 @@
 ## Support
 
 Feature-level support tracking with repo test references and optional test262 evidence.
+
+### 8.2 ([tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-scope-analysis))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| Scope analysis across binding discovery, lexical environments, hoisting, and top-level declaration tracking | Supported with Limitations | `tests/Jroc.Tests/SymbolTableBuilderTests.cs`<br>[`Variable_LetBlockScope.js`](../../../tests/Jroc.Tests/Variable/JavaScript/Variable_LetBlockScope.js)<br>[`CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js`](../../../tests/Jroc.Tests/CommonJS/JavaScript/CommonJS_FunctionDeclaration_Hoisting_BeforeUse.js) | suite `language/expressions/arrow-function`<br>suite `language/expressions/class`<br>suite `language/expressions/function` | JROC's symbol-table and scope-building pipeline covers the declaration-collection and environment-boundary analysis needed by the currently supported language surface, including destructuring bindings, lexical block scopes, loop-head scopes, hoisted var/function declarations, and top-level CommonJS-style module scope tracking. Remaining limitations mainly follow unsupported grammar/runtime forms and the fact that ESM-specific top-level semantics are still outside current support. |
 
 ### 8.2.1 ([tc39.es](https://tc39.es/ecma262/#sec-static-semantics-boundnames))
 
