@@ -81,6 +81,11 @@ public static class BigInt
         return ToString(value, null);
     }
 
+    public static string ToLocaleString(object? value)
+    {
+        return ToString(ThisBigIntValue(value), null);
+    }
+
     public static string ToString(object? value, object? radix)
     {
         var bigInt = ToBigInteger(value);
@@ -130,6 +135,24 @@ public static class BigInt
         }
 
         return builder.ToString();
+    }
+
+    internal static BigInteger ThisBigIntValue(object? value)
+    {
+        if (value is BigInteger primitive)
+        {
+            return primitive;
+        }
+
+        if (value is not null
+            && PropertyDescriptorStore.TryGetOwn(value, JavaScriptRuntime.Object.PrimitiveValuePropertyName, out var descriptor)
+            && descriptor.Kind == JsPropertyDescriptorKind.Data
+            && descriptor.Value is BigInteger wrapped)
+        {
+            return wrapped;
+        }
+
+        throw new TypeError("BigInt.prototype method called on incompatible receiver");
     }
 
     private static BigInteger ToBigInteger(object? value)

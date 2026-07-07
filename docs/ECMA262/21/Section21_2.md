@@ -4,13 +4,13 @@
 
 [Back to Section21](Section21.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-27T20:45:55Z
+> Last generated (UTC): 2026-07-07T16:01:14Z
 
-JROC provides a minimal BigInt callable implementation backed by System.Numerics.BigInteger, sufficient for basic BigInt(value) usage and typeof semantics. The broader BigInt constructor/prototype surface and full spec conversion rules are not yet implemented.
+JROC provides a BigInt callable and core prototype surface backed by System.Numerics.BigInteger, including `BigInt(value)`, `BigInt.asIntN`, `BigInt.asUintN`, `BigInt.prototype`, `toString`, `toLocaleString`, `valueOf`, and wrapper-object integration for the currently covered test262 surface. Full BigInt conversion rules and broader locale/radix coverage still remain incomplete.
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 21.2 | BigInt Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-bigint-objects) |
+| 21.2 | BigInt Objects | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint-objects) |
 
 ## Subclauses
 
@@ -22,15 +22,15 @@ JROC provides a minimal BigInt callable implementation backed by System.Numerics
 | 21.2.2 | Properties of the BigInt Constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-bigint-constructor) |
 | 21.2.2.1 | BigInt.asIntN ( bits , bigint ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.asintn) |
 | 21.2.2.2 | BigInt.asUintN ( bits , bigint ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.asuintn) |
-| 21.2.2.3 | BigInt.prototype | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype) |
-| 21.2.3 | Properties of the BigInt Prototype Object | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-bigint-prototype-object) |
-| 21.2.3.1 | BigInt.prototype.constructor | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.constructor) |
-| 21.2.3.2 | BigInt.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.tolocalestring) |
-| 21.2.3.3 | BigInt.prototype.toString ( [ radix ] ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.tostring) |
-| 21.2.3.4 | BigInt.prototype.valueOf ( ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.valueof) |
-| 21.2.3.4.1 | ThisBigIntValue ( value ) | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-thisbigintvalue) |
-| 21.2.3.5 | BigInt.prototype [ %Symbol.toStringTag% ] | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype-%symbol.tostringtag%) |
-| 21.2.4 | Properties of BigInt Instances | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-bigint-instances) |
+| 21.2.2.3 | BigInt.prototype | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype) |
+| 21.2.3 | Properties of the BigInt Prototype Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-bigint-prototype-object) |
+| 21.2.3.1 | BigInt.prototype.constructor | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.constructor) |
+| 21.2.3.2 | BigInt.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.tolocalestring) |
+| 21.2.3.3 | BigInt.prototype.toString ( [ radix ] ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.tostring) |
+| 21.2.3.4 | BigInt.prototype.valueOf ( ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.valueof) |
+| 21.2.3.4.1 | ThisBigIntValue ( value ) | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-thisbigintvalue) |
+| 21.2.3.5 | BigInt.prototype [ %Symbol.toStringTag% ] | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype-%symbol.tostringtag%) |
+| 21.2.4 | Properties of BigInt Instances | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-properties-of-bigint-instances) |
 
 ## Support
 
@@ -59,4 +59,52 @@ Feature-level support tracking with repo test references and optional test262 ev
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
 | BigInt.asUintN(bits, bigint) | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/asUintN/ExecutionTests.cs` | `test/built-ins/BigInt/asUintN/arithmetic.js`<br>`test/built-ins/BigInt/asUintN/asUintN.js`<br>`test/built-ins/BigInt/asUintN/length.js`<br>`test/built-ins/BigInt/asUintN/name.js`<br>`test/built-ins/BigInt/asUintN/not-a-constructor.js` | Supports `BigInt.asUintN` modulo truncation and callable metadata (name/length, non-constructible) for the covered test262 surface. Very large bit widths beyond current implementation limits remain unsupported. |
+
+### 21.2.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt.prototype descriptor and prototype linkage | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/prop-desc.js`<br>`test/built-ins/BigInt/prototype/proto.js` | Checked-in coverage now verifies the `BigInt.prototype` property descriptor on `%BigInt%` and the BigInt prototype object's `[[Prototype]]` linkage to `%Object.prototype%`. |
+
+### 21.2.3 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-the-bigint-prototype-object))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt prototype surface and wrapper integration | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/constructor.js`<br>`test/built-ins/BigInt/prototype/Symbol.toStringTag.js`<br>`test/built-ins/Object/bigint.js`<br>`test/built-ins/Object/prototype/toString/Object.prototype.toString.call-bigint.js` | JROC now exposes a concrete BigInt prototype object with constructor and `@@toStringTag` metadata, and `Object(0n)` produces a BigInt wrapper that participates in `instanceof`, `valueOf`, and `Object.prototype.toString` for the covered cases. |
+
+### 21.2.3.2 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.tolocalestring))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt.prototype.toLocaleString metadata and non-constructibility | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/toLocaleString/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/intl402/BigInt/prototype/toLocaleString/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/toLocaleString/not-a-constructor.js`<br>`test/intl402/BigInt/prototype/toLocaleString/length.js`<br>`test/intl402/BigInt/prototype/toLocaleString/name.js` | Checked-in coverage now verifies `BigInt.prototype.toLocaleString` exists with the expected built-in metadata and is not constructible. Locale-sensitive formatting semantics still need broader dedicated coverage. |
+
+### 21.2.3.3 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.tostring))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt.prototype.toString basic semantics | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/toString/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/toString/default-radix.js`<br>`test/built-ins/BigInt/prototype/toString/not-a-constructor.js`<br>`test/built-ins/BigInt/prototype/toString/thisbigintvalue-not-valid-throws.js` | Checked-in coverage now exercises default-radix formatting, `thisBigIntValue` receiver validation, and non-constructibility for `BigInt.prototype.toString`. Wider radix and coercion coverage is still incomplete. |
+
+### 21.2.3.4 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype.valueof))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt.prototype.valueOf basic semantics | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/valueOf/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/valueOf/return.js`<br>`test/built-ins/BigInt/prototype/valueOf/this-value-invalid-object-throws.js` | Checked-in coverage now verifies `BigInt.prototype.valueOf` returns the primitive BigInt from both primitive and wrapper receivers and rejects incompatible object receivers. |
+
+### 21.2.3.4.1 ([tc39.es](https://tc39.es/ecma262/#sec-thisbigintvalue))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| ThisBigIntValue primitive and wrapper extraction | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/toString/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/valueOf/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/toString/thisbigintvalue-not-valid-throws.js`<br>`test/built-ins/BigInt/prototype/valueOf/return.js`<br>`test/built-ins/BigInt/prototype/valueOf/this-value-invalid-object-throws.js` | The current BigInt prototype implementation now extracts primitive BigInt values from both raw primitives and BigInt wrapper objects for the covered methods, and throws `TypeError` for incompatible receivers. |
+
+### 21.2.3.5 ([tc39.es](https://tc39.es/ecma262/#sec-bigint.prototype-%symbol.tostringtag%))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt.prototype[@@toStringTag] | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/BigInt/prototype/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs` | `test/built-ins/BigInt/prototype/Symbol.toStringTag.js`<br>`test/built-ins/Object/prototype/toString/Object.prototype.toString.call-bigint.js` | Checked-in coverage now verifies the `@@toStringTag` descriptor on `BigInt.prototype` and the resulting `[object BigInt]` branding for both primitive and wrapper receivers. |
+
+### 21.2.4 ([tc39.es](https://tc39.es/ecma262/#sec-properties-of-bigint-instances))
+
+| Feature name | Status | Test scripts | test262 evidence | Notes |
+|---|---|---|---|---|
+| BigInt wrapper object properties | Supported with Limitations | `tests/Jroc.Test262.Tests/built-ins/Object/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/Object/prototype/toString/ExecutionTests.cs` | `test/built-ins/Object/bigint.js`<br>`test/built-ins/Object/prototype/toString/Object.prototype.toString.call-bigint.js` | Checked-in coverage now verifies that `Object(0n)` produces a branded BigInt wrapper with the expected prototype linkage and primitive `valueOf()` behavior for the covered cases. |
 

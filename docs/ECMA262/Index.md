@@ -19,12 +19,12 @@ Notes:
 - `Partially Supported` is deprecated legacy wording and is treated as `Supported with Limitations`.
 - Prototype-chain design/strategy: see [PrototypeChainSupport.md](../compiler/PrototypeChainSupport.md).
 
-> Last generated (UTC): 2026-06-24T17:01:02Z
+> Last generated (UTC): 2026-07-07T16:50:30Z
 
 ## Summary
 - Total top-level sections indexed: **29**
 - Top-level sections with tracked status: **28**
-- Status breakdown: Supported with Limitations: **7**, Incomplete: **14**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
+- Status breakdown: Supported with Limitations: **8**, Incomplete: **13**, Not Yet Supported: **1**, N/A (informational): **6**, Untracked: **1**
 - Untracked top-level sections: **1**
 
 ## Sections
@@ -51,7 +51,7 @@ Notes:
 | 18 | ECMAScript Standard Built-in Objects | N/A (informational) | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) | [Section18.md](18/Section18.md) |
 | 19 | The Global Object | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-global-object) | [Section19.md](19/Section19.md) |
 | 20 | Fundamental Objects | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-fundamental-objects) | [Section20.md](20/Section20.md) |
-| 21 | Numbers and Dates | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-numbers-and-dates) | [Section21.md](21/Section21.md) |
+| 21 | Numbers and Dates | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-numbers-and-dates) | [Section21.md](21/Section21.md) |
 | 22 | Text Processing | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-text-processing) | [Section22.md](22/Section22.md) |
 | 23 | Indexed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-indexed-collections) | [Section23.md](23/Section23.md) |
 | 24 | Keyed Collections | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-keyed-collections) | [Section24.md](24/Section24.md) |
