@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace JavaScriptRuntime
 {
@@ -127,7 +128,10 @@ namespace JavaScriptRuntime
         public static double expm1(object? x)
         {
             double d = ToNumber(x);
-            // Use Math.Exp - 1; for small values, .NET also has Math.Exp(d) - 1
+            if (double.IsNaN(d)) return double.NaN;
+            if (double.IsNegativeInfinity(d)) return -1.0;
+            if (double.IsPositiveInfinity(d)) return double.PositiveInfinity;
+            if (d == 0.0) return d; // preserve +0/-0
             return System.Math.Exp(d) - 1.0;
         }
         public static double log(object? x) => System.Math.Log(ToNumber(x));
@@ -135,6 +139,9 @@ namespace JavaScriptRuntime
         public static double log1p(object? x)
         {
             double d = ToNumber(x);
+            if (double.IsNaN(d) || d < -1.0) return double.NaN;
+            if (d == -1.0) return double.NegativeInfinity;
+            if (double.IsPositiveInfinity(d) || d == 0.0) return d; // preserve +0/-0
             return System.Math.Log(1.0 + d);
         }
         public static double log2(object? x)
@@ -147,6 +154,10 @@ namespace JavaScriptRuntime
         {
             double dx = ToNumber(x);
             double dy = ToNumber(y);
+            if (double.IsNaN(dy))
+            {
+                return double.NaN;
+            }
             return System.Math.Pow(dx, dy);
         }
 
@@ -236,6 +247,19 @@ namespace JavaScriptRuntime
             return d;
         }
 
+        public static double f16round(object? x)
+        {
+            double d = ToNumber(x);
+            Half half = (Half)d;
+            double rounded = (double)half;
+            if (rounded == 0.0 && double.IsNegative(d))
+            {
+                return -0.0;
+            }
+
+            return rounded;
+        }
+
         public static double imul(object? a, object? b)
         {
             int x = ToInt32(a);
@@ -255,6 +279,99 @@ namespace JavaScriptRuntime
                 else break;
             }
             return (double)count;
+        }
+
+        public static double sumPrecise(object? items)
+        {
+            var iterator = ObjectRuntime.GetIterator(items);
+            var completedNormally = false;
+            var partials = new List<double>();
+
+            try
+            {
+                while (true)
+                {
+                    var step = Object.IteratorNext(iterator);
+                    if (Object.IteratorResultDone(step))
+                    {
+                        break;
+                    }
+
+                    var value = Object.IteratorResultValue(step);
+                    var number = ToNumber(value);
+                    if (double.IsNaN(number))
+                    {
+                        return double.NaN;
+                    }
+
+                    AddExactPartial(partials, number);
+                }
+
+                completedNormally = true;
+            }
+            finally
+            {
+                if (!completedNormally)
+                {
+                    Object.IteratorClose(iterator);
+                }
+            }
+
+            return SumExactPartials(partials);
+        }
+
+        private static void AddExactPartial(List<double> partials, double value)
+        {
+            var x = value;
+            for (var i = 0; i < partials.Count; i++)
+            {
+                var y = partials[i];
+                if (System.Math.Abs(x) < System.Math.Abs(y))
+                {
+                    (x, y) = (y, x);
+                }
+
+                var hi = x + y;
+                var lo = y - (hi - x);
+                if (lo != 0.0)
+                {
+                    partials[i] = lo;
+                    x = hi;
+                }
+                else
+                {
+                    partials[i] = hi;
+                    return;
+                }
+            }
+
+            partials.Add(x);
+        }
+
+        private static double SumExactPartials(List<double> partials)
+        {
+            if (partials.Count == 0)
+            {
+                return 0.0;
+            }
+
+            var total = 0.0;
+            var sawNegativeZero = false;
+            foreach (var partial in partials)
+            {
+                total += partial;
+                if (partial == 0.0 && double.IsNegative(partial))
+                {
+                    sawNegativeZero = true;
+                }
+            }
+
+            if (total == 0.0 && sawNegativeZero)
+            {
+                return -0.0;
+            }
+
+            return total;
         }
 
         private static double ToNumber(object? x) => TypeUtilities.ToNumber(x);
