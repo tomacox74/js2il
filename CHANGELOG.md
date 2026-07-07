@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs/ecma262: reclassify ECMA-262 Section 7.4 Operations on Iterator Objects to `Supported with Limitations`, documenting the current sync/async iterator acquisition, step/value, close-on-abrupt-completion, helper cleanup, and iterator-to-list style materialization coverage against existing runtime behavior and focused evidence.
 - docs/ecma262: reclassify ECMA-262 Section 7.3 Operations on Objects to `Supported with Limitations`, documenting the current integrity-level, apply/construct argument normalization, species accessor, private method/accessor, grouping, and class-field own-property coverage against existing runtime behavior and targeted evidence.
 - docs/ecma262: reclassify ECMA-262 Section 7.2 Testing and Comparison Operations to `Supported with Limitations`, documenting the current `RequireObjectCoercible`, `IsExtensible`, `isWellFormed`, identity, and comparison coverage against existing runtime behavior and targeted evidence.
 - runtime/tests/docs/test262: reclassify ECMA-262 Section 7.1 Type Conversion to `Supported with Limitations`, add shared `ToInt8` / `ToInt16` / `ToUint8` / `ToUint16` / `ToUint8Clamp` runtime helpers, implement `Uint8ClampedArray`, port new `for..of` test262 coverage for `Uint8ClampedArray`, and refresh the Section 7.1 support notes.
