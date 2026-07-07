@@ -71,6 +71,22 @@ namespace JavaScriptRuntime
             var bigint = args.Length > 1 ? args[1] : null;
             return global::JavaScriptRuntime.BigInt.AsUintN(bits, bigint);
         };
+        private static readonly Func<object[], object?[]?, object?> _bigIntPrototypeToStringValue = static (_, args) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            var radix = args != null && args.Length > 0 ? args[0] : null;
+            return global::JavaScriptRuntime.BigInt.ToString(global::JavaScriptRuntime.BigInt.ThisBigIntValue(thisValue), radix);
+        };
+        private static readonly Func<object[], object?[]?, object?> _bigIntPrototypeToLocaleStringValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            return global::JavaScriptRuntime.BigInt.ToLocaleString(thisValue);
+        };
+        private static readonly Func<object[], object?[]?, object?> _bigIntPrototypeValueOfValue = static (_, __) =>
+        {
+            var thisValue = RuntimeServices.GetCurrentThis();
+            return global::JavaScriptRuntime.BigInt.ThisBigIntValue(thisValue);
+        };
 
         private static readonly Func<object[], object?[]?, object?> _numberPrototypeToStringValue = static (_, __) =>
         {
@@ -281,6 +297,7 @@ namespace JavaScriptRuntime
         private static readonly object _atomicsValue = new JsObject();
         private static readonly object _numberPrototypeValue = new JsObject();
         private static readonly object _booleanPrototypeValue = new JsObject();
+        private static readonly object _bigIntPrototypeValue = new JsObject();
         private static readonly object _symbolPrototypeValue = new JsObject();
         private static readonly object _promisePrototypeValue = new JsObject();
         private static readonly object _arrayBufferPrototypeValue = new JsObject();
@@ -495,6 +512,7 @@ namespace JavaScriptRuntime
             PrototypeChain.SetPrototype(_atomicsValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_numberPrototypeValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_booleanPrototypeValue, _objectPrototypeValue);
+            PrototypeChain.SetPrototype(_bigIntPrototypeValue, _objectPrototypeValue);
             PrototypeChain.SetPrototype(_symbolPrototypeValue, _objectPrototypeValue);
             PropertyDescriptorStore.DefineOrUpdate(_numberPrototypeValue, JavaScriptRuntime.Number.NumberDataPropertyName, new JsPropertyDescriptor
             {
@@ -503,6 +521,14 @@ namespace JavaScriptRuntime
                 Configurable = false,
                 Writable = true,
                 Value = 0d
+            });
+            PropertyDescriptorStore.DefineOrUpdate(_bigIntPrototypeValue, JavaScriptRuntime.Object.PrimitiveValuePropertyName, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = true,
+                Value = global::System.Numerics.BigInteger.Zero
             });
             DefineIntrinsicDataProperty(_jsonValue, "parse", (Func<object?, object?>)JavaScriptRuntime.JSON.Parse);
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
@@ -563,9 +589,21 @@ namespace JavaScriptRuntime
             DefineIntrinsicDataProperty(_numberFunctionValue, "parseFloat", _parseFloatValue);
             DefineIntrinsicDataProperty(_numberFunctionValue, "parseInt", _parseIntValue);
             JavaScriptRuntime.Function.InitializeFunctionInstance(_bigIntFunctionValue, 1d, "BigInt");
-            DefineUndefinedPrototypeProperty(_bigIntFunctionValue);
+            PropertyDescriptorStore.DefineOrUpdate(_bigIntFunctionValue, "prototype", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = _bigIntPrototypeValue
+            });
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asIntN", _bigIntAsIntNValue, 2d);
             DefineBuiltinFunctionProperty(_bigIntFunctionValue, "asUintN", _bigIntAsUintNValue, 2d);
+            DefineIntrinsicDataProperty(_bigIntPrototypeValue, "constructor", _bigIntFunctionValue);
+            DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "toLocaleString", _bigIntPrototypeToLocaleStringValue, 0d);
+            DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "toString", _bigIntPrototypeToStringValue, 1d);
+            DefineBuiltinFunctionProperty(_bigIntPrototypeValue, "valueOf", _bigIntPrototypeValueOfValue, 0d);
+            DefineIntrinsicToStringTagProperty(_bigIntPrototypeValue, "BigInt");
             JavaScriptRuntime.Date.InitializeIntrinsicSurface(_objectPrototypeValue);
             ConfigureBuiltinFunctionObject(_stringFunctionValue);
             ConfigureBuiltinFunctionObject(_booleanFunctionValue);
@@ -1811,6 +1849,7 @@ namespace JavaScriptRuntime
         internal static object ObjectPrototypeValue => _objectPrototypeValue;
         internal static object NumberPrototypeValue => _numberPrototypeValue;
         internal static object BooleanPrototypeValue => _booleanPrototypeValue;
+        internal static object BigIntPrototypeValue => _bigIntPrototypeValue;
         internal static object SymbolPrototypeValue => _symbolPrototypeValue;
         internal static object DatePrototypeValue => JavaScriptRuntime.Date.Prototype;
         internal static object ErrorPrototypeValue => _errorPrototypeValue;

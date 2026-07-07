@@ -25,4 +25,8 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "S15.2.3_A2")]
     public Task S15_2_3_A2()
         => ExecutionTestFromFile("S15.2.3_A2");
+
+    [Fact(DisplayName = "bigint")]
+    public Task bigint()
+        => ExecutionTestFromFile("bigint");
 }

@@ -1304,7 +1304,7 @@ namespace JavaScriptRuntime
                 Value = (Func<object[], object?[]?, object?>)((_, __) => primitiveValue)
             });
 
-            if (includeOwnStringMethods || primitiveValue is System.Numerics.BigInteger or JavaScriptRuntime.Symbol)
+            if (includeOwnStringMethods || primitiveValue is JavaScriptRuntime.Symbol)
             {
                 PropertyDescriptorStore.DefineOrUpdate(wrapper, "toString", new JsPropertyDescriptor
                 {
@@ -2168,7 +2168,7 @@ namespace JavaScriptRuntime
 
             if (value is System.Numerics.BigInteger)
             {
-                return CreatePrimitiveWrapper(value, GlobalThis.ObjectPrototypeValue, includeOwnStringMethods: false);
+                return CreatePrimitiveWrapper(value, GlobalThis.BigIntPrototypeValue, includeOwnStringMethods: false);
             }
 
             if (value is JavaScriptRuntime.Symbol)
@@ -5470,10 +5470,16 @@ namespace JavaScriptRuntime
                 return TryGetInheritedPropertyValue(booleanWrapper, name, out var booleanInherited) ? booleanInherited : null;
             }
 
-            if (obj is double or float or int or long or short or byte or System.Numerics.BigInteger)
+            if (obj is double or float or int or long or short or byte)
             {
                 var numberWrapper = CreatePrimitiveWrapper(obj, GlobalThis.NumberPrototypeValue, includeOwnStringMethods: false);
                 return TryGetInheritedPropertyValue(numberWrapper, name, out var numberInherited) ? numberInherited : null;
+            }
+
+            if (obj is System.Numerics.BigInteger)
+            {
+                var bigIntWrapper = CreatePrimitiveWrapper(obj, GlobalThis.BigIntPrototypeValue, includeOwnStringMethods: false);
+                return TryGetInheritedPropertyValue(bigIntWrapper, name, out var bigIntInherited) ? bigIntInherited : null;
             }
 
             if (obj is JavaScriptRuntime.Symbol)
