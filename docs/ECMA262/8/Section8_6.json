@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "8.6",
   "title": "Miscellaneous",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-miscellaneous",
   "parent": {
     "clause": "8"
@@ -48,6 +48,25 @@
   ],
   "support": {
     "entries": [
+      {
+        "clause": "8.6",
+        "feature": "Miscellaneous syntax-directed operations for function instantiation, binding initialization, assignment targets, and property-name evaluation",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-syntax-directed-operations-miscellaneous",
+        "testScripts": [
+          "tests/Jroc.Tests/Function/JavaScript/Function_HelloWorld.js",
+          "tests/Jroc.Tests/Variable/JavaScript/Variable_ArrayDestructuring_Basic.js",
+          "tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+        ],
+        "test262Suites": [
+          "language/statements/variable",
+          "language/expressions/assignment/destructuring",
+          "language/statements/for-of",
+          "language/expressions/object",
+          "language/expressions/class/elements"
+        ],
+        "notes": "JROC already covers the observable Section 8.6 semantics exercised by today's supported function forms, declaration/destructuring bindings, iterator-driven loop bindings, assignment-target classification, and computed property-name evaluation. Remaining limitations follow intentionally unsupported forms such as eval and other unsupported syntax/runtime edge cases rather than a missing core miscellaneous-operations pipeline."
+      },
       {
         "clause": "8.6.1",
         "feature": "Instantiation of function/arrow/class callable objects",

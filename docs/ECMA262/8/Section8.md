@@ -4,7 +4,7 @@ Defines syntax-directed operations, linking grammar productions to static semant
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-07-07T21:06:59Z
+> Last generated (UTC): 2026-07-07T21:13:28Z
 
 _This section is split into subsection documents for readability._
 
@@ -12,7 +12,7 @@ _This section is split into subsection documents for readability._
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
-| 8 | Syntax-Directed Operations | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) |
+| 8 | Syntax-Directed Operations | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) |
 
 ## Subsections
 
@@ -23,4 +23,4 @@ _This section is split into subsection documents for readability._
 | 8.3 | Labels | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-labels) | [Section8_3.md](Section8_3.md) |
 | 8.4 | Function Name Inference | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-function-name-inference) | [Section8_4.md](Section8_4.md) |
 | 8.5 | Contains | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-contains) | [Section8_5.md](Section8_5.md) |
-| 8.6 | Miscellaneous | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-miscellaneous) | [Section8_6.md](Section8_6.md) |
+| 8.6 | Miscellaneous | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations-miscellaneous) | [Section8_6.md](Section8_6.md) |

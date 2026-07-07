@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- docs/ecma262: reclassify ECMA-262 Section 8.6 Miscellaneous to `Supported with Limitations`, documenting the current function-instantiation, binding-initialization, iterator-binding, assignment-target, and property-name evaluation coverage and rolling Section 8 up to `Supported with Limitations`.
 - docs/ecma262: reclassify ECMA-262 Sections 8.2 Scope Analysis and 8.4 Function Name Inference to `Supported with Limitations`, documenting the current scope-building, hoisting, lexical-environment, and observable SetFunctionName / NamedEvaluation coverage against existing compiler/runtime behavior and focused evidence.
 - docs/ecma262: reclassify ECMA-262 Section 8.1 Runtime Semantics: Evaluation to `Supported with Limitations`, documenting the current HIR/LIR/IL evaluation pipeline coverage across expressions, control flow, generators, async evaluation, and evaluation-order semantics while keeping general `eval` unsupported by design.
 - docs/ecma262: reclassify ECMA-262 Section 7.4 Operations on Iterator Objects to `Supported with Limitations`, documenting the current sync/async iterator acquisition, step/value, close-on-abrupt-completion, helper cleanup, and iterator-to-list style materialization coverage against existing runtime behavior and focused evidence.
