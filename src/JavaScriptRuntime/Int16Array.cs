@@ -92,7 +92,7 @@ namespace JavaScriptRuntime
         {
             var offset = ByteOffsetBytes + (index * ElementSize);
             var span = BufferObject.RawBytes.AsSpan(offset, ElementSize);
-            var coerced = unchecked((short)TypeUtilities.ToInt32(value));
+            var coerced = TypeUtilities.ToInt16(value);
             if (BitConverter.IsLittleEndian)
             {
                 BinaryPrimitives.WriteInt16LittleEndian(span, coerced);

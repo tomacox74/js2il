@@ -2,7 +2,7 @@
   "$schema": "../SectionDoc.schema.json",
   "clause": "7.1",
   "title": "Type Conversion",
-  "status": "Incomplete",
+  "status": "Supported with Limitations",
   "specUrl": "https://tc39.es/ecma262/#sec-type-conversion",
   "parent": {
     "clause": "7"
@@ -61,7 +61,7 @@
     {
       "clause": "7.1.4.1.3",
       "title": "RoundMVResult ( n )",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-roundmvresult"
     },
     {
@@ -85,7 +85,7 @@
     {
       "clause": "7.1.8",
       "title": "ToInt16 ( argument )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-toint16"
     },
     {
@@ -97,19 +97,19 @@
     {
       "clause": "7.1.10",
       "title": "ToInt8 ( argument )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-toint8"
     },
     {
       "clause": "7.1.11",
       "title": "ToUint8 ( argument )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-touint8"
     },
     {
       "clause": "7.1.12",
       "title": "ToUint8Clamp ( argument )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-touint8clamp"
     },
     {
@@ -127,25 +127,25 @@
     {
       "clause": "7.1.14.1",
       "title": "StringIntegerLiteral Grammar",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-stringintegerliteral-grammar"
     },
     {
       "clause": "7.1.14.2",
       "title": "Runtime Semantics: MV",
-      "status": "Not Yet Supported",
+      "status": "N/A (informational)",
       "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-mv-for-stringintegerliteral"
     },
     {
       "clause": "7.1.15",
       "title": "ToBigInt64 ( argument )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-tobigint64"
     },
     {
       "clause": "7.1.16",
       "title": "ToBigUint64 ( argument )",
-      "status": "Not Yet Supported",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-tobiguint64"
     },
     {
@@ -188,6 +188,18 @@
   "support": {
     "entries": [
       {
+        "clause": "7.1",
+        "feature": "Type conversion across numbers, BigInt, typed arrays, and key/index coercion",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-type-conversion",
+        "testScripts": [
+          "tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_SignedAndClamped_ConversionSemantics.js",
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/ExecutionTests.cs"
+        ],
+        "notes": "The runtime now covers the commonly exercised conversion surfaces for numbers, BigInt, typed-array element writes, property keys, and index coercion. Remaining gaps are concentrated in full object-coercion precedence, uncommon grammar corners, and broader typed-array families that are still only partially implemented."
+      },
+      {
         "clause": "7.1.1",
         "feature": "comparison/equality coercion paths that rely on ToPrimitive",
         "status": "Supported with Limitations",
@@ -210,6 +222,18 @@
         "notes": "Implements core truthiness for primitives, null/undefined, BigInt, and objects via TypeUtilities.ToBoolean; host-specific edge cases are not modeled."
       },
       {
+        "clause": "7.1.3",
+        "feature": "ToNumeric dispatch between Number and BigInt paths",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-tonumeric",
+        "testScripts": [
+          "tests/Jroc.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/asIntN/ExecutionTests.cs",
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/asUintN/ExecutionTests.cs"
+        ],
+        "notes": "Current numeric call sites correctly stay in the Number or BigInt domain for the covered built-ins and coercion helpers. Mixed-domain operator coverage and full object-to-BigInt coercion precedence remain incomplete."
+      },
+      {
         "clause": "7.1.4",
         "feature": "ToNumber coercion",
         "status": "Supported with Limitations",
@@ -219,6 +243,18 @@
           "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseFloat_IsFinite_Basic.js"
         ],
         "notes": "Supports common primitive conversions including trimmed decimal/hex strings, booleans, null, and undefined; does not implement full StringNumericLiteral grammar parity."
+      },
+      {
+        "clause": "7.1.5",
+        "feature": "ToIntegerOrInfinity in relative-index and length-like call sites",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-tointegerorinfinity",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Array/prototype/copyWithin/ExecutionTests.cs",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Infinity_Index_NoOp.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Int32Array_Fractional_Index_NoOp.js"
+        ],
+        "notes": "The shared truncation and infinity-handling behavior required by covered array and typed-array index consumers is implemented in the current runtime call sites. JROC still does not expose a single centralized helper for every abstract-operation consumer."
       },
       {
         "clause": "7.1.6",
@@ -241,14 +277,59 @@
         "notes": "Implemented where required by >>> semantics; not exposed as a standalone abstract-operation helper."
       },
       {
+        "clause": "7.1.8",
+        "feature": "ToInt16 coercion for typed-array and DataView element writes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-toint16",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_SignedAndClamped_ConversionSemantics.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js"
+        ],
+        "notes": "Narrowing to signed 16-bit values is implemented in the shared runtime helper used by Int16Array and DataView integer writes. Wider typed-array families that would exercise the same operation are still only partially implemented."
+      },
+      {
         "clause": "7.1.9",
-        "feature": "ToUint16 coercion for String.fromCharCode",
+        "feature": "ToUint16 coercion for String.fromCharCode and DataView integer writes",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-touint16",
         "testScripts": [
-          "tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_Slice_FromCharCode_Apply.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/DataView_SetGet_UintAndEndian.js"
         ],
-        "notes": "Applies ToUint16-style truncation/masking for fromCharCode arguments."
+        "notes": "Applies ToUint16-style truncation/masking in String.fromCharCode and the covered DataView integer-write paths."
+      },
+      {
+        "clause": "7.1.10",
+        "feature": "ToInt8 coercion for typed-array and DataView byte writes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-toint8",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_SignedAndClamped_ConversionSemantics.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/ExecutionTests.cs"
+        ],
+        "notes": "Signed 8-bit wrapping now flows through a shared helper used by Int8Array and DataView.setInt8. Coverage is currently focused on the typed-array and iteration paths implemented in JROC."
+      },
+      {
+        "clause": "7.1.11",
+        "feature": "ToUint8 coercion for typed-array, DataView, and buffer-style byte writes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-touint8",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_SignedAndClamped_ConversionSemantics.js",
+          "tests/Jroc.Tests/TypedArray/JavaScript/Uint8Array_Construct_ArrayLike_Buffer_Search.js"
+        ],
+        "notes": "Unsigned 8-bit truncation is implemented via a shared runtime helper and is exercised by Uint8Array, DataView.setUint8, and byte-oriented Node helpers. Some broader typed-array families that would share this operation are still unimplemented."
+      },
+      {
+        "clause": "7.1.12",
+        "feature": "ToUint8Clamp coercion in Uint8ClampedArray element writes",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-touint8clamp",
+        "testScripts": [
+          "tests/Jroc.Tests/TypedArray/JavaScript/TypedArray_SignedAndClamped_ConversionSemantics.js",
+          "tests/Jroc.Test262.Tests/language/statements/for-of/ExecutionTests.cs"
+        ],
+        "notes": "JROC now implements the clamp-and-round-to-even behavior used by Uint8ClampedArray writes and iteration over clamped values. The supporting typed-array surface is still narrower than the full ECMAScript typed-array matrix."
       },
       {
         "clause": "7.1.13",
@@ -262,13 +343,48 @@
       },
       {
         "clause": "7.1.14",
-        "feature": "StringToBigInt (minimal decimal parsing)",
+        "feature": "StringToBigInt parsing for decimal and prefixed integer strings",
         "status": "Supported with Limitations",
         "specUrl": "https://tc39.es/ecma262/#sec-stringtobigint",
         "testScripts": [
-          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js"
+          "tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_BigInt_Callable_Basic.js",
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/ExecutionTests.cs"
         ],
-        "notes": "Supports basic decimal string parsing used by BigInt(value), but does not yet implement the full StringIntegerLiteral grammar variants."
+        "test262Paths": [
+          "test/built-ins/BigInt/constructor-from-binary-string.js",
+          "test/built-ins/BigInt/constructor-from-hex-string.js",
+          "test/built-ins/BigInt/constructor-from-octal-string.js",
+          "test/built-ins/BigInt/constructor-from-string-syntax-errors.js"
+        ],
+        "notes": "BigInt(value) now covers decimal, binary, octal, and hexadecimal string forms plus the covered syntax-error cases. Object-to-BigInt coercion precedence and some abstract ToBigInt edge cases remain incomplete."
+      },
+      {
+        "clause": "7.1.15",
+        "feature": "ToBigInt64 semantics via BigInt.asIntN",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-tobigint64",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/asIntN/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/BigInt/asIntN/arithmetic.js",
+          "test/built-ins/BigInt/asIntN/asIntN.js"
+        ],
+        "notes": "The 64-bit signed narrowing behavior is covered through BigInt.asIntN, including negative modulo cases and large-width arithmetic. Broader BigInt typed-array surfaces and full ToBigInt coercion parity are still incomplete."
+      },
+      {
+        "clause": "7.1.16",
+        "feature": "ToBigUint64 semantics via BigInt.asUintN",
+        "status": "Supported with Limitations",
+        "specUrl": "https://tc39.es/ecma262/#sec-tobiguint64",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/BigInt/asUintN/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "test/built-ins/BigInt/asUintN/arithmetic.js",
+          "test/built-ins/BigInt/asUintN/asUintN.js"
+        ],
+        "notes": "The 64-bit unsigned narrowing behavior is covered through BigInt.asUintN, including wraparound behavior for negative and oversized inputs. BigInt typed-array constructors and some ToBigInt coercion edges remain unsupported."
       },
       {
         "clause": "7.1.17",
