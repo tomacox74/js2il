@@ -12,7 +12,7 @@
     {
       "clause": "21.1.1",
       "title": "The Number Constructor",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number-constructor"
     },
     {
@@ -24,7 +24,7 @@
     {
       "clause": "21.1.2",
       "title": "Properties of the Number Constructor",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-number-constructor"
     },
     {
@@ -54,7 +54,7 @@
     {
       "clause": "21.1.2.5",
       "title": "Number.isSafeInteger ( number )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.issafeinteger"
     },
     {
@@ -66,7 +66,7 @@
     {
       "clause": "21.1.2.7",
       "title": "Number.MAX_VALUE",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.max_value"
     },
     {
@@ -78,13 +78,13 @@
     {
       "clause": "21.1.2.9",
       "title": "Number.MIN_VALUE",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.min_value"
     },
     {
       "clause": "21.1.2.10",
       "title": "Number.NaN",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.nan"
     },
     {
@@ -114,72 +114,84 @@
     {
       "clause": "21.1.2.15",
       "title": "Number.prototype",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype"
     },
     {
       "clause": "21.1.3",
       "title": "Properties of the Number Prototype Object",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-the-number-prototype-object"
     },
     {
       "clause": "21.1.3.1",
       "title": "Number.prototype.constructor",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.constructor"
     },
     {
       "clause": "21.1.3.2",
       "title": "Number.prototype.toExponential ( fractionDigits )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.toexponential"
     },
     {
       "clause": "21.1.3.3",
       "title": "Number.prototype.toFixed ( fractionDigits )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.tofixed"
     },
     {
       "clause": "21.1.3.4",
       "title": "Number.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.tolocalestring"
     },
     {
       "clause": "21.1.3.5",
       "title": "Number.prototype.toPrecision ( precision )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.toprecision"
     },
     {
       "clause": "21.1.3.6",
       "title": "Number.prototype.toString ( [ radix ] )",
-      "status": "Untracked",
+      "status": "Supported with Limitations",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.tostring"
     },
     {
       "clause": "21.1.3.7",
       "title": "Number.prototype.valueOf ( )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-number.prototype.valueof"
     },
     {
       "clause": "21.1.3.7.1",
       "title": "ThisNumberValue ( value )",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-thisnumbervalue"
     },
     {
       "clause": "21.1.4",
       "title": "Properties of Number Instances",
-      "status": "Untracked",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-properties-of-number-instances"
     }
   ],
   "support": {
     "entries": [
+      {
+        "clause": "21.1.1",
+        "feature": "The Number Constructor",
+        "status": "Supported with Limitations",
+        "test262Paths": [
+          "built-ins/Number/S15.7.2.1_A1.js",
+          "built-ins/Number/S15.7.2.1_A2.js",
+          "built-ins/Number/S15.7.5_A1_T01.js",
+          "built-ins/Number/S15.7.5_A1_T02.js"
+        ],
+        "notes": "Number wrapper construction is supported for the currently modeled Number object surface, including representative primitive construction and instance-shape coverage. Direct Number(value) calls remain tracked separately in 21.1.1.1, and broader constructor edge cases remain limited to the checked-in test262 slice."
+      },
       {
         "clause": "21.1.1.1",
         "feature": "Number ( value )",
@@ -196,6 +208,18 @@
           "built-ins/Number/S9.3.1_A7.js"
         ],
         "notes": "Direct calls to the global Number function are lowered to TypeUtilities.ToNumber and preserve observable abrupt completions even when the converted value is discarded. Checked-in coverage now includes representative undefined, null, boolean, numeric, empty-string, decimal-string, NaN, hexadecimal-string, object-wrapper, and non-canonical infinity-string coercion cases. Wrapper construction is supported for the currently modeled Number object surface, but full Number constructor/prototype semantics remain incomplete."
+      },
+      {
+        "clause": "21.1.2",
+        "feature": "Properties of the Number Constructor",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/S15.7.3_A1.js",
+          "built-ins/Number/S15.7.3_A2.js",
+          "built-ins/Number/S15.7.3_A3.js",
+          "built-ins/Number/S15.7.3_A4.js"
+        ],
+        "notes": "The Number constructor exposes the covered standard own properties with representative descriptor and existence coverage."
       },
       {
         "clause": "21.1.2.1",
@@ -259,6 +283,19 @@
         "notes": "Number.isNaN is exposed on the Number constructor with the expected callable metadata and property descriptor, does not coerce non-number arguments, and returns true only for Number NaN values."
       },
       {
+        "clause": "21.1.2.5",
+        "feature": "Number.isSafeInteger(number)",
+        "status": "Supported",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/isSafeInteger/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/isSafeInteger/not-safe-integer.js",
+          "built-ins/Number/isSafeInteger/safe-integers.js"
+        ],
+        "notes": "Number.isSafeInteger accepts safe integral Number values and rejects NaN, infinities, fractional values, unsafe integers, and non-number inputs without coercion."
+      },
+      {
         "clause": "21.1.2.6",
         "feature": "Number.MAX_SAFE_INTEGER",
         "status": "Supported",
@@ -268,6 +305,17 @@
         "notes": "Exposed on the Number constructor as a non-writable, non-enumerable, non-configurable data property with value 9007199254740991."
       },
       {
+        "clause": "21.1.2.7",
+        "feature": "Number.MAX_VALUE",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/MAX_VALUE/S15.7.3.2_A2.js",
+          "built-ins/Number/MAX_VALUE/S15.7.3.2_A3.js",
+          "built-ins/Number/MAX_VALUE/value.js"
+        ],
+        "notes": "Exposed on the Number constructor with the expected maximum finite double value and non-writable, non-enumerable, non-configurable data-property attributes."
+      },
+      {
         "clause": "21.1.2.8",
         "feature": "Number.MIN_SAFE_INTEGER",
         "status": "Supported",
@@ -275,6 +323,34 @@
           "built-ins/Number/MIN_SAFE_INTEGER.js"
         ],
         "notes": "Exposed on the Number constructor as a non-writable, non-enumerable, non-configurable data property with value -9007199254740991."
+      },
+      {
+        "clause": "21.1.2.9",
+        "feature": "Number.MIN_VALUE",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/MIN_VALUE/S15.7.3.3_A3.js",
+          "built-ins/Number/MIN_VALUE/value.js"
+        ],
+        "notes": "Exposed on the Number constructor with the expected smallest positive double value and non-configurable data-property attribute coverage."
+      },
+      {
+        "clause": "21.1.2.10",
+        "feature": "Number.NaN",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/NaN.js"
+        ],
+        "notes": "Exposed on the Number constructor with the expected NaN value."
+      },
+      {
+        "clause": "21.1.2.11",
+        "feature": "Number.NEGATIVE_INFINITY",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/NEGATIVE_INFINITY/value.js"
+        ],
+        "notes": "Exposed on the Number constructor with the expected negative infinity numeric value."
       },
       {
         "clause": "21.1.2.12",
@@ -295,15 +371,6 @@
         "notes": "Exposed as the same function value as the global parseInt property with writable, non-enumerable, configurable data-property attributes."
       },
       {
-        "clause": "21.1.2.11",
-        "feature": "Number.NEGATIVE_INFINITY",
-        "status": "Supported",
-        "test262Paths": [
-          "built-ins/Number/NEGATIVE_INFINITY/value.js"
-        ],
-        "notes": "Exposed on the Number constructor with the expected negative infinity numeric value."
-      },
-      {
         "clause": "21.1.2.14",
         "feature": "Number.POSITIVE_INFINITY",
         "status": "Supported",
@@ -311,6 +378,146 @@
           "built-ins/Number/POSITIVE_INFINITY/value.js"
         ],
         "notes": "Exposed on the Number constructor with the expected positive infinity numeric value."
+      },
+      {
+        "clause": "21.1.2.15",
+        "feature": "Number.prototype",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/prototype/15.7.3.1-2.js",
+          "built-ins/Number/prototype/prop-desc.js",
+          "built-ins/Number/prototype/S15.7.4_A1.js",
+          "built-ins/Number/prototype/S15.7.4_A2.js"
+        ],
+        "notes": "Number.prototype is exposed as the initial Number prototype object, has the expected Number.prototype property descriptor on the constructor, inherits from Object.prototype, and carries [[NumberData]] value +0 for prototype method calls."
+      },
+      {
+        "clause": "21.1.3",
+        "feature": "Properties of the Number Prototype Object",
+        "status": "Supported with Limitations",
+        "test262Paths": [
+          "built-ins/Number/prototype/S15.7.4_A1.js",
+          "built-ins/Number/prototype/S15.7.4_A2.js",
+          "built-ins/Number/prototype/S15.7.4_A3.1.js",
+          "built-ins/Number/prototype/toExponential/prop-desc.js",
+          "built-ins/Number/prototype/toFixed/prop-desc.js",
+          "built-ins/Number/prototype/toLocaleString/prop-desc.js",
+          "built-ins/Number/prototype/toPrecision/prop-desc.js",
+          "built-ins/Number/prototype/toString/prop-desc.js",
+          "built-ins/Number/prototype/valueOf/prop-desc.js"
+        ],
+        "notes": "The covered Number.prototype object shape and prototype method descriptors are implemented. Formatting and locale behavior for some methods remains limited to the currently ported test262 slice and is tracked by method-specific entries."
+      },
+      {
+        "clause": "21.1.3.1",
+        "feature": "Number.prototype.constructor",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/prototype/constructor.js",
+          "built-ins/Number/prototype/S15.7.4_A3.1.js"
+        ],
+        "notes": "Number.prototype.constructor points to the Number intrinsic and has the expected writable, non-enumerable, configurable descriptor."
+      },
+      {
+        "clause": "21.1.3.2",
+        "feature": "Number.prototype.toExponential(fractionDigits)",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/prototype/toExponential/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/prototype/toExponential/prop-desc.js",
+          "built-ins/Number/prototype/toExponential/return-values.js"
+        ],
+        "notes": "Implemented with expected descriptor metadata, non-constructor behavior through builtin-function initialization, representative return values, special NaN/infinity handling, and RangeError validation for digits outside 0..100. Decimal formatting precision remains limited to the current implementation and test262 slice."
+      },
+      {
+        "clause": "21.1.3.3",
+        "feature": "Number.prototype.toFixed(fractionDigits)",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/prototype/toFixed/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/prototype/toFixed/prop-desc.js",
+          "built-ins/Number/prototype/toFixed/return-type.js"
+        ],
+        "notes": "Implemented with expected descriptor metadata, string return behavior, special NaN/infinity handling, and RangeError validation for digits outside 0..100. Exhaustive ECMAScript decimal-rounding edge cases are not yet fully tracked."
+      },
+      {
+        "clause": "21.1.3.4",
+        "feature": "Number.prototype.toLocaleString([ reserved1 [, reserved2 ] ])",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/prototype/toLocaleString/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/prototype/toLocaleString/not-a-constructor.js",
+          "built-ins/Number/prototype/toLocaleString/prop-desc.js"
+        ],
+        "notes": "Exposed as a non-constructible builtin with the expected property descriptor. Locale/options-sensitive formatting is intentionally limited today and currently delegates to the invariant JavaScript number string conversion."
+      },
+      {
+        "clause": "21.1.3.5",
+        "feature": "Number.prototype.toPrecision(precision)",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/prototype/toPrecision/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/prototype/toPrecision/prop-desc.js",
+          "built-ins/Number/prototype/toPrecision/return-values.js"
+        ],
+        "notes": "Implemented with expected descriptor metadata, representative precision formatting, undefined-precision fallback, special NaN/infinity handling, and RangeError validation for precision outside 1..100. Exhaustive ECMAScript decimal-rounding edge cases are not yet fully tracked."
+      },
+      {
+        "clause": "21.1.3.6",
+        "feature": "Number.prototype.toString([ radix ])",
+        "status": "Supported with Limitations",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/prototype/toString/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/prototype/toString/not-a-constructor.js",
+          "built-ins/Number/prototype/toString/prop-desc.js",
+          "built-ins/Number/prototype/toString/S15.7.4.2_A1_T01.js"
+        ],
+        "notes": "Implemented for the covered default/decimal conversion cases, including Number.prototype itself, wrapper values, NaN, and infinities; exposed as a non-constructible builtin with expected property descriptor. Non-decimal radix formatting remains limited to existing runtime conversion support."
+      },
+      {
+        "clause": "21.1.3.7",
+        "feature": "Number.prototype.valueOf()",
+        "status": "Supported",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/built-ins/Number/prototype/valueOf/ExecutionTests.cs"
+        ],
+        "test262Paths": [
+          "built-ins/Number/prototype/valueOf/not-a-constructor.js",
+          "built-ins/Number/prototype/valueOf/prop-desc.js",
+          "built-ins/Number/prototype/valueOf/S15.7.4.4_A2_T01.js"
+        ],
+        "notes": "Returns the wrapped NumberData value for Number primitives/wrappers and rejects incompatible receivers with TypeError; exposed as a non-constructible builtin with expected property descriptor."
+      },
+      {
+        "clause": "21.1.3.7.1",
+        "feature": "ThisNumberValue(value)",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/prototype/S15.7.4_A1.js",
+          "built-ins/Number/prototype/toString/S15.7.4.2_A1_T01.js",
+          "built-ins/Number/prototype/valueOf/S15.7.4.4_A2_T01.js"
+        ],
+        "notes": "The shared Number prototype receiver extraction accepts Number primitives, Number wrapper objects, and Number.prototype itself, and throws TypeError for incompatible receivers."
+      },
+      {
+        "clause": "21.1.4",
+        "feature": "Properties of Number Instances",
+        "status": "Supported",
+        "test262Paths": [
+          "built-ins/Number/S15.7.5_A1_T01.js",
+          "built-ins/Number/S15.7.5_A1_T02.js"
+        ],
+        "notes": "Constructed Number instances expose the covered Number object shape and prototype relationship."
       }
     ]
   }

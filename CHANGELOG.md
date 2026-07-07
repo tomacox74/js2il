@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- tests/docs/test262: expand ECMA-262 Section 21.1 Number coverage with newly ported constructor, constructor-property, prototype, prototype-method, and instance-shape test262 cases; implement the covered Number prototype method surface and refresh the Section 21.1 support docs.
 
 ## v0.11.12 - 2026-07-06
 

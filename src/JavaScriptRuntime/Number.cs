@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace JavaScriptRuntime
 {
     /// <summary>
@@ -140,5 +142,160 @@ namespace JavaScriptRuntime
             numberValue = TypeUtilities.ToNumber(descriptor.Value);
             return true;
         }
+
+        internal static string ToExponentialString(object? value, object? fractionDigitsArgument)
+        {
+            var number = ThisNumberValue(value);
+            if (double.IsNaN(number)) return "NaN";
+            if (double.IsPositiveInfinity(number)) return "Infinity";
+            if (double.IsNegativeInfinity(number)) return "-Infinity";
+
+            var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toExponential");
+            var formattedNumber = number;
+            var absolute = System.Math.Abs(number);
+            if (absolute != 0d)
+            {
+                var exponent = (int)System.Math.Floor(System.Math.Log10(absolute));
+                var scaled = absolute * System.Math.Pow(10d, fractionDigits - exponent);
+                var floor = System.Math.Floor(scaled);
+                var fractionalPart = scaled - floor;
+                if (System.Math.Abs(fractionalPart - 0.5d) <= 1e-12)
+                {
+                    var roundedScaled = floor + 1d;
+                    var roundedNormalized = roundedScaled / System.Math.Pow(10d, fractionDigits);
+                    if (roundedNormalized >= 10d)
+                    {
+                        roundedNormalized /= 10d;
+                        exponent++;
+                    }
+
+                    formattedNumber = System.Math.CopySign(
+                        roundedNormalized * System.Math.Pow(10d, exponent),
+                        number);
+                }
+            }
+
+            return NormalizeExponent(formattedNumber.ToString($"e{fractionDigits}", CultureInfo.InvariantCulture), trimMantissaTrailingZeros: false);
+        }
+
+        internal static string ToFixedString(object? value, object? fractionDigitsArgument)
+        {
+            var number = ThisNumberValue(value);
+            if (double.IsNaN(number)) return "NaN";
+            if (double.IsPositiveInfinity(number)) return "Infinity";
+            if (double.IsNegativeInfinity(number)) return "-Infinity";
+
+            var fractionDigits = ToDigitsArgument(fractionDigitsArgument, defaultValue: 0, minimum: 0, maximum: 100, "toFixed");
+            return number.ToString($"F{fractionDigits}", CultureInfo.InvariantCulture);
+        }
+
+        internal static string ToLocaleStringString(object? value)
+        {
+            var number = ThisNumberValue(value);
+            return DotNet2JSConversions.ToString(number);
+        }
+
+        internal static string ToPrecisionString(object? value, object? precisionArgument)
+        {
+            var number = ThisNumberValue(value);
+            if (precisionArgument is null)
+            {
+                return DotNet2JSConversions.ToString(number);
+            }
+
+            if (double.IsNaN(number)) return "NaN";
+            if (double.IsPositiveInfinity(number)) return "Infinity";
+            if (double.IsNegativeInfinity(number)) return "-Infinity";
+
+            var precision = ToDigitsArgument(precisionArgument, defaultValue: 0, minimum: 1, maximum: 100, "toPrecision");
+            var negative = number < 0 || double.IsNegative(number);
+            var absolute = System.Math.Abs(number);
+            var exponentForm = NormalizeExponent(absolute.ToString($"e{precision - 1}", CultureInfo.InvariantCulture), trimMantissaTrailingZeros: false);
+            var exponentIndex = exponentForm.IndexOf('e');
+            var mantissa = exponentForm[..exponentIndex];
+            var exponent = int.Parse(exponentForm[(exponentIndex + 1)..], CultureInfo.InvariantCulture);
+            var digits = mantissa.Replace(".", string.Empty, StringComparison.Ordinal);
+
+            string formatted;
+            if (exponent < -6 || exponent >= precision)
+            {
+                formatted = precision == 1
+                    ? $"{digits[0]}e{FormatExponent(exponent)}"
+                    : $"{digits[0]}.{digits[1..]}e{FormatExponent(exponent)}";
+            }
+            else if (exponent >= precision - 1)
+            {
+                formatted = digits + new string('0', exponent + 1 - digits.Length);
+            }
+            else if (exponent >= 0)
+            {
+                formatted = digits[..(exponent + 1)] + "." + digits[(exponent + 1)..];
+            }
+            else
+            {
+                formatted = "0." + new string('0', -(exponent + 1)) + digits;
+            }
+
+            return negative ? "-" + formatted : formatted;
+        }
+
+        private static int ToDigitsArgument(object? argument, int defaultValue, int minimum, int maximum, string methodName)
+        {
+            if (argument is null)
+            {
+                return defaultValue;
+            }
+
+            var number = TypeUtilities.ToNumber(argument);
+            if (double.IsNaN(number))
+            {
+                return 0;
+            }
+
+            var integer = System.Math.Truncate(number);
+            if (double.IsInfinity(integer) || integer < minimum || integer > maximum)
+            {
+                throw new RangeError($"Number.prototype.{methodName} digits argument must be between {minimum} and {maximum}");
+            }
+
+            return (int)integer;
+        }
+
+        private static string NormalizeExponent(string value, bool trimMantissaTrailingZeros)
+        {
+            var normalized = value.Replace('E', 'e');
+            var exponentIndex = normalized.IndexOf('e');
+            if (exponentIndex < 0)
+            {
+                return normalized;
+            }
+
+            var mantissa = normalized[..exponentIndex];
+            if (trimMantissaTrailingZeros)
+            {
+                mantissa = mantissa.TrimEnd('0').TrimEnd('.');
+            }
+
+            var exponent = normalized[(exponentIndex + 1)..];
+            var sign = string.Empty;
+            if (exponent.StartsWith("+", StringComparison.Ordinal) || exponent.StartsWith("-", StringComparison.Ordinal))
+            {
+                sign = exponent[..1];
+                exponent = exponent[1..];
+            }
+
+            exponent = exponent.TrimStart('0');
+            if (exponent.Length == 0)
+            {
+                exponent = "0";
+            }
+
+            return $"{mantissa}e{sign}{exponent}";
+        }
+
+        private static string FormatExponent(int exponent)
+            => exponent >= 0
+                ? $"+{exponent.ToString(CultureInfo.InvariantCulture)}"
+                : exponent.ToString(CultureInfo.InvariantCulture);
     }
 }
