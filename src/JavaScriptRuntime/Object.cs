@@ -1902,6 +1902,11 @@ namespace JavaScriptRuntime
             var prop = args != null && args.Length > 0 ? args[0] : null;
             var key = ToPropertyKeyString(prop);
 
+            if (target is JavaScriptRuntime.Proxy && TryGetOwnPropertyDescriptor(target, key, out var proxyDescriptor))
+            {
+                return proxyDescriptor.Enumerable;
+            }
+
             if (PropertyDescriptorStore.TryGetOwn(target, key, out var descriptor))
             {
                 return descriptor.Enumerable;
@@ -3290,6 +3295,11 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (target is JavaScriptRuntime.Proxy)
+            {
+                return TryGetOwnPropertyDescriptor(target, name, out _);
+            }
+
             if (PropertyDescriptorStore.IsDeleted(target, name))
             {
                 return false;
@@ -3597,6 +3607,14 @@ namespace JavaScriptRuntime
                 {
                     if (trapResult is null || trapResult is JsNull)
                     {
+                        if (TryGetOwnPropertyDescriptor(proxyTarget, propName, out var targetDescriptor))
+                        {
+                            if (!IsExtensibleInternal(proxyTarget) || !targetDescriptor.Configurable)
+                            {
+                                throw new TypeError("Proxy getOwnPropertyDescriptor trap returned undefined for a non-configurable or non-extensible target property");
+                            }
+                        }
+
                         descriptor = null!;
                         return false;
                     }
@@ -3607,6 +3625,24 @@ namespace JavaScriptRuntime
                     }
 
                     descriptor = CreateDescriptorForNewProperty(ParseRequestedPropertyDescriptor(trapResult!));
+
+                    var extensibleTarget = IsExtensibleInternal(proxyTarget);
+                    var targetHasDescriptor = TryGetOwnPropertyDescriptor(proxyTarget, propName, out var targetDescriptorForValidation);
+                    if (!targetHasDescriptor)
+                    {
+                        if (!extensibleTarget || !descriptor.Configurable)
+                        {
+                            throw new TypeError("Proxy getOwnPropertyDescriptor trap reported an incompatible property descriptor");
+                        }
+
+                        return true;
+                    }
+
+                    if (!IsCompatibleProxyOwnPropertyDescriptor(descriptor, targetDescriptorForValidation))
+                    {
+                        throw new TypeError("Proxy getOwnPropertyDescriptor trap reported an incompatible property descriptor");
+                    }
+
                     return true;
                 }
 
@@ -3818,6 +3854,39 @@ namespace JavaScriptRuntime
             // No implicit descriptor support for arrays/typed arrays/strings here.
             descriptor = null!;
             return false;
+        }
+
+        private static bool IsCompatibleProxyOwnPropertyDescriptor(JsPropertyDescriptor reportedDescriptor, JsPropertyDescriptor targetDescriptor)
+        {
+            if (!reportedDescriptor.Configurable && targetDescriptor.Configurable)
+            {
+                return false;
+            }
+
+            if (targetDescriptor.Configurable)
+            {
+                return true;
+            }
+
+            if (reportedDescriptor.Configurable
+                || reportedDescriptor.Enumerable != targetDescriptor.Enumerable
+                || reportedDescriptor.Kind != targetDescriptor.Kind)
+            {
+                return false;
+            }
+
+            if (targetDescriptor.Kind == JsPropertyDescriptorKind.Data)
+            {
+                if (!targetDescriptor.Writable && reportedDescriptor.Writable)
+                {
+                    return false;
+                }
+
+                return targetDescriptor.Writable || Operators.SameValue(reportedDescriptor.Value, targetDescriptor.Value);
+            }
+
+            return ReferenceEquals(reportedDescriptor.Get, targetDescriptor.Get)
+                && ReferenceEquals(reportedDescriptor.Set, targetDescriptor.Set);
         }
 
         private static object CreateDescriptorObject(JsPropertyDescriptor desc)

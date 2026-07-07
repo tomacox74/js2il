@@ -4,7 +4,7 @@ Defines ECMAScript data types and values (primitives, objects) and the core conc
 
 [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:01:02Z
+> Last generated (UTC): 2026-07-07T17:43:09Z
 
 _This section is split into subsection documents for readability._
 
@@ -18,5 +18,5 @@ _This section is split into subsection documents for readability._
 
 | Subsection | Title | Status | Spec | Document |
 |---:|---|---|---|---|
-| 6.1 | ECMAScript Language Types | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types) | [Section6_1.md](Section6_1.md) |
+| 6.1 | ECMAScript Language Types | Supported with Limitations | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-types) | [Section6_1.md](Section6_1.md) |
 | 6.2 | ECMAScript Specification Types | Incomplete | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-specification-types) | [Section6_2.md](Section6_2.md) |
