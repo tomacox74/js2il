@@ -120,13 +120,13 @@ namespace JavaScriptRuntime
 
         public object? setInt8(object? byteOffset, object? value)
         {
-            WriteByte(byteOffset, unchecked((byte)(sbyte)TypeUtilities.ToInt32(value)));
+            WriteByte(byteOffset, unchecked((byte)TypeUtilities.ToInt8(value)));
             return null;
         }
 
         public object? setUint8(object? byteOffset, object? value)
         {
-            WriteByte(byteOffset, unchecked((byte)TypeUtilities.ToInt32(value)));
+            WriteByte(byteOffset, TypeUtilities.ToUint8(value));
             return null;
         }
 
@@ -135,7 +135,7 @@ namespace JavaScriptRuntime
 
         public object? setInt16(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteUInt16(byteOffset, unchecked((ushort)(short)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
+            WriteUInt16(byteOffset, unchecked((ushort)TypeUtilities.ToInt16(value)), UseLittleEndian(littleEndian));
             return null;
         }
 
@@ -144,7 +144,7 @@ namespace JavaScriptRuntime
 
         public object? setUint16(object? byteOffset, object? value, object? littleEndian)
         {
-            WriteUInt16(byteOffset, unchecked((ushort)TypeUtilities.ToInt32(value)), UseLittleEndian(littleEndian));
+            WriteUInt16(byteOffset, TypeUtilities.ToUint16(value), UseLittleEndian(littleEndian));
             return null;
         }
 

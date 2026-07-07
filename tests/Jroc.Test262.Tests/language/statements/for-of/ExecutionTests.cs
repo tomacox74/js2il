@@ -194,6 +194,14 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task int8array()
         => ExecutionTest("int8array");
 
+    [Fact(DisplayName = "uint8clampedarray-mutate")]
+    public Task uint8clampedarray_mutate()
+        => ExecutionTest("uint8clampedarray-mutate");
+
+    [Fact(DisplayName = "uint8clampedarray")]
+    public Task uint8clampedarray()
+        => ExecutionTest("uint8clampedarray");
+
     [Fact(DisplayName = "iterator-as-proxy")]
     public Task iterator_as_proxy()
         => ExecutionTest("iterator-as-proxy");

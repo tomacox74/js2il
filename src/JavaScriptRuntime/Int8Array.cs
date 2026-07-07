@@ -82,7 +82,7 @@ namespace JavaScriptRuntime
             => unchecked((sbyte)BufferObject.RawBytes[ByteOffsetBytes + index]);
 
         protected override void WriteElementValue(int index, double value)
-            => BufferObject.RawBytes[ByteOffsetBytes + index] = unchecked((byte)(sbyte)TypeUtilities.ToInt32(value));
+            => BufferObject.RawBytes[ByteOffsetBytes + index] = unchecked((byte)TypeUtilities.ToInt8(value));
 
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Int8Array(buffer, byteOffset, length);

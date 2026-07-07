@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime/tests/docs/test262: reclassify ECMA-262 Section 7.1 Type Conversion to `Supported with Limitations`, add shared `ToInt8` / `ToInt16` / `ToUint8` / `ToUint16` / `ToUint8Clamp` runtime helpers, implement `Uint8ClampedArray`, port new `for..of` test262 coverage for `Uint8ClampedArray`, and refresh the Section 7.1 support notes.
 - docs/ecma262: reclassify Section 6.2 ECMAScript Specification Types so every clause/subclause is now tracked as `Supported with Limitations` or `N/A (informational)`, documenting environment records, abstract closures, data blocks, and class static block records against current implementation evidence and rolling Section 6 up to `Supported with Limitations`.
 - runtime/tests/docs/test262: raise the Section 6.1.7 object-model coverage floor by fixing strict `NaN` equality for boxed doubles, preserving NaN across repeated ordinary-property updates, and enforcing the newly ported Proxy `[[GetOwnProperty]]` forwarding/invariant cases; refresh the Section 6.1 docs and roll-ups.
 - runtime/tests/docs/test262: expand ECMA-262 Section 21.2 BigInt coverage with newly ported prototype, prototype-method, branding, and wrapper-object test262 cases; add the covered `BigInt.prototype` surface (`toString`, `toLocaleString`, `valueOf`, `@@toStringTag`, and wrapper integration) and refresh the Section 21.2 support docs.

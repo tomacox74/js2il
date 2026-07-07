@@ -166,7 +166,7 @@ namespace JavaScriptRuntime
             => BufferObject.RawBytes[ByteOffsetBytes + index];
 
         protected override void WriteElementValue(int index, double value)
-            => BufferObject.RawBytes[ByteOffsetBytes + index] = ToUint8(value);
+            => BufferObject.RawBytes[ByteOffsetBytes + index] = TypeUtilities.ToUint8(value);
 
         protected override TypedArrayBase CreateSameType(ArrayBuffer buffer, int byteOffset, int length)
             => new Uint8Array(buffer, byteOffset, length);
@@ -189,8 +189,5 @@ namespace JavaScriptRuntime
                 >= 'A' and <= 'F' => value - 'A' + 10,
                 _ => -1
             };
-
-        private static byte ToUint8(double value)
-            => unchecked((byte)TypeUtilities.ToInt32(value));
     }
 }

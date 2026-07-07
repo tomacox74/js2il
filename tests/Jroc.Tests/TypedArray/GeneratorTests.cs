@@ -79,6 +79,9 @@ namespace Jroc.Tests.TypedArray
         public Task Uint8Array_FromBase64_InvalidInput() { var testName = nameof(Uint8Array_FromBase64_InvalidInput); return GenerateTest(testName); }
 
         [Fact]
+        public Task TypedArray_SignedAndClamped_ConversionSemantics() { var testName = nameof(TypedArray_SignedAndClamped_ConversionSemantics); return GenerateTest(testName); }
+
+        [Fact]
         public Task Float64Array_Construct_ArrayBuffer_Search() { var testName = nameof(Float64Array_Construct_ArrayBuffer_Search); return GenerateTest(testName); }
 
         [Fact]

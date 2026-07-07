@@ -332,7 +332,7 @@ namespace JavaScriptRuntime
         private static readonly Func<object[], object?[], object?> _uint8ArrayConstructorValue = 
             static (_, args) => new Uint8Array(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _uint8ClampedArrayConstructorValue = 
-            static (_, __) => throw new NotSupportedException("The Uint8ClampedArray constructor is not yet supported in jroc.");
+            static (_, args) => new Uint8ClampedArray(args ?? global::System.Array.Empty<object?>());
         private static readonly Func<object[], object?[], object?> _bigInt64ArrayConstructorValue = 
             static (_, __) => throw new NotSupportedException("The BigInt64Array constructor is not yet supported in jroc.");
         private static readonly Func<object[], object?[], object?> _bigUint64ArrayConstructorValue = 
@@ -792,6 +792,7 @@ namespace JavaScriptRuntime
             ConfigureTypedArrayConstructorValue(_bigInt64ArrayConstructorValue);
             ConfigureTypedArrayConstructorValue(_bigUint64ArrayConstructorValue);
             ConfigureTypedArrayInstancePrototype(_uint8ArrayConstructorValue, JavaScriptRuntime.Uint8Array.Prototype);
+            ConfigureTypedArrayInstancePrototype(_uint8ClampedArrayConstructorValue, JavaScriptRuntime.Uint8ClampedArray.Prototype);
             ConfigureConstructorPrototypeSurface(_arrayBufferConstructorValue, _arrayBufferPrototypeValue);
 
             JavaScriptRuntime.String.ConfigureIntrinsicSurface(_stringFunctionValue);

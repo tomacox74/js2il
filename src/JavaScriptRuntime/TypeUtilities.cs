@@ -163,6 +163,115 @@ namespace JavaScriptRuntime
             return (uint)uint32bit;
         }
 
+        public static short ToInt16(object? value)
+        {
+            var number = ToNumber(value);
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            const double two16 = 65536.0;
+            var integer = global::System.Math.Truncate(number);
+            var uint16bit = integer % two16;
+            if (uint16bit < 0)
+            {
+                uint16bit += two16;
+            }
+
+            return uint16bit >= 32768.0
+                ? (short)(uint16bit - two16)
+                : (short)uint16bit;
+        }
+
+        public static ushort ToUint16(object? value)
+        {
+            var number = ToNumber(value);
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            const double two16 = 65536.0;
+            var integer = global::System.Math.Truncate(number);
+            var uint16bit = integer % two16;
+            if (uint16bit < 0)
+            {
+                uint16bit += two16;
+            }
+
+            return (ushort)uint16bit;
+        }
+
+        public static sbyte ToInt8(object? value)
+        {
+            var number = ToNumber(value);
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            const double two8 = 256.0;
+            var integer = global::System.Math.Truncate(number);
+            var uint8bit = integer % two8;
+            if (uint8bit < 0)
+            {
+                uint8bit += two8;
+            }
+
+            return uint8bit >= 128.0
+                ? (sbyte)(uint8bit - two8)
+                : (sbyte)uint8bit;
+        }
+
+        public static byte ToUint8(object? value)
+        {
+            var number = ToNumber(value);
+            if (double.IsNaN(number) || double.IsInfinity(number) || number == 0.0)
+            {
+                return 0;
+            }
+
+            const double two8 = 256.0;
+            var integer = global::System.Math.Truncate(number);
+            var uint8bit = integer % two8;
+            if (uint8bit < 0)
+            {
+                uint8bit += two8;
+            }
+
+            return (byte)uint8bit;
+        }
+
+        public static byte ToUint8Clamp(object? value)
+        {
+            var number = ToNumber(value);
+            if (double.IsNaN(number) || number <= 0.0)
+            {
+                return 0;
+            }
+
+            if (number >= 255.0)
+            {
+                return 255;
+            }
+
+            var floor = global::System.Math.Floor(number);
+            if (floor + 0.5 < number)
+            {
+                return (byte)(floor + 1.0);
+            }
+
+            if (number < floor + 0.5)
+            {
+                return (byte)floor;
+            }
+
+            return ((long)floor & 1L) == 0L
+                ? (byte)floor
+                : (byte)(floor + 1.0);
+        }
+
         // JS ToBoolean coercion used in conditional tests and logical contexts
         public static bool ToBoolean(double value)
         {
