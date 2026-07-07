@@ -91,7 +91,19 @@ public partial class SymbolTableBuilder
             {
                 if (TryResolveParameterInferenceCallTarget(call, currentScope, candidatesByScope, out var target))
                 {
-                    target.RecordCall(call, currentScope, this);
+                    target.RecordCall(call.Arguments, currentScope, this);
+                }
+                return;
+            }
+
+            if (node is NewExpression newExpression)
+            {
+                // Statically-resolved `new Identifier(...)` constructor calls contribute the same
+                // parameter evidence as direct calls. Arity mismatches and conflicting argument
+                // types are handled conservatively inside RecordCall.
+                if (TryResolveParameterInferenceNewTarget(newExpression, currentScope, candidatesByScope, out var newCallTarget))
+                {
+                    newCallTarget.RecordCall(newExpression.Arguments, currentScope, this);
                 }
                 return;
             }
@@ -114,7 +126,8 @@ public partial class SymbolTableBuilder
                 var referencedScope = TryGetCallableScopeForBinding(root, binding);
                 if (referencedScope != null
                     && candidatesByScope.TryGetValue(referencedScope, out var referencedCandidate)
-                    && !IsDirectIdentifierCall(id, parent))
+                    && !IsDirectIdentifierCall(id, parent)
+                    && !IsNewExpressionCallee(id, parent))
                 {
                     referencedCandidate.IsCallableUnsafe = true;
                 }
@@ -200,9 +213,9 @@ public partial class SymbolTableBuilder
         public bool[] IsParameterUnsafe { get; }
         public bool IsCallableUnsafe { get; set; }
 
-        public void RecordCall(CallExpression call, Scope callScope, SymbolTableBuilder builder)
+        public void RecordCall(in NodeList<Expression> arguments, Scope callScope, SymbolTableBuilder builder)
         {
-            if (call.Arguments.Count < ParameterNames.Count)
+            if (arguments.Count < ParameterNames.Count)
             {
                 IsCallableUnsafe = true;
                 return;
@@ -215,13 +228,13 @@ public partial class SymbolTableBuilder
                     continue;
                 }
 
-                if (call.Arguments[i] is SpreadElement)
+                if (arguments[i] is SpreadElement)
                 {
                     IsCallableUnsafe = true;
                     return;
                 }
 
-                if (call.Arguments[i] is not Node arg)
+                if (arguments[i] is not Node arg)
                 {
                     MarkParameterUnsafe(i);
                     continue;
@@ -266,6 +279,7 @@ public partial class SymbolTableBuilder
             MemberExpression memberExpression => InferStableMemberArgumentClrType(memberExpression, callScope),
             NewExpression newExpression => InferStableNewArgumentClrType(newExpression, callScope),
             CallExpression callExpression => InferStableCallArgumentClrType(callExpression, callScope),
+            NonUpdateUnaryExpression unaryExpression => InferStableUnaryArgumentClrType(unaryExpression, callScope),
             _ => null
         };
 
@@ -359,6 +373,29 @@ public partial class SymbolTableBuilder
         }
 
         return null;
+    }
+
+    private Type? InferStableUnaryArgumentClrType(NonUpdateUnaryExpression unaryExpression, Scope callScope)
+    {
+        switch (unaryExpression.Operator)
+        {
+            case Operator.UnaryNegation:
+            case Operator.UnaryPlus:
+            case Operator.BitwiseNot:
+                // Numeric unary operators over a provably stable double operand (e.g. `-CubeSize`)
+                // produce a double. Other operand types (strings, BigInt, ...) stay conservative.
+                var operandType = InferStableParameterArgumentClrType(unaryExpression.Argument, callScope);
+                return operandType == typeof(double) ? typeof(double) : null;
+
+            case Operator.LogicalNot:
+                return typeof(bool);
+
+            case Operator.TypeOf:
+                return typeof(string);
+
+            default:
+                return null;
+        }
     }
 
     private bool TryCreateParameterInferenceCandidate(Scope scope, out ParameterInferenceCandidate candidate)
@@ -462,6 +499,26 @@ public partial class SymbolTableBuilder
             targetScope = TryGetClassMethodScopeForReceiver(callScope, member.Object, methodId.Name);
         }
 
+        return targetScope != null && candidatesByScope.TryGetValue(targetScope, out candidate!);
+    }
+
+    private bool TryResolveParameterInferenceNewTarget(
+        NewExpression newExpression,
+        Scope callScope,
+        IReadOnlyDictionary<Scope, ParameterInferenceCandidate> candidatesByScope,
+        out ParameterInferenceCandidate candidate)
+    {
+        candidate = null!;
+
+        // Only statically-known `new Identifier(...)` constructor targets contribute evidence.
+        // Dynamic or computed constructor targets stay conservative.
+        if (newExpression.Callee is not Identifier calleeId)
+        {
+            return false;
+        }
+
+        var binding = TryResolveBinding(callScope, calleeId.Name);
+        var targetScope = TryGetCallableScopeForBinding(FindRootScope(callScope) ?? callScope, binding);
         return targetScope != null && candidatesByScope.TryGetValue(targetScope, out candidate!);
     }
 

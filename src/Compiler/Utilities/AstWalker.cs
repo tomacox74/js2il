@@ -65,6 +65,11 @@ public class AstWalker
                 VisitNodes(callExpr.Arguments, visitor);
                 break;
 
+            case NewExpression newExpr:
+                Visit(newExpr.Callee, visitor);
+                VisitNodes(newExpr.Arguments, visitor);
+                break;
+
             case MemberExpression memberExpr:
                 Visit(memberExpr.Object, visitor);
                 Visit(memberExpr.Property, visitor);
@@ -291,6 +296,11 @@ public class AstWalker
             case CallExpression callExpr:
                 VisitWithContext(callExpr.Callee, enterNode, exitNode);
                 VisitNodesWithContext(callExpr.Arguments, enterNode, exitNode);
+                break;
+
+            case NewExpression newExpr:
+                VisitWithContext(newExpr.Callee, enterNode, exitNode);
+                VisitNodesWithContext(newExpr.Arguments, enterNode, exitNode);
                 break;
 
             case MemberExpression memberExpr:

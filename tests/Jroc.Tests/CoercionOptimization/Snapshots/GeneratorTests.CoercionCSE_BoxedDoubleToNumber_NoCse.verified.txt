@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21b0
+				// Method begins at RVA 0x21b2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -36,7 +36,7 @@
 		.method public hidebysig static 
 			object __js_call__ (
 				object newTarget,
-				object n
+				float64 n
 			) cil managed 
 		{
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
@@ -44,56 +44,60 @@
 			)
 			// Method begins at RVA 0x213c
 			// Header size: 12
-			// Code size: 95 (0x5f)
+			// Code size: 97 (0x61)
 			.maxstack 8
 			.locals init (
-				[0] object,
+				[0] float64,
 				[1] object,
 				[2] object,
-				[3] float64,
-				[4] object,
+				[3] object,
+				[4] float64,
 				[5] float64
 			)
 
 			IL_0000: ldarg.1
-			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0006: ldc.r8 0.0
-			IL_000f: sub
-			IL_0010: box [System.Runtime]System.Double
-			IL_0015: stloc.0
-			IL_0016: ldloc.0
-			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001c: stloc.3
-			IL_001d: ldloc.3
-			IL_001e: box [System.Runtime]System.Double
-			IL_0023: stloc.s 4
-			IL_0025: ldloc.s 4
-			IL_0027: stloc.1
-			IL_0028: ldloc.0
-			IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002e: stloc.3
-			IL_002f: ldloc.3
-			IL_0030: box [System.Runtime]System.Double
-			IL_0035: stloc.s 4
-			IL_0037: ldloc.s 4
-			IL_0039: stloc.2
-			IL_003a: ldloc.1
-			IL_003b: stloc.s 4
-			IL_003d: ldloc.s 4
-			IL_003f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0044: stloc.3
-			IL_0045: ldloc.2
-			IL_0046: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_004b: stloc.s 5
-			IL_004d: ldloc.3
-			IL_004e: ldloc.s 5
-			IL_0050: add
-			IL_0051: stloc.s 5
-			IL_0053: ldloc.s 5
-			IL_0055: box [System.Runtime]System.Double
-			IL_005a: stloc.s 4
-			IL_005c: ldloc.s 4
-			IL_005e: ret
+			IL_0001: ldc.r8 0.0
+			IL_000a: sub
+			IL_000b: stloc.0
+			IL_000c: ldloc.0
+			IL_000d: box [System.Runtime]System.Double
+			IL_0012: stloc.3
+			IL_0013: ldloc.3
+			IL_0014: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0019: stloc.s 4
+			IL_001b: ldloc.s 4
+			IL_001d: box [System.Runtime]System.Double
+			IL_0022: stloc.3
+			IL_0023: ldloc.3
+			IL_0024: stloc.1
+			IL_0025: ldloc.0
+			IL_0026: box [System.Runtime]System.Double
+			IL_002b: stloc.3
+			IL_002c: ldloc.3
+			IL_002d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0032: stloc.s 4
+			IL_0034: ldloc.s 4
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.3
+			IL_003c: ldloc.3
+			IL_003d: stloc.2
+			IL_003e: ldloc.1
+			IL_003f: stloc.3
+			IL_0040: ldloc.3
+			IL_0041: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0046: stloc.s 4
+			IL_0048: ldloc.2
+			IL_0049: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_004e: stloc.s 5
+			IL_0050: ldloc.s 4
+			IL_0052: ldloc.s 5
+			IL_0054: add
+			IL_0055: stloc.s 5
+			IL_0057: ldloc.s 5
+			IL_0059: box [System.Runtime]System.Double
+			IL_005e: stloc.3
+			IL_005f: ldloc.3
+			IL_0060: ret
 		} // end of method compute::__js_call__
 
 	} // end of class compute
@@ -112,7 +116,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21a7
+			// Method begins at RVA 0x21a9
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -151,8 +155,8 @@
 		IL_0000: newobj instance void Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/compute::__js_call__(object, object)
-		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0007: ldftn object Modules.CoercionCSE_BoxedDoubleToNumber_NoCse/compute::__js_call__(object, float64)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object, float64, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: conv.r8
 		IL_0014: ldstr "compute"
@@ -232,7 +236,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b9
+		// Method begins at RVA 0x21bb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
