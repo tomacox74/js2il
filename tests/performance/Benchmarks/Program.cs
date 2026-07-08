@@ -45,7 +45,8 @@ else
 
             var kb = new KrackenBenchmarks();
             kb.Setup();
-            kb.RunKrackenTest();
+            kb.RunJrocTest();
+
             
             return;
         }
