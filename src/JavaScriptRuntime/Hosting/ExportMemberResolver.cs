@@ -99,8 +99,13 @@ internal static class ExportMemberResolver
 
         foreach (var candidate in GetNameCandidates(contractName))
         {
-            if (exports is IDictionary<string, object?> dict && dict.TryGetValue(candidate, out value))
+            if (exports is IDictionary<string, object?> dict
+                && (dict.ContainsKey(candidate) || JavaScriptRuntime.PropertyDescriptorStore.TryGetOwn(exports, candidate, out _)))
             {
+                // Read through the runtime property path so accessor properties
+                // (e.g. ES module export getters) are evaluated instead of
+                // returning the raw backing slot.
+                value = JavaScriptRuntime.ObjectRuntime.GetProperty(exports, candidate);
                 return true;
             }
 
@@ -183,6 +188,11 @@ internal static class ExportMemberResolver
     private static bool HasExportMember(object exports, string candidate)
     {
         if (exports is IDictionary<string, object?> dict && dict.ContainsKey(candidate))
+        {
+            return true;
+        }
+
+        if (JavaScriptRuntime.PropertyDescriptorStore.TryGetOwn(exports, candidate, out _))
         {
             return true;
         }
