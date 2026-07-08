@@ -133,5 +133,8 @@ namespace Jroc.Tests.Array
 
         [Fact]
         public Task Array_MemberCall_Arity2_Slice() { var testName = nameof(Array_MemberCall_Arity2_Slice); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Prototype_CustomMethod_Dispatch() { var testName = nameof(Array_Prototype_CustomMethod_Dispatch); return ExecutionTest(testName); }
     }
 }
