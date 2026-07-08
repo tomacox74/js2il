@@ -46,6 +46,12 @@ namespace Jroc.Tests.String
         }
 
         [Fact]
+        public Task String_Replace_Regex_CaptureCallback()
+        {
+            return ExecutionTest(nameof(String_Replace_Regex_CaptureCallback));
+        }
+
+        [Fact]
         public Task String_Match_NonGlobal()
         {
             return ExecutionTest(nameof(String_Match_NonGlobal));

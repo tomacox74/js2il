@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- runtime/tests: pass RegExp capture arguments to `String.prototype.replace` callback replacers, fixing captured replacement callbacks such as Dromaeo's regexp benchmark `capture.toUpperCase()` path.
 
 ## v0.11.15 - 2026-07-08
 

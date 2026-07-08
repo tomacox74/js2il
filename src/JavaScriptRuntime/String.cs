@@ -1463,6 +1463,24 @@ namespace JavaScriptRuntime
             return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
         }
 
+        private static string InvokeRegExpReplaceCallback(Delegate callback, Match match, string input)
+        {
+            var args = new object?[match.Groups.Count + 2];
+            args[0] = match.Value;
+
+            for (var i = 1; i < match.Groups.Count; i++)
+            {
+                var group = match.Groups[i];
+                args[i] = group.Success ? group.Value : null;
+            }
+
+            args[match.Groups.Count] = (double)match.Index;
+            args[match.Groups.Count + 1] = input;
+
+            var callbackResult = Closure.InvokeFunctionCallWithArgs(callback, System.Array.Empty<object>(), args);
+            return DotNet2JSConversions.ToString(callbackResult) ?? string.Empty;
+        }
+
         /// <summary>
         /// Implements a subset of String.prototype.endsWith(searchString[, length]).
         /// If length is provided, the string is treated as if it were truncated to that length.
@@ -1753,7 +1771,7 @@ namespace JavaScriptRuntime
             {
                 if (cb is Delegate callback)
                 {
-                    return InvokeStringReplaceCallback(callback, match.Value, (double)match.Index, input);
+                    return InvokeRegExpReplaceCallback(callback, match, input);
                 }
 
                 // Fallback: ToString on callback object (unlikely useful)
@@ -2017,7 +2035,7 @@ namespace JavaScriptRuntime
 
                 if (replacement is Delegate replacementCallback)
                 {
-                    var evaluator = new MatchEvaluator(m => InvokeStringReplaceCallback(replacementCallback, m.Value, (double)m.Index, input));
+                    var evaluator = new MatchEvaluator(m => InvokeRegExpReplaceCallback(replacementCallback, m, input));
                     if (regExp.Global)
                     {
                         return regExp.Regex.Replace(input, evaluator);
