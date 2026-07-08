@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Acornima.Ast;
 using Jroc.HIR;
+using Jroc.IL;
 using Jroc.Services;
 using Jroc.Services.ScopesAbi;
 using TwoPhase = Jroc.Services.TwoPhaseCompilation;
@@ -1164,60 +1165,58 @@ public sealed partial class HIRToLIRLowerer
                 }
                 else
                 {
-                var arrayArgTemps = new List<TempVariable>();
-                foreach (var argExpr in callExpr.Arguments)
-                {
-                    if (!TryLowerExpression(argExpr, out var argTempVar))
+                    var arrayArgTemps = new List<TempVariable>();
+                    foreach (var argExpr in callExpr.Arguments)
                     {
-                        return false;
+                        if (!TryLowerExpression(argExpr, out var argTempVar))
+                        {
+                            return false;
+                        }
+                        arrayArgTemps.Add(EnsureObject(argTempVar));
                     }
-                    arrayArgTemps.Add(EnsureObject(argTempVar));
-                }
 
-                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
-                    receiverTempVar,
-                    typeof(JavaScriptRuntime.Array),
-                    calleePropAccess.PropertyName,
-                    arrayArgTemps,
-                    resultTempVar));
+                    if (TryResolveTypedInstanceCallReturnClrType(
+                            typeof(JavaScriptRuntime.Array),
+                            calleePropAccess.PropertyName,
+                            arrayArgTemps.Count,
+                            out var returnClrType))
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                            receiverTempVar,
+                            typeof(JavaScriptRuntime.Array),
+                            calleePropAccess.PropertyName,
+                            arrayArgTemps,
+                            resultTempVar));
 
-                // Determine the CLR return type of the chosen intrinsic method so we can allocate
-                // an appropriately-typed temp (and box later only when JS semantics require object).
-                // This is critical for value-type returns (bool/double), which must not be stored into
-                // object temps without boxing.
-                var returnClrType = ResolveTypedInstanceCallReturnClrType(
-                    typeof(JavaScriptRuntime.Array),
-                    calleePropAccess.PropertyName,
-                    arrayArgTemps.Count);
+                        if (returnClrType == typeof(bool))
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            return true;
+                        }
 
-                if (returnClrType == typeof(bool))
-                {
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-                    return true;
-                }
+                        if (returnClrType == typeof(double))
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                            return true;
+                        }
 
-                if (returnClrType == typeof(double))
-                {
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    return true;
-                }
+                        if (returnClrType == typeof(string))
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                            return true;
+                        }
 
-                if (returnClrType == typeof(string))
-                {
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-                    return true;
-                }
+                        // Track a more precise runtime type when we know it, so chained calls can lower.
+                        // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
+                        if (returnClrType == typeof(JavaScriptRuntime.Array))
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+                            return true;
+                        }
 
-                // Track a more precise runtime type when we know it, so chained calls can lower.
-                // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
-                if (returnClrType == typeof(JavaScriptRuntime.Array))
-                {
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
-                    return true;
-                }
-
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                return true;
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return true;
+                    }
                 }
             }
 
@@ -1232,25 +1231,32 @@ public sealed partial class HIRToLIRLowerer
                 }
                 else
                 {
-                var consoleArgTemps = new List<TempVariable>();
-                foreach (var argExpr in callExpr.Arguments)
-                {
-                    if (!TryLowerExpression(argExpr, out var argTempVar))
+                    var consoleArgTemps = new List<TempVariable>();
+                    foreach (var argExpr in callExpr.Arguments)
                     {
-                        return false;
+                        if (!TryLowerExpression(argExpr, out var argTempVar))
+                        {
+                            return false;
+                        }
+                        consoleArgTemps.Add(EnsureObject(argTempVar));
                     }
-                    consoleArgTemps.Add(EnsureObject(argTempVar));
-                }
 
-                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
-                    receiverTempVar,
-                    typeof(JavaScriptRuntime.Console),
-                    calleePropAccess.PropertyName,
-                    consoleArgTemps,
-                    resultTempVar));
+                    if (TryResolveTypedInstanceCallReturnClrType(
+                            typeof(JavaScriptRuntime.Console),
+                            calleePropAccess.PropertyName,
+                            consoleArgTemps.Count,
+                            out _))
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                            receiverTempVar,
+                            typeof(JavaScriptRuntime.Console),
+                            calleePropAccess.PropertyName,
+                            consoleArgTemps,
+                            resultTempVar));
 
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-                return true;
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return true;
+                    }
                 }
             }
 
@@ -1437,48 +1443,17 @@ public sealed partial class HIRToLIRLowerer
         return null;
     }
 
-    private static Type ResolveTypedInstanceCallReturnClrType(Type receiverType, string methodName, int argCount)
+    private static bool TryResolveTypedInstanceCallReturnClrType(Type receiverType, string methodName, int argCount, out Type returnClrType)
     {
-        var allMethods = receiverType
-            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
-            .ToList();
-
-        var methods = allMethods
-            .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal))
-            .ToList();
-
-        if (methods.Count == 0)
+        var chosen = LIRToILCompiler.ResolveTypedInstanceMethodOverload(receiverType, methodName, argCount);
+        if (chosen == null)
         {
-            methods = allMethods
-                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            returnClrType = typeof(object);
+            return false;
         }
 
-        var preferredMethods = methods.Where(mi => mi.DeclaringType == receiverType).ToList();
-        if (preferredMethods.Count > 0)
-        {
-            methods = preferredMethods;
-        }
-
-        var chosen = methods
-            .Select(mi => new { Method = mi, Parameters = mi.GetParameters() })
-            .Where(static x =>
-                (x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[]))
-                || x.Parameters.All(p => p.ParameterType == typeof(object)))
-            .Select(x => new
-            {
-                x.Method,
-                x.Parameters,
-                IsVariadicFallback = x.Parameters.Length == 1 && x.Parameters[0].ParameterType == typeof(object[])
-            })
-            .Where(x => x.IsVariadicFallback || x.Parameters.Length == argCount)
-            .OrderBy(x => x.IsVariadicFallback ? 1 : 0)
-            .ThenBy(x => x.Parameters.Length)
-            .ThenBy(x => x.Method.ToString(), StringComparer.Ordinal)
-            .Select(x => x.Method)
-            .FirstOrDefault();
-
-        return chosen?.ReturnType ?? typeof(object);
+        returnClrType = chosen.ReturnType;
+        return true;
     }
 
 }

@@ -2555,9 +2555,20 @@ namespace JavaScriptRuntime
                 }
             }
 
-            // 2) JavaScriptRuntime.Array -> instance methods
+            // 2) JavaScriptRuntime.Array -> prototype/own member dispatch
             if (receiver is Array jsArray)
             {
+                var arrayMemberValue = GetProperty(jsArray, methodName);
+                if (arrayMemberValue is Delegate memberDelegate)
+                {
+                    return InvokeMemberDelegate(receiver, memberDelegate, callArgs);
+                }
+
+                if (arrayMemberValue is not null && arrayMemberValue is not JsNull)
+                {
+                    throw new TypeError($"{methodName} is not a function");
+                }
+
                 var type = typeof(Array);
                 var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                     .Where(m => string.Equals(m.Name, methodName, StringComparison.Ordinal))
@@ -2566,7 +2577,7 @@ namespace JavaScriptRuntime
                 {
                     throw new TypeError($"{methodName} is not a function");
                 }
-                // Prefer params object[] first, else exact arg count
+
                 var chosen = methods.FirstOrDefault(mi =>
                 {
                     var ps = mi.GetParameters();
@@ -2575,7 +2586,6 @@ namespace JavaScriptRuntime
 
                 if (chosen == null)
                 {
-                    // Fallback: pick smallest arity and let reflection coerce if possible
                     chosen = methods.OrderBy(mi => mi.GetParameters().Length).First();
                 }
 
