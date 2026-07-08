@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.16 - 2026-07-08
+
 - runtime/hosting/tests: fix ES module named exports (e.g. `export function runTest() {}`) resolving to `null` through the hosting exports layer (`JsEngine.LoadModule` dynamic/typed proxies); `ExportMemberResolver` now reads exports through the runtime property path so ESM export getters are evaluated instead of returning the raw backing slot.
 - compiler/tests: fix `InvalidProgramException` when a deeply nested array/object literal is stored into a scope field (e.g. Kraken ai-astar's top-level `var g1 = [[{...}]]` data table); the maxstack estimator now accounts for the receiver slot(s) pushed by scope/parameter/user-class field stores before the inlined value is constructed.
 - runtime/tests: pass RegExp capture arguments to `String.prototype.replace` callback replacers, fixing captured replacement callbacks such as Dromaeo's regexp benchmark `capture.toUpperCase()` path.
