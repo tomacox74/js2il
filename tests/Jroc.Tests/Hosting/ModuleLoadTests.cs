@@ -70,6 +70,28 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_LoadModule_Typed_AllowsCallingEsmExports()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("mathEsm", "mathEsm.js");
+        using var exports = Jroc.Runtime.JsEngine.LoadModule<IMathExports>(module.Assembly, "mathEsm");
+
+        Assert.Equal("2.0.0", exports.Version);
+        Assert.Equal(3.0, exports.Add(1, 2));
+    }
+
+    [Fact]
+    public void JsEngine_LoadModule_Dynamic_AllowsCallingEsmExports()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("mathEsm", "mathEsm.js");
+
+        using var exportsObj = Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "mathEsm");
+        dynamic exports = exportsObj;
+
+        Assert.Equal("2.0.0", (string)exports.version);
+        Assert.Equal(3.0, (double)exports.add(1, 2));
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Dynamic_AllowsMutatingExportsObject()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("hostingMutable", "Hosting_TypedExports.js");
