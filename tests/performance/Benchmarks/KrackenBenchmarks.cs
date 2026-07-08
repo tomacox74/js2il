@@ -75,7 +75,7 @@ public class KrackenBenchmarks
         var astarDataScriptContent = File.ReadAllText(astarDataScript);
 
         SetupJroc(astarDataScriptContent, astarTestScriptContent);
-        //SetupOkojo(astarDataScriptContent, astarTestScriptContent);
+        SetupOkojo(astarDataScriptContent, astarTestScriptContent);
     }
 
     [Benchmark(Description = "jroc-kracken")]

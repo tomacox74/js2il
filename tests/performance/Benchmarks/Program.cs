@@ -34,7 +34,7 @@ else
         else if (programArgs.Length > 0 && programArgs[0] == "--all")
         {
             // Run all benchmarks
-            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(LateBoundDispatchBenchmarks), typeof(JrocPhasedBenchmarks)]);
+            switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(JrocPhasedBenchmarks), typeof(KrackenBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
         }
         else if (programArgs.Length > 0 && programArgs[0] == "--kracken")
@@ -42,13 +42,6 @@ else
             // Run the Kraken benchmarks
             switcher = BenchmarkSwitcher.FromTypes([typeof(KrackenBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
-
-            var kb = new KrackenBenchmarks();
-            kb.Setup();
-            kb.RunJrocTest();
-
-            
-            return;
         }
         else
         {
