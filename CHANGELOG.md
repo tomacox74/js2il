@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - runtime/tests: pass RegExp capture arguments to `String.prototype.replace` callback replacers, fixing captured replacement callbacks such as Dromaeo's regexp benchmark `capture.toUpperCase()` path.
+- perf/benchmarks: report benchmark failures with the underlying exception details (root-cause `TypeError` etc.) in the final stdout summary, emit GitHub Actions error annotations, and stop printing "Benchmark execution complete!" after failed runs, so CI failures like the dromaeo-object-regexp crash are diagnosable without scanning the full log.
 
 ## v0.11.15 - 2026-07-08
 
