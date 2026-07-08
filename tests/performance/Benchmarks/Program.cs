@@ -4,6 +4,8 @@ using Benchmarks;
 
 // Run benchmarks based on command line arguments
 var programArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
+var debugBenchmarks = TakeFlag(ref programArgs, "--debug-benchmarks");
+FullParamsConfig.DebugModeEnabled = debugBenchmarks;
 
 if (programArgs.Length > 0 && programArgs[0] == "--validate")
 {
@@ -34,6 +36,18 @@ else
             // Run all benchmarks
             switcher = BenchmarkSwitcher.FromTypes([typeof(JavaScriptRuntimeBenchmarks), typeof(LateBoundDispatchBenchmarks), typeof(JrocPhasedBenchmarks)]);
             benchmarkArgs = programArgs.Skip(1).ToArray();
+        }
+        else if (programArgs.Length > 0 && programArgs[0] == "--kracken")
+        {
+            // Run the Kraken benchmarks
+            switcher = BenchmarkSwitcher.FromTypes([typeof(KrackenBenchmarks)]);
+            benchmarkArgs = programArgs.Skip(1).ToArray();
+
+            var kb = new KrackenBenchmarks();
+            kb.Setup();
+            kb.RunKrackenTest();
+            
+            return;
         }
         else
         {
@@ -70,6 +84,7 @@ Console.WriteLine("  dotnet run -c Release          # Run cross-runtime comparis
 Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
+Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");
 
 static void SetExitCodeFromSummaries(IEnumerable<Summary> summaries)
@@ -229,4 +244,24 @@ static string? TakeOption(ref string[] args, string name)
     }
 
     return null;
+}
+
+static bool TakeFlag(ref string[] args, string name)
+{
+    for (var i = 0; i < args.Length; i++)
+    {
+        var arg = args[i];
+        if (!arg.Equals(name, StringComparison.OrdinalIgnoreCase))
+        {
+            continue;
+        }
+
+        args = args
+            .Where((_, index) => index != i)
+            .ToArray();
+
+        return true;
+    }
+
+    return false;
 }
