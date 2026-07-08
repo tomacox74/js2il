@@ -18,6 +18,7 @@ namespace Jroc.Tests.Literals
         [Fact] public Task ObjectLiteral_PropertyAssign() { var testName = nameof(ObjectLiteral_PropertyAssign); return ExecutionTest(testName); }
 
         [Fact] public Task MaxStack_GetSetItem_Inlined() { var testName = nameof(MaxStack_GetSetItem_Inlined); return ExecutionTest(testName); }
+        [Fact] public Task MaxStack_NestedLiteral_ScopeFieldStore() { var testName = nameof(MaxStack_NestedLiteral_ScopeFieldStore); return ExecutionTest(testName); }
 
         [Fact] public Task NewExpression_Boolean_Sugar() { var testName = nameof(NewExpression_Boolean_Sugar); return ExecutionTest(testName); }
         [Fact] public Task NewExpression_Number_Sugar() { var testName = nameof(NewExpression_Number_Sugar); return ExecutionTest(testName); }

@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/tests: fix `InvalidProgramException` when a deeply nested array/object literal is stored into a scope field (e.g. Kraken ai-astar's top-level `var g1 = [[{...}]]` data table); the maxstack estimator now accounts for the receiver slot(s) pushed by scope/parameter/user-class field stores before the inlined value is constructed.
 - runtime/tests: pass RegExp capture arguments to `String.prototype.replace` callback replacers, fixing captured replacement callbacks such as Dromaeo's regexp benchmark `capture.toUpperCase()` path.
 - perf/benchmarks: report benchmark failures with the underlying exception details (root-cause `TypeError` etc.) in the final stdout summary, emit GitHub Actions error annotations, and stop printing "Benchmark execution complete!" after failed runs, so CI failures like the dromaeo-object-regexp crash are diagnosable without scanning the full log.
 

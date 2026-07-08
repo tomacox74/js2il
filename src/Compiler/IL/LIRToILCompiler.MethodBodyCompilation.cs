@@ -690,6 +690,25 @@ internal sealed partial class LIRToILCompiler
                 // Use the declared max arg count since emission pads missing args.
                 LIRNewUserClass newUserClass => (newUserClass.NeedsScopes ? 1 : 0) + newUserClass.MaxArgCount,
 
+                // Field stores push the receiver before loading the (possibly inlined) value,
+                // so the value's construction peak rides on top of the receiver slot(s).
+                LIRStoreScopeField storeScopeField => Math.Max(
+                    EstimateTempLoadPeak(storeScopeField.ScopeInstance),
+                    1 + EstimateTempLoadPeak(storeScopeField.Value)),
+                LIRStoreLeafScopeField storeLeafField => 1 + EstimateTempLoadPeak(storeLeafField.Value),
+                LIRStoreScopeFieldByName storeScopeFieldByName => 1 + EstimateTempLoadPeak(storeScopeFieldByName.Value),
+                // Parent-scope store: scopesArray + index peaks at 2 before the receiver collapses to 1.
+                LIRStoreParentScopeField storeParentScopeField => Math.Max(
+                    2,
+                    1 + EstimateTempLoadPeak(storeParentScopeField.Value)),
+                // User-class instance field store worst case (static callable path):
+                // this + fieldName + value + strict flag.
+                LIRStoreUserClassInstanceField storeUserInstanceField => Math.Max(
+                    4,
+                    2 + EstimateTempLoadPeak(storeUserInstanceField.Value)),
+                LIRStoreUserClassStaticField storeUserStaticField => EstimateTempLoadPeak(storeUserStaticField.Value),
+                LIRStoreParameter storeParameter => EstimateTempLoadPeak(storeParameter.Value),
+
                 _ => 0
             };
 
