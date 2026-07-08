@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/benchmarks: drain pending collectible in-memory load-context unloads between `jroc (compile+execute)` BenchmarkDotNet iterations so the published-package regexp scenarios stop failing mid-run; benchmark adapter failures now also preserve the full exception text for diagnosis.
 
 ## v0.11.14 - 2026-07-07
 
