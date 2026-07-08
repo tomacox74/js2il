@@ -65,6 +65,18 @@ public class KrackenBenchmarks
         this._okojoRunTest = _okojoRealm.Global["runTest"];
     }
 
+    [ParamsSource(nameof(ScriptNames))]
+    public string ScriptName { get; set; } = "";
+
+    public IEnumerable<string> ScriptNames()
+    {
+        return new string []
+        {
+            "ai-astar.js"
+        };
+    }
+
+
     [GlobalSetup]
     public void Setup()
     {
@@ -78,7 +90,7 @@ public class KrackenBenchmarks
         SetupOkojo(astarDataScriptContent, astarTestScriptContent);
     }
 
-    [Benchmark(Description = "jroc-kracken")]
+    [Benchmark(Description = "jroc-execute")]
     public void RunJrocTest()
     {
         dynamic exports = _jrocExports!;
@@ -89,7 +101,7 @@ public class KrackenBenchmarks
         }
     }
 
-    [Benchmark(Description = "okojo-kracken")]
+    [Benchmark(Description = "okojo-execute")]
     public void RunOkojoTest()
     {
         var result = _okojoRealm!.Call(_okojoRunTest, _okojoRealm.GlobalObject);
