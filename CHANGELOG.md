@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.15 - 2026-07-08
+
 - compiler/tests: stop early-binding arbitrary method names on typed `JavaScriptRuntime.Array` and `JavaScriptRuntime.Console` receivers; unknown members like custom `Array.prototype.removeGraphNode(...)` now stay on the normal JS member-dispatch path instead of crashing compilation.
 - perf/benchmarks: drain pending collectible in-memory load-context unloads between `jroc (compile+execute)` BenchmarkDotNet iterations so the published-package regexp scenarios stop failing mid-run; benchmark adapter failures now also preserve the full exception text for diagnosis.
 
