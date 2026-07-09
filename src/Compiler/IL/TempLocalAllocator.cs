@@ -63,6 +63,10 @@ internal static class TempLocalAllocator
         var tempToSlot = new int[tempCount];
         Array.Fill(tempToSlot, -1);
 
+        // Def-instruction lookup built once so CanEmitInline doesn't rescan the
+        // instruction list per query (O(N^2) on large method bodies, issue #1415).
+        var defInstructions = BuildDefInstructionMap(methodBody);
+
         var slotStorages = new List<ValueStorage>();
         var freeByKey = new Dictionary<StorageKey, Stack<int>>();
 
@@ -107,7 +111,7 @@ internal static class TempLocalAllocator
                 defined.Index < tempCount &&
                 lastUse[defined.Index] >= 0 &&
                 (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
-                !CanEmitInline(instruction, methodBody) &&
+                !CanEmitInline(instruction, methodBody, defInstructions) &&
                 !(defined.Index < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[defined.Index] >= 0))
             {
                 var storage = GetTempStorage(methodBody, defined);
@@ -134,7 +138,7 @@ internal static class TempLocalAllocator
     /// Returns true if the instruction defines a constant that can be emitted inline
     /// without needing a local variable slot.
     /// </summary>
-    private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody)
+    private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody, Dictionary<int, LIRInstruction> defInstructions)
     {
         if (instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull or LIRLoadParameter or LIRLoadThis)
         {
@@ -160,26 +164,28 @@ internal static class TempLocalAllocator
             {
                 return false;
             }
-            var sourceDefinition = TryFindDefInstruction(methodBody, convertToObject.Source);
-            return sourceDefinition != null && CanEmitInline(sourceDefinition, methodBody);
+            var sourceDefinition = defInstructions.TryGetValue(convertToObject.Source.Index, out var def) ? def : null;
+            return sourceDefinition != null && CanEmitInline(sourceDefinition, methodBody, defInstructions);
         }
 
         return false;
     }
 
     /// <summary>
-    /// Finds the instruction that defines the given temp variable.
+    /// Builds a temp-index → defining-instruction map in a single pass.
+    /// Keeps the first definition per temp to match the previous first-match scan semantics.
     /// </summary>
-    private static LIRInstruction? TryFindDefInstruction(MethodBodyIR methodBody, TempVariable temp)
+    private static Dictionary<int, LIRInstruction> BuildDefInstructionMap(MethodBodyIR methodBody)
     {
+        var map = new Dictionary<int, LIRInstruction>(methodBody.Instructions.Count);
         foreach (var inst in methodBody.Instructions)
         {
-            if (TryGetDefinedTemp(inst, out var def) && def.Index == temp.Index)
+            if (TryGetDefinedTemp(inst, out var def))
             {
-                return inst;
+                map.TryAdd(def.Index, inst);
             }
         }
-        return null;
+        return map;
     }
 
     private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)

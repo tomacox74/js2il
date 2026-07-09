@@ -171,7 +171,7 @@ public class PropertyDescriptorStoreTests
     }
 
     [Fact]
-    public void RuntimeStore_ReturnsClonedDescriptors()
+    public void RuntimeStore_WritesCloneIncomingDescriptors()
     {
         var target = new JsObject();
         using (PropertyDescriptorStore.BeginIntrinsicInitialization())
@@ -184,11 +184,14 @@ public class PropertyDescriptorStoreTests
         {
             GlobalThis.ServiceProvider = runtime;
 
-            Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var descriptor));
-            descriptor.Value = "mutated copy";
+            // Writes clone the incoming descriptor, so later caller-side mutation
+            // of the written descriptor must not leak into the store.
+            var written = DataDescriptor("updated");
+            PropertyDescriptorStore.DefineOrUpdate(target, "value", written);
+            written.Value = "mutated after write";
 
             Assert.True(PropertyDescriptorStore.TryGetOwn(target, "value", out var reread));
-            Assert.Equal("original", reread.Value);
+            Assert.Equal("updated", reread.Value);
         }
         finally
         {

@@ -83,7 +83,12 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
                 {
                     if (slot.Descriptors.TryGetValue(key, out var stored))
                     {
-                        descriptor = CloneDescriptor(stored);
+                        // Perf (#1415): return the stored descriptor without cloning.
+                        // Stored descriptors are never mutated in place (writes go through
+                        // DefineOrUpdate, which clones the incoming descriptor), so callers
+                        // that only read the descriptor can safely share the instance.
+                        // Callers that mutate the result must clone it first.
+                        descriptor = stored;
                         return true;
                     }
                 }
@@ -290,7 +295,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
                 return false;
             }
 
-            descriptor = CloneDescriptor(entry.Descriptor!);
+            // Perf (#1415): no clone on the read path; see IntrinsicPropertyDescriptorStore.TryGetOwn.
+            descriptor = entry.Descriptor!;
             return true;
         }
 
