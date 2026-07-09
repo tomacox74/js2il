@@ -25,7 +25,17 @@ internal sealed class JsShape
 
     public IEnumerable<string> PropertyNames
     {
-        get => _slots.Keys;
+        get
+        {
+            // FrozenDictionary does not guarantee enumeration order; property names
+            // must be reported in slot order to preserve JS insertion-order semantics.
+            var names = new string[_slots.Count];
+            foreach (var kvp in _slots)
+            {
+                names[kvp.Value] = kvp.Key;
+            }
+            return names;
+        }
     }
 
     private JsShape(string newPropertyName, JsShape parent)
@@ -37,13 +47,15 @@ internal sealed class JsShape
 
     private JsShape(string deadPropertyName, JsShape parent, bool delete)
     {
-        var newSlots = parent._slots.ToDictionary();
-        newSlots.Remove(deadPropertyName);
-        // Shift slots for properties after the deleted slot
-        var keys = newSlots.Keys.ToArray();
-        for (int i = 0; i < keys.Length; i++)
+        // Rebuild slots in the parent's slot order so surviving properties keep their
+        // relative order and stay aligned with the compacted value array.
+        var newSlots = new Dictionary<string, int>();
+        foreach (var name in parent.PropertyNames)
         {
-            newSlots[keys[i]] = i;
+            if (!string.Equals(name, deadPropertyName, StringComparison.Ordinal))
+            {
+                newSlots[name] = newSlots.Count;
+            }
         }
         _slots = newSlots.ToFrozenDictionary();
     }
@@ -119,7 +131,7 @@ public sealed class JsObject : IDictionary<string, object?>
 
     /// <summary>Stores an arbitrary object value (alias used by newer IL emit paths).</summary>
     public void SetObject(string key, object? value)
-        => SetValue(key, JsValue.FromObject(value));
+        => SetValue(key, value);
 
     // -------------------------------------------------------------------------
     // Read helpers
@@ -248,11 +260,12 @@ public sealed class JsObject : IDictionary<string, object?>
         {
             _shape = _shape.TransitionTo(key);
             slot = _shape.GetSlot(key);
-        }
-        var newProperties = new JsValue[_properties!.Length + 1];
-        System.Array.Copy(_properties, newProperties, _properties.Length);
 
-        _properties = newProperties;
+            var newProperties = new JsValue[_properties!.Length + 1];
+            System.Array.Copy(_properties, newProperties, _properties.Length);
+            _properties = newProperties;
+        }
+
         _properties[slot] = value;
     }
 
