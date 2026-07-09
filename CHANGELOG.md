@@ -8,6 +8,11 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 _Nothing yet._
 
+## v0.11.17 - 2026-07-09
+
+
+
+
 ## v0.11.16 - 2026-07-08
 
 - runtime/hosting/tests: fix ES module named exports (e.g. `export function runTest() {}`) resolving to `null` through the hosting exports layer (`JsEngine.LoadModule` dynamic/typed proxies); `ExportMemberResolver` now reads exports through the runtime property path so ESM export getters are evaluated instead of returning the raw backing slot.
