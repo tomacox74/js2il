@@ -2405,19 +2405,49 @@ internal sealed partial class LIRToILCompiler
         return scopeLocalOffset + MethodBody.VariableNames.Count + slot;
     }
 
+    private Dictionary<int, LIRInstruction>? _tempDefInstructionCache;
+
     private LIRInstruction? TryFindDefInstruction(TempVariable temp)
     {
-        foreach (var instr in MethodBody.Instructions
-            .Where(i => TempLocalAllocator.TryGetDefinedTemp(i, out var defined) && defined == temp))
+        // Built once per method body: a linear scan per lookup makes compilation of
+        // large method bodies O(N^2) (see issue #1415).
+        var cache = _tempDefInstructionCache;
+        if (cache is null)
         {
-            return instr;
+            cache = new Dictionary<int, LIRInstruction>(MethodBody.Instructions.Count);
+            foreach (var instr in MethodBody.Instructions)
+            {
+                if (TempLocalAllocator.TryGetDefinedTemp(instr, out var defined))
+                {
+                    // Keep the first definition to preserve the previous first-match semantics.
+                    cache.TryAdd(defined.Index, instr);
+                }
+            }
+            _tempDefInstructionCache = cache;
         }
-        return null;
+
+        return cache.TryGetValue(temp.Index, out var def) ? def : null;
     }
+
+    private HashSet<int>? _usedTempIndexCache;
 
     private bool HasAnyUses(TempVariable temp)
     {
-        return MethodBody.Instructions.Any(i => TempLocalAllocator.EnumerateUsedTemps(i).Any(u => u == temp));
+        var cache = _usedTempIndexCache;
+        if (cache is null)
+        {
+            cache = new HashSet<int>();
+            foreach (var instr in MethodBody.Instructions)
+            {
+                foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instr))
+                {
+                    cache.Add(used.Index);
+                }
+            }
+            _usedTempIndexCache = cache;
+        }
+
+        return cache.Contains(temp.Index);
     }
 
     /// <summary>

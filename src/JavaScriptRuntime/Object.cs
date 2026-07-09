@@ -1682,6 +1682,7 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
+                desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Configurable = false;
                 PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
             }
@@ -1712,6 +1713,7 @@ namespace JavaScriptRuntime
                     continue;
                 }
 
+                desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Configurable = false;
                 if (desc.Kind == JsPropertyDescriptorKind.Data)
                 {
@@ -5710,6 +5712,7 @@ namespace JavaScriptRuntime
                     throw new TypeError($"Cannot assign to read only property '{name}' of object");
                 }
 
+                desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Value = value;
                 PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
                 if (obj is System.Dynamic.ExpandoObject expDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
