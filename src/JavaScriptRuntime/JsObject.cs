@@ -1,9 +1,72 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Frozen;
 
 namespace JavaScriptRuntime;
+
+internal sealed class JsShape
+{
+
+    private static readonly ThreadLocal<JsShape> _empty = new (() => new JsShape());
+
+    public static JsShape Empty
+    {
+        get => _empty.Value!;
+    }
+
+    private FrozenDictionary<string, int> _slots;
+
+    private Dictionary<string, WeakReference<JsShape>>? _transitions = new Dictionary<string, WeakReference<JsShape>>();
+
+    public JsShape()
+    {
+        _slots = new Dictionary<string, int>().ToFrozenDictionary();
+    }
+
+    public IEnumerable<string> PropertyNames
+    {
+        get => _slots.Keys;
+    }
+
+    private JsShape(string newPropertyName, JsShape parent)
+    {
+        var newSlots = parent._slots.ToDictionary();
+        newSlots[string.Intern(newPropertyName)] = newSlots.Count;
+        _slots = newSlots.ToFrozenDictionary();
+    }
+
+    private JsShape(string deadPropertyName, JsShape parent, bool delete)
+    {
+        var newSlots = parent._slots.ToDictionary();
+        newSlots.Remove(deadPropertyName);
+        // Shift slots for properties after the deleted slot
+        var keys = newSlots.Keys.ToArray();
+        for (int i = 0; i < keys.Length; i++)
+        {
+            newSlots[keys[i]] = i;
+        }
+        _slots = newSlots.ToFrozenDictionary();
+    }
+
+    public JsShape TransitionTo(string newPropertyName)
+    {
+        if (_transitions != null && _transitions.TryGetValue(newPropertyName, out var weakRef) && weakRef.TryGetTarget(out var existingShape))
+        {
+            return existingShape;
+        }
+        var newShape = new JsShape(newPropertyName, this);
+        _transitions![newPropertyName] = new WeakReference<JsShape>(newShape);
+        return newShape;
+    }
+
+    public JsShape TransitionAway(string deadPropertyName)
+    {
+        return new JsShape(deadPropertyName, this, true);
+    }
+
+    public int GetSlot(string propertyName)
+        => _slots.TryGetValue(propertyName, out var slot) ? slot : -1;
+}
 
 /// <summary>
 /// A JavaScript plain object backed by a <see cref="Dictionary{TKey,TValue}"/> of
@@ -18,7 +81,9 @@ namespace JavaScriptRuntime;
 /// </summary>
 public sealed class JsObject : IDictionary<string, object?>
 {
-    private Dictionary<string, JsValue>? _properties;
+    private JsValue[] _properties = System.Array.Empty<JsValue>();
+
+    private JsShape _shape = JsShape.Empty;
 
     // -------------------------------------------------------------------------
     // Typed initializer methods used from generated IL (no boxing at call site)
@@ -27,34 +92,34 @@ public sealed class JsObject : IDictionary<string, object?>
     /// <summary>Stores a numeric property without boxing the double value.</summary>
     public void SetNumber(string key, double value)
     {
-        GetOrCreateDict()[key] = JsValue.FromNumber(value);
+        SetValue(key, JsValue.FromNumber(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores a boolean property without boxing the bool value.</summary>
     public void SetBoolean(string key, bool value)
     {
-        GetOrCreateDict()[key] = JsValue.FromBoolean(value);
+        SetValue(key, JsValue.FromBoolean(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores a string property.</summary>
     public void SetString(string key, string? value)
     {
-        GetOrCreateDict()[key] = JsValue.FromString(value);
+        SetValue(key, JsValue.FromString(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores an arbitrary object value.</summary>
     public void SetValue(string key, object? value)
     {
-        GetOrCreateDict()[key] = JsValue.FromObject(value);
+        SetValue(key, JsValue.FromObject(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores an arbitrary object value (alias used by newer IL emit paths).</summary>
     public void SetObject(string key, object? value)
-        => SetValue(key, value);
+        => SetValue(key, JsValue.FromObject(value));
 
     // -------------------------------------------------------------------------
     // Read helpers
@@ -66,7 +131,7 @@ public sealed class JsObject : IDictionary<string, object?>
     /// </summary>
     public bool TryGetBoxedValue(string key, out object? value)
     {
-        if (_properties is not null && _properties.TryGetValue(key, out var jv))
+        if (TryGetJsValue(key, out var jv))
         {
             value = jv.ToObject();
             return true;
@@ -77,15 +142,17 @@ public sealed class JsObject : IDictionary<string, object?>
 
     /// <summary>Returns enumerable sequence of own property names.</summary>
     public IEnumerable<string> GetOwnPropertyNames()
-        => _properties?.Keys ?? Enumerable.Empty<string>();
+        => _shape.PropertyNames;
 
     /// <summary>Returns own property key-value pairs (values boxed as object).</summary>
     public IEnumerable<KeyValuePair<string, object?>> GetOwnProperties()
     {
-        if (_properties is null)
-            yield break;
-        foreach (var kvp in _properties)
-            yield return new KeyValuePair<string, object?>(kvp.Key, kvp.Value.ToObject());
+        for (int i = 0; i < _shape.PropertyNames.Count(); i++)
+        {
+            var key = _shape.PropertyNames.ElementAt(i);
+            var value = _properties[i];
+            yield return new KeyValuePair<string, object?>(key, value.ToObject());
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -95,41 +162,38 @@ public sealed class JsObject : IDictionary<string, object?>
 
     public object? this[string key]
     {
-        get
-        {
-            var dict = _properties;
-            if (dict is not null && dict.TryGetValue(key, out var jv))
-                return jv.ToObject();
-            throw new KeyNotFoundException($"Key '{key}' not found.");
-        }
-        set => GetOrCreateDict()[key] = JsValue.FromObject(value);
+        get => GetValue(key).ToObject();
+        set => SetValue(key, JsValue.FromObject(value));
     }
 
-    public ICollection<string> Keys => _properties?.Keys ?? (ICollection<string>)System.Array.Empty<string>();
+    public ICollection<string> Keys => _shape.PropertyNames.ToList();
 
-    public ICollection<object?> Values
-    {
-        get
-        {
-            if (_properties is null)
-                return System.Array.Empty<object?>();
-            return _properties.Values.Select(v => v.ToObject()).ToList();
-        }
-    }
+    public ICollection<object?> Values => _properties!.Select(v => v.ToObject()).ToList();
 
-    public int Count => _properties?.Count ?? 0;
+    public int Count => _properties!.Length;
 
     public bool IsReadOnly => false;
 
-    public void Add(string key, object? value) => GetOrCreateDict().Add(key, JsValue.FromObject(value));
+    public void Add(string key, object? value)
+        => SetValue(key, JsValue.FromObject(value));
 
-    public bool ContainsKey(string key) => _properties?.ContainsKey(key) ?? false;
+    public bool ContainsKey(string key) => _shape.GetSlot(key) != -1;
 
-    public bool Remove(string key) => _properties?.Remove(key) ?? false;
+    public bool Remove(string key)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot == -1)
+            return false;
+
+        _shape = _shape.TransitionAway(key);
+        _properties = _properties.Where((v, i) => i != slot).ToArray();
+
+        return true;
+    }
 
     public bool TryGetValue(string key, out object? value)
     {
-        if (_properties is not null && _properties.TryGetValue(key, out var jv))
+        if (this.TryGetJsValue(key, out var jv))
         {
             value = jv.ToObject();
             return true;
@@ -138,37 +202,38 @@ public sealed class JsObject : IDictionary<string, object?>
         return false;
     }
 
-    public void Add(KeyValuePair<string, object?> item) => GetOrCreateDict().Add(item.Key, JsValue.FromObject(item.Value));
+    public void Add(KeyValuePair<string, object?> item)
+    {
+        SetValue(item.Key, JsValue.FromObject(item.Value));
+    }
 
-    public void Clear() => _properties?.Clear();
+    public void Clear()
+    {
+        _properties = System.Array.Empty<JsValue>();
+        _shape = JsShape.Empty;
+    }
 
     public bool Contains(KeyValuePair<string, object?> item)
         => _properties is not null
-           && _properties.TryGetValue(item.Key, out var jv)
+           && TryGetJsValue(item.Key, out var jv)
            && Equals(jv.ToObject(), item.Value);
 
     public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex)
     {
-        if (_properties is null) return;
-        int i = arrayIndex;
-        foreach (var kvp in _properties)
-            array[i++] = new KeyValuePair<string, object?>(kvp.Key, kvp.Value.ToObject());
+        throw new NotImplementedException();
     }
-
     public bool Remove(KeyValuePair<string, object?> item)
     {
-        if (_properties is null) return false;
-        if (_properties.TryGetValue(item.Key, out var jv) && Equals(jv.ToObject(), item.Value))
-            return _properties.Remove(item.Key);
-        return false;
+        throw new NotImplementedException();
     }
 
     public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
     {
-        if (_properties is null)
-            yield break;
-        foreach (var kvp in _properties)
-            yield return new KeyValuePair<string, object?>(kvp.Key, kvp.Value.ToObject());
+        foreach (var key in _shape.PropertyNames)
+        {
+            if (TryGetJsValue(key, out var jv))
+                yield return new KeyValuePair<string, object?>(key, jv.ToObject());
+        }
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -176,9 +241,40 @@ public sealed class JsObject : IDictionary<string, object?>
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+    private void SetValue(string key, JsValue value)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot == -1)
+        {
+            _shape = _shape.TransitionTo(key);
+            slot = _shape.GetSlot(key);
+        }
+        var newProperties = new JsValue[_properties!.Length + 1];
+        System.Array.Copy(_properties, newProperties, _properties.Length);
 
-    private Dictionary<string, JsValue> GetOrCreateDict()
-        => _properties ??= new Dictionary<string, JsValue>(StringComparer.Ordinal);
+        _properties = newProperties;
+        _properties[slot] = value;
+    }
+
+    private JsValue GetValue(string key)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot == -1)
+            throw new KeyNotFoundException($"Key '{key}' not found.");
+        return _properties[slot];
+    }
+
+    private bool TryGetJsValue(string key, out JsValue value)
+    {
+        var slot = _shape.GetSlot(key);
+        if (slot == -1)
+        {
+            value = JsValue.Undefined;
+            return false;
+        }
+        value = _properties[slot];
+        return true;
+    }
 
     private void DefineDataDescriptor(string key, object? value)
         => PropertyDescriptorStore.DefineOrUpdate(this, key, new JsPropertyDescriptor
