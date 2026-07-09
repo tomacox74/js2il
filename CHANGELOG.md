@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.18 - 2026-07-09
+
 - perf/runtime: stop cloning property descriptors on every property read (`PropertyDescriptorStore.TryGetOwn` intrinsic + runtime-store paths); descriptors are still cloned on write and by the few callers that mutate a read descriptor (`Object.seal`, `Object.freeze`, `SetProperty` accessor/data update). Cuts Kraken `ai-astar` execution time roughly in half (136s → 69s locally). (#1415)
 - perf/compiler: replace repeated O(N) LIR instruction scans with cached def-instruction/use lookups in `LIRToILCompiler` (`TryFindDefInstruction`, `HasAnyUses`) and build the def map once per method in `TempLocalAllocator`; compiling the Kraken `ai-astar` scenario (50k-line data literal) drops from ~65s to ~9.5s locally. (#1415)
 
