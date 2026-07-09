@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: make `PropertyDescriptorStore` reads lock-free; descriptor and override slots now publish immutable copy-on-write snapshots that hot read paths (`TryGetOwn`, `HasAny`, `TryGetOverride`, own-key enumeration) access via a volatile read while writers serialize on a per-slot write lock, removing `Monitor.Enter_Slowpath` as the dominant remaining hotspot in the Kraken `ai-astar` execution trace. (#1417)
 
 ## v0.11.18 - 2026-07-09
 

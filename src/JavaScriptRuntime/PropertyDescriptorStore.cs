@@ -49,18 +49,63 @@ internal enum PropertyDescriptorOverrideKind
 
 internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 {
+    // Perf (#1417): descriptor reads vastly outnumber writes on hot property paths, so
+    // each slot publishes an immutable snapshot that readers access lock-free via a
+    // volatile read. Writers serialize on the slot's WriteLock, build a modified copy
+    // of the snapshot, and publish it atomically. Published snapshots are never
+    // mutated, so readers can safely share them without locks or cloning.
+    private sealed class DescriptorSnapshot
+    {
+        public static readonly DescriptorSnapshot Empty = new(
+            new Dictionary<string, JsPropertyDescriptor>(StringComparer.Ordinal),
+            System.Array.Empty<string>());
+
+        public DescriptorSnapshot(Dictionary<string, JsPropertyDescriptor> descriptors, string[] keyOrder)
+        {
+            Descriptors = descriptors;
+            KeyOrder = keyOrder;
+        }
+
+        public readonly Dictionary<string, JsPropertyDescriptor> Descriptors;
+        public readonly string[] KeyOrder;
+    }
+
     private sealed class DescriptorSlot
     {
-        public readonly object SyncRoot = new();
-        public readonly Dictionary<string, JsPropertyDescriptor> Descriptors = new(StringComparer.Ordinal);
-        public readonly List<string> KeyOrder = new();
+        public readonly object WriteLock = new();
+        private DescriptorSnapshot _snapshot = DescriptorSnapshot.Empty;
+
+        public DescriptorSnapshot Read() => Volatile.Read(ref _snapshot);
+
+        // Callers must hold WriteLock.
+        public void Publish(DescriptorSnapshot snapshot) => Volatile.Write(ref _snapshot, snapshot);
+    }
+
+    private sealed class OverrideSnapshot
+    {
+        public static readonly OverrideSnapshot Empty = new(
+            new Dictionary<string, PropertyDescriptorOverride>(StringComparer.Ordinal),
+            System.Array.Empty<string>());
+
+        public OverrideSnapshot(Dictionary<string, PropertyDescriptorOverride> overrides, string[] keyOrder)
+        {
+            Overrides = overrides;
+            KeyOrder = keyOrder;
+        }
+
+        public readonly Dictionary<string, PropertyDescriptorOverride> Overrides;
+        public readonly string[] KeyOrder;
     }
 
     private sealed class OverrideSlot
     {
-        public readonly object SyncRoot = new();
-        public readonly Dictionary<string, PropertyDescriptorOverride> Overrides = new(StringComparer.Ordinal);
-        public readonly List<string> KeyOrder = new();
+        public readonly object WriteLock = new();
+        private OverrideSnapshot _snapshot = OverrideSnapshot.Empty;
+
+        public OverrideSnapshot Read() => Volatile.Read(ref _snapshot);
+
+        // Callers must hold WriteLock.
+        public void Publish(OverrideSnapshot snapshot) => Volatile.Write(ref _snapshot, snapshot);
     }
 
     private sealed class PropertyDescriptorOverride
@@ -79,19 +124,13 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
             if (_slots.TryGetValue(target, out var slot))
             {
-                lock (slot.SyncRoot)
-                {
-                    if (slot.Descriptors.TryGetValue(key, out var stored))
-                    {
-                        // Perf (#1415): return the stored descriptor without cloning.
-                        // Stored descriptors are never mutated in place (writes go through
-                        // DefineOrUpdate, which clones the incoming descriptor), so callers
-                        // that only read the descriptor can safely share the instance.
-                        // Callers that mutate the result must clone it first.
-                        descriptor = stored;
-                        return true;
-                    }
-                }
+                // Perf (#1415/#1417): lock-free snapshot read; return the stored
+                // descriptor without cloning. Stored descriptors are never mutated in
+                // place (writes go through DefineOrUpdate, which clones the incoming
+                // descriptor and publishes a new snapshot), so callers that only read
+                // the descriptor can safely share the instance. Callers that mutate
+                // the result must clone it first.
+                return slot.Read().Descriptors.TryGetValue(key, out descriptor!);
             }
 
             descriptor = null!;
@@ -102,15 +141,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         {
             ArgumentNullException.ThrowIfNull(target);
 
-            if (!_slots.TryGetValue(target, out var slot))
-            {
-                return false;
-            }
-
-            lock (slot.SyncRoot)
-            {
-                return slot.Descriptors.Count != 0;
-            }
+            return _slots.TryGetValue(target, out var slot)
+                && slot.Read().Descriptors.Count != 0;
         }
 
         public void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
@@ -132,10 +164,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
             if (_slots.TryGetValue(target, out var slot))
             {
-                lock (slot.SyncRoot)
-                {
-                    return slot.KeyOrder.ToArray();
-                }
+                return slot.Read().KeyOrder;
             }
 
             return System.Array.Empty<string>();
@@ -172,14 +201,22 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             }
 
             var slot = _slots.GetOrCreateValue(target);
-            lock (slot.SyncRoot)
+            lock (slot.WriteLock)
             {
-                if (!slot.Descriptors.ContainsKey(key))
+                var current = slot.Read();
+                var descriptors = new Dictionary<string, JsPropertyDescriptor>(current.Descriptors, StringComparer.Ordinal);
+                var keyOrder = current.KeyOrder;
+
+                if (!descriptors.ContainsKey(key))
                 {
-                    slot.KeyOrder.Add(key);
+                    var newOrder = new string[keyOrder.Length + 1];
+                    System.Array.Copy(keyOrder, newOrder, keyOrder.Length);
+                    newOrder[keyOrder.Length] = key;
+                    keyOrder = newOrder;
                 }
 
-                slot.Descriptors[key] = CloneDescriptor(descriptor);
+                descriptors[key] = CloneDescriptor(descriptor);
+                slot.Publish(new DescriptorSnapshot(descriptors, keyOrder));
             }
         }
 
@@ -190,15 +227,19 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
                 return false;
             }
 
-            lock (slot.SyncRoot)
+            lock (slot.WriteLock)
             {
-                var removed = slot.Descriptors.Remove(key);
-                if (removed)
+                var current = slot.Read();
+                if (!current.Descriptors.ContainsKey(key))
                 {
-                    slot.KeyOrder.Remove(key);
+                    return false;
                 }
 
-                return removed;
+                var descriptors = new Dictionary<string, JsPropertyDescriptor>(current.Descriptors, StringComparer.Ordinal);
+                descriptors.Remove(key);
+                var keyOrder = current.KeyOrder.Where(k => !string.Equals(k, key, StringComparison.Ordinal)).ToArray();
+                slot.Publish(new DescriptorSnapshot(descriptors, keyOrder));
+                return true;
             }
         }
     }
@@ -314,23 +355,21 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
             return _intrinsicStore.HasAny(target);
         }
 
+        var snapshot = slot.Read();
         foreach (var key in _intrinsicStore.GetOwnKeys(target))
         {
-            if (!IsIntrinsicKeySuppressedByOverride(target, key))
+            if (!IsIntrinsicKeySuppressedByOverride(snapshot, key))
             {
                 return true;
             }
         }
 
-        lock (slot.SyncRoot)
+        foreach (var key in snapshot.KeyOrder)
         {
-            foreach (var key in slot.KeyOrder)
+            if (snapshot.Overrides.TryGetValue(key, out var entry)
+                && entry.Kind != PropertyDescriptorOverrideKind.Delete)
             {
-                if (slot.Overrides.TryGetValue(key, out var entry)
-                    && entry.Kind != PropertyDescriptorOverrideKind.Delete)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -437,10 +476,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     {
         if (_overrideSlots.TryGetValue(target, out var slot))
         {
-            lock (slot.SyncRoot)
-            {
-                return slot.Overrides.TryGetValue(key, out entry!);
-            }
+            // Perf (#1417): lock-free snapshot read.
+            return slot.Read().Overrides.TryGetValue(key, out entry!);
         }
 
         entry = null!;
@@ -457,25 +494,33 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
         var slot = _overrideSlots.GetOrCreateValue(target);
 
-        lock (slot.SyncRoot)
+        lock (slot.WriteLock)
         {
-            var hadDeleteOverride = slot.Overrides.TryGetValue(key, out var existing)
+            var current = slot.Read();
+            var hadDeleteOverride = current.Overrides.TryGetValue(key, out var existing)
                 && existing.Kind == PropertyDescriptorOverrideKind.Delete;
             var shouldTrackOrder = (!hasIntrinsic || hadDeleteOverride)
-                && (!slot.KeyOrder.Contains(key));
+                && System.Array.IndexOf(current.KeyOrder, key) < 0;
 
+            var keyOrder = current.KeyOrder;
             if (shouldTrackOrder)
             {
-                slot.KeyOrder.Add(key);
+                var newOrder = new string[keyOrder.Length + 1];
+                System.Array.Copy(keyOrder, newOrder, keyOrder.Length);
+                newOrder[keyOrder.Length] = key;
+                keyOrder = newOrder;
             }
 
-            slot.Overrides[key] = new PropertyDescriptorOverride
+            var overrides = new Dictionary<string, PropertyDescriptorOverride>(current.Overrides, StringComparer.Ordinal);
+            overrides[key] = new PropertyDescriptorOverride
             {
                 Kind = hasIntrinsic && !hadDeleteOverride
                     ? PropertyDescriptorOverrideKind.Modify
                     : PropertyDescriptorOverrideKind.Add,
                 Descriptor = CloneDescriptor(descriptor)
             };
+
+            slot.Publish(new OverrideSnapshot(overrides, keyOrder));
         }
     }
 
@@ -484,37 +529,27 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
         var slot = _overrideSlots.GetOrCreateValue(target);
 
-        lock (slot.SyncRoot)
+        lock (slot.WriteLock)
         {
-            var hasOverride = slot.Overrides.TryGetValue(key, out var existing)
+            var current = slot.Read();
+            var hasOverride = current.Overrides.TryGetValue(key, out var existing)
                 && existing.Kind != PropertyDescriptorOverrideKind.Delete;
 
-            if (!hasIntrinsic && !hasOverride)
+            var keyOrder = current.KeyOrder;
+            if (System.Array.IndexOf(keyOrder, key) >= 0)
             {
-                slot.KeyOrder.Remove(key);
-                slot.Overrides[key] = new PropertyDescriptorOverride
-                {
-                    Kind = PropertyDescriptorOverrideKind.Delete
-                };
-                return false;
+                keyOrder = keyOrder.Where(k => !string.Equals(k, key, StringComparison.Ordinal)).ToArray();
             }
 
-            if (hasIntrinsic)
-            {
-                slot.KeyOrder.Remove(key);
-                slot.Overrides[key] = new PropertyDescriptorOverride
-                {
-                    Kind = PropertyDescriptorOverrideKind.Delete
-                };
-                return true;
-            }
-
-            slot.KeyOrder.Remove(key);
-            slot.Overrides[key] = new PropertyDescriptorOverride
+            var overrides = new Dictionary<string, PropertyDescriptorOverride>(current.Overrides, StringComparer.Ordinal);
+            overrides[key] = new PropertyDescriptorOverride
             {
                 Kind = PropertyDescriptorOverrideKind.Delete
             };
-            return true;
+
+            slot.Publish(new OverrideSnapshot(overrides, keyOrder));
+
+            return hasIntrinsic || hasOverride;
         }
     }
 
@@ -522,32 +557,29 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     {
         var keys = new List<string>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
+        var snapshot = _overrideSlots.TryGetValue(target, out var slot)
+            ? slot.Read()
+            : OverrideSnapshot.Empty;
 
         foreach (var key in _intrinsicStore.GetOwnKeys(target))
         {
-            if (!IsIntrinsicKeySuppressedByOverride(target, key) && seen.Add(key))
+            if (!IsIntrinsicKeySuppressedByOverride(snapshot, key) && seen.Add(key))
             {
                 keys.Add(key);
             }
         }
 
-        if (_overrideSlots.TryGetValue(target, out var slot))
+        foreach (var key in snapshot.KeyOrder)
         {
-            lock (slot.SyncRoot)
+            if (!snapshot.Overrides.TryGetValue(key, out var entry)
+                || entry.Kind == PropertyDescriptorOverrideKind.Delete)
             {
-                foreach (var key in slot.KeyOrder.ToArray())
-                {
-                    if (!slot.Overrides.TryGetValue(key, out var entry)
-                        || entry.Kind == PropertyDescriptorOverrideKind.Delete)
-                    {
-                        continue;
-                    }
+                continue;
+            }
 
-                    if (seen.Add(key))
-                    {
-                        keys.Add(key);
-                    }
-                }
+            if (seen.Add(key))
+            {
+                keys.Add(key);
             }
         }
 
@@ -561,8 +593,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     private bool HasDeletedOverride(object target, string key)
         => IsDeletedOverride(target, key);
 
-    private bool IsIntrinsicKeySuppressedByOverride(object target, string key)
-        => TryGetOverride(target, key, out var entry)
+    private static bool IsIntrinsicKeySuppressedByOverride(OverrideSnapshot snapshot, string key)
+        => snapshot.Overrides.TryGetValue(key, out var entry)
             && (entry.Kind == PropertyDescriptorOverrideKind.Delete
                 || entry.Kind == PropertyDescriptorOverrideKind.Add);
 }
