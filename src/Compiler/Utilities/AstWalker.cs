@@ -146,6 +146,10 @@ public class AstWalker
                 VisitNodes(objExpr.Properties, visitor);
                 break;
 
+            case SpreadElement spreadElement:
+                Visit(spreadElement.Argument, visitor);
+                break;
+
             case Property prop:
                 Visit(prop.Key, visitor);
                 Visit(prop.Value, visitor);
@@ -377,6 +381,10 @@ public class AstWalker
 
             case ObjectExpression objExpr:
                 VisitNodesWithContext(objExpr.Properties, enterNode, exitNode);
+                break;
+
+            case SpreadElement spreadElement:
+                VisitWithContext(spreadElement.Argument, enterNode, exitNode);
                 break;
 
             case Property prop:

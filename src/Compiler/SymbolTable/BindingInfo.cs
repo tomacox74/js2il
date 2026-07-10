@@ -102,6 +102,14 @@ public class BindingInfo
     /// </summary>
     public bool RequiresRuntimeTemporalDeadZoneChecks { get; set; }
 
+    /// <summary>
+    /// Shape analysis result when this binding is declared with an object literal initializer.
+    /// Populated by <c>SymbolTableBuilder.AnalyzeObjectLiteralShapes</c>; null when the binding
+    /// is not an object-literal declaration. Consumers must check
+    /// <see cref="ObjectLiteralShapeInfo.IsEligible"/> before early-binding member access.
+    /// </summary>
+    public ObjectLiteralShapeInfo? ObjectLiteralShape { get; set; }
+
     public BindingInfo(string name, BindingKind kind, Scope declaringScope, Node declarationNode)
     {
         Name = name;
