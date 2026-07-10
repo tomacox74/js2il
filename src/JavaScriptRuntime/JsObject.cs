@@ -91,7 +91,7 @@ internal sealed class JsShape
 /// for object literal property initialization to avoid the <c>box</c> instruction.
 /// </para>
 /// </summary>
-public sealed class JsObject : IDictionary<string, object?>
+public class JsObject : IDictionary<string, object?>
 {
     private JsValue[] _properties = System.Array.Empty<JsValue>();
 

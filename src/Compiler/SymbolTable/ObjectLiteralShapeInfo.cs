@@ -72,6 +72,12 @@ public sealed class ObjectLiteralShapeInfo
     /// <summary>First reason the literal was disqualified; null while eligible.</summary>
     public string? DisqualifyReason { get; private set; }
 
+    /// <summary>
+    /// Deterministic generated CLR type name assigned by TypeGenerator for eligible shapes.
+    /// Null until type generation runs, and always null for ineligible shapes.
+    /// </summary>
+    public string? GeneratedClrTypeName { get; internal set; }
+
     internal void Disqualify(string reason)
     {
         if (!IsEligible)
