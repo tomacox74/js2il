@@ -550,7 +550,7 @@ namespace Jroc.Services
             // is included for readability.
             var loc = shape.Literal.Location.Start;
             var bindingName = SanitizeClrIdentifier(shape.Binding.Name);
-            return $"ObjectLiteral_L{loc.Line}C{loc.Column + 1}_{bindingName}";
+            return $"L{loc.Line}C{loc.Column + 1}_{bindingName}";
         }
 
         private static string SanitizeClrIdentifier(string value)
