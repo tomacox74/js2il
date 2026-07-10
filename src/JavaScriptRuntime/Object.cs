@@ -2693,7 +2693,10 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (PropertyDescriptorStore.TryGetOwn(receiver, memberName, out _))
+            // Perf (#1418): single probe instead of the previous TryGetOwn call;
+            // only a live descriptor shadows the dictionary slot (a delete
+            // tombstone intentionally does not, preserving prior behavior).
+            if (PropertyDescriptorStore.GetOwnLookup(receiver, memberName, out _) == PropertyDescriptorLookup.Found)
             {
                 return false;
             }
@@ -4079,14 +4082,16 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (PropertyDescriptorStore.IsDeleted(target, propName))
+            // Perf (#1418): single-probe lookup answering deleted/descriptor/none at once.
+            var ownLookup = PropertyDescriptorStore.GetOwnLookup(target, propName, out var desc);
+            if (ownLookup == PropertyDescriptorLookup.Deleted)
             {
                 value = null;
                 return false;
             }
 
             // Descriptor-defined properties (data/accessor)
-            if (PropertyDescriptorStore.TryGetOwn(target, propName, out var desc))
+            if (ownLookup == PropertyDescriptorLookup.Found)
             {
                 if (desc.Kind == JsPropertyDescriptorKind.Accessor)
                 {
@@ -5475,6 +5480,43 @@ namespace JavaScriptRuntime
         {
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
+
+            // Perf (#1418): fast dispatch for plain JS objects (object literals via
+            // JsObject, function-constructed instances via ExpandoObject). Own
+            // properties on these receivers are authoritatively descriptor-backed
+            // (literal/assignment writes mirror a data descriptor), so a single
+            // descriptor probe resolves the overwhelmingly common case without
+            // walking the full dispatch ladder below. Misses fall through so
+            // rarely-taken paths (lazy class methods, __proto__, inheritance)
+            // keep their existing semantics. Function.Prototype is excluded to
+            // preserve the restricted 'caller'/'arguments' check.
+            if ((obj is JsObject || obj is System.Dynamic.ExpandoObject)
+                && !ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype))
+            {
+                var lookup = PropertyDescriptorStore.GetOwnLookup(obj, name, out var fastDesc);
+                if (lookup == PropertyDescriptorLookup.Found)
+                {
+                    if (fastDesc.Kind == JsPropertyDescriptorKind.Data)
+                    {
+                        return fastDesc.Value;
+                    }
+
+                    return fastDesc.Get is null || fastDesc.Get is JsNull
+                        ? null
+                        : InvokeCallable(fastDesc.Get, obj, System.Array.Empty<object>());
+                }
+
+                if (lookup == PropertyDescriptorLookup.None
+                    && ((IDictionary<string, object?>)obj).TryGetValue(name, out var fastDictValue))
+                {
+                    // Dictionary-only entries (no shadowing descriptor) mirror the
+                    // existing TryGetFastDictionaryOwnValue behavior.
+                    return fastDictValue;
+                }
+
+                // Own miss (or delete tombstone): fall through to the full ladder.
+            }
+
             if (ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype)
                 && (string.Equals(name, "caller", StringComparison.Ordinal) || string.Equals(name, "arguments", StringComparison.Ordinal)))
             {
