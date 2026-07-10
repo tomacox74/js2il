@@ -44,13 +44,29 @@ public sealed class ObjectLiteralTypeGenerationGroundworkTests
         using var peReader = new PEReader(peStream);
         var reader = peReader.GetMetadataReader();
 
-        var objectLiteralTypes = reader.TypeDefinitions
-            .Select(reader.GetTypeDefinition)
-            .Where(type => reader.GetString(type.Namespace) == "ObjectLiterals")
+        // Object literal types are nested: Modules.<Module> -> ObjectLiterals -> ObjectLiteral_L{line}C{col}_{binding}.
+        var containerHandle = Assert.Single(
+            reader.TypeDefinitions,
+            handle => reader.GetString(reader.GetTypeDefinition(handle).Name) == "ObjectLiterals");
+        var container = reader.GetTypeDefinition(containerHandle);
+        Assert.True(container.IsNested);
+
+        var moduleTypeHandle = container.GetDeclaringType();
+        var moduleType = reader.GetTypeDefinition(moduleTypeHandle);
+        Assert.Equal("Modules", reader.GetString(moduleType.Namespace));
+
+        var objectLiteralTypeHandles = reader.TypeDefinitions
+            .Where(handle =>
+            {
+                var type = reader.GetTypeDefinition(handle);
+                return reader.GetString(type.Name).StartsWith("ObjectLiteral_", StringComparison.Ordinal);
+            })
             .ToList();
 
-        var type = Assert.Single(objectLiteralTypes);
-        Assert.Contains("_a", reader.GetString(type.Name), StringComparison.Ordinal);
+        var typeHandle = Assert.Single(objectLiteralTypeHandles);
+        var type = reader.GetTypeDefinition(typeHandle);
+        Assert.Equal("ObjectLiteral_L1C11_a", reader.GetString(type.Name));
+        Assert.Equal(containerHandle, type.GetDeclaringType());
 
         Assert.Equal(HandleKind.TypeReference, type.BaseType.Kind);
         var baseTypeRef = reader.GetTypeReference(MetadataTokens.TypeReferenceHandle(MetadataTokens.GetRowNumber(type.BaseType)));

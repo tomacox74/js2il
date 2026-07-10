@@ -77,7 +77,10 @@ namespace Jroc.Services
         /// Generates .NET types from the symbol table.
         /// Returns the root type definition handle.
         /// </summary>
-        public void GenerateTypes(SymbolTable symbolTable)
+        public void GenerateTypes(
+            SymbolTable symbolTable,
+            TypeDefinitionHandle moduleTypeHandle,
+            NestedTypeRelationshipRegistry nestedTypeRegistry)
         {            
             // Phase 1: Create all scope types (depth-first) for every scope discovered by the SymbolTable.
             // SymbolTable already contains scopes for function declarations, function expressions, arrow functions,
@@ -91,7 +94,7 @@ namespace Jroc.Services
             // Phase 1b: declare generated object-literal CLR types for eligible shapes.
             // Construction/member-access codegen is implemented in later phases; this step only
             // creates deterministic TypeDefs and registers field metadata for future consumers.
-            CreateObjectLiteralTypes(symbolTable.Root);
+            CreateObjectLiteralTypes(symbolTable.Root, moduleTypeHandle, nestedTypeRegistry);
 
             // Phase 2: Populate the variable registry (fields + metadata for every binding).
             PopulateVariableRegistry(symbolTable.Root);
@@ -377,22 +380,48 @@ namespace Jroc.Services
             }
         }
 
-        private void CreateObjectLiteralTypes(Scope root)
+        private void CreateObjectLiteralTypes(
+            Scope root,
+            TypeDefinitionHandle moduleTypeHandle,
+            NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
-            foreach (var shape in EnumerateEligibleObjectLiteralShapes(root)
-                         .OrderBy(static s => s.Literal.Location.Start.Line)
-                         .ThenBy(static s => s.Literal.Location.Start.Column)
-                         .ThenBy(static s => s.Binding.Name, StringComparer.Ordinal)
-                         .ThenBy(static s => GetRegistryScopeName(s.Binding.DeclaringScope), StringComparer.Ordinal))
+            var shapes = EnumerateEligibleObjectLiteralShapes(root)
+                .OrderBy(static s => s.Literal.Location.Start.Line)
+                .ThenBy(static s => s.Literal.Location.Start.Column)
+                .ThenBy(static s => s.Binding.Name, StringComparer.Ordinal)
+                .ThenBy(static s => GetRegistryScopeName(s.Binding.DeclaringScope), StringComparer.Ordinal)
+                .ToList();
+
+            if (shapes.Count == 0)
             {
-                CreateObjectLiteralType(shape);
+                return;
+            }
+
+            // Mirror the scope-type layout: object-literal types live under a per-module
+            // "ObjectLiterals" container nested in the module type, as a sibling of "Scope".
+            // The container declares no methods/fields; its MethodList points at the first
+            // literal ctor row (deferred), so it owns zero MethodDef rows.
+            var containerBuilder = new TypeBuilder(_metadataBuilder, string.Empty, "ObjectLiterals");
+            var containerHandle = containerBuilder.AddTypeDefinition(
+                TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+                _bclReferences.ObjectType,
+                firstFieldOverride: null,
+                firstMethodOverride: MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow));
+            nestedTypeRegistry.Add(containerHandle, moduleTypeHandle);
+
+            foreach (var shape in shapes)
+            {
+                CreateObjectLiteralType(shape, containerHandle, nestedTypeRegistry);
             }
         }
 
-        private void CreateObjectLiteralType(ObjectLiteralShapeInfo shape)
+        private void CreateObjectLiteralType(
+            ObjectLiteralShapeInfo shape,
+            TypeDefinitionHandle containerHandle,
+            NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
             var typeName = GetObjectLiteralTypeName(shape);
-            var tb = new TypeBuilder(_metadataBuilder, "ObjectLiterals", typeName);
+            var tb = new TypeBuilder(_metadataBuilder, string.Empty, typeName);
             var fieldHandlesByName = new Dictionary<string, FieldDefinitionHandle>(StringComparer.Ordinal);
             var fieldClrTypesByName = new Dictionary<string, Type>(StringComparer.Ordinal);
 
@@ -409,7 +438,7 @@ namespace Jroc.Services
                 fieldClrTypesByName[member.Name] = fieldClrType;
             }
 
-            var typeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
+            var typeAttributes = TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
             var baseType = _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsObject));
             var ctorHandle = MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow++);
             var typeHandle = tb.AddTypeDefinition(
@@ -417,6 +446,7 @@ namespace Jroc.Services
                 baseType,
                 firstFieldOverride: null,
                 firstMethodOverride: ctorHandle);
+            nestedTypeRegistry.Add(typeHandle, containerHandle);
 
             shape.GeneratedClrTypeName = typeName;
             _variableRegistry.RegisterObjectLiteralType(
@@ -428,7 +458,7 @@ namespace Jroc.Services
             _deferredCtorPlan.Add(new DeferredConstructorPlan(
                 DeferredConstructorKind.ObjectLiteral,
                 ScopeKey: string.Empty,
-                Namespace: "ObjectLiterals",
+                Namespace: string.Empty,
                 TypeName: typeName,
                 IsAsync: false,
                 IsGenerator: false,
@@ -515,10 +545,12 @@ namespace Jroc.Services
 
         private static string GetObjectLiteralTypeName(ObjectLiteralShapeInfo shape)
         {
+            // Nested under Modules.<Module>/ObjectLiterals, so the name only needs to be unique
+            // within its module. The literal's start position guarantees that; the binding name
+            // is included for readability.
             var loc = shape.Literal.Location.Start;
-            var scopeKey = SanitizeClrIdentifier(GetRegistryScopeName(shape.Binding.DeclaringScope));
             var bindingName = SanitizeClrIdentifier(shape.Binding.Name);
-            return $"ObjectLiteral_{scopeKey}_L{loc.Line}C{loc.Column + 1}_{bindingName}";
+            return $"ObjectLiteral_L{loc.Line}C{loc.Column + 1}_{bindingName}";
         }
 
         private static string SanitizeClrIdentifier(string value)
