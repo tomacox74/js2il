@@ -166,6 +166,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
             if (TryGetMirroredRawClassPrototype(target, TryGetOwn, out var mirroredTarget))
             {
+                // Mirrored writes never sync the raw prototype's dictionary, so its
+                // plain-object read fast path must be disabled regardless of shape.
+                MarkJsObjectNonDataDescriptors(mirroredTarget);
                 DefineOrUpdateCore(mirroredTarget, key, descriptor);
             }
         }
@@ -207,6 +210,11 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
         private void DefineOrUpdateCore(object target, string key, JsPropertyDescriptor descriptor)
         {
+            // Intrinsic descriptors are defined during engine setup without a
+            // guaranteed dictionary sync, so any intrinsic entry disables the
+            // plain-object read fast path for JsObject targets.
+            MarkJsObjectNonDataDescriptors(target);
+
             if (target is Delegate del)
             {
                 Function.ClearDeletedMetadataProperty(del, key);
@@ -234,6 +242,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
         private bool DeleteCore(object target, string key)
         {
+            MarkJsObjectNonDataDescriptors(target);
+
             if (!_slots.TryGetValue(target, out var slot))
             {
                 return false;
@@ -261,6 +271,31 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     private static readonly ThreadLocal<int> _intrinsicInitializationDepth = new(() => 0);
 
     private readonly ConditionalWeakTable<object, OverrideSlot> _overrideSlots = new();
+
+    /// <summary>
+    /// Marks a <see cref="JsObject"/> target whose descriptor state can no longer be
+    /// answered from its property dictionary alone, disabling the plain-object read
+    /// fast path for that instance. See <see cref="JsObject.HasNonDataDescriptors"/>.
+    /// </summary>
+    private static void MarkJsObjectNonDataDescriptors(object target)
+    {
+        if (target is JsObject jsObject)
+        {
+            jsObject.MarkNonDataDescriptors();
+        }
+    }
+
+    /// <summary>
+    /// True for the descriptor shape produced by plain assignment/literal mirror
+    /// writes (data, writable, enumerable, configurable). All writers of this shape
+    /// keep the target dictionary in sync, so such descriptors never invalidate the
+    /// plain-object read fast path.
+    /// </summary>
+    private static bool IsMirroredDefaultDataDescriptor(JsPropertyDescriptor descriptor)
+        => descriptor.Kind == JsPropertyDescriptorKind.Data
+            && descriptor.Writable
+            && descriptor.Enumerable
+            && descriptor.Configurable;
 
     public PropertyDescriptorStore()
     {
@@ -346,6 +381,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
 
+        // Descriptor copies do not sync the target's property dictionary, so a
+        // JsObject target can no longer rely on the plain-object read fast path.
+        MarkJsObjectNonDataDescriptors(target);
+
         foreach (var key in GetOwnKeys(source))
         {
             if (TryGetOwn(source, key, out var descriptor))
@@ -428,6 +467,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
         if (TryGetMirroredRawClassPrototype(target, ((IPropertyDescriptorStore)this).TryGetOwn, out var mirroredTarget))
         {
+            // Mirrored writes never sync the raw prototype's dictionary, so its
+            // plain-object read fast path must be disabled regardless of shape.
+            MarkJsObjectNonDataDescriptors(mirroredTarget);
             DefineOrUpdateOverride(mirroredTarget, key, descriptor);
         }
     }
@@ -529,6 +571,13 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     private void DefineOrUpdateOverride(object target, string key, JsPropertyDescriptor descriptor)
     {
+        // Non-default descriptors (accessors, restricted attributes) make the
+        // dictionary non-authoritative for reads on JsObject targets.
+        if (!IsMirroredDefaultDataDescriptor(descriptor))
+        {
+            MarkJsObjectNonDataDescriptors(target);
+        }
+
         if (target is Delegate del)
         {
             Function.ClearDeletedMetadataProperty(del, key);
@@ -569,6 +618,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     private bool DeleteOverride(object target, string key)
     {
+        // Delete tombstones are only visible through the descriptor store.
+        MarkJsObjectNonDataDescriptors(target);
+
         var hasIntrinsic = _intrinsicStore.TryGetOwn(target, key, out _);
         var slot = _overrideSlots.GetOrCreateValue(target);
 

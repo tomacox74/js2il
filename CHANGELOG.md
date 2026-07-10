@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: skip the descriptor-store probe (`ConditionalWeakTable` lookup) entirely for plain object literal reads; `JsObject` now tracks a sticky `HasNonDataDescriptors` flag (set by accessors, `delete` tombstones, non-default `defineProperty` attributes, `seal`/`freeze`, intrinsic descriptors, and class-prototype mirror writes), and while it is clear `Object.GetProperty` answers own reads directly from the object's shape/slot dictionary. Object-literal property read loops run ~32% faster locally (10.9s → 7.4s microbenchmark). (#1418 follow-up)
 
 ## v0.11.19 - 2026-07-10
 

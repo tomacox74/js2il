@@ -5481,6 +5481,20 @@ namespace JavaScriptRuntime
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
 
+            // Perf: plain JsObject fast path. While an object literal has only
+            // mirrored default data descriptors (no accessors, deletes, or
+            // attribute-bearing descriptors), its property dictionary is fully
+            // authoritative for own reads — answer directly from the shape/slot
+            // storage without probing the descriptor store (ConditionalWeakTable).
+            // Own misses fall through so prototype-chain and special-name
+            // semantics are preserved.
+            if (obj is JsObject plainJsObject && !plainJsObject.HasNonDataDescriptors)
+            {
+                if (plainJsObject.TryGetBoxedValue(name, out var plainValue))
+                {
+                    return plainValue;
+                }
+            }
             // Perf (#1418): fast dispatch for plain JS objects (object literals via
             // JsObject, function-constructed instances via ExpandoObject). Own
             // properties on these receivers are authoritatively descriptor-backed
@@ -5490,7 +5504,7 @@ namespace JavaScriptRuntime
             // rarely-taken paths (lazy class methods, __proto__, inheritance)
             // keep their existing semantics. Function.Prototype is excluded to
             // preserve the restricted 'caller'/'arguments' check.
-            if ((obj is JsObject || obj is System.Dynamic.ExpandoObject)
+            else if ((obj is JsObject || obj is System.Dynamic.ExpandoObject)
                 && !ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype))
             {
                 var lookup = PropertyDescriptorStore.GetOwnLookup(obj, name, out var fastDesc);
