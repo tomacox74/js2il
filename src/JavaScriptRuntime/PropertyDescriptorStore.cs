@@ -47,6 +47,18 @@ internal enum PropertyDescriptorOverrideKind
     Delete
 }
 
+/// <summary>
+/// Result of a single-probe own-descriptor lookup (perf #1418): answers
+/// "deleted / descriptor / none" in one descriptor-store probe so hot read
+/// paths don't pay for separate IsDeleted + TryGetOwn calls.
+/// </summary>
+internal enum PropertyDescriptorLookup
+{
+    None,
+    Deleted,
+    Found
+}
+
 internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 {
     // Perf (#1417): descriptor reads vastly outnumber writes on hot property paths, so
@@ -281,6 +293,37 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
         => CurrentStore.TryGetOwn(target, key, out descriptor);
+
+    /// <summary>
+    /// Unified single-probe own lookup (perf #1418). Combines the tombstone check
+    /// (<see cref="IsDeleted"/>) and descriptor fetch (<see cref="TryGetOwn(object, string, out JsPropertyDescriptor)"/>)
+    /// into one descriptor-store probe. Like <c>TryGetOwn</c>, the returned descriptor
+    /// is shared and must be cloned by callers that mutate it.
+    /// </summary>
+    internal static PropertyDescriptorLookup GetOwnLookup(object target, string key, out JsPropertyDescriptor descriptor)
+    {
+        ValidateTargetAndKey(target, key);
+
+        if (CurrentStore is PropertyDescriptorStore runtimeStore)
+        {
+            if (runtimeStore._overrideSlots.TryGetValue(target, out var slot)
+                && slot.Read().Overrides.TryGetValue(key, out var entry))
+            {
+                if (entry.Kind == PropertyDescriptorOverrideKind.Delete)
+                {
+                    descriptor = null!;
+                    return PropertyDescriptorLookup.Deleted;
+                }
+
+                descriptor = entry.Descriptor!;
+                return PropertyDescriptorLookup.Found;
+            }
+        }
+
+        return _intrinsicStore.TryGetOwn(target, key, out descriptor)
+            ? PropertyDescriptorLookup.Found
+            : PropertyDescriptorLookup.None;
+    }
 
     public static bool HasAny(object target)
         => CurrentStore.HasAny(target);
