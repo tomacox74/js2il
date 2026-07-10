@@ -31,8 +31,22 @@ namespace Jroc.Services
         private readonly bool _emitDebuggerDisplay;
         private readonly int _deferredCtorStartRow;
         private int _nextDeferredCtorRow;
-        private readonly List<(string ScopeKey, string Namespace, string TypeName, bool IsAsync, bool IsGenerator, MethodDefinitionHandle ExpectedCtor)> _deferredCtorPlan;
-        private readonly List<(string Namespace, string TypeName, MethodDefinitionHandle ExpectedCtor)> _deferredObjectLiteralCtorPlan;
+        private readonly List<DeferredConstructorPlan> _deferredCtorPlan;
+
+        private enum DeferredConstructorKind
+        {
+            Scope,
+            ObjectLiteral
+        }
+
+        private sealed record DeferredConstructorPlan(
+            DeferredConstructorKind Kind,
+            string ScopeKey,
+            string Namespace,
+            string TypeName,
+            bool IsAsync,
+            bool IsGenerator,
+            MethodDefinitionHandle ExpectedCtor);
 
         public TypeGenerator(
             MetadataBuilder metadataBuilder,
@@ -55,8 +69,7 @@ namespace Jroc.Services
             _scopeFieldHandlesByName = new Dictionary<string, Dictionary<string, FieldDefinitionHandle>>();
             _deferredCtorStartRow = deferredCtorStartRow;
             _nextDeferredCtorRow = deferredCtorStartRow;
-            _deferredCtorPlan = new List<(string, string, string, bool, bool, MethodDefinitionHandle)>();
-            _deferredObjectLiteralCtorPlan = new List<(string, string, MethodDefinitionHandle)>();
+            _deferredCtorPlan = new List<DeferredConstructorPlan>();
             _emitDebuggerDisplay = emitDebuggerDisplay;
         }
 
@@ -94,22 +107,19 @@ namespace Jroc.Services
             foreach (var item in _deferredCtorPlan)
             {
                 var tb = new TypeBuilder(_metadataBuilder, item.Namespace, item.TypeName);
-                var actual = EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator);
+                var actual = item.Kind switch
+                {
+                    DeferredConstructorKind.Scope => EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator),
+                    DeferredConstructorKind.ObjectLiteral => EmitObjectLiteralConstructor(tb),
+                    _ => throw new InvalidOperationException($"Unknown deferred constructor kind '{item.Kind}'.")
+                };
                 if (actual != item.ExpectedCtor)
                 {
+                    var label = item.Kind == DeferredConstructorKind.Scope
+                        ? $"scope '{item.ScopeKey}'"
+                        : $"object literal type '{item.TypeName}'";
                     throw new InvalidOperationException(
-                        $"Deferred scope ctor MethodDef token mismatch for scope '{item.ScopeKey}'. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
-                }
-            }
-
-            foreach (var item in _deferredObjectLiteralCtorPlan)
-            {
-                var tb = new TypeBuilder(_metadataBuilder, item.Namespace, item.TypeName);
-                var actual = EmitObjectLiteralConstructor(tb);
-                if (actual != item.ExpectedCtor)
-                {
-                    throw new InvalidOperationException(
-                        $"Deferred object literal ctor MethodDef token mismatch for type '{item.TypeName}'. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
+                        $"Deferred ctor MethodDef token mismatch for {label}. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
                 }
             }
         }
@@ -415,7 +425,14 @@ namespace Jroc.Services
                 typeHandle,
                 fieldHandlesByName,
                 fieldClrTypesByName);
-            _deferredObjectLiteralCtorPlan.Add(("ObjectLiterals", typeName, ctorHandle));
+            _deferredCtorPlan.Add(new DeferredConstructorPlan(
+                DeferredConstructorKind.ObjectLiteral,
+                ScopeKey: string.Empty,
+                Namespace: "ObjectLiterals",
+                TypeName: typeName,
+                IsAsync: false,
+                IsGenerator: false,
+                ExpectedCtor: ctorHandle));
         }
 
         private MethodDefinitionHandle EmitObjectLiteralConstructor(TypeBuilder tb)
@@ -609,7 +626,14 @@ namespace Jroc.Services
             // Register the scope type immediately so even scopes without variables can be instantiated later.
             _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
 
-            _deferredCtorPlan.Add((scopeKey, actualNamespace, typeName, scope.IsAsync, scope.IsGenerator, ctorHandle));
+            _deferredCtorPlan.Add(new DeferredConstructorPlan(
+                DeferredConstructorKind.Scope,
+                ScopeKey: scopeKey,
+                Namespace: actualNamespace,
+                TypeName: typeName,
+                IsAsync: scope.IsAsync,
+                IsGenerator: scope.IsGenerator,
+                ExpectedCtor: ctorHandle));
 
             return typeHandle;
         }
