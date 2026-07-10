@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.19 - 2026-07-10
+
 - perf/runtime: add fast property lookup dispatch to `Object.GetProperty`; plain JS objects (`JsObject` literals and function-constructed `ExpandoObject` instances) now resolve own reads with a single unified descriptor-store probe (`PropertyDescriptorStore.GetOwnLookup` answering deleted/descriptor/none at once) before the full dispatch ladder, and `TryGetOwnPropertyValue`/`TryGetFastDictionaryOwnValue` use the same single probe instead of separate `IsDeleted` + `TryGetOwn` calls. Kraken `ai-astar` warmed execution drops ~23% (71.5s → 55.1s locally). (#1418)
 - perf/runtime: make `PropertyDescriptorStore` reads lock-free; descriptor and override slots now publish immutable copy-on-write snapshots that hot read paths (`TryGetOwn`, `HasAny`, `TryGetOverride`, own-key enumeration) access via a volatile read while writers serialize on a per-slot write lock, removing `Monitor.Enter_Slowpath` as the dominant remaining hotspot in the Kraken `ai-astar` execution trace. (#1417)
 
