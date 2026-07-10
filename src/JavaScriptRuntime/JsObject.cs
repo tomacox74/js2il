@@ -97,6 +97,23 @@ public sealed class JsObject : IDictionary<string, object?>
 
     private JsShape _shape = JsShape.Empty;
 
+    // Perf (#1418 follow-up): sticky flag set when this object gains descriptor
+    // state that the plain dictionary cannot answer (accessors, delete tombstones,
+    // non-default attributes from defineProperty/seal/freeze, intrinsic descriptors).
+    // While the flag is clear, every own descriptor is a mirrored default data
+    // descriptor whose value matches the dictionary, so hot read paths can go
+    // straight to the dictionary and skip the descriptor store probe entirely.
+    private volatile bool _hasNonDataDescriptors;
+
+    /// <summary>
+    /// True when own reads can no longer be answered from the property dictionary
+    /// alone (the object has accessors, deleted tombstones, or attribute-bearing
+    /// descriptors). Sticky: once set it is never cleared.
+    /// </summary>
+    internal bool HasNonDataDescriptors => _hasNonDataDescriptors;
+
+    internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
+
     // -------------------------------------------------------------------------
     // Typed initializer methods used from generated IL (no boxing at call site)
     // -------------------------------------------------------------------------
