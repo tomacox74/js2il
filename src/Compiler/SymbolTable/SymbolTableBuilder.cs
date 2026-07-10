@@ -250,6 +250,11 @@ namespace Jroc.SymbolTables
             InferCallableParameterClrTypes(globalScope);
             InferVariableClrTypes(globalScope);
             InferCallableReturnClrTypes(globalScope);
+
+            // Object literal shape eligibility analysis (issue #1429). Runs last so member
+            // type inference can rely on final variable/parameter/return type conclusions.
+            AnalyzeObjectLiteralShapes(globalScope);
+
             module.SymbolTable = new SymbolTable(globalScope);
         }
 
