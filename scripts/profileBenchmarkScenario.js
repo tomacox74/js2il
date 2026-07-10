@@ -36,7 +36,13 @@ const perfViewExe = path.join(workRoot, "PerfView.exe");
 const perfViewUrl = "https://github.com/microsoft/perfview/releases/latest/download/PerfView.exe";
 
 function printUsage() {
-  console.log("Usage: node scripts/profileBenchmarkScenario.js <scenario-name> [--iterations N] [--no-open]");
+  console.log("Usage: node scripts/profileBenchmarkScenario.js <scenario-name> [--iterations N] [--no-open] [--no-inline]");
+  console.log("");
+  console.log("Options:");
+  console.log("  --iterations N   Number of timed iterations (default 2).");
+  console.log("  --no-open        Skip opening the trace in PerfView.");
+  console.log("  --no-inline      Run with DOTNET_JitNoInline=1 so every runtime helper");
+  console.log("                   appears as a real frame in the trace (timings will skew).");
   console.log("");
   console.log("Examples:");
   console.log("  node scripts/profileBenchmarkScenario.js ai-astar");
@@ -214,11 +220,14 @@ async function main() {
   const scenarioName = normalizeScenarioName(argv[0]);
   let iterations = 2;
   let open = true;
+  let noInline = false;
   for (let i = 1; i < argv.length; i++) {
     if (argv[i] === "--iterations" && argv[i + 1]) {
       iterations = Number.parseInt(argv[++i], 10);
     } else if (argv[i] === "--no-open") {
       open = false;
+    } else if (argv[i] === "--no-inline") {
+      noInline = true;
     } else {
       console.error(`Unknown option: ${argv[i]}`);
       printUsage();
@@ -249,6 +258,9 @@ async function main() {
 
   console.log(`Scenario:   ${scenarioName} (mode: ${scenario.mode}, iterations: ${iterations})`);
   console.log(`Work dir:   ${workDir}`);
+  if (noInline) {
+    console.log("Inlining:   disabled (DOTNET_JitNoInline=1) - call trees are complete, timings skew");
+  }
 
   console.log("Building profiling runner (Release)...");
   if (run("dotnet", ["build", "-c", "Release", "--nologo", "-v", "q"], { cwd: runnerDir }) !== 0) {
@@ -262,12 +274,14 @@ async function main() {
   const tracePath = path.join(workDir, `${scenarioName}-${timestamp}.nettrace`);
 
   console.log("Collecting trace (this runs the full scenario; may take a while)...");
+  // Env vars set on dotnet-trace propagate to the child process it launches.
+  const traceEnv = noInline ? { ...process.env, DOTNET_JitNoInline: "1" } : undefined;
   const traceStatus = run("dotnet-trace", [
     "collect",
     "-o", tracePath,
     "--",
     runnerExe, composedScript, scenario.mode, String(iterations),
-  ]);
+  ], traceEnv ? { env: traceEnv } : undefined);
   if (traceStatus !== 0 || !fs.existsSync(tracePath)) {
     throw new Error("Trace collection failed.");
   }
