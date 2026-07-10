@@ -7,7 +7,8 @@
  * Steps automated:
  *   1. Resolves the scenario script(s) under tests/performance/Benchmarks/Scenarios.
  *   2. Generates and builds a small Release runner that compiles the scenario
- *      in-memory (JrocInMemoryCompiler) and executes it via JsEngine.LoadModule.
+ *      to an assembly on disk (with a portable PDB for symbols), loads it with
+ *      Assembly.LoadFrom, and executes it via JsEngine.LoadModule.
  *   3. Runs the runner under `dotnet-trace collect` (CPU sampling).
  *   4. Downloads PerfView (cached) if needed and opens the .nettrace file in it.
  *
@@ -111,6 +112,7 @@ const runnerCsproj = `<Project Sdk="Microsoft.NET.Sdk">
 `;
 
 const runnerProgram = `using System.Diagnostics;
+using System.Reflection;
 using Jroc;
 using Jroc.Runtime;
 
@@ -119,18 +121,31 @@ var scriptPath = args[0];
 var mode = args[1];
 var iterations = args.Length > 2 ? int.Parse(args[2]) : 2;
 
-var source = File.ReadAllText(scriptPath);
-var entryPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(scriptPath));
+// Compile the scenario to an assembly on disk (with symbols) so PerfView can
+// resolve the generated methods back to the scenario source.
+var outDir = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(scriptPath))!, "out");
+Directory.CreateDirectory(outDir);
 
 var compileWatch = Stopwatch.StartNew();
-var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entryPath) { SourceText = source });
+var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(Path.GetFullPath(scriptPath))
+{
+    EmitPdb = true
+});
+var dllPath = Path.Combine(outDir, artifact.AssemblyName + ".dll");
+File.WriteAllBytes(dllPath, artifact.PeBytes);
+if (artifact.PdbBytes is { Length: > 0 } pdbBytes)
+{
+    File.WriteAllBytes(Path.Combine(outDir, artifact.AssemblyName + ".pdb"), pdbBytes);
+}
 compileWatch.Stop();
-Console.WriteLine($"compile: {compileWatch.Elapsed.TotalSeconds:F1} s");
+Console.WriteLine($"compile: {compileWatch.Elapsed.TotalSeconds:F1} s -> {dllPath}");
+
+var assembly = Assembly.LoadFrom(dllPath);
+var moduleId = artifact.ModuleIds[0];
 
 if (mode == "calltest")
 {
-    var loaded = JrocInMemoryAssemblyLoader.Load(artifact);
-    using var exports = (IDisposable)JsEngine.LoadModule(loaded.Assembly, artifact.ModuleIds[0]);
+    using var exports = (IDisposable)JsEngine.LoadModule(assembly, moduleId);
     dynamic d = exports;
     for (int i = 0; i < iterations; i++)
     {
@@ -144,13 +159,11 @@ else
 {
     for (int i = 0; i < iterations; i++)
     {
-        var loaded = JrocInMemoryAssemblyLoader.Load(artifact);
         var sw = Stopwatch.StartNew();
-        using (var exports = (IDisposable)JsEngine.LoadModule(loaded.Assembly, artifact.ModuleIds[0]))
+        using (var exports = (IDisposable)JsEngine.LoadModule(assembly, moduleId))
         {
         }
         sw.Stop();
-        loaded.Dispose();
         Console.WriteLine($"run {i}: {sw.Elapsed.TotalSeconds:F2} s");
     }
 }
