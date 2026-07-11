@@ -449,10 +449,12 @@ namespace Jroc.Services
             nestedTypeRegistry.Add(typeHandle, containerHandle);
 
             shape.GeneratedClrTypeName = typeName;
+            shape.GeneratedClrTypeHandle = typeHandle;
             _variableRegistry.RegisterObjectLiteralType(
                 shape,
                 typeName,
                 typeHandle,
+                ctorHandle,
                 fieldHandlesByName,
                 fieldClrTypesByName);
             _deferredCtorPlan.Add(new DeferredConstructorPlan(

@@ -13,12 +13,14 @@ public sealed class ObjectLiteralTypeMetadata
         ObjectLiteralShapeInfo shape,
         string typeName,
         TypeDefinitionHandle typeHandle,
+        MethodDefinitionHandle constructorHandle,
         IReadOnlyDictionary<string, FieldDefinitionHandle> fieldHandlesByMemberName,
         IReadOnlyDictionary<string, Type> fieldClrTypesByMemberName)
     {
         Shape = shape;
         TypeName = typeName;
         TypeHandle = typeHandle;
+        ConstructorHandle = constructorHandle;
         FieldHandlesByMemberName = fieldHandlesByMemberName;
         FieldClrTypesByMemberName = fieldClrTypesByMemberName;
     }
@@ -28,6 +30,8 @@ public sealed class ObjectLiteralTypeMetadata
     public string TypeName { get; }
 
     public TypeDefinitionHandle TypeHandle { get; }
+
+    public MethodDefinitionHandle ConstructorHandle { get; }
 
     public IReadOnlyDictionary<string, FieldDefinitionHandle> FieldHandlesByMemberName { get; }
 

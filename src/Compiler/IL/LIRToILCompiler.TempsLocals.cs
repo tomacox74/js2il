@@ -644,6 +644,9 @@ internal sealed partial class LIRToILCompiler
                     // Object reference stays on stack
                 }
                 break;
+            case LIRNewInferredJsObject newInferredJsObject:
+                throw new InvalidOperationException(
+                    $"Specialized object-literal construction for '{newInferredJsObject.Shape.Binding.Name}' must be materialized.");
             case LIRGetLength getLength:
                 {
                     // Emit inline: call JavaScriptRuntime.Object.GetLength(object)

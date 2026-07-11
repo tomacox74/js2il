@@ -477,6 +477,11 @@ internal static class Stackify
                 }
                 return true;
 
+            case LIRNewInferredJsObject:
+                // Specialized construction stores the generated object first, then initializes fields
+                // and mirrors from those fields into JsObject storage. That requires a typed local.
+                return false;
+
             // Getter-like instructions are pure, but stackifying them re-emits the getter at the
             // final use site. That is only safe when the receiver/index operands are themselves
             // stable inline operands; otherwise delayed emission can observe a different value or
@@ -703,6 +708,10 @@ internal static class Stackify
             // The dup pattern keeps object on stack internally, net effect is: pop N, push 1
             case LIRNewJsObject newJsObject:
                 return (newJsObject.Properties.Count, 1);
+
+            // LIRNewInferredJsObject: consumes one value per property, produces 1 generated object reference.
+            case LIRNewInferredJsObject newInferredJsObject:
+                return (newInferredJsObject.Properties.Count, 1);
 
             // LIRGetLength: consumes 1 object, produces 1 double
             case LIRGetLength:
