@@ -194,6 +194,9 @@ namespace Jroc.Tests.Function
         public Task Function_Constructor_New_ShadowedLocal_NoSyntaxError() { var testName = nameof(Function_Constructor_New_ShadowedLocal_NoSyntaxError); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_ConstructedInstance_ObjectSemantics() { var testName = nameof(Function_ConstructedInstance_ObjectSemantics); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous() { var testName = nameof(Function_Instance_Name_DynamicFunctionLineColumnPattern_NoFalseAnonymous); return GenerateTest(testName); }
 
         [Fact]

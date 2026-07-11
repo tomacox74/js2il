@@ -35,25 +35,27 @@ public static class Function
     private static readonly ConditionalWeakTable<Delegate, InvocationMetadataSlot> _invocationMetadata = new();
     private static readonly ConditionalWeakTable<Delegate, UndefinedPrototypeSlot> _undefinedPrototypeFunctions = new();
     private static readonly ConditionalWeakTable<Delegate, WithObjectSlot> _withObjectBindings = new();
+    private static readonly Func<object[], object?[], object?> _restrictedPropertyThrower =
+        static (_, _) => throw new TypeError("Cannot access restricted function property");
 
-    internal static readonly ExpandoObject Prototype = CreatePrototype();
-    internal static readonly ExpandoObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
+    internal static readonly JsObject Prototype = CreatePrototype();
+    internal static readonly JsObject RestrictedPropertiesPrototype = CreateRestrictedPropertiesPrototype();
 
-    private static ExpandoObject CreatePrototype()
+    private static JsObject CreatePrototype()
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        var exp = new ExpandoObject();
-        DefinePrototypeMethod(exp, "apply", (Func<object[], object?[]?, object?>)PrototypeApply, 2);
-        DefinePrototypeMethod(exp, "call", (Func<object[], object?[]?, object?>)PrototypeCall, 1);
-        DefinePrototypeMethod(exp, "bind", (Func<object[], object?[]?, object?>)PrototypeBind, 1);
-        DefinePrototypeMethod(exp, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
-        DefineRestrictedProperty(exp, "caller");
-        DefineRestrictedProperty(exp, "arguments");
-        return exp;
+        var prototype = new JsObject();
+        DefinePrototypeMethod(prototype, "apply", (Func<object[], object?[]?, object?>)PrototypeApply, 2);
+        DefinePrototypeMethod(prototype, "call", (Func<object[], object?[]?, object?>)PrototypeCall, 1);
+        DefinePrototypeMethod(prototype, "bind", (Func<object[], object?[]?, object?>)PrototypeBind, 1);
+        DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
+        DefineRestrictedProperty(prototype, "caller");
+        DefineRestrictedProperty(prototype, "arguments");
+        return prototype;
     }
 
-    private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
+    private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
     {
         var value = CreateBuiltinPrototypeFunction(method, length);
         PrototypeChain.SetPrototype(value, prototype);
@@ -102,14 +104,14 @@ public static class Function
         return method;
     }
 
-    private static ExpandoObject CreateRestrictedPropertiesPrototype()
+    private static JsObject CreateRestrictedPropertiesPrototype()
     {
         using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-        var exp = new ExpandoObject();
-        DefineRestrictedProperty(exp, "caller");
-        DefineRestrictedProperty(exp, "arguments");
-        return exp;
+        var prototype = new JsObject();
+        DefineRestrictedProperty(prototype, "caller");
+        DefineRestrictedProperty(prototype, "arguments");
+        return prototype;
     }
 
     private static void DefineRestrictedProperty(object target, string propertyName)
@@ -119,8 +121,8 @@ public static class Function
             Kind = JsPropertyDescriptorKind.Accessor,
             Enumerable = false,
             Configurable = true,
-            Get = (Func<object[], object?[], object?>)((_, __) => throw new TypeError($"Cannot access restricted function property '{propertyName}'")),
-            Set = (Func<object[], object?[], object?>)((_, __) => throw new TypeError($"Cannot access restricted function property '{propertyName}'"))
+            Get = _restrictedPropertyThrower,
+            Set = _restrictedPropertyThrower
         });
     }
 
@@ -595,12 +597,12 @@ public static class Function
                 throw new TypeError("Value is not a constructor");
             }
 
-            var instance = new System.Dynamic.ExpandoObject();
+            var instance = JavaScriptRuntime.Object.CreateOrdinaryObject();
 
-            // Default proto: ctor.prototype when it is an object or null; otherwise undefined.
-            // If undefined/non-object, we intentionally skip prototype assignment (minimal behavior).
+            // Override the ordinary Object.prototype default only when ctor.prototype is an object.
+            // Null and primitive prototype values use Object.prototype per GetPrototypeFromConstructor.
             var proto = JavaScriptRuntime.ObjectRuntime.GetItem(constructor, "prototype");
-            if (proto is JsNull || TypeUtilities.IsConstructorReturnOverride(proto))
+            if (TypeUtilities.IsConstructorReturnOverride(proto))
             {
                 PrototypeChain.SetPrototype(instance, proto);
             }

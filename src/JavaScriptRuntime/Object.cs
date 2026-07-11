@@ -5481,7 +5481,7 @@ namespace JavaScriptRuntime
             // Null/undefined -> undefined (modeled as null)
             if (obj is null) return null;
 
-            // Perf: plain JsObject fast path. While an object literal has only
+            // Perf: plain JsObject fast path. While an ordinary object has only
             // mirrored default data descriptors (no accessors, deletes, or
             // attribute-bearing descriptors), its property dictionary is fully
             // authoritative for own reads — answer directly from the shape/slot
@@ -5495,8 +5495,8 @@ namespace JavaScriptRuntime
                     return plainValue;
                 }
             }
-            // Perf (#1418): fast dispatch for plain JS objects (object literals via
-            // JsObject, function-constructed instances via ExpandoObject). Own
+            // Perf (#1418): fast dispatch for plain JS objects (JsObject plus retained
+            // mixed-runtime ExpandoObject surfaces). Own
             // properties on these receivers are authoritatively descriptor-backed
             // (literal/assignment writes mirror a data descriptor), so a single
             // descriptor probe resolves the overwhelmingly common case without
