@@ -31,7 +31,22 @@ namespace Jroc.Services
         private readonly bool _emitDebuggerDisplay;
         private readonly int _deferredCtorStartRow;
         private int _nextDeferredCtorRow;
-        private readonly List<(string ScopeKey, string Namespace, string TypeName, bool IsAsync, bool IsGenerator, MethodDefinitionHandle ExpectedCtor)> _deferredCtorPlan;
+        private readonly List<DeferredConstructorPlan> _deferredCtorPlan;
+
+        private enum DeferredConstructorKind
+        {
+            Scope,
+            ObjectLiteral
+        }
+
+        private sealed record DeferredConstructorPlan(
+            DeferredConstructorKind Kind,
+            string ScopeKey,
+            string Namespace,
+            string TypeName,
+            bool IsAsync,
+            bool IsGenerator,
+            MethodDefinitionHandle ExpectedCtor);
 
         public TypeGenerator(
             MetadataBuilder metadataBuilder,
@@ -54,7 +69,7 @@ namespace Jroc.Services
             _scopeFieldHandlesByName = new Dictionary<string, Dictionary<string, FieldDefinitionHandle>>();
             _deferredCtorStartRow = deferredCtorStartRow;
             _nextDeferredCtorRow = deferredCtorStartRow;
-            _deferredCtorPlan = new List<(string, string, string, bool, bool, MethodDefinitionHandle)>();
+            _deferredCtorPlan = new List<DeferredConstructorPlan>();
             _emitDebuggerDisplay = emitDebuggerDisplay;
         }
 
@@ -62,7 +77,10 @@ namespace Jroc.Services
         /// Generates .NET types from the symbol table.
         /// Returns the root type definition handle.
         /// </summary>
-        public void GenerateTypes(SymbolTable symbolTable)
+        public void GenerateTypes(
+            SymbolTable symbolTable,
+            TypeDefinitionHandle moduleTypeHandle,
+            NestedTypeRelationshipRegistry nestedTypeRegistry)
         {            
             // Phase 1: Create all scope types (depth-first) for every scope discovered by the SymbolTable.
             // SymbolTable already contains scopes for function declarations, function expressions, arrow functions,
@@ -72,6 +90,11 @@ namespace Jroc.Services
             // Nesting relationships are recorded later once module and callable-owner TypeDefs exist
             // (see JsMethodCompiler.EstablishModuleNesting and NestedTypeRelationshipRegistry).
             CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
+
+            // Phase 1b: declare generated object-literal CLR types for eligible shapes.
+            // Construction/member-access codegen is implemented in later phases; this step only
+            // creates deterministic TypeDefs and registers field metadata for future consumers.
+            CreateObjectLiteralTypes(symbolTable.Root, moduleTypeHandle, nestedTypeRegistry);
 
             // Phase 2: Populate the variable registry (fields + metadata for every binding).
             PopulateVariableRegistry(symbolTable.Root);
@@ -87,11 +110,19 @@ namespace Jroc.Services
             foreach (var item in _deferredCtorPlan)
             {
                 var tb = new TypeBuilder(_metadataBuilder, item.Namespace, item.TypeName);
-                var actual = EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator);
+                var actual = item.Kind switch
+                {
+                    DeferredConstructorKind.Scope => EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator),
+                    DeferredConstructorKind.ObjectLiteral => EmitObjectLiteralConstructor(tb),
+                    _ => throw new InvalidOperationException($"Unknown deferred constructor kind '{item.Kind}'.")
+                };
                 if (actual != item.ExpectedCtor)
                 {
+                    var label = item.Kind == DeferredConstructorKind.Scope
+                        ? $"scope '{item.ScopeKey}'"
+                        : $"object literal type '{item.TypeName}'";
                     throw new InvalidOperationException(
-                        $"Deferred scope ctor MethodDef token mismatch for scope '{item.ScopeKey}'. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
+                        $"Deferred ctor MethodDef token mismatch for {label}. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
                 }
             }
         }
@@ -349,6 +380,205 @@ namespace Jroc.Services
             }
         }
 
+        private void CreateObjectLiteralTypes(
+            Scope root,
+            TypeDefinitionHandle moduleTypeHandle,
+            NestedTypeRelationshipRegistry nestedTypeRegistry)
+        {
+            var shapes = EnumerateEligibleObjectLiteralShapes(root)
+                .OrderBy(static s => s.Literal.Location.Start.Line)
+                .ThenBy(static s => s.Literal.Location.Start.Column)
+                .ThenBy(static s => s.Binding.Name, StringComparer.Ordinal)
+                .ThenBy(static s => GetRegistryScopeName(s.Binding.DeclaringScope), StringComparer.Ordinal)
+                .ToList();
+
+            if (shapes.Count == 0)
+            {
+                return;
+            }
+
+            // Mirror the scope-type layout: object-literal types live under a per-module
+            // "ObjectLiterals" container nested in the module type, as a sibling of "Scope".
+            // The container declares no methods/fields; its MethodList points at the first
+            // literal ctor row (deferred), so it owns zero MethodDef rows.
+            var containerBuilder = new TypeBuilder(_metadataBuilder, string.Empty, "ObjectLiterals");
+            var containerHandle = containerBuilder.AddTypeDefinition(
+                TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+                _bclReferences.ObjectType,
+                firstFieldOverride: null,
+                firstMethodOverride: MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow));
+            nestedTypeRegistry.Add(containerHandle, moduleTypeHandle);
+
+            foreach (var shape in shapes)
+            {
+                CreateObjectLiteralType(shape, containerHandle, nestedTypeRegistry);
+            }
+        }
+
+        private void CreateObjectLiteralType(
+            ObjectLiteralShapeInfo shape,
+            TypeDefinitionHandle containerHandle,
+            NestedTypeRelationshipRegistry nestedTypeRegistry)
+        {
+            var typeName = GetObjectLiteralTypeName(shape);
+            var tb = new TypeBuilder(_metadataBuilder, string.Empty, typeName);
+            var fieldHandlesByName = new Dictionary<string, FieldDefinitionHandle>(StringComparer.Ordinal);
+            var fieldClrTypesByName = new Dictionary<string, Type>(StringComparer.Ordinal);
+
+            foreach (var member in shape.Members)
+            {
+                var fieldClrType = member.ClrType ?? typeof(object);
+                var fieldSignature = CreateFieldSignature(fieldClrType);
+                var fieldHandle = tb.AddFieldDefinition(
+                    FieldAttributes.Public,
+                    member.Name,
+                    fieldSignature);
+
+                fieldHandlesByName[member.Name] = fieldHandle;
+                fieldClrTypesByName[member.Name] = fieldClrType;
+            }
+
+            var typeAttributes = TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
+            var baseType = _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsObject));
+            var ctorHandle = MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow++);
+            var typeHandle = tb.AddTypeDefinition(
+                typeAttributes,
+                baseType,
+                firstFieldOverride: null,
+                firstMethodOverride: ctorHandle);
+            nestedTypeRegistry.Add(typeHandle, containerHandle);
+
+            shape.GeneratedClrTypeName = typeName;
+            _variableRegistry.RegisterObjectLiteralType(
+                shape,
+                typeName,
+                typeHandle,
+                fieldHandlesByName,
+                fieldClrTypesByName);
+            _deferredCtorPlan.Add(new DeferredConstructorPlan(
+                DeferredConstructorKind.ObjectLiteral,
+                ScopeKey: string.Empty,
+                Namespace: string.Empty,
+                TypeName: typeName,
+                IsAsync: false,
+                IsGenerator: false,
+                ExpectedCtor: ctorHandle));
+        }
+
+        private MethodDefinitionHandle EmitObjectLiteralConstructor(TypeBuilder tb)
+        {
+            var ctorSig = new BlobBuilder();
+            new BlobEncoder(ctorSig)
+                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+                .Parameters(0, returnType => returnType.Void(), parameters => { });
+            var ctorSigHandle = _metadataBuilder.GetOrAddBlob(ctorSig);
+
+            var ilBuilder = new BlobBuilder();
+            var encoder = new InstructionEncoder(ilBuilder);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.Call(_bclReferences.JsObject_Ctor_Ref);
+            encoder.OpCode(ILOpCode.Ret);
+
+            var bodyOffset = _methodBodyStream.AddMethodBody(
+                encoder,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            return tb.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                ".ctor",
+                ctorSigHandle,
+                bodyOffset);
+        }
+
+        private BlobHandle CreateFieldSignature(Type fieldClrType)
+        {
+            var fieldSignature = new BlobBuilder();
+            var fieldTypeEncoder = new BlobEncoder(fieldSignature)
+                .Field()
+                .Type();
+
+            if (fieldClrType == typeof(double))
+            {
+                fieldTypeEncoder.Double();
+            }
+            else if (fieldClrType == typeof(bool))
+            {
+                fieldTypeEncoder.Boolean();
+            }
+            else if (fieldClrType == typeof(string))
+            {
+                fieldTypeEncoder.String();
+            }
+            else if (fieldClrType != typeof(object))
+            {
+                fieldTypeEncoder.Type(
+                    _bclReferences.TypeReferenceRegistry.GetOrAdd(fieldClrType),
+                    isValueType: false);
+            }
+            else
+            {
+                fieldTypeEncoder.Object();
+            }
+
+            return _metadataBuilder.GetOrAddBlob(fieldSignature);
+        }
+
+        private static IEnumerable<ObjectLiteralShapeInfo> EnumerateEligibleObjectLiteralShapes(Scope scope)
+        {
+            foreach (var binding in scope.Bindings.Values)
+            {
+                if (binding.ObjectLiteralShape is { IsEligible: true } shape)
+                {
+                    yield return shape;
+                }
+            }
+
+            foreach (var child in scope.Children)
+            {
+                foreach (var shape in EnumerateEligibleObjectLiteralShapes(child))
+                {
+                    yield return shape;
+                }
+            }
+        }
+
+        private static string GetObjectLiteralTypeName(ObjectLiteralShapeInfo shape)
+        {
+            // Nested under Modules.<Module>/ObjectLiterals, so the name only needs to be unique
+            // within its module. The literal's start position guarantees that; the binding name
+            // is included for readability.
+            var loc = shape.Literal.Location.Start;
+            var bindingName = SanitizeClrIdentifier(shape.Binding.Name);
+            return $"L{loc.Line}C{loc.Column + 1}_{bindingName}";
+        }
+
+        private static string SanitizeClrIdentifier(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return "_";
+            }
+
+            var builder = new StringBuilder(value.Length);
+            foreach (var ch in value)
+            {
+                builder.Append(char.IsLetterOrDigit(ch) || ch == '_' ? ch : '_');
+            }
+
+            if (builder.Length == 0)
+            {
+                return "_";
+            }
+
+            if (char.IsDigit(builder[0]))
+            {
+                builder.Insert(0, '_');
+            }
+
+            return builder.ToString();
+        }
+
         /// <summary>
         /// Creates nested types recursively.
         /// </summary>
@@ -428,7 +658,14 @@ namespace Jroc.Services
             // Register the scope type immediately so even scopes without variables can be instantiated later.
             _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
 
-            _deferredCtorPlan.Add((scopeKey, actualNamespace, typeName, scope.IsAsync, scope.IsGenerator, ctorHandle));
+            _deferredCtorPlan.Add(new DeferredConstructorPlan(
+                DeferredConstructorKind.Scope,
+                ScopeKey: scopeKey,
+                Namespace: actualNamespace,
+                TypeName: typeName,
+                IsAsync: scope.IsAsync,
+                IsGenerator: scope.IsGenerator,
+                ExpectedCtor: ctorHandle));
 
             return typeHandle;
         }

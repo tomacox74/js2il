@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/metadata: add object literal type-generation groundwork (issue #1430, parent #1428). Eligible `ObjectLiteralShapeInfo` instances now get deterministic generated CLR helper TypeDefs nested inside their module type under an `ObjectLiterals` container type (a sibling of `Scope`), with public fields registered in `VariableRegistry` for later construction/direct-access phases; `JsObject` is unsealed so generated literal types can derive from it while preserving dictionary, descriptor, enumeration, and JSON behavior through base-storage mirroring.
 - compiler/analysis: add object literal shape eligibility analysis (issue #1429, parent #1428). `SymbolTableBuilder` now records an `ObjectLiteralShapeInfo` on bindings declared with object literal initializers, conservatively proving whether every use of the binding is safe for future early-bound, strongly-typed CLR member access (any escape, reassignment, `delete`, computed access, spread, enumeration, export, or unresolvable member operation disqualifies). Analysis only; no codegen consumes the result yet.
 - compiler/fix: `AstWalker` now traverses into `SpreadElement` arguments (previously identifiers inside `...expr` in object/array literals and call arguments were invisible to AST analyses).
 

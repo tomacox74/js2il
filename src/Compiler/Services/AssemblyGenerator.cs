@@ -211,10 +211,15 @@ namespace Jroc.Services
             }
 
             // Phase 2: Emit scope TypeDefs for ALL modules (constructors deferred).
+            var nestedTypeRelationshipRegistry = _serviceProvider.GetRequiredService<NestedTypeRelationshipRegistry>();
             foreach (var module in moduleList)
             {
                 var symbolTable = module.SymbolTable!;
-                typeGenerator.GenerateTypes(symbolTable);
+                if (!moduleTypeRegistry.TryGet(module.Name, out var moduleTypeHandleForLiterals) || moduleTypeHandleForLiterals.IsNil)
+                {
+                    throw new InvalidOperationException($"Missing module type handle for module '{module.Name}' during scope type generation.");
+                }
+                typeGenerator.GenerateTypes(symbolTable, moduleTypeHandleForLiterals, nestedTypeRelationshipRegistry);
             }
 
             // Phase 3: Compile module init methods now (after scope types, before callables).

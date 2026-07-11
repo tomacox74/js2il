@@ -24,6 +24,7 @@ namespace Jroc.Services.VariableBindings
         private readonly ScopeMetadataRegistry _scopeMetadata;
         // Track uncaptured variables (no scope backing field, will use local variables)
         private readonly Dictionary<string, HashSet<string>> _uncapturedVariables = new();
+        private readonly Dictionary<ObjectLiteralShapeInfo, ObjectLiteralTypeMetadata> _objectLiteralTypes = new(ReferenceEqualityComparer.Instance);
 
         /// <summary>
         /// Creates a new VariableRegistry with an internal ScopeMetadataRegistry.
@@ -45,6 +46,42 @@ namespace Jroc.Services.VariableBindings
         /// New code should depend on ScopeMetadataRegistry directly instead of VariableRegistry.
         /// </summary>
         public ScopeMetadataRegistry ScopeMetadata => _scopeMetadata;
+
+        /// <summary>
+        /// Registers the generated CLR metadata for an eligible object literal shape.
+        /// </summary>
+        public void RegisterObjectLiteralType(
+            ObjectLiteralShapeInfo shape,
+            string typeName,
+            TypeDefinitionHandle typeHandle,
+            IReadOnlyDictionary<string, FieldDefinitionHandle> fieldHandlesByMemberName,
+            IReadOnlyDictionary<string, Type> fieldClrTypesByMemberName)
+        {
+            if (shape == null) throw new ArgumentNullException(nameof(shape));
+            if (!shape.IsEligible)
+            {
+                throw new ArgumentException("Only eligible object literal shapes can be registered.", nameof(shape));
+            }
+            if (typeHandle.IsNil)
+            {
+                throw new ArgumentException("Object literal type handle cannot be nil.", nameof(typeHandle));
+            }
+
+            var metadata = new ObjectLiteralTypeMetadata(
+                shape,
+                typeName,
+                typeHandle,
+                new Dictionary<string, FieldDefinitionHandle>(fieldHandlesByMemberName, StringComparer.Ordinal),
+                new Dictionary<string, Type>(fieldClrTypesByMemberName, StringComparer.Ordinal));
+
+            _objectLiteralTypes[shape] = metadata;
+        }
+
+        public bool TryGetObjectLiteralType(ObjectLiteralShapeInfo shape, out ObjectLiteralTypeMetadata metadata)
+            => _objectLiteralTypes.TryGetValue(shape, out metadata!);
+
+        public IReadOnlyCollection<ObjectLiteralTypeMetadata> GetObjectLiteralTypes()
+            => _objectLiteralTypes.Values.ToList();
 
         /// <summary>
         /// Adds a variable to the registry with its scope and field information (legacy overload; assumes Var binding).
