@@ -39,12 +39,22 @@ public partial class SymbolTableBuilder
             CheckDeclarationContext(shape, parentMap);
         }
 
-        AnalyzeObjectLiteralBindingUses(root.AstNode, candidates, parentMap, scopeMap);
+        // Interprocedural object-literal type inference (issue #1434 phase 6). The coupled
+        // fixed point decides which callables may receive a literal shape at a parameter and
+        // which literal bindings escape into an unsafe callee use.
+        var interprocedural = new ObjectLiteralInterproceduralAnalysis(this, root, candidates, parentMap, scopeMap);
+        interprocedural.Prepare();
+
+        AnalyzeObjectLiteralBindingUses(root.AstNode, candidates, parentMap, scopeMap, interprocedural);
+
+        interprocedural.Analyze();
 
         foreach (var shape in candidates.Values)
         {
             shape.Binding.ObjectLiteralShape = shape;
         }
+
+        interprocedural.AssignParameterShapes();
     }
 
     private Dictionary<BindingInfo, ObjectLiteralShapeInfo> CollectObjectLiteralShapeCandidates(Scope root)
@@ -181,7 +191,8 @@ public partial class SymbolTableBuilder
         Node rootNode,
         Dictionary<BindingInfo, ObjectLiteralShapeInfo> candidates,
         Dictionary<Node, Node> parentMap,
-        Dictionary<Node, Scope> scopeMap)
+        Dictionary<Node, Scope> scopeMap,
+        ObjectLiteralInterproceduralAnalysis interprocedural)
     {
         var candidateNames = new HashSet<string>(candidates.Keys.Select(b => b.Name), StringComparer.Ordinal);
         var walker = new Jroc.Utilities.AstWalker();
@@ -209,7 +220,7 @@ public partial class SymbolTableBuilder
                 return;
             }
 
-            AnalyzeObjectLiteralUse(shape, identifier, parentMap);
+            AnalyzeObjectLiteralUse(shape, identifier, parentMap, scope, interprocedural);
         });
     }
 
@@ -247,7 +258,9 @@ public partial class SymbolTableBuilder
     private void AnalyzeObjectLiteralUse(
         ObjectLiteralShapeInfo shape,
         Identifier identifier,
-        Dictionary<Node, Node> parentMap)
+        Dictionary<Node, Node> parentMap,
+        Scope useScope,
+        ObjectLiteralInterproceduralAnalysis interprocedural)
     {
         parentMap.TryGetValue(identifier, out var parent);
 
@@ -269,6 +282,27 @@ public partial class SymbolTableBuilder
 
             case UpdateExpression update when ReferenceEquals(update.Argument, identifier):
                 shape.Disqualify("binding is reassigned");
+                return;
+
+            case CallExpression call when !ReferenceEquals(call.Callee, identifier):
+                // Passing the literal binding as a positional argument to a statically-resolved,
+                // closed-world callable is a candidate for interprocedural propagation. The final
+                // safety decision is deferred to the coupled fixed point; record an obligation.
+                if (interprocedural.TryRecordLiteralCallArgument(shape, identifier, call, useScope))
+                {
+                    return;
+                }
+
+                shape.Disqualify("object passed to a call");
+                return;
+
+            case NewExpression newExpr when !ReferenceEquals(newExpr.Callee, identifier):
+                if (interprocedural.TryRecordLiteralCallArgument(shape, identifier, newExpr, useScope))
+                {
+                    return;
+                }
+
+                shape.Disqualify("object passed to a call");
                 return;
 
             case CallExpression:
@@ -399,33 +433,40 @@ public partial class SymbolTableBuilder
         ObjectLiteralMemberInfo memberInfo,
         AssignmentExpression assignment)
     {
-        Type? writtenType = null;
+        RecordObjectLiteralMemberWriteType(memberInfo, InferMemberWriteClrType(assignment));
+    }
+
+    /// <summary>
+    /// Conservative stable CLR type produced by an assignment to an object-literal member. Simple
+    /// assignments take the type of the right-hand side; provably numeric compound assignments
+    /// produce <c>double</c>; everything else (including <c>+=</c>, which can concatenate strings)
+    /// is unknown. Shared by the per-binding shape analysis and the interprocedural parameter
+    /// safe-use parity check (issue #1434).
+    /// </summary>
+    internal static Type? InferMemberWriteClrType(AssignmentExpression assignment)
+    {
         if (assignment.Operator == Operator.Assignment)
         {
-            writtenType = InferObjectLiteralMemberClrType(assignment.Right);
-        }
-        else
-        {
-            // Compound assignments other than string concatenation produce numbers; `+=` can
-            // produce strings. Treat only provably numeric operators as double.
-            writtenType = assignment.Operator switch
-            {
-                Operator.SubtractionAssignment
-                    or Operator.MultiplicationAssignment
-                    or Operator.DivisionAssignment
-                    or Operator.RemainderAssignment
-                    or Operator.ExponentiationAssignment
-                    or Operator.BitwiseAndAssignment
-                    or Operator.BitwiseOrAssignment
-                    or Operator.BitwiseXorAssignment
-                    or Operator.LeftShiftAssignment
-                    or Operator.RightShiftAssignment
-                    or Operator.UnsignedRightShiftAssignment => typeof(double),
-                _ => null
-            };
+            return InferObjectLiteralMemberClrType(assignment.Right);
         }
 
-        RecordObjectLiteralMemberWriteType(memberInfo, writtenType);
+        // Compound assignments other than string concatenation produce numbers; `+=` can
+        // produce strings. Treat only provably numeric operators as double.
+        return assignment.Operator switch
+        {
+            Operator.SubtractionAssignment
+                or Operator.MultiplicationAssignment
+                or Operator.DivisionAssignment
+                or Operator.RemainderAssignment
+                or Operator.ExponentiationAssignment
+                or Operator.BitwiseAndAssignment
+                or Operator.BitwiseOrAssignment
+                or Operator.BitwiseXorAssignment
+                or Operator.LeftShiftAssignment
+                or Operator.RightShiftAssignment
+                or Operator.UnsignedRightShiftAssignment => typeof(double),
+            _ => null
+        };
     }
 
     private static void RecordObjectLiteralMemberWriteType(ObjectLiteralMemberInfo memberInfo, Type? writtenType)

@@ -34,15 +34,15 @@ public partial class SymbolTableBuilder
             functionScope.StableParameterClrTypes.Clear();
         }
 
-        // Iterate so parameter types inferred for one callable can become call-site evidence
-        // for another callable that receives that parameter.
-        for (var iteration = 0; iteration < 4; iteration++)
+        // Iterate to a fixed point so parameter types inferred for one callable can become
+        // call-site evidence for another callable that receives that parameter. Each pass only
+        // ever adds stable conclusions (parameter CLR types and unsafe flags are monotone), so the
+        // analysis converges: once a pass makes no change the result is stable. There is no
+        // iteration cap because the lattice height is finite (bottom -> a stable type -> unsafe per
+        // parameter), which guarantees termination even for long propagation chains
+        // (a -> c -> d -> e -> ...) and mutual recursion.
+        while (InferCallableParameterClrTypesOnce(root))
         {
-            var changed = InferCallableParameterClrTypesOnce(root);
-            if (!changed)
-            {
-                break;
-            }
         }
     }
 
