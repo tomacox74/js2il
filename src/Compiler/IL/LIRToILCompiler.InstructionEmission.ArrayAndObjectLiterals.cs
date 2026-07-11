@@ -178,29 +178,12 @@ internal sealed partial class LIRToILCompiler
                 $"Missing generated object-literal type metadata for binding '{newInferredJsObject.Shape.Binding.Name}'.");
         }
 
-        var setNumberMethod = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.JsObject),
-            nameof(JavaScriptRuntime.JsObject.SetNumber),
-            parameterTypes: new[] { typeof(string), typeof(double) });
-        var setBooleanMethod = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.JsObject),
-            nameof(JavaScriptRuntime.JsObject.SetBoolean),
-            parameterTypes: new[] { typeof(string), typeof(bool) });
-        var setStringMethod = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.JsObject),
-            nameof(JavaScriptRuntime.JsObject.SetString),
-            parameterTypes: new[] { typeof(string), typeof(string) });
-        var setObjectMethod = _memberRefRegistry.GetOrAddMethod(
-            typeof(JavaScriptRuntime.JsObject),
-            nameof(JavaScriptRuntime.JsObject.SetObject),
-            parameterTypes: new[] { typeof(string), typeof(object) });
-
         foreach (var prop in newInferredJsObject.Properties)
         {
-            if (!metadata.FieldHandlesByMemberName.TryGetValue(prop.Key, out var fieldHandle))
+            if (!metadata.SetterHandlesByMemberName.TryGetValue(prop.Key, out var setterHandle))
             {
                 throw new InvalidOperationException(
-                    $"Missing generated object-literal field metadata for member '{prop.Key}'.");
+                    $"Missing generated object-literal setter metadata for member '{prop.Key}'.");
             }
             if (!metadata.FieldClrTypesByMemberName.TryGetValue(prop.Key, out var fieldClrType))
             {
@@ -208,24 +191,12 @@ internal sealed partial class LIRToILCompiler
                     $"Missing generated object-literal CLR type metadata for member '{prop.Key}'.");
             }
 
+            // The generated setter stores the typed backing field and mirrors the value
+            // into JsObject storage, so a single call keeps both views in sync.
             EmitLoadTemp(newInferredJsObject.Result, ilEncoder, allocation, methodDescriptor);
             EmitLoadTempAsClrType(prop.Value, fieldClrType, ilEncoder, allocation, methodDescriptor);
-            ilEncoder.OpCode(ILOpCode.Stfld);
-            ilEncoder.Token(fieldHandle);
-
-            EmitLoadTemp(newInferredJsObject.Result, ilEncoder, allocation, methodDescriptor);
-            ilEncoder.Ldstr(_metadataBuilder, prop.Key);
-            EmitLoadTemp(newInferredJsObject.Result, ilEncoder, allocation, methodDescriptor);
-            ilEncoder.OpCode(ILOpCode.Ldfld);
-            ilEncoder.Token(fieldHandle);
             ilEncoder.OpCode(ILOpCode.Callvirt);
-            ilEncoder.Token(fieldClrType == typeof(double)
-                ? setNumberMethod
-                : fieldClrType == typeof(bool)
-                    ? setBooleanMethod
-                    : fieldClrType == typeof(string)
-                        ? setStringMethod
-                        : setObjectMethod);
+            ilEncoder.Token(setterHandle);
         }
     }
 

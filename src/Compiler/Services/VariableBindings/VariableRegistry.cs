@@ -56,7 +56,9 @@ namespace Jroc.Services.VariableBindings
             TypeDefinitionHandle typeHandle,
             MethodDefinitionHandle constructorHandle,
             IReadOnlyDictionary<string, FieldDefinitionHandle> fieldHandlesByMemberName,
-            IReadOnlyDictionary<string, Type> fieldClrTypesByMemberName)
+            IReadOnlyDictionary<string, Type> fieldClrTypesByMemberName,
+            IReadOnlyDictionary<string, MethodDefinitionHandle> getterHandlesByMemberName,
+            IReadOnlyDictionary<string, MethodDefinitionHandle> setterHandlesByMemberName)
         {
             if (shape == null) throw new ArgumentNullException(nameof(shape));
             if (!shape.IsEligible)
@@ -78,7 +80,9 @@ namespace Jroc.Services.VariableBindings
                 typeHandle,
                 constructorHandle,
                 new Dictionary<string, FieldDefinitionHandle>(fieldHandlesByMemberName, StringComparer.Ordinal),
-                new Dictionary<string, Type>(fieldClrTypesByMemberName, StringComparer.Ordinal));
+                new Dictionary<string, Type>(fieldClrTypesByMemberName, StringComparer.Ordinal),
+                new Dictionary<string, MethodDefinitionHandle>(getterHandlesByMemberName, StringComparer.Ordinal),
+                new Dictionary<string, MethodDefinitionHandle>(setterHandlesByMemberName, StringComparer.Ordinal));
 
             _objectLiteralTypes[shape] = metadata;
         }

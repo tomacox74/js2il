@@ -549,7 +549,7 @@ internal sealed partial class LIRToILCompiler
                     // Inline ExpandoObject/object literal: dup + key + value
                     LIRNewJsObject newJsObject => 3 + (newJsObject.Properties.Count == 0 ? 0 : newJsObject.Properties.Max(p => EstimateTempConstructionPeak(p.Value))),
 
-                    // Specialized object literal: receiver + key + field-read value is the widest mirror sequence.
+                    // Specialized object literal: receiver + value construction is the widest setter-call sequence.
                     LIRNewInferredJsObject newInferredJsObject => 3 + (newInferredJsObject.Properties.Count == 0 ? 0 : newInferredJsObject.Properties.Max(p => EstimateTempConstructionPeak(p.Value))),
 
                     // Inline item get: receiver + index
