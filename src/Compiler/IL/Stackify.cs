@@ -482,6 +482,12 @@ internal static class Stackify
                 // and mirrors from those fields into JsObject storage. That requires a typed local.
                 return false;
 
+            // Early-bound object-literal accessor calls: never re-emit. The getter is pure but the
+            // paired setter mutates state, so keep both materialized for a simple liveness model.
+            case LIRGetInferredMember:
+            case LIRSetInferredMember:
+                return false;
+
             // Getter-like instructions are pure, but stackifying them re-emits the getter at the
             // final use site. That is only safe when the receiver/index operands are themselves
             // stable inline operands; otherwise delayed emission can observe a different value or
@@ -712,6 +718,14 @@ internal static class Stackify
             // LIRNewInferredJsObject: consumes one value per property, produces 1 generated object reference.
             case LIRNewInferredJsObject newInferredJsObject:
                 return (newInferredJsObject.Properties.Count, 1);
+
+            // LIRGetInferredMember: consumes 1 receiver, produces 1 typed member value.
+            case LIRGetInferredMember:
+                return (1, 1);
+
+            // LIRSetInferredMember: consumes receiver + value, produces nothing.
+            case LIRSetInferredMember:
+                return (2, 0);
 
             // LIRGetLength: consumes 1 object, produces 1 double
             case LIRGetLength:

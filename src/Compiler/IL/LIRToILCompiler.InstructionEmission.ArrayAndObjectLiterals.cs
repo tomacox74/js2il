@@ -145,9 +145,67 @@ internal sealed partial class LIRToILCompiler
                     return true;
                 }
 
+            case LIRGetInferredMember getInferredMember:
+                {
+                    // The generated getter is pure; skip entirely when the result is unused.
+                    if (!IsMaterialized(getInferredMember.Result, allocation))
+                    {
+                        return true;
+                    }
+
+                    var metadata = GetObjectLiteralTypeMetadata(getInferredMember.Shape);
+                    if (!metadata.GetterHandlesByMemberName.TryGetValue(getInferredMember.MemberName, out var getterHandle))
+                    {
+                        throw new InvalidOperationException(
+                            $"Missing generated object-literal getter metadata for member '{getInferredMember.MemberName}'.");
+                    }
+
+                    EmitLoadTempAsObject(getInferredMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(metadata.TypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getterHandle);
+                    EmitStoreTemp(getInferredMember.Result, ilEncoder, allocation);
+                    return true;
+                }
+
+            case LIRSetInferredMember setInferredMember:
+                {
+                    var metadata = GetObjectLiteralTypeMetadata(setInferredMember.Shape);
+                    if (!metadata.SetterHandlesByMemberName.TryGetValue(setInferredMember.MemberName, out var setterHandle))
+                    {
+                        throw new InvalidOperationException(
+                            $"Missing generated object-literal setter metadata for member '{setInferredMember.MemberName}'.");
+                    }
+                    if (!metadata.FieldClrTypesByMemberName.TryGetValue(setInferredMember.MemberName, out var memberClrType))
+                    {
+                        throw new InvalidOperationException(
+                            $"Missing generated object-literal CLR type metadata for member '{setInferredMember.MemberName}'.");
+                    }
+
+                    EmitLoadTempAsObject(setInferredMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(metadata.TypeHandle);
+                    EmitLoadTempAsClrType(setInferredMember.Value, memberClrType, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(setterHandle);
+                    return true;
+                }
+
             default:
                 return null;
         }
+    }
+
+    private Jroc.Services.VariableBindings.ObjectLiteralTypeMetadata GetObjectLiteralTypeMetadata(Jroc.SymbolTables.ObjectLiteralShapeInfo shape)
+    {
+        if (!_variableRegistry.TryGetObjectLiteralType(shape, out var metadata))
+        {
+            throw new InvalidOperationException(
+                $"Missing generated object-literal type metadata for binding '{shape.Binding.Name}'.");
+        }
+
+        return metadata;
     }
 
     private void EmitNewInferredJsObject(

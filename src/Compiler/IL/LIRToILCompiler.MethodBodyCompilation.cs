@@ -552,6 +552,14 @@ internal sealed partial class LIRToILCompiler
                     // Specialized object literal: receiver + value construction is the widest setter-call sequence.
                     LIRNewInferredJsObject newInferredJsObject => 3 + (newInferredJsObject.Properties.Count == 0 ? 0 : newInferredJsObject.Properties.Max(p => EstimateTempConstructionPeak(p.Value))),
 
+                    // Early-bound member read: receiver load + castclass + callvirt getter.
+                    LIRGetInferredMember getInferredMember => 1 + EstimateTempConstructionPeak(getInferredMember.Receiver),
+
+                    // Early-bound member write: receiver stays on stack while the value is built.
+                    LIRSetInferredMember setInferredMember => Math.Max(
+                        EstimateTempConstructionPeak(setInferredMember.Receiver),
+                        1 + EstimateTempConstructionPeak(setInferredMember.Value)),
+
                     // Inline item get: receiver + index
                     // Load order matters because receiver remains on stack while index is evaluated.
                     LIRGetItem getItem => Math.Max(

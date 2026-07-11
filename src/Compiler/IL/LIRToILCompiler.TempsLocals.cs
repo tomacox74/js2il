@@ -647,6 +647,9 @@ internal sealed partial class LIRToILCompiler
             case LIRNewInferredJsObject newInferredJsObject:
                 throw new InvalidOperationException(
                     $"Specialized object-literal construction for '{newInferredJsObject.Shape.Binding.Name}' must be materialized.");
+            case LIRGetInferredMember getInferredMember:
+                throw new InvalidOperationException(
+                    $"Early-bound object-literal member read '{getInferredMember.MemberName}' must be materialized.");
             case LIRGetLength getLength:
                 {
                     // Emit inline: call JavaScriptRuntime.Object.GetLength(object)

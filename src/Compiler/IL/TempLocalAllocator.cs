@@ -680,6 +680,13 @@ internal static class TempLocalAllocator
                     yield return prop.Value;
                 }
                 break;
+            case LIRGetInferredMember getInferredMember:
+                yield return getInferredMember.Receiver;
+                break;
+            case LIRSetInferredMember setInferredMember:
+                yield return setInferredMember.Receiver;
+                yield return setInferredMember.Value;
+                break;
             case LIRGetLength getLength:
                 yield return getLength.Object;
                 break;
@@ -1149,6 +1156,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNewInferredJsObject newInferredJsObject:
                 defined = newInferredJsObject.Result;
+                return true;
+            case LIRGetInferredMember getInferredMember:
+                defined = getInferredMember.Result;
                 return true;
             case LIRGetLength getLength:
                 defined = getLength.Result;

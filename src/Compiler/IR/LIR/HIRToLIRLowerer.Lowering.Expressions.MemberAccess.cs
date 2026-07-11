@@ -22,6 +22,25 @@ public sealed partial class HIRToLIRLowerer
             return TryLowerExpression(new HIRThisExpression(), out resultTempVar);
         }
 
+        // Early-bound object-literal member read (phase 4, #1432): when the receiver is a
+        // binding whose literal passed phase-1 eligibility, read through the generated
+        // typed accessor instead of the dynamic property path.
+        if (TryGetInferredObjectLiteralMember(propAccessExpr.Object, propAccessExpr.PropertyName, out var inferredShape, out var inferredMember))
+        {
+            if (!TryLowerExpression(propAccessExpr.Object, out var inferredReceiver))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRGetInferredMember(
+                inferredShape,
+                inferredMember.Name,
+                EnsureObject(inferredReceiver),
+                resultTempVar));
+            DefineTempStorage(resultTempVar, GetInferredMemberStorage(inferredMember));
+            return true;
+        }
+
         // Intrinsic object property read: support well-known Symbol properties (e.g., Symbol.iterator).
         // We lower this as a static intrinsic call so `Symbol` does not need to be representable
         // as a normal runtime value.
@@ -760,6 +779,58 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Matches a property access/assignment receiver against an eligible object-literal
+    /// binding (phase 4, #1432). Returns true when the receiver is the binding the shape
+    /// was inferred for, the generated CLR type exists, and the member is declared.
+    /// Restricted to const/let bindings so the receiver is provably initialized (a `var`
+    /// binding could be observed as undefined before initialization, which must keep the
+    /// generic path's TypeError semantics).
+    /// </summary>
+    private static bool TryGetInferredObjectLiteralMember(
+        HIRExpression objectExpr,
+        string propertyName,
+        out ObjectLiteralShapeInfo shape,
+        out ObjectLiteralMemberInfo member)
+    {
+        shape = null!;
+        member = null!;
+
+        if (objectExpr is not HIRVariableExpression variableExpr)
+        {
+            return false;
+        }
+
+        var binding = variableExpr.Name.BindingInfo;
+        if (binding.Kind is not (BindingKind.Const or BindingKind.Let))
+        {
+            return false;
+        }
+
+        if (binding.ObjectLiteralShape is not { IsEligible: true } candidate
+            || candidate.GeneratedClrTypeHandle.IsNil)
+        {
+            return false;
+        }
+
+        if (!candidate.TryGetMember(propertyName, out var candidateMember))
+        {
+            return false;
+        }
+
+        shape = candidate;
+        member = candidateMember;
+        return true;
+    }
+
+    private static ValueStorage GetInferredMemberStorage(ObjectLiteralMemberInfo member)
+    {
+        var clrType = member.ClrType ?? typeof(object);
+        return clrType == typeof(double) || clrType == typeof(bool)
+            ? new ValueStorage(ValueStorageKind.UnboxedValue, clrType)
+            : new ValueStorage(ValueStorageKind.Reference, clrType);
     }
 
     /// <summary>
