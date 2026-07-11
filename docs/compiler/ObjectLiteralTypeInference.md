@@ -125,9 +125,12 @@ Object-literal read microbenchmark (1000 literals × 20k iterations of
 Identical computed results confirm behavioral parity.
 
 Kraken `ai-astar` attribution note: its central `var astar = { … }` namespace
-literal is `var`-bound and its members are invoked as methods, so this feature
-contributes little there; the constructor-created `GraphNode` objects that
-dominate `ai-astar` are covered by the constructor-shape work (#1426).
+literal does receive a specialized type, but it is constructed exactly once and
+is `var`-bound with method-invoked members, so its accesses stay on the dynamic
+path and this feature contributes little there; the constructor-created
+`GraphNode` objects that dominate `ai-astar` are covered by the
+constructor-shape work (#1426). Direct measured run of the compiled scenario:
+~2.9–3.8 s wall, ~70.6 MB allocated.
 
 ## Test coverage
 
