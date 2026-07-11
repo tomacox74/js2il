@@ -35,7 +35,7 @@
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		{
 			// Fields
-			.field public float64 'value'
+			.field private float64 _value
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -50,6 +50,39 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
 				IL_0006: ret
 			} // end of method L6C11_b::.ctor
+
+			.method public hidebysig 
+				instance float64 get_value () cil managed 
+			{
+				// Method begins at RVA 0x2122
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld float64 Modules.BinaryOperator_OptionalChaining_PropertyAccess/ObjectLiterals/L6C11_b::_value
+				IL_0006: ret
+			} // end of method L6C11_b::get_value
+
+			.method public hidebysig 
+				instance void set_value (
+					float64 ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x212a
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld float64 Modules.BinaryOperator_OptionalChaining_PropertyAccess/ObjectLiterals/L6C11_b::_value
+				IL_0007: ldarg.0
+				IL_0008: ldstr "value"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+				IL_0013: ret
+			} // end of method L6C11_b::set_value
 
 		} // end of class L6C11_b
 
@@ -74,9 +107,10 @@
 		.locals init (
 			[0] class Modules.BinaryOperator_OptionalChaining_PropertyAccess/Scope,
 			[1] object,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] class Modules.BinaryOperator_OptionalChaining_PropertyAccess/ObjectLiterals/L6C11_b,
 			[3] object,
-			[4] object
+			[4] object,
+			[5] class Modules.BinaryOperator_OptionalChaining_PropertyAccess/ObjectLiterals/L6C11_b
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_OptionalChaining_PropertyAccess/Scope::.ctor()
@@ -111,11 +145,12 @@
 		IL_004b: ldloc.s 4
 		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_0052: pop
-		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0058: dup
-		IL_0059: ldstr "value"
-		IL_005e: ldc.r8 123
-		IL_0067: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0053: newobj instance void Modules.BinaryOperator_OptionalChaining_PropertyAccess/ObjectLiterals/L6C11_b::.ctor()
+		IL_0058: stloc.s 5
+		IL_005a: ldloc.s 5
+		IL_005c: ldc.r8 123
+		IL_0065: callvirt instance void Modules.BinaryOperator_OptionalChaining_PropertyAccess/ObjectLiterals/L6C11_b::set_value(float64)
+		IL_006a: ldloc.s 5
 		IL_006c: stloc.2
 		IL_006d: ldstr "console"
 		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
@@ -156,7 +191,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2122
+		// Method begins at RVA 0x213f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

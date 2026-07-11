@@ -77,12 +77,31 @@ public sealed class ObjectLiteralTypeGenerationGroundworkTests
             reader.GetString(method.Name) == ".ctor"
             && (method.Attributes & MethodAttributes.Public) == MethodAttributes.Public);
 
-        var fieldNames = type.GetFields()
+        // Stable members are exposed via private backing fields plus public get_/set_ accessors.
+        var fields = type.GetFields()
             .Select(reader.GetFieldDefinition)
-            .Select(field => reader.GetString(field.Name))
             .ToArray();
 
-        Assert.Equal(new[] { "b", "n", "flag" }, fieldNames);
+        Assert.Equal(new[] { "_b", "_n", "_flag" }, fields.Select(field => reader.GetString(field.Name)).ToArray());
+        Assert.All(fields, field =>
+            Assert.Equal(FieldAttributes.Private, field.Attributes & FieldAttributes.FieldAccessMask));
+
+        var methods = type.GetMethods()
+            .Select(reader.GetMethodDefinition)
+            .ToArray();
+
+        foreach (var member in new[] { "b", "n", "flag" })
+        {
+            Assert.Contains(methods, method =>
+                reader.GetString(method.Name) == $"get_{member}"
+                && (method.Attributes & MethodAttributes.Public) == MethodAttributes.Public);
+            Assert.Contains(methods, method =>
+                reader.GetString(method.Name) == $"set_{member}"
+                && (method.Attributes & MethodAttributes.Public) == MethodAttributes.Public);
+        }
+
+        // ctor + getter/setter per member
+        Assert.Equal(1 + 2 * 3, methods.Length);
     }
 
     [Fact]

@@ -132,8 +132,99 @@ internal sealed partial class LIRToILCompiler
                     return true;
                 }
 
+            case LIRNewInferredJsObject newInferredJsObject:
+                {
+                    if (!IsMaterialized(newInferredJsObject.Result, allocation))
+                    {
+                        return true;
+                    }
+
+                    EmitNewInferredJsObject(newInferredJsObject, ilEncoder, allocation, methodDescriptor);
+                    EmitStoreTemp(newInferredJsObject.Result, ilEncoder, allocation);
+                    EmitInitializeInferredJsObject(newInferredJsObject, ilEncoder, allocation, methodDescriptor);
+                    return true;
+                }
+
             default:
                 return null;
         }
+    }
+
+    private void EmitNewInferredJsObject(
+        LIRNewInferredJsObject newInferredJsObject,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (!_variableRegistry.TryGetObjectLiteralType(newInferredJsObject.Shape, out var metadata))
+        {
+            throw new InvalidOperationException(
+                $"Missing generated object-literal type metadata for binding '{newInferredJsObject.Shape.Binding.Name}'.");
+        }
+
+        ilEncoder.OpCode(ILOpCode.Newobj);
+        ilEncoder.Token(metadata.ConstructorHandle);
+    }
+
+    private void EmitInitializeInferredJsObject(
+        LIRNewInferredJsObject newInferredJsObject,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (!_variableRegistry.TryGetObjectLiteralType(newInferredJsObject.Shape, out var metadata))
+        {
+            throw new InvalidOperationException(
+                $"Missing generated object-literal type metadata for binding '{newInferredJsObject.Shape.Binding.Name}'.");
+        }
+
+        foreach (var prop in newInferredJsObject.Properties)
+        {
+            if (!metadata.SetterHandlesByMemberName.TryGetValue(prop.Key, out var setterHandle))
+            {
+                throw new InvalidOperationException(
+                    $"Missing generated object-literal setter metadata for member '{prop.Key}'.");
+            }
+            if (!metadata.FieldClrTypesByMemberName.TryGetValue(prop.Key, out var fieldClrType))
+            {
+                throw new InvalidOperationException(
+                    $"Missing generated object-literal CLR type metadata for member '{prop.Key}'.");
+            }
+
+            // The generated setter stores the typed backing field and mirrors the value
+            // into JsObject storage, so a single call keeps both views in sync.
+            EmitLoadTemp(newInferredJsObject.Result, ilEncoder, allocation, methodDescriptor);
+            EmitLoadTempAsClrType(prop.Value, fieldClrType, ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Callvirt);
+            ilEncoder.Token(setterHandle);
+        }
+    }
+
+    private void EmitLoadTempAsClrType(
+        TempVariable value,
+        Type fieldClrType,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        if (fieldClrType == typeof(double))
+        {
+            EmitLoadTempAsNumber(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (fieldClrType == typeof(bool))
+        {
+            EmitLoadTempAsBoolean(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        if (fieldClrType == typeof(string))
+        {
+            EmitLoadTempAsString(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
     }
 }

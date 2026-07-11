@@ -47,6 +47,9 @@ namespace Jroc.Tests.Object
         public Task ObjectLiteral_InlinePropertyInit() { var testName = nameof(ObjectLiteral_InlinePropertyInit); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ObjectLiteral_InferredConstruction_Parity() { var testName = nameof(ObjectLiteral_InferredConstruction_Parity); return ExecutionTest(testName); }
+
+        [Fact]
         public Task PrototypeChain_Basic() { var testName = nameof(PrototypeChain_Basic); return ExecutionTest(testName); }
 
         [Fact]

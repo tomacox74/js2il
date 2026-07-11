@@ -152,6 +152,33 @@ public sealed partial class HIRToLIRLowerer
 
         if (allSimple)
         {
+            if (objectExpr.ObjectLiteralShape is { IsEligible: true } shape
+                && !shape.GeneratedClrTypeHandle.IsNil
+                && shape.Members.Count == objectExpr.Members.Length)
+            {
+                var inferredProperties = new List<InferredObjectProperty>(shape.Members.Count);
+                foreach (HIRObjectProperty prop in objectExpr.Members)
+                {
+                    if (!TryLowerExpression(prop.Value, out var valueTemp))
+                    {
+                        return false;
+                    }
+
+                    if (prop.IsMethodDefinition)
+                    {
+                        valueTemp = EmitMarkUndefinedPrototype(valueTemp);
+                    }
+
+                    inferredProperties.Add(new InferredObjectProperty(prop.Key, valueTemp));
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRNewInferredJsObject(shape, inferredProperties, resultTempVar));
+                DefineTempStorage(
+                    resultTempVar,
+                    new ValueStorage(ValueStorageKind.Reference, TypeHandle: shape.GeneratedClrTypeHandle));
+                return true;
+            }
+
             var properties = new List<ObjectProperty>();
             foreach (HIRObjectProperty prop in objectExpr.Members)
             {

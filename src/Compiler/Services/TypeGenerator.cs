@@ -7,6 +7,7 @@ using Jroc.Services.VariableBindings;
 using System.Linq;
 using Jroc.Utilities.Ecma335;
 using Jroc.Utilities;
+using Jroc.Services.ILGenerators;
 using System.Text;
 
 namespace Jroc.Services
@@ -36,7 +37,9 @@ namespace Jroc.Services
         private enum DeferredConstructorKind
         {
             Scope,
-            ObjectLiteral
+            ObjectLiteral,
+            ObjectLiteralGetter,
+            ObjectLiteralSetter
         }
 
         private sealed record DeferredConstructorPlan(
@@ -46,7 +49,10 @@ namespace Jroc.Services
             string TypeName,
             bool IsAsync,
             bool IsGenerator,
-            MethodDefinitionHandle ExpectedCtor);
+            MethodDefinitionHandle ExpectedCtor,
+            string? MemberName = null,
+            FieldDefinitionHandle AccessorField = default,
+            Type? AccessorClrType = null);
 
         public TypeGenerator(
             MetadataBuilder metadataBuilder,
@@ -114,13 +120,18 @@ namespace Jroc.Services
                 {
                     DeferredConstructorKind.Scope => EmitScopeConstructor(tb, item.ScopeKey, item.IsAsync, item.IsGenerator),
                     DeferredConstructorKind.ObjectLiteral => EmitObjectLiteralConstructor(tb),
+                    DeferredConstructorKind.ObjectLiteralGetter => EmitObjectLiteralGetter(tb, item.MemberName!, item.AccessorField, item.AccessorClrType!),
+                    DeferredConstructorKind.ObjectLiteralSetter => EmitObjectLiteralSetter(tb, item.MemberName!, item.AccessorField, item.AccessorClrType!),
                     _ => throw new InvalidOperationException($"Unknown deferred constructor kind '{item.Kind}'.")
                 };
                 if (actual != item.ExpectedCtor)
                 {
-                    var label = item.Kind == DeferredConstructorKind.Scope
-                        ? $"scope '{item.ScopeKey}'"
-                        : $"object literal type '{item.TypeName}'";
+                    var label = item.Kind switch
+                    {
+                        DeferredConstructorKind.Scope => $"scope '{item.ScopeKey}'",
+                        DeferredConstructorKind.ObjectLiteral => $"object literal type '{item.TypeName}'",
+                        _ => $"object literal accessor '{item.TypeName}.{item.MemberName}'"
+                    };
                     throw new InvalidOperationException(
                         $"Deferred ctor MethodDef token mismatch for {label}. Expected 0x{MetadataTokens.GetToken(item.ExpectedCtor):X8}, got 0x{MetadataTokens.GetToken(actual):X8}.");
                 }
@@ -430,8 +441,8 @@ namespace Jroc.Services
                 var fieldClrType = member.ClrType ?? typeof(object);
                 var fieldSignature = CreateFieldSignature(fieldClrType);
                 var fieldHandle = tb.AddFieldDefinition(
-                    FieldAttributes.Public,
-                    member.Name,
+                    FieldAttributes.Private,
+                    "_" + member.Name,
                     fieldSignature);
 
                 fieldHandlesByName[member.Name] = fieldHandle;
@@ -448,13 +459,6 @@ namespace Jroc.Services
                 firstMethodOverride: ctorHandle);
             nestedTypeRegistry.Add(typeHandle, containerHandle);
 
-            shape.GeneratedClrTypeName = typeName;
-            _variableRegistry.RegisterObjectLiteralType(
-                shape,
-                typeName,
-                typeHandle,
-                fieldHandlesByName,
-                fieldClrTypesByName);
             _deferredCtorPlan.Add(new DeferredConstructorPlan(
                 DeferredConstructorKind.ObjectLiteral,
                 ScopeKey: string.Empty,
@@ -463,6 +467,56 @@ namespace Jroc.Services
                 IsAsync: false,
                 IsGenerator: false,
                 ExpectedCtor: ctorHandle));
+
+            // Reserve getter/setter MethodDef rows per member, contiguous after the ctor,
+            // in source member order so deferred emission reproduces the exact tokens.
+            var getterHandlesByName = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
+            var setterHandlesByName = new Dictionary<string, MethodDefinitionHandle>(StringComparer.Ordinal);
+            foreach (var member in shape.Members)
+            {
+                var fieldHandle = fieldHandlesByName[member.Name];
+                var fieldClrType = fieldClrTypesByName[member.Name];
+
+                var getterHandle = MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow++);
+                getterHandlesByName[member.Name] = getterHandle;
+                _deferredCtorPlan.Add(new DeferredConstructorPlan(
+                    DeferredConstructorKind.ObjectLiteralGetter,
+                    ScopeKey: string.Empty,
+                    Namespace: string.Empty,
+                    TypeName: typeName,
+                    IsAsync: false,
+                    IsGenerator: false,
+                    ExpectedCtor: getterHandle,
+                    MemberName: member.Name,
+                    AccessorField: fieldHandle,
+                    AccessorClrType: fieldClrType));
+
+                var setterHandle = MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow++);
+                setterHandlesByName[member.Name] = setterHandle;
+                _deferredCtorPlan.Add(new DeferredConstructorPlan(
+                    DeferredConstructorKind.ObjectLiteralSetter,
+                    ScopeKey: string.Empty,
+                    Namespace: string.Empty,
+                    TypeName: typeName,
+                    IsAsync: false,
+                    IsGenerator: false,
+                    ExpectedCtor: setterHandle,
+                    MemberName: member.Name,
+                    AccessorField: fieldHandle,
+                    AccessorClrType: fieldClrType));
+            }
+
+            shape.GeneratedClrTypeName = typeName;
+            shape.GeneratedClrTypeHandle = typeHandle;
+            _variableRegistry.RegisterObjectLiteralType(
+                shape,
+                typeName,
+                typeHandle,
+                ctorHandle,
+                fieldHandlesByName,
+                fieldClrTypesByName,
+                getterHandlesByName,
+                setterHandlesByName);
         }
 
         private MethodDefinitionHandle EmitObjectLiteralConstructor(TypeBuilder tb)
@@ -489,6 +543,134 @@ namespace Jroc.Services
                 ".ctor",
                 ctorSigHandle,
                 bodyOffset);
+        }
+
+        private MethodDefinitionHandle EmitObjectLiteralGetter(
+            TypeBuilder tb,
+            string memberName,
+            FieldDefinitionHandle fieldHandle,
+            Type fieldClrType)
+        {
+            var sig = new BlobBuilder();
+            new BlobEncoder(sig)
+                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+                .Parameters(0, returnType => EncodeClrType(returnType.Type(), fieldClrType), parameters => { });
+            var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
+
+            var ilBuilder = new BlobBuilder();
+            var encoder = new InstructionEncoder(ilBuilder);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldfld);
+            encoder.Token(fieldHandle);
+            encoder.OpCode(ILOpCode.Ret);
+
+            var bodyOffset = _methodBodyStream.AddMethodBody(
+                encoder,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            return tb.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig,
+                "get_" + memberName,
+                sigHandle,
+                bodyOffset);
+        }
+
+        private MethodDefinitionHandle EmitObjectLiteralSetter(
+            TypeBuilder tb,
+            string memberName,
+            FieldDefinitionHandle fieldHandle,
+            Type fieldClrType)
+        {
+            var sig = new BlobBuilder();
+            new BlobEncoder(sig)
+                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+                .Parameters(1, returnType => returnType.Void(), parameters => EncodeClrType(parameters.AddParameter().Type(), fieldClrType));
+            var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
+
+            // set_<member>(value): store the backing field, then mirror the value into
+            // the base JsObject storage so dictionary/descriptor views stay in sync.
+            var ilBuilder = new BlobBuilder();
+            var encoder = new InstructionEncoder(ilBuilder);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldarg_1);
+            encoder.OpCode(ILOpCode.Stfld);
+            encoder.Token(fieldHandle);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.Ldstr(_metadataBuilder, memberName);
+            encoder.OpCode(ILOpCode.Ldarg_1);
+            encoder.OpCode(ILOpCode.Call);
+            encoder.Token(GetJsObjectTypedSetterRef(fieldClrType));
+            encoder.OpCode(ILOpCode.Ret);
+
+            var bodyOffset = _methodBodyStream.AddMethodBody(
+                encoder,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            return tb.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig,
+                "set_" + memberName,
+                sigHandle,
+                bodyOffset);
+        }
+
+        private MemberReferenceHandle GetJsObjectTypedSetterRef(Type fieldClrType)
+        {
+            if (fieldClrType == typeof(double))
+            {
+                return _memberReferenceRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.JsObject),
+                    nameof(JavaScriptRuntime.JsObject.SetNumber),
+                    parameterTypes: new[] { typeof(string), typeof(double) });
+            }
+
+            if (fieldClrType == typeof(bool))
+            {
+                return _memberReferenceRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.JsObject),
+                    nameof(JavaScriptRuntime.JsObject.SetBoolean),
+                    parameterTypes: new[] { typeof(string), typeof(bool) });
+            }
+
+            if (fieldClrType == typeof(string))
+            {
+                return _memberReferenceRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.JsObject),
+                    nameof(JavaScriptRuntime.JsObject.SetString),
+                    parameterTypes: new[] { typeof(string), typeof(string) });
+            }
+
+            return _memberReferenceRegistry.GetOrAddMethod(
+                typeof(JavaScriptRuntime.JsObject),
+                nameof(JavaScriptRuntime.JsObject.SetObject),
+                parameterTypes: new[] { typeof(string), typeof(object) });
+        }
+
+        private void EncodeClrType(SignatureTypeEncoder typeEncoder, Type clrType)
+        {
+            if (clrType == typeof(double))
+            {
+                typeEncoder.Double();
+            }
+            else if (clrType == typeof(bool))
+            {
+                typeEncoder.Boolean();
+            }
+            else if (clrType == typeof(string))
+            {
+                typeEncoder.String();
+            }
+            else if (clrType != typeof(object))
+            {
+                typeEncoder.Type(
+                    _bclReferences.TypeReferenceRegistry.GetOrAdd(clrType),
+                    isValueType: false);
+            }
+            else
+            {
+                typeEncoder.Object();
+            }
         }
 
         private BlobHandle CreateFieldSignature(Type fieldClrType)

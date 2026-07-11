@@ -674,6 +674,12 @@ internal static class TempLocalAllocator
                     yield return prop.Value;
                 }
                 break;
+            case LIRNewInferredJsObject newInferredJsObject:
+                foreach (var prop in newInferredJsObject.Properties)
+                {
+                    yield return prop.Value;
+                }
+                break;
             case LIRGetLength getLength:
                 yield return getLength.Object;
                 break;
@@ -1140,6 +1146,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNewJsObject newJsObject:
                 defined = newJsObject.Result;
+                return true;
+            case LIRNewInferredJsObject newInferredJsObject:
+                defined = newInferredJsObject.Result;
                 return true;
             case LIRGetLength getLength:
                 defined = getLength.Result;

@@ -35,7 +35,7 @@
 			extends [JavaScriptRuntime]JavaScriptRuntime.JsObject
 		{
 			// Fields
-			.field public object 'nested'
+			.field private object _nested
 
 			// Methods
 			.method public hidebysig specialname rtspecialname 
@@ -50,6 +50,39 @@
 				IL_0001: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::.ctor()
 				IL_0006: ret
 			} // end of method L6C15_outer::.ctor
+
+			.method public hidebysig 
+				instance object get_nested () cil managed 
+			{
+				// Method begins at RVA 0x2130
+				// Header size: 1
+				// Code size: 7 (0x7)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldfld object Modules.ObjectLiteral_Spread_NestedObjects/ObjectLiterals/L6C15_outer::_nested
+				IL_0006: ret
+			} // end of method L6C15_outer::get_nested
+
+			.method public hidebysig 
+				instance void set_nested (
+					object ''
+				) cil managed 
+			{
+				// Method begins at RVA 0x2138
+				// Header size: 1
+				// Code size: 20 (0x14)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: ldarg.1
+				IL_0002: stfld object Modules.ObjectLiteral_Spread_NestedObjects/ObjectLiterals/L6C15_outer::_nested
+				IL_0007: ldarg.0
+				IL_0008: ldstr "nested"
+				IL_000d: ldarg.1
+				IL_000e: call instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+				IL_0013: ret
+			} // end of method L6C15_outer::set_nested
 
 		} // end of class L6C15_outer
 
@@ -74,9 +107,10 @@
 		.locals init (
 			[0] class Modules.ObjectLiteral_Spread_NestedObjects/Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
+			[2] class Modules.ObjectLiteral_Spread_NestedObjects/ObjectLiterals/L6C15_outer,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.JsObject,
-			[4] object
+			[4] class Modules.ObjectLiteral_Spread_NestedObjects/ObjectLiterals/L6C15_outer,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ObjectLiteral_Spread_NestedObjects/Scope::.ctor()
@@ -97,19 +131,20 @@
 		IL_003b: ldloc.1
 		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SpreadIntoObjectLiteral(object, object)
 		IL_0041: pop
-		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0047: dup
-		IL_0048: ldstr "nested"
-		IL_004d: ldloc.3
-		IL_004e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0042: newobj instance void Modules.ObjectLiteral_Spread_NestedObjects/ObjectLiterals/L6C15_outer::.ctor()
+		IL_0047: stloc.s 4
+		IL_0049: ldloc.s 4
+		IL_004b: ldloc.3
+		IL_004c: callvirt instance void Modules.ObjectLiteral_Spread_NestedObjects/ObjectLiterals/L6C15_outer::set_nested(object)
+		IL_0051: ldloc.s 4
 		IL_0053: stloc.2
 		IL_0054: ldstr "console"
 		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_005e: stloc.s 4
-		IL_0060: ldloc.s 4
+		IL_005e: stloc.s 5
+		IL_0060: ldloc.s 5
 		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0067: stloc.s 4
-		IL_0069: ldloc.s 4
+		IL_0067: stloc.s 5
+		IL_0069: ldloc.s 5
 		IL_006b: ldstr "log"
 		IL_0070: ldloc.2
 		IL_0071: ldstr "nested"
@@ -120,11 +155,11 @@
 		IL_008a: pop
 		IL_008b: ldstr "console"
 		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0095: stloc.s 4
-		IL_0097: ldloc.s 4
+		IL_0095: stloc.s 5
+		IL_0097: ldloc.s 5
 		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_009e: stloc.s 4
-		IL_00a0: ldloc.s 4
+		IL_009e: stloc.s 5
+		IL_00a0: ldloc.s 5
 		IL_00a2: ldstr "log"
 		IL_00a7: ldloc.2
 		IL_00a8: ldstr "nested"
@@ -145,7 +180,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x214d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -54,8 +54,11 @@ namespace Jroc.Services.VariableBindings
             ObjectLiteralShapeInfo shape,
             string typeName,
             TypeDefinitionHandle typeHandle,
+            MethodDefinitionHandle constructorHandle,
             IReadOnlyDictionary<string, FieldDefinitionHandle> fieldHandlesByMemberName,
-            IReadOnlyDictionary<string, Type> fieldClrTypesByMemberName)
+            IReadOnlyDictionary<string, Type> fieldClrTypesByMemberName,
+            IReadOnlyDictionary<string, MethodDefinitionHandle> getterHandlesByMemberName,
+            IReadOnlyDictionary<string, MethodDefinitionHandle> setterHandlesByMemberName)
         {
             if (shape == null) throw new ArgumentNullException(nameof(shape));
             if (!shape.IsEligible)
@@ -66,13 +69,20 @@ namespace Jroc.Services.VariableBindings
             {
                 throw new ArgumentException("Object literal type handle cannot be nil.", nameof(typeHandle));
             }
+            if (constructorHandle.IsNil)
+            {
+                throw new ArgumentException("Object literal constructor handle cannot be nil.", nameof(constructorHandle));
+            }
 
             var metadata = new ObjectLiteralTypeMetadata(
                 shape,
                 typeName,
                 typeHandle,
+                constructorHandle,
                 new Dictionary<string, FieldDefinitionHandle>(fieldHandlesByMemberName, StringComparer.Ordinal),
-                new Dictionary<string, Type>(fieldClrTypesByMemberName, StringComparer.Ordinal));
+                new Dictionary<string, Type>(fieldClrTypesByMemberName, StringComparer.Ordinal),
+                new Dictionary<string, MethodDefinitionHandle>(getterHandlesByMemberName, StringComparer.Ordinal),
+                new Dictionary<string, MethodDefinitionHandle>(setterHandlesByMemberName, StringComparer.Ordinal));
 
             _objectLiteralTypes[shape] = metadata;
         }

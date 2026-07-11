@@ -4088,7 +4088,7 @@ class HIRMethodBuilder
                         isPrototypeMutation: !objProp.Shorthand && string.Equals(propName, "__proto__", StringComparison.Ordinal),
                         isMethodDefinition: objProp.Method));
                 }
-                hirExpr = new HIRObjectExpression(objectMembers);
+                hirExpr = new HIRObjectExpression(objectMembers, FindObjectLiteralShape(objExpr));
                 return true;
 
             // Handle other expression types as needed
@@ -4258,6 +4258,37 @@ class HIRMethodBuilder
         }
 
         return null;
+    }
+
+    private ObjectLiteralShapeInfo? FindObjectLiteralShape(ObjectExpression objectExpression)
+    {
+        foreach (var scope in EnumerateScopes(_rootScope))
+        {
+            foreach (var binding in scope.Bindings.Values)
+            {
+                var shape = binding.ObjectLiteralShape;
+                if (shape is { IsEligible: true }
+                    && ReferenceEquals(shape.Literal, objectExpression))
+                {
+                    return shape;
+                }
+            }
+        }
+
+        return null;
+
+        static IEnumerable<Scope> EnumerateScopes(Scope root)
+        {
+            yield return root;
+
+            foreach (var child in root.Children)
+            {
+                foreach (var descendant in EnumerateScopes(child))
+                {
+                    yield return descendant;
+                }
+            }
+        }
     }
 
     private static Scope GetCallableBodyScope(Scope scope, BlockStatement bodyBlock)

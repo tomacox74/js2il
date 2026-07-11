@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Jroc.SymbolTables;
 
 namespace Jroc.HIR;
 
@@ -7,15 +8,22 @@ namespace Jroc.HIR;
 /// </summary>
 public sealed class HIRObjectExpression : HIRExpression
 {
-    public HIRObjectExpression(IEnumerable<HIRObjectMember> members)
+    public HIRObjectExpression(IEnumerable<HIRObjectMember> members, ObjectLiteralShapeInfo? objectLiteralShape = null)
     {
         Members = members.ToImmutableArray();
+        ObjectLiteralShape = objectLiteralShape;
     }
 
     /// <summary>
     /// The members of the object literal, in source evaluation order.
     /// </summary>
     public ImmutableArray<HIRObjectMember> Members { get; init; }
+
+    /// <summary>
+    /// Eligible phase-1 shape metadata for this literal, when it is the initializer of
+    /// a binding proven safe for specialized object-literal construction.
+    /// </summary>
+    public ObjectLiteralShapeInfo? ObjectLiteralShape { get; init; }
 }
 
 /// <summary>

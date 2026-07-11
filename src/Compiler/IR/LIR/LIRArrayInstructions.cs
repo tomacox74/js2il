@@ -1,3 +1,5 @@
+using Jroc.SymbolTables;
+
 namespace Jroc.IR;
 
 /// <summary>
@@ -118,6 +120,13 @@ public record LIRSetInt32ArrayElement(TempVariable Receiver, TempVariable Index,
 public readonly record struct ObjectProperty(string Key, TempVariable Value);
 
 /// <summary>
+/// Represents a property key-value pair for specialized object literal construction.
+/// The value initializes the generated CLR field; IL emission then mirrors by reading
+/// the initialized field so the original expression is still evaluated once.
+/// </summary>
+public readonly record struct InferredObjectProperty(string Key, TempVariable Value);
+
+/// <summary>
 /// Creates and initializes a JavaScript object (<see cref="JavaScriptRuntime.JsObject"/>) with the given properties.
 /// IL emitter: call RuntimeServices.CreateObjectLiteral(), [dup, ldstr key, load value, call SetProperty*]*.
 /// For numeric/bool/string values the IL emitter uses void typed-setter overloads
@@ -126,3 +135,12 @@ public readonly record struct ObjectProperty(string Key, TempVariable Value);
 /// <param name="Properties">The list of property key-value pairs (values may be unboxed typed temps).</param>
 /// <param name="Result">The temp variable to store the created object.</param>
 public record LIRNewJsObject(IReadOnlyList<ObjectProperty> Properties, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Creates and initializes a generated object-literal CLR type for an eligible phase-1 shape.
+/// IL emitter: newobj generated::.ctor(), then for each property stfld + JsObject mirror setter.
+/// </summary>
+public record LIRNewInferredJsObject(
+    ObjectLiteralShapeInfo Shape,
+    IReadOnlyList<InferredObjectProperty> Properties,
+    TempVariable Result) : LIRInstruction;

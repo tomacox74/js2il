@@ -78,6 +78,12 @@ public sealed class ObjectLiteralShapeInfo
     /// </summary>
     public string? GeneratedClrTypeName { get; internal set; }
 
+    /// <summary>
+    /// Metadata handle for the generated CLR type assigned by TypeGenerator.
+    /// Nil until type generation runs, and always nil for ineligible shapes.
+    /// </summary>
+    public System.Reflection.Metadata.TypeDefinitionHandle GeneratedClrTypeHandle { get; internal set; }
+
     internal void Disqualify(string reason)
     {
         if (!IsEligible)
