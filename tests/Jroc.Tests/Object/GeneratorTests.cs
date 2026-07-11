@@ -53,6 +53,15 @@ namespace Jroc.Tests.Object
         public Task ObjectLiteral_EarlyBoundAccess_Parity() { var testName = nameof(ObjectLiteral_EarlyBoundAccess_Parity); return GenerateTest(testName); }
 
         [Fact]
+        public Task ObjectLiteral_Inference_EnumerationAndJson_Parity() { var testName = nameof(ObjectLiteral_Inference_EnumerationAndJson_Parity); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Inference_DescriptorAndMutation_Parity() { var testName = nameof(ObjectLiteral_Inference_DescriptorAndMutation_Parity); return GenerateTest(testName); }
+
+        [Fact]
+        public Task ObjectLiteral_Inference_ClosureAndAliasing_Parity() { var testName = nameof(ObjectLiteral_Inference_ClosureAndAliasing_Parity); return GenerateTest(testName); }
+
+        [Fact]
         public Task PrototypeChain_Basic() { var testName = nameof(PrototypeChain_Basic); return GenerateTest(testName); }
 
         [Fact]
