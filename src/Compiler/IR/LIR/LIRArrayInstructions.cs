@@ -144,3 +144,26 @@ public record LIRNewInferredJsObject(
     ObjectLiteralShapeInfo Shape,
     IReadOnlyList<InferredObjectProperty> Properties,
     TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Early-bound property read on an eligible object-literal binding (phase 4, #1432).
+/// IL emitter: load receiver, castclass generated type, callvirt get_&lt;member&gt;().
+/// The result carries the member's stable CLR type (unboxed double/bool, string, or object).
+/// </summary>
+public record LIRGetInferredMember(
+    ObjectLiteralShapeInfo Shape,
+    string MemberName,
+    TempVariable Receiver,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Early-bound property write on an eligible object-literal binding (phase 4, #1432).
+/// IL emitter: load receiver, castclass generated type, load value as the member CLR type,
+/// callvirt set_&lt;member&gt;(value). The generated setter stores the typed backing field and
+/// mirrors the value into JsObject storage, keeping dynamic views in sync.
+/// </summary>
+public record LIRSetInferredMember(
+    ObjectLiteralShapeInfo Shape,
+    string MemberName,
+    TempVariable Receiver,
+    TempVariable Value) : LIRInstruction;

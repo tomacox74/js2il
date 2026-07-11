@@ -365,6 +365,23 @@ public partial class SymbolTableBuilder
                 RecordObjectLiteralMemberWriteType(memberInfo, typeof(double));
                 return;
 
+            // obj.p as a destructuring/iteration assignment target (e.g. [obj.p] = arr,
+            // ({ x: obj.p } = src), for (obj.p of arr)). These write through generic paths
+            // the early-bound field would not observe, so disqualify conservatively.
+            case ArrayPattern:
+            case AssignmentPattern:
+            case RestElement:
+            case ForInStatement forIn when ReferenceEquals(forIn.Left, member):
+            case ForOfStatement forOf when ReferenceEquals(forOf.Left, member):
+                shape.Disqualify($"member '{memberInfo.Name}' is a destructuring or iteration assignment target");
+                return;
+
+            case Property property when ReferenceEquals(property.Value, member)
+                && parentMap.TryGetValue(property, out var propertyParent)
+                && propertyParent is ObjectPattern:
+                shape.Disqualify($"member '{memberInfo.Name}' is a destructuring or iteration assignment target");
+                return;
+
             // obj.p(...) — method call; obj becomes `this` inside the callee.
             case CallExpression call when ReferenceEquals(call.Callee, member):
                 AnalyzeObjectLiteralMethodCall(shape, memberInfo);

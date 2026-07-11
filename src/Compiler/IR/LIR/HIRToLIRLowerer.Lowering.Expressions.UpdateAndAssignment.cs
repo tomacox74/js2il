@@ -302,6 +302,60 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        // Early-bound object-literal member update (phase 4, #1432): read-modify-write
+        // through the generated accessors so the backing field stays in sync.
+        if (TryGetInferredObjectLiteralMember(propAccessExpr.Object, propAccessExpr.PropertyName, out var inferredShape, out var inferredMember))
+        {
+            if (!TryLowerExpression(propAccessExpr.Object, out var inferredReceiver))
+            {
+                return false;
+            }
+            var receiver = EnsureObject(inferredReceiver);
+
+            var currentValue = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetInferredMember(inferredShape, inferredMember.Name, receiver, currentValue));
+            DefineTempStorage(currentValue, GetInferredMemberStorage(inferredMember));
+
+            var currentAsNumber = EnsureNumber(currentValue);
+
+            TempVariable? snapshotForPostfix = null;
+            if (needsPostfixValue)
+            {
+                var snapshotValue = EnsureObject(currentAsNumber);
+                var snapshot = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
+                DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                snapshotForPostfix = snapshot;
+            }
+
+            var oneTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, oneTemp));
+            DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var newNumber = CreateTempVariable();
+            if (isIncrement)
+            {
+                _methodBodyIR.Instructions.Add(new LIRAddNumber(currentAsNumber, oneTemp, newNumber));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRSubNumber(currentAsNumber, oneTemp, newNumber));
+            }
+            DefineTempStorage(newNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            _methodBodyIR.Instructions.Add(new LIRSetInferredMember(inferredShape, inferredMember.Name, receiver, newNumber));
+
+            var newBoxed = EnsureObject(newNumber);
+            if (prefix)
+            {
+                resultTempVar = newBoxed;
+                return true;
+            }
+
+            resultTempVar = needsPostfixValue ? snapshotForPostfix!.Value : newBoxed;
+            return true;
+        }
+
         if (!TryLowerExpression(propAccessExpr.Object, out var objTemp))
         {
             return false;

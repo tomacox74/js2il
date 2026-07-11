@@ -137,6 +137,14 @@ public sealed partial class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        // Early-bound object-literal member write (phase 4, #1432). All write forms must go
+        // through the generated setter so the typed backing field and JsObject storage stay
+        // in sync; a generic SetItem would leave the backing field stale.
+        if (TryGetInferredObjectLiteralMember(assignExpr.Object, assignExpr.PropertyName, out var inferredShape, out var inferredMember))
+        {
+            return TryLowerInferredMemberAssignment(assignExpr, inferredShape, inferredMember, out resultTempVar);
+        }
+
         if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
         {
             if (!TryLowerExpression(assignExpr.Object, out var objTemp))
@@ -244,6 +252,95 @@ public sealed partial class HIRToLIRLowerer
         }
 
         return TryLowerPropertyAssignmentTarget(assignExpr.Object, assignExpr.PropertyName, valueToStore, out resultTempVar);
+    }
+
+    /// <summary>
+    /// Lowers simple, compound, and nullish-coalescing assignments to a declared member of an
+    /// eligible object-literal binding through the generated typed accessors (phase 4, #1432).
+    /// </summary>
+    private bool TryLowerInferredMemberAssignment(
+        HIRPropertyAssignmentExpression assignExpr,
+        ObjectLiteralShapeInfo shape,
+        ObjectLiteralMemberInfo member,
+        out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (!TryLowerExpression(assignExpr.Object, out var receiverTemp))
+        {
+            return false;
+        }
+        var receiver = EnsureObject(receiverTemp);
+
+        if (assignExpr.Operator == Acornima.Operator.Assignment)
+        {
+            if (!TryLowerExpression(assignExpr.Value, out var valueTemp))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRSetInferredMember(shape, member.Name, receiver, valueTemp));
+            resultTempVar = valueTemp;
+            return true;
+        }
+
+        if (assignExpr.Operator == Acornima.Operator.NullishCoalescingAssignment)
+        {
+            var current = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRGetInferredMember(shape, member.Name, receiver, current));
+            DefineTempStorage(current, GetInferredMemberStorage(member));
+
+            resultTempVar = CreateTempVariable();
+            var evalRightLabel = CreateLabel();
+            var endLabel = CreateLabel();
+
+            var currentBoxed = EnsureObject(current);
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(currentBoxed, evalRightLabel));
+
+            var isJsNullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), currentBoxed, isJsNullTemp));
+            DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isJsNullTemp, evalRightLabel));
+
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(evalRightLabel));
+            ClearNumericRefinementsAtLabel();
+
+            if (!TryLowerExpression(assignExpr.Value, out var rhsValue))
+            {
+                return false;
+            }
+
+            var rhsBoxed = EnsureObject(rhsValue);
+            _methodBodyIR.Instructions.Add(new LIRSetInferredMember(shape, member.Name, receiver, rhsBoxed));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rhsBoxed, resultTempVar));
+
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            ClearNumericRefinementsAtLabel();
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        // Compound assignment: read-modify-write through the early-bound accessors.
+        var currentValue = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRGetInferredMember(shape, member.Name, receiver, currentValue));
+        DefineTempStorage(currentValue, GetInferredMemberStorage(member));
+
+        if (!TryLowerExpression(assignExpr.Value, out var rhs))
+        {
+            return false;
+        }
+
+        if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhs, out var computedValue))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRSetInferredMember(shape, member.Name, receiver, computedValue));
+        resultTempVar = computedValue;
+        return true;
     }
 
     private bool TryLowerIndexAssignmentExpression(HIRIndexAssignmentExpression assignExpr, out TempVariable resultTempVar)

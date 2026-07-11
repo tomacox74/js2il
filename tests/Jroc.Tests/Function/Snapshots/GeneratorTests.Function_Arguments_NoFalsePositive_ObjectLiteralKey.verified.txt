@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f3
+				// Method begins at RVA 0x20fe
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,12 +46,14 @@
 			)
 			// Method begins at RVA 0x209c
 			// Header size: 12
-			// Code size: 66 (0x42)
+			// Code size: 77 (0x4d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/ObjectLiterals/L4C15_o,
 				[1] class Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/ObjectLiterals/L4C15_o,
-				[2] object
+				[2] object,
+				[3] float64,
+				[4] object
 			)
 
 			IL_0000: newobj instance void Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/ObjectLiterals/L4C15_o::.ctor()
@@ -67,15 +69,20 @@
 			IL_0022: ldloc.2
 			IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
 			IL_0028: stloc.2
-			IL_0029: ldloc.2
-			IL_002a: ldstr "log"
-			IL_002f: ldloc.0
-			IL_0030: ldstr "arguments"
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_003f: pop
-			IL_0040: ldnull
-			IL_0041: ret
+			IL_0029: ldloc.0
+			IL_002a: castclass Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/ObjectLiterals/L4C15_o
+			IL_002f: callvirt instance float64 Modules.Function_Arguments_NoFalsePositive_ObjectLiteralKey/ObjectLiterals/L4C15_o::get_arguments()
+			IL_0034: stloc.3
+			IL_0035: ldloc.3
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.s 4
+			IL_003d: ldloc.2
+			IL_003e: ldstr "log"
+			IL_0043: ldloc.s 4
+			IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_004a: pop
+			IL_004b: ldnull
+			IL_004c: ret
 		} // end of method f::__js_call__
 
 	} // end of class f
@@ -93,7 +100,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ea
+			// Method begins at RVA 0x20f5
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -120,7 +127,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fc
+				// Method begins at RVA 0x2107
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -133,7 +140,7 @@
 			.method public hidebysig 
 				instance float64 get_arguments () cil managed 
 			{
-				// Method begins at RVA 0x2104
+				// Method begins at RVA 0x210f
 				// Header size: 1
 				// Code size: 7 (0x7)
 				.maxstack 8
@@ -148,7 +155,7 @@
 					float64 ''
 				) cil managed 
 			{
-				// Method begins at RVA 0x210c
+				// Method begins at RVA 0x2117
 				// Header size: 1
 				// Code size: 20 (0x14)
 				.maxstack 8
@@ -227,7 +234,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2121
+		// Method begins at RVA 0x212c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

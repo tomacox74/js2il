@@ -50,6 +50,9 @@ namespace Jroc.Tests.Object
         public Task ObjectLiteral_InferredConstruction_Parity() { var testName = nameof(ObjectLiteral_InferredConstruction_Parity); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ObjectLiteral_EarlyBoundAccess_Parity() { var testName = nameof(ObjectLiteral_EarlyBoundAccess_Parity); return ExecutionTest(testName); }
+
+        [Fact]
         public Task PrototypeChain_Basic() { var testName = nameof(PrototypeChain_Basic); return ExecutionTest(testName); }
 
         [Fact]
