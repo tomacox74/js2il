@@ -18,6 +18,7 @@ every dynamic runtime path still sees correct values.
 | 3 | #1431 | Lowering constructs eligible literals via the generated constructor and per-member typed accessors instead of `CreateObjectLiteral()`. |
 | 4 | #1432 | Property reads and writes on eligible bindings early-bind to the generated `get_<name>`/`set_<name>` accessors (`castclass` + `callvirt`) instead of `ObjectRuntime.GetItem`/`SetItem`. |
 | 5 | #1433 | Validation, benchmarks, documentation (this document). |
+| 6 | #1434 | Interprocedural propagation: a literal passed into a closed-world callable lets the receiving parameter reuse the generated specialized type, so member reads on the parameter early-bind through the inferred-member path. Uses a monotone, capless fixed point (cascading invalidation) so multi-hop chains and mutual recursion converge; structurally identical literals canonicalize onto one shared CLR type and can join at a parameter. |
 
 ## Generated type shape
 
@@ -60,8 +61,14 @@ Use-level disqualifiers (conservative whitelist — anything unrecognized also
 disqualifies):
 
 - binding reassigned, aliased to another binding, exported, or `delete` applied
-- object passed to a call, returned from a function, stored into another
-  object/array, or stored through any assignment (escape)
+- object returned from a function, stored into another object/array, or stored
+  through any assignment (escape)
+- object passed to a call, **unless** every receiving callable is closed-world
+  (only ever referenced as a direct call/`new` target) and every use of the
+  corresponding parameter is itself safe — phase 6 (#1434) then propagates the
+  shape into the parameter instead of disqualifying. Spread arguments, missing
+  arguments, escaping/aliased callables, conflicting shapes at a shared
+  parameter, and any unsafe parameter use still fall back to the generic path.
 - object used in a spread, enumerated by `for-in`/`for-of`, or used with `in`
 - computed / non-identifier member access, access to an undeclared member,
   `delete` of a member
@@ -81,9 +88,46 @@ Notably **not** disqualifying:
 
 Because reflective operations (`Object.keys`, `JSON.stringify`,
 `Object.getOwnPropertyDescriptor`, `defineProperty`, `freeze`, `seal`, …)
-require passing the binding to a call, they inherently disqualify the shape, so
-descriptor/enumeration semantics never need to be replicated by the generated
-type.
+pass the binding to an unknown (non-closed-world) call, they inherently
+disqualify the shape, so descriptor/enumeration semantics never need to be
+replicated by the generated type.
+
+## Interprocedural propagation (phase 6, #1434)
+
+When a literal is passed as a positional argument to a *closed-world* callable
+(a function/const-bound function expression whose binding is only ever the
+callee of a direct call/`new`), the analysis may propagate the shape into the
+receiving parameter instead of disqualifying. This is a coupled, monotone fixed
+point over parameter *slots* and literal eligibility, iterated to convergence
+with **no** iteration cap (the lattice height is finite, so long multi-hop
+chains `a → c → d → …` and mutual recursion terminate deterministically).
+
+Structural canonicalization: the shape's structural signature is normalized by
+member name (names + member CLR types + function-ness), so two literals that
+declare the same members in a **different source order** share one generated
+CLR type and can join at a shared parameter. Each literal still constructs and
+enumerates in its own source order — only the shared type's field layout is
+canonical.
+
+Parameter-use safety mirrors the per-binding rules and is checked once the
+representative shape is known:
+
+- **Member reads** early-bind exactly like reads on the original binding.
+- **Same-type member writes/updates** (`o.p = <same-type>`, `o.p++`) are safe
+  and lower through the generated setter, keeping the typed backing field in
+  sync. A write whose value type does not provably match the member's field
+  type conservatively demotes the slot and disqualifies the feeding literal.
+- **Method calls through the parameter** (`o.fn()`) are conservatively out of
+  scope: they pass the object as `this` into a callee this pass does not model,
+  so they are treated as an escaping use.
+- **Spread/missing arguments** make positional mapping unstable: any literal or
+  forwarded parameter at or after the first spread argument in a call is not
+  accepted as stable evidence and falls back to the generic path.
+- Conflicting shapes at a shared parameter, escaping/aliased callables, and any
+  unrecognized parameter use fall back to the generic path.
+
+The parameter ABI stays `object`; only the stable shape token is propagated so
+lowering can early-bind member access on the parameter.
 
 ## Early-bound access (phase 4)
 
@@ -139,4 +183,6 @@ constructor-shape work (#1426). Direct measured run of the compiled scenario:
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Inference_EnumerationAndJson_Parity.js` — enumeration order, `Object.keys/values/entries`, integer-key ordering, `JSON.stringify`
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Inference_DescriptorAndMutation_Parity.js` — `getOwnPropertyDescriptor`, `defineProperty`, `delete`, `freeze`, `seal`, `in`
 - `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_Inference_ClosureAndAliasing_Parity.js` — aliasing/escape disqualification, closure capture (early-bound)
-- `tests/Jroc.Tests/ObjectLiteralTypeGenerationGroundworkTests.cs` — generated type metadata contract
+- `tests/Jroc.Tests/Object/JavaScript/ObjectLiteral_InterproceduralInference_Parity.js` — phase 6 interprocedural propagation: direct/multi-hop/mutual-recursion propagation, reordered same-shape join, safe parameter member write/read, incompatible/spread-shift fallback
+- `tests/Jroc.Tests/SymbolTable/ObjectLiteralShapeAnalysisTests.cs` — phase 6 slot analysis: propagation, canonicalization (order-insensitive signature), safe/conflicting parameter writes, method-call and spread-shift fallback
+- `tests/Jroc.Tests/ObjectLiteralTypeGenerationGroundworkTests.cs` — generated type metadata contract, reordered same-shape literals sharing one generated type

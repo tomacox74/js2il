@@ -315,6 +315,316 @@ public class ObjectLiteralShapeAnalysisTests
     }
 
     // ---------------------------------------------------------------------
+    // Interprocedural propagation (issue #1434, phase 6)
+    // ---------------------------------------------------------------------
+
+    private static System.Collections.Generic.IEnumerable<Scope> EnumerateScopes(Scope scope)
+    {
+        yield return scope;
+        foreach (var child in scope.Children)
+        {
+            foreach (var descendant in EnumerateScopes(child))
+            {
+                yield return descendant;
+            }
+        }
+    }
+
+    private ObjectLiteralShapeInfo? GetParameterShape(SymbolTable symbolTable, string functionName, string parameterName)
+    {
+        var functionScope = EnumerateScopes(symbolTable.Root)
+            .First(s => s.Kind == ScopeKind.Function && string.Equals(s.Name, functionName, StringComparison.Ordinal));
+        return functionScope.Bindings[parameterName].ObjectLiteralShape;
+    }
+
+    [Fact]
+    public void Interprocedural_DirectPropagation_TypesParameter()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              function c(o) { console.log(o.b); }
+              c(a);");
+
+        Assert.True(symbolTable.GetBindingInfo("a")!.ObjectLiteralShape!.IsEligible);
+
+        var paramShape = GetParameterShape(symbolTable, "c", "o");
+        Assert.NotNull(paramShape);
+        Assert.True(paramShape!.IsEligible);
+        // The parameter shares the literal's shape so codegen uses one generated CLR type.
+        Assert.Same(symbolTable.GetBindingInfo("a")!.ObjectLiteralShape, paramShape);
+    }
+
+    [Fact]
+    public void Interprocedural_IncompatibleCallSites_ParameterStaysGeneric()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              const d = { z: 1 };
+              function c(o) { console.log(o.b); }
+              c(a);
+              c(d);");
+
+        // Both literals only flow into a safe callee use, so they remain eligible for their own
+        // early binding, but the parameter cannot join two different shapes.
+        Assert.True(symbolTable.GetBindingInfo("a")!.ObjectLiteralShape!.IsEligible);
+        Assert.True(symbolTable.GetBindingInfo("d")!.ObjectLiteralShape!.IsEligible);
+        Assert.Null(GetParameterShape(symbolTable, "c", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_SpreadArgument_ParameterStaysGeneric()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              function c(o) { console.log(o.b); }
+              function forward(rest) { c(...rest); }
+              c(a);
+              forward([a]);");
+
+        // The spread call site cannot supply positional evidence, so the parameter is generic.
+        Assert.Null(GetParameterShape(symbolTable, "c", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_SpreadShiftsPositionalLiteral_FallsBackSafely()
+    {
+        // A spread before a positional literal argument shifts `a`'s parameter slot by an unknown
+        // amount: `a` cannot be assumed to map to parameter index 1. The literal obligation must
+        // not be accepted as stable, so the literal falls back and the parameter stays generic.
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              const rest = [1, 2];
+              function c(x, o) { console.log(o.b); }
+              c(...rest, a);");
+
+        var literalShape = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        Assert.NotNull(literalShape);
+        Assert.False(literalShape!.IsEligible);
+        Assert.Null(GetParameterShape(symbolTable, "c", "o"));
+        Assert.Null(GetParameterShape(symbolTable, "c", "x"));
+    }
+
+    [Fact]
+    public void Interprocedural_SpreadShiftsForwardedParameter_FallsBackSafely()
+    {
+        // A parameter forwarded after a spread cannot be proved to line up with a callee slot,
+        // so the forwarded evidence must not be accepted and both slots stay generic.
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              function d(o) { console.log(o.b); }
+              function c(rest, o) { d(...rest, o); }
+              c([1], a);");
+
+        Assert.Null(GetParameterShape(symbolTable, "d", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_SafeParameterMemberWrite_TypesParameter()
+    {
+        // Same-type member writes/updates through the parameter are safe: they lower through the
+        // generated setter, so the parameter is early-bound to the literal's shape (issue #1434
+        // safe-use parity).
+        var symbolTable = BuildSymbolTable(
+            @"const a = { n: 1 };
+              function bump(o) { o.n = 5; o.n++; console.log(o.n); }
+              bump(a);");
+
+        var literalShape = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        Assert.NotNull(literalShape);
+        Assert.True(literalShape!.IsEligible, literalShape.DisqualifyReason);
+
+        var paramShape = GetParameterShape(symbolTable, "bump", "o");
+        Assert.NotNull(paramShape);
+        Assert.True(paramShape!.IsEligible);
+        Assert.Same(literalShape, paramShape);
+    }
+
+    [Fact]
+    public void Interprocedural_ConflictingParameterMemberWrite_FallsBackSafely()
+    {
+        // Writing a string into a member the literal declares as a number cannot be lowered through
+        // the numeric setter, so the write demotes the slot and disqualifies the feeding literal.
+        var symbolTable = BuildSymbolTable(
+            @"const a = { n: 1 };
+              function clobber(o) { o.n = 'text'; console.log(o.n); }
+              clobber(a);");
+
+        var literalShape = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        Assert.NotNull(literalShape);
+        Assert.False(literalShape!.IsEligible);
+        Assert.Null(GetParameterShape(symbolTable, "clobber", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_ParameterMethodCall_FallsBackSafely()
+    {
+        // Interprocedural method-call parity is conservatively out of scope: calling a member
+        // through the parameter passes the object as `this` into a callee this pass does not model,
+        // so it is treated as an escaping use.
+        var symbolTable = BuildSymbolTable(
+            @"const a = { greet: function () { return 'hi'; } };
+              function run(o) { console.log(o.greet()); }
+              run(a);");
+
+        var literalShape = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        Assert.NotNull(literalShape);
+        Assert.False(literalShape!.IsEligible);
+        Assert.Null(GetParameterShape(symbolTable, "run", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_UnsafeCalleeUse_DisqualifiesLiteralAndParameter()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              function c(o) { return o; }
+              c(a);");
+
+        var literalShape = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        Assert.NotNull(literalShape);
+        Assert.False(literalShape!.IsEligible);
+        Assert.Contains("unsafe", literalShape.DisqualifyReason);
+        Assert.Null(GetParameterShape(symbolTable, "c", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_MultiHopChain_PropagatesBeyondFourHops()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'deep' };
+              function h6(o) { console.log(o.b); }
+              function h5(o) { h6(o); }
+              function h4(o) { h5(o); }
+              function h3(o) { h4(o); }
+              function h2(o) { h3(o); }
+              function h1(o) { h2(o); }
+              h1(a);");
+
+        Assert.True(symbolTable.GetBindingInfo("a")!.ObjectLiteralShape!.IsEligible);
+        foreach (var name in new[] { "h1", "h2", "h3", "h4", "h5", "h6" })
+        {
+            var paramShape = GetParameterShape(symbolTable, name, "o");
+            Assert.True(paramShape is { IsEligible: true }, $"{name}.o should carry the inferred shape");
+        }
+    }
+
+    [Fact]
+    public void Interprocedural_MutualRecursion_ResolvesDeterministically()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hi' };
+              function f(o) { if (o.b) { g(o); } console.log(o.b); }
+              function g(o) { if (o.b) { f(o); } console.log(o.b); }
+              f(a);");
+
+        Assert.True(symbolTable.GetBindingInfo("a")!.ObjectLiteralShape!.IsEligible);
+        Assert.True(GetParameterShape(symbolTable, "f", "o") is { IsEligible: true });
+        Assert.True(GetParameterShape(symbolTable, "g", "o") is { IsEligible: true });
+    }
+
+    [Fact]
+    public void Interprocedural_StructurallyIdenticalLiterals_ShareShapeAtParameter()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { x: 1 };
+              const b = { x: 2 };
+              function f(o) { return o.x; }
+              f(a);
+              f(b);");
+
+        var shapeA = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        var shapeB = symbolTable.GetBindingInfo("b")!.ObjectLiteralShape;
+        Assert.True(shapeA!.IsEligible);
+        Assert.True(shapeB!.IsEligible);
+        Assert.Equal(shapeA.GetStructuralSignatureKey(), shapeB.GetStructuralSignatureKey());
+
+        var paramShape = GetParameterShape(symbolTable, "f", "o");
+        Assert.NotNull(paramShape);
+        Assert.True(paramShape!.IsEligible);
+        // The join canonicalizes onto one representative shape (the first, deterministically).
+        Assert.Same(shapeA, paramShape);
+    }
+
+    [Fact]
+    public void Interprocedural_ReorderedSameShapeLiterals_ShareShapeAtParameter()
+    {
+        // Members declared in a different source order must produce the same structural signature
+        // (canonicalized by member name) so the two literals share one generated CLR type and can
+        // join at the parameter (issue #1434 phase 6 canonicalization).
+        var symbolTable = BuildSymbolTable(
+            @"const a = { x: 1, y: 'left' };
+              const b = { y: 'right', x: 2 };
+              function f(o) { return o.x + o.y; }
+              f(a);
+              f(b);");
+
+        var shapeA = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        var shapeB = symbolTable.GetBindingInfo("b")!.ObjectLiteralShape;
+        Assert.True(shapeA!.IsEligible);
+        Assert.True(shapeB!.IsEligible);
+
+        // Same names/types in a different order canonicalize to one signature.
+        Assert.Equal(shapeA.GetStructuralSignatureKey(), shapeB.GetStructuralSignatureKey());
+        // Each literal keeps its own construction/enumeration source order.
+        Assert.Equal(new[] { "x", "y" }, shapeA.Members.Select(m => m.Name));
+        Assert.Equal(new[] { "y", "x" }, shapeB.Members.Select(m => m.Name));
+
+        var paramShape = GetParameterShape(symbolTable, "f", "o");
+        Assert.NotNull(paramShape);
+        Assert.True(paramShape!.IsEligible);
+        Assert.Same(shapeA, paramShape);
+    }
+
+    [Fact]
+    public void StructuralSignatureKey_IsOrderInsensitiveByMemberName()
+    {
+        // Direct unit check on the canonicalization: reordered members share a key, but a differing
+        // member type or a different member set does not.
+        var symbolTable = BuildSymbolTable(
+            @"const a = { x: 1, y: 'left' };
+              const b = { y: 'right', x: 2 };
+              const c = { x: 'one', y: 'two' };
+              console.log(a.x, a.y, b.x, b.y, c.x, c.y);");
+
+        var keyA = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape!.GetStructuralSignatureKey();
+        var keyB = symbolTable.GetBindingInfo("b")!.ObjectLiteralShape!.GetStructuralSignatureKey();
+        var keyC = symbolTable.GetBindingInfo("c")!.ObjectLiteralShape!.GetStructuralSignatureKey();
+
+        Assert.Equal(keyA, keyB);
+        Assert.NotEqual(keyA, keyC);
+    }
+
+    [Fact]
+    public void Interprocedural_ConflictingMemberTypes_ParameterStaysGeneric()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { x: 1 };
+              const b = { x: 'text' };
+              function f(o) { return o.x; }
+              f(a);
+              f(b);");
+
+        // Same member name but different member CLR types => distinct signatures => no join.
+        Assert.Null(GetParameterShape(symbolTable, "f", "o"));
+    }
+
+    [Fact]
+    public void Interprocedural_EscapingCallable_ParameterStaysGeneric()
+    {
+        var symbolTable = BuildSymbolTable(
+            @"const a = { b: 'hello' };
+              function c(o) { console.log(o.b); }
+              const alias = c;
+              c(a);");
+
+        // `c` is aliased to another binding, so it is not a closed-world callable and passing the
+        // literal into it must fall back to the generic path.
+        var literalShape = symbolTable.GetBindingInfo("a")!.ObjectLiteralShape;
+        Assert.False(literalShape!.IsEligible);
+        Assert.Null(GetParameterShape(symbolTable, "c", "o"));
+    }
+
+    // ---------------------------------------------------------------------
     // Member metadata
     // ---------------------------------------------------------------------
 

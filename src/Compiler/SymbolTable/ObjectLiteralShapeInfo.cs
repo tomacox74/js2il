@@ -84,6 +84,37 @@ public sealed class ObjectLiteralShapeInfo
     /// </summary>
     public System.Reflection.Metadata.TypeDefinitionHandle GeneratedClrTypeHandle { get; internal set; }
 
+    /// <summary>
+    /// Structural signature key over member names + member CLR types + function-ness. The key is
+    /// normalized by ordering members by name so two literals that declare the same members in a
+    /// different source order produce an identical key and may share a single generated CLR type
+    /// (issue #1434 phase 6 canonicalization). Construction and enumeration still use each literal's
+    /// own source order (see the object-literal lowering), so observable property order is
+    /// unchanged. Members with the same name but different CLR types or function-ness produce
+    /// distinct keys, so they never join.
+    /// </summary>
+    public string GetStructuralSignatureKey()
+    {
+        var builder = new System.Text.StringBuilder();
+        var ordered = new List<ObjectLiteralMemberInfo>(Members);
+        ordered.Sort(static (left, right) => string.CompareOrdinal(left.Name, right.Name));
+        foreach (var member in ordered)
+        {
+            builder.Append(member.Name).Append('\u0000');
+            if (member.IsFunction)
+            {
+                builder.Append("fn");
+            }
+            else
+            {
+                builder.Append(member.ClrType?.FullName ?? "object");
+            }
+            builder.Append('\u0001');
+        }
+
+        return builder.ToString();
+    }
+
     internal void Disqualify(string reason)
     {
         if (!IsEligible)

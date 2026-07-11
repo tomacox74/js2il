@@ -804,7 +804,12 @@ public sealed partial class HIRToLIRLowerer
         }
 
         var binding = variableExpr.Name.BindingInfo;
-        if (binding.Kind is not (BindingKind.Const or BindingKind.Let))
+
+        // Const/let object-literal bindings are provably initialized before use. Parameters that
+        // were inferred to a literal shape via interprocedural analysis (issue #1434) are also
+        // safe: they are assigned their argument on entry, before any member access.
+        var isParameter = binding.DeclaringScope.Parameters.Contains(binding.Name);
+        if (binding.Kind is not (BindingKind.Const or BindingKind.Let) && !isParameter)
         {
             return false;
         }

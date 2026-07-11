@@ -105,6 +105,57 @@ public sealed class ObjectLiteralTypeGenerationGroundworkTests
     }
 
     [Fact]
+    public void GeneratedAssembly_SharesOneTypeForReorderedSameShapeLiterals()
+    {
+        // Two literals with the same member names/types in a different source order canonicalize to
+        // one structural signature and must therefore share a single generated CLR type
+        // (issue #1434 phase 6 canonicalization), while each literal keeps its own source order.
+        var entryPath = Path.Combine(
+            Path.GetTempPath(),
+            "Jroc.Tests",
+            "ObjectLiteralTypeGenerationCanonicalization",
+            Guid.NewGuid().ToString("N"),
+            "entry.js");
+
+        var artifact = JrocInMemoryCompiler.Compile(new JrocInMemoryCompileRequest(entryPath)
+        {
+            SourceText = """
+                const a = { x: 1, y: 'left' };
+                const b = { y: 'right', x: 2 };
+                console.log(a.x, a.y, b.x, b.y);
+                """
+        });
+
+        using var peStream = new MemoryStream(artifact.PeBytes, writable: false);
+        using var peReader = new PEReader(peStream);
+        var reader = peReader.GetMetadataReader();
+
+        var containerHandle = Assert.Single(
+            reader.TypeDefinitions,
+            handle => reader.GetString(reader.GetTypeDefinition(handle).Name) == "ObjectLiterals");
+
+        var objectLiteralTypeHandles = reader.TypeDefinitions
+            .Where(handle =>
+            {
+                var type = reader.GetTypeDefinition(handle);
+                return reader.GetString(type.Name).StartsWith("L", StringComparison.Ordinal)
+                    && type.GetDeclaringType() == containerHandle;
+            })
+            .ToList();
+
+        // Both reordered literals join onto one representative type.
+        var typeHandle = Assert.Single(objectLiteralTypeHandles);
+        var type = reader.GetTypeDefinition(typeHandle);
+
+        // The representative (first literal, `a`) drives the field layout.
+        var fields = type.GetFields()
+            .Select(reader.GetFieldDefinition)
+            .Select(field => reader.GetString(field.Name))
+            .ToArray();
+        Assert.Equal(new[] { "_x", "_y" }, fields);
+    }
+
+    [Fact]
     public void JsObjectSubclass_PreservesDictionaryDescriptorEnumerationAndJsonBehavior()
     {
         var obj = new SpecializedJsObjectForTest

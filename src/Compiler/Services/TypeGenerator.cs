@@ -396,17 +396,36 @@ namespace Jroc.Services
             TypeDefinitionHandle moduleTypeHandle,
             NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
-            var shapes = EnumerateEligibleObjectLiteralShapes(root)
-                .OrderBy(static s => s.Literal.Location.Start.Line)
-                .ThenBy(static s => s.Literal.Location.Start.Column)
-                .ThenBy(static s => s.Binding.Name, StringComparer.Ordinal)
-                .ThenBy(static s => GetRegistryScopeName(s.Binding.DeclaringScope), StringComparer.Ordinal)
+            // A single shape object can be referenced by more than one binding (an object-literal
+            // binding plus any callable parameters that were inferred to its shape, issue #1434),
+            // so deduplicate by reference before generating types.
+            var distinctShapes = EnumerateEligibleObjectLiteralShapes(root)
+                .Distinct(ReferenceEqualityComparer.Instance)
+                .Cast<ObjectLiteralShapeInfo>()
                 .ToList();
 
-            if (shapes.Count == 0)
+            if (distinctShapes.Count == 0)
             {
                 return;
             }
+
+            // Structurally identical shapes (same member names + member CLR types + function-ness)
+            // share one generated CLR type so distinct same-shape literals can join at a parameter
+            // (issue #1434 phase 6 canonicalization). Groups and their members are ordered
+            // deterministically so metadata tokens stay stable.
+            var groups = distinctShapes
+                .GroupBy(static s => s.GetStructuralSignatureKey(), StringComparer.Ordinal)
+                .Select(g => g
+                    .OrderBy(static s => s.Literal.Location.Start.Line)
+                    .ThenBy(static s => s.Literal.Location.Start.Column)
+                    .ThenBy(static s => s.Binding.Name, StringComparer.Ordinal)
+                    .ThenBy(static s => GetRegistryScopeName(s.Binding.DeclaringScope), StringComparer.Ordinal)
+                    .ToList())
+                .OrderBy(static g => g[0].Literal.Location.Start.Line)
+                .ThenBy(static g => g[0].Literal.Location.Start.Column)
+                .ThenBy(static g => g[0].Binding.Name, StringComparer.Ordinal)
+                .ThenBy(static g => GetRegistryScopeName(g[0].Binding.DeclaringScope), StringComparer.Ordinal)
+                .ToList();
 
             // Mirror the scope-type layout: object-literal types live under a per-module
             // "ObjectLiterals" container nested in the module type, as a sibling of "Scope".
@@ -420,17 +439,20 @@ namespace Jroc.Services
                 firstMethodOverride: MetadataTokens.MethodDefinitionHandle(_nextDeferredCtorRow));
             nestedTypeRegistry.Add(containerHandle, moduleTypeHandle);
 
-            foreach (var shape in shapes)
+            foreach (var group in groups)
             {
-                CreateObjectLiteralType(shape, containerHandle, nestedTypeRegistry);
+                CreateObjectLiteralType(group, containerHandle, nestedTypeRegistry);
             }
         }
 
         private void CreateObjectLiteralType(
-            ObjectLiteralShapeInfo shape,
+            IReadOnlyList<ObjectLiteralShapeInfo> shapeGroup,
             TypeDefinitionHandle containerHandle,
             NestedTypeRelationshipRegistry nestedTypeRegistry)
         {
+            // The representative (first, deterministically ordered) shape names the type and drives
+            // field/member layout; every shape in the group shares the generated type and metadata.
+            var shape = shapeGroup[0];
             var typeName = GetObjectLiteralTypeName(shape);
             var tb = new TypeBuilder(_metadataBuilder, string.Empty, typeName);
             var fieldHandlesByName = new Dictionary<string, FieldDefinitionHandle>(StringComparer.Ordinal);
@@ -517,6 +539,25 @@ namespace Jroc.Services
                 fieldClrTypesByName,
                 getterHandlesByName,
                 setterHandlesByName);
+
+            // Share the generated type and metadata with every structurally identical shape in the
+            // group so distinct same-shape literals (and parameters inferred to the shape) resolve
+            // to one CLR type at the join (issue #1434 phase 6).
+            for (var i = 1; i < shapeGroup.Count; i++)
+            {
+                var member = shapeGroup[i];
+                member.GeneratedClrTypeName = typeName;
+                member.GeneratedClrTypeHandle = typeHandle;
+                _variableRegistry.RegisterObjectLiteralType(
+                    member,
+                    typeName,
+                    typeHandle,
+                    ctorHandle,
+                    fieldHandlesByName,
+                    fieldClrTypesByName,
+                    getterHandlesByName,
+                    setterHandlesByName);
+            }
         }
 
         private MethodDefinitionHandle EmitObjectLiteralConstructor(TypeBuilder tb)
