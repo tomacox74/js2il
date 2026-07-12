@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
@@ -459,12 +458,12 @@ namespace JavaScriptRuntime
             switch (el.ValueKind)
             {
                 case JsonValueKind.Object:
-                    var expando = new ExpandoObject() as IDictionary<string, object?>;
+                    var obj = Object.CreateOrdinaryObject();
                     foreach (var prop in el.EnumerateObject())
                     {
-                        expando[prop.Name] = FromElement(prop.Value);
+                        obj.SetValue(prop.Name, FromElement(prop.Value));
                     }
-                    return (ExpandoObject)expando;
+                    return obj;
 
                 case JsonValueKind.Array:
                     var arr = new Array();

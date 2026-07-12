@@ -403,7 +403,7 @@ namespace JavaScriptRuntime
                 return new IteratorResultObject(value, done: false);
             }
 
-            public object next(object? value = null) => Next();
+            public object next(object? value = null) => IteratorResult.ToOrdinaryObject(Next());
 
             public void Return()
             {
