@@ -3,7 +3,7 @@ using JavaScriptRuntime;
 
 namespace Jroc.Tests;
 
-public sealed class OrdinaryObjectOperationsTests
+public sealed class ObjectRuntimeOrdinaryObjectTests
 {
     [Theory]
     [InlineData(false)]
@@ -73,7 +73,7 @@ public sealed class OrdinaryObjectOperationsTests
     public void DeletedIntrinsicProperty_IsMaskedAcrossCoreDispatch(bool useExpando)
     {
         object target = useExpando ? new ExpandoObject() : new JsObject();
-        OrdinaryObjectOperations.TrySetOwnValue(target, "hidden", 42d);
+        ObjectRuntime.TrySetOwnValue(target, "hidden", 42d);
         using (PropertyDescriptorStore.BeginIntrinsicInitialization())
         {
             PropertyDescriptorStore.DefineOrUpdate(target, "hidden", new JsPropertyDescriptor

@@ -49,7 +49,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
         // Only CLR objects (non-ordinary, non-array-like) use a type chain.
         _useTypeChain = !_usePrototypeChain
-            && !OrdinaryObjectOperations.IsOrdinaryObject(root)
+            && !ObjectRuntime.IsOrdinaryObject(root)
             && root is not JavaScriptRuntime.Proxy
             && root is not JavaScriptRuntime.Array
             && root is not JavaScriptRuntime.TypedArrayBase
@@ -205,7 +205,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         }
 
         // Ordinary objects: union descriptor keys and backing keys.
-        if (OrdinaryObjectOperations.IsOrdinaryObject(target))
+        if (ObjectRuntime.IsOrdinaryObject(target))
         {
             return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
@@ -264,7 +264,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
         }
 
-        if (OrdinaryObjectOperations.IsOrdinaryObject(target))
+        if (ObjectRuntime.IsOrdinaryObject(target))
         {
             return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
         }
@@ -348,11 +348,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
 
         // Ordinary objects: key is present in backing storage or the descriptor store,
         // and enumerable according to descriptor semantics.
-        if (OrdinaryObjectOperations.IsOrdinaryObject(target))
+        if (ObjectRuntime.IsOrdinaryObject(target))
         {
             bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);
             bool presentInBacking = !PropertyDescriptorStore.IsDeleted(target, key)
-                && OrdinaryObjectOperations.HasOwnValue(target, key);
+                && ObjectRuntime.HasOwnValue(target, key);
             if (!presentInDescriptor && !presentInBacking)
                 return false;
             return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
