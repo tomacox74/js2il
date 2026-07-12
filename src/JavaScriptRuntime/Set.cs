@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 
 namespace JavaScriptRuntime
 {
@@ -9,15 +8,15 @@ namespace JavaScriptRuntime
     public sealed class Set : IEnumerable<object>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeValuesValue = PrototypeValues;
-        internal static readonly ExpandoObject Prototype = CreatePrototype();
+        internal static readonly JsObject Prototype = CreatePrototype();
         private readonly List<object> _items = new List<object>();
         private readonly HashSet<object> _set = new HashSet<object>();
 
-        private static ExpandoObject CreatePrototype()
+        private static JsObject CreatePrototype()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var exp = new ExpandoObject();
+            var exp = new JsObject();
             DefinePrototypeMethod(exp, "add", PrototypeAdd);
             DefinePrototypeMethod(exp, "has", PrototypeHas);
             DefinePrototypeMethod(exp, "delete", PrototypeDelete);
@@ -59,7 +58,7 @@ namespace JavaScriptRuntime
             return exp;
         }
 
-        private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {

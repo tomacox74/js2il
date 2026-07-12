@@ -5,6 +5,91 @@ namespace Jroc.Tests;
 public class GlobalThisTests
 {
     [Fact]
+    public void GlobalObject_AndNonArrayIntrinsicPrototypes_UseJsObjectRepresentation()
+    {
+        var globalObject = Assert.IsType<GlobalThis>(GlobalThis.globalThis);
+
+        Assert.IsAssignableFrom<JsObject>(globalObject);
+        Assert.IsType<JsObject>(JavaScriptRuntime.String.Prototype);
+        Assert.IsType<JsObject>(JavaScriptRuntime.String.StringIteratorPrototype);
+        Assert.IsType<JsObject>(RegExp.Prototype);
+        Assert.IsType<JsObject>(JavaScriptRuntime.Map.Prototype);
+        Assert.IsType<JsObject>(JavaScriptRuntime.Set.Prototype);
+    }
+
+    [Fact]
+    public void GlobalObject_PreservesDynamicHostPropertyAccess()
+    {
+        var serviceProvider = RuntimeServices.BuildServiceProvider();
+
+        try
+        {
+            GlobalThis.ServiceProvider = serviceProvider;
+            dynamic globalObject = GlobalThis.globalThis;
+
+            globalObject.hostValue = 42d;
+
+            Assert.Equal(42d, globalObject.hostValue);
+            Assert.Equal(42d, ((GlobalThis)globalObject)["hostValue"]);
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
+    public void GlobalObject_PreservesDictionaryCollectionBehavior()
+    {
+        var globalObject = Assert.IsType<GlobalThis>(GlobalThis.globalThis);
+        var collection = (ICollection<KeyValuePair<string, object?>>)globalObject;
+        var copy = new KeyValuePair<string, object?>[collection.Count];
+
+        collection.CopyTo(copy, 0);
+
+        Assert.Contains(copy, pair => pair.Key == nameof(GlobalThis.globalThis)
+            && ReferenceEquals(pair.Value, globalObject));
+        Assert.Throws<ArgumentException>(() => globalObject.Add(nameof(GlobalThis.globalThis), null));
+        Assert.Throws<NotSupportedException>(collection.Clear);
+        Assert.Throws<NotSupportedException>(((JsObject)globalObject).Clear);
+    }
+
+    [Fact]
+    public void NonArrayIntrinsicPrototypeMutations_AreIsolatedBetweenRuntimeStores()
+    {
+        var firstServiceProvider = RuntimeServices.BuildServiceProvider();
+        var secondServiceProvider = RuntimeServices.BuildServiceProvider();
+        var prototypes = new object[]
+        {
+            JavaScriptRuntime.String.Prototype,
+            JavaScriptRuntime.String.StringIteratorPrototype,
+            RegExp.Prototype,
+            JavaScriptRuntime.Map.Prototype,
+            JavaScriptRuntime.Set.Prototype
+        };
+
+        try
+        {
+            GlobalThis.ServiceProvider = firstServiceProvider;
+            foreach (var prototype in prototypes)
+            {
+                ObjectRuntime.SetItem(prototype, "realmMarker", 1d);
+                Assert.Equal(1d, ObjectRuntime.GetItem(prototype, "realmMarker"));
+            }
+
+            GlobalThis.ServiceProvider = secondServiceProvider;
+            foreach (var prototype in prototypes)
+            {
+                Assert.Null(ObjectRuntime.GetItem(prototype, "realmMarker"));
+            }
+        }
+        finally
+        {
+            GlobalThis.ServiceProvider = null;
+        }
+    }
+
+    [Fact]
     public void GlobalObject_DoesNotExposeGcByDefault()
     {
         var serviceProvider = RuntimeServices.BuildServiceProvider();

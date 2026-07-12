@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Frozen;
+using System.Dynamic;
 
 namespace JavaScriptRuntime;
 
@@ -91,7 +92,7 @@ internal sealed class JsShape
 /// for object literal property initialization to avoid the <c>box</c> instruction.
 /// </para>
 /// </summary>
-public class JsObject : IDictionary<string, object?>
+public class JsObject : DynamicObject, IDictionary<string, object?>
 {
     private JsValue[] _properties = System.Array.Empty<JsValue>();
 
@@ -207,7 +208,14 @@ public class JsObject : IDictionary<string, object?>
     public bool IsReadOnly => false;
 
     public void Add(string key, object? value)
-        => SetValue(key, JsValue.FromObject(value));
+    {
+        if (ContainsKey(key))
+        {
+            throw new ArgumentException($"An item with the same key has already been added: {key}", nameof(key));
+        }
+
+        SetValue(key, JsValue.FromObject(value));
+    }
 
     public bool ContainsKey(string key) => _shape.GetSlot(key) != -1;
 
@@ -236,10 +244,10 @@ public class JsObject : IDictionary<string, object?>
 
     public void Add(KeyValuePair<string, object?> item)
     {
-        SetValue(item.Key, JsValue.FromObject(item.Value));
+        Add(item.Key, item.Value);
     }
 
-    public void Clear()
+    public virtual void Clear()
     {
         _properties = System.Array.Empty<JsValue>();
         _shape = JsShape.Empty;
@@ -252,11 +260,27 @@ public class JsObject : IDictionary<string, object?>
 
     public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(array);
+        if (arrayIndex < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+        }
+        if (array.Length - arrayIndex < Count)
+        {
+            throw new ArgumentException("The destination array does not have enough space.", nameof(array));
+        }
+
+        foreach (var property in this)
+        {
+            array[arrayIndex++] = property;
+        }
     }
+
     public bool Remove(KeyValuePair<string, object?> item)
     {
-        throw new NotImplementedException();
+        return TryGetValue(item.Key, out var value)
+            && EqualityComparer<object?>.Default.Equals(value, item.Value)
+            && Remove(item.Key);
     }
 
     public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
@@ -269,6 +293,21 @@ public class JsObject : IDictionary<string, object?>
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
+        => TryGetValue(binder.Name, out result);
+
+    public override bool TrySetMember(SetMemberBinder binder, object? value)
+    {
+        this[binder.Name] = value;
+        return true;
+    }
+
+    public override bool TryDeleteMember(DeleteMemberBinder binder)
+        => Remove(binder.Name);
+
+    public override IEnumerable<string> GetDynamicMemberNames()
+        => GetOwnPropertyNames();
 
     // -------------------------------------------------------------------------
     // Helpers

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 
 namespace JavaScriptRuntime
 {
@@ -9,16 +8,16 @@ namespace JavaScriptRuntime
     public sealed class Map : IEnumerable<object[]>
     {
         private static readonly Func<object[], object?[]?, object?> _prototypeEntriesValue = PrototypeEntries;
-        internal static readonly ExpandoObject Prototype = CreatePrototype();
+        internal static readonly JsObject Prototype = CreatePrototype();
         private static readonly object NullKeySentinel = new object();
         private readonly List<object[]> _entries = new List<object[]>(); // [key, value] pairs
         private readonly Dictionary<object, int> _keyIndex = new Dictionary<object, int>(new SameValueZeroKeyComparer());
 
-        private static ExpandoObject CreatePrototype()
+        private static JsObject CreatePrototype()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var exp = new ExpandoObject();
+            var exp = new JsObject();
             DefinePrototypeMethod(exp, "set", PrototypeSet);
             DefinePrototypeMethod(exp, "get", PrototypeGet);
             DefinePrototypeMethod(exp, "has", PrototypeHas);
@@ -54,7 +53,7 @@ namespace JavaScriptRuntime
             return exp;
         }
 
-        private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method)
+        private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method)
         {
             PropertyDescriptorStore.DefineOrUpdate(prototype, name, new JsPropertyDescriptor
             {

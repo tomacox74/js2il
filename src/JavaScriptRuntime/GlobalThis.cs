@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq.Expressions;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime
@@ -12,16 +10,12 @@ namespace JavaScriptRuntime
     /// Minimal surface for jroc codegen: __dirname, __filename, and process.exitCode.
     /// </summary>
     [IntrinsicObject("GlobalThis")]
-    public class GlobalThis : IDynamicMetaObjectProvider, IDictionary<string, object?>
+    public class GlobalThis : JsObject, IDictionary<string, object?>
     {
         private static readonly ThreadLocal<ServiceContainer?> _serviceProvider = new(() => null);
 
         // Per-"realm" (thread) global object. This backs the ECMAScript globalThis value.
-        // We represent it as a GlobalThis instance with ExpandoObject-like behavior.
         private static readonly ThreadLocal<GlobalThis?> _globalObject = new(() => null);
-
-        private readonly ExpandoObject _expando = new();
-        private IDictionary<string, object?> Properties => (IDictionary<string, object?>)_expando;
 
         private static readonly JavaScriptRuntime.Console _defaultConsole = new(new ConsoleOutputSinks());
         private static readonly JavaScriptRuntime.Node.Process _defaultProcess = new(new DefaultEnvironment());
@@ -875,55 +869,15 @@ namespace JavaScriptRuntime
             }
         }
 
-        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
-        {
-            return ((IDynamicMetaObjectProvider)_expando).GetMetaObject(parameter);
-        }
-
-        public object? this[string key]
-        {
-            get => Properties[key];
-            set => Properties[key] = value;
-        }
-
-        public ICollection<string> Keys => Properties.Keys;
-
-        public ICollection<object?> Values => Properties.Values;
-
-        public int Count => Properties.Count;
-
-        public bool IsReadOnly => Properties.IsReadOnly;
-
-        public void Add(string key, object? value) => Properties.Add(key, value);
-
-        public bool ContainsKey(string key) => Properties.ContainsKey(key);
-
-        public bool Remove(string key) => Properties.Remove(key);
-
-        public bool TryGetValue(string key, out object? value) => Properties.TryGetValue(key, out value);
-
-        public void Add(KeyValuePair<string, object?> item) => Properties.Add(item);
-
-        void ICollection<KeyValuePair<string, object?>>.Clear() =>
+        public override void Clear() =>
             throw new NotSupportedException("Clearing the global object is not supported.");
-
-        public bool Contains(KeyValuePair<string, object?> item) => Properties.Contains(item);
-
-        void ICollection<KeyValuePair<string, object?>>.CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex) =>
-            Properties.CopyTo(array, arrayIndex);
-
-        public bool Remove(KeyValuePair<string, object?> item) => Properties.Remove(item);
-
-        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator() => Properties.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => Properties.GetEnumerator();
 
         /// <summary>
         /// ECMA-262 globalThis value.
         /// Returns the global object for the current execution context.
         /// </summary>
         /// <remarks>
-        /// JROC models the global object as a dynamic bag (ExpandoObject) seeded with common globals.
+        /// JROC models the global object as a <see cref="JsObject"/> seeded with common globals.
         /// This allows libraries to read/write properties via globalThis (e.g., globalThis.window = ...).
         /// </remarks>
         public static object globalThis => GetOrCreateGlobalObject();
