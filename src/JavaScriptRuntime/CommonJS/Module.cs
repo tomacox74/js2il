@@ -33,8 +33,8 @@ public class Module : DynamicObject
         this._childrenList = new List<Module>();
         this.paths = ComputeModulePaths(this.path);
         
-        // exports starts as an empty ExpandoObject, same as Node.js
-        this.exports = new ExpandoObject();
+        // CommonJS exports starts as one mutable ordinary JavaScript object.
+        this.exports = new JsObject();
         
         // Module is not loaded until execution completes
         this.loaded = false;
