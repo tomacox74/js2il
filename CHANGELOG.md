@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/runtime: ordinary receivers allocated by `new Fn()` and the shared ordinary `Function.prototype` / restricted-function prototype objects now use shape-backed `JsObject` storage instead of `ExpandoObject`. Constructor assignments therefore use the descriptor-free own-read path while preserving prototype lookup, bound/dynamic constructors, constructor return overrides, restricted `caller` / `arguments` thrower identity, and mixed-runtime `ExpandoObject` compatibility. A constructed-object benchmark (1,000 instances, 100 repeated read passes) improved precompiled execution from 38.6 ms to 25.8 ms (~33%); current `JsObject` setup/storage increased allocations from 6.95 MB to 11.51 MB, leaving allocation reduction for the core-dispatch/storage follow-up (#1450). (#1449, parent #1426)
 
 ## v0.11.21 - 2026-07-11
 
