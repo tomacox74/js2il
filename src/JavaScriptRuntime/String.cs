@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -29,8 +28,8 @@ namespace JavaScriptRuntime
         private static SubstringCacheEntry[]? substringCache;
         [ThreadStatic]
         private static int substringCacheNextIndex;
-        internal static readonly ExpandoObject Prototype = CreatePrototype();
-        internal static readonly ExpandoObject StringIteratorPrototype = CreateStringIteratorPrototype();
+        internal static readonly JsObject Prototype = CreatePrototype();
+        internal static readonly JsObject StringIteratorPrototype = CreateStringIteratorPrototype();
 
         private readonly struct SubstringCacheEntry
         {
@@ -48,11 +47,11 @@ namespace JavaScriptRuntime
             public string? Result { get; }
         }
 
-        private static ExpandoObject CreatePrototype()
+        private static JsObject CreatePrototype()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new ExpandoObject();
+            var prototype = new JsObject();
 
             DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
             DefinePrototypeMethod(prototype, "charAt", (Func<object[], object?[]?, object?>)PrototypeCharAt, 1);
@@ -107,11 +106,11 @@ namespace JavaScriptRuntime
             return prototype;
         }
 
-        private static ExpandoObject CreateStringIteratorPrototype()
+        private static JsObject CreateStringIteratorPrototype()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new ExpandoObject();
+            var prototype = new JsObject();
             DefinePrototypeMethod(prototype, "next", (Func<object[], object?[]?, object?>)StringIteratorPrototypeNext, 0);
             DefinePrototypeMethod(prototype, IteratorSymbolPropertyKey, (Func<object[], object?[]?, object?>)StringIteratorPrototypeIterator, 0, "[Symbol.iterator]");
             PropertyDescriptorStore.DefineOrUpdate(prototype, ToStringTagSymbolPropertyKey, new JsPropertyDescriptor

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -32,7 +31,7 @@ namespace JavaScriptRuntime
         private static readonly Func<object?, object?, object> ReplaceSymbolDelegate = ReplaceSymbolMethod;
         private static readonly Func<object?, object> SearchSymbolDelegate = SearchSymbolMethod;
         private static readonly Func<object?, object?, object> SplitSymbolDelegate = SplitSymbolMethod;
-        internal static readonly ExpandoObject Prototype = CreatePrototype();
+        internal static readonly JsObject Prototype = CreatePrototype();
         private static WellKnownSymbolFastPathFlags _prototypeWellKnownSymbolFastPathFlags = WellKnownSymbolFastPathFlags.All;
         private readonly Regex _regex;
         private readonly bool _global;
@@ -254,11 +253,11 @@ namespace JavaScriptRuntime
             return JavaScriptRuntime.String.SplitWithRegExp(DotNet2JSConversions.ToString(input) ?? string.Empty, regExp, limit);
         }
 
-        private static ExpandoObject CreatePrototype()
+        private static JsObject CreatePrototype()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new ExpandoObject();
+            var prototype = new JsObject();
             DefineSymbolMethod(prototype, MatchSymbolPropertyKey, MatchSymbolDelegate);
             DefineSymbolMethod(prototype, ReplaceSymbolPropertyKey, ReplaceSymbolDelegate);
             DefineSymbolMethod(prototype, SearchSymbolPropertyKey, SearchSymbolDelegate);
