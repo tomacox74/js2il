@@ -2369,9 +2369,9 @@ namespace JavaScriptRuntime
                 return Advance();
             }
 
-            public object next()
+            public IteratorResultObject next()
             {
-                return IteratorResult.ToOrdinaryObject(Advance());
+                return Advance();
             }
 
             public void Return()

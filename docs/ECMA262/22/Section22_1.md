@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-27T01:36:52Z
+> Last generated (UTC): 2026-07-12T04:40:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -187,13 +187,13 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.match | Supported with Limitations | [`String_Match_NonGlobal.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_Match_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_Global.js) |  | Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with groups and sets .index/.input. Symbol.match and advanced RegExp behaviors are not implemented. |
+| String.prototype.match | Supported with Limitations | [`String_Match_NonGlobal.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_NonGlobal.js)<br>[`String_Match_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_Match_Global.js) |  | Implemented via JavaScriptRuntime.String.Match with limited RegExp integration. For /g, returns an Array of full-match substrings (or null). For non-global, returns an exec-like Array with .index, .input, and null-prototype named .groups metadata. Symbol.match dispatch is supported, while broader RegExp exotic behavior remains limited. |
 
 ### 22.1.3.14 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.matchall))
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| String.prototype.matchAll | Supported with Limitations | [`String_MatchAll_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MatchAll_Basic.js) |  | Implemented in JavaScriptRuntime.String.MatchAll for string patterns and global RegExp inputs. The current runtime eagerly materializes the matches as a JavaScriptRuntime.Array of exec-like match arrays instead of the spec's lazy RegExp String Iterator. |
+| String.prototype.matchAll | Supported with Limitations | [`String_MatchAll_Basic.js`](../../../tests/Jroc.Tests/String/JavaScript/String_MatchAll_Basic.js)<br>[`String_RegExp_NamedGroups_Indices.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js) |  | Implemented in JavaScriptRuntime.String.MatchAll for string patterns and global RegExp inputs. Exec-like match arrays include named .groups and optional .indices.groups metadata. The current runtime eagerly materializes matches as a JavaScriptRuntime.Array instead of the spec's lazy RegExp String Iterator. |
 
 ### 22.1.3.15 ([tc39.es](https://tc39.es/ecma262/#sec-string.prototype.normalize))
 

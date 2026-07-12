@@ -1038,7 +1038,7 @@ namespace JavaScriptRuntime
         }
 
         public object next(object? value = null)
-            => IteratorResult.ToOrdinaryObject(Next());
+            => Next();
 
         public bool HasReturn => false;
 

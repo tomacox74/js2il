@@ -884,7 +884,7 @@ namespace JavaScriptRuntime
             }
 
             public object next(object? value = null)
-                => IteratorResult.ToOrdinaryObject(Next());
+                => Next();
 
             public void Return()
             {

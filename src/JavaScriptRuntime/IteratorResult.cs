@@ -52,29 +52,4 @@ public static class IteratorResult
     {
         return new IteratorResultObject<T>(value, done);
     }
-
-    /// <summary>
-    /// Converts an internal, allocation-light iterator result into the ordinary
-    /// JavaScript-visible object returned by <c>Iterator.prototype.next()</c> and the
-    /// various built-in iterator "next" methods: a real ordinary object (backed by
-    /// <see cref="JsObject"/>) with own data properties "value" then "done" in that
-    /// order (per ECMA-262 7.4.7 CreateIteratorResultObject), writable/enumerable/
-    /// configurable, and [[Prototype]] set to %Object.prototype%.
-    /// <para>
-    /// Internal consumers (for-of, spread, destructuring, generator delegation) must
-    /// keep using <see cref="IJavaScriptIterator.Next"/> / <see cref="IIteratorResult"/>
-    /// directly instead of this method, so the hot iteration path is not affected by
-    /// the extra allocation this performs.
-    /// </para>
-    /// </summary>
-    public static object ToOrdinaryObject(IIteratorResult result)
-        => ToOrdinaryObject(result.value, result.done);
-
-    public static object ToOrdinaryObject(object? value, bool done)
-    {
-        var obj = Object.CreateOrdinaryObject();
-        obj.SetValue("value", value);
-        obj.SetBoolean("done", done);
-        return obj;
-    }
 }

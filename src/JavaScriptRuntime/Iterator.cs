@@ -105,7 +105,7 @@ public static class Iterator
 
     private static object? PrototypeNext(object[] scopes, object?[]? args)
     {
-        return IteratorResult.ToOrdinaryObject(GetReceiverIterator("next").Next());
+        return GetReceiverIterator("next").Next();
     }
 
     private static object? PrototypeReturn(object[] scopes, object?[]? args)
@@ -116,7 +116,7 @@ public static class Iterator
             iterator.Return();
         }
 
-        return IteratorResult.ToOrdinaryObject(null, done: true);
+        return IteratorResult.Create(null, done: true);
     }
 
     private static object? PrototypeDrop(object[] scopes, object?[]? args)

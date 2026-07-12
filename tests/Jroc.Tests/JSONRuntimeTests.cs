@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Xunit;
 using JSONRuntime = JavaScriptRuntime.JSON;
@@ -65,10 +64,9 @@ namespace Jroc.Tests
         }
 
         [Fact]
-        public void JSON_Parse_NonString_Throws_TypeError()
+        public void JSON_Parse_NonString_Coerces_ToString()
         {
-            var ex = Assert.Throws<JavaScriptRuntime.TypeError>(() => JSONRuntime.Parse(123));
-            Assert.Contains("JSON.parse", ex.Message);
+            Assert.Equal(123d, JSONRuntime.Parse(123));
         }
     }
 }

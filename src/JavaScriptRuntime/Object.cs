@@ -3919,22 +3919,20 @@ namespace JavaScriptRuntime
         private static object CreateDescriptorObject(JsPropertyDescriptor desc)
         {
             var result = CreateOrdinaryObject();
-            var dict = (IDictionary<string, object?>)result;
-
-            dict["enumerable"] = desc.Enumerable;
-            dict["configurable"] = desc.Configurable;
 
             if (desc.Kind == JsPropertyDescriptorKind.Accessor)
             {
-                dict["get"] = desc.Get;
-                dict["set"] = desc.Set;
+                result.SetBoxedValue("get", desc.Get);
+                result.SetBoxedValue("set", desc.Set);
             }
             else
             {
-                dict["value"] = desc.Value;
-                dict["writable"] = desc.Writable;
+                result.SetBoxedValue("value", desc.Value);
+                result.SetBoxedValue("writable", desc.Writable);
             }
 
+            result.SetBoxedValue("enumerable", desc.Enumerable);
+            result.SetBoxedValue("configurable", desc.Configurable);
             return result;
         }
 

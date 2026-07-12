@@ -215,15 +215,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
 
-        // JS Array: enumerate indices
-        if (target is JavaScriptRuntime.Array jsArr)
+        // Arrays can also carry enumerable non-index properties (for example,
+        // RegExp exec metadata such as groups, index, input, and indices).
+        if (target is JavaScriptRuntime.Array)
         {
-            var keys = new List<string>(jsArr.Count);
-            for (int i = 0; i < jsArr.Count; i++)
-            {
-                keys.Add(i.ToString());
-            }
-            return keys;
+            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
 
         // Typed array: enumerate indices
@@ -274,14 +270,9 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
         }
 
-        if (target is JavaScriptRuntime.Array jsArr)
+        if (target is JavaScriptRuntime.Array)
         {
-            var keys = new List<string>(jsArr.Count);
-            for (int i = 0; i < jsArr.Count; i++)
-            {
-                keys.Add(i.ToString());
-            }
-            return keys;
+            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
         }
 
         if (target is JavaScriptRuntime.TypedArrayBase typedArray)
@@ -370,6 +361,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         // JS Array
         if (target is JavaScriptRuntime.Array jsArr)
         {
+            if (PropertyDescriptorStore.TryGetOwn(target, key, out var descriptor))
+            {
+                return descriptor.Enumerable;
+            }
+
             if (!int.TryParse(key, out var idx) || idx < 0)
             {
                 return false;

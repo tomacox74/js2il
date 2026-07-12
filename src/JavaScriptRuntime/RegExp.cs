@@ -42,6 +42,7 @@ namespace JavaScriptRuntime
         private readonly bool _hasIndices;
         private readonly string _source;
         private readonly string? _simpleLiteralPattern;
+        private readonly (string Name, int Number)[] _namedGroups;
         private WellKnownSymbolFastPathFlags _wellKnownSymbolFastPathFlags;
 
         // Minimal support for RegExp.prototype.lastIndex (used heavily by parsers).
@@ -73,6 +74,7 @@ namespace JavaScriptRuntime
             {
                 var preparedPattern = PreparePatternForDotNetRegex(_source, _unicode, _dotAll);
                 _regex = new Regex(preparedPattern, parsedFlags.ToRegexOptions());
+                _namedGroups = GetNamedGroups(_regex);
             }
             catch (RegexParseException ex)
             {
@@ -187,11 +189,12 @@ namespace JavaScriptRuntime
                 result.Add(g.Success ? g.Value : null);
             }
 
-            JavaScriptRuntime.ObjectRuntime.SetProperty(result, "index", (double)match.Index);
-            JavaScriptRuntime.ObjectRuntime.SetProperty(result, "input", s);
+            DefineResultProperty(result, "index", (double)match.Index);
+            DefineResultProperty(result, "input", s);
+            DefineResultProperty(result, "groups", CreateNamedGroupsObject(match, indices: false));
             if (_hasIndices)
             {
-                JavaScriptRuntime.ObjectRuntime.SetProperty(result, "indices", CreateIndicesArray(match));
+                DefineResultProperty(result, "indices", CreateIndicesArray(match));
             }
 
             return result;
@@ -706,7 +709,7 @@ namespace JavaScriptRuntime
                 var group = match.Groups[i];
                 if (!group.Success)
                 {
-                    indices.Add(JsNull.Null);
+                    indices.Add(null);
                     continue;
                 }
 
@@ -718,7 +721,67 @@ namespace JavaScriptRuntime
                 indices.Add(bounds);
             }
 
+            DefineResultProperty(indices, "groups", CreateNamedGroupsObject(match, indices: true));
             return indices;
+        }
+
+        private static void DefineResultProperty(object target, string name, object? value)
+        {
+            PropertyDescriptorStore.DefineOrUpdate(target, name, new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = value,
+                Writable = true,
+                Enumerable = true,
+                Configurable = true
+            });
+        }
+
+        private static (string Name, int Number)[] GetNamedGroups(Regex regex)
+        {
+            var groups = new List<(string Name, int Number)>();
+            foreach (var name in regex.GetGroupNames())
+            {
+                if (int.TryParse(name, NumberStyles.None, CultureInfo.InvariantCulture, out _))
+                {
+                    continue;
+                }
+
+                groups.Add((name, regex.GroupNumberFromName(name)));
+            }
+
+            return groups.ToArray();
+        }
+
+        private object? CreateNamedGroupsObject(Match match, bool indices)
+        {
+            if (_namedGroups.Length == 0)
+            {
+                return null;
+            }
+
+            var groups = new JsObject();
+            PrototypeChain.SetPrototype(groups, JsNull.Null);
+
+            foreach (var (name, number) in _namedGroups)
+            {
+                var group = match.Groups[number];
+                object? value = null;
+                if (group.Success)
+                {
+                    value = indices
+                        ? new JavaScriptRuntime.Array(2)
+                        {
+                            (double)group.Index,
+                            (double)(group.Index + group.Length)
+                        }
+                        : group.Value;
+                }
+
+                groups.SetBoxedValue(name, value);
+            }
+
+            return groups;
         }
 
         internal bool TryMatch(string input, out Match match)

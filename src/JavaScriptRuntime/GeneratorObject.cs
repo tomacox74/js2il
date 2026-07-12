@@ -240,21 +240,6 @@ public sealed class GeneratorObject : IJavaScriptIterator
     /// </summary>
     public object next(object? value = null)
     {
-        var result = NextCore(value);
-        return result is IIteratorResult iteratorResult
-            ? IteratorResult.ToOrdinaryObject(iteratorResult)
-            : IteratorResult.ToOrdinaryObject(result, done: false);
-    }
-
-    /// <summary>
-    /// Core step logic shared by <see cref="next"/> (the JS-visible method, which
-    /// converts the result into a real ordinary object) and
-    /// <see cref="IJavaScriptIterator.Next"/> (the internal fast path used by for-of,
-    /// spread, destructuring, and yield* delegation, which must not incur the extra
-    /// ordinary-object allocation on every step).
-    /// </summary>
-    private object NextCore(object? value)
-    {
         var scope = GetLeafScope();
 
         if (scope.Done)
@@ -284,7 +269,7 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
     IteratorResultObject IJavaScriptIterator.Next()
     {
-        var result = NextCore(null);
+        var result = next();
         if (result is IteratorResultObject iteratorResult)
         {
             return iteratorResult;
@@ -302,21 +287,13 @@ public sealed class GeneratorObject : IJavaScriptIterator
 
     void IJavaScriptIterator.Return()
     {
-        _ = ReturnCore(null);
+        _ = @return(null);
     }
 
     /// <summary>
     /// Implements generator.throw(error).
     /// </summary>
     public object @throw(object? error)
-    {
-        var result = ThrowCore(error);
-        return result is IIteratorResult iteratorResult
-            ? IteratorResult.ToOrdinaryObject(iteratorResult)
-            : IteratorResult.ToOrdinaryObject(result, done: false);
-    }
-
-    private object ThrowCore(object? error)
     {
         var scope = GetLeafScope();
 
@@ -348,20 +325,6 @@ public sealed class GeneratorObject : IJavaScriptIterator
     /// Implements generator.return(value).
     /// </summary>
     public object @return(object? value)
-    {
-        var result = ReturnCore(value);
-        return result is IIteratorResult iteratorResult
-            ? IteratorResult.ToOrdinaryObject(iteratorResult)
-            : IteratorResult.ToOrdinaryObject(result, done: false);
-    }
-
-    /// <summary>
-    /// Core "return" logic shared by <see cref="@return"/> (JS-visible, converts the
-    /// result into a real ordinary object) and <see cref="IJavaScriptIterator.Return"/>
-    /// (the internal fast path used by IteratorClose on for-of early exit, which discards
-    /// the result and must not pay for the extra ordinary-object allocation).
-    /// </summary>
-    private object ReturnCore(object? value)
     {
         var scope = GetLeafScope();
 
@@ -424,11 +387,11 @@ public sealed class GeneratorObject : IJavaScriptIterator
             if (_done || ReferenceEquals(_yieldValue, NoYield))
             {
                 _done = true;
-                return IteratorResult.ToOrdinaryObject(null, done: true);
+                return IteratorResult.Create(null, done: true);
             }
 
             _done = true;
-            return IteratorResult.ToOrdinaryObject(_yieldValue, done: false);
+            return IteratorResult.Create(_yieldValue, done: false);
         }
     }
 }

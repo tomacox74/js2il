@@ -8,5 +8,8 @@ namespace Jroc.Tests.JSON
 
         [Fact]
         public Task JSON_Parse_SimpleObject() => GenerateTest(nameof(JSON_Parse_SimpleObject));
+
+        [Fact]
+        public Task JSON_Parse_Reviver_Holder() => GenerateTest(nameof(JSON_Parse_Reviver_Holder));
     }
 }
