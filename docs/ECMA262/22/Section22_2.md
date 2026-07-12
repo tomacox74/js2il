@@ -4,7 +4,7 @@
 
 [Back to Section22](Section22.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-28T17:44:11Z
+> Last generated (UTC): 2026-07-12T04:40:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -128,7 +128,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Indices_Exec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js) |  | Implemented in JavaScriptRuntime.RegExp.exec as a minimal subset. Supports returning an Array of captures, attaching .index and .input, honoring lastIndex for both /g and /y regexes, and attaching a minimal .indices array when the d flag is present. Full RegExp exotic object semantics, named groups on indices, and complete Unicode mode parity are still not implemented. |
+| RegExp.prototype.exec | Supported with Limitations | [`String_RegExp_Exec_LastIndex_Global.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Global.js)<br>[`String_RegExp_Exec_LastIndex_Sticky.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_Exec_LastIndex_Sticky.js)<br>[`IntrinsicCallables_RegExp_Indices_Exec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js)<br>[`String_RegExp_NamedGroups_Indices.js`](../../../tests/Jroc.Tests/String/JavaScript/String_RegExp_NamedGroups_Indices.js)<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/named-groups/ExecutionTests.cs`<br>`tests/Jroc.Test262.Tests/built-ins/RegExp/match-indices/ExecutionTests.cs` |  | Implemented in JavaScriptRuntime.RegExp.exec. Returns an Array of captures with default data properties for .index, .input, .groups, and optional .indices; honors lastIndex for both /g and /y regexes. Named captures produce null-prototype JsObject records in .groups and .indices.groups, with source-order keys and present undefined values for unmatched captures. Full RegExp exotic object semantics, duplicate named groups, and complete Unicode mode parity remain limited. |
 
 ### 22.2.6.3 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.dotAll))
 
@@ -152,7 +152,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| get RegExp.prototype.hasIndices | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js)<br>[`IntrinsicCallables_RegExp_Indices_Exec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) |  | Implemented in JavaScriptRuntime.RegExp.hasIndices from the stored d flag. exec() attaches a minimal .indices property containing [start, end] pairs for the overall match and each capture, with unmatched captures represented as null. Named groups on indices are not yet implemented. |
+| get RegExp.prototype.hasIndices | Supported with Limitations | [`IntrinsicCallables_RegExp_Getters_Extended.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Getters_Extended.js)<br>[`IntrinsicCallables_RegExp_Indices_Exec.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_Indices_Exec.js)<br>[`IntrinsicCallables_RegExp_ModernFlags_Basic.js`](../../../tests/Jroc.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_RegExp_ModernFlags_Basic.js) |  | Implemented in JavaScriptRuntime.RegExp.hasIndices from the stored d flag. exec() attaches .indices containing [start, end] pairs for the overall match and each capture; unmatched captures are undefined. Named captures are exposed through a null-prototype .indices.groups JsObject with source-order keys and default data-property descriptors. |
 
 ### 22.2.6.7 ([tc39.es](https://tc39.es/ecma262/#sec-get-regexp.prototype.ignorecase))
 

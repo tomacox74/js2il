@@ -4,7 +4,7 @@
 
 [Back to Section25](Section25.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-22T20:50:08Z
+> Last generated (UTC): 2026-07-12T04:40:20Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -34,7 +34,7 @@ Feature-level support tracking with repo test references and optional test262 ev
 
 | Feature name | Status | Test scripts | test262 evidence | Notes |
 |---|---|---|---|---|
-| JSON.parse | Supported with Limitations | `tests/Jroc.Tests/JSONRuntimeTests.cs` | `test/built-ins/JSON/parse/15.12.1.1-0-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-0-4.js`<br>`test/built-ins/JSON/parse/15.12.1.1-0-9.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g1-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g1-4.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g2-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g2-4.js` | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Current bounded test262 coverage exercises representative grammar acceptance and primitive/whitespace handling. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. |
+| JSON.parse | Supported with Limitations | [`JSON_Parse_Reviver_Holder.js`](../../../tests/Jroc.Tests/JSON/JavaScript/JSON_Parse_Reviver_Holder.js)<br>`tests/Jroc.Test262.Tests/built-ins/JSON/parse/ExecutionTests.cs` | `test/built-ins/JSON/parse/15.12.1.1-0-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-0-4.js`<br>`test/built-ins/JSON/parse/15.12.1.1-0-9.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g1-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g1-4.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g2-1.js`<br>`test/built-ins/JSON/parse/15.12.1.1-g2-4.js`<br>`test/built-ins/JSON/parse/reviver-call-order.js`<br>`test/built-ins/JSON/parse/reviver-wrapper.js` | Implemented by JavaScriptRuntime.JSON.Parse with ECMAScript string coercion and SyntaxError translation for invalid input. Parsed objects and the reviver root wrapper are ordinary JsObject instances; arrays use JavaScriptRuntime.Array and numbers use double. Reviver processing walks properties post-order, calls the reviver with the current holder as this, supports deletion through an undefined result, and supports replacement values. Broader proxy, cross-realm, and extreme-depth behavior remains limited. |
 
 ### 25.5.2 ([tc39.es](https://tc39.es/ecma262/#sec-json.stringify))
 

@@ -203,4 +203,12 @@ public class ExecutionTests : DiskExecutionTestsBase
     [Fact(DisplayName = "15.12.2-2-1")]
     public Task _15_12_2_2_1()
         => ExecutionTestFromFile("15.12.2-2-1");
+
+    [Fact(DisplayName = "reviver-call-order.js")]
+    public Task reviver_call_order()
+        => ExecutionTestFromFile("reviver-call-order");
+
+    [Fact(DisplayName = "reviver-wrapper.js")]
+    public Task reviver_wrapper()
+        => ExecutionTestFromFile("reviver-wrapper");
 }

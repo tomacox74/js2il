@@ -248,6 +248,12 @@ namespace JavaScriptRuntime
             var space = args != null && args.Length > 2 ? args[2] : null;
             return JavaScriptRuntime.JSON.Stringify(value, replacer, space);
         };
+        private static readonly Func<object[], object?[], object?> _jsonParseValue = static (_, args) =>
+        {
+            var text = args != null && args.Length > 0 ? args[0] : null;
+            var reviver = args != null && args.Length > 1 ? args[1] : null;
+            return JavaScriptRuntime.JSON.Parse(text, reviver);
+        };
 
         private static readonly Func<object[], object?[], object?> _errorConstructorValue =
             CreateErrorConstructorValue(static message => new JavaScriptRuntime.Error(message));
@@ -530,7 +536,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = global::System.Numerics.BigInteger.Zero
             });
-            DefineIntrinsicDataProperty(_jsonValue, "parse", (Func<object?, object?>)JavaScriptRuntime.JSON.Parse);
+            DefineBuiltinFunctionProperty(_jsonValue, "parse", _jsonParseValue, 2d);
             DefineIntrinsicToStringTagProperty(_atomicsValue, "Atomics");
             DefineBuiltinFunctionProperty(_atomicsValue, "wait", (Func<object?, object?, object?, object?, string>)JavaScriptRuntime.Atomics.wait, 4d);
             ConfigureBuiltinFunctionObject(_jsonStringifyValue);

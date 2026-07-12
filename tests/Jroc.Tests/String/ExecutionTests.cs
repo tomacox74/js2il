@@ -238,5 +238,11 @@ namespace Jroc.Tests.String
         {
             return ExecutionTest(nameof(String_MatchAll_Basic));
         }
+
+        [Fact]
+        public Task String_RegExp_NamedGroups_Indices()
+        {
+            return ExecutionTest(nameof(String_RegExp_NamedGroups_Indices));
+        }
     }
 }

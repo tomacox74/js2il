@@ -263,5 +263,12 @@ namespace Jroc.Tests.String
             var testName = nameof(String_MatchAll_Basic);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_RegExp_NamedGroups_Indices()
+        {
+            var testName = nameof(String_RegExp_NamedGroups_Indices);
+            return GenerateTest(testName);
+        }
     }
 }

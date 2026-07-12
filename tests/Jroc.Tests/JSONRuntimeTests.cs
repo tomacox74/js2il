@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using Xunit;
 using JSONRuntime = JavaScriptRuntime.JSON;
 using JsArray = JavaScriptRuntime.Array;
+using JsObject = JavaScriptRuntime.JsObject;
 
 namespace Jroc.Tests
 {
@@ -15,7 +14,7 @@ namespace Jroc.Tests
             var input = "{\"a\":1,\"b\":true,\"c\":null}";
             var result = JSONRuntime.Parse(input);
 
-            var obj = Assert.IsAssignableFrom<ExpandoObject>(result);
+            var obj = Assert.IsAssignableFrom<JsObject>(result);
             var dict = (IDictionary<string, object?>)obj;
             Assert.Equal(1d, dict["a"]);
             Assert.Equal(true, dict["b"]);
@@ -42,10 +41,10 @@ namespace Jroc.Tests
             var input = "{\"o\":{\"x\":2},\"arr\":[1,2,3]}";
             var result = JSONRuntime.Parse(input);
 
-            var obj = Assert.IsAssignableFrom<ExpandoObject>(result);
+            var obj = Assert.IsAssignableFrom<JsObject>(result);
             var dict = (IDictionary<string, object?>)obj;
 
-            var inner = Assert.IsAssignableFrom<ExpandoObject>(dict["o"]);
+            var inner = Assert.IsAssignableFrom<JsObject>(dict["o"]);
             var innerDict = (IDictionary<string, object?>)inner;
             Assert.Equal(2d, innerDict["x"]);
 
@@ -65,10 +64,9 @@ namespace Jroc.Tests
         }
 
         [Fact]
-        public void JSON_Parse_NonString_Throws_TypeError()
+        public void JSON_Parse_NonString_Coerces_ToString()
         {
-            var ex = Assert.Throws<JavaScriptRuntime.TypeError>(() => JSONRuntime.Parse(123));
-            Assert.Contains("JSON.parse", ex.Message);
+            Assert.Equal(123d, JSONRuntime.Parse(123));
         }
     }
 }

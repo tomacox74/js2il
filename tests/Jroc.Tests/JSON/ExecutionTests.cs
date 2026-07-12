@@ -9,5 +9,9 @@ namespace Jroc.Tests.JSON
 	[Fact]
 		public Task JSON_Parse_SimpleObject()
 			=> ExecutionTest(nameof(JSON_Parse_SimpleObject));
+
+		[Fact]
+		public Task JSON_Parse_Reviver_Holder()
+			=> ExecutionTest(nameof(JSON_Parse_Reviver_Holder));
 	}
 }

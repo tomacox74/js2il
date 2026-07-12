@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
@@ -10,24 +9,85 @@ namespace JavaScriptRuntime
     [IntrinsicObject("JSON")]
     public static class JSON
     {
-        // JSON.parse(text)
+        // JSON.parse(text[, reviver])
         public static object? Parse(object? text)
+            => Parse(text, null);
+
+        public static object? Parse(object? text, object? reviver)
         {
-            // Spec: If first argument is not a string, it should throw a TypeError
-            if (text is not string s)
-            {
-                throw new TypeError("JSON.parse requires a string argument");
-            }
+            var s = DotNet2JSConversions.ToString(text);
 
             try
             {
-                using var doc = JsonDocument.Parse(s);
-                return FromElement(doc.RootElement);
+                using var doc = JsonDocument.Parse(s ?? "undefined");
+                var parsed = FromElement(doc.RootElement);
+                if (reviver is not Delegate reviverFunction)
+                {
+                    return parsed;
+                }
+
+                var root = Object.CreateOrdinaryObject();
+                root.SetBoxedValue(string.Empty, parsed);
+                return InternalizeJsonProperty(root, string.Empty, reviverFunction);
             }
             catch (JsonException ex)
             {
                 // Map JSON parsing failures to JavaScript SyntaxError
                 throw new SyntaxError(ex.Message);
+            }
+        }
+
+        private static object? InternalizeJsonProperty(object holder, string name, Delegate reviver)
+        {
+            var value = ObjectRuntime.GetItem(holder, name);
+            if (value is Array array)
+            {
+                var length = (int)array.length;
+                for (var i = 0; i < length; i++)
+                {
+                    var key = i.ToString(CultureInfo.InvariantCulture);
+                    var revived = InternalizeJsonProperty(array, key, reviver);
+                    if (revived is null)
+                    {
+                        ObjectRuntime.DeleteProperty(array, key);
+                    }
+                    else
+                    {
+                        ObjectRuntime.SetItem(array, key, revived);
+                    }
+                }
+            }
+            else if (value is not null and not JsNull
+                     && value is not string
+                     && value is not bool
+                     && value is not double
+                     && value is not float
+                     && value is not int
+                     && value is not long
+                     && value is not decimal)
+            {
+                foreach (var key in Object.GetOwnEnumerableKeysInOrder(value))
+                {
+                    var revived = InternalizeJsonProperty(value, key, reviver);
+                    if (revived is null)
+                    {
+                        ObjectRuntime.DeleteProperty(value, key);
+                    }
+                    else
+                    {
+                        ObjectRuntime.SetItem(value, key, revived);
+                    }
+                }
+            }
+
+            var previousThis = RuntimeServices.SetCurrentThis(holder);
+            try
+            {
+                return Closure.InvokeWithArgs(reviver, System.Array.Empty<object>(), new object?[] { name, value });
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
             }
         }
 
@@ -459,12 +519,12 @@ namespace JavaScriptRuntime
             switch (el.ValueKind)
             {
                 case JsonValueKind.Object:
-                    var expando = new ExpandoObject() as IDictionary<string, object?>;
+                    var obj = Object.CreateOrdinaryObject();
                     foreach (var prop in el.EnumerateObject())
                     {
-                        expando[prop.Name] = FromElement(prop.Value);
+                        obj.SetBoxedValue(prop.Name, FromElement(prop.Value));
                     }
-                    return (ExpandoObject)expando;
+                    return obj;
 
                 case JsonValueKind.Array:
                     var arr = new Array();
