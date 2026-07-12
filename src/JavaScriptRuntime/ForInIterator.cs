@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 
@@ -15,7 +14,7 @@ namespace JavaScriptRuntime;
 /// - Before yielding a key, it re-checks that the key is still present and enumerable.
 ///
 /// Prototype chain support in this runtime is currently approximated for CLR objects by walking
-/// the CLR type hierarchy (declared members per type). For ExpandoObject/IDictionary, an explicit
+/// the CLR type hierarchy (declared members per type). For ordinary objects/IDictionary, an explicit
 /// JS-observable [[Prototype]] chain is supported via the opt-in PrototypeChain side-table.
 /// </summary>
 public sealed class ForInIterator : IJavaScriptIterator<string>
@@ -48,9 +47,9 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             && PrototypeChain.GetPrototypeOrNull(_root) is not null
             && PrototypeChain.GetPrototypeOrNull(_root) is not JsNull;
 
-        // Only CLR objects (non-expando, non-array-like) use a type chain.
+        // Only CLR objects (non-ordinary, non-array-like) use a type chain.
         _useTypeChain = !_usePrototypeChain
-            && !(root is ExpandoObject)
+            && !OrdinaryObjectOperations.IsOrdinaryObject(root)
             && root is not JavaScriptRuntime.Proxy
             && root is not JavaScriptRuntime.Array
             && root is not JavaScriptRuntime.TypedArrayBase
@@ -150,7 +149,7 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 continue;
             }
 
-            // Single-target (Expando/Array/String/IDictionary) enumeration.
+            // Single-target (ordinary object/Array/String/IDictionary) enumeration.
             if (_doneSingleTarget)
             {
                 return IteratorResult.Create<string>(null, done: true);
@@ -205,7 +204,12 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
 
-        // Dictionary-backed plain objects (JsObject/ExpandoObject): union descriptor keys and backing keys.
+        // Ordinary objects: union descriptor keys and backing keys.
+        if (OrdinaryObjectOperations.IsOrdinaryObject(target))
+        {
+            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
+        }
+
         if (target is IDictionary<string, object?>)
         {
             return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
@@ -256,6 +260,11 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
     private static List<string> GetOwnPropertyKeysSingleTarget(object target)
     {
         if (target is JavaScriptRuntime.Proxy)
+        {
+            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
+        }
+
+        if (OrdinaryObjectOperations.IsOrdinaryObject(target))
         {
             return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
         }
@@ -337,8 +346,18 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
                 && TypeUtilities.ToBoolean(JavaScriptRuntime.Object.GetProperty(descriptor, "enumerable"));
         }
 
-        // Dictionary-backed plain objects (JsObject/ExpandoObject): key is present if in backing dict
-        // or descriptor store, and enumerable in descriptor semantics.
+        // Ordinary objects: key is present in backing storage or the descriptor store,
+        // and enumerable according to descriptor semantics.
+        if (OrdinaryObjectOperations.IsOrdinaryObject(target))
+        {
+            bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);
+            bool presentInBacking = !PropertyDescriptorStore.IsDeleted(target, key)
+                && OrdinaryObjectOperations.HasOwnValue(target, key);
+            if (!presentInDescriptor && !presentInBacking)
+                return false;
+            return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
+        }
+
         if (target is IDictionary<string, object?> dictGeneric)
         {
             bool presentInDescriptor = PropertyDescriptorStore.TryGetOwn(target, key, out _);

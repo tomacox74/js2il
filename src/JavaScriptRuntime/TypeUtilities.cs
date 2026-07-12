@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -23,7 +22,7 @@ namespace JavaScriptRuntime
             if (value is string) return false;
             if (value.GetType().IsValueType) return false;
 
-            // Any remaining reference type (ExpandoObject, Array, Delegate, host objects, etc.) counts as an object.
+            // Any remaining reference type (ordinary object, Array, Delegate, host object, etc.) counts as an object.
             return true;
         }
 
@@ -108,8 +107,7 @@ namespace JavaScriptRuntime
                 case JavaScriptRuntime.Proxy proxy:
                     return proxy.IsCallableTarget ? "function" : "object";
             }
-            if (value is ExpandoObject) return "object";
-            if (value is JsObject) return "object";
+            if (OrdinaryObjectOperations.IsOrdinaryObject(value)) return "object";
             if (value is Array) return "object";
             // Functions are delegates in our model; detect common delegate base
             if (value is Delegate) return "function";

@@ -169,6 +169,9 @@ public class JsObject : IDictionary<string, object?>
         return false;
     }
 
+    internal void SetBoxedValue(string key, object? value)
+        => SetValue(key, JsValue.FromObject(value));
+
     /// <summary>Returns enumerable sequence of own property names.</summary>
     public IEnumerable<string> GetOwnPropertyNames()
         => _shape.PropertyNames;
