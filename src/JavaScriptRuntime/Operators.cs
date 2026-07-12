@@ -1095,7 +1095,7 @@ namespace JavaScriptRuntime
         /// Implements JavaScript 'in' operator. Checks if property exists in object.
         /// </summary>
         /// <remarks>
-        /// Performance note: For objects that are not dictionaries, arrays, or ExpandoObject,
+        /// Performance note: For objects that are not ordinary objects, dictionaries, or arrays,
         /// this method falls back to reflection which can be slow. The reflection results
         /// are not cached, so avoid using 'in' operator in hot paths with CLR objects.
         /// Consider using dictionary-based objects for performance-critical code.
@@ -1127,54 +1127,14 @@ namespace JavaScriptRuntime
             
             static bool HasOwn(object target, string name)
             {
-                if (PropertyDescriptorStore.TryGetOwn(target, name, out _))
-                {
-                    return true;
-                }
-
-                if (target is System.Collections.IDictionary dict)
-                {
-                    return dict.Contains(name);
-                }
-
-                // For arrays, check if index exists
                 if (target is object?[] array)
                 {
-                    if (int.TryParse(name, out var index))
-                    {
-                        return index >= 0 && index < array.Length;
-                    }
-                    return false;
+                    return int.TryParse(name, out var index)
+                        && index >= 0
+                        && index < array.Length;
                 }
 
-                // For JS Array objects, check index existence
-                if (target is JavaScriptRuntime.Array jsArray)
-                {
-                    if (int.TryParse(name, out var arrIndex))
-                    {
-                        return arrIndex >= 0 && jsArray.HasOwnIndex(arrIndex);
-                    }
-                    // Check non-index own properties
-                    if (JavaScriptRuntime.Object.hasOwn(jsArray, name) is bool b)
-                    {
-                        return b;
-                    }
-                    return false;
-                }
-
-                // For generic objects (ExpandoObject, JsObject, IDictionary-backed objects)
-                if (target is System.Collections.Generic.IDictionary<string, object?> dictGeneric)
-                {
-                    return dictGeneric.ContainsKey(name);
-                }
-
-                // Fallback: check using reflection (not cached - see performance note above)
-                var type = target.GetType();
-                var prop = type.GetProperty(name);
-                if (prop != null)
-                    return true;
-                var field = type.GetField(name);
-                return field != null;
+                return JavaScriptRuntime.Object.hasOwn(target, name);
             }
 
             if (HasOwn(obj, propName))

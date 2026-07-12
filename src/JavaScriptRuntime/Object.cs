@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -601,11 +600,14 @@ namespace JavaScriptRuntime
                     AddKey(keys, seen, i.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
                 }
             }
-            else if (obj is ExpandoObject expando)
+            else if (ObjectRuntime.IsOrdinaryObject(obj))
             {
-                foreach (var key in ((IDictionary<string, object?>)expando).Keys)
+                foreach (var key in ObjectRuntime.GetOwnKeys(obj))
                 {
-                    AddKey(keys, seen, key);
+                    if (!PropertyDescriptorStore.IsDeleted(obj, key))
+                    {
+                        AddKey(keys, seen, key);
+                    }
                 }
             }
             else if (obj is IDictionary<string, object?> dictGeneric)
@@ -633,7 +635,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            if (obj is not ExpandoObject
+            if (!ObjectRuntime.IsOrdinaryObject(obj)
                 && obj is not IDictionary<string, object?>
                 && obj is not System.Collections.IDictionary
                 && obj is not JavaScriptRuntime.Array
@@ -1465,7 +1467,15 @@ namespace JavaScriptRuntime
                 largeArray.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
             }
 
-            if (obj is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
+            if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
+                && ObjectRuntime.IsOrdinaryObject(obj))
+            {
+                ObjectRuntime.TrySetOwnValue(
+                    obj,
+                    key,
+                    appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor ? null : appliedDescriptor.Value);
+            }
+            else if (obj is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
             {
                 if (appliedDescriptor.Kind == JsPropertyDescriptorKind.Accessor)
                 {
@@ -1914,10 +1924,9 @@ namespace JavaScriptRuntime
                 return descriptor.Enumerable;
             }
 
-            if (target is ExpandoObject exp)
+            if (ObjectRuntime.IsOrdinaryObject(target))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                return dict.ContainsKey(key);
+                return ObjectRuntime.HasOwnValue(target, key);
             }
 
             if (target is IDictionary<string, object?> dictGeneric)
@@ -2203,7 +2212,7 @@ namespace JavaScriptRuntime
         /// Supported constructor value shapes:
         /// - <see cref="Type"/>: invokes a public instance constructor (reflection).
         /// - <see cref="Delegate"/>: invokes via <see cref="Closure.InvokeWithArgs"/> (scopes are empty for now).
-        /// - <see cref="System.Dynamic.ExpandoObject"/> with a callable <c>Construct</c> property.
+        /// - An ordinary object with a callable <c>Construct</c> property.
         /// - Any object with a public instance method named <c>Construct</c>.
         ///
         /// Note: This is intentionally minimal; it enables CommonJS export/import patterns where
@@ -2253,10 +2262,10 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (constructor is System.Dynamic.ExpandoObject exp)
+            if (ObjectRuntime.IsOrdinaryObject(constructor))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                return dict.TryGetValue("Construct", out var constructValue) && constructValue is Delegate;
+                return ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
+                    && constructValue is Delegate;
             }
 
             return constructor.GetType().GetMethod("Construct", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) != null;
@@ -2407,13 +2416,11 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.Function.Construct(del, callArgs, newTarget);
             }
 
-            if (constructor is System.Dynamic.ExpandoObject exp)
+            if (ObjectRuntime.IsOrdinaryObject(constructor)
+                && ObjectRuntime.TryGetOwnValue(constructor, "Construct", out var constructValue)
+                && constructValue is Delegate constructDel)
             {
-                var dict = (IDictionary<string, object?>)exp;
-                if (dict.TryGetValue("Construct", out var constructValue) && constructValue is Delegate constructDel)
-                {
-                    return Closure.InvokeWithArgs(constructDel, System.Array.Empty<object>(), callArgs);
-                }
+                return Closure.InvokeWithArgs(constructDel, System.Array.Empty<object>(), callArgs);
             }
 
             // Generic reflection fallback: instance method named Construct(...)
@@ -2442,11 +2449,12 @@ namespace JavaScriptRuntime
                 throw tie.InnerException;
             }
 
-            if (Environment.GetEnvironmentVariable("JROC_DOMINO_DIAG") == "1" && constructor is System.Dynamic.ExpandoObject expDiag)
+            if (Environment.GetEnvironmentVariable("JROC_DOMINO_DIAG") == "1"
+                && ObjectRuntime.IsOrdinaryObject(constructor))
             {
-                var dict = (IDictionary<string, object?>)expDiag;
-                var keys = string.Join(", ", dict.Keys.OrderBy(k => k, StringComparer.Ordinal).Take(12));
-                if (dict.Count > 12)
+                var allKeys = ObjectRuntime.GetOwnKeys(constructor).ToList();
+                var keys = string.Join(", ", allKeys.OrderBy(k => k, StringComparer.Ordinal).Take(12));
+                if (allKeys.Count > 12)
                 {
                     keys += ", ...";
                 }
@@ -2607,27 +2615,7 @@ namespace JavaScriptRuntime
                 throw new TypeError($"{methodName} is not a function");
             }
 
-            // 3) ExpandoObject (object literal): properties may contain function delegates
-            if (receiver is System.Dynamic.ExpandoObject exp)
-            {
-                var propValue = GetProperty(receiver, methodName);
-                if (propValue is Delegate)
-                {
-                    var previousThis = RuntimeServices.SetCurrentThis(receiver);
-                    try
-                    {
-                        return Closure.InvokeWithArgs(propValue, System.Array.Empty<object>(), callArgs);
-                    }
-                    finally
-                    {
-                        RuntimeServices.SetCurrentThis(previousThis);
-                    }
-                }
-
-                throw new TypeError($"{methodName} is not a function");
-            }
-
-            // 3b) Host object properties may also contain function delegates.
+            // 3) Host and descriptor-backed object properties may contain function delegates.
             // This enables patterns like:
             //   const r = Promise.withResolvers(); r.resolve(123);
             // where `resolve` is exposed as a delegate-valued property.
@@ -2683,6 +2671,22 @@ namespace JavaScriptRuntime
         {
             value = null;
 
+            if (ObjectRuntime.IsOrdinaryObject(receiver))
+            {
+                if (!ObjectRuntime.TryGetOwnValue(receiver, memberName, out var ordinaryValue))
+                {
+                    return false;
+                }
+
+                if (PropertyDescriptorStore.GetOwnLookup(receiver, memberName, out _) != PropertyDescriptorLookup.None)
+                {
+                    return false;
+                }
+
+                value = ordinaryValue;
+                return true;
+            }
+
             if (receiver is not IDictionary<string, object?> dictionary)
             {
                 return false;
@@ -2696,7 +2700,7 @@ namespace JavaScriptRuntime
             // Perf (#1418): single probe instead of the previous TryGetOwn call;
             // only a live descriptor shadows the dictionary slot (a delete
             // tombstone intentionally does not, preserving prior behavior).
-            if (PropertyDescriptorStore.GetOwnLookup(receiver, memberName, out _) == PropertyDescriptorLookup.Found)
+            if (PropertyDescriptorStore.GetOwnLookup(receiver, memberName, out _) != PropertyDescriptorLookup.None)
             {
                 return false;
             }
@@ -3335,6 +3339,11 @@ namespace JavaScriptRuntime
                 return true;
             }
 
+            if (ObjectRuntime.IsOrdinaryObject(target))
+            {
+                return ObjectRuntime.HasOwnValue(target, name);
+            }
+
             if (target is IDictionary<string, object?> dictGeneric)
             {
                 return dictGeneric.ContainsKey(name);
@@ -3664,6 +3673,12 @@ namespace JavaScriptRuntime
                 target = proxyTarget;
             }
 
+            if (PropertyDescriptorStore.IsDeleted(target, propName))
+            {
+                descriptor = null!;
+                return false;
+            }
+
             if (GlobalThis.IsArrayConstructorValue(target)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal)
                 && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
@@ -3714,22 +3729,19 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            // Default descriptors for existing properties (no attribute fidelity yet).
-            if (target is System.Dynamic.ExpandoObject exp)
+            // Default descriptors for existing ordinary-object backing values.
+            if (ObjectRuntime.IsOrdinaryObject(target)
+                && ObjectRuntime.TryGetOwnValue(target, propName, out var ordinaryValue))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                if (dict.TryGetValue(propName, out var v))
+                descriptor = new JsPropertyDescriptor
                 {
-                    descriptor = new JsPropertyDescriptor
-                    {
-                        Kind = JsPropertyDescriptorKind.Data,
-                        Enumerable = true,
-                        Configurable = true,
-                        Writable = true,
-                        Value = v
-                    };
-                    return true;
-                }
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Enumerable = true,
+                    Configurable = true,
+                    Writable = true,
+                    Value = ordinaryValue
+                };
+                return true;
             }
 
             if (target is IDictionary<string, object?> dictGeneric
@@ -4130,11 +4142,9 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            // ExpandoObject properties
-            if (target is System.Dynamic.ExpandoObject exp)
+            if (ObjectRuntime.IsOrdinaryObject(target))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                return dict.TryGetValue(propName, out value);
+                return ObjectRuntime.TryGetOwnValue(target, propName, out value);
             }
 
             if (target is IDictionary<string, object?> dictGeneric)
@@ -4412,10 +4422,9 @@ namespace JavaScriptRuntime
                     return false;
                 }
 
-                if (proto is System.Dynamic.ExpandoObject expProto)
+                if (ObjectRuntime.IsOrdinaryObject(proto))
                 {
-                    var expandoDict = (IDictionary<string, object?>)expProto;
-                    if (expandoDict.ContainsKey(propName))
+                    if (ObjectRuntime.HasOwnValue(proto, propName))
                     {
                         return false;
                     }
@@ -4742,11 +4751,10 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            // ExpandoObject: common for user-defined iterators in this runtime.
-            if (iterator is System.Dynamic.ExpandoObject exp)
+            // Ordinary object: common for user-defined iterators in this runtime.
+            if (ObjectRuntime.IsOrdinaryObject(iterator))
             {
-                var dict = (IDictionary<string, object?>)exp;
-                if (!dict.TryGetValue("return", out var ret) || ret is null)
+                if (!ObjectRuntime.TryGetOwnValue(iterator, "return", out var ret) || ret is null)
                 {
                     return;
                 }
@@ -5104,7 +5112,7 @@ namespace JavaScriptRuntime
         ///
         /// Minimal semantics:
         ///  - null/undefined (null or JsNull) are ignored
-        ///  - ExpandoObject: copy all keys
+        ///  - ordinary objects: copy all enumerable own keys
         ///  - JavaScriptRuntime.Array / typed arrays / string: copy index keys
         ///  - IDictionary&lt;string, object?&gt;: copy keys
         ///  - host objects: copy public instance properties/fields
@@ -5123,7 +5131,7 @@ namespace JavaScriptRuntime
 
         private static void SetSpreadTargetProperty(object target, string key, object? value)
         {
-            if (target is JsObject)
+            if (ObjectRuntime.IsOrdinaryObject(target))
             {
                 SetProperty(target, key, value);
                 return;
@@ -5151,22 +5159,11 @@ namespace JavaScriptRuntime
                 return target;
             }
 
-            // JsObject: enumerate all own enumerable properties (backing dict + descriptor store).
-            if (source is JsObject jsObjSource)
+            // Ordinary object: enumerate all own enumerable properties (backing store + descriptors).
+            if (ObjectRuntime.IsOrdinaryObject(source))
             {
                 var srcSeen = new HashSet<string>(StringComparer.Ordinal);
-                EnumerateOwnEnumerableProperties(jsObjSource, srcSeen, (key, value) =>
-                {
-                    setOwnProperty(key, value);
-                }, includeEncodedSymbolKeys: true);
-                return target;
-            }
-
-            // ExpandoObject: copy all enumerable own properties.
-            if (source is System.Dynamic.ExpandoObject exp)
-            {
-                var srcSeen = new HashSet<string>(StringComparer.Ordinal);
-                EnumerateOwnEnumerableProperties(exp, srcSeen, (key, value) =>
+                EnumerateOwnEnumerableProperties(source, srcSeen, (key, value) =>
                 {
                     setOwnProperty(key, value);
                 }, includeEncodedSymbolKeys: true);
@@ -5376,7 +5373,7 @@ namespace JavaScriptRuntime
 
         /// <summary>
         /// Returns enumerable property keys for for..in. Minimal implementation:
-        /// - ExpandoObject: own keys
+        /// - ordinary objects: own keys
         /// - Array/typed arrays/string: numeric indices as strings
         /// - IDictionary: keys coerced to strings
         /// Other types: empty list
@@ -5388,10 +5385,9 @@ namespace JavaScriptRuntime
                 throw new JavaScriptRuntime.TypeError("Right-hand side of 'for...in' should be an object");
             }
 
-            // ExpandoObject (object literal)
-            if (obj is System.Dynamic.ExpandoObject exp)
+            if (ObjectRuntime.IsOrdinaryObject(obj))
             {
-                return new JavaScriptRuntime.Array(GetOwnEnumerableKeysInOrder(exp).Cast<object?>());
+                return new JavaScriptRuntime.Array(GetOwnEnumerableKeysInOrder(obj).Cast<object?>());
             }
 
             if (obj is IDictionary<string, object?> dictGeneric)
@@ -5495,8 +5491,8 @@ namespace JavaScriptRuntime
                     return plainValue;
                 }
             }
-            // Perf (#1418): fast dispatch for plain JS objects (JsObject plus retained
-            // mixed-runtime ExpandoObject surfaces). Own
+            // Descriptor-aware fast dispatch for JsObject plus the retained
+            // mixed-runtime ExpandoObject compatibility surface. Own
             // properties on these receivers are authoritatively descriptor-backed
             // (literal/assignment writes mirror a data descriptor), so a single
             // descriptor probe resolves the overwhelmingly common case without
@@ -5504,7 +5500,7 @@ namespace JavaScriptRuntime
             // rarely-taken paths (lazy class methods, __proto__, inheritance)
             // keep their existing semantics. Function.Prototype is excluded to
             // preserve the restricted 'caller'/'arguments' check.
-            else if ((obj is JsObject || obj is System.Dynamic.ExpandoObject)
+            else if (ObjectRuntime.IsOrdinaryObject(obj)
                 && !ReferenceEquals(obj, JavaScriptRuntime.Function.Prototype))
             {
                 var lookup = PropertyDescriptorStore.GetOwnLookup(obj, name, out var fastDesc);
@@ -5521,11 +5517,11 @@ namespace JavaScriptRuntime
                 }
 
                 if (lookup == PropertyDescriptorLookup.None
-                    && ((IDictionary<string, object?>)obj).TryGetValue(name, out var fastDictValue))
+                    && ObjectRuntime.TryGetOwnValue(obj, name, out var fastOrdinaryValue))
                 {
-                    // Dictionary-only entries (no shadowing descriptor) mirror the
+                    // Backing-only entries (no shadowing descriptor) mirror the
                     // existing TryGetFastDictionaryOwnValue behavior.
-                    return fastDictValue;
+                    return fastOrdinaryValue;
                 }
 
                 // Own miss (or delete tombstone): fall through to the full ladder.
@@ -5675,7 +5671,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Dynamic property assignment used when the compiler cannot bind a static setter.
         /// Supports:
-        ///  - ExpandoObject (object literal): sets/overwrites the named property
+        ///  - Ordinary JavaScript objects: sets/overwrites the named property
         ///  - Reflection fallback: sets public instance property/field when writable
         ///  - Arrays/typed arrays: currently no custom properties; silently ignore and return value
         /// Returns the assigned value to match JavaScript assignment expression semantics.
@@ -5771,10 +5767,10 @@ namespace JavaScriptRuntime
                 desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Value = value;
                 PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
-                if (obj is System.Dynamic.ExpandoObject expDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
+                if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
+                    && ObjectRuntime.IsOrdinaryObject(obj))
                 {
-                    var dict = (IDictionary<string, object?>)expDesc;
-                    dict[name] = value;
+                    ObjectRuntime.TrySetOwnValue(obj, name, value);
                 }
                 else if (obj is IDictionary<string, object?> dictDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
                 {
@@ -5783,21 +5779,21 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            // ExpandoObject support
-            if (obj is System.Dynamic.ExpandoObject exp)
+            // Ordinary objects use direct JsObject storage first, with ExpandoObject
+            // retained behind ObjectRuntime during the migration.
+            if (ObjectRuntime.IsOrdinaryObject(obj))
             {
-                var dict = (IDictionary<string, object?>)exp;
-
                 // Prototype-setter semantics: if no own property exists, and a prototype accessor
                 // defines a setter, route the assignment to that setter.
-                if (!dict.ContainsKey(name) && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
+                if (!ObjectRuntime.HasOwnValue(obj, name)
+                    && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;
                 }
 
                 if (!PropertyDescriptorStore.HasIntrinsicProperties(obj))
                 {
-                    dict[name] = value;
+                    ObjectRuntime.TrySetOwnValue(obj, name, value);
                 }
                 PropertyDescriptorStore.DefineOrUpdate(obj, name, new JsPropertyDescriptor
                 {

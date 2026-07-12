@@ -28,6 +28,89 @@ namespace JavaScriptRuntime
         public static string ToPropertyKeyString(object? key)
             => Object.ToPropertyKeyString(key);
 
+        /// <summary>
+        /// Identifies runtime-owned ordinary objects. <see cref="JsObject"/> is the
+        /// primary representation; ExpandoObject remains a transitional compatibility path.
+        /// </summary>
+        internal static bool IsOrdinaryObject(object target)
+            => target is JsObject or System.Dynamic.ExpandoObject;
+
+        internal static bool TryGetOwnValue(object target, string key, out object? value)
+        {
+            if (target is JsObject jsObject)
+            {
+                return jsObject.TryGetBoxedValue(key, out value);
+            }
+
+            if (target is System.Dynamic.ExpandoObject expando)
+            {
+                return ((IDictionary<string, object?>)expando).TryGetValue(key, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
+        internal static bool HasOwnValue(object target, string key)
+        {
+            if (target is JsObject jsObject)
+            {
+                return jsObject.ContainsKey(key);
+            }
+
+            return target is System.Dynamic.ExpandoObject expando
+                && ((IDictionary<string, object?>)expando).ContainsKey(key);
+        }
+
+        internal static bool TrySetOwnValue(object target, string key, object? value)
+        {
+            if (target is JsObject jsObject)
+            {
+                jsObject.SetBoxedValue(key, value);
+                return true;
+            }
+
+            if (target is System.Dynamic.ExpandoObject expando)
+            {
+                ((IDictionary<string, object?>)expando)[key] = value;
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static bool TryDeleteOwnValue(object target, string key)
+        {
+            if (target is JsObject jsObject)
+            {
+                jsObject.Remove(key);
+                return true;
+            }
+
+            if (target is System.Dynamic.ExpandoObject expando)
+            {
+                ((IDictionary<string, object?>)expando).Remove(key);
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static IEnumerable<string> GetOwnKeys(object target)
+        {
+            if (target is JsObject jsObject)
+            {
+                return jsObject.GetOwnPropertyNames();
+            }
+
+            if (target is System.Dynamic.ExpandoObject expando)
+            {
+                return ((IDictionary<string, object?>)expando).Keys;
+            }
+
+            return System.Array.Empty<string>();
+        }
+
         public static object? GetGlobalBindingValue(string name)
         {
             if (!HasGlobalBinding(name))
@@ -315,6 +398,11 @@ namespace JavaScriptRuntime
             {
                 setJsObjectValue(jsObject, key, value);
             }
+            else if (IsOrdinaryObject(target)
+                && !PropertyDescriptorStore.HasIntrinsicProperties(target))
+            {
+                TrySetOwnValue(target, key, value);
+            }
             else if (target is IDictionary<string, object?> dict && !PropertyDescriptorStore.HasIntrinsicProperties(target))
             {
                 dict[key] = value;
@@ -420,12 +508,11 @@ namespace JavaScriptRuntime
                 return Function.DeleteOwnProperty(del, key);
             }
 
-            if (receiver is System.Dynamic.ExpandoObject exp)
+            if (IsOrdinaryObject(receiver))
             {
-                var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
                 if (!PropertyDescriptorStore.HasIntrinsicProperties(receiver))
                 {
-                    dict.Remove(key);
+                    TryDeleteOwnValue(receiver, key);
                 }
 
                 PropertyDescriptorStore.Delete(receiver, key);
@@ -659,8 +746,8 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
-            // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
-            if (obj is System.Dynamic.ExpandoObject)
+            // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
+            if (IsOrdinaryObject(obj))
             {
                 return GetProperty(obj, propName)!;
             }
@@ -702,7 +789,7 @@ namespace JavaScriptRuntime
             else
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
-                // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
+                // and fall back to dynamic property lookup (public fields/properties and host objects).
                 return GetProperty(obj, propName)!;
             }
         }
@@ -739,8 +826,8 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
-            // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
-            if (obj is System.Dynamic.ExpandoObject)
+            // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
+            if (IsOrdinaryObject(obj))
             {
                 var propName = Object.ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
@@ -803,7 +890,7 @@ namespace JavaScriptRuntime
             else
             {
                 // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
-                // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
+                // and fall back to dynamic property lookup (public fields/properties and host objects).
                 var propName = Object.ToPropertyKeyString(index);
                 return GetProperty(obj, propName)!;
             }
@@ -849,8 +936,8 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
-            // ExpandoObject (object literal): key is already a string property
-            if (obj is System.Dynamic.ExpandoObject)
+            // Ordinary object: key is already a string property.
+            if (IsOrdinaryObject(obj))
             {
                 return GetProperty(obj, key)!;
             }
@@ -966,7 +1053,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (obj is System.Dynamic.ExpandoObject)
+            if (IsOrdinaryObject(obj))
             {
                 return SetProperty(obj, propName, value, throwOnError);
             }
@@ -1058,7 +1145,7 @@ namespace JavaScriptRuntime
 
             bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
 
-            if (obj is System.Dynamic.ExpandoObject)
+            if (IsOrdinaryObject(obj))
             {
                 return SetProperty(obj, key, value, throwOnError);
             }
@@ -1148,7 +1235,7 @@ namespace JavaScriptRuntime
 
             bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
 
-            if (obj is System.Dynamic.ExpandoObject)
+            if (IsOrdinaryObject(obj))
             {
                 return SetProperty(obj, key, value, throwOnError);
             }
