@@ -9,6 +9,7 @@ function parseArgs(argv) {
   const args = {
     branch: null,
     scenario: null,
+    benchmarkSuite: "phased",
     repo: null,
     ref: "master",
     watch: false,
@@ -24,9 +25,12 @@ function parseArgs(argv) {
         args.branch = argv[++i] ?? null;
         break;
       case "--scenario":
-      case "--benchmark":
       case "-s":
         args.scenario = argv[++i] ?? null;
+        break;
+      case "--benchmark":
+      case "--suite":
+        args.benchmarkSuite = argv[++i] ?? null;
         break;
       case "--repo":
         args.repo = argv[++i] ?? null;
@@ -62,13 +66,13 @@ function printHelp() {
   process.stdout.write(`Usage: node scripts/dispatchBenchmarkBranchComparisonWorkflow.js <private-branch> <scenario-name> [options]
 
 Dispatches the manual workflow that benchmarks master first, then a private branch,
-using the same phased BenchmarkDotNet scenario. The workflow uploads both raw result
-sets and console output as an artifact.
+using the selected BenchmarkDotNet suite. The workflow uploads both raw result sets
+and console output as an artifact.
 
 Options:
   --branch, -b <branch>       Private branch/ref to compare with master.
-  --scenario, --benchmark,
-    -s <scenario>             Exact phased BenchmarkDotNet scenario name.
+  --scenario, -s <scenario>  Scenario or filter name for the selected suite.
+  --benchmark, --suite <name> Benchmark suite: phased (default) or kracken.
   --repo <owner/name>         Explicit repository override (defaults to origin).
   --ref <branch>              Branch/ref containing the workflow file (default: master).
   --watch                     Wait for the dispatched run to finish.
@@ -78,6 +82,7 @@ Options:
 Examples:
   node scripts/dispatchBenchmarkBranchComparisonWorkflow.js perf/object-shapes dromaeo-3d-cube
   node scripts/dispatchBenchmarkBranchComparisonWorkflow.js --branch perf/object-shapes --scenario dromaeo-3d-cube --watch
+  node scripts/dispatchBenchmarkBranchComparisonWorkflow.js v0.11.21 ai-astar --benchmark kracken --watch
 `);
 }
 
@@ -143,6 +148,9 @@ function main() {
 
   if (!args.branch) throw new Error("A private branch/ref is required.");
   if (!args.scenario) throw new Error("A benchmark scenario name is required.");
+  if (!["phased", "kracken"].includes(args.benchmarkSuite)) {
+    throw new Error("--benchmark must be either 'phased' or 'kracken'.");
+  }
   if (!args.ref) throw new Error("--ref requires a value.");
 
   const repo = args.repo ?? inferRepoFromGitRemote();
@@ -156,6 +164,8 @@ function main() {
     `private_branch=${args.branch}`,
     "-f",
     `scenario_name=${args.scenario}`,
+    "-f",
+    `benchmark_suite=${args.benchmarkSuite}`,
   ];
   if (repo) workflowArgs.push("--repo", repo);
 
