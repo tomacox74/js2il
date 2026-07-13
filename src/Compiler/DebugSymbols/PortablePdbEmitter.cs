@@ -269,9 +269,6 @@ internal static class PortablePdbEmitter
             {
                 if (sp.IlOffset == lastOffset)
                 {
-                    // Nested statements can share an offset when an enclosing
-                    // scope emits no IL. Keep the later, more-specific span.
-                    deduped[^1] = sp;
                     continue;
                 }
                 deduped.Add(sp);

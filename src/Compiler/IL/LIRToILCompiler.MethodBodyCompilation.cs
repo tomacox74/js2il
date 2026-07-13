@@ -29,6 +29,7 @@ internal sealed partial class LIRToILCompiler
         _localVariablesSignature = default;
         _ilLength = 0;
         _locals = null;
+        var emitPdb = _serviceProvider.GetService<CompilerOptions>()?.EmitPdb == true;
 
         // All temps start as "needs materialization". Stackify will mark which ones can stay on stack.
         var shouldMaterialize = new bool[MethodBody.Temps.Count];
@@ -265,6 +266,17 @@ internal sealed partial class LIRToILCompiler
                     continue;
 
                 case LIRSequencePoint sp:
+                    // Empty lexical scopes can leave an outer and inner source span at the
+                    // same IL offset. Preserve both mappings for PDB consumers by giving
+                    // the outer span a debug-only nop before recording the inner span.
+                    if (emitPdb
+                        && _sequencePoints.Count > 0
+                        && _sequencePoints[^1].IlOffset == methodBlob.Count
+                        && _sequencePoints[^1].Span != sp.Span)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Nop);
+                    }
+
                     // Marker emits no IL. Associate the next real IL instruction with this span.
                     // IL offset is the current method IL byte length.
                     _sequencePoints.Add(new MethodSequencePoint(methodBlob.Count, sp.Span));
