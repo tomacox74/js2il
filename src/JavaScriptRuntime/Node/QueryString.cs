@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 
 using JsArray = JavaScriptRuntime.Array;
 
@@ -26,7 +25,7 @@ namespace JavaScriptRuntime.Node
             var assignmentText = NormalizeToken(assignment, "=");
             var entries = UrlQueryHelpers.ParseEntries(value, separatorText, assignmentText, plusAsSpace: true);
 
-            dynamic result = new ExpandoObject();
+            var result = new JsObject(cacheShapeTransitions: false);
             var dict = (IDictionary<string, object?>)result;
 
             foreach (var entry in entries)

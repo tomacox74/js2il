@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
 using JavaScriptRuntime;
@@ -26,10 +25,10 @@ namespace JavaScriptRuntime.Node
 
         private static object CreateConstants()
         {
-            dynamic c = new ExpandoObject();
+            var constants = new JsObject();
             // Node's fs.constants.F_OK (value 0) - used as the existence-check mode.
-            c.F_OK = 0.0;
-            return c;
+            constants.SetNumber("F_OK", 0.0);
+            return constants;
         }
 
         // Dynamic-friendly overloads first so Object.CallInstanceMethod prefers them
@@ -945,29 +944,7 @@ namespace JavaScriptRuntime.Node
                 catch { return new JavaScriptRuntime.Array(); }
             }
 
-            bool withFileTypes = false;
-            try
-            {
-                if (options is System.Dynamic.ExpandoObject exp)
-                {
-                    var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                    if (dict.TryGetValue("withFileTypes", out var val))
-                    {
-                        withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                    }
-                }
-                else if (options != null)
-                {
-                    // Fallback: use runtime dynamic property access for object literals
-                    try
-                    {
-                        var val = JavaScriptRuntime.ObjectRuntime.GetProperty(options, "withFileTypes");
-                        withFileTypes = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                    }
-                    catch { }
-                }
-            }
-            catch { }
+            var withFileTypes = FsCommon.GetBooleanOption(options, "withFileTypes");
 
             if (!withFileTypes)
             {
@@ -1036,19 +1013,7 @@ namespace JavaScriptRuntime.Node
         public object rmSync(object file, object? options)
         {
             var path = file?.ToString() ?? string.Empty;
-            bool force = false;
-            try
-            {
-                if (options is System.Dynamic.ExpandoObject exp)
-                {
-                    var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                    if (dict.TryGetValue("force", out var val))
-                    {
-                        force = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
-                    }
-                }
-            }
-            catch { }
+            var force = FsCommon.GetBooleanOption(options, "force");
 
             try
             {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using JavaScriptRuntime.EngineCore;
 
 namespace JavaScriptRuntime.Node
@@ -225,15 +224,6 @@ namespace JavaScriptRuntime.Node
             if (options == null || options is JsNull)
             {
                 return null;
-            }
-
-            if (options is ExpandoObject expando)
-            {
-                var dict = (System.Collections.Generic.IDictionary<string, object?>)expando;
-                if (dict.TryGetValue(name, out var value))
-                {
-                    return value;
-                }
             }
 
             return ObjectRuntime.GetProperty(options, name);

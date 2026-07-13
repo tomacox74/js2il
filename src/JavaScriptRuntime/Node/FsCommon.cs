@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,17 +27,6 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                if (options is ExpandoObject exp)
-                {
-                    var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                    if (dict.TryGetValue(propertyName, out var val))
-                    {
-                        return TypeUtilities.ToBoolean(val);
-                    }
-
-                    return false;
-                }
-
                 var value = ObjectRuntime.GetProperty(options, propertyName);
                 return TypeUtilities.ToBoolean(value);
             }
@@ -57,15 +45,6 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                if (options is ExpandoObject exp)
-                {
-                    var dict = (System.Collections.Generic.IDictionary<string, object?>)exp;
-                    if (dict.TryGetValue(propertyName, out var value))
-                    {
-                        return value;
-                    }
-                }
-
                 return ObjectRuntime.GetProperty(options, propertyName);
             }
             catch
