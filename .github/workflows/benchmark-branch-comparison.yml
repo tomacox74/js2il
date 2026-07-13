@@ -1,0 +1,134 @@
+name: Benchmark branch comparison
+run-name: Benchmark ${{ inputs.scenario_name }} - master vs ${{ inputs.private_branch }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      private_branch:
+        description: "Private branch or ref to compare with master"
+        required: true
+        type: string
+      scenario_name:
+        description: "Exact phased BenchmarkDotNet scenario name"
+        required: true
+        type: string
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  compare:
+    name: Compare master and private branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout master baseline
+        uses: actions/checkout@v5
+        with:
+          ref: master
+          path: master
+          fetch-depth: 1
+
+      - name: Checkout private branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.private_branch }}
+          path: private
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Run master benchmark
+        shell: bash
+        env:
+          SCENARIO_NAME: ${{ inputs.scenario_name }}
+        run: |
+          set -euo pipefail
+
+          output_dir="$GITHUB_WORKSPACE/benchmark-comparison-results/master"
+          benchmark_dir="$GITHUB_WORKSPACE/master/tests/performance/Benchmarks"
+          mkdir -p "$output_dir"
+
+          cd "$benchmark_dir"
+          dotnet restore Benchmarks.csproj
+          dotnet build Benchmarks.csproj -c Release --no-restore
+          dotnet build-server shutdown
+          rm -rf BenchmarkDotNet.Artifacts
+
+          echo "=== master: $SCENARIO_NAME ==="
+          dotnet run --project Benchmarks.csproj -c Release --no-build -- \
+            --phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME" --exporters json \
+            | tee "$output_dir/console.txt"
+
+          cp -R BenchmarkDotNet.Artifacts "$output_dir/artifacts"
+          find "$output_dir/artifacts/results" -name '*-report.md' -type f -print -exec cat {} \;
+
+      - name: Run private branch benchmark
+        if: always()
+        shell: bash
+        env:
+          SCENARIO_NAME: ${{ inputs.scenario_name }}
+          PRIVATE_BRANCH: ${{ inputs.private_branch }}
+        run: |
+          set -euo pipefail
+
+          output_dir="$GITHUB_WORKSPACE/benchmark-comparison-results/private"
+          benchmark_dir="$GITHUB_WORKSPACE/private/tests/performance/Benchmarks"
+          mkdir -p "$output_dir"
+
+          cd "$benchmark_dir"
+          dotnet restore Benchmarks.csproj
+          dotnet build Benchmarks.csproj -c Release --no-restore
+          dotnet build-server shutdown
+          rm -rf BenchmarkDotNet.Artifacts
+
+          echo "=== $PRIVATE_BRANCH: $SCENARIO_NAME ==="
+          dotnet run --project Benchmarks.csproj -c Release --no-build -- \
+            --phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME" --exporters json \
+            | tee "$output_dir/console.txt"
+
+          cp -R BenchmarkDotNet.Artifacts "$output_dir/artifacts"
+          find "$output_dir/artifacts/results" -name '*-report.md' -type f -print -exec cat {} \;
+
+      - name: Write comparison metadata
+        if: always()
+        shell: bash
+        env:
+          SCENARIO_NAME: ${{ inputs.scenario_name }}
+          PRIVATE_BRANCH: ${{ inputs.private_branch }}
+        run: |
+          set -euo pipefail
+
+          output_dir="$GITHUB_WORKSPACE/benchmark-comparison-results"
+          mkdir -p "$output_dir"
+          {
+            echo "# Benchmark comparison"
+            echo
+            echo "- Scenario: \`$SCENARIO_NAME\`"
+            echo "- Baseline: \`master\`"
+            echo "- Candidate: \`$PRIVATE_BRANCH\`"
+            echo
+            echo "Raw BenchmarkDotNet reports and console output are in the \`master\` and \`private\` directories."
+          } | tee "$output_dir/README.md"
+
+      - name: Upload benchmark comparison results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-branch-comparison-results
+          path: benchmark-comparison-results
+          if-no-files-found: warn
+          retention-days: 90
