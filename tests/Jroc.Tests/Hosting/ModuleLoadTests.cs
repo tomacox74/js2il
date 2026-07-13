@@ -70,6 +70,19 @@ public class ModuleLoadTests
     }
 
     [Fact]
+    public void JsEngine_LoadModule_HostedExportResolution_UsesJsObjectExports()
+    {
+        using var module = CompileAndLoadModuleAssemblyFromResource("math", "math.js");
+
+        using var exportsProxy = Assert.IsType<Jroc.Runtime.JsDynamicExports>(
+            Jroc.Runtime.JsEngine.LoadModule(module.Assembly, "math"));
+        var exports = Assert.IsType<JsObject>(exportsProxy.UnwrapExports());
+
+        Assert.Equal("1.0.0", ExportMemberResolver.GetExportMember(exports, "version"));
+        Assert.IsAssignableFrom<Delegate>(ExportMemberResolver.GetExportMember(exports, "add"));
+    }
+
+    [Fact]
     public void JsEngine_LoadModule_Typed_AllowsCallingEsmExports()
     {
         using var module = CompileAndLoadModuleAssemblyFromResource("mathEsm", "mathEsm.js");

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Runtime.CompilerServices;
 
 namespace JavaScriptRuntime.CommonJS
@@ -27,7 +25,7 @@ namespace JavaScriptRuntime.CommonJS
                 return cachedNamespace!;
             }
 
-            var namespaceObject = new ExpandoObject();
+            var namespaceObject = new JsObject();
             DefineNamespaceGetter(namespaceObject, "default", () => exports);
             DefineNamespaceGetter(namespaceObject, "module.exports", () => exports);
 
@@ -110,7 +108,7 @@ namespace JavaScriptRuntime.CommonJS
 
         private static object CreatePrimitiveNamespace(object? exports)
         {
-            var namespaceObject = new ExpandoObject();
+            var namespaceObject = new JsObject();
             JavaScriptRuntime.ObjectRuntime.SetProperty(namespaceObject, "default", exports);
             JavaScriptRuntime.ObjectRuntime.SetProperty(namespaceObject, "module.exports", exports);
             return namespaceObject;
@@ -131,12 +129,11 @@ namespace JavaScriptRuntime.CommonJS
 
         private static object CreateDataDescriptor(object? value, bool enumerable, bool configurable, bool writable)
         {
-            var descriptor = new ExpandoObject();
-            var properties = (IDictionary<string, object?>)descriptor;
-            properties["value"] = value;
-            properties["enumerable"] = enumerable;
-            properties["configurable"] = configurable;
-            properties["writable"] = writable;
+            var descriptor = new JsObject();
+            descriptor.SetValue("value", value);
+            descriptor.SetBoolean("enumerable", enumerable);
+            descriptor.SetBoolean("configurable", configurable);
+            descriptor.SetBoolean("writable", writable);
             return descriptor;
         }
     }

@@ -78,6 +78,20 @@ namespace Jroc.Tests.CommonJS
         }
 
         [Fact]
+        public Task CommonJS_Require_CircularExportsIdentity()
+        {
+            // Each module must publish its initial exports object before executing so
+            // the other side of a circular require observes the same object identity.
+            return ExecutionTest(
+                nameof(CommonJS_Require_CircularExportsIdentity),
+                additionalScripts: new[]
+                {
+                    "CommonJS_Require_CircularExportsIdentity_A",
+                    "CommonJS_Require_CircularExportsIdentity_B"
+                });
+        }
+
+        [Fact]
         public Task CommonJS_Require_Reassigned_Function()
         {
             // Node.js semantics: `require` is a mutable binding. Reassignment must be respected.
