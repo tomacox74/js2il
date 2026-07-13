@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -69,20 +68,6 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                if (options is ExpandoObject expando)
-                {
-                    var expandoDict = (IDictionary<string, object?>)expando;
-                    if (expandoDict.TryGetValue(name, out var expandoValue))
-                    {
-                        return expandoValue;
-                    }
-                }
-
-                if (options is IDictionary<string, object?> dict && dict.TryGetValue(name, out var dictValue))
-                {
-                    return dictValue;
-                }
-
                 return ObjectRuntime.GetProperty(options, name);
             }
             catch
@@ -376,11 +361,10 @@ namespace JavaScriptRuntime.Node
 
         internal static object CreateAddressRecord(string host, int port)
         {
-            var result = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)result;
-            dict["address"] = host;
-            dict["family"] = "IPv4";
-            dict["port"] = (double)port;
+            var result = new JsObject();
+            result["address"] = host;
+            result["family"] = "IPv4";
+            result["port"] = (double)port;
             return result;
         }
 

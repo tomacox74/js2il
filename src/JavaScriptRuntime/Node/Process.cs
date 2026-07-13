@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Runtime.InteropServices;
 
 namespace JavaScriptRuntime.Node
@@ -194,27 +192,25 @@ namespace JavaScriptRuntime.Node
 
         private static object CreateVersions()
         {
-            var result = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)result;
-            dict["node"] = TargetNodeVersion;
+            var result = new JsObject();
+            result["node"] = TargetNodeVersion;
             
             // Add .NET runtime version info
             var frameworkDescription = RuntimeInformation.FrameworkDescription;
-            dict["v8"] = "12.4.254.21-node.22"; // V8 version from Node 22.x
-            dict["modules"] = "127"; // Node modules ABI version for Node 22.x
+            result["v8"] = "12.4.254.21-node.22"; // V8 version from Node 22.x
+            result["modules"] = "127"; // Node modules ABI version for Node 22.x
             
             // Add jroc-specific version info
             var jrocVersion = typeof(Process).Assembly.GetName().Version?.ToString() ?? "0.0.0";
-            dict["jroc"] = jrocVersion;
-            dict["dotnet"] = frameworkDescription;
+            result["jroc"] = jrocVersion;
+            result["dotnet"] = frameworkDescription;
             
             return result;
         }
 
         private static object CreateEnvSnapshot()
         {
-            var result = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)result;
+            var result = new JsObject(cacheShapeTransitions: false);
 
             foreach (DictionaryEntry entry in System.Environment.GetEnvironmentVariables())
             {
@@ -224,7 +220,7 @@ namespace JavaScriptRuntime.Node
                     continue;
                 }
 
-                dict[key] = entry.Value?.ToString() ?? string.Empty;
+                result[key] = entry.Value?.ToString() ?? string.Empty;
             }
 
             return result;

@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -27,10 +26,10 @@ namespace Jroc.Tests.Node.Net
         [Fact]
         public void NetSocket_OptionsConstructor_ParsesAllowHalfOpen()
         {
-            dynamic options = new ExpandoObject();
-            options.allowHalfOpen = true;
+            var options = new JsObject();
+            options["allowHalfOpen"] = true;
 
-            var socket = new NetSocket((object)options);
+            var socket = new NetSocket(options);
 
             Assert.True(socket.allowHalfOpen);
         }
@@ -76,10 +75,10 @@ namespace Jroc.Tests.Node.Net
                 var schedulerState = serviceProvider.Resolve<NodeSchedulerState>();
                 var eventLoop = new NodeEventLoopPump(schedulerState, tickSource, waitHandle);
 
-                dynamic options = new ExpandoObject();
-                options.allowHalfOpen = true;
+                var options = new JsObject();
+                options["allowHalfOpen"] = true;
 
-                var socket = new NetSocket((object)options);
+                var socket = new NetSocket(options);
                 var events = new System.Collections.Generic.List<string>();
                 socket.on("data", (Func<object[], object?[], object?>)((scopes, args) =>
                 {
