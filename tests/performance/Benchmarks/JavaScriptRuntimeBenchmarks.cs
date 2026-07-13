@@ -106,12 +106,6 @@ public class JavaScriptRuntimeBenchmarks
         }
     }
 
-    [IterationCleanup(Target = nameof(Jroc_Total))]
-    public void CleanupJrocIteration()
-    {
-        _jrocRuntime.DrainPendingUnloadContexts();
-    }
-
     private string ResolveScriptName(string scenarioKey)
     {
         return _scenarioKeyToScriptName.TryGetValue(scenarioKey, out var scriptName)

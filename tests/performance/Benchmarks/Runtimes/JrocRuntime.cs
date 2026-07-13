@@ -10,8 +10,6 @@ namespace Benchmarks.Runtimes;
 /// </summary>
 public class JrocRuntime : IJavaScriptRuntime
 {
-    private readonly List<WeakReference> _pendingUnloadContexts = [];
-
     public string Name => "jroc";
 
     public RuntimeExecutionResult Execute(string scriptContent, string scriptName = "script.js")
@@ -47,7 +45,6 @@ public class JrocRuntime : IJavaScriptRuntime
 
         // Load the compiled assembly from memory and execute
         var loadedAssembly = JrocInMemoryAssemblyLoader.Load(artifact);
-        var loadContextWeakReference = loadedAssembly.LoadContextWeakReference;
         try
         {
             var moduleId = artifact.ModuleIds[0];
@@ -67,37 +64,8 @@ public class JrocRuntime : IJavaScriptRuntime
         finally
         {
             loadedAssembly.Dispose();
-            TrackPendingUnload(loadContextWeakReference);
         }
 
         return result;
-    }
-
-    public void DrainPendingUnloadContexts()
-    {
-        lock (_pendingUnloadContexts)
-        {
-            if (_pendingUnloadContexts.Count == 0)
-            {
-                return;
-            }
-
-            for (var i = 0; i < 10 && _pendingUnloadContexts.Exists(reference => reference.IsAlive); i++)
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-            }
-
-            _pendingUnloadContexts.RemoveAll(reference => !reference.IsAlive);
-        }
-    }
-
-    private void TrackPendingUnload(WeakReference loadContextWeakReference)
-    {
-        lock (_pendingUnloadContexts)
-        {
-            _pendingUnloadContexts.Add(loadContextWeakReference);
-        }
     }
 }
