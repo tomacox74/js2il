@@ -594,7 +594,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 470 (0x1d6)
+		// Code size: 471 (0x1d7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_CreateSecureContext_Server_Handshake/Scope,
@@ -611,163 +611,164 @@
 
 		IL_0000: newobj instance void Modules.Tls_CreateSecureContext_Server_Handshake/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldarg.1
-		IL_0007: ldstr "node:tls"
-		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0011: stloc.s 4
-		IL_0013: ldloc.0
-		IL_0014: ldloc.s 4
-		IL_0016: stfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
-		IL_001b: ldarg.1
-		IL_001c: ldstr "./Tls_TestCertificates"
-		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
-		IL_0026: stloc.s 4
-		IL_0028: ldloc.s 4
-		IL_002a: brfalse IL_003b
+		IL_0006: nop
+		IL_0007: ldarg.1
+		IL_0008: ldstr "node:tls"
+		IL_000d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0012: stloc.s 4
+		IL_0014: ldloc.0
+		IL_0015: ldloc.s 4
+		IL_0017: stfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
+		IL_001c: ldarg.1
+		IL_001d: ldstr "./Tls_TestCertificates"
+		IL_0022: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0027: stloc.s 4
+		IL_0029: ldloc.s 4
+		IL_002b: brfalse IL_003c
 
-		IL_002f: ldloc.s 4
-		IL_0031: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0036: brfalse IL_004c
+		IL_0030: ldloc.s 4
+		IL_0032: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0037: brfalse IL_004d
 
-		IL_003b: ldloc.s 4
-		IL_003d: ldstr ""
-		IL_0042: ldstr "certPem"
-		IL_0047: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_003c: ldloc.s 4
+		IL_003e: ldstr ""
+		IL_0043: ldstr "certPem"
+		IL_0048: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_004c: ldloc.s 4
-		IL_004e: ldstr "certPem"
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0058: stloc.1
-		IL_0059: ldloc.s 4
-		IL_005b: ldstr "keyPem"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0065: stloc.2
-		IL_0066: ldloc.0
-		IL_0067: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0071: stloc.s 4
-		IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0078: dup
-		IL_0079: ldstr "key"
-		IL_007e: ldloc.2
-		IL_007f: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0084: dup
-		IL_0085: ldstr "cert"
-		IL_008a: ldloc.1
-		IL_008b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0090: stloc.s 5
-		IL_0092: ldloc.s 4
-		IL_0094: ldstr "createSecureContext"
-		IL_0099: ldloc.s 5
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a0: stloc.s 4
-		IL_00a2: ldloc.s 4
-		IL_00a4: stloc.3
-		IL_00a5: ldstr "console"
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00af: stloc.s 4
-		IL_00b1: ldloc.s 4
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b8: stloc.s 4
-		IL_00ba: ldloc.3
-		IL_00bb: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_00c0: ldc.i4.0
-		IL_00c1: ceq
-		IL_00c3: stloc.s 6
-		IL_00c5: ldloc.s 6
-		IL_00c7: ldc.i4.0
-		IL_00c8: ceq
-		IL_00ca: stloc.s 6
-		IL_00cc: ldloc.s 6
-		IL_00ce: box [System.Runtime]System.Boolean
-		IL_00d3: stloc.s 7
-		IL_00d5: ldstr "secureContext:"
-		IL_00da: ldloc.s 7
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00e1: stloc.s 8
-		IL_00e3: ldloc.s 4
-		IL_00e5: ldstr "log"
-		IL_00ea: ldloc.s 8
-		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00f1: pop
-		IL_00f2: ldloc.0
-		IL_00f3: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
-		IL_00f8: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00fd: stloc.s 4
-		IL_00ff: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_0104: dup
-		IL_0105: ldstr "secureContext"
-		IL_010a: ldloc.3
-		IL_010b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_0110: stloc.s 5
-		IL_0112: ldnull
-		IL_0113: ldftn object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52::__js_call__(object, object)
-		IL_0119: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_011e: ldc.i4.1
-		IL_011f: newarr [System.Runtime]System.Object
-		IL_0124: dup
-		IL_0125: ldc.i4.0
-		IL_0126: ldloc.0
-		IL_0127: stelem.ref
-		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0132: ldc.i4.1
-		IL_0133: conv.r8
-		IL_0134: ldstr ""
-		IL_0139: ldc.i4.0
+		IL_004d: ldloc.s 4
+		IL_004f: ldstr "certPem"
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0059: stloc.1
+		IL_005a: ldloc.s 4
+		IL_005c: ldstr "keyPem"
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0066: stloc.2
+		IL_0067: ldloc.0
+		IL_0068: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0072: stloc.s 4
+		IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0079: dup
+		IL_007a: ldstr "key"
+		IL_007f: ldloc.2
+		IL_0080: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0085: dup
+		IL_0086: ldstr "cert"
+		IL_008b: ldloc.1
+		IL_008c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0091: stloc.s 5
+		IL_0093: ldloc.s 4
+		IL_0095: ldstr "createSecureContext"
+		IL_009a: ldloc.s 5
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a1: stloc.s 4
+		IL_00a3: ldloc.s 4
+		IL_00a5: stloc.3
+		IL_00a6: ldstr "console"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b0: stloc.s 4
+		IL_00b2: ldloc.s 4
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00b9: stloc.s 4
+		IL_00bb: ldloc.3
+		IL_00bc: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_00c1: ldc.i4.0
+		IL_00c2: ceq
+		IL_00c4: stloc.s 6
+		IL_00c6: ldloc.s 6
+		IL_00c8: ldc.i4.0
+		IL_00c9: ceq
+		IL_00cb: stloc.s 6
+		IL_00cd: ldloc.s 6
+		IL_00cf: box [System.Runtime]System.Boolean
+		IL_00d4: stloc.s 7
+		IL_00d6: ldstr "secureContext:"
+		IL_00db: ldloc.s 7
+		IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e2: stloc.s 8
+		IL_00e4: ldloc.s 4
+		IL_00e6: ldstr "log"
+		IL_00eb: ldloc.s 8
+		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f2: pop
+		IL_00f3: ldloc.0
+		IL_00f4: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::'tls'
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00fe: stloc.s 4
+		IL_0100: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_0105: dup
+		IL_0106: ldstr "secureContext"
+		IL_010b: ldloc.3
+		IL_010c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_0111: stloc.s 5
+		IL_0113: ldnull
+		IL_0114: ldftn object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L9C52::__js_call__(object, object)
+		IL_011a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_011f: ldc.i4.1
+		IL_0120: newarr [System.Runtime]System.Object
+		IL_0125: dup
+		IL_0126: ldc.i4.0
+		IL_0127: ldloc.0
+		IL_0128: stelem.ref
+		IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0133: ldc.i4.1
+		IL_0134: conv.r8
+		IL_0135: ldstr ""
 		IL_013a: ldc.i4.0
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0145: stloc.s 9
-		IL_0147: ldloc.s 4
-		IL_0149: ldstr "createServer"
-		IL_014e: ldloc.s 5
-		IL_0150: ldloc.s 9
-		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0157: stloc.s 9
-		IL_0159: ldloc.0
-		IL_015a: ldloc.s 9
-		IL_015c: stfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::server
-		IL_0161: ldloc.0
-		IL_0162: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::server
-		IL_0167: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_016c: stloc.s 9
-		IL_016e: ldc.i4.1
-		IL_016f: newarr [System.Runtime]System.Object
-		IL_0174: dup
-		IL_0175: ldc.i4.0
-		IL_0176: ldloc.0
-		IL_0177: stelem.ref
-		IL_0178: ldc.i4.0
-		IL_0179: ldelem.ref
-		IL_017a: castclass Modules.Tls_CreateSecureContext_Server_Handshake/Scope
-		IL_017f: ldftn object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31::__js_call__(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, object)
-		IL_0185: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_018a: ldc.i4.1
-		IL_018b: newarr [System.Runtime]System.Object
-		IL_0190: dup
-		IL_0191: ldc.i4.0
-		IL_0192: ldloc.0
-		IL_0193: stelem.ref
-		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0199: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_019e: ldc.i4.0
-		IL_019f: conv.r8
-		IL_01a0: ldstr ""
-		IL_01a5: ldc.i4.0
+		IL_013b: ldc.i4.0
+		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0146: stloc.s 9
+		IL_0148: ldloc.s 4
+		IL_014a: ldstr "createServer"
+		IL_014f: ldloc.s 5
+		IL_0151: ldloc.s 9
+		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0158: stloc.s 9
+		IL_015a: ldloc.0
+		IL_015b: ldloc.s 9
+		IL_015d: stfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::server
+		IL_0162: ldloc.0
+		IL_0163: ldfld object Modules.Tls_CreateSecureContext_Server_Handshake/Scope::server
+		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_016d: stloc.s 9
+		IL_016f: ldc.i4.1
+		IL_0170: newarr [System.Runtime]System.Object
+		IL_0175: dup
+		IL_0176: ldc.i4.0
+		IL_0177: ldloc.0
+		IL_0178: stelem.ref
+		IL_0179: ldc.i4.0
+		IL_017a: ldelem.ref
+		IL_017b: castclass Modules.Tls_CreateSecureContext_Server_Handshake/Scope
+		IL_0180: ldftn object Modules.Tls_CreateSecureContext_Server_Handshake/ArrowFunction_L13C31::__js_call__(class Modules.Tls_CreateSecureContext_Server_Handshake/Scope, object)
+		IL_0186: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_018b: ldc.i4.1
+		IL_018c: newarr [System.Runtime]System.Object
+		IL_0191: dup
+		IL_0192: ldc.i4.0
+		IL_0193: ldloc.0
+		IL_0194: stelem.ref
+		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_019f: ldc.i4.0
+		IL_01a0: conv.r8
+		IL_01a1: ldstr ""
 		IL_01a6: ldc.i4.0
-		IL_01a7: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01ac: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_01b1: stloc.s 4
-		IL_01b3: ldloc.s 9
-		IL_01b5: ldstr "listen"
-		IL_01ba: ldc.r8 0.0
-		IL_01c3: box [System.Runtime]System.Double
-		IL_01c8: ldstr "127.0.0.1"
-		IL_01cd: ldloc.s 4
-		IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_01d4: pop
-		IL_01d5: ret
+		IL_01a7: ldc.i4.0
+		IL_01a8: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_01ad: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_01b2: stloc.s 4
+		IL_01b4: ldloc.s 9
+		IL_01b6: ldstr "listen"
+		IL_01bb: ldc.r8 0.0
+		IL_01c4: box [System.Runtime]System.Double
+		IL_01c9: ldstr "127.0.0.1"
+		IL_01ce: ldloc.s 4
+		IL_01d0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_01d5: pop
+		IL_01d6: ret
 	} // end of method Tls_CreateSecureContext_Server_Handshake::__js_module_init__
 
 } // end of class Modules.Tls_CreateSecureContext_Server_Handshake
@@ -809,7 +810,7 @@
 	{
 		// Method begins at RVA 0x2234
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 60 (0x3c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Tls_TestCertificates/Scope,
@@ -818,23 +819,24 @@
 
 		IL_0000: newobj instance void Modules.Tls_TestCertificates/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_000b: dup
-		IL_000c: ldstr "certPem"
-		IL_0011: ldstr "-----BEGIN CERTIFICATE-----\nMIIC+TCCAeGgAwIBAgIIaUAevC7krmQwDQYJKoZIhvcNAQELBQAwFjEUMBIGA1UE\nAxMLanMyaWwtbG9jYWwwHhcNMjYwMzE0MjAwODM0WhcNMjcwMzE1MjAwODM0WjAW\nMRQwEgYDVQQDEwtqczJpbC1sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBANP5G6yPJfJHP9xJsjN4DzzfGc3OahHJ9HkJuoicHjTd0m5l9kLBs1dE\nnES1ZZAnHC3StoD5iABtyS4yYtiL5Gv7UvgqR/9YL5XvyyYj8p9h51rVQn4xaU8p\nM7ngRaBciAqwpH8+JbnCA0RA9RC5rpEJtcUGNGPGwwQ7xuBUdQrWEFTnQ/PCrvpg\nP9wlJqQF+5pGorCV3rH5P5dOYR4AVO68ulqXcjwbM3OCAInONzth8xNjWNKFWwou\nR77IBF7/oboZFGJhKPqhWP9I974M69lGA1HrUMX9AmU+tVmgjo63XvzhWIhhmCZy\nWmP9FPfUipGpBQXSCTDILxXY+6jFu1UCAwEAAaNLMEkwGgYDVR0RBBMwEYIJbG9j\nYWxob3N0hwR/AAABMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoG\nCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQC2gZkmvzdlk0JLBjRr8qtbtrMy\nd/CnwDprOe9k+BeHIdlGzzpm7vvr63DacVo7znnH7Lp/O1FYiqJRhBWdm4weZj7c\nlHy9KNC/Eyv7ieGMPb4R0BGOvEmA8kp55ohaWsySGd2MQohNzYVDVntJ8xBvt2+Y\n5eHfYDfoBYG1lJTbTv0E3UWEpR8itnTsDEtA/FBvn/Do1TvYvyB7uUPFcCt4BWom\nTJdsb+Cl9CRe8yStfbsgjkzAdgJh74xYtmk+rSbYx8DLlp++Xfdgfj7eAKZ0Rm83\ng0+a+SMF6xucjCIRjG0R9AEgL7K2vppinB2/MusGrmD0HFUhAta7miSlnymn\n-----END CERTIFICATE-----"
-		IL_0016: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_001b: dup
-		IL_001c: ldstr "keyPem"
-		IL_0021: ldstr "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDT+RusjyXyRz/c\nSbIzeA883xnNzmoRyfR5CbqInB403dJuZfZCwbNXRJxEtWWQJxwt0raA+YgAbcku\nMmLYi+Rr+1L4Kkf/WC+V78smI/KfYeda1UJ+MWlPKTO54EWgXIgKsKR/PiW5wgNE\nQPUQua6RCbXFBjRjxsMEO8bgVHUK1hBU50Pzwq76YD/cJSakBfuaRqKwld6x+T+X\nTmEeAFTuvLpal3I8GzNzggCJzjc7YfMTY1jShVsKLke+yARe/6G6GRRiYSj6oVj/\nSPe+DOvZRgNR61DF/QJlPrVZoI6Ot1784ViIYZgmclpj/RT31IqRqQUF0gkwyC8V\n2PuoxbtVAgMBAAECggEAYNaJIggzmb+bGRRB6OmMbI6vxynpoz7UBQfAw/AujJBa\nNj02h8DeIZwil/EW+QglA3okDj/xNeDx67zxE2S1ce9bNCx8v9aVxrXJ5R6/FLkx\nbHnI6sXACn4UN3KR3HTpYZjZTZgiu/46Z9AVJRLvASuicuQmwv5m0WRNsuZiohPc\nel2rXFnX7RLY8Few3FrqZhLV+nDGSBWSnd3TGLOi4rxcRL+V+2AITP5Aj88+FWne\ni/MS50lrNtwIsOSx0Af8gNc4KNNgwlSFfVs+BsUj45pmsgzdYC0pVs6mVdH954U0\nELEoWLSeWYS/fyo6tVmdKtz8jhQsCid2N6jJDxpQcQKBgQDs4nc3wjOUjVCi/Oka\nUqn8v2o9gTdUwjb5aIruUU5Mw6PGjP47mxhxSWUpOt8o4c5spkccTVv8wodSIoLz\nbAQjCYKuVq2yzJR3jwhnJVRaYtn/Zv1Iwwok6UwOKt23FX8f31NUB2k9HmoudZGE\n59pMo7D5wlqNK2cCM7t4pG5ptwKBgQDlFAXEoFQAENRS703Snnx2sHly/dsYaeUA\nAWh/bsEMzKxEiz+U3RYETUjPqel/yp0IlRzLHwhO2j9MPEmxyzC+DvyVuPiR3mIu\naRkIbBhGsPSqcSzmJJTdp8tp9SDdV+FyMlbF3U570ARmloqIk2l6h+09wNgWFHeB\ngYD/nWYzUwKBgQCMR4hGEtEs1Yq9GnyIRA+6RziI965mmSSpCgnMG4X825ZvDCu5\n7JzK6aXohp6EvUPa/5T4467nveMY9qsJsBu7C/TBfT8btR7utltJicesRwHFx52S\nqz2koiuR8DygITDJFR1pk4H02cAThzgHtq2F2SICpd+t3dgAa9ZHGUjxfQKBgQCO\nP7i1OLnwsIKoXWF+AFxZd4xzE6ARsPA66KTzPNs0D4SJq853qjIZycQE8AXHDRIm\nWjHfEA4gqPXVaTp55SsHWlcOwiXYrrdZCno4+Ka6fvfvPwgagWzPl3qA+W7HA+NC\n/m9TvvEVgT66VZEA7kj5hZ6UUkPcsijjin+IOz1TcQKBgHGpSDuMjSskmvnVFMtc\nD2IODSKFhbXGhvNrQk8eyTUWSOA6xmtjv1qC8m2QSL+FTIHRn5lWlH3kntL8BO1S\nKdvFqYmZ/n0gIBGimF2WI8DAVUuAxDGQgnjqWotBaiCE6cEvwy7c3JS1156zMWic\nnodqo8mDXzbUbIenGwelECRH\n-----END PRIVATE KEY-----"
-		IL_0026: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_002b: stloc.1
-		IL_002c: ldarg.2
-		IL_002d: ldstr "exports"
-		IL_0032: ldloc.1
-		IL_0033: ldc.i4.1
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0039: pop
-		IL_003a: ret
+		IL_0006: nop
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000c: dup
+		IL_000d: ldstr "certPem"
+		IL_0012: ldstr "-----BEGIN CERTIFICATE-----\nMIIC+TCCAeGgAwIBAgIIaUAevC7krmQwDQYJKoZIhvcNAQELBQAwFjEUMBIGA1UE\nAxMLanMyaWwtbG9jYWwwHhcNMjYwMzE0MjAwODM0WhcNMjcwMzE1MjAwODM0WjAW\nMRQwEgYDVQQDEwtqczJpbC1sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBANP5G6yPJfJHP9xJsjN4DzzfGc3OahHJ9HkJuoicHjTd0m5l9kLBs1dE\nnES1ZZAnHC3StoD5iABtyS4yYtiL5Gv7UvgqR/9YL5XvyyYj8p9h51rVQn4xaU8p\nM7ngRaBciAqwpH8+JbnCA0RA9RC5rpEJtcUGNGPGwwQ7xuBUdQrWEFTnQ/PCrvpg\nP9wlJqQF+5pGorCV3rH5P5dOYR4AVO68ulqXcjwbM3OCAInONzth8xNjWNKFWwou\nR77IBF7/oboZFGJhKPqhWP9I974M69lGA1HrUMX9AmU+tVmgjo63XvzhWIhhmCZy\nWmP9FPfUipGpBQXSCTDILxXY+6jFu1UCAwEAAaNLMEkwGgYDVR0RBBMwEYIJbG9j\nYWxob3N0hwR/AAABMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgeAMBMGA1UdJQQMMAoG\nCCsGAQUFBwMBMA0GCSqGSIb3DQEBCwUAA4IBAQC2gZkmvzdlk0JLBjRr8qtbtrMy\nd/CnwDprOe9k+BeHIdlGzzpm7vvr63DacVo7znnH7Lp/O1FYiqJRhBWdm4weZj7c\nlHy9KNC/Eyv7ieGMPb4R0BGOvEmA8kp55ohaWsySGd2MQohNzYVDVntJ8xBvt2+Y\n5eHfYDfoBYG1lJTbTv0E3UWEpR8itnTsDEtA/FBvn/Do1TvYvyB7uUPFcCt4BWom\nTJdsb+Cl9CRe8yStfbsgjkzAdgJh74xYtmk+rSbYx8DLlp++Xfdgfj7eAKZ0Rm83\ng0+a+SMF6xucjCIRjG0R9AEgL7K2vppinB2/MusGrmD0HFUhAta7miSlnymn\n-----END CERTIFICATE-----"
+		IL_0017: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_001c: dup
+		IL_001d: ldstr "keyPem"
+		IL_0022: ldstr "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDT+RusjyXyRz/c\nSbIzeA883xnNzmoRyfR5CbqInB403dJuZfZCwbNXRJxEtWWQJxwt0raA+YgAbcku\nMmLYi+Rr+1L4Kkf/WC+V78smI/KfYeda1UJ+MWlPKTO54EWgXIgKsKR/PiW5wgNE\nQPUQua6RCbXFBjRjxsMEO8bgVHUK1hBU50Pzwq76YD/cJSakBfuaRqKwld6x+T+X\nTmEeAFTuvLpal3I8GzNzggCJzjc7YfMTY1jShVsKLke+yARe/6G6GRRiYSj6oVj/\nSPe+DOvZRgNR61DF/QJlPrVZoI6Ot1784ViIYZgmclpj/RT31IqRqQUF0gkwyC8V\n2PuoxbtVAgMBAAECggEAYNaJIggzmb+bGRRB6OmMbI6vxynpoz7UBQfAw/AujJBa\nNj02h8DeIZwil/EW+QglA3okDj/xNeDx67zxE2S1ce9bNCx8v9aVxrXJ5R6/FLkx\nbHnI6sXACn4UN3KR3HTpYZjZTZgiu/46Z9AVJRLvASuicuQmwv5m0WRNsuZiohPc\nel2rXFnX7RLY8Few3FrqZhLV+nDGSBWSnd3TGLOi4rxcRL+V+2AITP5Aj88+FWne\ni/MS50lrNtwIsOSx0Af8gNc4KNNgwlSFfVs+BsUj45pmsgzdYC0pVs6mVdH954U0\nELEoWLSeWYS/fyo6tVmdKtz8jhQsCid2N6jJDxpQcQKBgQDs4nc3wjOUjVCi/Oka\nUqn8v2o9gTdUwjb5aIruUU5Mw6PGjP47mxhxSWUpOt8o4c5spkccTVv8wodSIoLz\nbAQjCYKuVq2yzJR3jwhnJVRaYtn/Zv1Iwwok6UwOKt23FX8f31NUB2k9HmoudZGE\n59pMo7D5wlqNK2cCM7t4pG5ptwKBgQDlFAXEoFQAENRS703Snnx2sHly/dsYaeUA\nAWh/bsEMzKxEiz+U3RYETUjPqel/yp0IlRzLHwhO2j9MPEmxyzC+DvyVuPiR3mIu\naRkIbBhGsPSqcSzmJJTdp8tp9SDdV+FyMlbF3U570ARmloqIk2l6h+09wNgWFHeB\ngYD/nWYzUwKBgQCMR4hGEtEs1Yq9GnyIRA+6RziI965mmSSpCgnMG4X825ZvDCu5\n7JzK6aXohp6EvUPa/5T4467nveMY9qsJsBu7C/TBfT8btR7utltJicesRwHFx52S\nqz2koiuR8DygITDJFR1pk4H02cAThzgHtq2F2SICpd+t3dgAa9ZHGUjxfQKBgQCO\nP7i1OLnwsIKoXWF+AFxZd4xzE6ARsPA66KTzPNs0D4SJq853qjIZycQE8AXHDRIm\nWjHfEA4gqPXVaTp55SsHWlcOwiXYrrdZCno4+Ka6fvfvPwgagWzPl3qA+W7HA+NC\n/m9TvvEVgT66VZEA7kj5hZ6UUkPcsijjin+IOz1TcQKBgHGpSDuMjSskmvnVFMtc\nD2IODSKFhbXGhvNrQk8eyTUWSOA6xmtjv1qC8m2QSL+FTIHRn5lWlH3kntL8BO1S\nKdvFqYmZ/n0gIBGimF2WI8DAVUuAxDGQgnjqWotBaiCE6cEvwy7c3JS1156zMWic\nnodqo8mDXzbUbIenGwelECRH\n-----END PRIVATE KEY-----"
+		IL_0027: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_002c: stloc.1
+		IL_002d: ldarg.2
+		IL_002e: ldstr "exports"
+		IL_0033: ldloc.1
+		IL_0034: ldc.i4.1
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_003a: pop
+		IL_003b: ret
 	} // end of method Tls_TestCertificates::__js_module_init__
 
 } // end of class Modules.Tls_TestCertificates

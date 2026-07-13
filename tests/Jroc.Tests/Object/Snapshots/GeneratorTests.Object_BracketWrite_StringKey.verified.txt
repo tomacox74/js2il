@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21cc
+			// Method begins at RVA 0x21cd
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,7 +40,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 368 (0x170)
+		// Code size: 369 (0x171)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Object_BracketWrite_StringKey/Scope,
@@ -52,114 +52,115 @@
 
 		IL_0000: newobj instance void Modules.Object_BracketWrite_StringKey/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
-		IL_000b: dup
-		IL_000c: ldstr "name"
-		IL_0011: ldstr "Alice"
-		IL_0016: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
-		IL_001b: dup
-		IL_001c: ldstr "age"
-		IL_0021: ldc.r8 30
-		IL_002a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
-		IL_002f: stloc.1
-		IL_0030: ldloc.1
-		IL_0031: ldstr "name"
-		IL_0036: ldstr "Bob"
-		IL_003b: ldc.i4.1
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0041: pop
-		IL_0042: ldloc.1
-		IL_0043: ldstr "age"
-		IL_0048: ldc.r8 25
-		IL_0051: ldc.i4.1
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_0057: pop
-		IL_0058: ldloc.1
-		IL_0059: ldstr "city"
-		IL_005e: ldstr "London"
-		IL_0063: ldc.i4.1
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
-		IL_0069: pop
-		IL_006a: ldstr "console"
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0074: stloc.s 4
-		IL_0076: ldloc.s 4
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007d: stloc.s 4
-		IL_007f: ldloc.s 4
-		IL_0081: ldstr "log"
-		IL_0086: ldloc.1
-		IL_0087: ldstr "name"
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0096: pop
-		IL_0097: ldstr "console"
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a1: stloc.s 4
-		IL_00a3: ldloc.s 4
-		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00aa: stloc.s 4
-		IL_00ac: ldloc.s 4
-		IL_00ae: ldstr "log"
-		IL_00b3: ldloc.1
-		IL_00b4: ldstr "age"
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00be: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00c3: pop
-		IL_00c4: ldstr "console"
-		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00ce: stloc.s 4
-		IL_00d0: ldloc.s 4
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00d7: stloc.s 4
-		IL_00d9: ldloc.s 4
-		IL_00db: ldstr "log"
-		IL_00e0: ldloc.1
-		IL_00e1: ldstr "city"
-		IL_00e6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00f0: pop
-		IL_00f1: ldstr "score"
-		IL_00f6: stloc.2
-		IL_00f7: ldloc.1
-		IL_00f8: ldloc.2
-		IL_00f9: ldc.r8 100
-		IL_0102: ldc.i4.1
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_0108: pop
-		IL_0109: ldstr "console"
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0113: stloc.s 4
-		IL_0115: ldloc.s 4
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_011c: stloc.s 4
-		IL_011e: ldloc.s 4
-		IL_0120: ldstr "log"
-		IL_0125: ldloc.1
-		IL_0126: ldloc.2
-		IL_0127: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0131: pop
-		IL_0132: ldloc.1
-		IL_0133: ldstr "level"
-		IL_0138: ldc.r8 5
-		IL_0141: ldc.i4.1
-		IL_0142: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
-		IL_0147: stloc.s 4
-		IL_0149: ldloc.s 4
-		IL_014b: stloc.3
-		IL_014c: ldstr "console"
-		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0156: stloc.s 4
-		IL_0158: ldloc.s 4
-		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_015f: stloc.s 4
-		IL_0161: ldloc.s 4
-		IL_0163: ldstr "log"
-		IL_0168: ldloc.3
-		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_016e: pop
-		IL_016f: ret
+		IL_0006: nop
+		IL_0007: call class [JavaScriptRuntime]JavaScriptRuntime.JsObject [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::CreateObjectLiteral()
+		IL_000c: dup
+		IL_000d: ldstr "name"
+		IL_0012: ldstr "Alice"
+		IL_0017: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetObject(string, object)
+		IL_001c: dup
+		IL_001d: ldstr "age"
+		IL_0022: ldc.r8 30
+		IL_002b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.JsObject::SetNumber(string, float64)
+		IL_0030: stloc.1
+		IL_0031: ldloc.1
+		IL_0032: ldstr "name"
+		IL_0037: ldstr "Bob"
+		IL_003c: ldc.i4.1
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_0042: pop
+		IL_0043: ldloc.1
+		IL_0044: ldstr "age"
+		IL_0049: ldc.r8 25
+		IL_0052: ldc.i4.1
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0058: pop
+		IL_0059: ldloc.1
+		IL_005a: ldstr "city"
+		IL_005f: ldstr "London"
+		IL_0064: ldc.i4.1
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, object, bool)
+		IL_006a: pop
+		IL_006b: ldstr "console"
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0075: stloc.s 4
+		IL_0077: ldloc.s 4
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_007e: stloc.s 4
+		IL_0080: ldloc.s 4
+		IL_0082: ldstr "log"
+		IL_0087: ldloc.1
+		IL_0088: ldstr "name"
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0097: pop
+		IL_0098: ldstr "console"
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00a2: stloc.s 4
+		IL_00a4: ldloc.s 4
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00ab: stloc.s 4
+		IL_00ad: ldloc.s 4
+		IL_00af: ldstr "log"
+		IL_00b4: ldloc.1
+		IL_00b5: ldstr "age"
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c4: pop
+		IL_00c5: ldstr "console"
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00cf: stloc.s 4
+		IL_00d1: ldloc.s 4
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d8: stloc.s 4
+		IL_00da: ldloc.s 4
+		IL_00dc: ldstr "log"
+		IL_00e1: ldloc.1
+		IL_00e2: ldstr "city"
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_00ec: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f1: pop
+		IL_00f2: ldstr "score"
+		IL_00f7: stloc.2
+		IL_00f8: ldloc.1
+		IL_00f9: ldloc.2
+		IL_00fa: ldc.r8 100
+		IL_0103: ldc.i4.1
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0109: pop
+		IL_010a: ldstr "console"
+		IL_010f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0114: stloc.s 4
+		IL_0116: ldloc.s 4
+		IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_011d: stloc.s 4
+		IL_011f: ldloc.s 4
+		IL_0121: ldstr "log"
+		IL_0126: ldloc.1
+		IL_0127: ldloc.2
+		IL_0128: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0132: pop
+		IL_0133: ldloc.1
+		IL_0134: ldstr "level"
+		IL_0139: ldc.r8 5
+		IL_0142: ldc.i4.1
+		IL_0143: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::SetItem(object, string, float64, bool)
+		IL_0148: stloc.s 4
+		IL_014a: ldloc.s 4
+		IL_014c: stloc.3
+		IL_014d: ldstr "console"
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0157: stloc.s 4
+		IL_0159: ldloc.s 4
+		IL_015b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0160: stloc.s 4
+		IL_0162: ldloc.s 4
+		IL_0164: ldstr "log"
+		IL_0169: ldloc.3
+		IL_016a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_016f: pop
+		IL_0170: ret
 	} // end of method Object_BracketWrite_StringKey::__js_module_init__
 
 } // end of class Modules.Object_BracketWrite_StringKey
@@ -171,7 +172,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d5
+		// Method begins at RVA 0x21d6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
