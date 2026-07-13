@@ -29,22 +29,16 @@ namespace JavaScriptRuntime
             => Object.ToPropertyKeyString(key);
 
         /// <summary>
-        /// Identifies runtime-owned ordinary objects. <see cref="JsObject"/> is the
-        /// primary representation; ExpandoObject remains a transitional compatibility path.
+        /// Identifies runtime-owned ordinary objects.
         /// </summary>
         internal static bool IsOrdinaryObject(object target)
-            => target is JsObject or System.Dynamic.ExpandoObject;
+            => target is JsObject;
 
         internal static bool TryGetOwnValue(object target, string key, out object? value)
         {
             if (target is JsObject jsObject)
             {
                 return jsObject.TryGetBoxedValue(key, out value);
-            }
-
-            if (target is System.Dynamic.ExpandoObject expando)
-            {
-                return ((IDictionary<string, object?>)expando).TryGetValue(key, out value);
             }
 
             value = null;
@@ -58,8 +52,7 @@ namespace JavaScriptRuntime
                 return jsObject.ContainsKey(key);
             }
 
-            return target is System.Dynamic.ExpandoObject expando
-                && ((IDictionary<string, object?>)expando).ContainsKey(key);
+            return false;
         }
 
         internal static bool TrySetOwnValue(object target, string key, object? value)
@@ -67,12 +60,6 @@ namespace JavaScriptRuntime
             if (target is JsObject jsObject)
             {
                 jsObject.SetBoxedValue(key, value);
-                return true;
-            }
-
-            if (target is System.Dynamic.ExpandoObject expando)
-            {
-                ((IDictionary<string, object?>)expando)[key] = value;
                 return true;
             }
 
@@ -87,12 +74,6 @@ namespace JavaScriptRuntime
                 return true;
             }
 
-            if (target is System.Dynamic.ExpandoObject expando)
-            {
-                ((IDictionary<string, object?>)expando).Remove(key);
-                return true;
-            }
-
             return false;
         }
 
@@ -101,11 +82,6 @@ namespace JavaScriptRuntime
             if (target is JsObject jsObject)
             {
                 return jsObject.GetOwnPropertyNames();
-            }
-
-            if (target is System.Dynamic.ExpandoObject expando)
-            {
-                return ((IDictionary<string, object?>)expando).Keys;
             }
 
             return System.Array.Empty<string>();
@@ -139,12 +115,11 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            var descriptor = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)descriptor;
-            dict["value"] = null;
-            dict["writable"] = true;
-            dict["enumerable"] = true;
-            dict["configurable"] = false;
+            var descriptor = new JsObject();
+            descriptor["value"] = null;
+            descriptor["writable"] = true;
+            descriptor["enumerable"] = true;
+            descriptor["configurable"] = false;
             Object.defineProperty(global, name, descriptor);
         }
 
@@ -422,12 +397,11 @@ namespace JavaScriptRuntime
 
         private static object CreateDataPropertyDescriptor(object? value, bool enumerable)
         {
-            var descriptor = new System.Dynamic.ExpandoObject();
-            var dict = (IDictionary<string, object?>)descriptor;
-            dict["value"] = value;
-            dict["writable"] = true;
-            dict["enumerable"] = enumerable;
-            dict["configurable"] = true;
+            var descriptor = new JsObject();
+            descriptor["value"] = value;
+            descriptor["writable"] = true;
+            descriptor["enumerable"] = enumerable;
+            descriptor["configurable"] = true;
             return descriptor;
         }
 

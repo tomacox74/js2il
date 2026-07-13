@@ -5489,8 +5489,7 @@ namespace JavaScriptRuntime
                     return plainValue;
                 }
             }
-            // Descriptor-aware fast dispatch for JsObject plus the retained
-            // mixed-runtime ExpandoObject compatibility surface. Own
+            // Descriptor-aware fast dispatch for ordinary JsObject receivers. Own
             // properties on these receivers are authoritatively descriptor-backed
             // (literal/assignment writes mirror a data descriptor), so a single
             // descriptor probe resolves the overwhelmingly common case without
@@ -5777,8 +5776,7 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            // Ordinary objects use direct JsObject storage first, with ExpandoObject
-            // retained behind ObjectRuntime during the migration.
+            // Ordinary objects use direct JsObject storage.
             if (ObjectRuntime.IsOrdinaryObject(obj))
             {
                 // Prototype-setter semantics: if no own property exists, and a prototype accessor

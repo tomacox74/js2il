@@ -2,7 +2,6 @@ using JavaScriptRuntime.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -18,7 +17,7 @@ public class RuntimeServices
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
     [ThreadStatic] private static Stack<object?[]?>? _constructorArgStack;
     [ThreadStatic] private static Stack<object?>? _derivedConstructorThisStack;
-    private static readonly ConcurrentDictionary<string, ExpandoObject> _importMetaByUrl = new(StringComparer.Ordinal);
+    private static readonly ConcurrentDictionary<string, JsObject> _importMetaByUrl = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<string, JavaScriptRuntime.CommonJS.RequireDelegate> _requireByModuleId = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<Type, LazyClassMetadataSlot> _lazyClassMetadata = new();
     private static readonly ConcurrentDictionary<ClassConstructorCacheKey, ClassConstructorValue> _classConstructorValues = new();
@@ -967,13 +966,12 @@ public class RuntimeServices
         var url = GetImportMetaUrl(moduleIdOrPath);
         var meta = _importMetaByUrl.GetOrAdd(url, static key =>
         {
-            var exp = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)exp;
+            var meta = new JsObject();
             if (!string.IsNullOrEmpty(key))
             {
-                dict["url"] = key;
+                meta["url"] = key;
             }
-            return exp;
+            return meta;
         });
 
         return meta;

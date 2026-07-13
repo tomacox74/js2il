@@ -1,4 +1,3 @@
-using System.Dynamic;
 using JavaScriptRuntime;
 
 namespace Jroc.Tests;
@@ -120,7 +119,7 @@ public static class Test262HostRuntimeIntrinsics
 
         InitializeFunction(constructor, "Test262Error", 1);
 
-        var prototype = new ExpandoObject();
+        var prototype = new JsObject();
         ObjectRuntime.SetItem(prototype, "constructor", constructor);
         ObjectRuntime.SetItem(constructor, "prototype", prototype);
 
@@ -129,7 +128,7 @@ public static class Test262HostRuntimeIntrinsics
 
     private static object Create262Object()
     {
-        var result = new ExpandoObject();
+        var result = new JsObject();
         ObjectRuntime.SetItem(result, "createRealm", (Func<object>)CreateRealm);
         ObjectRuntime.SetItem(result, "detachArrayBuffer", Unsupported262("$262.detachArrayBuffer"));
         ObjectRuntime.SetItem(result, "evalScript", Unsupported262("$262.evalScript"));
@@ -139,7 +138,7 @@ public static class Test262HostRuntimeIntrinsics
 
     private static object CreateRealm()
     {
-        var realm = new ExpandoObject();
+        var realm = new JsObject();
         ObjectRuntime.SetItem(realm, "global", GlobalThis.globalThis);
         return realm;
     }

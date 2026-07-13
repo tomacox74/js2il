@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Dynamic;
 using JavaScriptRuntime;
 
 namespace Jroc.Tests
@@ -24,11 +23,11 @@ namespace Jroc.Tests
         [Fact]
         public Task ToString_ObjectLiteral()
         {
-            var expandoObject = new ExpandoObject() as IDictionary<string, object>;
-            expandoObject["name"] = "Alice";
-            expandoObject["age"] = 31;
+            var objectLiteral = new JsObject();
+            objectLiteral["name"] = "Alice";
+            objectLiteral["age"] = 31;
 
-            var result = DotNet2JSConversions.ToString(expandoObject);
+            var result = DotNet2JSConversions.ToString(objectLiteral);
             return VerifyWithSnapshot(result);
         }
 

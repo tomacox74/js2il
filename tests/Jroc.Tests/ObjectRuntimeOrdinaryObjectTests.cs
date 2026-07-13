@@ -1,20 +1,18 @@
-using System.Dynamic;
+using System.Collections.Generic;
 using JavaScriptRuntime;
 
 namespace Jroc.Tests;
 
 public sealed class ObjectRuntimeOrdinaryObjectTests
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void CoreDispatch_PreservesJsObjectAndTransitionalExpandoBehavior(bool useExpando)
+    [Fact]
+    public void CoreDispatch_PreservesJsObjectBehavior()
     {
         var runtime = RuntimeServices.BuildServiceProvider();
         try
         {
             GlobalThis.ServiceProvider = runtime;
-            object target = useExpando ? new ExpandoObject() : new JsObject();
+            object target = new JsObject();
             var prototype = new JsObject();
 
             ObjectRuntime.SetProperty(target, "second", 2d);
@@ -45,13 +43,13 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
     }
 
     [Fact]
-    public void ProxyFallback_PreservesTransitionalExpandoTargetSemantics()
+    public void ProxyFallback_PreservesJsObjectTargetSemantics()
     {
         var runtime = RuntimeServices.BuildServiceProvider();
         try
         {
             GlobalThis.ServiceProvider = runtime;
-            object target = new ExpandoObject();
+            object target = new JsObject();
             var proxy = new JavaScriptRuntime.Proxy(target, new JsObject());
 
             ObjectRuntime.SetProperty(proxy, "value", 42d);
@@ -67,12 +65,10 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
         }
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void DeletedIntrinsicProperty_IsMaskedAcrossCoreDispatch(bool useExpando)
+    [Fact]
+    public void DeletedIntrinsicProperty_IsMaskedAcrossCoreDispatch()
     {
-        object target = useExpando ? new ExpandoObject() : new JsObject();
+        object target = new JsObject();
         ObjectRuntime.TrySetOwnValue(target, "hidden", 42d);
         using (PropertyDescriptorStore.BeginIntrinsicInitialization())
         {
@@ -104,5 +100,31 @@ public sealed class ObjectRuntimeOrdinaryObjectTests
         {
             GlobalThis.ServiceProvider = null;
         }
+    }
+
+    [Fact]
+    public void RuntimeCreatedOrdinaryRecords_AreJsObjects()
+    {
+        var moduleId = $"module-{Guid.NewGuid():N}.js";
+        var importMeta = Assert.IsType<JsObject>(RuntimeServices.GetImportMeta(moduleId));
+        var revocable = Assert.IsType<JsObject>(
+            JavaScriptRuntime.Proxy.revocable(new JsObject(), new JsObject()));
+
+        Assert.Same(importMeta, RuntimeServices.GetImportMeta(moduleId));
+        Assert.IsType<string>(ObjectRuntime.GetProperty(importMeta, "url"));
+        Assert.IsType<JavaScriptRuntime.Proxy>(ObjectRuntime.GetProperty(revocable, "proxy"));
+        Assert.IsAssignableFrom<Delegate>(ObjectRuntime.GetProperty(revocable, "revoke"));
+    }
+
+    [Fact]
+    public void ExternalDictionary_RemainsAHostObject()
+    {
+        var hostObject = new Dictionary<string, object?>();
+
+        ObjectRuntime.SetProperty(hostObject, "value", 42d);
+
+        Assert.Equal(42d, ObjectRuntime.GetProperty(hostObject, "value"));
+        Assert.True(JavaScriptRuntime.Object.hasOwn(hostObject, "value"));
+        Assert.Equal(42d, hostObject["value"]);
     }
 }

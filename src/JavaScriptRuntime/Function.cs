@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -227,9 +226,8 @@ public static class Function
 
         private static object BindClassConstructor(ClassConstructorValue target, object? thisArg, object?[] boundArgs)
         {
-            var bound = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)bound;
-            dict["Construct"] = (Func<object[], object?[]?, object?>)((_, args) =>
+            var bound = new JsObject();
+            bound["Construct"] = (Func<object[], object?[]?, object?>)((_, args) =>
             {
                 var callArgs = boundArgs
                     .Concat(args ?? System.Array.Empty<object?>())
@@ -237,7 +235,7 @@ public static class Function
                     .ToArray();
                 return JavaScriptRuntime.Object.ConstructValue(target, callArgs);
             });
-            dict["prototype"] = JavaScriptRuntime.Object.GetProperty(target.Type, "prototype");
+            bound["prototype"] = JavaScriptRuntime.Object.GetProperty(target.Type, "prototype");
             PrototypeChain.SetPrototype(bound, Prototype);
             return bound;
         }

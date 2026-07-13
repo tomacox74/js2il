@@ -1821,7 +1821,7 @@ namespace JavaScriptRuntime
         {
             if (options == null) return false;
 
-            // Handle ExpandoObject/dynamic dictionaries
+            // Handle dictionary-backed host option objects.
             if (options is System.Collections.Generic.IDictionary<string, object> dict)
             {
                 foreach (var kv in dict)

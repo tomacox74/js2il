@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Dynamic;
+using JavaScriptRuntime;
 using RuntimeError = JavaScriptRuntime.Error;
 using RuntimeTypeError = JavaScriptRuntime.TypeError;
 using RuntimeHttpAgent = JavaScriptRuntime.Node.HttpAgent;
@@ -13,8 +12,8 @@ namespace Jroc.Tests.Node.Https
         [Fact]
         public void Tls_CreateSecureContext_KeyWithoutCert_ThrowsClearError()
         {
-            dynamic options = new ExpandoObject();
-            options.key = "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----";
+            var options = new JsObject();
+            options["key"] = "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----";
 
             var tls = new RuntimeTlsModule();
             var ex = Assert.Throws<RuntimeError>(() => tls.createSecureContext(options));
@@ -24,10 +23,10 @@ namespace Jroc.Tests.Node.Https
         [Fact]
         public void Https_Request_WithAgentObject_ThrowsClearError()
         {
-            dynamic options = new ExpandoObject();
-            options.host = "127.0.0.1";
-            options.port = 443.0;
-            options.agent = new RuntimeHttpAgent();
+            var options = new JsObject();
+            options["host"] = "127.0.0.1";
+            options["port"] = 443.0;
+            options["agent"] = new RuntimeHttpAgent();
 
             var https = new RuntimeHttpsModule();
             var ex = Assert.Throws<RuntimeTypeError>(() => https.request(new object[] { options }));

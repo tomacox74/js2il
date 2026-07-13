@@ -546,7 +546,7 @@ internal sealed partial class LIRToILCompiler
                     // Inline JavaScriptRuntime.Array construction: dup + element
                     LIRNewJsArray newJsArray => 2 + (newJsArray.Elements.Count == 0 ? 0 : newJsArray.Elements.Max(EstimateTempConstructionPeak)),
 
-                    // Inline ExpandoObject/object literal: dup + key + value
+                    // Inline JsObject/object literal: dup + key + value
                     LIRNewJsObject newJsObject => 3 + (newJsObject.Properties.Count == 0 ? 0 : newJsObject.Properties.Max(p => EstimateTempConstructionPeak(p.Value))),
 
                     // Specialized object literal: receiver + value construction is the widest setter-call sequence.
