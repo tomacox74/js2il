@@ -107,6 +107,26 @@ dotnet run -c Release -- --phased --scenario dromaeo-3d-cube
 
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
 
+#### Branch comparison workflow
+
+Run the manual `Benchmark branch comparison` workflow to compare an exact phased
+scenario on `master` and a private branch on the same GitHub-hosted runner. It
+runs `master` first, prints both BenchmarkDotNet reports in the workflow log,
+and uploads raw reports plus console output as the
+`benchmark-branch-comparison-results` artifact.
+
+Dispatch it from a checkout with:
+
+```powershell
+node scripts/dispatchBenchmarkBranchComparisonWorkflow.js <private-branch> <scenario-name> --watch
+```
+
+For example:
+
+```powershell
+node scripts/dispatchBenchmarkBranchComparisonWorkflow.js perf/object-shapes dromaeo-3d-cube --watch
+```
+
 #### Cube-focused guardrail workflow
 Runs only the Dromaeo cube phased scenarios and prints the execution counters we track for issue #1327:
 
