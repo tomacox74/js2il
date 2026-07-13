@@ -109,10 +109,10 @@ If any benchmark case fails, the run now exits non-zero and prints the failing b
 
 #### Branch comparison workflow
 
-Run the manual `Benchmark branch comparison` workflow to compare an exact phased
-scenario on `master` and a private branch on the same GitHub-hosted runner. It
-runs `master` first, prints both BenchmarkDotNet reports in the workflow log,
-and uploads raw reports plus console output as the
+Run the manual `Benchmark branch comparison` workflow to compare a scenario from
+the `phased` (default) or `kracken` benchmark suite on `master` and a private
+branch on the same GitHub-hosted runner. It runs `master` first, prints both
+BenchmarkDotNet reports in the workflow log, and uploads raw reports plus console output as the
 `benchmark-branch-comparison-results` artifact.
 
 Dispatch it from a checkout with:
@@ -125,6 +125,12 @@ For example:
 
 ```powershell
 node scripts/dispatchBenchmarkBranchComparisonWorkflow.js perf/object-shapes dromaeo-3d-cube --watch
+```
+
+To compare the Kraken `ai-astar` scenario:
+
+```powershell
+node scripts/dispatchBenchmarkBranchComparisonWorkflow.js v0.11.21 ai-astar --benchmark kracken --watch
 ```
 
 #### Cube-focused guardrail workflow

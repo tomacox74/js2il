@@ -1,5 +1,5 @@
 name: Benchmark branch comparison
-run-name: Benchmark ${{ inputs.scenario_name }} - master vs ${{ inputs.private_branch }}
+run-name: ${{ inputs.benchmark_suite }} ${{ inputs.scenario_name }} - master vs ${{ inputs.private_branch }}
 
 on:
   workflow_dispatch:
@@ -9,9 +9,17 @@ on:
         required: true
         type: string
       scenario_name:
-        description: "Exact phased BenchmarkDotNet scenario name"
+        description: "Scenario or filter name for the selected benchmark suite"
         required: true
         type: string
+      benchmark_suite:
+        description: "Benchmark suite to run"
+        required: true
+        default: phased
+        type: choice
+        options:
+          - phased
+          - kracken
 
 env:
   DOTNET_NOLOGO: true
@@ -55,6 +63,7 @@ jobs:
         shell: bash
         env:
           SCENARIO_NAME: ${{ inputs.scenario_name }}
+          BENCHMARK_SUITE: ${{ inputs.benchmark_suite }}
         run: |
           set -euo pipefail
 
@@ -68,9 +77,22 @@ jobs:
           dotnet build-server shutdown
           rm -rf BenchmarkDotNet.Artifacts
 
-          echo "=== master: $SCENARIO_NAME ==="
+          case "$BENCHMARK_SUITE" in
+            phased)
+              benchmark_args=(--phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME")
+              ;;
+            kracken)
+              benchmark_args=(--kracken --filter "*$SCENARIO_NAME*")
+              ;;
+            *)
+              echo "Unsupported benchmark suite: $BENCHMARK_SUITE" >&2
+              exit 2
+              ;;
+          esac
+
+          echo "=== master: $BENCHMARK_SUITE $SCENARIO_NAME ==="
           dotnet run --project Benchmarks.csproj -c Release --no-build -- \
-            --phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME" --exporters json \
+            "${benchmark_args[@]}" --exporters json \
             | tee "$output_dir/console.txt"
 
           cp -R BenchmarkDotNet.Artifacts "$output_dir/artifacts"
@@ -81,6 +103,7 @@ jobs:
         shell: bash
         env:
           SCENARIO_NAME: ${{ inputs.scenario_name }}
+          BENCHMARK_SUITE: ${{ inputs.benchmark_suite }}
           PRIVATE_BRANCH: ${{ inputs.private_branch }}
         run: |
           set -euo pipefail
@@ -95,9 +118,22 @@ jobs:
           dotnet build-server shutdown
           rm -rf BenchmarkDotNet.Artifacts
 
-          echo "=== $PRIVATE_BRANCH: $SCENARIO_NAME ==="
+          case "$BENCHMARK_SUITE" in
+            phased)
+              benchmark_args=(--phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME")
+              ;;
+            kracken)
+              benchmark_args=(--kracken --filter "*$SCENARIO_NAME*")
+              ;;
+            *)
+              echo "Unsupported benchmark suite: $BENCHMARK_SUITE" >&2
+              exit 2
+              ;;
+          esac
+
+          echo "=== $PRIVATE_BRANCH: $BENCHMARK_SUITE $SCENARIO_NAME ==="
           dotnet run --project Benchmarks.csproj -c Release --no-build -- \
-            --phased --filter "*JrocPhasedBenchmarks*" --scenario "$SCENARIO_NAME" --exporters json \
+            "${benchmark_args[@]}" --exporters json \
             | tee "$output_dir/console.txt"
 
           cp -R BenchmarkDotNet.Artifacts "$output_dir/artifacts"
@@ -108,6 +144,7 @@ jobs:
         shell: bash
         env:
           SCENARIO_NAME: ${{ inputs.scenario_name }}
+          BENCHMARK_SUITE: ${{ inputs.benchmark_suite }}
           PRIVATE_BRANCH: ${{ inputs.private_branch }}
         run: |
           set -euo pipefail
@@ -117,6 +154,7 @@ jobs:
           {
             echo "# Benchmark comparison"
             echo
+            echo "- Benchmark suite: \`$BENCHMARK_SUITE\`"
             echo "- Scenario: \`$SCENARIO_NAME\`"
             echo "- Baseline: \`master\`"
             echo "- Candidate: \`$PRIVATE_BRANCH\`"
