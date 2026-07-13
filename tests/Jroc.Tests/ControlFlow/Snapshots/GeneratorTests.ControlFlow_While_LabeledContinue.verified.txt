@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2126
+				// Method begins at RVA 0x210c
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -46,7 +46,7 @@
 					.method public hidebysig specialname rtspecialname 
 						instance void .ctor () cil managed 
 					{
-						// Method begins at RVA 0x2141
+						// Method begins at RVA 0x2127
 						// Header size: 1
 						// Code size: 8 (0x8)
 						.maxstack 8
@@ -64,7 +64,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2138
+					// Method begins at RVA 0x211e
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x212f
+				// Method begins at RVA 0x2115
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -100,7 +100,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x211d
+			// Method begins at RVA 0x2103
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -126,18 +126,15 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 193 (0xc1)
+		// Code size: 167 (0xa7)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_While_LabeledContinue/Scope,
 			[1] float64,
-			[2] class Modules.ControlFlow_While_LabeledContinue/Scope/Block_L5C21,
+			[2] float64,
 			[3] float64,
-			[4] class Modules.ControlFlow_While_LabeledContinue/Scope/Scope_For_L7C7/Block_L7C30,
-			[5] class Modules.ControlFlow_While_LabeledContinue/Scope/Scope_For_L7C7/Block_L7C30/Block_L8C17,
-			[6] float64,
-			[7] object,
-			[8] object
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_While_LabeledContinue/Scope::.ctor()
@@ -146,66 +143,60 @@
 		IL_000f: stloc.1
 		// loop start (head: IL_0010)
 			IL_0010: ldloc.1
-			IL_0011: stloc.s 6
-			IL_0013: ldloc.s 6
-			IL_0015: ldc.r8 3
-			IL_001e: clt
-			IL_0020: brfalse IL_00c0
+			IL_0011: stloc.3
+			IL_0012: ldloc.3
+			IL_0013: ldc.r8 3
+			IL_001c: clt
+			IL_001e: brfalse IL_00a6
 
-			IL_0025: newobj instance void Modules.ControlFlow_While_LabeledContinue/Scope/Block_L5C21::.ctor()
-			IL_002a: stloc.2
-			IL_002b: ldloc.1
-			IL_002c: ldc.r8 1
-			IL_0035: add
-			IL_0036: stloc.1
-			IL_0037: ldc.r8 0.0
-			IL_0040: stloc.3
-			// loop start (head: IL_0041)
-				IL_0041: ldloc.3
-				IL_0042: stloc.s 6
-				IL_0044: ldloc.s 6
-				IL_0046: ldc.r8 1
-				IL_004f: clt
-				IL_0051: brfalse IL_00bb
+			IL_0023: ldloc.1
+			IL_0024: ldc.r8 1
+			IL_002d: add
+			IL_002e: stloc.1
+			IL_002f: ldc.r8 0.0
+			IL_0038: stloc.2
+			// loop start (head: IL_0039)
+				IL_0039: ldloc.2
+				IL_003a: stloc.3
+				IL_003b: ldloc.3
+				IL_003c: ldc.r8 1
+				IL_0045: clt
+				IL_0047: brfalse IL_00a1
 
-				IL_0056: newobj instance void Modules.ControlFlow_While_LabeledContinue/Scope/Scope_For_L7C7/Block_L7C30::.ctor()
-				IL_005b: stloc.s 4
-				IL_005d: ldloc.1
-				IL_005e: stloc.s 6
-				IL_0060: ldloc.s 6
-				IL_0062: ldc.r8 2
-				IL_006b: ceq
-				IL_006d: brfalse IL_007e
+				IL_004c: ldloc.1
+				IL_004d: stloc.3
+				IL_004e: ldloc.3
+				IL_004f: ldc.r8 2
+				IL_0058: ceq
+				IL_005a: brfalse IL_0064
 
-				IL_0072: newobj instance void Modules.ControlFlow_While_LabeledContinue/Scope/Scope_For_L7C7/Block_L7C30/Block_L8C17::.ctor()
-				IL_0077: stloc.s 5
-				IL_0079: br IL_0010
+				IL_005f: br IL_0010
 
-				IL_007e: ldstr "console"
-				IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-				IL_0088: stloc.s 7
-				IL_008a: ldloc.s 7
-				IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-				IL_0091: stloc.s 7
-				IL_0093: ldloc.1
-				IL_0094: box [System.Runtime]System.Double
-				IL_0099: stloc.s 8
-				IL_009b: ldloc.s 7
-				IL_009d: ldstr "log"
-				IL_00a2: ldloc.s 8
-				IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-				IL_00a9: pop
-				IL_00aa: ldloc.3
-				IL_00ab: ldc.r8 1
-				IL_00b4: add
-				IL_00b5: stloc.3
-				IL_00b6: br IL_0041
+				IL_0064: ldstr "console"
+				IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+				IL_006e: stloc.s 4
+				IL_0070: ldloc.s 4
+				IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+				IL_0077: stloc.s 4
+				IL_0079: ldloc.1
+				IL_007a: box [System.Runtime]System.Double
+				IL_007f: stloc.s 5
+				IL_0081: ldloc.s 4
+				IL_0083: ldstr "log"
+				IL_0088: ldloc.s 5
+				IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+				IL_008f: pop
+				IL_0090: ldloc.2
+				IL_0091: ldc.r8 1
+				IL_009a: add
+				IL_009b: stloc.2
+				IL_009c: br IL_0039
 			// end loop
 
-			IL_00bb: br IL_0010
+			IL_00a1: br IL_0010
 		// end loop
 
-		IL_00c0: ret
+		IL_00a6: ret
 	} // end of method ControlFlow_While_LabeledContinue::__js_module_init__
 
 } // end of class Modules.ControlFlow_While_LabeledContinue
@@ -217,7 +208,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214a
+		// Method begins at RVA 0x2130
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

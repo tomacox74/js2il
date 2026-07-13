@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x214d
+			// Method begins at RVA 0x2146
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x215f
+				// Method begins at RVA 0x2158
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2156
+			// Method begins at RVA 0x214f
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 241 (0xf1)
+		// Code size: 234 (0xea)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ObjectDefineProperty_Enumerable_ForIn/Scope,
@@ -90,10 +90,9 @@
 			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] object,
 			[4] object,
-			[5] class Modules.ObjectDefineProperty_Enumerable_ForIn/Scope_ForIn_L8C5/Block_L8C19,
-			[6] object,
-			[7] bool,
-			[8] string
+			[5] object,
+			[6] bool,
+			[7] string
 		)
 
 		IL_0000: newobj instance void Modules.ObjectDefineProperty_Enumerable_ForIn/Scope::.ctor()
@@ -135,48 +134,46 @@
 		// loop start (head: IL_007c)
 			IL_007c: ldloc.3
 			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorNext(object)
-			IL_0082: stloc.s 6
-			IL_0084: ldloc.s 6
+			IL_0082: stloc.s 5
+			IL_0084: ldloc.s 5
 			IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultDone(object)
-			IL_008b: stloc.s 7
-			IL_008d: ldloc.s 7
-			IL_008f: brtrue IL_00b6
+			IL_008b: stloc.s 6
+			IL_008d: ldloc.s 6
+			IL_008f: brtrue IL_00af
 
-			IL_0094: ldloc.s 6
+			IL_0094: ldloc.s 5
 			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::IteratorResultValue(object)
-			IL_009b: stloc.s 6
-			IL_009d: ldloc.s 6
+			IL_009b: stloc.s 5
+			IL_009d: ldloc.s 5
 			IL_009f: stloc.s 4
-			IL_00a1: newobj instance void Modules.ObjectDefineProperty_Enumerable_ForIn/Scope_ForIn_L8C5/Block_L8C19::.ctor()
-			IL_00a6: stloc.s 5
-			IL_00a8: ldloc.2
-			IL_00a9: ldloc.s 4
-			IL_00ab: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-			IL_00b0: pop
-			IL_00b1: br IL_007c
+			IL_00a1: ldloc.2
+			IL_00a2: ldloc.s 4
+			IL_00a4: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+			IL_00a9: pop
+			IL_00aa: br IL_007c
 		// end loop
 
-		IL_00b6: ldstr "console"
-		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00c0: stloc.s 6
-		IL_00c2: ldloc.s 6
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00c9: stloc.s 6
-		IL_00cb: ldloc.2
-		IL_00cc: ldc.i4.1
-		IL_00cd: newarr [System.Runtime]System.Object
-		IL_00d2: dup
-		IL_00d3: ldc.i4.0
-		IL_00d4: ldstr ","
-		IL_00d9: stelem.ref
-		IL_00da: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_00df: stloc.s 8
-		IL_00e1: ldloc.s 6
-		IL_00e3: ldstr "log"
-		IL_00e8: ldloc.s 8
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ef: pop
-		IL_00f0: ret
+		IL_00af: ldstr "console"
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00b9: stloc.s 5
+		IL_00bb: ldloc.s 5
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00c2: stloc.s 5
+		IL_00c4: ldloc.2
+		IL_00c5: ldc.i4.1
+		IL_00c6: newarr [System.Runtime]System.Object
+		IL_00cb: dup
+		IL_00cc: ldc.i4.0
+		IL_00cd: ldstr ","
+		IL_00d2: stelem.ref
+		IL_00d3: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00d8: stloc.s 7
+		IL_00da: ldloc.s 5
+		IL_00dc: ldstr "log"
+		IL_00e1: ldloc.s 7
+		IL_00e3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00e8: pop
+		IL_00e9: ret
 	} // end of method ObjectDefineProperty_Enumerable_ForIn::__js_module_init__
 
 } // end of class Modules.ObjectDefineProperty_Enumerable_ForIn
@@ -188,7 +185,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2168
+		// Method begins at RVA 0x2161
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

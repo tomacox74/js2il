@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2135
+				// Method begins at RVA 0x212d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -38,7 +38,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x213e
+				// Method begins at RVA 0x2136
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -56,7 +56,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x212c
+			// Method begins at RVA 0x2124
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -82,19 +82,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 191 (0xbf)
+		// Code size: 182 (0xb6)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.TryCatch_ScopedParam/Scope,
 			[1] string,
-			[2] class Modules.TryCatch_ScopedParam/Scope/Block_L5C4,
-			[3] object,
-			[4] class [System.Runtime]System.Exception,
+			[2] object,
+			[3] class [System.Runtime]System.Exception,
+			[4] object,
 			[5] object,
-			[6] object,
-			[7] class Modules.TryCatch_ScopedParam/Scope/Block_L7C12,
-			[8] object,
-			[9] object
+			[6] class Modules.TryCatch_ScopedParam/Scope/Block_L7C12,
+			[7] object,
+			[8] object
 		)
 
 		IL_0000: newobj instance void Modules.TryCatch_ScopedParam/Scope::.ctor()
@@ -103,81 +102,79 @@
 		IL_000b: stloc.1
 		.try
 		{
-			IL_000c: newobj instance void Modules.TryCatch_ScopedParam/Scope/Block_L5C4::.ctor()
+			IL_000c: ldstr "inner"
 			IL_0011: stloc.2
-			IL_0012: ldstr "inner"
-			IL_0017: stloc.3
-			IL_0018: ldloc.3
-			IL_0019: isinst [System.Runtime]System.Exception
-			IL_001e: dup
-			IL_001f: brtrue IL_002c
+			IL_0012: ldloc.2
+			IL_0013: isinst [System.Runtime]System.Exception
+			IL_0018: dup
+			IL_0019: brtrue IL_0026
 
-			IL_0024: pop
-			IL_0025: ldloc.3
-			IL_0026: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
-			IL_002b: throw
+			IL_001e: pop
+			IL_001f: ldloc.2
+			IL_0020: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0025: throw
 
-			IL_002c: throw
+			IL_0026: throw
 
-			IL_002d: leave IL_0098
+			IL_0027: leave IL_008f
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_0032: stloc.s 4
-			IL_0034: ldloc.s 4
-			IL_0036: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
-			IL_003b: dup
-			IL_003c: brtrue IL_0052
+			IL_002c: stloc.3
+			IL_002d: ldloc.3
+			IL_002e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0033: dup
+			IL_0034: brtrue IL_0049
 
-			IL_0041: pop
-			IL_0042: ldloc.s 4
-			IL_0044: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
-			IL_0049: dup
-			IL_004a: brtrue IL_005e
+			IL_0039: pop
+			IL_003a: ldloc.3
+			IL_003b: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0040: dup
+			IL_0041: brtrue IL_0055
 
-			IL_004f: pop
-			IL_0050: rethrow
+			IL_0046: pop
+			IL_0047: rethrow
 
-			IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
-			IL_0057: stloc.s 5
-			IL_0059: br IL_0060
+			IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_004e: stloc.s 4
+			IL_0050: br IL_0057
 
-			IL_005e: stloc.s 5
+			IL_0055: stloc.s 4
 
-			IL_0060: ldloc.s 5
-			IL_0062: stloc.s 9
-			IL_0064: ldloc.s 9
-			IL_0066: stloc.s 6
-			IL_0068: newobj instance void Modules.TryCatch_ScopedParam/Scope/Block_L7C12::.ctor()
-			IL_006d: stloc.s 7
-			IL_006f: ldstr "console"
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_0079: stloc.s 9
-			IL_007b: ldloc.s 9
-			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0082: stloc.s 9
-			IL_0084: ldloc.s 9
-			IL_0086: ldstr "log"
-			IL_008b: ldloc.s 6
-			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0092: pop
-			IL_0093: leave IL_0098
+			IL_0057: ldloc.s 4
+			IL_0059: stloc.s 8
+			IL_005b: ldloc.s 8
+			IL_005d: stloc.s 5
+			IL_005f: newobj instance void Modules.TryCatch_ScopedParam/Scope/Block_L7C12::.ctor()
+			IL_0064: stloc.s 6
+			IL_0066: ldstr "console"
+			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0070: stloc.s 8
+			IL_0072: ldloc.s 8
+			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0079: stloc.s 8
+			IL_007b: ldloc.s 8
+			IL_007d: ldstr "log"
+			IL_0082: ldloc.s 5
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_0089: pop
+			IL_008a: leave IL_008f
 		} // end handler
 
-		IL_0098: ldstr "console"
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a2: stloc.s 9
-		IL_00a4: ldloc.s 9
-		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00ab: stloc.s 9
-		IL_00ad: ldloc.s 9
-		IL_00af: ldstr "log"
-		IL_00b4: ldloc.1
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ba: pop
-		IL_00bb: ldnull
-		IL_00bc: stloc.s 8
-		IL_00be: ret
+		IL_008f: ldstr "console"
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0099: stloc.s 8
+		IL_009b: ldloc.s 8
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a2: stloc.s 8
+		IL_00a4: ldloc.s 8
+		IL_00a6: ldstr "log"
+		IL_00ab: ldloc.1
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b1: pop
+		IL_00b2: ldnull
+		IL_00b3: stloc.s 7
+		IL_00b5: ret
 	} // end of method TryCatch_ScopedParam::__js_module_init__
 
 } // end of class Modules.TryCatch_ScopedParam
@@ -189,7 +186,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2147
+		// Method begins at RVA 0x213f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
