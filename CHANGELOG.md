@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler: elide runtime lexical-environment creation for empty ordinary and `switch` block scopes while retaining scope instances for blocks with direct bindings. This removes unnecessary per-execution allocations from hot control-flow bodies such as Kraken `ai-astar`'s `findGraphNode` loop and conditional blocks. A same-runner `ai-astar` comparison improved jroc execution from 8.752 s to 8.007 s (-8.5%), while measured allocation remained effectively unchanged (2,242.94 MB to 2,246.64 MB).
 
 ## v0.11.22 - 2026-07-13
 

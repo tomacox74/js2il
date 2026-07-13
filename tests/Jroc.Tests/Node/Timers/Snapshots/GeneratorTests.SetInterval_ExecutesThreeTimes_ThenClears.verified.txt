@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21de
+					// Method begins at RVA 0x21dc
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d5
+				// Method begins at RVA 0x21d3
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -66,15 +66,14 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2100
+			// Method begins at RVA 0x2104
 			// Header size: 12
-			// Code size: 181 (0xb5)
+			// Code size: 175 (0xaf)
 			.maxstack 8
 			.locals init (
-				[0] class Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/Scope/Block_L9C21,
+				[0] object,
 				[1] object,
-				[2] object,
-				[3] bool
+				[2] bool
 			)
 
 			IL_0000: ldarg.0
@@ -87,55 +86,53 @@
 			IL_001b: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
 			IL_0020: ldstr "console"
 			IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_002a: stloc.1
-			IL_002b: ldloc.1
+			IL_002a: stloc.0
+			IL_002b: ldloc.0
 			IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0031: stloc.1
+			IL_0031: stloc.0
 			IL_0032: ldstr "tick "
 			IL_0037: ldarg.0
 			IL_0038: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
 			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0042: stloc.2
-			IL_0043: ldloc.1
+			IL_0042: stloc.1
+			IL_0043: ldloc.0
 			IL_0044: ldstr "log"
-			IL_0049: ldloc.2
+			IL_0049: ldloc.1
 			IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 			IL_004f: pop
 			IL_0050: ldarg.0
 			IL_0051: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-			IL_0056: stloc.1
-			IL_0057: ldloc.1
+			IL_0056: stloc.0
+			IL_0057: ldloc.0
 			IL_0058: ldc.r8 3
 			IL_0061: box [System.Runtime]System.Double
 			IL_0066: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_006b: stloc.3
-			IL_006c: ldloc.3
-			IL_006d: brfalse IL_00b3
+			IL_006b: stloc.2
+			IL_006c: ldloc.2
+			IL_006d: brfalse IL_00ad
 
-			IL_0072: newobj instance void Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24/Scope/Block_L9C21::.ctor()
-			IL_0077: stloc.0
-			IL_0078: ldarg.0
-			IL_0079: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
-			IL_007e: ldstr "Cannot access 'id' before initialization"
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
-			IL_0088: stloc.1
-			IL_0089: ldloc.1
-			IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
-			IL_008f: pop
-			IL_0090: ldstr "console"
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_009a: stloc.1
-			IL_009b: ldloc.1
-			IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_00a1: stloc.1
-			IL_00a2: ldloc.1
-			IL_00a3: ldstr "log"
-			IL_00a8: ldstr "cleared"
-			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_00b2: pop
+			IL_0072: ldarg.0
+			IL_0073: ldfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
+			IL_0078: ldstr "Cannot access 'id' before initialization"
+			IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+			IL_0082: stloc.0
+			IL_0083: ldloc.0
+			IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
+			IL_0089: pop
+			IL_008a: ldstr "console"
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_0094: stloc.0
+			IL_0095: ldloc.0
+			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_009b: stloc.0
+			IL_009c: ldloc.0
+			IL_009d: ldstr "log"
+			IL_00a2: ldstr "cleared"
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_00ac: pop
 
-			IL_00b3: ldnull
-			IL_00b4: ret
+			IL_00ad: ldnull
+			IL_00ae: ret
 		} // end of method ArrowFunction_L5C24::__js_call__
 
 	} // end of class ArrowFunction_L5C24
@@ -155,7 +152,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c1
+			// Method begins at RVA 0x21bf
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -184,7 +181,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 164 (0xa4)
+		// Code size: 165 (0xa5)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope,
@@ -193,59 +190,60 @@
 
 		IL_0000: newobj instance void Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
-		IL_001a: ldc.i4.1
-		IL_001b: newarr [System.Runtime]System.Object
-		IL_0020: dup
-		IL_0021: ldc.i4.0
-		IL_0022: ldloc.0
-		IL_0023: stelem.ref
-		IL_0024: ldc.i4.0
-		IL_0025: ldelem.ref
-		IL_0026: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
-		IL_002b: ldftn object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24::__js_call__(class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope, object)
-		IL_0031: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldloc.0
-		IL_003f: stelem.ref
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_004a: ldc.i4.0
-		IL_004b: conv.r8
-		IL_004c: ldstr ""
-		IL_0051: ldc.i4.0
+		IL_0006: nop
+		IL_0007: ldloc.0
+		IL_0008: ldc.r8 0.0
+		IL_0011: box [System.Runtime]System.Double
+		IL_0016: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::count
+		IL_001b: ldc.i4.1
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: dup
+		IL_0022: ldc.i4.0
+		IL_0023: ldloc.0
+		IL_0024: stelem.ref
+		IL_0025: ldc.i4.0
+		IL_0026: ldelem.ref
+		IL_0027: castclass Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope
+		IL_002c: ldftn object Modules.SetInterval_ExecutesThreeTimes_ThenClears/ArrowFunction_L5C24::__js_call__(class Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope, object)
+		IL_0032: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldloc.0
+		IL_0040: stelem.ref
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_004b: ldc.i4.0
+		IL_004c: conv.r8
+		IL_004d: ldstr ""
 		IL_0052: ldc.i4.0
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_005d: stloc.1
-		IL_005e: ldloc.1
-		IL_005f: ldc.r8 50
-		IL_0068: box [System.Runtime]System.Double
-		IL_006d: ldc.i4.0
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setInterval(object, object, object[])
-		IL_0078: stloc.1
-		IL_0079: ldloc.0
-		IL_007a: ldloc.1
-		IL_007b: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
-		IL_0080: ldstr "console"
-		IL_0085: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_008a: stloc.1
-		IL_008b: ldloc.1
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0091: stloc.1
-		IL_0092: ldloc.1
-		IL_0093: ldstr "log"
-		IL_0098: ldstr "setInterval scheduled"
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a2: pop
-		IL_00a3: ret
+		IL_0053: ldc.i4.0
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_005e: stloc.1
+		IL_005f: ldloc.1
+		IL_0060: ldc.r8 50
+		IL_0069: box [System.Runtime]System.Double
+		IL_006e: ldc.i4.0
+		IL_006f: newarr [System.Runtime]System.Object
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setInterval(object, object, object[])
+		IL_0079: stloc.1
+		IL_007a: ldloc.0
+		IL_007b: ldloc.1
+		IL_007c: stfld object Modules.SetInterval_ExecutesThreeTimes_ThenClears/Scope::id
+		IL_0081: ldstr "console"
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_008b: stloc.1
+		IL_008c: ldloc.1
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0092: stloc.1
+		IL_0093: ldloc.1
+		IL_0094: ldstr "log"
+		IL_0099: ldstr "setInterval scheduled"
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00a3: pop
+		IL_00a4: ret
 	} // end of method SetInterval_ExecutesThreeTimes_ThenClears::__js_module_init__
 
 } // end of class Modules.SetInterval_ExecutesThreeTimes_ThenClears
@@ -257,7 +255,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e7
+		// Method begins at RVA 0x21e5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2105
+					// Method begins at RVA 0x20f0
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -40,7 +40,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20fc
+				// Method begins at RVA 0x20e7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20f3
+			// Method begins at RVA 0x20de
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -84,69 +84,64 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 151 (0x97)
+		// Code size: 130 (0x82)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ControlFlow_DoWhile_Continue_SkipEven/Scope,
 			[1] float64,
-			[2] class Modules.ControlFlow_DoWhile_Continue_SkipEven/Scope/Block_L4C15,
-			[3] class Modules.ControlFlow_DoWhile_Continue_SkipEven/Scope/Block_L4C15/Block_L6C19,
-			[4] float64,
-			[5] object,
-			[6] object
+			[2] float64,
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Modules.ControlFlow_DoWhile_Continue_SkipEven/Scope::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.r8 0.0
-		IL_000f: stloc.1
-		// loop start (head: IL_0010)
-			IL_0010: ldloc.1
-			IL_0011: stloc.s 4
-			IL_0013: ldloc.s 4
-			IL_0015: ldc.r8 10
-			IL_001e: clt
-			IL_0020: brfalse IL_0096
+		IL_0006: nop
+		IL_0007: ldc.r8 0.0
+		IL_0010: stloc.1
+		// loop start (head: IL_0011)
+			IL_0011: ldloc.1
+			IL_0012: stloc.2
+			IL_0013: ldloc.2
+			IL_0014: ldc.r8 10
+			IL_001d: clt
+			IL_001f: brfalse IL_0081
 
-			IL_0025: newobj instance void Modules.ControlFlow_DoWhile_Continue_SkipEven/Scope/Block_L4C15::.ctor()
-			IL_002a: stloc.2
-			IL_002b: ldloc.1
-			IL_002c: ldc.r8 1
-			IL_0035: add
-			IL_0036: stloc.1
-			IL_0037: ldloc.1
-			IL_0038: stloc.s 4
-			IL_003a: ldloc.s 4
-			IL_003c: ldc.r8 2
-			IL_0045: rem
-			IL_0046: stloc.s 4
-			IL_0048: ldloc.s 4
-			IL_004a: ldc.r8 0.0
-			IL_0053: ceq
-			IL_0055: brfalse IL_0065
+			IL_0024: ldloc.1
+			IL_0025: ldc.r8 1
+			IL_002e: add
+			IL_002f: stloc.1
+			IL_0030: ldloc.1
+			IL_0031: stloc.2
+			IL_0032: ldloc.2
+			IL_0033: ldc.r8 2
+			IL_003c: rem
+			IL_003d: stloc.2
+			IL_003e: ldloc.2
+			IL_003f: ldc.r8 0.0
+			IL_0048: ceq
+			IL_004a: brfalse IL_0054
 
-			IL_005a: newobj instance void Modules.ControlFlow_DoWhile_Continue_SkipEven/Scope/Block_L4C15/Block_L6C19::.ctor()
-			IL_005f: stloc.3
-			IL_0060: br IL_0010
+			IL_004f: br IL_0011
 
-			IL_0065: ldstr "console"
-			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-			IL_006f: stloc.s 5
-			IL_0071: ldloc.s 5
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_0078: stloc.s 5
-			IL_007a: ldloc.1
-			IL_007b: box [System.Runtime]System.Double
-			IL_0080: stloc.s 6
-			IL_0082: ldloc.s 5
-			IL_0084: ldstr "log"
-			IL_0089: ldloc.s 6
-			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-			IL_0090: pop
-			IL_0091: br IL_0010
+			IL_0054: ldstr "console"
+			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+			IL_005e: stloc.3
+			IL_005f: ldloc.3
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+			IL_0065: stloc.3
+			IL_0066: ldloc.1
+			IL_0067: box [System.Runtime]System.Double
+			IL_006c: stloc.s 4
+			IL_006e: ldloc.3
+			IL_006f: ldstr "log"
+			IL_0074: ldloc.s 4
+			IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+			IL_007b: pop
+			IL_007c: br IL_0011
 		// end loop
 
-		IL_0096: ret
+		IL_0081: ret
 	} // end of method ControlFlow_DoWhile_Continue_SkipEven::__js_module_init__
 
 } // end of class Modules.ControlFlow_DoWhile_Continue_SkipEven
@@ -158,7 +153,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210e
+		// Method begins at RVA 0x20f9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1172,6 +1172,16 @@ class HIRMethodBuilder
         return null;
     }
 
+    private static string? GetMaterializedBlockScopeName(Scope? scope)
+    {
+        // Only blocks with lexical bindings have a runtime-observable environment.
+        // Empty block scopes remain in the symbol tree for structural analysis but
+        // must not cause a per-execution scope instance allocation.
+        return scope is { Kind: ScopeKind.Block } && scope.Bindings.Count > 0
+            ? ScopeNaming.GetRegistryScopeName(scope)
+            : null;
+    }
+
     private bool TryGetEnclosingClassDefinition([NotNullWhen(true)] out Scope? classScope, [NotNullWhen(true)] out ClassBody? classBody)
     {
         classScope = null;
@@ -2056,10 +2066,7 @@ class HIRMethodBuilder
 
     internal HIRBlock CreateMethodBodyBlock(List<HIRStatement> statements)
     {
-        var scopeName = _currentScope.Kind == ScopeKind.Block
-            ? ScopeNaming.GetRegistryScopeName(_currentScope)
-            : null;
-        return new HIRBlock(statements, scopeName);
+        return new HIRBlock(statements, GetMaterializedBlockScopeName(_currentScope));
     }
 
     public bool TryParseParameters(in NodeList<Node> parameters, [NotNullWhen(true)] out IReadOnlyList<HIRPattern>? hirParameters)
@@ -2163,7 +2170,7 @@ class HIRMethodBuilder
                 _currentScope = previousScope;
                 hirStatement = new HIRBlock(
                     blockStatements,
-                    blockScope != null ? ScopeNaming.GetRegistryScopeName(blockScope) : null);
+                    GetMaterializedBlockScopeName(blockScope));
                 return true;
 
             case FunctionDeclaration:
@@ -2718,7 +2725,7 @@ class HIRMethodBuilder
                     hirStatement = new HIRSwitchStatement(
                         discriminant!,
                         cases,
-                        switchScope != null ? ScopeNaming.GetRegistryScopeName(switchScope) : null);
+                        GetMaterializedBlockScopeName(switchScope));
                     return true;
                 }
 
