@@ -214,7 +214,7 @@ namespace JavaScriptRuntime.Node
                 name = baseName.Substring(0, baseName.Length - ext.Length);
             }
 
-            var result = new System.Dynamic.ExpandoObject();
+            var result = new JsObject();
             var dict = (IDictionary<string, object?>)result;
             dict["root"] = root;
             dict["dir"] = dir;
@@ -551,7 +551,7 @@ namespace JavaScriptRuntime.Node
                     name = baseName.Substring(0, baseName.Length - ext.Length);
                 }
 
-                var result = new System.Dynamic.ExpandoObject();
+                var result = new JsObject();
                 var dict = (IDictionary<string, object?>)result;
                 dict["root"] = root;
                 dict["dir"] = dir;

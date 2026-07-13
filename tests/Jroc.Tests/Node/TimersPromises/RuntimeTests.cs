@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using JavaScriptRuntime;
 using JavaScriptRuntime.EngineCore;
 
@@ -109,10 +108,10 @@ namespace Jroc.Tests.Node.TimersPromises
             }
         }
 
-        private static ExpandoObject CreateOptions(object signal)
+        private static JsObject CreateOptions(object signal)
         {
-            dynamic options = new ExpandoObject();
-            options.signal = signal;
+            var options = new JsObject();
+            options.SetObject("signal", signal);
             return options;
         }
 

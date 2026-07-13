@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: migrate lower-coupling Node.js path, query-string, util, timers/promises, and filesystem ordinary result/helper objects from `ExpandoObject` to `JsObject` (issue #1454, parent #1426). Path and query-string result ordering, `util.types` and synthesized inheritance prototypes, `fs.constants`, promise-based file-handle read/write records, and `fs`/timer option reads retain their existing Node-visible behavior through shared property APIs. Higher-risk process, child-process, network, stream, and IPC objects remain deferred.
+
 - runtime: migrate CommonJS default `module.exports` plus ESM dynamic-import namespace, primitive-namespace, and namespace-cache descriptor records from `ExpandoObject` to `JsObject` (issue #1453, parent #1426). CommonJS export aliasing/replacement and circular-require identity, ESM accessor-backed live bindings, namespace cache identity (including non-extensible exports), and hosted `JsEngine.LoadModule` export resolution remain preserved.
 
 - runtime: migrate the per-realm global object and the shared `String`, string-iterator, `RegExp`, `Map`, and `Set` intrinsic prototypes from `ExpandoObject` to `JsObject` (issue #1452, parent #1426). Constructor/prototype identity cycles, intrinsic descriptors, prototype hierarchies, symbol properties, and runtime-store mutation isolation are preserved. `JsObject` now supplies DynamicObject member access and complete dictionary collection copy/removal behavior so the global-object migration retains its existing hosted DLR and collection surface. Array prototype representation remains unchanged under #1443.

@@ -1,5 +1,4 @@
 using System;
-using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
 using JavaScriptRuntime;
@@ -126,9 +125,9 @@ namespace JavaScriptRuntime.Node
                     temp.AsSpan(0, bytesRead).CopyTo(buffer.AsWritableSpan().Slice(offset, bytesRead));
                 }
 
-                dynamic result = new ExpandoObject();
-                result.bytesRead = (double)bytesRead;
-                result.buffer = buffer;
+                var result = new JsObject();
+                result.SetNumber("bytesRead", bytesRead);
+                result.SetObject("buffer", buffer);
                 _ioScheduler.EndIo(promiseWithResolvers, result, isError: false);
             }
             catch (Exception ex)
@@ -177,9 +176,9 @@ namespace JavaScriptRuntime.Node
 
                 await stream.FlushAsync().ConfigureAwait(false);
 
-                dynamic result = new ExpandoObject();
-                result.bytesWritten = (double)bytes.Length;
-                result.buffer = resultBuffer;
+                var result = new JsObject();
+                result.SetNumber("bytesWritten", bytes.Length);
+                result.SetObject("buffer", resultBuffer);
                 _ioScheduler.EndIo(promiseWithResolvers, result, isError: false);
             }
             catch (Exception ex)

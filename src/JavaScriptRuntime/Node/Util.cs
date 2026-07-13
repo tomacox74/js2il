@@ -119,7 +119,7 @@ namespace JavaScriptRuntime.Node
             var ctorProto = Object.GetProperty(constructor, "prototype");
             if (ctorProto == null || ctorProto is JsNull)
             {
-                ctorProto = new System.Dynamic.ExpandoObject();
+                ctorProto = new JsObject();
                 Object.SetProperty(constructor, "prototype", ctorProto);
             }
 
@@ -406,7 +406,7 @@ namespace JavaScriptRuntime.Node
 
         private static object CreateTypesObject()
         {
-            var typesObj = new System.Dynamic.ExpandoObject();
+            var typesObj = new JsObject();
             var dict = (IDictionary<string, object?>)typesObj;
 
             dict["isArray"] = new Func<object?, bool>(v => v is JavaScriptRuntime.Array);

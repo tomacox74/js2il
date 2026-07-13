@@ -7,6 +7,11 @@ namespace JavaScriptRuntime;
 
 internal sealed class JsShape
 {
+    private enum PropertyNameStorage
+    {
+        Interned,
+        Direct
+    }
 
     private static readonly ThreadLocal<JsShape> _empty = new (() => new JsShape());
 
@@ -39,10 +44,10 @@ internal sealed class JsShape
         }
     }
 
-    private JsShape(string newPropertyName, JsShape parent)
+    private JsShape(string newPropertyName, JsShape parent, PropertyNameStorage propertyNameStorage)
     {
         var newSlots = parent._slots.ToDictionary();
-        newSlots[string.Intern(newPropertyName)] = newSlots.Count;
+        newSlots[propertyNameStorage == PropertyNameStorage.Interned ? string.Intern(newPropertyName) : newPropertyName] = newSlots.Count;
         _slots = newSlots.ToFrozenDictionary();
     }
 
@@ -67,10 +72,18 @@ internal sealed class JsShape
         {
             return existingShape;
         }
-        var newShape = new JsShape(newPropertyName, this);
+        var newShape = new JsShape(newPropertyName, this, PropertyNameStorage.Interned);
         _transitions![newPropertyName] = new WeakReference<JsShape>(newShape);
         return newShape;
     }
+
+    /// <summary>
+    /// Adds a property name without publishing it to the shared shape-transition cache.
+    /// This is for objects populated from untrusted input where neither global string
+    /// interning nor long-lived transition-cache keys are appropriate.
+    /// </summary>
+    public JsShape TransitionToUncached(string newPropertyName)
+        => new JsShape(newPropertyName, this, PropertyNameStorage.Direct);
 
     public JsShape TransitionAway(string deadPropertyName)
     {
@@ -98,6 +111,8 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     private JsShape _shape = JsShape.Empty;
 
+    private readonly bool _cacheShapeTransitions;
+
     // Perf (#1418 follow-up): sticky flag set when this object gains descriptor
     // state that the plain dictionary cannot answer (accessors, delete tombstones,
     // non-default attributes from defineProperty/seal/freeze, intrinsic descriptors).
@@ -114,6 +129,21 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     internal bool HasNonDataDescriptors => _hasNonDataDescriptors;
 
     internal void MarkNonDataDescriptors() => _hasNonDataDescriptors = true;
+
+    /// <summary>Creates an ordinary object using the shared shape-transition cache.</summary>
+    public JsObject()
+    {
+        _cacheShapeTransitions = true;
+    }
+
+    /// <summary>
+    /// Creates an ordinary object whose property names are appended without using shared
+    /// shape transitions. Intended for records populated from untrusted property keys.
+    /// </summary>
+    internal JsObject(bool cacheShapeTransitions)
+    {
+        _cacheShapeTransitions = cacheShapeTransitions;
+    }
 
     // -------------------------------------------------------------------------
     // Typed initializer methods used from generated IL (no boxing at call site)
@@ -317,7 +347,9 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
         var slot = _shape.GetSlot(key);
         if (slot == -1)
         {
-            _shape = _shape.TransitionTo(key);
+            _shape = _cacheShapeTransitions
+                ? _shape.TransitionTo(key)
+                : _shape.TransitionToUncached(key);
             slot = _shape.GetSlot(key);
 
             var newProperties = new JsValue[_properties!.Length + 1];
