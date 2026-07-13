@@ -6,6 +6,8 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- runtime: migrate process version/environment snapshots, synchronous child-process result records, and network address records from `ExpandoObject` to `JsObject` (issue #1455, parent #1426). Process environment snapshots use uncached shape transitions so host-controlled environment variable names are neither globally interned nor retained by shared shape caches; child-process and network option reads now use the shared property API, preserving accessor-backed options.
+
 - runtime: migrate lower-coupling Node.js path, query-string, util, timers/promises, and filesystem ordinary result/helper objects from `ExpandoObject` to `JsObject` (issue #1454, parent #1426). Path and query-string result ordering, `util.types` and synthesized inheritance prototypes, `fs.constants`, promise-based file-handle read/write records, and `fs`/timer option reads retain their existing Node-visible behavior through shared property APIs. Higher-risk process, child-process, network, stream, and IPC objects remain deferred.
 
 - runtime: migrate CommonJS default `module.exports` plus ESM dynamic-import namespace, primitive-namespace, and namespace-cache descriptor records from `ExpandoObject` to `JsObject` (issue #1453, parent #1426). CommonJS export aliasing/replacement and circular-require identity, ESM accessor-backed live bindings, namespace cache identity (including non-extensible exports), and hosted `JsEngine.LoadModule` export resolution remain preserved.

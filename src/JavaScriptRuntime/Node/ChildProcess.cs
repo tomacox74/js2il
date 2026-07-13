@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -85,19 +84,19 @@ namespace JavaScriptRuntime.Node
 
                 var completion = WaitForProcessCompletionSync(p, stdio);
 
-                dynamic result = new ExpandoObject();
-                result.status = (double)completion.ExitCode;
-                result.stdout = stdio.StdoutMode == StdioMode.Pipe ? completion.Stdout : null;
-                result.stderr = stdio.StderrMode == StdioMode.Pipe ? completion.Stderr : null;
+                var result = new JsObject();
+                result["status"] = (double)completion.ExitCode;
+                result["stdout"] = stdio.StdoutMode == StdioMode.Pipe ? completion.Stdout : null;
+                result["stderr"] = stdio.StderrMode == StdioMode.Pipe ? completion.Stderr : null;
                 return result;
             }
             catch (Exception ex)
             {
-                dynamic result = new ExpandoObject();
-                result.status = (double)(-1);
-                result.stdout = null;
-                result.stderr = ex.Message;
-                result.error = ex;
+                var result = new JsObject();
+                result["status"] = -1d;
+                result["stdout"] = null;
+                result["stderr"] = ex.Message;
+                result["error"] = ex;
                 return result;
             }
         }
@@ -899,12 +898,6 @@ namespace JavaScriptRuntime.Node
 
             try
             {
-                if (options is ExpandoObject exp)
-                {
-                    var dict = (IDictionary<string, object?>)exp;
-                    if (dict.TryGetValue(name, out var val)) return val;
-                }
-
                 return ObjectRuntime.GetProperty(options, name);
             }
             catch
@@ -966,8 +959,10 @@ namespace JavaScriptRuntime.Node
                 return false;
             }
 
-            if (options is IDictionary<string, object?> dictionary && dictionary.TryGetValue(name, out value))
+            if (ObjectRuntime.HasOwnValue(options, name)
+                || PropertyDescriptorStore.TryGetOwn(options, name, out _))
             {
+                value = ObjectRuntime.GetProperty(options, name);
                 return true;
             }
 

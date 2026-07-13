@@ -386,7 +386,6 @@ namespace JavaScriptRuntime.Node
             return value switch
             {
                 JsObject => "Object",
-                System.Dynamic.ExpandoObject => "Object",
                 System.Collections.Generic.IDictionary<string, object?> => "Object",
                 _ => value.GetType().Name,
             };
