@@ -13,6 +13,8 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : IEnumerable<object?>
     {
+        // Array remains an exotic object with dedicated prototype/element storage until #1443
+        // unifies it with JsObject. These are the only intentional ExpandoObject runtime uses.
         internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
         private static readonly object Hole = new();

@@ -117,16 +117,16 @@ namespace JavaScriptRuntime.Tests
         }
 
         [Fact]
-        public void Log_PrintsExpandoObjectProperties()
+        public void Log_PrintsJsObjectProperties()
         {
             var testOutput = new TestConsoleOutput();
             var console = CreateConsole(testOutput);
 
-            dynamic expando = new System.Dynamic.ExpandoObject();
-            expando.name = "Alice";
-            expando.age = 31;
+            var jsObject = new JsObject();
+            jsObject["name"] = "Alice";
+            jsObject["age"] = 31;
 
-            console.Log("x is", expando);
+            console.Log("x is", jsObject);
 
             Assert.Single(testOutput.Output);
             // The expected output should match the Node.js style: x is { name: 'Alice', age: 31 }

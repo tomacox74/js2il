@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
 
 namespace JavaScriptRuntime
 {
@@ -108,10 +106,9 @@ namespace JavaScriptRuntime
         public static object revocable(object? target, object? handler)
         {
             var proxy = new Proxy(target, handler);
-            var result = new ExpandoObject();
-            var dict = (IDictionary<string, object?>)result;
-            dict["proxy"] = proxy;
-            dict["revoke"] = (Func<object[], object?[]?, object?>)((object[] scopes, object?[]? args) =>
+            var result = new JsObject();
+            result["proxy"] = proxy;
+            result["revoke"] = (Func<object[], object?[]?, object?>)((object[] scopes, object?[]? args) =>
             {
                 proxy.Revoke();
                 return null;
