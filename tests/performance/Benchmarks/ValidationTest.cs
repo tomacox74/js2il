@@ -106,6 +106,24 @@ public static class ValidationTest
             Console.WriteLine($"   Exception: {ex.Message}");
         }
 
+        // Test YantraJS
+        Console.WriteLine("\n5. Testing YantraJS...");
+        try
+        {
+            var yantraJsRuntime = new YantraJsRuntime();
+            var yantraJsResult = yantraJsRuntime.Execute(script, "minimal.js");
+            Console.WriteLine($"   Success: {yantraJsResult.Success}");
+            Console.WriteLine($"   Execution Time: {yantraJsResult.ExecutionTime.TotalMilliseconds}ms");
+            if (!yantraJsResult.Success)
+            {
+                Console.WriteLine($"   Error: {yantraJsResult.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"   Exception: {ex.Message}");
+        }
+
         Console.WriteLine("\nAll runtime adapters tested!");
     }
 }

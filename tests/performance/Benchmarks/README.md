@@ -5,6 +5,7 @@ This directory contains a comprehensive BenchmarkDotNet-based performance benchm
 - **ClearScript** - .NET-hosted V8 runtime
 - **Jint** - .NET JavaScript interpreter
 - **Okojo** - fully managed .NET JavaScript runtime
+- **YantraJS** - .NET JavaScript runtime
 - **jroc** - JavaScript-to-IL AOT compiler
 
 ## Purpose
@@ -33,6 +34,7 @@ Benchmarks/
 │   ├── ClearScriptRuntime.cs
 │   ├── JintRuntime.cs
 │   ├── OkojoRuntime.cs
+│   ├── YantraJsRuntime.cs
 │   └── JrocRuntime.cs
 ├── Compliance/          # Licensing and provenance tracking
 │   └── PROVENANCE.md
