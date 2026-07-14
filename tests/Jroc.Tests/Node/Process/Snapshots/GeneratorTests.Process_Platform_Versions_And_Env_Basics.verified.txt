@@ -57,10 +57,11 @@
 			[11] object,
 			[12] object,
 			[13] object,
-			[14] float64,
-			[15] object,
+			[14] valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue,
+			[15] float64,
 			[16] object,
-			[17] object
+			[17] object,
+			[18] object
 		)
 
 		IL_0000: newobj instance void Modules.Process_Platform_Versions_And_Env_Basics/Scope::.ctor()
@@ -248,12 +249,12 @@
 		IL_0235: stloc.s 4
 		IL_0237: ldloc.s 4
 		IL_0239: ldstr "length"
-		IL_023e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0243: stloc.s 4
-		IL_0245: ldloc.s 4
-		IL_0247: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_024c: stloc.s 14
-		IL_024e: ldloc.s 14
+		IL_023e: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, string)
+		IL_0243: stloc.s 14
+		IL_0245: ldloc.s 14
+		IL_0247: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
+		IL_024c: stloc.s 15
+		IL_024e: ldloc.s 15
 		IL_0250: ldc.r8 0.0
 		IL_0259: cgt
 		IL_025b: stloc.s 5
@@ -303,13 +304,13 @@
 		IL_02e3: box [System.Runtime]System.Boolean
 		IL_02e8: stloc.s 7
 		IL_02ea: ldloc.s 7
-		IL_02ec: stloc.s 16
+		IL_02ec: stloc.s 17
 		IL_02ee: br IL_02f7
 
 		IL_02f3: ldloc.s 6
-		IL_02f5: stloc.s 16
+		IL_02f5: stloc.s 17
 
-		IL_02f7: ldloc.s 16
+		IL_02f7: ldloc.s 17
 		IL_02f9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 		IL_02fe: stloc.s 5
 		IL_0300: ldloc.s 5
@@ -327,12 +328,12 @@
 		IL_0328: stloc.s 4
 		IL_032a: ldloc.s 4
 		IL_032c: ldstr "length"
-		IL_0331: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-		IL_0336: stloc.s 4
-		IL_0338: ldloc.s 4
-		IL_033a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_033f: stloc.s 14
-		IL_0341: ldloc.s 14
+		IL_0331: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, string)
+		IL_0336: stloc.s 14
+		IL_0338: ldloc.s 14
+		IL_033a: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
+		IL_033f: stloc.s 15
+		IL_0341: ldloc.s 15
 		IL_0343: ldc.r8 0.0
 		IL_034c: cgt
 		IL_034e: stloc.s 5
@@ -340,10 +341,10 @@
 		IL_0352: box [System.Runtime]System.Boolean
 		IL_0357: stloc.s 6
 		IL_0359: ldloc.s 6
-		IL_035b: stloc.s 16
+		IL_035b: stloc.s 17
 		IL_035d: br IL_0362
 
-		IL_0362: ldloc.s 16
+		IL_0362: ldloc.s 17
 		IL_0364: stloc.3
 		IL_0365: ldstr "console"
 		IL_036a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)

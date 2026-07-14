@@ -2522,13 +2522,14 @@
 				[6] object,
 				[7] object,
 				[8] object,
-				[9] object,
+				[9] valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue,
 				[10] object,
 				[11] object,
 				[12] object,
 				[13] object,
 				[14] object,
-				[15] object
+				[15] object,
+				[16] object
 			)
 
 			IL_0000: ldarg.3
@@ -2581,14 +2582,14 @@
 				IL_007e: stloc.s 8
 				IL_0080: ldarg.2
 				IL_0081: ldstr "length"
-				IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
+				IL_0086: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, string)
 				IL_008b: stloc.s 9
 				IL_008d: ldloc.s 8
 				IL_008f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 				IL_0094: stloc.3
 				IL_0095: ldloc.3
 				IL_0096: ldloc.s 9
-				IL_0098: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0098: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
 				IL_009d: clt
 				IL_009f: brfalse IL_0207
 
@@ -2599,8 +2600,8 @@
 				IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 				IL_00b1: stloc.2
 				IL_00b2: ldloc.2
-				IL_00b3: stloc.s 9
-				IL_00b5: ldloc.s 9
+				IL_00b3: stloc.s 10
+				IL_00b5: ldloc.s 10
 				IL_00b7: ldstr " "
 				IL_00bc: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_00c1: stloc.s 5
@@ -2614,8 +2615,8 @@
 				IL_00d7: brtrue IL_00ff
 
 				IL_00dc: ldloc.2
-				IL_00dd: stloc.s 9
-				IL_00df: ldloc.s 9
+				IL_00dd: stloc.s 10
+				IL_00df: ldloc.s 10
 				IL_00e1: ldstr "\t"
 				IL_00e6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_00eb: stloc.s 5
@@ -2623,21 +2624,21 @@
 				IL_00ef: box [System.Runtime]System.Boolean
 				IL_00f4: stloc.s 6
 				IL_00f6: ldloc.s 6
-				IL_00f8: stloc.s 10
+				IL_00f8: stloc.s 11
 				IL_00fa: br IL_0103
 
 				IL_00ff: ldloc.s 4
-				IL_0101: stloc.s 10
+				IL_0101: stloc.s 11
 
-				IL_0103: ldloc.s 10
+				IL_0103: ldloc.s 11
 				IL_0105: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_010a: stloc.s 5
 				IL_010c: ldloc.s 5
 				IL_010e: brtrue IL_0136
 
 				IL_0113: ldloc.2
-				IL_0114: stloc.s 9
-				IL_0116: ldloc.s 9
+				IL_0114: stloc.s 10
+				IL_0116: ldloc.s 10
 				IL_0118: ldstr "\r"
 				IL_011d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0122: stloc.s 5
@@ -2645,18 +2646,18 @@
 				IL_0126: box [System.Runtime]System.Boolean
 				IL_012b: stloc.s 4
 				IL_012d: ldloc.s 4
-				IL_012f: stloc.s 10
+				IL_012f: stloc.s 11
 				IL_0131: br IL_0136
 
-				IL_0136: ldloc.s 10
+				IL_0136: ldloc.s 11
 				IL_0138: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_013d: stloc.s 5
 				IL_013f: ldloc.s 5
 				IL_0141: brtrue IL_0169
 
 				IL_0146: ldloc.2
-				IL_0147: stloc.s 9
-				IL_0149: ldloc.s 9
+				IL_0147: stloc.s 10
+				IL_0149: ldloc.s 10
 				IL_014b: ldstr "\n"
 				IL_0150: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0155: stloc.s 5
@@ -2664,18 +2665,18 @@
 				IL_0159: box [System.Runtime]System.Boolean
 				IL_015e: stloc.s 4
 				IL_0160: ldloc.s 4
-				IL_0162: stloc.s 10
+				IL_0162: stloc.s 11
 				IL_0164: br IL_0169
 
-				IL_0169: ldloc.s 10
+				IL_0169: ldloc.s 11
 				IL_016b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_0170: stloc.s 5
 				IL_0172: ldloc.s 5
 				IL_0174: brtrue IL_019c
 
 				IL_0179: ldloc.2
-				IL_017a: stloc.s 9
-				IL_017c: ldloc.s 9
+				IL_017a: stloc.s 10
+				IL_017c: ldloc.s 10
 				IL_017e: ldstr ">"
 				IL_0183: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_0188: stloc.s 5
@@ -2683,18 +2684,18 @@
 				IL_018c: box [System.Runtime]System.Boolean
 				IL_0191: stloc.s 4
 				IL_0193: ldloc.s 4
-				IL_0195: stloc.s 10
+				IL_0195: stloc.s 11
 				IL_0197: br IL_019c
 
-				IL_019c: ldloc.s 10
+				IL_019c: ldloc.s 11
 				IL_019e: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_01a3: stloc.s 5
 				IL_01a5: ldloc.s 5
 				IL_01a7: brtrue IL_01cf
 
 				IL_01ac: ldloc.2
-				IL_01ad: stloc.s 9
-				IL_01af: ldloc.s 9
+				IL_01ad: stloc.s 10
+				IL_01af: ldloc.s 10
 				IL_01b1: ldstr "/"
 				IL_01b6: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 				IL_01bb: stloc.s 5
@@ -2702,10 +2703,10 @@
 				IL_01bf: box [System.Runtime]System.Boolean
 				IL_01c4: stloc.s 4
 				IL_01c6: ldloc.s 4
-				IL_01c8: stloc.s 10
+				IL_01c8: stloc.s 11
 				IL_01ca: br IL_01cf
 
-				IL_01cf: ldloc.s 10
+				IL_01cf: ldloc.s 11
 				IL_01d1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 				IL_01d6: stloc.s 5
 				IL_01d8: ldloc.s 5
@@ -2722,26 +2723,26 @@
 				IL_01f6: stloc.3
 				IL_01f7: ldloc.3
 				IL_01f8: box [System.Runtime]System.Double
-				IL_01fd: stloc.s 15
-				IL_01ff: ldloc.s 15
+				IL_01fd: stloc.s 16
+				IL_01ff: ldloc.s 16
 				IL_0201: stloc.0
 				IL_0202: br IL_007d
 			// end loop
 
 			IL_0207: ldarg.2
 			IL_0208: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-			IL_020d: stloc.s 9
+			IL_020d: stloc.s 10
 			IL_020f: ldarg.3
 			IL_0210: ldc.r8 1
 			IL_0219: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
-			IL_021e: stloc.s 10
-			IL_0220: ldloc.s 9
+			IL_021e: stloc.s 11
+			IL_0220: ldloc.s 10
 			IL_0222: ldstr "substring"
-			IL_0227: ldloc.s 10
+			IL_0227: ldloc.s 11
 			IL_0229: ldloc.0
 			IL_022a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-			IL_022f: stloc.s 9
-			IL_0231: ldloc.s 9
+			IL_022f: stloc.s 10
+			IL_0231: ldloc.s 10
 			IL_0233: ret
 		} // end of method findTagNameAt::__js_call__
 

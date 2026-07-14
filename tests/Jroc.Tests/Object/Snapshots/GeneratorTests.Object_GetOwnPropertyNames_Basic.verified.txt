@@ -73,10 +73,11 @@
 			[5] object,
 			[6] object,
 			[7] object,
-			[8] float64,
-			[9] bool,
-			[10] object,
-			[11] object
+			[8] valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue,
+			[9] float64,
+			[10] bool,
+			[11] object,
+			[12] object
 		)
 
 		IL_0000: newobj instance void Modules.Object_GetOwnPropertyNames_Basic/Scope::.ctor()
@@ -128,14 +129,14 @@
 			IL_0096: stloc.s 7
 			IL_0098: ldloc.2
 			IL_0099: ldstr "length"
-			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00a3: stloc.s 6
+			IL_009e: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, string)
+			IL_00a3: stloc.s 8
 			IL_00a5: ldloc.s 7
 			IL_00a7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00ac: stloc.s 8
-			IL_00ae: ldloc.s 8
-			IL_00b0: ldloc.s 6
-			IL_00b2: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00ac: stloc.s 9
+			IL_00ae: ldloc.s 9
+			IL_00b0: ldloc.s 8
+			IL_00b2: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
 			IL_00b7: clt
 			IL_00b9: brfalse IL_0134
 
@@ -144,14 +145,14 @@
 			IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 			IL_00c6: ldstr "a"
 			IL_00cb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00d0: stloc.s 9
-			IL_00d2: ldloc.s 9
+			IL_00d0: stloc.s 10
+			IL_00d2: ldloc.s 10
 			IL_00d4: brfalse IL_00e4
 
 			IL_00d9: ldc.i4.1
 			IL_00da: box [System.Runtime]System.Boolean
-			IL_00df: stloc.s 10
-			IL_00e1: ldloc.s 10
+			IL_00df: stloc.s 11
+			IL_00e1: ldloc.s 11
 			IL_00e3: stloc.3
 
 			IL_00e4: ldloc.2
@@ -159,24 +160,24 @@
 			IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
 			IL_00ec: ldstr "hidden"
 			IL_00f1: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_00f6: stloc.s 9
-			IL_00f8: ldloc.s 9
+			IL_00f6: stloc.s 10
+			IL_00f8: ldloc.s 10
 			IL_00fa: brfalse IL_010b
 
 			IL_00ff: ldc.i4.1
 			IL_0100: box [System.Runtime]System.Boolean
-			IL_0105: stloc.s 10
-			IL_0107: ldloc.s 10
+			IL_0105: stloc.s 11
+			IL_0107: ldloc.s 11
 			IL_0109: stloc.s 4
 
 			IL_010b: ldloc.s 5
 			IL_010d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0112: stloc.s 8
-			IL_0114: ldloc.s 8
+			IL_0112: stloc.s 9
+			IL_0114: ldloc.s 9
 			IL_0116: ldc.r8 1
 			IL_011f: add
-			IL_0120: stloc.s 8
-			IL_0122: ldloc.s 8
+			IL_0120: stloc.s 9
+			IL_0122: ldloc.s 9
 			IL_0124: box [System.Runtime]System.Double
 			IL_0129: stloc.s 7
 			IL_012b: ldloc.s 7
@@ -195,10 +196,10 @@
 		IL_014f: ldstr "length"
 		IL_0154: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
 		IL_0159: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_015e: stloc.s 11
+		IL_015e: stloc.s 12
 		IL_0160: ldloc.s 6
 		IL_0162: ldstr "log"
-		IL_0167: ldloc.s 11
+		IL_0167: ldloc.s 12
 		IL_0169: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_016e: pop
 		IL_016f: ldstr "console"
@@ -210,10 +211,10 @@
 		IL_0184: ldstr "has_a="
 		IL_0189: ldloc.3
 		IL_018a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_018f: stloc.s 11
+		IL_018f: stloc.s 12
 		IL_0191: ldloc.s 6
 		IL_0193: ldstr "log"
-		IL_0198: ldloc.s 11
+		IL_0198: ldloc.s 12
 		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_019f: pop
 		IL_01a0: ldstr "console"
@@ -225,10 +226,10 @@
 		IL_01b5: ldstr "has_hidden="
 		IL_01ba: ldloc.s 4
 		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_01c1: stloc.s 11
+		IL_01c1: stloc.s 12
 		IL_01c3: ldloc.s 6
 		IL_01c5: ldstr "log"
-		IL_01ca: ldloc.s 11
+		IL_01ca: ldloc.s 12
 		IL_01cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
 		IL_01d1: pop
 		IL_01d2: ret

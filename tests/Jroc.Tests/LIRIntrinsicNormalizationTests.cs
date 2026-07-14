@@ -60,6 +60,50 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_Preserves_Numeric_GetItem_Across_Intervening_Evaluation()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var item = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var otherReceiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var otherItem = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var number = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        body.Instructions.Add(new LIRGetItem(receiver, index, item));
+        body.Instructions.Add(new LIRGetItem(otherReceiver, index, otherItem));
+        body.Instructions.Add(new LIRConvertToNumber(item, number));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        Assert.IsType<LIRGetItem>(body.Instructions[0]);
+        Assert.IsType<LIRGetItem>(body.Instructions[1]);
+        Assert.IsType<LIRConvertToNumber>(body.Instructions[2]);
+        Assert.Equal(ValueStorageKind.UnboxedValue, body.TempStorages[item.Index].Kind);
+        Assert.Equal(typeof(JavaScriptRuntime.NumericIndexedValue), body.TempStorages[item.Index].ClrType);
+        Assert.Equal(typeof(object), body.TempStorages[otherItem.Index].ClrType);
+    }
+
+    [Fact]
+    public void Normalize_Keeps_Object_GetItem_When_ControlFlow_Intervenes()
+    {
+        var body = new MethodBodyIR();
+        var receiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var item = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var number = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        body.Instructions.Add(new LIRGetItem(receiver, index, item));
+        body.Instructions.Add(new LIRLabel(1));
+        body.Instructions.Add(new LIRConvertToNumber(item, number));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        Assert.Equal(ValueStorageKind.Reference, body.TempStorages[item.Index].Kind);
+        Assert.Equal(typeof(object), body.TempStorages[item.Index].ClrType);
+    }
+
+    [Fact]
     public void Normalize_Rewrites_SetItem_To_Int32ArrayElementSet_WhenReceiverProvenViaCopyAndOperandsAreDouble()
     {
         var classRegistry = new ClassRegistry();

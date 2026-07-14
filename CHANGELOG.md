@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler: preserve numeric SSA across non-adjacent indexed reads and their numeric consumers without reordering observable access or coercion. Numeric values travel through an unboxed runtime value type, while objects defer `ToNumber` until the original coercion point; conservative control-flow and multi-use cases retain the generic object path. This replaces 42 legacy-cube and 34 modern-cube object-valued `GetItem`/`TypeUtilities.ToNumber` pairs.
 
 ## v0.11.25 - 2026-07-14
 

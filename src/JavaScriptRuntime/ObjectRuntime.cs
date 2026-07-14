@@ -952,6 +952,29 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static NumericIndexedValue GetItemNumericValue(object obj, double index)
+        {
+            if (obj is TypedArrayBase typedArray)
+            {
+                return NumericIndexedValue.FromNumber(typedArray[index]);
+            }
+
+            return NumericIndexedValue.FromValue(GetItem(obj, index));
+        }
+
+        public static NumericIndexedValue GetItemNumericValue(object obj, object index)
+        {
+            if (obj is TypedArrayBase typedArray && index is double doubleIndex)
+            {
+                return NumericIndexedValue.FromNumber(typedArray[doubleIndex]);
+            }
+
+            return NumericIndexedValue.FromValue(GetItem(obj, index));
+        }
+
+        public static NumericIndexedValue GetItemNumericValue(object obj, string key)
+            => NumericIndexedValue.FromValue(GetItem(obj, key));
+
         /// <summary>
         /// Gets an item from an object and converts the result to a number (double).
         /// Provides a fast path for typed-array receivers that avoids boxing the element value.

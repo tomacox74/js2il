@@ -73,7 +73,8 @@
 			[5] object,
 			[6] object,
 			[7] float64,
-			[8] object
+			[8] valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue,
+			[9] object
 		)
 
 		IL_0000: newobj instance void Modules.CompoundAssignment_ArrayIndexBitwiseOr/Scope::.ctor()
@@ -147,8 +148,8 @@
 
 			IL_00f8: ldloc.1
 			IL_00f9: ldloc.2
-			IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-			IL_00ff: stloc.s 5
+			IL_00fa: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, object)
+			IL_00ff: stloc.s 8
 			IL_0101: ldloc.2
 			IL_0102: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0107: stloc.s 4
@@ -159,8 +160,8 @@
 			IL_0116: shl
 			IL_0117: conv.r8
 			IL_0118: stloc.s 4
-			IL_011a: ldloc.s 5
-			IL_011c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_011a: ldloc.s 8
+			IL_011c: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
 			IL_0121: conv.i4
 			IL_0122: ldloc.s 4
 			IL_0124: conv.i4
@@ -185,22 +186,22 @@
 			IL_0152: ldstr "arr["
 			IL_0157: ldloc.2
 			IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_015d: stloc.s 8
-			IL_015f: ldloc.s 8
+			IL_015d: stloc.s 9
+			IL_015f: ldloc.s 9
 			IL_0161: ldstr "] after |= (1 << "
 			IL_0166: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_016b: stloc.s 8
-			IL_016d: ldloc.s 8
+			IL_016b: stloc.s 9
+			IL_016d: ldloc.s 9
 			IL_016f: ldloc.2
 			IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0175: stloc.s 8
-			IL_0177: ldloc.s 8
+			IL_0175: stloc.s 9
+			IL_0177: ldloc.s 9
 			IL_0179: ldstr "):"
 			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0183: stloc.s 8
+			IL_0183: stloc.s 9
 			IL_0185: ldloc.s 5
 			IL_0187: ldstr "log"
-			IL_018c: ldloc.s 8
+			IL_018c: ldloc.s 9
 			IL_018e: ldloc.1
 			IL_018f: ldloc.2
 			IL_0190: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
@@ -226,8 +227,8 @@
 		IL_01d0: stloc.3
 		IL_01d1: ldloc.1
 		IL_01d2: ldloc.3
-		IL_01d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, object)
-		IL_01d8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_01d3: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, object)
+		IL_01d8: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
 		IL_01dd: conv.i4
 		IL_01de: ldc.r8 32
 		IL_01e7: conv.i4

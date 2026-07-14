@@ -89,6 +89,16 @@ internal sealed partial class LIRToILCompiler
             return;
         }
 
+        if (storage.Kind == ValueStorageKind.UnboxedValue
+            && storage.ClrType != null
+            && storage.ClrType != typeof(JavaScriptRuntime.JsNull)
+            && storage.ClrType.IsValueType)
+        {
+            var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
+            typeEncoder.Type(typeRef, true);
+            return;
+        }
+
         if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
         {
             typeEncoder.String();
@@ -739,14 +749,17 @@ internal sealed partial class LIRToILCompiler
                 {
                     var indexStorage = GetTempStorage(getItem.Index);
                     var resultStorage = GetTempStorage(getItem.Result);
+                    var getNumericValue = resultStorage.Kind == ValueStorageKind.UnboxedValue
+                        && resultStorage.ClrType == typeof(JavaScriptRuntime.NumericIndexedValue);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
-                        // Emit inline: call JavaScriptRuntime.ObjectRuntime.GetItem(object, double)
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            getNumericValue
+                                ? nameof(JavaScriptRuntime.ObjectRuntime.GetItemNumericValue)
+                                : nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
                             parameterTypes: new[] { typeof(object), typeof(double) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
@@ -769,7 +782,9 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            getNumericValue
+                                ? nameof(JavaScriptRuntime.ObjectRuntime.GetItemNumericValue)
+                                : nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
                             parameterTypes: new[] { typeof(object), typeof(string) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
@@ -792,7 +807,9 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            getNumericValue
+                                ? nameof(JavaScriptRuntime.ObjectRuntime.GetItemNumericValue)
+                                : nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
                             parameterTypes: new[] { typeof(object), typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
@@ -1925,6 +1942,23 @@ internal sealed partial class LIRToILCompiler
                 return true;
 
             case LIRConvertToNumber convertToNumber:
+                if (GetTempStorage(convertToNumber.Source) is
+                    {
+                        Kind: ValueStorageKind.UnboxedValue,
+                        ClrType: var candidateType
+                    }
+                    && candidateType == typeof(JavaScriptRuntime.NumericIndexedValue))
+                {
+                    EmitLoadTemp(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
+                    var toNumberMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.NumericIndexedValue),
+                        nameof(JavaScriptRuntime.NumericIndexedValue.ToNumber),
+                        parameterTypes: new[] { typeof(JavaScriptRuntime.NumericIndexedValue) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toNumberMethod);
+                    return true;
+                }
+
                 // If already an unboxed numeric value, skip boxing + ToNumber.
                 // In this compiler pipeline, the only non-numeric unboxed values are bool and JsNull.
                 if (GetTempStorage(convertToNumber.Source) is { Kind: ValueStorageKind.UnboxedValue, ClrType: var clrType }

@@ -108,6 +108,9 @@ namespace Jroc.Tests.BinaryOperator
         public Task BinaryOperator_MulNumberNumber() { var testName = nameof(BinaryOperator_MulNumberNumber); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_MulIndexedNumericCandidate() { var testName = nameof(BinaryOperator_MulIndexedNumericCandidate); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_MulObjectObject() { var testName = nameof(BinaryOperator_MulObjectObject); return ExecutionTest(testName); }
 
         [Fact]

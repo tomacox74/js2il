@@ -206,14 +206,17 @@ internal sealed partial class LIRToILCompiler
 
                     var indexStorage = GetTempStorage(getItem.Index);
                     var resultStorage = GetTempStorage(getItem.Result);
+                    var getNumericValue = resultStorage.Kind == ValueStorageKind.UnboxedValue
+                        && resultStorage.ClrType == typeof(JavaScriptRuntime.NumericIndexedValue);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
-                        // Emit: call JavaScriptRuntime.ObjectRuntime.GetItem(object, double)
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            getNumericValue
+                                ? nameof(JavaScriptRuntime.ObjectRuntime.GetItemNumericValue)
+                                : nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
                             parameterTypes: new[] { typeof(object), typeof(double) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
@@ -236,7 +239,9 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            getNumericValue
+                                ? nameof(JavaScriptRuntime.ObjectRuntime.GetItemNumericValue)
+                                : nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
                             parameterTypes: new[] { typeof(object), typeof(string) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
@@ -259,7 +264,9 @@ internal sealed partial class LIRToILCompiler
                         EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
                         var getItemMethod = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.ObjectRuntime),
-                            nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
+                            getNumericValue
+                                ? nameof(JavaScriptRuntime.ObjectRuntime.GetItemNumericValue)
+                                : nameof(JavaScriptRuntime.ObjectRuntime.GetItem),
                             parameterTypes: new[] { typeof(object), typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);

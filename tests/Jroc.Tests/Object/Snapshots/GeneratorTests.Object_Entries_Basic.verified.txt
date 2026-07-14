@@ -72,7 +72,8 @@
 			[4] object,
 			[5] object,
 			[6] object,
-			[7] float64
+			[7] valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue,
+			[8] float64
 		)
 
 		IL_0000: newobj instance void Modules.Object_Entries_Basic/Scope::.ctor()
@@ -143,14 +144,14 @@
 			IL_00e8: stloc.s 6
 			IL_00ea: ldloc.2
 			IL_00eb: ldstr "length"
-			IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItem(object, string)
-			IL_00f5: stloc.s 4
+			IL_00f0: call valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetItemNumericValue(object, string)
+			IL_00f5: stloc.s 7
 			IL_00f7: ldloc.s 6
 			IL_00f9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00fe: stloc.s 7
-			IL_0100: ldloc.s 7
-			IL_0102: ldloc.s 4
-			IL_0104: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00fe: stloc.s 8
+			IL_0100: ldloc.s 8
+			IL_0102: ldloc.s 7
+			IL_0104: call float64 [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue::ToNumber(valuetype [JavaScriptRuntime]JavaScriptRuntime.NumericIndexedValue)
 			IL_0109: clt
 			IL_010b: brfalse IL_019a
 
@@ -183,12 +184,12 @@
 			IL_0172: pop
 			IL_0173: ldloc.3
 			IL_0174: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0179: stloc.s 7
-			IL_017b: ldloc.s 7
+			IL_0179: stloc.s 8
+			IL_017b: ldloc.s 8
 			IL_017d: ldc.r8 1
 			IL_0186: add
-			IL_0187: stloc.s 7
-			IL_0189: ldloc.s 7
+			IL_0187: stloc.s 8
+			IL_0189: ldloc.s 8
 			IL_018b: box [System.Runtime]System.Double
 			IL_0190: stloc.s 6
 			IL_0192: ldloc.s 6

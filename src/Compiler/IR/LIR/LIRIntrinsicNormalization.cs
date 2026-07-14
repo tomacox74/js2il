@@ -614,12 +614,6 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
-            // Keep evaluation/exception ordering intact: only fuse when ConvertToNumber is immediately after GetItem.
-            if (convIdx != i + 1)
-            {
-                continue;
-            }
-
             var conv = (LIRConvertToNumber)methodBody.Instructions[convIdx];
 
             // Verify the result temp is not used by any other instruction (besides the GetItem def and the ConvertToNumber).
@@ -628,14 +622,47 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
-            // Fuse: replace GetItem with GetItemAsNumber targeting the numResult directly.
-            methodBody.Instructions[i] = new LIRGetItemAsNumber(getItem.Object, getItem.Index, conv.Result);
-            indicesToRemove.Add(convIdx);
-
-            // Update result storage to unboxed double.
-            if (conv.Result.Index >= 0 && conv.Result.Index < methodBody.TempStorages.Count)
+            if (convIdx == i + 1)
             {
-                methodBody.TempStorages[conv.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                // With no intervening evaluation, access and coercion can remain fused directly.
+                methodBody.Instructions[i] = new LIRGetItemAsNumber(getItem.Object, getItem.Index, conv.Result);
+                indicesToRemove.Add(convIdx);
+
+                if (conv.Result.Index >= 0 && conv.Result.Index < methodBody.TempStorages.Count)
+                {
+                    methodBody.TempStorages[conv.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                }
+            }
+            else if (convIdx > i + 1)
+            {
+                if (methodBody.Instructions
+                    .Skip(i + 1)
+                    .Take(convIdx - i - 1)
+                    .Any(static instruction => instruction is
+                        LIRLabel
+                        or LIRBranch
+                        or LIRLeave
+                        or LIRBranchIfFalse
+                        or LIRBranchIfTrue
+                        or LIRReturn
+                        or LIRReturnUndefinedImmediate
+                        or LIRTailCallFunctionReturn
+                        or LIRThrow
+                        or LIRThrowNewTypeError
+                        or LIREndFinally
+                        or LIRAwait
+                        or LIRYield
+                        or LIRAsyncStateSwitch
+                        or LIRGeneratorStateSwitch))
+                {
+                    continue;
+                }
+
+                // Preserve the original access and coercion positions. Numeric values travel in a
+                // value type; object coercion remains deferred until the existing conversion.
+                methodBody.TempStorages[resultIdx] = new ValueStorage(
+                    ValueStorageKind.UnboxedValue,
+                    typeof(JavaScriptRuntime.NumericIndexedValue));
             }
         }
 
