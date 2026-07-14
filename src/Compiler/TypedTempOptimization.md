@@ -310,7 +310,7 @@ The pinned-slot guard is required because a temp can be both a temp and a write
 to a stable IL local. Removing such an instruction can break loop-carried state,
 try/finally state, generator state, or other compiler-created variables.
 
-The use scan relies on `TempLocalAllocator.EnumerateUsedTemps`, so this PR also
+The use scan relies on `TempLocalAllocator.VisitUsedTemps`, so this PR also
 adds missing tracking for `LIRGetItemAsNumberString`. Without that, a boxed temp
 used by string-key item access could be incorrectly deleted.
 
@@ -352,7 +352,7 @@ uses but still be read through the variable slot by later generated IL.
 
 This PR updates `TempLocalAllocator` in two related ways:
 
-1. `EnumerateUsedTemps` now reports the `Object` and `Index` operands for
+1. `VisitUsedTemps` reports the `Object` and `Index` operands for
    `LIRGetItemAsNumberString`.
 2. `TryGetDefinedTemp` now reports its `Result`.
 
@@ -385,7 +385,7 @@ Future typed-temp optimizations should preserve these invariants:
    slot write is proven redundant.
 3. Do not use `ValueStorageFacts.IsSameRuntimeRepresentation` as a general
    conversion test. It is intentionally stricter.
-4. Keep `TempLocalAllocator.EnumerateUsedTemps` and `TryGetDefinedTemp` in sync
+4. Keep `TempLocalAllocator.VisitUsedTemps` and `TryGetDefinedTemp` in sync
    with every instruction shape that IL emission reads or writes.
 5. Treat `object` call boundaries differently from typed boundaries. Avoiding a
    box for a typed parameter is good; moving a box to a runtime-dispatch fallback

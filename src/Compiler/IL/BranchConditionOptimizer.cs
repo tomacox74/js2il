@@ -52,15 +52,8 @@ internal static class BranchConditionOptimizer
         {
             bool isBranch = instruction is LIRBranchIfFalse or LIRBranchIfTrue;
             
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction)
-                .Where(u => u.Index >= 0 && u.Index < tempCount))
-            {
-                useCount[used.Index]++;
-                if (!isBranch)
-                {
-                    usedByBranchOnly[used.Index] = false;
-                }
-            }
+            var visitor = new BranchUseVisitor(useCount, usedByBranchOnly, tempCount, isBranch);
+            TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
         }
 
         // Mark branch-only condition temps that are only used once by a branch as non-materialized.
@@ -78,6 +71,36 @@ internal static class BranchConditionOptimizer
             {
                 // Mark this temp as not needing materialization (false = not used outside)
                 shouldMaterializeTemp[i] = false;
+            }
+        }
+    }
+
+    private struct BranchUseVisitor : ITempUseVisitor
+    {
+        private readonly int[] _useCount;
+        private readonly bool[] _usedByBranchOnly;
+        private readonly int _tempCount;
+        private readonly bool _isBranch;
+
+        public BranchUseVisitor(int[] useCount, bool[] usedByBranchOnly, int tempCount, bool isBranch)
+        {
+            _useCount = useCount;
+            _usedByBranchOnly = usedByBranchOnly;
+            _tempCount = tempCount;
+            _isBranch = isBranch;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if (temp.Index < 0 || temp.Index >= _tempCount)
+            {
+                return;
+            }
+
+            _useCount[temp.Index]++;
+            if (!_isBranch)
+            {
+                _usedByBranchOnly[temp.Index] = false;
             }
         }
     }

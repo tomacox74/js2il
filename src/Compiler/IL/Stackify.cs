@@ -69,13 +69,8 @@ internal static class Stackify
                 defInstruction[def.Index] = instruction;
             }
 
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction))
-            {
-                if (used.Index >= 0 && used.Index < tempCount)
-                {
-                    useIndices[used.Index].Add(i);
-                }
-            }
+            var visitor = new UseIndexVisitor(useIndices, tempCount, i);
+            TempLocalAllocator.VisitUsedTemps(instruction, ref visitor);
         }
 
         // Second pass: check if temps meet stackify criteria
@@ -146,13 +141,8 @@ internal static class Stackify
         {
             // But only if target temp is the first operand consumed
             var useInstr = methodBody.Instructions[useIndex];
-            var operands = TempLocalAllocator.EnumerateUsedTemps(useInstr).ToList();
-            if (operands.Count > 0 && operands[0].Index == targetTemp.Index)
-            {
-                return true;
-            }
-            // If it's the only operand, also stackable
-            if (operands.Count == 1 && operands[0].Index == targetTemp.Index)
+            var operands = TempLocalAllocator.GetTempUseSummary(useInstr, targetTemp);
+            if (operands.Count > 0 && operands.First.Index == targetTemp.Index)
             {
                 return true;
             }
@@ -251,18 +241,8 @@ internal static class Stackify
 
         // At use site, verify target is consumed correctly
         var useInstr2 = methodBody.Instructions[useIndex];
-        var operands2 = TempLocalAllocator.EnumerateUsedTemps(useInstr2).ToList();
-
-        // Find which operand position our target is at
-        int targetOperandIndex = -1;
-        for (int j = 0; j < operands2.Count; j++)
-        {
-            if (operands2[j].Index == targetTemp.Index)
-            {
-                targetOperandIndex = j;
-                break;
-            }
-        }
+        var operands2 = TempLocalAllocator.GetTempUseSummary(useInstr2, targetTemp);
+        int targetOperandIndex = operands2.TargetIndex;
 
         if (targetOperandIndex < 0)
         {
@@ -287,6 +267,28 @@ internal static class Stackify
         }
 
         return true;
+    }
+
+    private struct UseIndexVisitor : ITempUseVisitor
+    {
+        private readonly List<int>[] _useIndices;
+        private readonly int _tempCount;
+        private readonly int _instructionIndex;
+
+        public UseIndexVisitor(List<int>[] useIndices, int tempCount, int instructionIndex)
+        {
+            _useIndices = useIndices;
+            _tempCount = tempCount;
+            _instructionIndex = instructionIndex;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if (temp.Index >= 0 && temp.Index < _tempCount)
+            {
+                _useIndices[temp.Index].Add(_instructionIndex);
+            }
+        }
     }
 
     /// <summary>
