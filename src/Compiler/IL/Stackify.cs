@@ -409,13 +409,13 @@ internal static class Stackify
             // Typed comparisons are side-effect free and compile to pure IL.
             // Safe to inline when both operands are inlineable.
             case LIRCompareNumberLessThan cmpLt:
-                return IsInlineableNumericOperand(cmpLt.Left) && IsInlineableNumericOperand(cmpLt.Right);
+                return IsInlineableOperand(cmpLt.Left) && IsInlineableOperand(cmpLt.Right);
             case LIRCompareNumberGreaterThan cmpGt:
-                return IsInlineableNumericOperand(cmpGt.Left) && IsInlineableNumericOperand(cmpGt.Right);
+                return IsInlineableOperand(cmpGt.Left) && IsInlineableOperand(cmpGt.Right);
             case LIRCompareNumberLessThanOrEqual cmpLe:
-                return IsInlineableNumericOperand(cmpLe.Left) && IsInlineableNumericOperand(cmpLe.Right);
+                return IsInlineableOperand(cmpLe.Left) && IsInlineableOperand(cmpLe.Right);
             case LIRCompareNumberGreaterThanOrEqual cmpGe:
-                return IsInlineableNumericOperand(cmpGe.Left) && IsInlineableNumericOperand(cmpGe.Right);
+                return IsInlineableOperand(cmpGe.Left) && IsInlineableOperand(cmpGe.Right);
             case LIRCompareNumberEqual cmpEq:
                 return IsInlineableOperand(cmpEq.Left) && IsInlineableOperand(cmpEq.Right);
             case LIRCompareNumberNotEqual cmpNe:
@@ -428,17 +428,17 @@ internal static class Stackify
             // Typed numeric binary ops compile to pure IL.
             // Safe to inline when both operands are inlineable.
             case LIRAddNumber addNumber:
-                return IsInlineableNumericOperand(addNumber.Left) && IsInlineableNumericOperand(addNumber.Right);
+                return IsInlineableOperand(addNumber.Left) && IsInlineableOperand(addNumber.Right);
             case LIRSubNumber subNumber:
-                return IsInlineableNumericOperand(subNumber.Left) && IsInlineableNumericOperand(subNumber.Right);
+                return IsInlineableOperand(subNumber.Left) && IsInlineableOperand(subNumber.Right);
             case LIRMulNumber mulNumber:
-                return IsInlineableNumericOperand(mulNumber.Left) && IsInlineableNumericOperand(mulNumber.Right);
+                return IsInlineableOperand(mulNumber.Left) && IsInlineableOperand(mulNumber.Right);
             case LIRDivNumber divNumber:
-                return IsInlineableNumericOperand(divNumber.Left) && IsInlineableNumericOperand(divNumber.Right);
+                return IsInlineableOperand(divNumber.Left) && IsInlineableOperand(divNumber.Right);
             case LIRModNumber modNumber:
-                return IsInlineableNumericOperand(modNumber.Left) && IsInlineableNumericOperand(modNumber.Right);
+                return IsInlineableOperand(modNumber.Left) && IsInlineableOperand(modNumber.Right);
             case LIRExpNumber expNumber:
-                return IsInlineableNumericOperand(expNumber.Left) && IsInlineableNumericOperand(expNumber.Right);
+                return IsInlineableOperand(expNumber.Left) && IsInlineableOperand(expNumber.Right);
 
             // LIRBuildArray creates an array and initializes elements inline.
             // Safe to inline if all element temps can be emitted inline.
@@ -497,15 +497,6 @@ internal static class Stackify
             case LIRGetStringLength getStringLength:
                 return IsInlineableOperand(getStringLength.Receiver);
             case LIRGetItem getItem:
-                if (getItem.Result.Index >= 0
-                    && getItem.Result.Index < methodBody.TempStorages.Count
-                    && methodBody.TempStorages[getItem.Result.Index].ClrType
-                        == typeof(JavaScriptRuntime.NumericIndexedValue))
-                {
-                    // Numeric candidates intentionally separate observable access from later
-                    // coercion. Re-emitting the access at its arithmetic use would reorder them.
-                    return false;
-                }
                 return IsInlineableOperand(getItem.Object) && IsInlineableOperand(getItem.Index);
             case LIRGetItemAsNumber getItemAsNumber:
                 return IsInlineableOperand(getItemAsNumber.Object) && IsInlineableOperand(getItemAsNumber.Index);
@@ -679,26 +670,6 @@ internal static class Stackify
 
             // No def instruction and not variable-backed: conservatively disallow.
             return false;
-        }
-
-        bool IsInlineableNumericOperand(TempVariable temp)
-        {
-            var idx = temp.Index;
-            if (idx >= 0
-                && idx < methodBody.TempStorages.Count
-                && methodBody.TempStorages[idx] is
-                {
-                    Kind: ValueStorageKind.UnboxedValue,
-                    ClrType: var clrType
-                }
-                && clrType == typeof(JavaScriptRuntime.NumericIndexedValue))
-            {
-                // Candidate-producing indexed reads are intentionally materialized so a later
-                // numeric operation can reload and coerce them without repeating the access.
-                return true;
-            }
-
-            return IsInlineableOperand(temp);
         }
     }
 

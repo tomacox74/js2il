@@ -1999,33 +1999,33 @@ internal sealed partial class LIRToILCompiler
                 return true;
 
             case LIRAddNumber addNumber:
-                EmitLoadTempAsNumber(addNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsNumber(addNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Add);
                 return true;
             case LIRSubNumber subNumber:
-                EmitLoadTempAsNumber(subNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsNumber(subNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Sub);
                 return true;
             case LIRMulNumber mulNumber:
-                EmitLoadTempAsNumber(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsNumber(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Mul);
                 return true;
             case LIRDivNumber divNumber:
-                EmitLoadTempAsNumber(divNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsNumber(divNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(divNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(divNumber.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Div);
                 return true;
             case LIRModNumber modNumber:
-                EmitLoadTempAsNumber(modNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsNumber(modNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(modNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(modNumber.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Rem);
                 return true;
             case LIRExpNumber expNumber:
-                EmitLoadTempAsNumber(expNumber.Left, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsNumber(expNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
                 EmitMathPow(ilEncoder);
                 return true;
             default:
@@ -2141,19 +2141,6 @@ internal sealed partial class LIRToILCompiler
         if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
         {
             EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
-            return;
-        }
-
-        if (storage.Kind == ValueStorageKind.UnboxedValue
-            && storage.ClrType == typeof(JavaScriptRuntime.NumericIndexedValue))
-        {
-            EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
-            var toNumberMethod = _memberRefRegistry.GetOrAddMethod(
-                typeof(JavaScriptRuntime.NumericIndexedValue),
-                nameof(JavaScriptRuntime.NumericIndexedValue.ToNumber),
-                parameterTypes: new[] { typeof(JavaScriptRuntime.NumericIndexedValue) });
-            ilEncoder.OpCode(ILOpCode.Call);
-            ilEncoder.Token(toNumberMethod);
             return;
         }
 
