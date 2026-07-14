@@ -991,6 +991,17 @@ public partial class SymbolTableBuilder
             return null;
         }
 
+        if (onlyReturn.Argument is Identifier returnedIdentifier)
+        {
+            var returnedBinding = TryResolveBinding(callableScope, returnedIdentifier.Name);
+            if (returnedBinding?.Kind == BindingKind.Var
+                && !returnedBinding.DeclaringScope.Parameters.Contains(returnedBinding.Name)
+                && returnedBinding.ClrType == null)
+            {
+                return null;
+            }
+        }
+
         var inferred = InferExpressionClrType(onlyReturn.Argument, callableScope);
 
         bool IsIdentifierForcedNumericBeforeReturn(string name)

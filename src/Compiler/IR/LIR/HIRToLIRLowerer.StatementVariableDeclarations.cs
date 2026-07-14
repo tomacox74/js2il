@@ -94,6 +94,13 @@ public sealed partial class HIRToLIRLowerer
             return true;
         }
 
+        // A proven numeric var has no observable read on any path before its first
+        // numeric assignment, so its source-level `var x;` declaration is a runtime no-op.
+        if (exprStmt.Initializer == null && binding.CanUseUnboxedLocal)
+        {
+            return true;
+        }
+
         TempVariable value;
         TempVariable? withResolvedVarNameTemp = null;
         TempVariable? withResolvedVarShadowedTemp = null;
@@ -195,12 +202,12 @@ public sealed partial class HIRToLIRLowerer
         if (TryGetActiveScopeFieldStorage(binding, out var activeScopeTemp, out var activeScopeId, out var activeFieldId))
         {
             TempVariable fieldValue;
-            if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(double))
+            if ((CanUseStablePrimitiveLocal(binding, typeof(double)))
                 || (binding.Kind == BindingKind.Const && initializerProvesUnboxedDouble))
             {
                 fieldValue = EnsureNumber(value);
             }
-            else if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
+            else if ((CanUseStablePrimitiveLocal(binding, typeof(bool)))
                 || (binding.Kind == BindingKind.Const && initializerProvesUnboxedBool))
             {
                 fieldValue = EnsureBoolean(value);
@@ -257,12 +264,12 @@ public sealed partial class HIRToLIRLowerer
         // IMPORTANT: declared locals should never store raw unboxed JsNull into an object-typed IL local.
         // Use unboxed locals only for proven-stable primitives (double/bool); otherwise box to object.
         TempVariable slotValue;
-        if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(double))
+        if (CanUseStablePrimitiveLocal(binding, typeof(double))
             || (binding.Kind == BindingKind.Const && initializerProvesUnboxedDouble))
         {
             slotValue = EnsureNumber(value);
         }
-        else if ((binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
+        else if (CanUseStablePrimitiveLocal(binding, typeof(bool))
             || (binding.Kind == BindingKind.Const && initializerProvesUnboxedBool))
         {
             slotValue = EnsureBoolean(value);

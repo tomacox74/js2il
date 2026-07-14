@@ -169,6 +169,146 @@ public class SymbolTableTypeInferenceTests
     }
 
     [Fact]
+    public void SymbolTable_InferTypes_NumericVarLocals_ProvesInitializedAndLoopBindings()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            function calculate(limit) {
+                var total = 0;
+                for (var i = 0; i < limit; i++) {
+                    total += i;
+                }
+
+                var direction;
+                if (total >= 0) {
+                    direction = 1;
+                } else {
+                    direction = -1;
+                }
+
+                return total + direction;
+            }
+            calculate(5);
+        ");
+
+        foreach (var variableName in new[]
+                 {
+                     "calculate/total",
+                     "calculate/i",
+                     "calculate/direction"
+                 })
+        {
+            var binding = symbolTable.GetBindingInfo(variableName);
+            Assert.NotNull(binding);
+            Assert.True(binding.IsStableType, $"Expected {variableName} to be stable.");
+            Assert.Equal(typeof(double), binding.ClrType);
+            Assert.True(binding.CanUseUnboxedLocal, $"Expected {variableName} to use an unboxed local.");
+        }
+    }
+
+    [Theory]
+    [InlineData("console.log(value); value = 1;")]
+    [InlineData("if (flag) value = 1; console.log(value);")]
+    [InlineData("value = 1; if (flag) value = 'text';")]
+    [InlineData("value = 1; var object = { property: (value = 'text') };")]
+    [InlineData("label: { if (flag) break label; value = 1; } console.log(value);")]
+    [InlineData("var callback = null; callback?.(value = 1); console.log(value);")]
+    public void SymbolTable_InferTypes_NumericVarLocal_RejectsUnsafeControlFlow(string statements)
+    {
+        var symbolTable = BuildSymbolTable($@"
+            function calculate(flag) {{
+                var value;
+                {statements}
+            }}
+        ");
+
+        var binding = symbolTable.GetBindingInfo("calculate/value");
+        Assert.NotNull(binding);
+        Assert.False(binding.CanUseUnboxedLocal);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_NumericVarLocal_RejectsHoistedNumericDependency()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            function calculate() {
+                var result = value;
+                var value = 1;
+                return result;
+            }
+        ");
+
+        var resultBinding = symbolTable.GetBindingInfo("calculate/result");
+        var valueBinding = symbolTable.GetBindingInfo("calculate/value");
+        Assert.NotNull(resultBinding);
+        Assert.NotNull(valueBinding);
+        Assert.False(resultBinding.CanUseUnboxedLocal);
+        Assert.False(valueBinding.CanUseUnboxedLocal);
+        Assert.Null(resultBinding.ClrType);
+        var functionScope = FindFirstScope(
+            symbolTable.Root,
+            candidate => candidate.Kind == ScopeKind.Function
+                         && string.Equals(candidate.Name, "calculate", StringComparison.Ordinal));
+        Assert.NotNull(functionScope);
+        Assert.Null(functionScope!.StableReturnClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_NumericVarLocal_RejectsShadowedNonnumericSource()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            function calculate() {
+                var source = 1;
+                var target;
+                {
+                    let source = 'text';
+                    target = source;
+                }
+                return target;
+            }
+        ");
+
+        var targetBinding = symbolTable.GetBindingInfo("calculate/target");
+        Assert.NotNull(targetBinding);
+        Assert.False(targetBinding.CanUseUnboxedLocal);
+        Assert.Null(targetBinding.ClrType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_NumericVarLocal_RejectsCapturedBinding()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            function calculate() {
+                var value = 1;
+                return function () {
+                    return ++value;
+                };
+            }
+        ");
+
+        var binding = symbolTable.GetBindingInfo("calculate/value");
+        Assert.NotNull(binding);
+        Assert.True(binding.IsCaptured);
+        Assert.False(binding.CanUseUnboxedLocal);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_NumericVarLocalSpecializationFixture_ProvesHotLocals()
+    {
+        const string resourceName = "Jroc.Tests.Variable.JavaScript.Variable_NumericVarLocalSpecialization.js";
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+        Assert.NotNull(stream);
+        using var reader = new StreamReader(stream);
+        var symbolTable = BuildSymbolTable(reader.ReadToEnd());
+
+        foreach (var variableName in new[] { "calculate/total", "calculate/i", "calculate/direction" })
+        {
+            var binding = symbolTable.GetBindingInfo(variableName);
+            Assert.NotNull(binding);
+            Assert.True(binding.CanUseUnboxedLocal, $"Expected {variableName} to use an unboxed local.");
+        }
+    }
+
+    [Fact]
     public void SymbolTable_InferTypes_ClassMethod()
     {
         var code = @"

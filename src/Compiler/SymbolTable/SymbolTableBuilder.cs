@@ -249,6 +249,7 @@ namespace Jroc.SymbolTables
             // can use only proven-stable argument bindings, not initializer guesses.
             InferCallableParameterClrTypes(globalScope);
             InferVariableClrTypes(globalScope);
+            InferDefinitelyInitializedNumericVarLocals(globalScope);
             InferCallableReturnClrTypes(globalScope);
 
             // Object literal shape eligibility analysis (issue #1429). Runs last so member

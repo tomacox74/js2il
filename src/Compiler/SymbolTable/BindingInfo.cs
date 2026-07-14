@@ -86,6 +86,12 @@ public class BindingInfo
     public bool HasWrite { get; set; }
 
     /// <summary>
+    /// True when a non-captured <c>var</c> binding is proven numeric and definitely
+    /// initialized before every reachable read in its callable.
+    /// </summary>
+    public bool CanUseUnboxedLocal { get; set; }
+
+    /// <summary>
     /// True when accesses to this binding must respect the temporal dead zone.
     /// This applies to lexical declarations (<c>let</c>, <c>const</c>, and class bindings modeled as <c>let</c>)
     /// but not to parameters injected into the scope.
