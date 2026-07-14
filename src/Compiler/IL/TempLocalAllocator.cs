@@ -4,6 +4,11 @@ using Jroc.IR;
 
 namespace Jroc.IL;
 
+internal interface ITempUseVisitor
+{
+    void Visit(TempVariable temp);
+}
+
 /// <summary>
 /// Result of temp local allocation - maps SSA temps to IL local slots.
 /// </summary>
@@ -51,12 +56,8 @@ internal static class TempLocalAllocator
         // First pass: determine last use for each temp.
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
-            foreach (var used in EnumerateUsedTemps(methodBody.Instructions[i])
-                .Where(u => u.Index >= 0 && u.Index < tempCount &&
-                    (shouldMaterializeTemp is null || shouldMaterializeTemp[u.Index])))
-            {
-                lastUse[used.Index] = i;
-            }
+            var visitor = new LastUseVisitor(lastUse, tempCount, shouldMaterializeTemp, i);
+            VisitUsedTemps(methodBody.Instructions[i], ref visitor);
         }
 
         // Second pass: linear-scan allocation with reuse after last use.
@@ -75,33 +76,14 @@ internal static class TempLocalAllocator
             var instruction = methodBody.Instructions[i];
 
             // Free dead operands before allocating the result so we can reuse within the same instruction.
-            foreach (var used in EnumerateUsedTemps(instruction))
-            {
-                if (used.Index < 0 || used.Index >= tempCount)
-                {
-                    continue;
-                }
-
-                if (lastUse[used.Index] != i)
-                {
-                    continue;
-                }
-
-                var usedSlot = tempToSlot[used.Index];
-                if (usedSlot < 0)
-                {
-                    continue;
-                }
-
-                var usedStorage = GetTempStorage(methodBody, used);
-                var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType, usedStorage.TypeHandle, usedStorage.ScopeName);
-                if (!freeByKey.TryGetValue(key, out var stack))
-                {
-                    stack = new Stack<int>();
-                    freeByKey[key] = stack;
-                }
-                stack.Push(usedSlot);
-            }
+            var releaseVisitor = new ReleaseDeadTempsVisitor(
+                methodBody,
+                lastUse,
+                tempToSlot,
+                tempCount,
+                i,
+                freeByKey);
+            VisitUsedTemps(instruction, ref releaseVisitor);
 
             // Allocate a slot for result if it will be used later.
             // Skip allocation for constant temps that can be emitted inline.
@@ -207,592 +189,459 @@ internal static class TempLocalAllocator
         return new ValueStorage(ValueStorageKind.Unknown);
     }
 
+    private struct LastUseVisitor : ITempUseVisitor
+    {
+        private readonly int[] _lastUse;
+        private readonly int _tempCount;
+        private readonly bool[]? _shouldMaterializeTemp;
+        private readonly int _instructionIndex;
+
+        public LastUseVisitor(int[] lastUse, int tempCount, bool[]? shouldMaterializeTemp, int instructionIndex)
+        {
+            _lastUse = lastUse;
+            _tempCount = tempCount;
+            _shouldMaterializeTemp = shouldMaterializeTemp;
+            _instructionIndex = instructionIndex;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if (temp.Index >= 0
+                && temp.Index < _tempCount
+                && (_shouldMaterializeTemp is null || _shouldMaterializeTemp[temp.Index]))
+            {
+                _lastUse[temp.Index] = _instructionIndex;
+            }
+        }
+    }
+
+    private struct ReleaseDeadTempsVisitor : ITempUseVisitor
+    {
+        private readonly MethodBodyIR _methodBody;
+        private readonly int[] _lastUse;
+        private readonly int[] _tempToSlot;
+        private readonly int _tempCount;
+        private readonly int _instructionIndex;
+        private readonly Dictionary<StorageKey, Stack<int>> _freeByKey;
+
+        public ReleaseDeadTempsVisitor(
+            MethodBodyIR methodBody,
+            int[] lastUse,
+            int[] tempToSlot,
+            int tempCount,
+            int instructionIndex,
+            Dictionary<StorageKey, Stack<int>> freeByKey)
+        {
+            _methodBody = methodBody;
+            _lastUse = lastUse;
+            _tempToSlot = tempToSlot;
+            _tempCount = tempCount;
+            _instructionIndex = instructionIndex;
+            _freeByKey = freeByKey;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            if (temp.Index < 0
+                || temp.Index >= _tempCount
+                || _lastUse[temp.Index] != _instructionIndex)
+            {
+                return;
+            }
+
+            var usedSlot = _tempToSlot[temp.Index];
+            if (usedSlot < 0)
+            {
+                return;
+            }
+
+            var usedStorage = GetTempStorage(_methodBody, temp);
+            var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType, usedStorage.TypeHandle, usedStorage.ScopeName);
+            if (!_freeByKey.TryGetValue(key, out var stack))
+            {
+                stack = new Stack<int>();
+                _freeByKey[key] = stack;
+            }
+
+            stack.Push(usedSlot);
+        }
+    }
+
     /// <summary>
-    /// Enumerates all temps used (read) by an instruction.
+    /// Visits all temps read by an instruction without allocating an iterator object.
     /// </summary>
-    internal static IEnumerable<TempVariable> EnumerateUsedTemps(LIRInstruction instruction)
+    internal static void VisitUsedTemps<TVisitor>(LIRInstruction instruction, ref TVisitor visitor)
+        where TVisitor : struct, ITempUseVisitor
     {
         switch (instruction)
         {
-            case LIRAddNumber add:
-                yield return add.Left;
-                yield return add.Right;
-                break;
-            case LIRConcatStrings concat:
-                yield return concat.Left;
-                yield return concat.Right;
-                break;
-            case LIRAddDynamic addDyn:
-                yield return addDyn.Left;
-                yield return addDyn.Right;
-                break;
-            case LIRAddDynamicDoubleObject addDynDoubleObject:
-                yield return addDynDoubleObject.LeftDouble;
-                yield return addDynDoubleObject.RightObject;
-                break;
-            case LIRAddDynamicObjectDouble addDynObjectDouble:
-                yield return addDynObjectDouble.LeftObject;
-                yield return addDynObjectDouble.RightDouble;
-                break;
-            case LIRAddAndToNumber addAndToNumber:
-                yield return addAndToNumber.Left;
-                yield return addAndToNumber.Right;
-                break;
-            case LIRSubNumber sub:
-                yield return sub.Left;
-                yield return sub.Right;
-                break;
-            case LIRMulNumber mul:
-                yield return mul.Left;
-                yield return mul.Right;
-                break;
-            case LIRMulDynamic mulDyn:
-                yield return mulDyn.Left;
-                yield return mulDyn.Right;
-                break;
-            case LIRCallIntrinsic call:
-                yield return call.IntrinsicObject;
-                yield return call.ArgumentsArray;
-                break;
-
-            case LIRCallIntrinsicGlobalFunction callGlobal:
-                foreach (var arg in callGlobal.Arguments)
+            case LIRAddNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRConcatStrings value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRAddDynamic value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRAddDynamicDoubleObject value:
+                visitor.Visit(value.LeftDouble); visitor.Visit(value.RightObject); break;
+            case LIRAddDynamicObjectDouble value:
+                visitor.Visit(value.LeftObject); visitor.Visit(value.RightDouble); break;
+            case LIRAddAndToNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRSubNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRMulNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRMulDynamic value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCallIntrinsic value:
+                visitor.Visit(value.IntrinsicObject); visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallIntrinsicGlobalFunction value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRCallInstanceMethod value:
+                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
+            case LIRCallIntrinsicStatic value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRCallIntrinsicStaticVoid value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRCallIntrinsicStaticWithArgsArray value:
+                visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallIntrinsicStaticVoidWithArgsArray value:
+                visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallRuntimeServicesStatic value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRConvertToObject value:
+                visitor.Visit(value.Source); break;
+            case LIRConvertToNumber value:
+                visitor.Visit(value.Source); break;
+            case LIRConvertToNumberDiscard value:
+                visitor.Visit(value.Source); break;
+            case LIRConvertToBoolean value:
+                visitor.Visit(value.Source); break;
+            case LIRConvertToString value:
+                visitor.Visit(value.Source); break;
+            case LIRTypeof value:
+                visitor.Visit(value.Value); break;
+            case LIRNegateNumber value:
+                visitor.Visit(value.Value); break;
+            case LIRNegateNumberDynamic value:
+                visitor.Visit(value.Value); break;
+            case LIRBitwiseNotNumber value:
+                visitor.Visit(value.Value); break;
+            case LIRBitwiseNotDynamic value:
+                visitor.Visit(value.Value); break;
+            case LIRLogicalNot value:
+                visitor.Visit(value.Value); break;
+            case LIRIsInstanceOf value:
+                visitor.Visit(value.Value); break;
+            case LIRCompareNumberLessThan value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareNumberGreaterThan value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareNumberLessThanOrEqual value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareNumberGreaterThanOrEqual value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareNumberEqual value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareNumberNotEqual value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareBooleanEqual value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCompareBooleanNotEqual value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRDivNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRModNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRExpNumber value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRBitwiseAnd value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRBitwiseOr value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRBitwiseXor value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRLeftShift value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRRightShift value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRUnsignedRightShift value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRCallIsTruthy value:
+                visitor.Visit(value.Value); break;
+            case LIRCallIsTruthyDouble value:
+                visitor.Visit(value.Value); break;
+            case LIRCallIsTruthyBool value:
+                visitor.Visit(value.Value); break;
+            case LIRCopyTemp value:
+                visitor.Visit(value.Source); break;
+            case LIRInOperator value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRInstanceOfOperator value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIREqualDynamic value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRNotEqualDynamic value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRStrictEqualDynamic value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRStrictNotEqualDynamic value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRBinaryDynamicOperator value:
+                visitor.Visit(value.Left); visitor.Visit(value.Right); break;
+            case LIRReturn value:
+                visitor.Visit(value.ReturnValue); break;
+            case LIRBranchIfFalse value:
+                visitor.Visit(value.Condition); break;
+            case LIRBranchIfTrue value:
+                visitor.Visit(value.Condition); break;
+            case LIRCallFunction value:
+                visitor.Visit(value.ScopesArray); VisitList(value.Arguments, ref visitor); break;
+            case LIRTailCallFunctionReturn value:
+                visitor.Visit(value.ScopesArray); VisitList(value.Arguments, ref visitor); break;
+            case LIRCallFunctionWithArgsArray value:
+                visitor.Visit(value.ScopesArray); visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallFunctionValue value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallFunctionValue0 value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); break;
+            case LIRCallFunctionValue1 value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); break;
+            case LIRCallFunctionValue2 value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); visitor.Visit(value.A1); break;
+            case LIRCallFunctionValue3 value:
+                visitor.Visit(value.FunctionValue); visitor.Visit(value.ScopesArray); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); break;
+            case LIRCallRequire value:
+                visitor.Visit(value.RequireValue); visitor.Visit(value.ModuleId); break;
+            case LIRCallImport value:
+                visitor.Visit(value.ModuleSpecifier); visitor.Visit(value.CurrentModuleId); break;
+            case LIRConstructValue value:
+                visitor.Visit(value.ConstructorValue); visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallFunctionBaseConstructor value:
+                visitor.Visit(value.ConstructorValue); visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallMember value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.ArgumentsArray); break;
+            case LIRCallMember0 value:
+                visitor.Visit(value.Receiver); break;
+            case LIRCallMember1 value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.A0); break;
+            case LIRCallMember2 value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); break;
+            case LIRCallMember3 value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.A0); visitor.Visit(value.A1); visitor.Visit(value.A2); break;
+            case LIRCallTypedMember value:
+                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
+            case LIRCallTypedMemberWithFallback value:
+                visitor.Visit(value.Receiver); VisitList(value.Arguments, ref visitor); break;
+            case LIRCallUserClassInstanceMethod value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRCallUserClassBaseConstructor value:
+                VisitList(value.Arguments, ref visitor); VisitList(value.AllJsArguments, ref visitor); break;
+            case LIRCallIntrinsicBaseConstructor value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRCallUserClassBaseInstanceMethod value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRBuildScopesArray value:
+                VisitScopeSlots(value.Slots, ref visitor); break;
+            case LIRStoreParameter value:
+                visitor.Visit(value.Value); break;
+            case LIRStoreLeafScopeField value:
+                visitor.Visit(value.Value); break;
+            case LIRStoreParentScopeField value:
+                visitor.Visit(value.Value); break;
+            case LIRStoreScopeFieldByName value:
+                visitor.Visit(value.Value); break;
+            case LIRLoadScopeField value:
+                visitor.Visit(value.ScopeInstance); break;
+            case LIRStoreScopeField value:
+                visitor.Visit(value.ScopeInstance); visitor.Visit(value.Value); break;
+            case LIRAwait value:
+                visitor.Visit(value.AwaitedValue); break;
+            case LIRYield value:
+                visitor.Visit(value.YieldedValue); break;
+            case LIRAsyncCallMoveNext value:
+                visitor.Visit(value.ScopesArray); break;
+            case LIRAsyncResolve value:
+                visitor.Visit(value.Value); break;
+            case LIRAsyncReject value:
+                visitor.Visit(value.Reason); break;
+            case LIRAsyncStateSwitch value:
+                visitor.Visit(value.StateValue); break;
+            case LIRAsyncStoreAwaitedResult value:
+                visitor.Visit(value.Value); break;
+            case LIRBuildArray value:
+                VisitList(value.Elements, ref visitor); break;
+            case LIRNewJsArray value:
+                VisitList(value.Elements, ref visitor); break;
+            case LIRNewJsObject value:
+                VisitObjectPropertyValues(value.Properties, ref visitor); break;
+            case LIRNewInferredJsObject value:
+                VisitInferredObjectPropertyValues(value.Properties, ref visitor); break;
+            case LIRGetInferredMember value:
+                visitor.Visit(value.Receiver); break;
+            case LIRSetInferredMember value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Value); break;
+            case LIRGetLength value:
+                visitor.Visit(value.Object); break;
+            case LIRGetStringLength value:
+                visitor.Visit(value.Receiver); break;
+            case LIRGetJsArrayLength value:
+                visitor.Visit(value.Receiver); break;
+            case LIRGetInt32ArrayLength value:
+                visitor.Visit(value.Receiver); break;
+            case LIRGetItem value:
+                visitor.Visit(value.Object); visitor.Visit(value.Index); break;
+            case LIRGetItemAsNumber value:
+                visitor.Visit(value.Object); visitor.Visit(value.Index); break;
+            case LIRGetItemAsNumberString value:
+                visitor.Visit(value.Object); visitor.Visit(value.Index); break;
+            case LIRSetItem value:
+                visitor.Visit(value.Object); visitor.Visit(value.Index); visitor.Visit(value.Value); break;
+            case LIRSetJsArrayLength value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Value); break;
+            case LIRGetJsArrayElement value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Index); break;
+            case LIRSetJsArrayElement value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Index); visitor.Visit(value.Value); break;
+            case LIRGetInt32ArrayElement value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Index); break;
+            case LIRSetInt32ArrayElement value:
+                visitor.Visit(value.Receiver); visitor.Visit(value.Index); visitor.Visit(value.Value); break;
+            case LIRArrayPushRange value:
+                visitor.Visit(value.TargetArray); visitor.Visit(value.SourceArray); break;
+            case LIRArrayAdd value:
+                visitor.Visit(value.TargetArray); visitor.Visit(value.Element); break;
+            case LIRNewBuiltInError value when value.Message.HasValue:
+                visitor.Visit(value.Message.Value); break;
+            case LIRNewIntrinsicObject value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRNewUserClass value:
+                if (value.NeedsScopes && value.ScopesArray.HasValue)
                 {
-                    yield return arg;
+                    visitor.Visit(value.ScopesArray.Value);
                 }
-                break;
-            case LIRCallInstanceMethod callInstance:
-                yield return callInstance.Receiver;
-                foreach (var arg in callInstance.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-            case LIRCallIntrinsicStatic callStatic:
-                foreach (var arg in callStatic.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCallIntrinsicStaticVoid callStaticVoid:
-                foreach (var arg in callStaticVoid.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCallIntrinsicStaticWithArgsArray callStaticWithArgsArray:
-                yield return callStaticWithArgsArray.ArgumentsArray;
-                break;
-
-            case LIRCallIntrinsicStaticVoidWithArgsArray callStaticVoidWithArgsArray:
-                yield return callStaticVoidWithArgsArray.ArgumentsArray;
-                break;
-            
-            case LIRCallRuntimeServicesStatic callRuntimeServices:
-                foreach (var arg in callRuntimeServices.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-            
-            case LIRConvertToObject conv:
-                yield return conv.Source;
-                break;
-            case LIRConvertToNumber convNum:
-                yield return convNum.Source;
-                break;
-            case LIRConvertToNumberDiscard convNumDiscard:
-                yield return convNumDiscard.Source;
-                break;
-            case LIRConvertToBoolean convBool:
-                yield return convBool.Source;
-                break;
-            case LIRConvertToString convString:
-                yield return convString.Source;
-                break;
-            case LIRTypeof t:
-                yield return t.Value;
-                break;
-            case LIRNegateNumber neg:
-                yield return neg.Value;
-                break;
-            case LIRNegateNumberDynamic negDyn:
-                yield return negDyn.Value;
-                break;
-            case LIRBitwiseNotNumber not:
-                yield return not.Value;
-                break;
-            case LIRBitwiseNotDynamic notDyn:
-                yield return notDyn.Value;
-                break;
-            case LIRLogicalNot logicalNot:
-                yield return logicalNot.Value;
-                break;
-
-            case LIRIsInstanceOf isInstanceOf:
-                yield return isInstanceOf.Value;
-                break;
-            case LIRCompareNumberLessThan cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareNumberGreaterThan cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareNumberLessThanOrEqual cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareNumberGreaterThanOrEqual cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareNumberEqual cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareNumberNotEqual cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareBooleanEqual cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRCompareBooleanNotEqual cmp:
-                yield return cmp.Left;
-                yield return cmp.Right;
-                break;
-            case LIRDivNumber div:
-                yield return div.Left;
-                yield return div.Right;
-                break;
-            case LIRModNumber mod:
-                yield return mod.Left;
-                yield return mod.Right;
-                break;
-            case LIRExpNumber exp:
-                yield return exp.Left;
-                yield return exp.Right;
-                break;
-            case LIRBitwiseAnd bitwiseAnd:
-                yield return bitwiseAnd.Left;
-                yield return bitwiseAnd.Right;
-                break;
-            case LIRBitwiseOr bitwiseOr:
-                yield return bitwiseOr.Left;
-                yield return bitwiseOr.Right;
-                break;
-            case LIRBitwiseXor bitwiseXor:
-                yield return bitwiseXor.Left;
-                yield return bitwiseXor.Right;
-                break;
-            case LIRLeftShift leftShift:
-                yield return leftShift.Left;
-                yield return leftShift.Right;
-                break;
-            case LIRRightShift rightShift:
-                yield return rightShift.Left;
-                yield return rightShift.Right;
-                break;
-            case LIRUnsignedRightShift unsignedRightShift:
-                yield return unsignedRightShift.Left;
-                yield return unsignedRightShift.Right;
-                break;
-            case LIRCallIsTruthy callIsTruthy:
-                yield return callIsTruthy.Value;
-                break;
-            case LIRCallIsTruthyDouble callIsTruthyDouble:
-                yield return callIsTruthyDouble.Value;
-                break;
-            case LIRCallIsTruthyBool callIsTruthyBool:
-                yield return callIsTruthyBool.Value;
-                break;
-            case LIRCopyTemp copyTemp:
-                yield return copyTemp.Source;
-                break;
-            case LIRInOperator inOp:
-                yield return inOp.Left;
-                yield return inOp.Right;
-                break;
-            case LIRInstanceOfOperator instOf:
-                yield return instOf.Left;
-                yield return instOf.Right;
-                break;
-            case LIREqualDynamic equalDyn:
-                yield return equalDyn.Left;
-                yield return equalDyn.Right;
-                break;
-            case LIRNotEqualDynamic notEqualDyn:
-                yield return notEqualDyn.Left;
-                yield return notEqualDyn.Right;
-                break;
-            case LIRStrictEqualDynamic strictEqualDyn:
-                yield return strictEqualDyn.Left;
-                yield return strictEqualDyn.Right;
-                break;
-            case LIRStrictNotEqualDynamic strictNotEqualDyn:
-                yield return strictNotEqualDyn.Left;
-                yield return strictNotEqualDyn.Right;
-                break;
-            case LIRBinaryDynamicOperator binaryDynamic:
-                yield return binaryDynamic.Left;
-                yield return binaryDynamic.Right;
-                break;
-            case LIRReturn ret:
-                yield return ret.ReturnValue;
-                break;
-            case LIRBranchIfFalse branchFalse:
-                yield return branchFalse.Condition;
-                break;
-            case LIRBranchIfTrue branchTrue:
-                yield return branchTrue.Condition;
-                break;
-            case LIRCallFunction callFunc:
-                yield return callFunc.ScopesArray;
-                foreach (var arg in callFunc.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-            case LIRTailCallFunctionReturn tailCall:
-                yield return tailCall.ScopesArray;
-                foreach (var arg in tailCall.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-            case LIRCallFunctionWithArgsArray callWithArgsArray:
-                yield return callWithArgsArray.ScopesArray;
-                yield return callWithArgsArray.ArgumentsArray;
-                break;
-            case LIRCallFunctionValue callValue:
-                yield return callValue.FunctionValue;
-                yield return callValue.ScopesArray;
-                yield return callValue.ArgumentsArray;
-                break;
-            case LIRCallFunctionValue0 callValue0:
-                yield return callValue0.FunctionValue;
-                yield return callValue0.ScopesArray;
-                break;
-            case LIRCallFunctionValue1 callValue1:
-                yield return callValue1.FunctionValue;
-                yield return callValue1.ScopesArray;
-                yield return callValue1.A0;
-                break;
-            case LIRCallFunctionValue2 callValue2:
-                yield return callValue2.FunctionValue;
-                yield return callValue2.ScopesArray;
-                yield return callValue2.A0;
-                yield return callValue2.A1;
-                break;
-            case LIRCallFunctionValue3 callValue3:
-                yield return callValue3.FunctionValue;
-                yield return callValue3.ScopesArray;
-                yield return callValue3.A0;
-                yield return callValue3.A1;
-                yield return callValue3.A2;
-                break;
-
-            case LIRCallRequire callRequire:
-                yield return callRequire.RequireValue;
-                yield return callRequire.ModuleId;
-                break;
-
-            case LIRCallImport callImport:
-                yield return callImport.ModuleSpecifier;
-                yield return callImport.CurrentModuleId;
-                break;
-
-            case LIRConstructValue constructValue:
-                yield return constructValue.ConstructorValue;
-                yield return constructValue.ArgumentsArray;
-                break;
-            case LIRCallFunctionBaseConstructor callFunctionBase:
-                yield return callFunctionBase.ConstructorValue;
-                yield return callFunctionBase.ArgumentsArray;
-                break;
-            case LIRCallMember callMember:
-                yield return callMember.Receiver;
-                yield return callMember.ArgumentsArray;
-                break;
-            case LIRCallMember0 callMember0:
-                yield return callMember0.Receiver;
-                break;
-            case LIRCallMember1 callMember1:
-                yield return callMember1.Receiver;
-                yield return callMember1.A0;
-                break;
-            case LIRCallMember2 callMember2:
-                yield return callMember2.Receiver;
-                yield return callMember2.A0;
-                yield return callMember2.A1;
-                break;
-            case LIRCallMember3 callMember3:
-                yield return callMember3.Receiver;
-                yield return callMember3.A0;
-                yield return callMember3.A1;
-                yield return callMember3.A2;
-                break;
-
-            case LIRCallTypedMember callTyped:
-                yield return callTyped.Receiver;
-                foreach (var arg in callTyped.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCallTypedMemberWithFallback callTypedFallback:
-                yield return callTypedFallback.Receiver;
-                foreach (var arg in callTypedFallback.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCallUserClassInstanceMethod callUserClass:
-                foreach (var arg in callUserClass.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCallUserClassBaseConstructor callBaseCtor:
-                foreach (var a in callBaseCtor.Arguments)
-                {
-                    yield return a;
-                }
-                foreach (var a in callBaseCtor.AllJsArguments)
-                {
-                    yield return a;
-                }
-                break;
-
-            case LIRCallIntrinsicBaseConstructor callIntrinsicBaseCtor:
-                foreach (var a in callIntrinsicBaseCtor.Arguments)
-                {
-                    yield return a;
-                }
-                break;
-
-            case LIRCallUserClassBaseInstanceMethod callBaseMethod:
-                foreach (var a in callBaseMethod.Arguments)
-                {
-                    yield return a;
-                }
-                break;
-            case LIRBuildScopesArray:
-                // LIRBuildScopesArray may load scope instances from temps (ScopeInstanceSource.Temp).
-                if (instruction is LIRBuildScopesArray buildScopes)
-                {
-                    foreach (var temp in buildScopes.Slots
-                        .Where(slot => slot.Source == ScopeInstanceSource.Temp && slot.SourceIndex >= 0)
-                        .Select(slot => new TempVariable(slot.SourceIndex)))
-                    {
-                        yield return temp;
-                    }
-                }
-                break;
-            case LIRLoadThis:
-                // LIRLoadThis doesn't consume any temps (it loads from IL argument 0)
-                break;
-            case LIRLoadParameter:
-                // LIRLoadParameter doesn't consume any temps (it loads from IL argument)
-                break;
-            case LIRStoreParameter storeParameter:
-                yield return storeParameter.Value;
-                break;
-            case LIRStoreLeafScopeField storeLeaf:
-                yield return storeLeaf.Value;
-                break;
-            case LIRStoreParentScopeField storeParent:
-                yield return storeParent.Value;
-                break;
-            case LIRStoreScopeFieldByName storeByName:
-                yield return storeByName.Value;
-                break;
-
-            case LIRLoadScopeField loadScopeField:
-                yield return loadScopeField.ScopeInstance;
-                break;
-
-            case LIRStoreScopeField storeScopeField:
-                yield return storeScopeField.ScopeInstance;
-                yield return storeScopeField.Value;
-                break;
-            case LIRLoadLeafScopeField:
-            case LIRLoadParentScopeField:
-            case LIRLoadScopeFieldByName:
-                // Load instructions don't consume temps (they load from scope fields)
-                break;
-
-            // Async / await state machine instructions
-            case LIRAwait awaitInstr:
-                yield return awaitInstr.AwaitedValue;
-                break;
-            // Generator state machine instructions
-            case LIRYield yieldInstr:
-                yield return yieldInstr.YieldedValue;
-                break;
-            case LIRGeneratorStateSwitch:
-                // Switch does not consume temps.
-                break;
-            case LIRAsyncCallMoveNext callMoveNext:
-                yield return callMoveNext.ScopesArray;
-                break;
-            case LIRAsyncResolve asyncResolve:
-                yield return asyncResolve.Value;
-                break;
-            case LIRAsyncReject asyncReject:
-                yield return asyncReject.Reason;
-                break;
-            case LIRAsyncStateSwitch stateSwitch:
-                yield return stateSwitch.StateValue;
-                break;
-            case LIRAsyncStoreAwaitedResult storeAwaited:
-                yield return storeAwaited.Value;
-                break;
-            case LIRBuildArray buildArray:
-                foreach (var elem in buildArray.Elements)
-                {
-                    yield return elem;
-                }
-                break;
-            case LIRNewJsArray newJsArray:
-                foreach (var elem in newJsArray.Elements)
-                {
-                    yield return elem;
-                }
-                break;
-            case LIRNewJsObject newJsObject:
-                foreach (var prop in newJsObject.Properties)
-                {
-                    yield return prop.Value;
-                }
-                break;
-            case LIRNewInferredJsObject newInferredJsObject:
-                foreach (var prop in newInferredJsObject.Properties)
-                {
-                    yield return prop.Value;
-                }
-                break;
-            case LIRGetInferredMember getInferredMember:
-                yield return getInferredMember.Receiver;
-                break;
-            case LIRSetInferredMember setInferredMember:
-                yield return setInferredMember.Receiver;
-                yield return setInferredMember.Value;
-                break;
-            case LIRGetLength getLength:
-                yield return getLength.Object;
-                break;
-            case LIRGetStringLength getStringLength:
-                yield return getStringLength.Receiver;
-                break;
-            case LIRGetJsArrayLength getJsArrayLength:
-                yield return getJsArrayLength.Receiver;
-                break;
-            case LIRGetInt32ArrayLength getInt32ArrayLength:
-                yield return getInt32ArrayLength.Receiver;
-                break;
-            case LIRGetItem getItem:
-                yield return getItem.Object;
-                yield return getItem.Index;
-                break;
-            case LIRGetItemAsNumber getItemAsNumber:
-                yield return getItemAsNumber.Object;
-                yield return getItemAsNumber.Index;
-                break;
-            case LIRGetItemAsNumberString getItemAsNumberString:
-                yield return getItemAsNumberString.Object;
-                yield return getItemAsNumberString.Index;
-                break;
-            case LIRSetItem setItem:
-                yield return setItem.Object;
-                yield return setItem.Index;
-                yield return setItem.Value;
-                break;
-            case LIRSetJsArrayLength setJsArrayLength:
-                yield return setJsArrayLength.Receiver;
-                yield return setJsArrayLength.Value;
-                break;
-            case LIRGetJsArrayElement getJsArray:
-                yield return getJsArray.Receiver;
-                yield return getJsArray.Index;
-                break;
-            case LIRSetJsArrayElement setJsArray:
-                yield return setJsArray.Receiver;
-                yield return setJsArray.Index;
-                yield return setJsArray.Value;
-                break;
-            case LIRGetInt32ArrayElement getInt32Array:
-                yield return getInt32Array.Receiver;
-                yield return getInt32Array.Index;
-                break;
-            case LIRSetInt32ArrayElement setInt32Array:
-                yield return setInt32Array.Receiver;
-                yield return setInt32Array.Index;
-                yield return setInt32Array.Value;
-                break;
-            case LIRArrayPushRange pushRange:
-                yield return pushRange.TargetArray;
-                yield return pushRange.SourceArray;
-                break;
-            case LIRArrayAdd arrayAdd:
-                yield return arrayAdd.TargetArray;
-                yield return arrayAdd.Element;
-                break;
-            case LIRNewBuiltInError newError:
-                if (newError.Message.HasValue)
-                {
-                    yield return newError.Message.Value;
-                }
-                break;
-            case LIRNewIntrinsicObject newIntrinsic:
-                foreach (var arg in newIntrinsic.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-            case LIRNewUserClass newUserClass:
-                if (newUserClass.NeedsScopes && newUserClass.ScopesArray.HasValue)
-                {
-                    yield return newUserClass.ScopesArray.Value;
-                }
-                foreach (var arg in newUserClass.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCallDeclaredCallable callDeclared:
-                foreach (var arg in callDeclared.Arguments)
-                {
-                    yield return arg;
-                }
-                break;
-
-            case LIRCreateBoundArrowFunction createArrow:
-                yield return createArrow.ScopesArray;
-                break;
-
-            case LIRCreateBoundFunctionExpression createFunc:
-                yield return createFunc.ScopesArray;
-                break;
-            case LIRStoreUserClassInstanceField storeInstanceField:
-                yield return storeInstanceField.Value;
-                break;
-
-            case LIRStoreUserClassStaticField storeStaticField:
-                yield return storeStaticField.Value;
-                break;
-            // LIRLabel and LIRBranch don't use temps
+                VisitList(value.Arguments, ref visitor);
+                break;
+            case LIRCallDeclaredCallable value:
+                VisitList(value.Arguments, ref visitor); break;
+            case LIRCreateBoundArrowFunction value:
+                visitor.Visit(value.ScopesArray); break;
+            case LIRCreateBoundFunctionExpression value:
+                visitor.Visit(value.ScopesArray); break;
+            case LIRStoreUserClassInstanceField value:
+                visitor.Visit(value.Value); break;
+            case LIRStoreUserClassStaticField value:
+                visitor.Visit(value.Value); break;
         }
     }
+
+    private static void VisitList<TVisitor>(IReadOnlyList<TempVariable> temps, ref TVisitor visitor)
+        where TVisitor : struct, ITempUseVisitor
+    {
+        for (int i = 0; i < temps.Count; i++)
+        {
+            visitor.Visit(temps[i]);
+        }
+    }
+
+    private static void VisitScopeSlots<TVisitor>(IReadOnlyList<ScopeSlotSource> slots, ref TVisitor visitor)
+        where TVisitor : struct, ITempUseVisitor
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            var slot = slots[i];
+            if (slot.Source == ScopeInstanceSource.Temp && slot.SourceIndex >= 0)
+            {
+                visitor.Visit(new TempVariable(slot.SourceIndex));
+            }
+        }
+    }
+
+    private static void VisitObjectPropertyValues<TVisitor>(IReadOnlyList<ObjectProperty> properties, ref TVisitor visitor)
+        where TVisitor : struct, ITempUseVisitor
+    {
+        for (int i = 0; i < properties.Count; i++)
+        {
+            visitor.Visit(properties[i].Value);
+        }
+    }
+
+    private static void VisitInferredObjectPropertyValues<TVisitor>(IReadOnlyList<InferredObjectProperty> properties, ref TVisitor visitor)
+        where TVisitor : struct, ITempUseVisitor
+    {
+        for (int i = 0; i < properties.Count; i++)
+        {
+            visitor.Visit(properties[i].Value);
+        }
+    }
+
+    internal static bool UsesTemp(LIRInstruction instruction, TempVariable target)
+    {
+        var visitor = new TempMatchVisitor(target.Index);
+        VisitUsedTemps(instruction, ref visitor);
+        return visitor.Found;
+    }
+
+    internal static TempUseSummary GetTempUseSummary(LIRInstruction instruction, TempVariable target)
+    {
+        var visitor = new TempUseSummaryVisitor(target.Index);
+        VisitUsedTemps(instruction, ref visitor);
+        return visitor.ToSummary();
+    }
+
+    internal readonly record struct TempUseSummary(int Count, TempVariable First, int TargetIndex);
+
+    private struct TempMatchVisitor : ITempUseVisitor
+    {
+        private readonly int _targetIndex;
+
+        public TempMatchVisitor(int targetIndex)
+        {
+            _targetIndex = targetIndex;
+        }
+
+        public bool Found { get; private set; }
+
+        public void Visit(TempVariable temp)
+        {
+            Found |= temp.Index == _targetIndex;
+        }
+    }
+
+    private struct TempUseSummaryVisitor : ITempUseVisitor
+    {
+        private readonly int _targetIndex;
+        private TempVariable _first;
+
+        public TempUseSummaryVisitor(int targetIndex)
+        {
+            _targetIndex = targetIndex;
+            _first = default;
+            TargetIndex = -1;
+        }
+
+        public int Count { get; private set; }
+        public int TargetIndex { get; private set; }
+
+        public void Visit(TempVariable temp)
+        {
+            if (Count == 0)
+            {
+                _first = temp;
+            }
+
+            if (temp.Index == _targetIndex && TargetIndex < 0)
+            {
+                TargetIndex = Count;
+            }
+
+            Count++;
+        }
+
+        public TempUseSummary ToSummary()
+            => new(Count, _first, TargetIndex);
+    }
+
 
     /// <summary>
     /// Gets the temp defined (written) by an instruction, if any.

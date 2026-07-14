@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- perf/compiler: replace allocating LIR temp-use iterator traversal with a struct-visitor API across local allocation, stackification, normalization, branch analysis, and IL emission. A warmed seven-sample `dromaeo-3d-cube` compiler measurement reduced median allocated bytes from 84.06 MB to 16.16 MB (-80.8%). (#1481)
 
 ## v0.11.25 - 2026-07-14
 

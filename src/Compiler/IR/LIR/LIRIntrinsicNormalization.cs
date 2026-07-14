@@ -1275,12 +1275,9 @@ internal static class LIRIntrinsicNormalization
                 continue;
             }
 
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i]))
+            if (TempLocalAllocator.UsesTemp(methodBody.Instructions[i], temp))
             {
-                if (used.Index == temp.Index)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 

@@ -201,15 +201,23 @@ internal sealed partial class LIRToILCompiler
         {
             // Try to include a little more context: which instruction attempted to use this temp.
             // This typically indicates a lowering/SSA bug where a temp is referenced without being defined.
-            var firstUse = MethodBody.Instructions
-                .Select((instr, idx) => (instr, idx))
-                .FirstOrDefault(t => TempLocalAllocator.EnumerateUsedTemps(t.instr).Any(u => u == temp));
+            LIRInstruction? firstUseInstruction = null;
+            int firstUseIndex = -1;
+            for (int i = 0; i < MethodBody.Instructions.Count; i++)
+            {
+                if (TempLocalAllocator.UsesTemp(MethodBody.Instructions[i], temp))
+                {
+                    firstUseInstruction = MethodBody.Instructions[i];
+                    firstUseIndex = i;
+                    break;
+                }
+            }
 
-            if (firstUse.instr != null)
+            if (firstUseInstruction != null)
             {
                 throw new InvalidOperationException(
                     $"Cannot emit unmaterialized temp {temp.Index} - no definition found. " +
-                    $"First use at instruction #{firstUse.idx}: {firstUse.instr.GetType().Name}");
+                    $"First use at instruction #{firstUseIndex}: {firstUseInstruction.GetType().Name}");
             }
 
             throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - no definition found (and no uses found in method body?)");
@@ -2021,12 +2029,9 @@ internal sealed partial class LIRToILCompiler
                 continue;
             }
 
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction))
+            if (TempLocalAllocator.UsesTemp(instruction, temp))
             {
-                if (used.Index == temp.Index)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -2445,15 +2450,28 @@ internal sealed partial class LIRToILCompiler
             cache = new HashSet<int>();
             foreach (var instr in MethodBody.Instructions)
             {
-                foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instr))
-                {
-                    cache.Add(used.Index);
-                }
+                var visitor = new UsedTempIndexCollector(cache);
+                TempLocalAllocator.VisitUsedTemps(instr, ref visitor);
             }
             _usedTempIndexCache = cache;
         }
 
         return cache.Contains(temp.Index);
+    }
+
+    private struct UsedTempIndexCollector : ITempUseVisitor
+    {
+        private readonly HashSet<int> _indices;
+
+        public UsedTempIndexCollector(HashSet<int> indices)
+        {
+            _indices = indices;
+        }
+
+        public void Visit(TempVariable temp)
+        {
+            _indices.Add(temp.Index);
+        }
     }
 
     /// <summary>
