@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.25 - 2026-07-14
+
 - perf/benchmarks: add YantraJS to the standard BenchmarkDotNet cross-runtime suite. YantraJS evaluates each scenario in a fresh `JSContext`, so its reported result covers the same cold runtime creation and source evaluation path as the existing Jint, Okojo, ClearScript, and `jroc (compile+execute)` comparisons.
 
 ## v0.11.24 - 2026-07-13
