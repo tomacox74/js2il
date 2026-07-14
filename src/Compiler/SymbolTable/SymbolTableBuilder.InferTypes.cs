@@ -1367,8 +1367,6 @@ public partial class SymbolTableBuilder
             proposedClrTypes[uninitializedBindingName] = assignedType;
         }
 
-        InferDefinitelyInitializedNumericVarLocals(scope, proposedClrTypes);
-
         foreach (var kvp in proposedClrTypes)
         {
             var binding = scope.Bindings[kvp.Key];

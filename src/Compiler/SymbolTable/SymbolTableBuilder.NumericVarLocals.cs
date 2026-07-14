@@ -5,6 +5,33 @@ namespace Jroc.SymbolTables;
 
 public partial class SymbolTableBuilder
 {
+    private void InferDefinitelyInitializedNumericVarLocals(Scope root)
+    {
+        if (root.Kind == ScopeKind.Function)
+        {
+            var proposedClrTypes = root.Bindings.Values
+                .Where(binding => binding.IsStableType && binding.ClrType != null)
+                .ToDictionary(
+                    binding => binding.Name,
+                    binding => binding.ClrType!,
+                    StringComparer.Ordinal);
+
+            InferDefinitelyInitializedNumericVarLocals(root, proposedClrTypes);
+
+            foreach (var (name, clrType) in proposedClrTypes)
+            {
+                var binding = root.Bindings[name];
+                binding.ClrType = clrType;
+                binding.IsStableType = true;
+            }
+        }
+
+        foreach (var child in root.Children)
+        {
+            InferDefinitelyInitializedNumericVarLocals(child);
+        }
+    }
+
     private void InferDefinitelyInitializedNumericVarLocals(
         Scope scope,
         Dictionary<string, Type> proposedClrTypes)
