@@ -20,6 +20,7 @@ namespace Jroc.Tests.Variable
         [Fact] public Task Variable_TemporalDeadZoneCapturedRead() { var testName = nameof(Variable_TemporalDeadZoneCapturedRead); return GenerateTest(testName); }
         [Fact] public Task Variable_TemporalDeadZoneShadowing() { var testName = nameof(Variable_TemporalDeadZoneShadowing); return GenerateTest(testName); }
         [Fact] public Task Variable_TemporalDeadZoneSwitchScope() { var testName = nameof(Variable_TemporalDeadZoneSwitchScope); return GenerateTest(testName); }
+        [Fact] public Task Variable_NumericVarLocalSpecialization() { var testName = nameof(Variable_NumericVarLocalSpecialization); return GenerateTest(testName); }
 
         // Object destructuring generator tests
         [Fact] public Task Variable_ObjectDestructuring_Basic() { var testName = nameof(Variable_ObjectDestructuring_Basic); return GenerateTest(testName); }

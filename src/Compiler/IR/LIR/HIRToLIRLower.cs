@@ -10,6 +10,11 @@ namespace Jroc.IR;
 
 public sealed partial class HIRToLIRLowerer
 {
+    private static bool CanUseStablePrimitiveLocal(BindingInfo binding, Type clrType)
+        => binding.IsStableType
+           && binding.ClrType == clrType
+           && (binding.Kind != BindingKind.Var || binding.CanUseUnboxedLocal);
+
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
     private readonly Scope? _scope;
     private readonly EnvironmentLayout? _environmentLayout;

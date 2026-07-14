@@ -591,7 +591,8 @@ public sealed partial class HIRToLIRLowerer
         ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
         {
             if (b.Kind == BindingKind.Var
-                && !b.DeclaringScope.Parameters.Contains(b.Name))
+                && !b.DeclaringScope.Parameters.Contains(b.Name)
+                && !b.CanUseUnboxedLocal)
             {
                 return new ValueStorage(ValueStorageKind.Reference, typeof(object));
             }

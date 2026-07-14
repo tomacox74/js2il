@@ -1319,12 +1319,12 @@ public sealed partial class HIRToLIRLowerer
         // object-typed JS variable into an unboxed local slot.
         TempVariable slotValue;
         ValueStorage slotStorage;
-        if (binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(double))
+        if (CanUseStablePrimitiveLocal(binding, typeof(double)))
         {
             slotValue = EnsureNumber(valueToStore);
             slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
         }
-        else if (binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
+        else if (CanUseStablePrimitiveLocal(binding, typeof(bool)))
         {
             slotValue = EnsureBoolean(valueToStore);
             slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
@@ -1677,12 +1677,12 @@ public sealed partial class HIRToLIRLowerer
         // into an unboxed local slot.
         TempVariable slotValue;
         ValueStorage slotStorage;
-        if (binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(double))
+        if (CanUseStablePrimitiveLocal(binding, typeof(double)))
         {
             slotValue = EnsureNumber(valueToStore);
             slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
         }
-        else if (binding.Kind != BindingKind.Var && binding.IsStableType && binding.ClrType == typeof(bool))
+        else if (CanUseStablePrimitiveLocal(binding, typeof(bool)))
         {
             slotValue = EnsureBoolean(valueToStore);
             slotStorage = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
