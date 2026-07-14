@@ -104,6 +104,41 @@ public sealed class LIRIntrinsicNormalizationTests
     }
 
     [Fact]
+    public void Normalize_Fuses_Numeric_Candidates_Directly_Into_Multiplication()
+    {
+        var body = new MethodBodyIR();
+        var leftReceiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var rightReceiver = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var index = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var leftItem = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var rightItem = AddTemp(body, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        var leftNumber = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var rightNumber = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var result = AddTemp(body, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        body.Instructions.Add(new LIRGetItem(leftReceiver, index, leftItem));
+        body.Instructions.Add(new LIRGetItem(rightReceiver, index, rightItem));
+        body.Instructions.Add(new LIRConvertToNumber(leftItem, leftNumber));
+        body.Instructions.Add(new LIRConvertToNumber(rightItem, rightNumber));
+        body.Instructions.Add(new LIRMulNumber(leftNumber, rightNumber, result));
+
+        LIRIntrinsicNormalization.Normalize(body, new ClassRegistry());
+
+        Assert.Collection(
+            body.Instructions,
+            instruction => Assert.IsType<LIRGetItem>(instruction),
+            instruction => Assert.IsType<LIRGetItem>(instruction),
+            instruction =>
+            {
+                var multiply = Assert.IsType<LIRMulNumber>(instruction);
+                Assert.Equal(leftItem, multiply.Left);
+                Assert.Equal(rightItem, multiply.Right);
+            });
+        Assert.Equal(typeof(JavaScriptRuntime.NumericIndexedValue), body.TempStorages[leftItem.Index].ClrType);
+        Assert.Equal(typeof(JavaScriptRuntime.NumericIndexedValue), body.TempStorages[rightItem.Index].ClrType);
+    }
+
+    [Fact]
     public void Normalize_Rewrites_SetItem_To_Int32ArrayElementSet_WhenReceiverProvenViaCopyAndOperandsAreDouble()
     {
         var classRegistry = new ClassRegistry();
