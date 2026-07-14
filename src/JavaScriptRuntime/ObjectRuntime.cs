@@ -959,14 +959,34 @@ namespace JavaScriptRuntime
                 return NumericIndexedValue.FromNumber(typedArray[index]);
             }
 
+            if (obj is Array array
+                && !double.IsNaN(index)
+                && !double.IsInfinity(index)
+                && index % 1.0 == 0.0
+                && index >= 0
+                && index <= int.MaxValue
+                && !PropertyDescriptorStore.HasAny(array))
+            {
+                var intIndex = (int)index;
+                if (intIndex < array.Count && array.HasOwnIndex(intIndex))
+                {
+                    return NumericIndexedValue.FromValue(array[intIndex]);
+                }
+            }
+
             return NumericIndexedValue.FromValue(GetItem(obj, index));
         }
 
         public static NumericIndexedValue GetItemNumericValue(object obj, object index)
         {
-            if (obj is TypedArrayBase typedArray && index is double doubleIndex)
+            if (index is double doubleIndex)
             {
-                return NumericIndexedValue.FromNumber(typedArray[doubleIndex]);
+                return GetItemNumericValue(obj, doubleIndex);
+            }
+
+            if (index is int intIndex)
+            {
+                return GetItemNumericValue(obj, (double)intIndex);
             }
 
             return NumericIndexedValue.FromValue(GetItem(obj, index));

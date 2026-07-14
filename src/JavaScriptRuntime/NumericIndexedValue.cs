@@ -1,5 +1,7 @@
 namespace JavaScriptRuntime;
 
+using System.Runtime.CompilerServices;
+
 /// <summary>
 /// Carries an indexed-read result to its numeric coercion point without boxing numeric values.
 /// Non-numeric values remain deferred so observable ToNumber behavior keeps JavaScript ordering.
@@ -23,14 +25,17 @@ public readonly struct NumericIndexedValue
         _number = default;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static NumericIndexedValue FromValue(object? value)
         => value is double number
             ? new NumericIndexedValue(number)
             : new NumericIndexedValue(value);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static NumericIndexedValue FromNumber(double number)
         => new(number);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double ToNumber(NumericIndexedValue value)
     {
         if (value._value == null)
