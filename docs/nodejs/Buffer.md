@@ -15,7 +15,7 @@
 
 ## Notes
 
-Core Buffer APIs are implemented for binary workflows: legacy Buffer constructor forms (`new Buffer(value[, encoding])` and `new Buffer(size)`), Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, instance methods (slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes/toString/length), array-like indexing (buffer[i]), and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/base64/hex encoding support.
+Core Buffer APIs are implemented for binary workflows: legacy Buffer constructor forms (`new Buffer(value[, encoding])` and `new Buffer(size)`), Buffer.from/isBuffer/alloc/allocUnsafe/byteLength/concat/compare, instance methods (slice/subarray/copy/write/fill/equals/indexOf/lastIndexOf/includes/toString/length), binary-view metadata (`buffer`, `byteOffset`, `byteLength`), array-like indexing (buffer[i]), and binary read/write methods for Int8/16/32, UInt8/16/32, FloatLE/BE, and DoubleLE/BE with utf8/base64/hex encoding support.
 
 ## Tests
 

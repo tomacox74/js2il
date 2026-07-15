@@ -43,6 +43,19 @@ namespace JavaScriptRuntime
             WriteElementValue(index, value);
         }
 
+        internal byte[] CopyRawBytes()
+        {
+            var byteLength = checked(_length * BytesPerElement);
+            if (byteLength == 0)
+            {
+                return System.Array.Empty<byte>();
+            }
+
+            var bytes = new byte[byteLength];
+            Buffer.BlockCopy(_buffer.RawBytes, _byteOffset, bytes, 0, byteLength);
+            return bytes;
+        }
+
         public object? set(object[]? args)
         {
             if (args == null || args.Length == 0 || args[0] == null || args[0] is JsNull)

@@ -33,5 +33,9 @@ namespace Jroc.Tests.Node.Buffer
         [Fact]
         public Task Buffer_Constructor_Legacy()
             => ExecutionTest(nameof(Buffer_Constructor_Legacy));
+
+        [Fact]
+        public Task Require_Buffer_Undici_Core()
+            => ExecutionTest(nameof(Require_Buffer_Undici_Core));
     }
 }
