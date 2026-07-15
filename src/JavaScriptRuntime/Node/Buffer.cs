@@ -13,6 +13,7 @@ namespace JavaScriptRuntime.Node
         private readonly byte[] _bytes;
         private readonly int _offset;
         private readonly int _length;
+        private readonly ArrayBuffer _arrayBuffer;
 
         public Buffer(byte[] bytes)
             : this(bytes ?? System.Array.Empty<byte>(), 0, bytes?.Length ?? 0)
@@ -29,14 +30,27 @@ namespace JavaScriptRuntime.Node
         {
         }
 
-        private Buffer(byte[] bytes, int offset, int length)
+        private Buffer(byte[] bytes, int offset, int length, ArrayBuffer? arrayBuffer = null)
         {
             _bytes = bytes ?? System.Array.Empty<byte>();
             _offset = offset;
             _length = length;
+            _arrayBuffer = arrayBuffer ?? new ArrayBuffer(_bytes, cloneBuffer: false);
+            PropertyDescriptorStore.DefineOrUpdate(this, "byteLength", new JsPropertyDescriptor
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Enumerable = false,
+                Configurable = false,
+                Writable = false,
+                Value = (double)_length
+            });
         }
 
         public double length => _length;
+
+        public double byteOffset => _offset;
+
+        public ArrayBuffer buffer => _arrayBuffer;
 
         public static Buffer from(object? value)
         {
@@ -704,7 +718,7 @@ namespace JavaScriptRuntime.Node
             }
 
             var sliceLength = endIdx - startIdx;
-            return new Buffer(_bytes, _offset + startIdx, sliceLength);
+            return new Buffer(_bytes, _offset + startIdx, sliceLength, _arrayBuffer);
         }
 
         public Buffer subarray()
