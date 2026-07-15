@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2121
+				// Method begins at RVA 0x2115
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20dc
+			// Method begins at RVA 0x20d0
 			// Header size: 12
 			// Code size: 48 (0x30)
 			.maxstack 8
@@ -84,7 +84,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2118
+			// Method begins at RVA 0x210c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -110,7 +110,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 128 (0x80)
+		// Code size: 113 (0x71)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_NonFunctionThen/Scope,
@@ -144,28 +144,21 @@
 		IL_0043: ldloc.0
 		IL_0044: stelem.ref
 		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
 		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
+		IL_0050: conv.r8
+		IL_0051: ldstr ""
 		IL_0056: ldc.i4.0
-		IL_0057: ldloc.0
-		IL_0058: stelem.ref
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
-		IL_005e: ldc.i4.1
-		IL_005f: conv.r8
-		IL_0060: ldstr ""
-		IL_0065: ldc.i4.0
-		IL_0066: ldc.i4.0
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0071: stloc.3
-		IL_0072: ldloc.2
-		IL_0073: ldstr "then"
-		IL_0078: ldloc.3
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_007e: pop
-		IL_007f: ret
+		IL_0057: ldc.i4.0
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0062: stloc.3
+		IL_0063: ldloc.2
+		IL_0064: ldstr "then"
+		IL_0069: ldloc.3
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_006f: pop
+		IL_0070: ret
 	} // end of method Promise_Thenable_NonFunctionThen::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_NonFunctionThen
@@ -177,7 +170,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212a
+		// Method begins at RVA 0x211e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

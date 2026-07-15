@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x2277
+					// Method begins at RVA 0x2258
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x223f
+				// Method begins at RVA 0x2220
 				// Header size: 1
 				// Code size: 19 (0x13)
 				.maxstack 8
@@ -69,7 +69,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x225c
+				// Method begins at RVA 0x223d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -101,7 +101,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x226e
+					// Method begins at RVA 0x224f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -119,7 +119,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2265
+				// Method begins at RVA 0x2246
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -145,9 +145,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2160
+			// Method begins at RVA 0x2150
 			// Header size: 12
-			// Code size: 211 (0xd3)
+			// Code size: 196 (0xc4)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_ForLetBodyBlockClosure/ArrowFunction_L1C23/Scope,
@@ -178,7 +178,7 @@
 				IL_002b: ldloc.s 6
 				IL_002d: ldloc.s 4
 				IL_002f: clt
-				IL_0031: brfalse IL_00d1
+				IL_0031: brfalse IL_00c2
 
 				IL_0036: newobj instance void Modules.ArrowFunction_ForLetBodyBlockClosure/ArrowFunction_L1C23/Scope_For_L4C9/Block_L4C49::.ctor()
 				IL_003b: stloc.s 5
@@ -214,39 +214,32 @@
 				IL_007c: ldloc.s 5
 				IL_007e: stelem.ref
 				IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
-				IL_0089: ldc.i4.1
-				IL_008a: newarr [System.Runtime]System.Object
-				IL_008f: dup
+				IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+				IL_0089: ldc.i4.0
+				IL_008a: conv.r8
+				IL_008b: ldstr ""
 				IL_0090: ldc.i4.0
-				IL_0091: ldarg.0
-				IL_0092: stelem.ref
-				IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
-				IL_0098: ldc.i4.0
-				IL_0099: conv.r8
-				IL_009a: ldstr ""
-				IL_009f: ldc.i4.0
-				IL_00a0: ldc.i4.0
-				IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-				IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-				IL_00ab: stloc.s 7
-				IL_00ad: ldloc.1
-				IL_00ae: ldloc.s 7
-				IL_00b0: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
-				IL_00b5: pop
-				IL_00b6: newobj instance void Modules.ArrowFunction_ForLetBodyBlockClosure/ArrowFunction_L1C23/Scope_For_L4C9::.ctor()
-				IL_00bb: stloc.s 8
-				IL_00bd: ldloc.s 8
-				IL_00bf: stloc.2
-				IL_00c0: ldloc.3
-				IL_00c1: ldc.r8 1
-				IL_00ca: add
-				IL_00cb: stloc.3
-				IL_00cc: br IL_0028
+				IL_0091: ldc.i4.0
+				IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+				IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+				IL_009c: stloc.s 7
+				IL_009e: ldloc.1
+				IL_009f: ldloc.s 7
+				IL_00a1: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::push(object)
+				IL_00a6: pop
+				IL_00a7: newobj instance void Modules.ArrowFunction_ForLetBodyBlockClosure/ArrowFunction_L1C23/Scope_For_L4C9::.ctor()
+				IL_00ac: stloc.s 8
+				IL_00ae: ldloc.s 8
+				IL_00b0: stloc.2
+				IL_00b1: ldloc.3
+				IL_00b2: ldc.r8 1
+				IL_00bb: add
+				IL_00bc: stloc.3
+				IL_00bd: br IL_0028
 			// end loop
 
-			IL_00d1: ldloc.1
-			IL_00d2: ret
+			IL_00c2: ldloc.1
+			IL_00c3: ret
 		} // end of method ArrowFunction_L1C23::__js_call__
 
 	} // end of class ArrowFunction_L1C23
@@ -258,7 +251,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2253
+			// Method begins at RVA 0x2234
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -284,7 +277,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 257 (0x101)
+		// Code size: 242 (0xf2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_ForLetBodyBlockClosure/Scope,
@@ -317,74 +310,67 @@
 		IL_002a: ldloc.0
 		IL_002b: stelem.ref
 		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0036: ldc.i4.0
+		IL_0037: conv.r8
+		IL_0038: ldstr ""
 		IL_003d: ldc.i4.0
-		IL_003e: ldloc.0
-		IL_003f: stelem.ref
-		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
-		IL_0045: ldc.i4.0
-		IL_0046: conv.r8
-		IL_0047: ldstr ""
-		IL_004c: ldc.i4.0
-		IL_004d: ldc.i4.0
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0058: stloc.s 5
-		IL_005a: ldloc.s 5
-		IL_005c: ldstr "makeCallbacks"
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0066: stloc.s 5
-		IL_0068: ldloc.s 5
-		IL_006a: stloc.1
-		IL_006b: ldloc.0
-		IL_006c: castclass Modules.ArrowFunction_ForLetBodyBlockClosure/Scope
-		IL_0071: ldnull
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.ArrowFunction_ForLetBodyBlockClosure/ArrowFunction_L1C23::__js_call__(class Modules.ArrowFunction_ForLetBodyBlockClosure/Scope, object)
-		IL_0077: stloc.s 6
-		IL_0079: ldloc.s 6
-		IL_007b: stloc.2
-		IL_007c: ldloc.2
-		IL_007d: ldc.r8 0.0
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_008b: stloc.3
-		IL_008c: ldloc.2
-		IL_008d: ldc.r8 1
-		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_009b: stloc.s 4
-		IL_009d: ldstr "console"
-		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00a7: stloc.s 5
-		IL_00a9: ldloc.s 5
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00b0: stloc.s 5
-		IL_00b2: ldloc.3
-		IL_00b3: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00bd: stloc.s 7
-		IL_00bf: ldloc.s 5
-		IL_00c1: ldstr "log"
-		IL_00c6: ldloc.s 7
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00cd: pop
-		IL_00ce: ldstr "console"
-		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00d8: stloc.s 7
-		IL_00da: ldloc.s 7
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00e1: stloc.s 7
-		IL_00e3: ldloc.s 4
-		IL_00e5: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
-		IL_00ef: stloc.s 5
-		IL_00f1: ldloc.s 7
-		IL_00f3: ldstr "log"
-		IL_00f8: ldloc.s 5
-		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00ff: pop
-		IL_0100: ret
+		IL_003e: ldc.i4.0
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0049: stloc.s 5
+		IL_004b: ldloc.s 5
+		IL_004d: ldstr "makeCallbacks"
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0057: stloc.s 5
+		IL_0059: ldloc.s 5
+		IL_005b: stloc.1
+		IL_005c: ldloc.0
+		IL_005d: castclass Modules.ArrowFunction_ForLetBodyBlockClosure/Scope
+		IL_0062: ldnull
+		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Array Modules.ArrowFunction_ForLetBodyBlockClosure/ArrowFunction_L1C23::__js_call__(class Modules.ArrowFunction_ForLetBodyBlockClosure/Scope, object)
+		IL_0068: stloc.s 6
+		IL_006a: ldloc.s 6
+		IL_006c: stloc.2
+		IL_006d: ldloc.2
+		IL_006e: ldc.r8 0.0
+		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_007c: stloc.3
+		IL_007d: ldloc.2
+		IL_007e: ldc.r8 1
+		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_008c: stloc.s 4
+		IL_008e: ldstr "console"
+		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0098: stloc.s 5
+		IL_009a: ldloc.s 5
+		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00a1: stloc.s 5
+		IL_00a3: ldloc.3
+		IL_00a4: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00ae: stloc.s 7
+		IL_00b0: ldloc.s 5
+		IL_00b2: ldstr "log"
+		IL_00b7: ldloc.s 7
+		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00be: pop
+		IL_00bf: ldstr "console"
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00c9: stloc.s 7
+		IL_00cb: ldloc.s 7
+		IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00d2: stloc.s 7
+		IL_00d4: ldloc.s 4
+		IL_00d6: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs0(object, object[])
+		IL_00e0: stloc.s 5
+		IL_00e2: ldloc.s 7
+		IL_00e4: ldstr "log"
+		IL_00e9: ldloc.s 5
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00f0: pop
+		IL_00f1: ret
 	} // end of method ArrowFunction_ForLetBodyBlockClosure::__js_module_init__
 
 } // end of class Modules.ArrowFunction_ForLetBodyBlockClosure
@@ -396,7 +382,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2280
+		// Method begins at RVA 0x2261
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2217
+				// Method begins at RVA 0x21f7
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2148
+			// Method begins at RVA 0x2128
 			// Header size: 12
 			// Code size: 134 (0x86)
 			.maxstack 8
@@ -127,7 +127,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2220
+				// Method begins at RVA 0x2200
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -151,7 +151,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21dc
+			// Method begins at RVA 0x21bc
 			// Header size: 12
 			// Code size: 38 (0x26)
 			.maxstack 8
@@ -184,7 +184,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x220e
+			// Method begins at RVA 0x21ee
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -210,7 +210,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 233 (0xe9)
+		// Code size: 203 (0xcb)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Import_BasicImport/Scope,
@@ -249,62 +249,48 @@
 		IL_0055: ldloc.0
 		IL_0056: stelem.ref
 		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
 		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
+		IL_0062: conv.r8
+		IL_0063: ldstr ""
 		IL_0068: ldc.i4.0
-		IL_0069: ldloc.0
-		IL_006a: stelem.ref
-		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
-		IL_0070: ldc.i4.1
-		IL_0071: conv.r8
-		IL_0072: ldstr ""
-		IL_0077: ldc.i4.0
-		IL_0078: ldc.i4.0
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0083: stloc.2
-		IL_0084: ldloc.1
-		IL_0085: ldstr "then"
-		IL_008a: ldloc.2
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_0090: stloc.2
-		IL_0091: ldloc.2
-		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0097: stloc.2
-		IL_0098: ldnull
-		IL_0099: ldftn object Modules.Import_BasicImport/ArrowFunction_L11C10::__js_call__(object, object)
-		IL_009f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
-		IL_00a4: ldc.i4.1
-		IL_00a5: newarr [System.Runtime]System.Object
-		IL_00aa: dup
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldloc.0
-		IL_00ad: stelem.ref
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
-		IL_00b8: ldc.i4.1
-		IL_00b9: newarr [System.Runtime]System.Object
-		IL_00be: dup
-		IL_00bf: ldc.i4.0
-		IL_00c0: ldloc.0
-		IL_00c1: stelem.ref
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
-		IL_00c7: ldc.i4.1
-		IL_00c8: conv.r8
-		IL_00c9: ldstr ""
-		IL_00ce: ldc.i4.0
-		IL_00cf: ldc.i4.0
-		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_00da: stloc.1
-		IL_00db: ldloc.2
-		IL_00dc: ldstr "catch"
-		IL_00e1: ldloc.1
-		IL_00e2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00e7: pop
-		IL_00e8: ret
+		IL_0069: ldc.i4.0
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0074: stloc.2
+		IL_0075: ldloc.1
+		IL_0076: ldstr "then"
+		IL_007b: ldloc.2
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0081: stloc.2
+		IL_0082: ldloc.2
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0088: stloc.2
+		IL_0089: ldnull
+		IL_008a: ldftn object Modules.Import_BasicImport/ArrowFunction_L11C10::__js_call__(object, object)
+		IL_0090: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes1::.ctor(object, native int)
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: stelem.ref
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_00a9: ldc.i4.1
+		IL_00aa: conv.r8
+		IL_00ab: ldstr ""
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldc.i4.0
+		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_00bc: stloc.1
+		IL_00bd: ldloc.2
+		IL_00be: ldstr "catch"
+		IL_00c3: ldloc.1
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00c9: pop
+		IL_00ca: ret
 	} // end of method Import_BasicImport::__js_module_init__
 
 } // end of class Modules.Import_BasicImport
@@ -316,7 +302,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2229
+		// Method begins at RVA 0x2209
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
