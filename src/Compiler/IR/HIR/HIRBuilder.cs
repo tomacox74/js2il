@@ -14,6 +14,80 @@ using Jroc.SymbolTables;
 namespace Jroc.HIR;
 public static class HIRBuilder
 {
+    internal static (bool RequiresContext, bool ContainsCallInBody)
+        AnalyzeArrowSuperConstructorUsage(ArrowFunctionExpression arrow)
+    {
+        var containsCallInBody = ContainsSuperConstructorCall(arrow.Body);
+        var requiresContext = containsCallInBody
+            || arrow.Params.Any(ContainsSuperConstructorCall);
+        return (requiresContext, containsCallInBody);
+    }
+
+    private static bool ContainsSuperConstructorCall(Node node)
+    {
+        var containsCall = false;
+        new AstWalker().Visit(node, child =>
+        {
+            if (child is CallExpression { Callee: Super })
+            {
+                containsCall = true;
+            }
+        });
+        return containsCall;
+    }
+
+    private static bool IsArrowLexicallyEnclosedByDerivedConstructor(Scope arrowScope)
+    {
+        FunctionExpression? enclosingFunction = null;
+        var current = arrowScope.Parent;
+        while (current != null)
+        {
+            if (current.AstNode is ArrowFunctionExpression)
+            {
+                current = current.Parent;
+                continue;
+            }
+
+            if (current.AstNode is FunctionExpression function)
+            {
+                enclosingFunction = function;
+                break;
+            }
+
+            if (current.Kind == ScopeKind.Function)
+            {
+                return false;
+            }
+
+            current = current.Parent;
+        }
+
+        if (enclosingFunction == null)
+        {
+            return false;
+        }
+
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        return current?.AstNode switch
+        {
+            ClassDeclaration classDeclaration => classDeclaration.SuperClass != null
+                && classDeclaration.Body.Body
+                    .OfType<MethodDefinition>()
+                    .Any(method => ReferenceEquals(method.Value, enclosingFunction)
+                        && ClassElementNames.IsConstructor(method)),
+            ClassExpression classExpression => classExpression.SuperClass != null
+                && classExpression.Body.Body
+                    .OfType<MethodDefinition>()
+                    .Any(method => ReferenceEquals(method.Value, enclosingFunction)
+                        && ClassElementNames.IsConstructor(method)),
+            _ => false
+        };
+    }
+
     private static Scope GetCallableBodyScope(Scope scope, BlockStatement bodyBlock)
     {
         var blockName = $"Block_L{bodyBlock.Location.Start.Line}C{bodyBlock.Location.Start.Column}";
@@ -192,27 +266,10 @@ public static class HIRBuilder
                     || ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Index),
                 HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
                 HIROptionalPropertyAccessExpression optionalPropertyAccessExpression => ExpressionContainsDirectSuperCall(optionalPropertyAccessExpression.Object),
-                HIRArrowFunctionExpression arrowFunctionExpression => ArrowContainsSuperCall(arrowFunctionExpression),
+                HIRArrowFunctionExpression arrowFunctionExpression =>
+                    arrowFunctionExpression.ContainsSuperConstructorCallInBody,
                 _ => false
             };
-
-        static bool ArrowContainsSuperCall(HIRArrowFunctionExpression arrowFunctionExpression)
-        {
-            if (arrowFunctionExpression.FunctionScope.AstNode is not ArrowFunctionExpression arrow)
-            {
-                return false;
-            }
-
-            var containsSuperCall = false;
-            new AstWalker().Visit(arrow.Body, child =>
-            {
-                if (child is CallExpression { Callee: Super })
-                {
-                    containsSuperCall = true;
-                }
-            });
-            return containsSuperCall;
-        }
 
         switch (node)
         {
@@ -647,7 +704,11 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
-                var arrowBuilder = new HIRMethodBuilder(scope);
+                var isLexicallyEnclosedByDerivedConstructor =
+                    IsArrowLexicallyEnclosedByDerivedConstructor(scope);
+                var arrowBuilder = new HIRMethodBuilder(
+                    scope,
+                    isLexicallyEnclosedByDerivedConstructor);
                 if (!arrowBuilder.TryParseParameters(arrowFunc.Params, out var arrowParams))
                 {
                     method = null!;
@@ -657,7 +718,9 @@ public static class HIRBuilder
                 // PL3.7a: concise-body arrows wrap implicit return
                 if (arrowFunc.Body is BlockStatement arrowBlock)
                 {
-                    return new HIRMethodBuilder(GetCallableBodyScope(scope, arrowBlock))
+                    return new HIRMethodBuilder(
+                            GetCallableBodyScope(scope, arrowBlock),
+                            isLexicallyEnclosedByDerivedConstructor)
                         .TryParseStatements(arrowBlock.Body, arrowParams, out method);
                 }
 
@@ -952,17 +1015,21 @@ class HIRMethodBuilder
     };
 
     readonly Scope _rootScope;
+    readonly bool _isLexicallyEnclosedByDerivedConstructor;
     Scope _currentScope;
     readonly List<HIRStatement> _statements = new();
     readonly Dictionary<ClassDeclaration, bool> _eagerClassMetadataOmissionCache = new();
     readonly JavaScriptParser _parser = new();
     string? _staticThisRegistryClassName;
 
-    public HIRMethodBuilder(Scope scope)
+    public HIRMethodBuilder(
+        Scope scope,
+        bool isLexicallyEnclosedByDerivedConstructor = false)
     {
         ArgumentNullException.ThrowIfNull(scope, nameof(scope));
         _rootScope = scope;
         _currentScope = scope;
+        _isLexicallyEnclosedByDerivedConstructor = isLexicallyEnclosedByDerivedConstructor;
     }
 
     public HIRMethodBuilder WithStaticThisRegistryClassName(string? staticThisRegistryClassName)
@@ -1429,27 +1496,10 @@ class HIRMethodBuilder
             HIRIndexAccessExpression indexAccessExpression => ExpressionContainsDirectSuperCall(indexAccessExpression.Object)
                 || ExpressionContainsDirectSuperCall(indexAccessExpression.Index),
             HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
-            HIRArrowFunctionExpression arrowFunctionExpression => ArrowContainsSuperCall(arrowFunctionExpression),
+            HIRArrowFunctionExpression arrowFunctionExpression =>
+                arrowFunctionExpression.ContainsSuperConstructorCallInBody,
             _ => false
         };
-
-    private static bool ArrowContainsSuperCall(HIRArrowFunctionExpression arrowFunctionExpression)
-    {
-        if (arrowFunctionExpression.FunctionScope.AstNode is not ArrowFunctionExpression arrow)
-        {
-            return false;
-        }
-
-        var containsSuperCall = false;
-        new AstWalker().Visit(arrow.Body, node =>
-        {
-            if (node is CallExpression { Callee: Super })
-            {
-                containsSuperCall = true;
-            }
-        });
-        return containsSuperCall;
-    }
 
     private bool TryGetDebugSequencePointOverride(Statement statement, out SourceSpan span)
     {
@@ -2078,6 +2128,7 @@ class HIRMethodBuilder
         method = new HIRMethod
         {
             Parameters = parameters,
+            IsLexicallyEnclosedByDerivedConstructor = _isLexicallyEnclosedByDerivedConstructor,
             Body = CreateMethodBodyBlock(hirStatements)
         };
 
@@ -2096,6 +2147,7 @@ class HIRMethodBuilder
         method = new HIRMethod
         {
             Parameters = parameters,
+            IsLexicallyEnclosedByDerivedConstructor = _isLexicallyEnclosedByDerivedConstructor,
             Body = new HIRBlock(new List<HIRStatement> { new HIRReturnStatement(hirExpr) })
         };
 
@@ -3856,7 +3908,13 @@ class HIRMethodBuilder
                     AstNode = arrowExpr
                 };
 
-                hirExpr = new HIRArrowFunctionExpression(arrowCallableId, arrowScope);
+                var superConstructorUsage =
+                    HIRBuilder.AnalyzeArrowSuperConstructorUsage(arrowExpr);
+                hirExpr = new HIRArrowFunctionExpression(
+                    arrowCallableId,
+                    arrowScope,
+                    superConstructorUsage.RequiresContext,
+                    superConstructorUsage.ContainsCallInBody);
                 return true;
 
             case FunctionExpression funcExpr:

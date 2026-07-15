@@ -24,7 +24,7 @@ public sealed partial class HIRToLIRLowerer
         if (callExpr.Callee is HIRSuperExpression)
         {
             var usesLexicalReceiver = _callableKind == CallableKind.Function
-                && IsArrowLexicallyEnclosedByDerivedConstructor();
+                && _isLexicallyEnclosedByDerivedConstructor;
             if (!usesLexicalReceiver
                 && (_callableKind != CallableKind.Constructor || !_isDerivedConstructor))
             {
