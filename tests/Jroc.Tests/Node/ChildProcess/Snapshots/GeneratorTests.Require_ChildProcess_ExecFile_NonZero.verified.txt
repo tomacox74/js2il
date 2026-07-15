@@ -29,7 +29,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239c
+				// Method begins at RVA 0x23ac
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -58,7 +58,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x2184
+			// Method begins at RVA 0x2194
 			// Header size: 12
 			// Code size: 504 (0x1f8)
 			.maxstack 8
@@ -271,7 +271,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2388
+			// Method begins at RVA 0x2398
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -300,7 +300,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 295 (0x127)
+		// Code size: 310 (0x136)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_ChildProcess_ExecFile_NonZero/Scope,
@@ -402,26 +402,33 @@
 		IL_00e9: ldloc.0
 		IL_00ea: stelem.ref
 		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_00f5: ldc.i4.3
-		IL_00f6: conv.r8
-		IL_00f7: ldstr ""
+		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_00f5: ldc.i4.1
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: dup
 		IL_00fc: ldc.i4.0
-		IL_00fd: ldc.i4.0
-		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0108: stloc.s 9
-		IL_010a: ldloc.s 7
-		IL_010c: ldstr "execFile"
-		IL_0111: ldloc.s 4
-		IL_0113: ldloc.s 6
-		IL_0115: ldloc.s 9
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
-		IL_011c: stloc.s 9
-		IL_011e: ldloc.0
-		IL_011f: ldloc.s 9
-		IL_0121: stfld object Modules.Require_ChildProcess_ExecFile_NonZero/Scope::child
-		IL_0126: ret
+		IL_00fd: ldloc.0
+		IL_00fe: stelem.ref
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_0104: ldc.i4.3
+		IL_0105: conv.r8
+		IL_0106: ldstr ""
+		IL_010b: ldc.i4.0
+		IL_010c: ldc.i4.0
+		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0112: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0117: stloc.s 9
+		IL_0119: ldloc.s 7
+		IL_011b: ldstr "execFile"
+		IL_0120: ldloc.s 4
+		IL_0122: ldloc.s 6
+		IL_0124: ldloc.s 9
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember3(object, string, object, object, object)
+		IL_012b: stloc.s 9
+		IL_012d: ldloc.0
+		IL_012e: ldloc.s 9
+		IL_0130: stfld object Modules.Require_ChildProcess_ExecFile_NonZero/Scope::child
+		IL_0135: ret
 	} // end of method Require_ChildProcess_ExecFile_NonZero::__js_module_init__
 
 } // end of class Modules.Require_ChildProcess_ExecFile_NonZero
@@ -433,7 +440,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23a5
+		// Method begins at RVA 0x23b5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

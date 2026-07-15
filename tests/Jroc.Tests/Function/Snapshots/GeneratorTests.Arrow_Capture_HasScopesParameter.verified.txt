@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x211c
+				// Method begins at RVA 0x212b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -51,7 +51,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x20ff
+			// Method begins at RVA 0x210e
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -81,7 +81,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2113
+			// Method begins at RVA 0x2122
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -107,7 +107,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 178 (0xb2)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Arrow_Capture_HasScopesParameter/Scope,
@@ -141,39 +141,46 @@
 		IL_003f: ldloc.0
 		IL_0040: stelem.ref
 		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
 		IL_004b: ldc.i4.1
-		IL_004c: conv.r8
-		IL_004d: ldstr ""
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
 		IL_0052: ldc.i4.0
-		IL_0053: ldc.i4.0
-		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_005e: stloc.2
-		IL_005f: ldloc.2
-		IL_0060: ldstr "scale"
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_006a: stloc.2
-		IL_006b: ldloc.2
-		IL_006c: stloc.1
-		IL_006d: ldstr "console"
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0077: stloc.2
-		IL_0078: ldloc.2
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_007e: stloc.2
-		IL_007f: ldloc.0
-		IL_0080: castclass Modules.Arrow_Capture_HasScopesParameter/Scope
-		IL_0085: ldnull
-		IL_0086: ldc.r8 5
-		IL_008f: call object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, float64)
-		IL_0094: stloc.3
-		IL_0095: ldloc.2
-		IL_0096: ldstr "log"
-		IL_009b: ldloc.3
-		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_00a1: pop
-		IL_00a2: ret
+		IL_0053: ldloc.0
+		IL_0054: stelem.ref
+		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_005a: ldc.i4.1
+		IL_005b: conv.r8
+		IL_005c: ldstr ""
+		IL_0061: ldc.i4.0
+		IL_0062: ldc.i4.0
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_006d: stloc.2
+		IL_006e: ldloc.2
+		IL_006f: ldstr "scale"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0079: stloc.2
+		IL_007a: ldloc.2
+		IL_007b: stloc.1
+		IL_007c: ldstr "console"
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0086: stloc.2
+		IL_0087: ldloc.2
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_008d: stloc.2
+		IL_008e: ldloc.0
+		IL_008f: castclass Modules.Arrow_Capture_HasScopesParameter/Scope
+		IL_0094: ldnull
+		IL_0095: ldc.r8 5
+		IL_009e: call object Modules.Arrow_Capture_HasScopesParameter/ArrowFunction_L6C15::__js_call__(class Modules.Arrow_Capture_HasScopesParameter/Scope, object, float64)
+		IL_00a3: stloc.3
+		IL_00a4: ldloc.2
+		IL_00a5: ldstr "log"
+		IL_00aa: ldloc.3
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_00b0: pop
+		IL_00b1: ret
 	} // end of method Arrow_Capture_HasScopesParameter::__js_module_init__
 
 } // end of class Modules.Arrow_Capture_HasScopesParameter
@@ -185,7 +192,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2125
+		// Method begins at RVA 0x2134
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

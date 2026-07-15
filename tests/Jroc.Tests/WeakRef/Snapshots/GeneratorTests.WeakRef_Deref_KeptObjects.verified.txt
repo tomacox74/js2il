@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2380
+				// Method begins at RVA 0x2390
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -44,7 +44,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x225c
+			// Method begins at RVA 0x226c
 			// Header size: 12
 			// Code size: 173 (0xad)
 			.maxstack 8
@@ -130,7 +130,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x239b
+				// Method begins at RVA 0x23ab
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -156,7 +156,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x2318
+			// Method begins at RVA 0x2328
 			// Header size: 12
 			// Code size: 83 (0x53)
 			.maxstack 8
@@ -219,7 +219,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2389
+				// Method begins at RVA 0x2399
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -239,7 +239,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2392
+				// Method begins at RVA 0x23a2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -261,7 +261,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2377
+			// Method begins at RVA 0x2387
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -287,7 +287,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 495 (0x1ef)
+		// Code size: 510 (0x1fe)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.WeakRef_Deref_KeptObjects/Scope,
@@ -462,23 +462,30 @@
 		IL_01bc: ldloc.0
 		IL_01bd: stelem.ref
 		IL_01be: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_01c8: ldc.i4.0
-		IL_01c9: conv.r8
-		IL_01ca: ldstr ""
+		IL_01c3: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_01c8: ldc.i4.1
+		IL_01c9: newarr [System.Runtime]System.Object
+		IL_01ce: dup
 		IL_01cf: ldc.i4.0
-		IL_01d0: ldc.i4.0
-		IL_01d1: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_01d6: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_01db: stloc.s 8
-		IL_01dd: ldloc.s 8
+		IL_01d0: ldloc.0
+		IL_01d1: stelem.ref
+		IL_01d2: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_01d7: ldc.i4.0
+		IL_01d8: conv.r8
+		IL_01d9: ldstr ""
+		IL_01de: ldc.i4.0
 		IL_01df: ldc.i4.0
-		IL_01e0: newarr [System.Runtime]System.Object
-		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_01ea: pop
-		IL_01eb: ldnull
-		IL_01ec: stloc.s 6
-		IL_01ee: ret
+		IL_01e0: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_01e5: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_01ea: stloc.s 8
+		IL_01ec: ldloc.s 8
+		IL_01ee: ldc.i4.0
+		IL_01ef: newarr [System.Runtime]System.Object
+		IL_01f4: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_01f9: pop
+		IL_01fa: ldnull
+		IL_01fb: stloc.s 6
+		IL_01fd: ret
 	} // end of method WeakRef_Deref_KeptObjects::__js_module_init__
 
 } // end of class Modules.WeakRef_Deref_KeptObjects
@@ -490,7 +497,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23a4
+		// Method begins at RVA 0x23b4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

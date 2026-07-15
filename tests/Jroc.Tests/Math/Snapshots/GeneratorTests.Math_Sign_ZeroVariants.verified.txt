@@ -24,7 +24,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2296
+				// Method begins at RVA 0x22a2
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -48,7 +48,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x21ec
+			// Method begins at RVA 0x21f8
 			// Header size: 12
 			// Code size: 16 (0x10)
 			.maxstack 8
@@ -80,7 +80,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x229f
+				// Method begins at RVA 0x22ab
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -104,7 +104,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2208
+			// Method begins at RVA 0x2214
 			// Header size: 12
 			// Code size: 121 (0x79)
 			.maxstack 8
@@ -178,7 +178,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x228d
+			// Method begins at RVA 0x2299
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -204,7 +204,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 397 (0x18d)
+		// Code size: 412 (0x19c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Math_Sign_ZeroVariants/Scope,
@@ -288,57 +288,64 @@
 		IL_0107: ldloc.0
 		IL_0108: stelem.ref
 		IL_0109: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_010e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
 		IL_0113: ldc.i4.1
-		IL_0114: conv.r8
-		IL_0115: ldstr ""
+		IL_0114: newarr [System.Runtime]System.Object
+		IL_0119: dup
 		IL_011a: ldc.i4.0
-		IL_011b: ldc.i4.0
-		IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0121: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0126: stloc.s 4
-		IL_0128: ldloc.2
-		IL_0129: ldc.i4.1
-		IL_012a: newarr [System.Runtime]System.Object
-		IL_012f: dup
-		IL_0130: ldc.i4.0
-		IL_0131: ldloc.s 4
-		IL_0133: stelem.ref
-		IL_0134: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_0139: stloc.s 7
-		IL_013b: ldloc.s 7
-		IL_013d: stloc.3
-		IL_013e: nop
-		IL_013f: ldstr "console"
-		IL_0144: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0149: stloc.s 4
-		IL_014b: ldloc.s 4
-		IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0152: stloc.s 4
-		IL_0154: ldloc.3
-		IL_0155: ldc.i4.1
-		IL_0156: newarr [System.Runtime]System.Object
-		IL_015b: dup
-		IL_015c: ldc.i4.0
-		IL_015d: ldloc.1
-		IL_015e: stelem.ref
-		IL_015f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_0164: stloc.s 7
-		IL_0166: ldloc.s 7
-		IL_0168: ldc.i4.1
-		IL_0169: newarr [System.Runtime]System.Object
-		IL_016e: dup
-		IL_016f: ldc.i4.0
-		IL_0170: ldstr " "
-		IL_0175: stelem.ref
-		IL_0176: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_017b: stloc.s 8
-		IL_017d: ldloc.s 4
-		IL_017f: ldstr "log"
-		IL_0184: ldloc.s 8
-		IL_0186: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_018b: pop
-		IL_018c: ret
+		IL_011b: ldloc.0
+		IL_011c: stelem.ref
+		IL_011d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_0122: ldc.i4.1
+		IL_0123: conv.r8
+		IL_0124: ldstr ""
+		IL_0129: ldc.i4.0
+		IL_012a: ldc.i4.0
+		IL_012b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0130: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0135: stloc.s 4
+		IL_0137: ldloc.2
+		IL_0138: ldc.i4.1
+		IL_0139: newarr [System.Runtime]System.Object
+		IL_013e: dup
+		IL_013f: ldc.i4.0
+		IL_0140: ldloc.s 4
+		IL_0142: stelem.ref
+		IL_0143: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0148: stloc.s 7
+		IL_014a: ldloc.s 7
+		IL_014c: stloc.3
+		IL_014d: nop
+		IL_014e: ldstr "console"
+		IL_0153: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0158: stloc.s 4
+		IL_015a: ldloc.s 4
+		IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0161: stloc.s 4
+		IL_0163: ldloc.3
+		IL_0164: ldc.i4.1
+		IL_0165: newarr [System.Runtime]System.Object
+		IL_016a: dup
+		IL_016b: ldc.i4.0
+		IL_016c: ldloc.1
+		IL_016d: stelem.ref
+		IL_016e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0173: stloc.s 7
+		IL_0175: ldloc.s 7
+		IL_0177: ldc.i4.1
+		IL_0178: newarr [System.Runtime]System.Object
+		IL_017d: dup
+		IL_017e: ldc.i4.0
+		IL_017f: ldstr " "
+		IL_0184: stelem.ref
+		IL_0185: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_018a: stloc.s 8
+		IL_018c: ldloc.s 4
+		IL_018e: ldstr "log"
+		IL_0193: ldloc.s 8
+		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_019a: pop
+		IL_019b: ret
 	} // end of method Math_Sign_ZeroVariants::__js_module_init__
 
 } // end of class Modules.Math_Sign_ZeroVariants
@@ -350,7 +357,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22a8
+		// Method begins at RVA 0x22b4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

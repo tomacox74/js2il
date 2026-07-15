@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x21f6
+					// Method begins at RVA 0x2216
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -46,7 +46,7 @@
 				.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 					01 00 02 00 00 00 00 00
 				)
-				// Method begins at RVA 0x214c
+				// Method begins at RVA 0x216c
 				// Header size: 12
 				// Code size: 140 (0x8c)
 				.maxstack 8
@@ -121,7 +121,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21ed
+				// Method begins at RVA 0x220d
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -147,9 +147,9 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x20e0
 			// Header size: 12
-			// Code size: 110 (0x6e)
+			// Code size: 125 (0x7d)
 			.maxstack 8
 			.locals init (
 				[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/Scope,
@@ -176,36 +176,43 @@
 			IL_0029: ldloc.0
 			IL_002a: stelem.ref
 			IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-			IL_0035: ldc.i4.0
-			IL_0036: conv.r8
-			IL_0037: ldstr ""
+			IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+			IL_0035: ldc.i4.1
+			IL_0036: newarr [System.Runtime]System.Object
+			IL_003b: dup
 			IL_003c: ldc.i4.0
-			IL_003d: ldc.i4.0
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-			IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-			IL_0048: stloc.2
-			IL_0049: ldloc.2
-			IL_004a: ldstr "nestedFunction"
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-			IL_0054: stloc.2
-			IL_0055: ldloc.2
-			IL_0056: stloc.1
-			IL_0057: ldc.i4.2
-			IL_0058: newarr [System.Runtime]System.Object
-			IL_005d: dup
-			IL_005e: ldc.i4.0
-			IL_005f: ldarg.0
-			IL_0060: stelem.ref
-			IL_0061: dup
-			IL_0062: ldc.i4.1
-			IL_0063: ldloc.0
-			IL_0064: stelem.ref
-			IL_0065: ldnull
-			IL_0066: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/ArrowFunction_L8C28::__js_call__(object[], object)
-			IL_006b: pop
-			IL_006c: ldnull
-			IL_006d: ret
+			IL_003d: ldarg.0
+			IL_003e: stelem.ref
+			IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+			IL_0044: ldc.i4.0
+			IL_0045: conv.r8
+			IL_0046: ldstr ""
+			IL_004b: ldc.i4.0
+			IL_004c: ldc.i4.0
+			IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+			IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+			IL_0057: stloc.2
+			IL_0058: ldloc.2
+			IL_0059: ldstr "nestedFunction"
+			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+			IL_0063: stloc.2
+			IL_0064: ldloc.2
+			IL_0065: stloc.1
+			IL_0066: ldc.i4.2
+			IL_0067: newarr [System.Runtime]System.Object
+			IL_006c: dup
+			IL_006d: ldc.i4.0
+			IL_006e: ldarg.0
+			IL_006f: stelem.ref
+			IL_0070: dup
+			IL_0071: ldc.i4.1
+			IL_0072: ldloc.0
+			IL_0073: stelem.ref
+			IL_0074: ldnull
+			IL_0075: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22/ArrowFunction_L8C28::__js_call__(object[], object)
+			IL_007a: pop
+			IL_007b: ldnull
+			IL_007c: ret
 		} // end of method ArrowFunction_L5C22::__js_call__
 
 	} // end of class ArrowFunction_L5C22
@@ -224,7 +231,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21e4
+			// Method begins at RVA 0x2204
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -250,7 +257,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 114 (0x72)
+		// Code size: 129 (0x81)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope,
@@ -282,27 +289,34 @@
 		IL_0036: ldloc.0
 		IL_0037: stelem.ref
 		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0042: ldc.i4.0
-		IL_0043: conv.r8
-		IL_0044: ldstr ""
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
 		IL_0049: ldc.i4.0
-		IL_004a: ldc.i4.0
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0055: stloc.2
-		IL_0056: ldloc.2
-		IL_0057: ldstr "testFunction"
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0061: stloc.2
-		IL_0062: ldloc.2
-		IL_0063: stloc.1
-		IL_0064: ldloc.0
-		IL_0065: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
-		IL_006a: ldnull
-		IL_006b: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22::__js_call__(class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope, object)
-		IL_0070: pop
-		IL_0071: ret
+		IL_004a: ldloc.0
+		IL_004b: stelem.ref
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_0051: ldc.i4.0
+		IL_0052: conv.r8
+		IL_0053: ldstr ""
+		IL_0058: ldc.i4.0
+		IL_0059: ldc.i4.0
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0064: stloc.2
+		IL_0065: ldloc.2
+		IL_0066: ldstr "testFunction"
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0070: stloc.2
+		IL_0071: ldloc.2
+		IL_0072: stloc.1
+		IL_0073: ldloc.0
+		IL_0074: castclass Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope
+		IL_0079: ldnull
+		IL_007a: call object Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_L5C22::__js_call__(class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes/Scope, object)
+		IL_007f: pop
+		IL_0080: ret
 	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::__js_module_init__
 
 } // end of class Modules.ArrowFunction_NestedFunctionAccessesMultipleScopes
@@ -314,7 +328,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ff
+		// Method begins at RVA 0x221f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

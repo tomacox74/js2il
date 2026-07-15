@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21cb
+				// Method begins at RVA 0x21eb
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -41,7 +41,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x213c
+			// Method begins at RVA 0x215c
 			// Header size: 12
 			// Code size: 51 (0x33)
 			.maxstack 8
@@ -79,7 +79,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x21d4
+				// Method begins at RVA 0x21f4
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -105,7 +105,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 05 00 00 02
 			)
-			// Method begins at RVA 0x217c
+			// Method begins at RVA 0x219c
 			// Header size: 12
 			// Code size: 58 (0x3a)
 			.maxstack 8
@@ -150,7 +150,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x21c2
+			// Method begins at RVA 0x21e2
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -176,7 +176,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 223 (0xdf)
+		// Code size: 253 (0xfd)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope,
@@ -197,74 +197,88 @@
 		IL_001b: ldloc.0
 		IL_001c: stelem.ref
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_0027: ldc.i4.0
-		IL_0028: conv.r8
-		IL_0029: ldstr ""
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
 		IL_002e: ldc.i4.0
-		IL_002f: ldc.i4.0
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: ldstr "helloWorld"
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_0046: stloc.2
-		IL_0047: ldloc.0
-		IL_0048: ldloc.2
-		IL_0049: stfld object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
-		IL_004e: ldc.i4.1
-		IL_004f: newarr [System.Runtime]System.Object
-		IL_0054: dup
-		IL_0055: ldc.i4.0
+		IL_002f: ldloc.0
+		IL_0030: stelem.ref
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_0036: ldc.i4.0
+		IL_0037: conv.r8
+		IL_0038: ldstr ""
+		IL_003d: ldc.i4.0
+		IL_003e: ldc.i4.0
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0049: stloc.2
+		IL_004a: ldloc.2
+		IL_004b: ldstr "helloWorld"
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_0055: stloc.2
 		IL_0056: ldloc.0
-		IL_0057: stelem.ref
-		IL_0058: ldc.i4.0
-		IL_0059: ldelem.ref
-		IL_005a: castclass Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope
-		IL_005f: ldftn object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25::__js_call__(class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope, object)
-		IL_0065: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.0
-		IL_0073: stelem.ref
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
-		IL_007e: ldc.i4.0
-		IL_007f: conv.r8
-		IL_0080: ldstr ""
-		IL_0085: ldc.i4.0
-		IL_0086: ldc.i4.0
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_0091: stloc.2
-		IL_0092: ldloc.2
-		IL_0093: ldstr "helloWorldProxy"
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
-		IL_009d: stloc.2
-		IL_009e: ldloc.2
-		IL_009f: stloc.1
-		IL_00a0: ldloc.0
-		IL_00a1: castclass Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope
-		IL_00a6: ldnull
-		IL_00a7: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25::__js_call__(class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope, object)
-		IL_00ac: pop
-		IL_00ad: ldstr "console"
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_00b7: stloc.2
-		IL_00b8: ldloc.2
-		IL_00b9: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_00be: stloc.2
-		IL_00bf: ldloc.2
-		IL_00c0: ldstr "log"
-		IL_00c5: ldstr "finally is now"
-		IL_00ca: ldc.r8 3
-		IL_00d3: box [System.Runtime]System.Double
-		IL_00d8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_00dd: pop
-		IL_00de: ret
+		IL_0057: ldloc.2
+		IL_0058: stfld object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope::helloWorld
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.0
+		IL_0066: stelem.ref
+		IL_0067: ldc.i4.0
+		IL_0068: ldelem.ref
+		IL_0069: castclass Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope
+		IL_006e: ldftn object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25::__js_call__(class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope, object)
+		IL_0074: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsFuncNoScopes0::.ctor(object, native int)
+		IL_0079: ldc.i4.1
+		IL_007a: newarr [System.Runtime]System.Object
+		IL_007f: dup
+		IL_0080: ldc.i4.0
+		IL_0081: ldloc.0
+		IL_0082: stelem.ref
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
+		IL_008d: ldc.i4.1
+		IL_008e: newarr [System.Runtime]System.Object
+		IL_0093: dup
+		IL_0094: ldc.i4.0
+		IL_0095: ldloc.0
+		IL_0096: stelem.ref
+		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_009c: ldc.i4.0
+		IL_009d: conv.r8
+		IL_009e: ldstr ""
+		IL_00a3: ldc.i4.0
+		IL_00a4: ldc.i4.0
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_00af: stloc.2
+		IL_00b0: ldloc.2
+		IL_00b1: ldstr "helloWorldProxy"
+		IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::SetFunctionInferredName(object, object)
+		IL_00bb: stloc.2
+		IL_00bc: ldloc.2
+		IL_00bd: stloc.1
+		IL_00be: ldloc.0
+		IL_00bf: castclass Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope
+		IL_00c4: ldnull
+		IL_00c5: call object Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/ArrowFunction_L8C25::__js_call__(class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction/Scope, object)
+		IL_00ca: pop
+		IL_00cb: ldstr "console"
+		IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_00d5: stloc.2
+		IL_00d6: ldloc.2
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_00dc: stloc.2
+		IL_00dd: ldloc.2
+		IL_00de: ldstr "log"
+		IL_00e3: ldstr "finally is now"
+		IL_00e8: ldc.r8 3
+		IL_00f1: box [System.Runtime]System.Double
+		IL_00f6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_00fb: pop
+		IL_00fc: ret
 	} // end of method ArrowFunction_GlobalFunctionCallsGlobalFunction::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionCallsGlobalFunction
@@ -276,7 +290,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21dd
+		// Method begins at RVA 0x21fd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

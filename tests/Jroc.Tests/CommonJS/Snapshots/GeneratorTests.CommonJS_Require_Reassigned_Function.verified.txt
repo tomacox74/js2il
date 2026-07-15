@@ -25,7 +25,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x20f3
+				// Method begins at RVA 0x20ff
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -49,7 +49,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20d0
+			// Method begins at RVA 0x20dc
 			// Header size: 12
 			// Code size: 14 (0xe)
 			.maxstack 8
@@ -74,7 +74,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20ea
+			// Method begins at RVA 0x20f6
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -100,7 +100,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 128 (0x80)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.CommonJS_Require_Reassigned_Function/Scope,
@@ -122,36 +122,43 @@
 		IL_001b: ldloc.0
 		IL_001c: stelem.ref
 		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
 		IL_0027: ldc.i4.1
-		IL_0028: conv.r8
-		IL_0029: ldstr ""
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
 		IL_002e: ldc.i4.0
-		IL_002f: ldc.i4.0
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_003a: stloc.1
-		IL_003b: ldloc.1
-		IL_003c: starg.s require
-		IL_003e: ldstr "console"
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_0048: stloc.1
-		IL_0049: ldloc.1
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_004f: stloc.1
-		IL_0050: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
-		IL_0055: stloc.2
-		IL_0056: ldarg.1
-		IL_0057: ldloc.2
-		IL_0058: ldstr "fs"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
-		IL_0062: stloc.3
-		IL_0063: ldloc.1
-		IL_0064: ldstr "log"
-		IL_0069: ldloc.3
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_006f: pop
-		IL_0070: ret
+		IL_002f: ldloc.0
+		IL_0030: stelem.ref
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_0036: ldc.i4.1
+		IL_0037: conv.r8
+		IL_0038: ldstr ""
+		IL_003d: ldc.i4.0
+		IL_003e: ldc.i4.0
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_0049: stloc.1
+		IL_004a: ldloc.1
+		IL_004b: starg.s require
+		IL_004d: ldstr "console"
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0057: stloc.1
+		IL_0058: ldloc.1
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_005e: stloc.1
+		IL_005f: ldsfld object[] [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EmptyScopes
+		IL_0064: stloc.2
+		IL_0065: ldarg.1
+		IL_0066: ldloc.2
+		IL_0067: ldstr "fs"
+		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeFunctionCallWithArgs1(object, object[], object)
+		IL_0071: stloc.3
+		IL_0072: ldloc.1
+		IL_0073: ldstr "log"
+		IL_0078: ldloc.3
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_007e: pop
+		IL_007f: ret
 	} // end of method CommonJS_Require_Reassigned_Function::__js_module_init__
 
 } // end of class Modules.CommonJS_Require_Reassigned_Function
@@ -163,7 +170,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2108
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

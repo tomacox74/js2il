@@ -18,7 +18,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x2146
+				// Method begins at RVA 0x2152
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -43,7 +43,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x20f8
 			// Header size: 12
 			// Code size: 21 (0x15)
 			.maxstack 8
@@ -82,7 +82,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x214f
+				// Method begins at RVA 0x215b
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -106,7 +106,7 @@
 			.custom instance void [JavaScriptRuntime]Jroc.Runtime.JsCallableScopeAbiAttribute::.ctor(valuetype [JavaScriptRuntime]Jroc.Runtime.CallableScopeAbiKind) = (
 				01 00 00 00 00 00 00 00
 			)
-			// Method begins at RVA 0x2110
+			// Method begins at RVA 0x211c
 			// Header size: 12
 			// Code size: 33 (0x21)
 			.maxstack 8
@@ -145,7 +145,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x213d
+			// Method begins at RVA 0x2149
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -171,7 +171,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 156 (0x9c)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Promise_Thenable_Reject/Scope,
@@ -222,21 +222,28 @@
 		IL_005d: ldloc.0
 		IL_005e: stelem.ref
 		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentThis()
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object)
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::GetCurrentLexicalSuperReceiver()
 		IL_0069: ldc.i4.1
-		IL_006a: conv.r8
-		IL_006b: ldstr ""
+		IL_006a: newarr [System.Runtime]System.Object
+		IL_006f: dup
 		IL_0070: ldc.i4.0
-		IL_0071: ldc.i4.0
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
-		IL_007c: stloc.s 5
-		IL_007e: ldloc.3
-		IL_007f: ldstr "catch"
-		IL_0084: ldloc.s 5
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
-		IL_008b: pop
-		IL_008c: ret
+		IL_0071: ldloc.0
+		IL_0072: stelem.ref
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::BindArrow(object, object[], object, object, object[])
+		IL_0078: ldc.i4.1
+		IL_0079: conv.r8
+		IL_007a: ldstr ""
+		IL_007f: ldc.i4.0
+		IL_0080: ldc.i4.0
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Function::InitializeFunctionInstance(object, float64, string, bool, bool)
+		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Function::MarkUndefinedPrototype(object)
+		IL_008b: stloc.s 5
+		IL_008d: ldloc.3
+		IL_008e: ldstr "catch"
+		IL_0093: ldloc.s 5
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_009a: pop
+		IL_009b: ret
 	} // end of method Promise_Thenable_Reject::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Reject
@@ -248,7 +255,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2158
+		// Method begins at RVA 0x2164
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
