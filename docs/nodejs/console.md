@@ -23,6 +23,9 @@ Supports require('console') and require('node:console'). The module exports a co
 | API | Kind | Status | Docs |
 | --- | ---- | ------ | ---- |
 | Console(options) | property | partial | [docs](https://nodejs.org/api/console.html#new-consoleoptions) |
+| console.log(...data) | function | supported | [docs](https://nodejs.org/api/console.html#consolelogdata) |
+| console.warn(...data) | function | supported | [docs](https://nodejs.org/api/console.html#consolewarndata) |
+| console.error(...data) | function | supported | [docs](https://nodejs.org/api/console.html#consoleerrordata) |
 | console.table(tabularData) | function | partial | [docs](https://nodejs.org/api/console.html#consoletabletabulardata-properties) |
 
 ## API Details
@@ -34,6 +37,27 @@ Supports object-form construction with stdout, optional stderr, and inspectOptio
 **Tests:**
 - `Jroc.Tests.Node.Console.ExecutionTests.Console_Undici_Transform_Table` (`tests/Jroc.Tests/Node/Console/ExecutionTests.cs`)
 - `Jroc.Tests.Node.Console.GeneratorTests.Console_Undici_Transform_Table` (`tests/Jroc.Tests/Node/Console/GeneratorTests.cs`)
+
+### console.log(...data)
+
+Writes formatted values followed by a newline to stdout.
+
+**Tests:**
+- `Jroc.Tests.ConsoleTests.Log_PrintsAllArgumentsWithSpaces` (`tests/Jroc.Tests/ConsoleTests.cs`)
+
+### console.warn(...data)
+
+Writes formatted values followed by a newline to stderr.
+
+**Tests:**
+- `Jroc.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces_ToStdErr` (`tests/Jroc.Tests/ConsoleTests.cs`)
+
+### console.error(...data)
+
+Writes formatted values followed by a newline to stderr.
+
+**Tests:**
+- `Jroc.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces_ToStdErr` (`tests/Jroc.Tests/ConsoleTests.cs`)
 
 ### console.table(tabularData)
 
