@@ -8,7 +8,7 @@
 
 ## Summary
 
-- **Modules:** 20
+- **Modules:** 21
 - **Globals:** 18
   - Supported: 15
   - Partial: 20
@@ -18,6 +18,7 @@
 | Module | Status | Documentation |
 | --- | --- | --- |
 | [child_process](child_process.md) | partial | [Node.js](https://nodejs.org/api/child_process.html) |
+| [console](console.md) | partial | [Node.js](https://nodejs.org/api/console.html) |
 | [crypto](crypto.md) | partial | [Node.js](https://nodejs.org/api/crypto.html) |
 | [events](events.md) | completed | [Node.js](https://nodejs.org/api/events.html) |
 | [fs](fs.md) | partial | [Node.js](https://nodejs.org/api/fs.html) |

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
+using JavaScriptRuntime.Node;
 
 namespace JavaScriptRuntime
 {
@@ -16,10 +18,34 @@ namespace JavaScriptRuntime
 
         private IConsoleOutput _errorOutput = new DefaultErrorConsoleOutput();
 
+        private bool _useColors;
+
         public Console(ConsoleOutputSinks consoleOutputSinks)
         {
             _output = consoleOutputSinks.Output ?? new DefaultConsoleOutput();
             _errorOutput = consoleOutputSinks.ErrorOutput ?? new DefaultErrorConsoleOutput();
+        }
+
+        public Console()
+        {
+        }
+
+        public Console(object? options)
+        {
+            if (options == null || options is JsNull)
+            {
+                throw new TypeError("Console options must specify a writable stdout stream.");
+            }
+
+            _output = CreateStreamOutput(Object.GetProperty(options, "stdout"), "stdout");
+
+            var stderr = Object.GetProperty(options, "stderr");
+            _errorOutput = stderr == null || stderr is JsNull
+                ? _output
+                : CreateStreamOutput(stderr, "stderr");
+
+            var inspectOptions = Object.GetProperty(options, "inspectOptions");
+            _useColors = Object.GetProperty(inspectOptions ?? JsNull.Null, "colors") is bool colors && colors;
         }
 
         /// <summary>
@@ -30,6 +56,57 @@ namespace JavaScriptRuntime
         public object? error(params object?[] args) => Error(args);
 
         public object? warn(params object?[] args) => Warn(args);
+
+        public object? table(object? tabularData)
+        {
+            if (tabularData is not Array rows || rows.Count == 0)
+            {
+                return null;
+            }
+
+            var columns = GetTableColumns(rows);
+            if (columns.Count == 0)
+            {
+                return null;
+            }
+
+            var widths = new int[columns.Count + 1];
+            widths[0] = "index".Length;
+            for (var columnIndex = 0; columnIndex < columns.Count; columnIndex++)
+            {
+                widths[columnIndex + 1] = columns[columnIndex].Length;
+            }
+
+            for (var rowIndex = 0; rowIndex < rows.Count; rowIndex++)
+            {
+                widths[0] = System.Math.Max(widths[0], rowIndex.ToString().Length);
+                var row = rows[rowIndex] ?? JsNull.Null;
+                for (var columnIndex = 0; columnIndex < columns.Count; columnIndex++)
+                {
+                    widths[columnIndex + 1] = System.Math.Max(
+                        widths[columnIndex + 1],
+                        FormatTableValue(Object.GetProperty(row, columns[columnIndex])).Length);
+                }
+            }
+
+            var table = new StringBuilder();
+            AppendTableRow(table, widths, "index", columns);
+            for (var rowIndex = 0; rowIndex < rows.Count; rowIndex++)
+            {
+                var values = new string[columns.Count];
+                var row = rows[rowIndex] ?? JsNull.Null;
+                for (var columnIndex = 0; columnIndex < columns.Count; columnIndex++)
+                {
+                    values[columnIndex] = FormatTableValue(Object.GetProperty(row, columns[columnIndex]));
+                }
+
+                table.Append('\n');
+                AppendTableRow(table, widths, rowIndex.ToString(), values);
+            }
+
+            _output.WriteLine(table.ToString());
+            return null;
+        }
 
         // Arity-specific overloads to avoid object[] allocations for common cases (0-3 args).
         // These inline the formatting logic to avoid creating arrays.
@@ -473,6 +550,96 @@ namespace JavaScriptRuntime
             }
 
             return sb.ToString();
+        }
+
+        private static IConsoleOutput CreateStreamOutput(object? stream, string streamName)
+        {
+            if (stream is not Writable writable)
+            {
+                throw new TypeError($"Console {streamName} must be a writable stream.");
+            }
+
+            return new StreamConsoleOutput(writable);
+        }
+
+        private static List<string> GetTableColumns(Array rows)
+        {
+            var columns = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            for (var rowIndex = 0; rowIndex < rows.Count; rowIndex++)
+            {
+                var row = rows[rowIndex];
+                if (row == null || row is JsNull)
+                {
+                    continue;
+                }
+
+                foreach (var key in Object.GetEnumerableKeys(row))
+                {
+                    var name = DotNet2JSConversions.ToString(key);
+                    if (seen.Add(name))
+                    {
+                        columns.Add(name);
+                    }
+                }
+            }
+
+            return columns;
+        }
+
+        private string FormatTableValue(object? value)
+        {
+            var builder = new StringBuilder();
+            AppendConsoleValue(builder, value);
+            var formatted = builder.ToString();
+            if (!_useColors)
+            {
+                return formatted;
+            }
+
+            return value switch
+            {
+                string => $"\u001b[32m{formatted}\u001b[39m",
+                bool or byte or sbyte or short or ushort or int or uint or long or ulong or float or double or decimal
+                    => $"\u001b[33m{formatted}\u001b[39m",
+                _ => formatted
+            };
+        }
+
+        private static void AppendTableRow(StringBuilder line, int[] widths, string index, IReadOnlyList<string> values)
+        {
+            AppendTableCell(line, index, widths[0]);
+            for (var columnIndex = 0; columnIndex < values.Count; columnIndex++)
+            {
+                line.Append(" | ");
+                AppendTableCell(line, values[columnIndex], widths[columnIndex + 1]);
+            }
+        }
+
+        private static void AppendTableCell(StringBuilder builder, string value, int width)
+        {
+            builder.Append(value);
+            builder.Append(' ', width - value.Length);
+        }
+
+        private sealed class StreamConsoleOutput : IConsoleOutput
+        {
+            private readonly Writable _stream;
+
+            public StreamConsoleOutput(Writable stream)
+            {
+                _stream = stream;
+            }
+
+            public void Write(string text)
+            {
+                _stream.write(text);
+            }
+
+            public void WriteLine(string line)
+            {
+                _stream.write(line + "\n");
+            }
         }
     }
 }

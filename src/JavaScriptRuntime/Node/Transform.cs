@@ -10,7 +10,10 @@ namespace JavaScriptRuntime.Node
         public object? _transform = null;
 
         // Constructor for subclassing
-        public Transform(object? options = null) : base(options) { }
+        public Transform(object? options = null) : base(options)
+        {
+            _transform = NodeNetworkingCommon.TryGetOption(options, "transform");
+        }
 
         protected override void InvokeWrite(object? chunk)
         {
@@ -21,7 +24,27 @@ namespace JavaScriptRuntime.Node
                     var previousThis = RuntimeServices.SetCurrentThis(this);
                     try
                     {
-                        Closure.InvokeWithArgs(transformFunc, System.Array.Empty<object>(), new[] { chunk });
+                        Closure.InvokeWithArgs(
+                            transformFunc,
+                            System.Array.Empty<object>(),
+                            chunk,
+                            JsNull.Null,
+                            new Func<object[], object?[], object?>((_, args) =>
+                            {
+                                var error = args.Length > 0 ? args[0] : null;
+                                if (error != null && error is not JsNull)
+                                {
+                                    destroy(error as Error ?? new Error(DotNet2JSConversions.ToString(error)));
+                                    return null;
+                                }
+
+                                if (args.Length > 1 && args[1] != null && args[1] is not JsNull)
+                                {
+                                    push(args[1]);
+                                }
+
+                                return null;
+                            }));
                     }
                     finally
                     {
