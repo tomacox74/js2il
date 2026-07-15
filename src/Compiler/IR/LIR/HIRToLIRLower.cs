@@ -362,6 +362,63 @@ public sealed partial class HIRToLIRLowerer
         return true;
     }
 
+    private bool IsArrowLexicallyEnclosedByDerivedConstructor()
+    {
+        if (_scope?.AstNode is not ArrowFunctionExpression)
+        {
+            return false;
+        }
+
+        FunctionExpression? enclosingFunction = null;
+        var current = _scope.Parent;
+        while (current != null)
+        {
+            if (current.AstNode is ArrowFunctionExpression)
+            {
+                current = current.Parent;
+                continue;
+            }
+
+            if (current.AstNode is FunctionExpression function)
+            {
+                enclosingFunction = function;
+                break;
+            }
+
+            if (current.Kind == ScopeKind.Function)
+            {
+                return false;
+            }
+
+            current = current.Parent;
+        }
+
+        if (enclosingFunction == null)
+        {
+            return false;
+        }
+
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        return current?.AstNode switch
+        {
+            ClassDeclaration classDeclaration => classDeclaration.SuperClass != null
+                && classDeclaration.Body.Body
+                    .OfType<MethodDefinition>()
+                    .Any(method => ReferenceEquals(method.Value, enclosingFunction)
+                        && ClassElementNames.IsConstructor(method)),
+            ClassExpression classExpression => classExpression.SuperClass != null
+                && classExpression.Body.Body
+                    .OfType<MethodDefinition>()
+                    .Any(method => ReferenceEquals(method.Value, enclosingFunction)
+                        && ClassElementNames.IsConstructor(method)),
+            _ => false
+        };
+    }
+
     private string? GetEnclosingSuperClassIntrinsicName()
     {
         if (_scope == null)

@@ -1313,11 +1313,42 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit unmaterialized base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing ctor token");
                     }
 
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    if (callBaseCtor.UsesLexicalReceiver)
+                    {
+                        var getSuperReceiver = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getSuperReceiver);
+
+                        if (_serviceProvider.GetService<ClassRegistry>() is not { } classRegistry
+                            || !classRegistry.TryGet(callBaseCtor.BaseRegistryClassName, out var baseTypeHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit lexical base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing base type token");
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(baseTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
 
                     if (callBaseCtor.HasScopesParameter)
                     {
-                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        if (callBaseCtor.UsesLexicalReceiver)
+                        {
+                            var getSuperScopes = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperScopes));
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getSuperScopes);
+                        }
+                        else
+                        {
+                            EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        }
                     }
 
                     int jsParamCount = callBaseCtor.MaxParamCount;
@@ -1334,6 +1365,25 @@ internal sealed partial class LIRToILCompiler
 
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callBaseCtor.ConstructorHandle);
+
+                    var initializeDerivedThis = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.InitializeDerivedConstructorThisBinding),
+                        parameterTypes: new[] { typeof(object) });
+                    if (callBaseCtor.UsesLexicalReceiver)
+                    {
+                        var getSuperReceiver = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getSuperReceiver);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(initializeDerivedThis);
                     break;
                 }
 
@@ -1350,7 +1400,27 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit unmaterialized base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing method token");
                     }
 
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    if (methodDescriptor.IsStatic)
+                    {
+                        var getCurrentThis = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getCurrentThis);
+
+                        if (_serviceProvider.GetService<ClassRegistry>() is not { } classRegistry
+                            || !classRegistry.TryGet(callBaseMethod.BaseRegistryClassName, out var baseTypeHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit lexical base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing base type token");
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(baseTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
 
                     if (callBaseMethod.HasScopesParameter)
                     {
@@ -1442,10 +1512,46 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(GetMaterializedCallableDelegateCtorRef(jsParamCount, delegateRequiresScopeArray, signature));
 
-                    // Bind delegate to scopes array: Closure.Bind(object, object[])
+                    // Bind delegate to scopes array AND lexical 'this': Closure.BindArrow(object, object[], object)
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
+
+                    if (methodDescriptor.IsDerivedConstructor || methodDescriptor.IsStatic)
+                    {
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+                    }
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
+
+                    if (methodDescriptor.IsDerivedConstructor)
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
+                    else if (methodDescriptor.IsStatic)
+                    {
+                        var getSuperReceiverRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getSuperReceiverRef);
+                    }
+                    else
+                    {
+                        ilEncoder.LoadArgument(0);
+                    }
+
+                    EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.BindArrow),
+                        new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
                     EmitInitializeFunctionInstance(createArrow.CallableId, createArrow.IsAsync, ilEncoder);
                     // Result stays on stack

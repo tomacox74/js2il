@@ -34,6 +34,14 @@ namespace JavaScriptRuntime
             modifiers: null)
             ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithThis(object, Delegate, object[], object[], object).");
 
+        private static readonly MethodInfo InvokeDelegatePreservingArgsWithLexicalThisMethod = typeof(Closure).GetMethod(
+            nameof(InvokeDelegatePreservingArgsWithLexicalThis),
+            BindingFlags.NonPublic | BindingFlags.Static,
+            binder: null,
+            types: new[] { typeof(object), typeof(object), typeof(object[]), typeof(Delegate), typeof(object[]), typeof(object[]), typeof(object) },
+            modifiers: null)
+            ?? throw new InvalidOperationException("Failed to resolve Closure.InvokeDelegatePreservingArgsWithLexicalThis(object, object, object[], Delegate, object[], object[], object).");
+
         private static readonly MethodInfo InvokeWithArgsWithThisMethod = typeof(Closure).GetMethod(
             nameof(InvokeWithArgsWithThis),
             BindingFlags.NonPublic | BindingFlags.Static)
@@ -125,6 +133,30 @@ namespace JavaScriptRuntime
         private static object InvokeDelegatePreservingArgsWithThis(object? boundThis, Delegate target, object[] scopes, object?[] args, object? newTarget)
         {
             return InvokeWithThis(boundThis, () => InvokeDelegateWithArgs(target, scopes, args, newTarget));
+        }
+
+        private static object InvokeDelegatePreservingArgsWithLexicalThis(
+            object? boundThis,
+            object? boundSuperReceiver,
+            object[] boundSuperScopes,
+            Delegate target,
+            object[] scopes,
+            object?[] args,
+            object? newTarget)
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(boundThis);
+            var previousSuperReceiver = RuntimeServices.SetCurrentLexicalSuperReceiver(boundSuperReceiver);
+            var previousSuperScopes = RuntimeServices.SetCurrentLexicalSuperScopes(boundSuperScopes);
+            try
+            {
+                return InvokeDelegateWithArgs(target, scopes, args, newTarget);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentLexicalSuperScopes(previousSuperScopes);
+                RuntimeServices.SetCurrentLexicalSuperReceiver(previousSuperReceiver);
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
 
         private static bool TryInvokeTypedJsFuncDelegate(
@@ -446,7 +478,10 @@ namespace JavaScriptRuntime
             bool captureLexicalNewTarget,
             object? lexicalNewTarget,
             BoundDelegateKind kind,
-            bool hasRestrictedProperties)
+            bool hasRestrictedProperties,
+            bool preserveLexicalThisBinding = false,
+            object? boundSuperReceiver = null,
+            object[]? boundSuperScopes = null)
         {
             var delegateType = target.GetType();
             var invoke = delegateType.GetMethod("Invoke")
@@ -484,7 +519,19 @@ namespace JavaScriptRuntime
             // When the wrapper is invoked by the outer dispatcher, the *real* call arguments (including extras)
             // have already been set as the current arguments. Rest parameters and `arguments` depend on preserving
             // that full call-site argument list.
-            if (boundThis == null)
+            if (preserveLexicalThisBinding)
+            {
+                invokeWithArgsCall = Expression.Call(
+                    InvokeDelegatePreservingArgsWithLexicalThisMethod,
+                    Expression.Constant(boundThis, typeof(object)),
+                    Expression.Constant(boundSuperReceiver, typeof(object)),
+                    Expression.Constant(boundSuperScopes ?? boundScopes, typeof(object[])),
+                    Expression.Constant(target, typeof(Delegate)),
+                    Expression.Constant(boundScopes, typeof(object[])),
+                    argsArray,
+                    forwardedNewTarget);
+            }
+            else if (boundThis == null)
             {
                 invokeWithArgsCall = Expression.Call(
                     InvokeDelegatePreservingArgsMethod,
@@ -555,6 +602,17 @@ namespace JavaScriptRuntime
         // The runtime call sites may set a dynamic 'this' (receiver) before invocation; this binder
         // overrides it for the duration of the arrow function body to match ECMA-262 lexical semantics.
         public static object BindArrow(object target, object[] boundScopes, object? boundThis)
+            => BindArrow(target, boundScopes, boundThis, boundThis, boundScopes);
+
+        public static object BindArrow(object target, object[] boundScopes, object? boundThis, object? boundSuperReceiver)
+            => BindArrow(target, boundScopes, boundThis, boundSuperReceiver, boundScopes);
+
+        public static object BindArrow(
+            object target,
+            object[] boundScopes,
+            object? boundThis,
+            object? boundSuperReceiver,
+            object[] boundSuperScopes)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
@@ -565,7 +623,17 @@ namespace JavaScriptRuntime
             }
 
             var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
-            return CreateBoundDelegate(del, boundScopes, boundThis, captureLexicalNewTarget: true, lexicalNewTarget, BoundDelegateKind.ScopeBinding, hasRestrictedProperties: false);
+            return CreateBoundDelegate(
+                del,
+                boundScopes,
+                boundThis,
+                captureLexicalNewTarget: true,
+                lexicalNewTarget,
+                BoundDelegateKind.ScopeBinding,
+                hasRestrictedProperties: false,
+                preserveLexicalThisBinding: true,
+                boundSuperReceiver,
+                boundSuperScopes);
         }
 
         internal static bool TryGetBoundTarget(Delegate boundDelegate, out Delegate target)

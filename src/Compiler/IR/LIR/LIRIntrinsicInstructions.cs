@@ -63,7 +63,8 @@ public record LIRCallIntrinsicStaticVoidWithArgsArray(string IntrinsicName, stri
 /// </summary>
 public record LIRCallIntrinsicBaseConstructor(
     string IntrinsicName,
-    IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
+    IReadOnlyList<TempVariable> Arguments,
+    bool UsesLexicalReceiver) : LIRInstruction;
 
 /// <summary>
 /// Creates a new instance of a JavaScriptRuntime intrinsic type via its constructor.

@@ -240,7 +240,10 @@ public record LIRConstructValue(TempVariable ConstructorValue, TempVariable Argu
 /// <summary>
 /// Invokes a regular function-valued base constructor from a derived class constructor.
 /// </summary>
-public record LIRCallFunctionBaseConstructor(TempVariable ConstructorValue, TempVariable ArgumentsArray) : LIRInstruction;
+public record LIRCallFunctionBaseConstructor(
+    TempVariable ConstructorValue,
+    TempVariable ArgumentsArray,
+    bool UsesLexicalReceiver) : LIRInstruction;
 
 /// <summary>
 /// Calls a user-defined JavaScript class instance method directly on the implicit 'this'.
@@ -267,6 +270,7 @@ public record LIRCallUserClassBaseConstructor(
     string BaseRegistryClassName,
     MethodDefinitionHandle ConstructorHandle,
     bool HasScopesParameter,
+    bool UsesLexicalReceiver,
     int MaxParamCount,
     IReadOnlyList<TempVariable> Arguments,
     IReadOnlyList<TempVariable> AllJsArguments) : LIRInstruction;

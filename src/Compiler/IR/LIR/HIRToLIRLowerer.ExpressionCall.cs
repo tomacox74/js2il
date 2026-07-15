@@ -23,12 +23,15 @@ public sealed partial class HIRToLIRLowerer
         // Case 0: super(...) call in a derived class constructor.
         if (callExpr.Callee is HIRSuperExpression)
         {
-            if (_callableKind != CallableKind.Constructor || !_isDerivedConstructor)
+            var usesLexicalReceiver = _callableKind == CallableKind.Function
+                && IsArrowLexicallyEnclosedByDerivedConstructor();
+            if (!usesLexicalReceiver
+                && (_callableKind != CallableKind.Constructor || !_isDerivedConstructor))
             {
                 return false;
             }
 
-            if (_superConstructorCalled)
+            if (!usesLexicalReceiver && _superConstructorCalled)
             {
                 return false;
             }
@@ -72,6 +75,7 @@ public sealed partial class HIRToLIRLowerer
                     baseRegistryClassName,
                     baseCtorHandle,
                     baseCtorHasScopesParam,
+                    usesLexicalReceiver,
                     baseCtorMaxParamCount,
                     callArgs,
                     allJsArgs));
@@ -93,7 +97,7 @@ public sealed partial class HIRToLIRLowerer
                         callArgs.Add(EnsureObject(argTemp));
                     }
 
-                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicBaseConstructor(intrinsicName, callArgs));
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicBaseConstructor(intrinsicName, callArgs, usesLexicalReceiver));
                 }
                 else
                 {
@@ -118,12 +122,18 @@ public sealed partial class HIRToLIRLowerer
                     var argsArrayTemp = CreateTempVariable();
                     _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgs, argsArrayTemp));
                     DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-                    _methodBodyIR.Instructions.Add(new LIRCallFunctionBaseConstructor(EnsureObject(constructorTemp), argsArrayTemp));
+                    _methodBodyIR.Instructions.Add(new LIRCallFunctionBaseConstructor(
+                        EnsureObject(constructorTemp),
+                        argsArrayTemp,
+                        usesLexicalReceiver));
                 }
             }
 
             // After super() the constructor is considered initialized.
-            _superConstructorCalled = true;
+            if (!usesLexicalReceiver)
+            {
+                _superConstructorCalled = true;
+            }
 
             // In JS, super(...) returns the derived `this` value.
             _methodBodyIR.Instructions.Add(new LIRLoadThis(resultTempVar));

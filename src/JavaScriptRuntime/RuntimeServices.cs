@@ -12,6 +12,8 @@ namespace JavaScriptRuntime;
 public class RuntimeServices
 {
     private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
+    private static readonly System.Threading.AsyncLocal<object?> _currentLexicalSuperReceiver = new();
+    private static readonly System.Threading.AsyncLocal<object[]?> _currentLexicalSuperScopes = new();
     private static readonly System.Threading.AsyncLocal<object?[]?> _currentArguments = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentNewTarget = new();
     private static readonly System.Threading.AsyncLocal<object?> _currentCallee = new();
@@ -135,6 +137,35 @@ public class RuntimeServices
         return previous;
     }
 
+    public static object? GetCurrentLexicalSuperReceiver()
+    {
+        return _currentLexicalSuperReceiver.Value ?? ResolveLexicalThis(_currentThis.Value);
+    }
+
+    public static object? GetCurrentLexicalSuperPropertyReceiver()
+    {
+        return ResolveLexicalThis(_currentThis.Value);
+    }
+
+    public static object? SetCurrentLexicalSuperReceiver(object? value)
+    {
+        var previous = _currentLexicalSuperReceiver.Value;
+        _currentLexicalSuperReceiver.Value = value;
+        return previous;
+    }
+
+    public static object[] GetCurrentLexicalSuperScopes()
+    {
+        return _currentLexicalSuperScopes.Value ?? EmptyScopes;
+    }
+
+    public static object[]? SetCurrentLexicalSuperScopes(object[]? value)
+    {
+        var previous = _currentLexicalSuperScopes.Value;
+        _currentLexicalSuperScopes.Value = value;
+        return previous;
+    }
+
     public static void PushDerivedConstructorThisBinding()
     {
         _derivedConstructorThisStack ??= new Stack<object?>();
@@ -146,6 +177,11 @@ public class RuntimeServices
     {
         if (_currentThis.Value is DerivedConstructorThisBinding binding)
         {
+            if (!ReferenceEquals(binding.Value, TemporalDeadZoneSentinel))
+            {
+                throw new ReferenceError("Super constructor may only be called once");
+            }
+
             binding.Value = value;
             return;
         }

@@ -20,15 +20,31 @@ internal sealed partial class LIRToILCompiler
             throw new InvalidOperationException($"Unsupported intrinsic base constructor: '{callIntrinsicBaseCtor.IntrinsicName}'");
         }
 
+        void EmitReceiver()
+        {
+            if (callIntrinsicBaseCtor.UsesLexicalReceiver)
+            {
+                var getSuperReceiver = _memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.RuntimeServices),
+                    nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(getSuperReceiver);
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(_memberRefRegistry.GetOrAddTypeHandle(typeof(JavaScriptRuntime.Array)));
+            }
+            else
+            {
+                ilEncoder.OpCode(ILOpCode.Ldarg_0);
+            }
+        }
+
         // Base constructor must be invoked before instance usage.
-        // Emit: ldarg.0; call instance void JavaScriptRuntime.Array::.ctor()
-        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+        EmitReceiver();
         var baseCtor = _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.Array), Type.EmptyTypes);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(baseCtor);
 
-        // Emit: ldarg.0; callvirt instance void JavaScriptRuntime.Array::ConstructInto(object[])
-        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+        EmitReceiver();
 
         int argc = callIntrinsicBaseCtor.Arguments.Count;
         ilEncoder.LoadConstantI4(argc);
@@ -55,7 +71,7 @@ internal sealed partial class LIRToILCompiler
             typeof(JavaScriptRuntime.RuntimeServices),
             nameof(JavaScriptRuntime.RuntimeServices.InitializeDerivedConstructorThisBinding),
             parameterTypes: new[] { typeof(object) });
-        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+        EmitReceiver();
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(initializeDerivedThis);
     }

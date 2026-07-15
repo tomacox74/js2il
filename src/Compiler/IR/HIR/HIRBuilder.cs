@@ -192,8 +192,27 @@ public static class HIRBuilder
                     || ExpressionContainsDirectSuperCall(optionalIndexAccessExpression.Index),
                 HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
                 HIROptionalPropertyAccessExpression optionalPropertyAccessExpression => ExpressionContainsDirectSuperCall(optionalPropertyAccessExpression.Object),
+                HIRArrowFunctionExpression arrowFunctionExpression => ArrowContainsSuperCall(arrowFunctionExpression),
                 _ => false
             };
+
+        static bool ArrowContainsSuperCall(HIRArrowFunctionExpression arrowFunctionExpression)
+        {
+            if (arrowFunctionExpression.FunctionScope.AstNode is not ArrowFunctionExpression arrow)
+            {
+                return false;
+            }
+
+            var containsSuperCall = false;
+            new AstWalker().Visit(arrow.Body, child =>
+            {
+                if (child is CallExpression { Callee: Super })
+                {
+                    containsSuperCall = true;
+                }
+            });
+            return containsSuperCall;
+        }
 
         switch (node)
         {
@@ -1410,8 +1429,27 @@ class HIRMethodBuilder
             HIRIndexAccessExpression indexAccessExpression => ExpressionContainsDirectSuperCall(indexAccessExpression.Object)
                 || ExpressionContainsDirectSuperCall(indexAccessExpression.Index),
             HIRPropertyAccessExpression propertyAccessExpression => ExpressionContainsDirectSuperCall(propertyAccessExpression.Object),
+            HIRArrowFunctionExpression arrowFunctionExpression => ArrowContainsSuperCall(arrowFunctionExpression),
             _ => false
         };
+
+    private static bool ArrowContainsSuperCall(HIRArrowFunctionExpression arrowFunctionExpression)
+    {
+        if (arrowFunctionExpression.FunctionScope.AstNode is not ArrowFunctionExpression arrow)
+        {
+            return false;
+        }
+
+        var containsSuperCall = false;
+        new AstWalker().Visit(arrow.Body, node =>
+        {
+            if (node is CallExpression { Callee: Super })
+            {
+                containsSuperCall = true;
+            }
+        });
+        return containsSuperCall;
+    }
 
     private bool TryGetDebugSequencePointOverride(Statement statement, out SourceSpan span)
     {

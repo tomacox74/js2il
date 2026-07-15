@@ -6,6 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+- compiler/runtime: support lexical `super` property access and constructor calls from nested arrow functions, including derived-constructor `this` initialization and repeated-`super()` errors. Ports four upstream test262 scenarios for lexical `super` in arrows. (#1498)
 - perf/compiler: specialize proven numeric function-local `var` bindings and loop induction variables into unboxed `double` locals after a flow-sensitive initialization/write proof. Hoisted reads, conditional and optional writes, mixed types, captures, shadowing, destructuring, and abrupt loop control retain object storage. Legacy `dromaeo-3d-cube` generated IL now has 44 fewer double boxes, 38 fewer `TypeUtilities.ToNumber` calls, and 4 fewer dynamic `Operators.*` calls; a same-runner comparison improved precompiled execution from 12.151 ms to 11.593 ms (-4.6%) and runtime allocation from 5,137.69 KB to 4,850.26 KB (-5.6%). Compile time changed from 79.525 ms to 75.792 ms (-4.7%) while compiler allocation increased from 12,596.37 KB to 13,060.09 KB (+3.7%). The modern lexical-declaration control remained allocation-neutral; its timing varied +3.7% in this run. (#1476, parent #1322)
 
 ## v0.11.26 - 2026-07-14
