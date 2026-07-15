@@ -146,7 +146,8 @@ namespace JavaScriptRuntime.CommonJS
         {
             return value.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
                 || value.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
-                || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase);
+                || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase)
+                || value.EndsWith(".json", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

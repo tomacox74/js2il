@@ -7,6 +7,34 @@ namespace Jroc.Tests;
 public class NodeModuleResolverTests
 {
     [Fact]
+    public void Resolve_Require_AcceptsJsonFilesAndPackageMain()
+    {
+        var fs = new MockFileSystem();
+        var resolver = new NodeModuleResolver(fs);
+
+        var projectDir = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "jroc-tests", Guid.NewGuid().ToString("N"), "proj"));
+        var localJson = Path.Combine(projectDir, "config.json");
+        var packageJson = Path.Combine(projectDir, "node_modules", "json-pkg", "package.json");
+        var packageEntry = Path.Combine(projectDir, "node_modules", "json-pkg", "data.json");
+
+        fs.AddFile(localJson, "{\"value\":\"local\"}");
+        fs.AddFile(packageJson, "{\"name\":\"json-pkg\",\"main\":\"data.json\"}");
+        fs.AddFile(packageEntry, "{\"value\":\"package\"}");
+
+        Assert.True(resolver.TryResolve("./config", projectDir, out var extensionlessResolved, out var extensionlessError), extensionlessError);
+        Assert.Equal(Path.GetFullPath(localJson), extensionlessResolved);
+
+        Assert.True(resolver.TryResolve("./config.json", projectDir, out var explicitResolved, out var explicitError), explicitError);
+        Assert.Equal(Path.GetFullPath(localJson), explicitResolved);
+
+        Assert.True(resolver.TryResolve("json-pkg", projectDir, out var packageResolved, out var packageError), packageError);
+        Assert.Equal(Path.GetFullPath(packageEntry), packageResolved);
+
+        Assert.False(resolver.TryResolve("./config.json", projectDir, ModuleResolutionMode.Import, out _, out var importError));
+        Assert.Contains("ES module", importError);
+    }
+
+    [Fact]
     public void Resolve_BarePackage_UsesPackageJsonMain()
     {
         var fs = new MockFileSystem();

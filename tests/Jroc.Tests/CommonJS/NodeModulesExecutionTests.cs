@@ -49,6 +49,30 @@ public class NodeModulesExecutionTests
     }
 
     [Fact]
+    public Task CommonJS_Require_JsonModules()
+    {
+        using var project = NodeModulesTestProjectSupport.CreateJsonModulesProject();
+        var compiled = NodeModulesTestProjectSupport.Compile(project);
+        if (!compiled.Success || string.IsNullOrWhiteSpace(compiled.AssemblyPath))
+        {
+            throw new InvalidOperationException("Compilation failed.\nErrors:\n" + compiled.Logger.Errors);
+        }
+
+        var output = NodeModulesTestProjectSupport.ExecuteGeneratedAssembly(compiled.AssemblyPath);
+        return VerifyWithSnapshot(output);
+    }
+
+    [Fact]
+    public void CommonJS_Require_InvalidJsonModule_ReportsDiagnostic()
+    {
+        using var project = NodeModulesTestProjectSupport.CreateInvalidJsonModuleProject();
+        var compiled = NodeModulesTestProjectSupport.Compile(project);
+
+        Assert.False(compiled.Success);
+        Assert.Contains("Failed to parse JSON module", compiled.Logger.Errors);
+    }
+
+    [Fact]
     public void CommonJS_Require_NodeModules_UnsupportedConditions_ReportDiagnostic()
     {
         using var project = NodeModulesTestProjectSupport.CreateUnsupportedExportsConditionsProject();
