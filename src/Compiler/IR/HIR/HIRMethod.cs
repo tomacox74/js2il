@@ -15,5 +15,10 @@ public sealed class HIRMethod : HIRNode
     /// </summary>
     public HIRExpression? SuperClassExpression { get; init; }
 
-    public required HIRBlock Body { get; init; } 
+    /// <summary>
+    /// Indicates that this arrow inherits the derived constructor's <c>super()</c> environment.
+    /// </summary>
+    public bool IsLexicallyEnclosedByDerivedConstructor { get; init; }
+
+    public required HIRBlock Body { get; init; }
 }

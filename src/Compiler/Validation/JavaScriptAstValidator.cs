@@ -159,7 +159,7 @@ public class JavaScriptAstValidator : IAstValidator
                     // Arrow functions have lexical 'this' (they inherit it from the enclosing context).
                     // Non-arrow functions establish their own 'this'.
                     AllowsThis = node is ArrowFunctionExpression ? currentContext.AllowsThis : true,
-                    AllowsSuper = false,
+                    AllowsSuper = node is ArrowFunctionExpression && currentContext.AllowsSuper,
                     ScopeOwner = node,
                     MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
                     InDerivedClass = currentContext.InDerivedClass,

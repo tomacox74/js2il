@@ -26,6 +26,7 @@ public sealed partial class HIRToLIRLowerer
     private readonly HIRExpression? _superClassExpression;
     private readonly bool _isAsync;
     private readonly bool _isDerivedConstructor;
+    private readonly bool _isLexicallyEnclosedByDerivedConstructor;
     private readonly JavaScriptRuntime.IRuntimeIntrinsicCatalog _runtimeIntrinsicCatalog;
     private bool _superConstructorCalled;
 
@@ -96,7 +97,7 @@ public sealed partial class HIRToLIRLowerer
 
     private readonly bool _isGenerator;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, bool preserveNonClassDoubleReturn = false, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Jroc.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, HIRExpression? superClassExpression = null, bool isAsync = false, bool isGenerator = false, bool isDerivedConstructor = false, bool isLexicallyEnclosedByDerivedConstructor = false, TwoPhase.CallableRegistry? callableRegistry = null, bool preserveNonClassDoubleReturn = false, JavaScriptRuntime.IRuntimeIntrinsicCatalog? runtimeIntrinsicCatalog = null)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
@@ -108,6 +109,7 @@ public sealed partial class HIRToLIRLowerer
         _isAsync = isAsync;
         _isGenerator = isGenerator;
         _isDerivedConstructor = isDerivedConstructor;
+        _isLexicallyEnclosedByDerivedConstructor = isLexicallyEnclosedByDerivedConstructor;
         _preserveNonClassDoubleReturn = preserveNonClassDoubleReturn;
         _runtimeIntrinsicCatalog = runtimeIntrinsicCatalog ?? new JavaScriptRuntime.RuntimeIntrinsicCatalog();
         InitializeParameters(parameters);
@@ -147,7 +149,21 @@ public sealed partial class HIRToLIRLowerer
             && !hasScopesParameter
             && callableId?.JsParamCount == 0;
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, hirMethod.SuperClassExpression, isAsync, isGenerator, isDerivedConstructor, callableRegistry, preserveNonClassDoubleReturn, runtimeIntrinsicCatalog);
+        var lowerer = new HIRToLIRLowerer(
+            scope,
+            environmentLayout,
+            environmentLayoutBuilder,
+            classRegistry,
+            callableKind,
+            hirMethod.Parameters,
+            hirMethod.SuperClassExpression,
+            isAsync,
+            isGenerator,
+            isDerivedConstructor,
+            hirMethod.IsLexicallyEnclosedByDerivedConstructor,
+            callableRegistry,
+            preserveNonClassDoubleReturn,
+            runtimeIntrinsicCatalog);
         lowerer.CollectStringBuilderAccumulatorCandidates(hirMethod.Body.Statements);
 
         // If default parameter initialization failed, fall back to legacy emitter

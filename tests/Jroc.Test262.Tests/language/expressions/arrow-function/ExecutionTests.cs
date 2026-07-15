@@ -144,6 +144,22 @@ public class ExecutionTests : DiskExecutionTestsBase
     public Task lexical_this()
         => ExecutionTest("lexical-this");
 
+    [Fact(DisplayName = "lexical-super-property")]
+    public Task lexical_super_property()
+        => ExecutionTest("lexical-super-property");
+
+    [Fact(DisplayName = "lexical-super-property-from-within-constructor")]
+    public Task lexical_super_property_from_within_constructor()
+        => ExecutionTest("lexical-super-property-from-within-constructor");
+
+    [Fact(DisplayName = "lexical-super-call-from-within-constructor")]
+    public Task lexical_super_call_from_within_constructor()
+        => ExecutionTest("lexical-super-call-from-within-constructor");
+
+    [Fact(DisplayName = "lexical-supercall-from-immediately-invoked-arrow")]
+    public Task lexical_supercall_from_immediately_invoked_arrow()
+        => ExecutionTest("lexical-supercall-from-immediately-invoked-arrow");
+
     [Fact(DisplayName = "object-literal-return-requires-body-parens")]
     public Task object_literal_return_requires_body_parens()
         => ExecutionTest("object-literal-return-requires-body-parens");

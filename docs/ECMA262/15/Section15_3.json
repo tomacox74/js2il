@@ -106,6 +106,25 @@
           "test/language/expressions/arrow-function/cannot-override-this-with-thisArg.js"
         ],
         "notes": "Arrow functions capture lexical this at creation time and invoke with that bound this, including top-level callback cases that receive a thisArg (GitHub issue #219)."
+      },
+      {
+        "clause": "15.3.4",
+        "feature": "lexical super in arrow functions",
+        "status": "Supported",
+        "specUrl": "https://tc39.es/ecma262/#sec-runtime-semantics-instantiatearrowfunctionexpression",
+        "testScripts": [
+          "tests/Jroc.Test262.Tests/language/expressions/arrow-function/JavaScript/lexical-super-property.js",
+          "tests/Jroc.Test262.Tests/language/expressions/arrow-function/JavaScript/lexical-super-property-from-within-constructor.js",
+          "tests/Jroc.Test262.Tests/language/expressions/arrow-function/JavaScript/lexical-supercall-from-immediately-invoked-arrow.js",
+          "tests/Jroc.Test262.Tests/language/expressions/arrow-function/JavaScript/lexical-super-call-from-within-constructor.js"
+        ],
+        "test262Paths": [
+          "test/language/expressions/arrow-function/lexical-super-property.js",
+          "test/language/expressions/arrow-function/lexical-super-property-from-within-constructor.js",
+          "test/language/expressions/arrow-function/lexical-supercall-from-immediately-invoked-arrow.js",
+          "test/language/expressions/arrow-function/lexical-super-call-from-within-constructor.js"
+        ],
+        "notes": "Arrow functions inherit super bindings from enclosing class methods and derived constructors. This includes base property calls, immediately invoked super constructor calls, and the required ReferenceError when a retained arrow calls super() after the derived this binding has already been initialized (GitHub issue #1498)."
       }
     ]
   }

@@ -1126,6 +1126,7 @@ public sealed partial class HIRToLIRLowerer
             CallableId: arrowExpr.CallableId,
             ScopesArray: scopesTemp,
             IsAsync: arrowScope.IsAsync,
+            RequiresLexicalSuperConstructorContext: arrowExpr.RequiresLexicalSuperConstructorContext,
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 

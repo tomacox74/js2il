@@ -630,7 +630,18 @@ internal sealed partial class LIRToILCompiler
 
             case LIRCallFunctionBaseConstructor callFunctionBase:
                 {
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    if (callFunctionBase.UsesLexicalReceiver)
+                    {
+                        var getSuperReceiver = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getSuperReceiver);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
                     EmitLoadTempAsObject(callFunctionBase.ConstructorValue, ilEncoder, allocation, methodDescriptor);
                     EmitLoadTemp(callFunctionBase.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
@@ -757,11 +768,42 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(pushCurrentArguments);
                     }
 
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    if (callBaseCtor.UsesLexicalReceiver)
+                    {
+                        var getSuperReceiver = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getSuperReceiver);
+
+                        if (_serviceProvider.GetService<ClassRegistry>() is not { } classRegistry
+                            || !classRegistry.TryGet(callBaseCtor.BaseRegistryClassName, out var baseTypeHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit lexical base constructor call for '{callBaseCtor.BaseRegistryClassName}' - missing base type token");
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(baseTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
 
                     if (callBaseCtor.HasScopesParameter)
                     {
-                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        if (callBaseCtor.UsesLexicalReceiver)
+                        {
+                            var getSuperScopes = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperScopes));
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getSuperScopes);
+                        }
+                        else
+                        {
+                            EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        }
                     }
 
                     int jsParamCount = callBaseCtor.MaxParamCount;
@@ -779,15 +821,8 @@ internal sealed partial class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callBaseCtor.ConstructorHandle);
 
-                    var initializeDerivedThis = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.RuntimeServices),
-                        nameof(JavaScriptRuntime.RuntimeServices.InitializeDerivedConstructorThisBinding),
-                        parameterTypes: new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(initializeDerivedThis);
-
-                    // Restore _currentArguments to its pre-super-call state (only if we pushed above).
+                    // Restore the caller's arguments before initialization, which may throw for a
+                    // second lexical super() call after still executing the base constructor.
                     if (allArgc > 0)
                     {
                         var popCurrentArguments = _memberRefRegistry.GetOrAddMethod(
@@ -797,6 +832,26 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(popCurrentArguments);
                     }
+
+                    var initializeDerivedThis = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.RuntimeServices),
+                        nameof(JavaScriptRuntime.RuntimeServices.InitializeDerivedConstructorThisBinding),
+                        parameterTypes: new[] { typeof(object) });
+                    if (callBaseCtor.UsesLexicalReceiver)
+                    {
+                        var getSuperReceiver = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getSuperReceiver);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(initializeDerivedThis);
+
                     break;
                 }
 
@@ -813,7 +868,27 @@ internal sealed partial class LIRToILCompiler
                         throw new InvalidOperationException($"Cannot emit base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing method token");
                     }
 
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    if (methodDescriptor.IsStatic)
+                    {
+                        var getCurrentThis = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.RuntimeServices),
+                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperPropertyReceiver));
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getCurrentThis);
+
+                        if (_serviceProvider.GetService<ClassRegistry>() is not { } classRegistry
+                            || !classRegistry.TryGet(callBaseMethod.BaseRegistryClassName, out var baseTypeHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit lexical base method call for '{callBaseMethod.BaseRegistryClassName}.{callBaseMethod.MethodName}' - missing base type token");
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(baseTypeHandle);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                    }
 
                     if (callBaseMethod.HasScopesParameter)
                     {
@@ -1105,8 +1180,41 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadArgument(0);
                     }
 
+                    MemberReferenceHandle bindRef;
+                    if (createArrow.RequiresLexicalSuperConstructorContext)
+                    {
+                        if (methodDescriptor.IsDerivedConstructor)
+                        {
+                            ilEncoder.LoadArgument(0);
+                        }
+                        else if (methodDescriptor.IsStatic)
+                        {
+                            var getSuperReceiverRef = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getSuperReceiverRef);
+                        }
+                        else
+                        {
+                            ilEncoder.LoadArgument(0);
+                        }
+
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        bindRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.BindArrow),
+                            new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object[]) });
+                    }
+                    else
+                    {
+                        bindRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.BindArrow),
+                            new[] { typeof(object), typeof(object[]), typeof(object) });
+                    }
+
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.BindArrow), new[] { typeof(object), typeof(object[]), typeof(object) });
                     ilEncoder.Token(bindRef);
                     EmitInitializeFunctionInstance(createArrow.CallableId, createArrow.IsAsync, ilEncoder);
 
