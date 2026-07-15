@@ -64,6 +64,40 @@ internal sealed class CompiledNodeModulesProject
 
 internal static class NodeModulesTestProjectSupport
 {
+    public static TempNodeModulesProject CreateJsonModulesProject()
+    {
+        var project = CreateProject("Issue1486JsonModules", "main.js");
+
+        WriteFile(project.ProjectRoot, "main.js",
+            "\"use strict\";\n" +
+            "const extensionless = require('./config');\n" +
+            "const explicit = require('./config.json');\n" +
+            "const packageConfig = require('json-pkg');\n" +
+            "console.log('same', extensionless === explicit);\n" +
+            "console.log('name', extensionless.name);\n" +
+            "console.log('nested', extensionless.nested.enabled);\n" +
+            "console.log('item', extensionless.items[1]);\n" +
+            "console.log('package', packageConfig.value);\n");
+        WriteFile(project.ProjectRoot, "config.json",
+            "{\"name\":\"local-config\",\"nested\":{\"enabled\":true},\"items\":[\"first\",\"second\"]}");
+
+        var packageRoot = Path.Combine(project.ProjectRoot, "node_modules", "json-pkg");
+        WriteFile(packageRoot, "package.json", "{\"name\":\"json-pkg\",\"main\":\"data.json\"}");
+        WriteFile(packageRoot, "data.json", "{\"value\":\"package-config\"}");
+
+        return project;
+    }
+
+    public static TempNodeModulesProject CreateInvalidJsonModuleProject()
+    {
+        var project = CreateProject("Issue1486InvalidJsonModule", "main.js");
+
+        WriteFile(project.ProjectRoot, "main.js", "require('./invalid.json');\n");
+        WriteFile(project.ProjectRoot, "invalid.json", "{\"unterminated\":");
+
+        return project;
+    }
+
     public static TempNodeModulesProject CreateDualModeExportsImportsProject()
     {
         var project = CreateProject("Issue869DualMode", Path.Combine("src", "main.mjs"));

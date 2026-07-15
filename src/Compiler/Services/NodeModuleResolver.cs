@@ -14,12 +14,13 @@ public enum ModuleResolutionMode
 /// Resolves CommonJS and ESM module specifiers to concrete JavaScript module files at compile time.
 ///
 /// This mirrors Node.js module resolution rules as closely as practical for JROC,
-/// and supports <c>.js</c>, <c>.mjs</c>, and <c>.cjs</c> targets.
+/// and supports <c>.js</c>, <c>.mjs</c>, <c>.cjs</c>, and CommonJS <c>.json</c> targets.
 /// </summary>
 public sealed class NodeModuleResolver
 {
     private readonly IFileSystem _fileSystem;
-    private static readonly string[] KnownScriptExtensions = [".js", ".mjs", ".cjs"];
+    private static readonly string[] ScriptExtensions = [".js", ".mjs", ".cjs"];
+    private static readonly string[] CommonJsModuleExtensions = [".js", ".mjs", ".cjs", ".json"];
     private static readonly string[] SupportedConditionNames = ["import", "require", "node", "default"];
 
     public NodeModuleResolver(IFileSystem fileSystem)
@@ -117,7 +118,7 @@ public sealed class NodeModuleResolver
 
             // Determine whether the package exists at this level by probing for common markers.
             var packageJsonPath = Path.Combine(packageRoot, "package.json");
-            var hasIndexCandidate = KnownScriptExtensions
+            var hasIndexCandidate = GetSupportedModuleExtensions(resolutionMode)
                 .Select(ext => Path.Combine(packageRoot, "index" + ext))
                 .Any(_fileSystem.FileExists);
 
@@ -168,8 +169,8 @@ public sealed class NodeModuleResolver
                 }
             }
 
-            // Fallback: <packageRoot>/index.(js|mjs|cjs)
-            foreach (var ext in KnownScriptExtensions)
+            // Fallback: <packageRoot>/index.(js|mjs|cjs|json)
+            foreach (var ext in GetSupportedModuleExtensions(resolutionMode))
             {
                 var packageIndexCandidate = Path.Combine(packageRoot, "index" + ext);
                 if (_fileSystem.FileExists(packageIndexCandidate))
@@ -193,25 +194,25 @@ public sealed class NodeModuleResolver
         error = null;
 
         // 1) Exact file
-        if (TryAcceptResolvedScriptFile(requestPath, out resolvedPath, out error))
+        if (TryAcceptResolvedModuleFile(requestPath, resolutionMode, out resolvedPath, out error))
         {
             return true;
         }
 
-        // 2) Append common script extensions
+        // 2) Append common module extensions
         if (!Path.HasExtension(requestPath))
         {
-            foreach (var ext in KnownScriptExtensions)
+            foreach (var ext in GetSupportedModuleExtensions(resolutionMode))
             {
                 var withExtension = requestPath + ext;
-                if (TryAcceptResolvedScriptFile(withExtension, out resolvedPath, out error))
+                if (TryAcceptResolvedModuleFile(withExtension, resolutionMode, out resolvedPath, out error))
                 {
                     return true;
                 }
             }
         }
 
-        // 3) Directory: package.json -> entry, then index.(js|mjs|cjs)
+        // 3) Directory: package.json -> entry, then index.(js|mjs|cjs|json)
         var packageJson = Path.Combine(requestPath, "package.json");
         if (_fileSystem.FileExists(packageJson)
             && TryResolvePackageEntryFromPackageJson(requestPath, packageJson, resolutionMode, out resolvedPath, out error))
@@ -219,7 +220,7 @@ public sealed class NodeModuleResolver
             return true;
         }
 
-        foreach (var ext in KnownScriptExtensions)
+        foreach (var ext in GetSupportedModuleExtensions(resolutionMode))
         {
             var indexCandidate = Path.Combine(requestPath, "index" + ext);
             if (_fileSystem.FileExists(indexCandidate))
@@ -229,11 +230,15 @@ public sealed class NodeModuleResolver
             }
         }
 
-        error = $"Cannot resolve module path '{requestPath}' to a supported script file (.js, .mjs, .cjs).";
+        error = $"Cannot resolve module path '{requestPath}' to a supported {DescribeModuleKind(resolutionMode)} module file ({DescribeSupportedModuleExtensions(resolutionMode)}).";
         return false;
     }
 
-    private bool TryAcceptResolvedScriptFile(string path, out string resolvedPath, out string? error)
+    private bool TryAcceptResolvedModuleFile(
+        string path,
+        ModuleResolutionMode resolutionMode,
+        out string resolvedPath,
+        out string? error)
     {
         resolvedPath = string.Empty;
         error = null;
@@ -244,15 +249,27 @@ public sealed class NodeModuleResolver
         }
 
         var full = Path.GetFullPath(path);
-        if (!KnownScriptExtensions.Any(ext => full.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+        if (!GetSupportedModuleExtensions(resolutionMode)
+            .Any(ext => full.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
         {
-            error = $"Resolved module target '{full}' is not a supported script file (.js, .mjs, .cjs).";
+            error = $"Resolved module target '{full}' is not a supported {DescribeModuleKind(resolutionMode)} module file ({DescribeSupportedModuleExtensions(resolutionMode)}).";
             return false;
         }
 
         resolvedPath = full;
         return true;
     }
+
+    private static IReadOnlyList<string> GetSupportedModuleExtensions(ModuleResolutionMode resolutionMode)
+        => resolutionMode == ModuleResolutionMode.Require
+            ? CommonJsModuleExtensions
+            : ScriptExtensions;
+
+    private static string DescribeSupportedModuleExtensions(ModuleResolutionMode resolutionMode)
+        => string.Join(", ", GetSupportedModuleExtensions(resolutionMode));
+
+    private static string DescribeModuleKind(ModuleResolutionMode resolutionMode)
+        => resolutionMode == ModuleResolutionMode.Require ? "CommonJS" : "ES module";
 
     private bool TryResolvePackageEntryFromPackageJson(string packageRoot, string packageJsonPath, ModuleResolutionMode resolutionMode, out string resolvedPath, out string? error)
     {

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace Jroc;
 
@@ -248,6 +249,16 @@ public class ModuleLoader
             return false;
         }
 
+        if (string.Equals(Path.GetExtension(modulePath), ".json", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryCreateJsonModuleSource(jsSource, modulePath, out jsSource, out var jsonError))
+            {
+                module = null;
+                diagnostics.AddParseError(modulePath, jsonError);
+                return false;
+            }
+        }
+
         Acornima.Ast.Program ast;
         var sourceFileForDebugging = modulePath;
         if (_fileSystem is ISourceFilePathResolver resolver
@@ -447,6 +458,30 @@ public class ModuleLoader
         }
 
         return requestResolutionOk;
+    }
+
+    private static bool TryCreateJsonModuleSource(
+        string jsonSource,
+        string modulePath,
+        out string moduleSource,
+        out string error)
+    {
+        moduleSource = string.Empty;
+        error = string.Empty;
+
+        try
+        {
+            // Node strips a UTF-8 BOM before parsing CommonJS JSON modules.
+            var jsonWithoutBom = jsonSource.TrimStart('\uFEFF');
+            using var _ = JsonDocument.Parse(jsonWithoutBom);
+            moduleSource = $"module.exports = JSON.parse({JsonSerializer.Serialize(jsonWithoutBom)});";
+            return true;
+        }
+        catch (JsonException ex)
+        {
+            error = $"Failed to parse JSON module '{modulePath}': {ex.Message}";
+            return false;
+        }
     }
 
     private static readonly string EsModuleInteropPrelude =
@@ -2272,7 +2307,8 @@ function __jroc_esm_export(name, getter) {
     {
         if (value.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
             || value.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase)
-            || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase))
+            || value.EndsWith(".cjs", StringComparison.OrdinalIgnoreCase)
+            || value.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
         {
             return Path.ChangeExtension(value, null) ?? value;
         }
