@@ -602,10 +602,25 @@ namespace JavaScriptRuntime
         // The runtime call sites may set a dynamic 'this' (receiver) before invocation; this binder
         // overrides it for the duration of the arrow function body to match ECMA-262 lexical semantics.
         public static object BindArrow(object target, object[] boundScopes, object? boundThis)
-            => BindArrow(target, boundScopes, boundThis, boundThis, boundScopes);
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
 
-        public static object BindArrow(object target, object[] boundScopes, object? boundThis, object? boundSuperReceiver)
-            => BindArrow(target, boundScopes, boundThis, boundSuperReceiver, boundScopes);
+            if (target is not Delegate del)
+            {
+                throw new ArgumentException("Expected a delegate for arrow closure binding", nameof(target));
+            }
+
+            var lexicalNewTarget = RuntimeServices.GetCurrentNewTarget();
+            return CreateBoundDelegate(
+                del,
+                boundScopes,
+                boundThis,
+                captureLexicalNewTarget: true,
+                lexicalNewTarget,
+                BoundDelegateKind.ScopeBinding,
+                hasRestrictedProperties: false);
+        }
 
         public static object BindArrow(
             object target,

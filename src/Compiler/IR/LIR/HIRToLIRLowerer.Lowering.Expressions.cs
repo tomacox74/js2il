@@ -1126,11 +1126,30 @@ public sealed partial class HIRToLIRLowerer
             CallableId: arrowExpr.CallableId,
             ScopesArray: scopesTemp,
             IsAsync: arrowScope.IsAsync,
+            RequiresLexicalSuperConstructorContext: RequiresLexicalSuperConstructorContext(arrowScope),
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         resultTempVar = EmitBindWithObjectIfNeeded(resultTempVar);
         return true;
+    }
+
+    private static bool RequiresLexicalSuperConstructorContext(Scope arrowScope)
+    {
+        if (arrowScope.AstNode is not ArrowFunctionExpression arrow)
+        {
+            return false;
+        }
+
+        var requiresContext = false;
+        new AstWalker().Visit(arrow, node =>
+        {
+            if (node is CallExpression { Callee: Super })
+            {
+                requiresContext = true;
+            }
+        });
+        return requiresContext;
     }
 
     private bool TryBuildScopesArrayForClosureBinding(Scope calleeScope, TempVariable resultTemp)

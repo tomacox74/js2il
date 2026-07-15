@@ -299,7 +299,12 @@ public record LIRCallDeclaredCallable(CallableId CallableId, IReadOnlyList<TempV
 /// Creates a JS callable value (delegate) for an ArrowFunctionExpression and binds it to a scopes array.
 /// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
 /// </summary>
-public record LIRCreateBoundArrowFunction(CallableId CallableId, TempVariable ScopesArray, bool IsAsync, TempVariable Result) : LIRInstruction;
+public record LIRCreateBoundArrowFunction(
+    CallableId CallableId,
+    TempVariable ScopesArray,
+    bool IsAsync,
+    bool RequiresLexicalSuperConstructorContext,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Creates a JS callable value (delegate) for a FunctionExpression.

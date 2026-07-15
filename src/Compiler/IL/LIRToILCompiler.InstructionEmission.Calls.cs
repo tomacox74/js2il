@@ -1180,30 +1180,41 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.LoadArgument(0);
                     }
 
-                    if (methodDescriptor.IsDerivedConstructor)
+                    MemberReferenceHandle bindRef;
+                    if (createArrow.RequiresLexicalSuperConstructorContext)
                     {
-                        ilEncoder.LoadArgument(0);
-                    }
-                    else if (methodDescriptor.IsStatic)
-                    {
-                        var getSuperReceiverRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.RuntimeServices),
-                            nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(getSuperReceiverRef);
+                        if (methodDescriptor.IsDerivedConstructor)
+                        {
+                            ilEncoder.LoadArgument(0);
+                        }
+                        else if (methodDescriptor.IsStatic)
+                        {
+                            var getSuperReceiverRef = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.RuntimeServices),
+                                nameof(JavaScriptRuntime.RuntimeServices.GetCurrentLexicalSuperReceiver));
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(getSuperReceiverRef);
+                        }
+                        else
+                        {
+                            ilEncoder.LoadArgument(0);
+                        }
+
+                        EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
+                        bindRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.BindArrow),
+                            new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object[]) });
                     }
                     else
                     {
-                        ilEncoder.LoadArgument(0);
+                        bindRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.BindArrow),
+                            new[] { typeof(object), typeof(object[]), typeof(object) });
                     }
 
-                    EmitLoadScopesArrayOrEmpty(ilEncoder, methodDescriptor);
-
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Closure),
-                        nameof(JavaScriptRuntime.Closure.BindArrow),
-                        new[] { typeof(object), typeof(object[]), typeof(object), typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
                     EmitInitializeFunctionInstance(createArrow.CallableId, createArrow.IsAsync, ilEncoder);
 
