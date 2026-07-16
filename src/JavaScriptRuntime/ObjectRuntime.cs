@@ -852,7 +852,8 @@ namespace JavaScriptRuntime
 
                     if (intIndex >= array.Count)
                     {
-                        return null!; // undefined
+                        var arrayIndexKey = intIndex.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+                        return GetProperty(array, arrayIndexKey)!;
                     }
 
                     if (!array.HasOwnIndex(intIndex))
