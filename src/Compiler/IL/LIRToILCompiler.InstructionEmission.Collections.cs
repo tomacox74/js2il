@@ -517,14 +517,28 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
                     }
 
-                    EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    var valueStorage = GetTempStorage(setArrayLength.Value);
+                    var hasUnboxedDoubleValue = valueStorage.Kind == ValueStorageKind.UnboxedValue
+                        && valueStorage.ClrType == typeof(double);
+                    if (hasUnboxedDoubleValue)
+                    {
+                        EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    }
 
-                    var arrayLengthSetter = _memberRefRegistry.GetOrAddMethod(
+                    ilEncoder.LoadConstantI4(setArrayLength.ThrowOnError ? 1 : 0);
+
+                    var setArrayLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        "set_length",
-                        parameterTypes: new[] { typeof(double) });
+                        nameof(JavaScriptRuntime.Array.SetLength),
+                        parameterTypes: hasUnboxedDoubleValue
+                            ? new[] { typeof(double), typeof(bool) }
+                            : new[] { typeof(object), typeof(bool) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(arrayLengthSetter);
+                    ilEncoder.Token(setArrayLengthMethod);
 
                     // If the assignment expression result is used, return the assigned RHS value.
                     if (IsMaterialized(setArrayLength.Result, allocation))

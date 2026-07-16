@@ -4,7 +4,7 @@
   "title": "Built-in Exotic Object Internal Methods and Slots",
   "status": "Incomplete",
   "specUrl": "https://tc39.es/ecma262/#sec-built-in-exotic-object-internal-methods-and-slots",
-  "intro": "JROC implements a pragmatic subset of spec-defined exotic-object behavior for the features it currently supports. Arrays, bound functions, typed arrays, and namespace imports expose useful observable behavior, but the engine does not model true exotic internal methods/slots with full ECMA-262 invariants.",
+  "intro": "JROC implements spec-defined exotic-object behavior for the features it currently supports. Arrays provide dedicated index and length internal operations over dense and sparse storage; bound functions, typed arrays, and namespace imports retain the limitations documented below.",
   "parent": {
     "clause": "10"
   },
@@ -43,7 +43,7 @@
     {
       "clause": "10.4.2.1",
       "title": "[[DefineOwnProperty]] ( P , Desc )",
-      "status": "Incomplete",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-array-exotic-objects-defineownproperty-p-desc"
     },
     {
@@ -61,7 +61,7 @@
     {
       "clause": "10.4.2.4",
       "title": "ArraySetLength ( A , Desc )",
-      "status": "Supported with Limitations",
+      "status": "Supported",
       "specUrl": "https://tc39.es/ecma262/#sec-arraysetlength"
     },
     {
@@ -411,14 +411,22 @@
       {
         "clause": "10.4.2",
         "feature": "Array exotic indexing and length behavior",
-        "status": "Supported with Limitations",
+        "status": "Supported",
         "specUrl": "https://tc39.es/ecma262/#sec-array-exotic-objects",
         "testScripts": [
           "tests/Jroc.Tests/Array/JavaScript/Array_New_Length.js",
           "tests/Jroc.Tests/Array/JavaScript/Array_New_MultipleArgs.js",
-          "tests/Jroc.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js"
+          "tests/Jroc.Tests/Array/JavaScript/Array_Length_Set_Fractional_ThrowsRangeError.js",
+          "tests/Jroc.Tests/Array/JavaScript/Array_Exotic_Property_Descriptors.js",
+          "tests/Jroc.Tests/Array/JavaScript/Array_Exotic_Sloppy_Assignment.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/length/JavaScript/define-own-prop-length-overflow-order.js",
+          "tests/Jroc.Test262.Tests/built-ins/Array/length/JavaScript/define-own-prop-length-no-value-order.js"
         ],
-        "notes": "Arrays support numeric element access, length-based construction, and range-checked length writes that truncate or extend the backing store. The specialized [[DefineOwnProperty]] / ArraySpeciesCreate machinery is still only partially modeled."
+        "test262Paths": [
+          "test/built-ins/Array/length/define-own-prop-length-overflow-order.js",
+          "test/built-ins/Array/length/define-own-prop-length-no-value-order.js"
+        ],
+        "notes": "Canonical array indices use dedicated dense storage for ordinary elements and descriptor-backed sparse storage for exceptional indices. Indexed data/accessor descriptors, holes, deletion, non-writable length, failed highest-to-lowest truncation, strict/sloppy writes, maximum index boundaries, and preventExtensions/seal/freeze invariants are enforced through the Array [[DefineOwnProperty]] and ArraySetLength paths. ArraySpeciesCreate remains separately unsupported."
       },
       {
         "clause": "10.4.3.5",
