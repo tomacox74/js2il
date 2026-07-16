@@ -55,6 +55,10 @@ namespace Jroc.Tests.Node.Util
             => GenerateTest(nameof(Require_Util_Types_TypedBinary));
 
         [Fact]
+        public Task Require_UtilTypes_Undici_Predicates()
+            => GenerateTest(nameof(Require_UtilTypes_Undici_Predicates));
+
+        [Fact]
         public Task Require_Util_Inspect_TypedBinary()
             => GenerateTest(nameof(Require_Util_Inspect_TypedBinary));
     }

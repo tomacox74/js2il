@@ -423,6 +423,16 @@ namespace JavaScriptRuntime.CommonJS
         /// </summary>
         private object? RequireNodeModule(string key, string specifier)
         {
+            if (string.Equals(key, "util/types", StringComparison.OrdinalIgnoreCase))
+            {
+                var util = RequireNodeModule("util", "util")
+                    ?? throw new TypeError("Failed to resolve the Node 'util' module.");
+                var types = JavaScriptRuntime.Object.GetProperty(util, "types")
+                    ?? throw new TypeError("The Node 'util' module does not expose 'types'.");
+                _instances[key] = types;
+                return types;
+            }
+
             if (!_registry.TryGetValue(key, out var type))
             {
                 if (_notFound.Contains(key))
