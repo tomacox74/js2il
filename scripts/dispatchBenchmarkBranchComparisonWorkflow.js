@@ -71,7 +71,7 @@ and console output as an artifact.
 
 Options:
   --branch, -b <branch>       Private branch/ref to compare with master.
-  --scenario, -s <scenario>  Scenario or filter name for the selected suite.
+  --scenario, -s <scenario>  Exact scenario name for the selected suite.
   --benchmark, --suite <name> Benchmark suite: phased (default) or kracken.
   --repo <owner/name>         Explicit repository override (defaults to origin).
   --ref <branch>              Branch/ref containing the workflow file (default: master).

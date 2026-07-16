@@ -147,5 +147,4 @@ function go() {
   path = astar.search(g1, start, end);
 };
 
-// invoked by test harness
-//go();
+runTest(go, 1);
