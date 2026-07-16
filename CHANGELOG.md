@@ -6,7 +6,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
-_Nothing yet._
+- modules: add the Node `util/types` / `node:util/types` subpath as an alias of `util.types`, including Undici-required `isUint8Array` and `isArrayBuffer` predicates for Fetch byte validation and WebSocket ArrayBuffer handling. (#1496)
 
 ## v0.11.27 - 2026-07-16
 
