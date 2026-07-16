@@ -61,6 +61,8 @@ internal enum PropertyDescriptorLookup
 
 internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 {
+    private static long _mutationVersion;
+    internal static long MutationVersion => Volatile.Read(ref _mutationVersion);
     // Perf (#1417): descriptor reads vastly outnumber writes on hot property paths, so
     // each slot publishes an immutable snapshot that readers access lock-free via a
     // volatile read. Writers serialize on the slot's WriteLock, build a modified copy
@@ -382,6 +384,8 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     public static bool HasAny(object target)
         => CurrentStore.HasAny(target);
 
+    internal static object CurrentStoreIdentity => CurrentStore;
+
     internal static bool HasIntrinsicProperties(object target)
         => _intrinsicStore.HasAny(target);
 
@@ -393,7 +397,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
-        => CurrentStore.DefineOrUpdate(target, key, descriptor);
+    {
+        CurrentStore.DefineOrUpdate(target, key, descriptor);
+        Interlocked.Increment(ref _mutationVersion);
+    }
 
     internal static void CopyOwnProperties(object source, object target)
     {
@@ -417,10 +424,21 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         => CurrentStore.GetOwnKeys(target);
 
     public static bool Delete(object target, string key)
-        => CurrentStore.Delete(target, key);
+    {
+        var deleted = CurrentStore.Delete(target, key);
+        if (deleted)
+        {
+            Interlocked.Increment(ref _mutationVersion);
+        }
+
+        return deleted;
+    }
 
     internal static void Clear(object target)
-        => CurrentStore.Clear(target);
+    {
+        CurrentStore.Clear(target);
+        Interlocked.Increment(ref _mutationVersion);
+    }
 
     public static bool IsEnumerableOrDefaultTrue(object target, string key)
         => !TryGetOwn(target, key, out var descriptor) || descriptor.Enumerable;

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace JavaScriptRuntime;
 
@@ -20,8 +21,10 @@ public static class PrototypeChain
 
     // Volatile ensures other threads observe the enabled flag without additional locking.
     private static volatile bool _enabled;
+    private static long _mutationVersion;
 
     public static bool Enabled => _enabled;
+    internal static long MutationVersion => Volatile.Read(ref _mutationVersion);
 
     public static void Enable()
     {
@@ -58,6 +61,15 @@ public static class PrototypeChain
     }
 
     public static void SetPrototype(object obj, object? prototype)
+    {
+        SetPrototypeCore(obj, prototype);
+        Interlocked.Increment(ref _mutationVersion);
+    }
+
+    internal static void InitializePrototype(object obj, object? prototype)
+        => SetPrototypeCore(obj, prototype);
+
+    private static void SetPrototypeCore(object obj, object? prototype)
     {
         if (obj == null) throw new ArgumentNullException(nameof(obj));
 

@@ -15,11 +15,21 @@ namespace JavaScriptRuntime
     {
         internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
+        private static readonly ThreadLocal<DensePrototypeCache> _densePrototypeCaches = new(() => new());
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
         private readonly List<object?> _items;
         private int _logicalLength;
+        private int _holeCount;
         private double _virtualLength;
+
+        private sealed class DensePrototypeCache
+        {
+            public long DescriptorVersion = -1;
+            public long PrototypeVersion = -1;
+            public object? StoreIdentity;
+            public bool HasIndexedProperties;
+        }
 
         internal static ExpandoObject Prototype
         {
@@ -60,7 +70,7 @@ namespace JavaScriptRuntime
 
             if (PrototypeChain.TryGetPrototype(ImmutablePrototype, out var parentPrototype))
             {
-                PrototypeChain.SetPrototype(prototype, parentPrototype);
+                PrototypeChain.InitializePrototype(prototype, parentPrototype);
             }
 
             return prototype;
@@ -183,6 +193,7 @@ namespace JavaScriptRuntime
             while (_items.Count < minCount)
             {
                 _items.Add(Hole);
+                _holeCount++;
             }
         }
 
@@ -827,7 +838,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         private enum ArrayIteratorKind
@@ -1513,6 +1524,11 @@ namespace JavaScriptRuntime
 
             if (index < _items.Count)
             {
+                if (ReferenceEquals(_items[index], Hole))
+                {
+                    _holeCount--;
+                }
+
                 _items[index] = value;
             }
             else
@@ -1547,6 +1563,14 @@ namespace JavaScriptRuntime
             var newLengthInt = (int)newLength;
             if (newLengthInt < _items.Count)
             {
+                for (var i = newLengthInt; i < _items.Count; i++)
+                {
+                    if (ReferenceEquals(_items[i], Hole))
+                    {
+                        _holeCount--;
+                    }
+                }
+
                 _items.RemoveRange(newLengthInt, _items.Count - newLengthInt);
             }
 
@@ -1609,7 +1633,78 @@ namespace JavaScriptRuntime
             }
 
             _items[index] = Hole;
+            _holeCount++;
             return true;
+        }
+
+        private bool CanUseDenseMutationFastPath()
+            => _holeCount == 0
+                && _logicalLength == _items.Count
+                && _virtualLength == _items.Count
+                && !HasNonDataDescriptors
+                && !PropertyDescriptorStore.HasAny(this);
+
+        private bool CanUseDenseGrowthFastPath()
+        {
+            if (!CanUseDenseMutationFastPath() || !Object.IsExtensibleInternal(this))
+            {
+                return false;
+            }
+
+            if (!PrototypeChain.TryGetPrototype(this, out var prototype)
+                || !ReferenceEquals(prototype, Prototype))
+            {
+                return false;
+            }
+
+            var cache = _densePrototypeCaches.Value!;
+            var descriptorVersion = PropertyDescriptorStore.MutationVersion;
+            var prototypeVersion = PrototypeChain.MutationVersion;
+            var storeIdentity = PropertyDescriptorStore.CurrentStoreIdentity;
+            if (!ReferenceEquals(cache.StoreIdentity, storeIdentity)
+                || cache.DescriptorVersion != descriptorVersion
+                || cache.PrototypeVersion != prototypeVersion)
+            {
+                cache.HasIndexedProperties = DefaultPrototypeChainHasIndexedProperties();
+                cache.StoreIdentity = storeIdentity;
+                cache.DescriptorVersion = descriptorVersion;
+                cache.PrototypeVersion = prototypeVersion;
+            }
+
+            return !cache.HasIndexedProperties;
+        }
+
+        private static bool DefaultPrototypeChainHasIndexedProperties()
+        {
+            object current = Prototype;
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+            while (visited.Add(current))
+            {
+                foreach (var key in PropertyDescriptorStore.GetOwnKeys(current))
+                {
+                    if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
+                    {
+                        return true;
+                    }
+                }
+
+                if (!PrototypeChain.TryGetPrototype(current, out var prototype)
+                    || prototype is null
+                    || prototype is JsNull)
+                {
+                    break;
+                }
+
+                current = prototype;
+            }
+
+            return false;
+        }
+
+        private void SynchronizeDenseLength()
+        {
+            _logicalLength = _items.Count;
+            _virtualLength = _items.Count;
         }
 
         public object? this[int index]
@@ -1672,6 +1767,13 @@ namespace JavaScriptRuntime
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
+            if (CanUseDenseGrowthFastPath())
+            {
+                _items.Insert(index, item);
+                SynchronizeDenseLength();
+                return;
+            }
+
             for (var source = currentLength - 1; source >= index; source--)
             {
                 var target = source + 1;
@@ -1703,6 +1805,13 @@ namespace JavaScriptRuntime
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
+            if (CanUseDenseGrowthFastPath())
+            {
+                _items.InsertRange(index, items);
+                SynchronizeDenseLength();
+                return;
+            }
+
             for (var source = currentLength - 1; source >= index; source--)
             {
                 var target = source + items.Count;
@@ -1730,6 +1839,13 @@ namespace JavaScriptRuntime
             if (index < 0 || index >= currentLength)
             {
                 throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (CanUseDenseMutationFastPath())
+            {
+                _items.RemoveAt(index);
+                SynchronizeDenseLength();
+                return;
             }
 
             for (var target = index; target < currentLength - 1; target++)
@@ -1763,6 +1879,13 @@ namespace JavaScriptRuntime
 
             var currentLength = Count;
             var newLength = currentLength - count;
+            if (CanUseDenseMutationFastPath())
+            {
+                _items.RemoveRange(index, count);
+                SynchronizeDenseLength();
+                return;
+            }
+
             for (var target = index; target < newLength; target++)
             {
                 var source = target + count;
@@ -1786,6 +1909,12 @@ namespace JavaScriptRuntime
 
         public void Reverse()
         {
+            if (CanUseDenseMutationFastPath())
+            {
+                _items.Reverse();
+                return;
+            }
+
             var len = Count;
             var middle = len / 2;
             for (var lower = 0; lower < middle; lower++)
@@ -2180,7 +2309,8 @@ namespace JavaScriptRuntime
 
         private void SetLengthValue(object? value, bool throwOnError)
         {
-            if (!IsLengthWritable)
+            if ((HasNonDataDescriptors || PropertyDescriptorStore.HasAny(this))
+                && !IsLengthWritable)
             {
                 if (throwOnError)
                 {
@@ -2190,7 +2320,14 @@ namespace JavaScriptRuntime
                 return;
             }
 
-            if (!DefineLengthProperty(CreateLengthDescriptorWithValue(value)) && throwOnError)
+            var newLength = ValidateLengthValue(value);
+            if (CanUseDenseMutationFastPath())
+            {
+                SetLengthStorage(newLength);
+                return;
+            }
+
+            if (!DefineLengthProperty(CreateLengthDescriptorWithValue(newLength)) && throwOnError)
             {
                 throw new TypeError("Cannot assign to property 'length' of array");
             }
@@ -3212,6 +3349,36 @@ namespace JavaScriptRuntime
                 throw new RangeError("Invalid array length");
             }
 
+            var newLength = len - deleteCount + insertCount;
+            var canUseDenseFastPath = Count == len
+                && (insertCount <= deleteCount
+                    ? CanUseDenseMutationFastPath()
+                    : CanUseDenseGrowthFastPath());
+            if (canUseDenseFastPath)
+            {
+                var removedDense = new Array(deleteCount);
+                for (var i = 0; i < deleteCount; i++)
+                {
+                    removedDense._items.Add(_items[start + i]);
+                }
+                removedDense.SynchronizeDenseLength();
+
+                _items.RemoveRange(start, deleteCount);
+                if (insertCount == 1)
+                {
+                    _items.Insert(start, args[2]);
+                }
+                else if (insertCount > 1)
+                {
+                    var insertedItems = new object?[insertCount];
+                    System.Array.Copy(args, 2, insertedItems, 0, insertCount);
+                    _items.InsertRange(start, insertedItems);
+                }
+
+                SynchronizeDenseLength();
+                return removedDense;
+            }
+
             // Gather removed elements, preserving holes.
             var removed = new Array();
             removed.length = deleteCount;
@@ -3266,7 +3433,7 @@ namespace JavaScriptRuntime
                 TrySetIndexValue(start + i, args[2 + i], throwOnError: true);
             }
 
-            SetLength(len - deleteCount + insertCount, throwOnError: true);
+            SetLength(newLength, throwOnError: true);
             return removed;
         }
 
@@ -3397,6 +3564,16 @@ namespace JavaScriptRuntime
         private double PushItems(object?[]? items)
         {
             var newLength = length;
+            if (items != null
+                && items.Length > 0
+                && newLength <= int.MaxValue - items.Length
+                && CanUseDenseGrowthFastPath())
+            {
+                _items.AddRange(items);
+                SynchronizeDenseLength();
+                return length;
+            }
+
             if (items != null)
             {
                 foreach (var item in items)
@@ -3422,6 +3599,15 @@ namespace JavaScriptRuntime
             {
                 SetLength(0, throwOnError: true);
                 return null; // JS undefined
+            }
+
+            if (CanUseDenseMutationFastPath())
+            {
+                var lastIndex = _items.Count - 1;
+                var denseValue = _items[lastIndex];
+                _items.RemoveAt(lastIndex);
+                SynchronizeDenseLength();
+                return denseValue;
             }
 
             var newLength = currentLength - 1d;
