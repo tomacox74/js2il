@@ -448,7 +448,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     private static void NotifyCanonicalIndexMutation(IPropertyDescriptorStore store, string key)
     {
-        if (!ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
+        if (key.Length == 0
+            || (uint)(key[0] - '0') > 9
+            || !ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
         {
             return;
         }
