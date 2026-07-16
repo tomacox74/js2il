@@ -13,24 +13,19 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : JsObject, IExoticJsObject, IEnumerable<object?>, IDictionary<string, object?>
     {
-        internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
         [ThreadStatic]
-        private static DensePrototypeCache? _densePrototypeCache;
+        private static bool _defaultPrototypeChainHasIndexedProperties;
+        [ThreadStatic]
+        private static long _observedPrototypeMutationVersion;
+        private static long _prototypeMutationVersion;
+        internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
         private readonly List<object?> _items;
         private int _logicalLength;
         private int _holeCount;
         private double _virtualLength;
-
-        private sealed class DensePrototypeCache
-        {
-            public long DescriptorVersion = -1;
-            public long PrototypeVersion = -1;
-            public object? StoreIdentity;
-            public bool HasIndexedProperties;
-        }
 
         internal static ExpandoObject Prototype
         {
@@ -44,6 +39,7 @@ namespace JavaScriptRuntime
 
                 prototype = CreateThreadPrototypeOverride();
                 _threadPrototypeOverrides.Value = prototype;
+                RefreshDefaultPrototypeChainState();
                 return prototype;
             }
         }
@@ -60,6 +56,8 @@ namespace JavaScriptRuntime
         internal static void ResetPrototypeForTests()
         {
             _threadPrototypeOverrides.Value = null;
+            _defaultPrototypeChainHasIndexedProperties = false;
+            _observedPrototypeMutationVersion = Volatile.Read(ref _prototypeMutationVersion);
         }
 
         private static ExpandoObject CreateThreadPrototypeOverride()
@@ -1654,21 +1652,40 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            var cache = _densePrototypeCache ??= new DensePrototypeCache();
-            var descriptorVersion = PropertyDescriptorStore.MutationVersion;
-            var prototypeVersion = PrototypeChain.MutationVersion;
-            var storeIdentity = PropertyDescriptorStore.CurrentStoreIdentity;
-            if (!ReferenceEquals(cache.StoreIdentity, storeIdentity)
-                || cache.DescriptorVersion != descriptorVersion
-                || cache.PrototypeVersion != prototypeVersion)
+            var mutationVersion = Volatile.Read(ref _prototypeMutationVersion);
+            if (_observedPrototypeMutationVersion != mutationVersion)
             {
-                cache.HasIndexedProperties = DefaultPrototypeChainHasIndexedProperties();
-                cache.StoreIdentity = storeIdentity;
-                cache.DescriptorVersion = descriptorVersion;
-                cache.PrototypeVersion = prototypeVersion;
+                RefreshDefaultPrototypeChainState();
             }
 
-            return !cache.HasIndexedProperties;
+            return !_defaultPrototypeChainHasIndexedProperties;
+        }
+
+        internal static void NotifyPrototypeDescriptorMutation(string key)
+        {
+            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
+            {
+                Interlocked.Increment(ref _prototypeMutationVersion);
+            }
+        }
+
+        internal static void NotifyPrototypeMutation()
+            => Interlocked.Increment(ref _prototypeMutationVersion);
+
+        private static void RefreshDefaultPrototypeChainState()
+        {
+            while (true)
+            {
+                var beforeScan = Volatile.Read(ref _prototypeMutationVersion);
+                var hasIndexedProperties = DefaultPrototypeChainHasIndexedProperties();
+                var afterScan = Volatile.Read(ref _prototypeMutationVersion);
+                if (beforeScan == afterScan)
+                {
+                    _defaultPrototypeChainHasIndexedProperties = hasIndexedProperties;
+                    _observedPrototypeMutationVersion = afterScan;
+                    return;
+                }
+            }
         }
 
         private static bool DefaultPrototypeChainHasIndexedProperties()

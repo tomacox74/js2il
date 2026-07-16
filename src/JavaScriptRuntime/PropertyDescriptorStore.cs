@@ -61,8 +61,6 @@ internal enum PropertyDescriptorLookup
 
 internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 {
-    private static long _mutationVersion;
-    internal static long MutationVersion => Volatile.Read(ref _mutationVersion);
     // Perf (#1417): descriptor reads vastly outnumber writes on hot property paths, so
     // each slot publishes an immutable snapshot that readers access lock-free via a
     // volatile read. Writers serialize on the slot's WriteLock, build a modified copy
@@ -304,7 +302,10 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     internal static void SetCurrentRuntimeStore(IPropertyDescriptorStore? store)
-        => _currentRuntimeStore.Value = store;
+    {
+        _currentRuntimeStore.Value = store;
+        Array.NotifyPrototypeMutation();
+    }
 
     internal static IDisposable BeginIntrinsicInitialization()
     {
@@ -384,8 +385,6 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     public static bool HasAny(object target)
         => CurrentStore.HasAny(target);
 
-    internal static object CurrentStoreIdentity => CurrentStore;
-
     internal static bool HasIntrinsicProperties(object target)
         => _intrinsicStore.HasAny(target);
 
@@ -399,7 +398,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
     {
         CurrentStore.DefineOrUpdate(target, key, descriptor);
-        Interlocked.Increment(ref _mutationVersion);
+        Array.NotifyPrototypeDescriptorMutation(key);
     }
 
     internal static void CopyOwnProperties(object source, object target)
@@ -428,7 +427,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         var deleted = CurrentStore.Delete(target, key);
         if (deleted)
         {
-            Interlocked.Increment(ref _mutationVersion);
+            Array.NotifyPrototypeDescriptorMutation(key);
         }
 
         return deleted;
@@ -437,7 +436,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     internal static void Clear(object target)
     {
         CurrentStore.Clear(target);
-        Interlocked.Increment(ref _mutationVersion);
+        Array.NotifyPrototypeMutation();
     }
 
     public static bool IsEnumerableOrDefaultTrue(object target, string key)
