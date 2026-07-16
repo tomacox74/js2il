@@ -1677,14 +1677,6 @@ namespace JavaScriptRuntime
             return !_defaultPrototypeChainHasIndexedProperties;
         }
 
-        internal static void NotifyPrototypeDescriptorMutation(string key)
-        {
-            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
-            {
-                Interlocked.Increment(ref _prototypeMutationVersion);
-            }
-        }
-
         internal static void NotifyPrototypeMutation()
             => Interlocked.Increment(ref _prototypeMutationVersion);
 

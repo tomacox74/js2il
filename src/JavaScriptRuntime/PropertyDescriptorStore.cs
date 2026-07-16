@@ -271,6 +271,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     private static readonly ThreadLocal<int> _intrinsicInitializationDepth = new(() => 0);
 
     private readonly ConditionalWeakTable<object, OverrideSlot> _overrideSlots = new();
+    private volatile bool _hasCanonicalIndexOverrides;
 
     /// <summary>
     /// Marks a <see cref="JsObject"/> target whose descriptor state can no longer be
@@ -303,8 +304,12 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     internal static void SetCurrentRuntimeStore(IPropertyDescriptorStore? store)
     {
+        var previous = _currentRuntimeStore.Value;
         _currentRuntimeStore.Value = store;
-        Array.NotifyPrototypeMutation();
+        if (HasCanonicalIndexOverrides(previous) || HasCanonicalIndexOverrides(store))
+        {
+            Array.NotifyPrototypeMutation();
+        }
     }
 
     internal static IDisposable BeginIntrinsicInitialization()
@@ -397,8 +402,9 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     public static void DefineOrUpdate(object target, string key, JsPropertyDescriptor descriptor)
     {
-        CurrentStore.DefineOrUpdate(target, key, descriptor);
-        Array.NotifyPrototypeDescriptorMutation(key);
+        var store = CurrentStore;
+        store.DefineOrUpdate(target, key, descriptor);
+        NotifyCanonicalIndexMutation(store, key);
     }
 
     internal static void CopyOwnProperties(object source, object target)
@@ -424,18 +430,34 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
 
     public static bool Delete(object target, string key)
     {
-        var deleted = CurrentStore.Delete(target, key);
-        if (deleted)
-        {
-            Array.NotifyPrototypeDescriptorMutation(key);
-        }
-
+        var store = CurrentStore;
+        var deleted = store.Delete(target, key);
+        NotifyCanonicalIndexMutation(store, key);
         return deleted;
     }
 
     internal static void Clear(object target)
     {
         CurrentStore.Clear(target);
+        Array.NotifyPrototypeMutation();
+    }
+
+    private static bool HasCanonicalIndexOverrides(IPropertyDescriptorStore? store)
+        => store is PropertyDescriptorStore runtimeStore
+            && runtimeStore._hasCanonicalIndexOverrides;
+
+    private static void NotifyCanonicalIndexMutation(IPropertyDescriptorStore store, string key)
+    {
+        if (!ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
+        {
+            return;
+        }
+
+        if (store is PropertyDescriptorStore runtimeStore)
+        {
+            runtimeStore._hasCanonicalIndexOverrides = true;
+        }
+
         Array.NotifyPrototypeMutation();
     }
 
