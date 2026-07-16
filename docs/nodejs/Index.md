@@ -4,14 +4,14 @@
 
 **Target Node.js Version:** `22.x LTS`
 
-**Generated:** `2026-07-15T22:50:04Z`
+**Generated:** `2026-07-16T00:47:37Z`
 
 ## Summary
 
-- **Modules:** 21
+- **Modules:** 23
 - **Globals:** 18
   - Supported: 15
-  - Partial: 21
+  - Partial: 23
 
 ## Modules
 
@@ -34,6 +34,7 @@
 | [querystring](querystring.md) | partial | [Node.js](https://nodejs.org/api/querystring.html) |
 | [stream](stream.md) | partial | [Node.js](https://nodejs.org/api/stream.html) |
 | [string_decoder](string_decoder.md) | partial | [Node.js](https://nodejs.org/api/string_decoder.html) |
+| [timers](timers.md) | partial | [Node.js](https://nodejs.org/api/timers.html) |
 | [timers/promises](timers_promises.md) | completed | [Node.js](https://nodejs.org/api/timers.html#timers-promises-api) |
 | [tls](tls.md) | partial | [Node.js](https://nodejs.org/api/tls.html) |
 | [url](url.md) | partial | [Node.js](https://nodejs.org/api/url.html) |
