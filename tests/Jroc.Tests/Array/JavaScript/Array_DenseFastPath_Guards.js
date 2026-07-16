@@ -46,3 +46,9 @@ const customPrototypeArray = [];
 Object.setPrototypeOf(customPrototypeArray, customPrototype);
 customPrototypeArray.push(84);
 console.log(customPrototypeArray.length, Object.hasOwn(customPrototypeArray, "0"), customPushValue);
+
+const sparseWritable = [];
+sparseWritable[2000] = "before";
+Object.preventExtensions(sparseWritable);
+sparseWritable[2000] = "after";
+console.log(sparseWritable.length, sparseWritable[2000]);

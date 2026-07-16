@@ -1383,7 +1383,15 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (PropertyDescriptorStore.HasAny(this))
+            var hasDenseIndex = HasDenseIndex(index);
+            if (!HasNonDataDescriptors && hasDenseIndex)
+            {
+                _items[index] = value;
+                return true;
+            }
+
+            if ((HasNonDataDescriptors || !hasDenseIndex)
+                && PropertyDescriptorStore.HasAny(this))
             {
                 var descriptorKey = index.ToString(CultureInfo.InvariantCulture);
                 if (PropertyDescriptorStore.GetOwnLookupCore(this, descriptorKey, out _) != PropertyDescriptorLookup.None)
@@ -1462,8 +1470,10 @@ namespace JavaScriptRuntime
         }
 
         internal static double ValidateLengthValue(object? value)
+            => ValidateLengthValue(TypeUtilities.ToNumber(value));
+
+        private static double ValidateLengthValue(double newLength)
         {
-            var newLength = TypeUtilities.ToNumber(value);
             if (double.IsNaN(newLength)
                 || double.IsInfinity(newLength)
                 || newLength < 0
@@ -1599,6 +1609,12 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            var hasDenseIndex = HasDenseIndex(index);
+            if (!HasNonDataDescriptors && hasDenseIndex)
+            {
+                return true;
+            }
+
             if (PropertyDescriptorStore.HasAny(this))
             {
                 var key = index.ToString(CultureInfo.InvariantCulture);
@@ -1609,7 +1625,7 @@ namespace JavaScriptRuntime
                 }
             }
 
-            return HasDenseIndex(index);
+            return hasDenseIndex;
         }
 
         internal IEnumerable<int> GetOwnElementIndices()
@@ -1730,7 +1746,12 @@ namespace JavaScriptRuntime
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
-                if (PropertyDescriptorStore.HasAny(this))
+                if (!HasNonDataDescriptors && HasDenseIndex(index))
+                {
+                    return _items[index];
+                }
+
+                if (HasNonDataDescriptors && PropertyDescriptorStore.HasAny(this))
                 {
                     var key = index.ToString(CultureInfo.InvariantCulture);
                     var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
@@ -1761,6 +1782,7 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(_logicalLength);
             _items.Add(item);
             _logicalLength = _items.Count;
+            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
         }
 
         public void AddRange(IEnumerable<object?> collection)
@@ -1771,6 +1793,7 @@ namespace JavaScriptRuntime
                 _items.Add(item);
             }
             _logicalLength = _items.Count;
+            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
         }
 
         public void Insert(int index, object? item)
@@ -2316,24 +2339,38 @@ namespace JavaScriptRuntime
         }
 
         public void SetLength(double value, bool throwOnError)
-            => SetLengthValue(value, throwOnError);
+        {
+            if (CanSetLength(throwOnError))
+            {
+                SetValidatedLength(ValidateLengthValue(value), throwOnError);
+            }
+        }
 
         public void SetLength(object? value, bool throwOnError)
-            => SetLengthValue(value, throwOnError);
-
-        private void SetLengthValue(object? value, bool throwOnError)
         {
-            if (HasNonDataDescriptors && !IsLengthWritable)
+            if (CanSetLength(throwOnError))
             {
-                if (throwOnError)
-                {
-                    throw new TypeError("Cannot assign to read only property 'length' of array");
-                }
+                SetValidatedLength(ValidateLengthValue(value), throwOnError);
+            }
+        }
 
-                return;
+        private bool CanSetLength(bool throwOnError)
+        {
+            if (!HasNonDataDescriptors || IsLengthWritable)
+            {
+                return true;
             }
 
-            var newLength = ValidateLengthValue(value);
+            if (throwOnError)
+            {
+                throw new TypeError("Cannot assign to read only property 'length' of array");
+            }
+
+            return false;
+        }
+
+        private void SetValidatedLength(double newLength, bool throwOnError)
+        {
             if (CanUseDenseMutationFastPath())
             {
                 SetLengthStorage(newLength);
@@ -3615,20 +3652,25 @@ namespace JavaScriptRuntime
         /// </summary>
         public object? pop(object[]? args)
         {
-            var currentLength = length;
-            if (currentLength == 0)
-            {
-                SetLength(0, throwOnError: true);
-                return null; // JS undefined
-            }
-
             if (CanUseDenseMutationFastPath())
             {
+                if (_items.Count == 0)
+                {
+                    return null;
+                }
+
                 var lastIndex = _items.Count - 1;
                 var denseValue = _items[lastIndex];
                 _items.RemoveAt(lastIndex);
                 SynchronizeDenseLength();
                 return denseValue;
+            }
+
+            var currentLength = length;
+            if (currentLength == 0)
+            {
+                SetLength(0, throwOnError: true);
+                return null; // JS undefined
             }
 
             var newLength = currentLength - 1d;
@@ -3675,6 +3717,19 @@ namespace JavaScriptRuntime
         /// </summary>
         public object? shift(object[]? args)
         {
+            if (CanUseDenseMutationFastPath())
+            {
+                if (_items.Count == 0)
+                {
+                    return null;
+                }
+
+                var denseValue = _items[0];
+                _items.RemoveAt(0);
+                SynchronizeDenseLength();
+                return denseValue;
+            }
+
             if (this.Count == 0) return null;
             var v = this[0];
             this.RemoveAt(0);

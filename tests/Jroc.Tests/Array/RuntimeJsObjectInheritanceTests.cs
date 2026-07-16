@@ -26,6 +26,17 @@ public sealed class RuntimeJsObjectInheritanceTests
     }
 
     [Fact]
+    public void EmptyAddRange_PreservesVirtualLength()
+    {
+        var array = new JavaScriptRuntime.Array();
+        array.length = 4294967295d;
+
+        array.AddRange(System.Array.Empty<object?>());
+
+        Assert.Equal(4294967295d, array.length);
+    }
+
+    [Fact]
     public void Array_UsesInheritedStorageOnlyForOrdinaryProperties()
     {
         var runtime = RuntimeServices.BuildServiceProvider();
