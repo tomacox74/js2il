@@ -7,6 +7,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - modules: add the Node `util/types` / `node:util/types` subpath as an alias of `util.types`, including Undici-required `isUint8Array` and `isArrayBuffer` predicates for Fetch byte validation and WebSocket ArrayBuffer handling. (#1496)
+- perf/benchmarks: add Jint and YantraJS execution measurements to the Kraken 1.1 `ai-astar` suite. The data and test scripts load during benchmark setup, so each runtime measures only the prepared `runTest()` invocation alongside the existing jroc and Okojo cases.
 
 ## v0.11.27 - 2026-07-16
 
