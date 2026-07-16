@@ -219,6 +219,70 @@ function getBaseContext() {
     };
 }
 
+function parsePackageVersionsFromCsproj(csprojPath) {
+    if (!fs.existsSync(csprojPath)) {
+        return {};
+    }
+
+    const xml = fs.readFileSync(csprojPath, 'utf8');
+    const versions = {};
+    const pattern = /<PackageReference\s+Include="([^"]+)"\s+Version="([^"]+)"/g;
+    let match;
+
+    while ((match = pattern.exec(xml)) !== null) {
+        const packageId = match[1];
+        const version = match[2];
+        if (packageId && version) {
+            versions[packageId] = version;
+        }
+    }
+
+    return versions;
+}
+
+function buildRuntimeVersionContext() {
+    const benchmarkCsproj = path.join(__dirname, 'Benchmarks', 'Benchmarks.csproj');
+    const benchmarkPackages = parsePackageVersionsFromCsproj(benchmarkCsproj);
+    const nodeVersion = process.env.NODE_VERSION || process.version?.replace(/^v/i, '') || null;
+    const jrocVersion = process.env.JROC_PACKAGE_VERSION || process.env.JROC_VERSION || null;
+
+    return compactObject({
+        node: nodeVersion,
+        jint: benchmarkPackages.Jint ?? null,
+        okojo: benchmarkPackages.Okojo ?? null,
+        yantrajs: benchmarkPackages['YantraJS.Core'] ?? null,
+        clearscript: benchmarkPackages['Microsoft.ClearScript.V8'] ?? null,
+        jroc: jrocVersion
+    });
+}
+
+function resolveRuntimeVersion(normalizedRuntime, runtimeVersions) {
+    if (!normalizedRuntime) {
+        return null;
+    }
+
+    if (normalizedRuntime === 'node') {
+        return runtimeVersions.node ?? null;
+    }
+    if (normalizedRuntime.startsWith('jint')) {
+        return runtimeVersions.jint ?? null;
+    }
+    if (normalizedRuntime.startsWith('okojo')) {
+        return runtimeVersions.okojo ?? null;
+    }
+    if (normalizedRuntime.startsWith('yantrajs')) {
+        return runtimeVersions.yantrajs ?? null;
+    }
+    if (normalizedRuntime.startsWith('clearscript')) {
+        return runtimeVersions.clearscript ?? null;
+    }
+    if (normalizedRuntime.startsWith('jroc')) {
+        return runtimeVersions.jroc ?? null;
+    }
+
+    return null;
+}
+
 function compactObject(obj) {
     return Object.fromEntries(
         Object.entries(obj).filter(([, value]) => value !== null && value !== undefined && value !== '')
@@ -300,13 +364,15 @@ function extractBenchmarkDotNetHostMetadata(data) {
     });
 }
 
-function createRow(base, source, scenario, runtime, metric, value, unit, runAt, meta = {}, hostColumns = {}) {
+function createRow(base, source, scenario, runtime, metric, value, unit, runAt, meta = {}, hostColumns = {}, runtimeVersions = {}) {
+    const normalizedRuntime = normalizeRuntime(runtime);
     return {
         ...base,
         ...hostColumns,
         source,
         scenario: slugify(scenario),
-        runtime: normalizeRuntime(runtime),
+        runtime: normalizedRuntime,
+        runtime_version: resolveRuntimeVersion(normalizedRuntime, runtimeVersions),
         metric,
         value,
         unit,
@@ -315,7 +381,7 @@ function createRow(base, source, scenario, runtime, metric, value, unit, runAt, 
     };
 }
 
-function parsePrimeResults(inputPath, base, hostMetadata) {
+function parsePrimeResults(inputPath, base, hostMetadata, runtimeVersions) {
     if (!fs.existsSync(inputPath)) {
         console.log(`Prime results file not found: ${inputPath}`);
         return [];
@@ -341,24 +407,24 @@ function parsePrimeResults(inputPath, base, hostMetadata) {
         if (passes !== null) {
             rows.push(createRow(base, 'prime-script', scenario, runtime, 'passes', passes, 'count', runAt, {
                 host: hostMetadata
-            }, hostColumns));
+            }, hostColumns, runtimeVersions));
         }
         if (passesPerSecond !== null) {
             rows.push(createRow(base, 'prime-script', scenario, runtime, 'passes_per_second', passesPerSecond, 'count_per_sec', runAt, {
                 host: hostMetadata
-            }, hostColumns));
+            }, hostColumns, runtimeVersions));
         }
         if (compileDuration !== null) {
             rows.push(createRow(base, 'prime-script', scenario, runtime, 'compile_duration_ms', compileDuration, 'ms', runAt, {
                 host: hostMetadata
-            }, hostColumns));
+            }, hostColumns, runtimeVersions));
         }
     }
 
     return rows;
 }
 
-function parseMitataResults(inputPath, base, hostMetadata) {
+function parseMitataResults(inputPath, base, hostMetadata, runtimeVersions) {
     if (!fs.existsSync(inputPath)) {
         console.log(`Mitata results file not found: ${inputPath}`);
         return [];
@@ -409,13 +475,13 @@ function parseMitataResults(inputPath, base, hostMetadata) {
             };
 
             if (avgNs !== null) {
-                rows.push(createRow(base, 'mitata', scenario, runtime, 'avg_ns', avgNs, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'avg_ns', avgNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (totalNs !== null) {
-                rows.push(createRow(base, 'mitata', scenario, runtime, 'total_ns', totalNs, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'total_ns', totalNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (benchmarkIterations !== null) {
-                rows.push(createRow(base, 'mitata', scenario, runtime, 'iterations', benchmarkIterations, 'count', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'mitata', scenario, runtime, 'iterations', benchmarkIterations, 'count', runAt, meta, hostColumns, runtimeVersions));
             }
             if (errorMessage) {
                 rows.push(createRow(
@@ -428,7 +494,8 @@ function parseMitataResults(inputPath, base, hostMetadata) {
                     'flag',
                     runAt,
                     { ...meta, error: errorMessage },
-                    hostColumns
+                    hostColumns,
+                    runtimeVersions
                 ));
             }
         }
@@ -448,7 +515,7 @@ function extractBenchmarksFromJson(data) {
     return [];
 }
 
-function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
+function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata, runtimeVersions) {
     if (!fs.existsSync(resultsDir)) {
         console.log(`BenchmarkDotNet results directory not found: ${resultsDir}`);
         return [];
@@ -559,28 +626,28 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
             );
 
             if (mean !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'mean_ns', mean, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'mean_ns', mean, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (median !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'median_ns', median, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'median_ns', median, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (stdDev !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'stddev_ns', stdDev, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'stddev_ns', stdDev, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (allocatedBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
             }
             if (allocatedNativeMemoryBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
             }
             if (gen0Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
             }
             if (gen1Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
             }
             if (gen2Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtimeRaw, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
             }
         }
     }
@@ -589,10 +656,10 @@ function parseBenchmarkDotNetResults(resultsDir, base, hostMetadata) {
         return rows;
     }
 
-    return parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata);
+    return parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, runtimeVersions);
 }
 
-function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
+function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata, runtimeVersions) {
     const files = fs.readdirSync(resultsDir)
         .filter(file => file.endsWith('.md'))
         .map(file => path.join(resultsDir, file));
@@ -682,28 +749,28 @@ function parseBenchmarkDotNetMarkdownResults(resultsDir, base, hostMetadata) {
             const gen2Collections = getNumber(gen2Text);
 
             if (meanNs !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'mean_ns', meanNs, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'mean_ns', meanNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (medianNs !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'median_ns', medianNs, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'median_ns', medianNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (stdDevNs !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'stddev_ns', stdDevNs, 'ns', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'stddev_ns', stdDevNs, 'ns', runAt, meta, hostColumns, runtimeVersions));
             }
             if (allocatedBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_bytes', allocatedBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
             }
             if (allocatedNativeMemoryBytes !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'allocated_native_memory_bytes', allocatedNativeMemoryBytes, 'bytes', runAt, meta, hostColumns, runtimeVersions));
             }
             if (gen0Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen0_collections_per_1000_ops', gen0Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
             }
             if (gen1Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen1_collections_per_1000_ops', gen1Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
             }
             if (gen2Collections !== null) {
-                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns));
+                rows.push(createRow(base, 'benchmarkdotnet', scenario, runtime, 'gen2_collections_per_1000_ops', gen2Collections, 'collections_per_1000_ops', runAt, meta, hostColumns, runtimeVersions));
             }
         }
     }
@@ -761,10 +828,11 @@ async function upsertRows(rows) {
             for (const key of HOST_COLUMN_KEYS) {
                 delete clone[key];
             }
+            delete clone.runtime_version;
             return clone;
         });
 
-        console.log('Structured host columns not found in perf_results; retrying upload with host metadata in meta.host only.');
+        console.log('Structured host/runtime columns not found in perf_results; retrying upload with metadata only.');
         await uploadChunked(strippedRows);
     }
 
@@ -783,14 +851,15 @@ async function main() {
 
     const base = getBaseContext();
     const hostMetadata = getHostMetadata();
+    const runtimeVersions = buildRuntimeVersionContext();
     let rows = [];
 
     if (source === 'benchmarkdotnet') {
-        rows = parseBenchmarkDotNetResults(input || path.join('tests', 'performance', 'Benchmarks', 'BenchmarkDotNet.Artifacts', 'results'), base, hostMetadata);
+        rows = parseBenchmarkDotNetResults(input || path.join('tests', 'performance', 'Benchmarks', 'BenchmarkDotNet.Artifacts', 'results'), base, hostMetadata, runtimeVersions);
     } else if (source === 'prime-script') {
-        rows = parsePrimeResults(input || path.join('tests', 'performance', 'results.json'), base, hostMetadata);
+        rows = parsePrimeResults(input || path.join('tests', 'performance', 'results.json'), base, hostMetadata, runtimeVersions);
     } else if (source === 'mitata') {
-        rows = parseMitataResults(input || path.join('tests', 'performance', 'mitata', 'results.json'), base, hostMetadata);
+        rows = parseMitataResults(input || path.join('tests', 'performance', 'mitata', 'results.json'), base, hostMetadata, runtimeVersions);
     } else {
         console.error(`Unsupported source: ${source}`);
         process.exit(1);
