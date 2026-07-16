@@ -95,6 +95,18 @@ internal sealed class JsShape
 }
 
 /// <summary>
+/// Marks a <see cref="JsObject"/> subclass that overrides ECMAScript internal
+/// object operations for specialized storage.
+/// </summary>
+/// <remarks>
+/// Keeping this opt-in explicit lets ordinary and generated JsObject subclasses
+/// retain direct, non-virtual hot paths.
+/// </remarks>
+internal interface IExoticJsObject
+{
+}
+
+/// <summary>
 /// A JavaScript plain object backed by a <see cref="Dictionary{TKey,TValue}"/> of
 /// <see cref="JsValue"/> entries. Numeric and boolean property values are stored
 /// without heap boxing; boxing is deferred until the value is accessed as
@@ -144,6 +156,106 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     {
         _cacheShapeTransitions = cacheShapeTransitions;
     }
+
+    // -------------------------------------------------------------------------
+    // ECMAScript internal object-operation hooks
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Looks up an own descriptor without cloning it. The returned descriptor is
+    /// shared descriptor-store state and must be cloned before mutation.
+    /// </summary>
+    /// <remarks>
+    /// Exotic subclasses must preserve descriptor-store tombstones and overrides
+    /// before synthesizing descriptors for specialized storage and implement
+    /// <see cref="IExoticJsObject"/> to opt generic dispatch into these hooks.
+    /// </remarks>
+    internal virtual PropertyDescriptorLookup GetOwnPropertyDescriptor(
+        string key,
+        out JsPropertyDescriptor descriptor)
+    {
+        var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out descriptor);
+        if (lookup != PropertyDescriptorLookup.None)
+        {
+            return lookup;
+        }
+
+        if (!TryGetOwnPropertyValue(key, out var value))
+        {
+            descriptor = null!;
+            return PropertyDescriptorLookup.None;
+        }
+
+        descriptor = new JsPropertyDescriptor
+        {
+            Kind = JsPropertyDescriptorKind.Data,
+            Value = value,
+            Writable = true,
+            Enumerable = true,
+            Configurable = true
+        };
+        return PropertyDescriptorLookup.Found;
+    }
+
+    /// <summary>
+    /// Reads an own value from this object's specialized backing storage.
+    /// Keys are canonical runtime property-key strings; symbols remain encoded
+    /// keys and are never converted to display strings by this contract.
+    /// </summary>
+    internal virtual bool TryGetOwnPropertyValue(string key, out object? value)
+        => TryGetBoxedValue(key, out value);
+
+    /// <summary>
+    /// Defines or updates an own property while keeping ordinary backing storage
+    /// and descriptor state synchronized.
+    /// </summary>
+    internal virtual bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
+        {
+            if (!SetOwnPropertyValue(
+                key,
+                descriptor.Kind == JsPropertyDescriptorKind.Accessor ? null : descriptor.Value))
+            {
+                return false;
+            }
+        }
+
+        PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
+        return true;
+    }
+
+    /// <summary>Writes an own value to this object's specialized backing storage.</summary>
+    internal virtual bool SetOwnPropertyValue(string key, object? value)
+    {
+        SetBoxedValue(key, value);
+        return true;
+    }
+
+    /// <summary>Deletes an own property from backing and descriptor storage.</summary>
+    internal virtual bool DeleteOwnProperty(string key)
+    {
+        if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
+        {
+            Remove(key);
+        }
+
+        PropertyDescriptorStore.Delete(this, key);
+        return true;
+    }
+
+    /// <summary>
+    /// Returns every own key in ECMAScript encounter order, including keys held
+    /// only in descriptor or specialized storage.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="IExoticJsObject"/> implementations with specialized storage
+    /// must override this method and merge all of their key sources.
+    /// </remarks>
+    internal virtual IEnumerable<string> GetOwnPropertyKeys()
+        => GetOwnPropertyNames();
 
     // -------------------------------------------------------------------------
     // Typed initializer methods used from generated IL (no boxing at call site)
