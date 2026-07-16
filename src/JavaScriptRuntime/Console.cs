@@ -464,6 +464,12 @@ namespace JavaScriptRuntime
                 return;
             }
 
+            if (value is JavaScriptRuntime.Array)
+            {
+                sb.Append(DotNet2JSConversions.ToString(value));
+                return;
+            }
+
             if (value is System.Collections.Generic.IDictionary<string, object?> dict)
             {
                 sb.Append('{');

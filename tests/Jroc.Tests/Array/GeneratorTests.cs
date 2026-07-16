@@ -135,5 +135,8 @@ namespace Jroc.Tests.Array
 
         [Fact]
         public Task Array_Prototype_CustomMethod_Dispatch() { var testName = nameof(Array_Prototype_CustomMethod_Dispatch); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_JsObject_NamedProperties() { var testName = nameof(Array_JsObject_NamedProperties); return GenerateTest(testName); }
     }
 }
