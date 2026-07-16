@@ -1100,6 +1100,27 @@ namespace JavaScriptRuntime
             return base.TryGetOwnPropertyValue(key, out value);
         }
 
+        internal override bool HasOwnPropertyValue(string key)
+        {
+            var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
+            if (lookup != PropertyDescriptorLookup.None)
+            {
+                return lookup == PropertyDescriptorLookup.Found;
+            }
+
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            {
+                return HasOwnIndex(index);
+            }
+
+            return base.HasOwnPropertyValue(key);
+        }
+
         internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
         {
             ArgumentNullException.ThrowIfNull(descriptor);

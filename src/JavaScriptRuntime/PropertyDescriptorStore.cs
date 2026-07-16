@@ -345,7 +345,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     /// </summary>
     internal static PropertyDescriptorLookup GetOwnLookup(object target, string key, out JsPropertyDescriptor descriptor)
     {
-        if (target is JsObject jsObject && jsObject is IExoticJsObject)
+        if (target is JsObject jsObject)
         {
             return jsObject.GetOwnPropertyDescriptor(key, out descriptor);
         }

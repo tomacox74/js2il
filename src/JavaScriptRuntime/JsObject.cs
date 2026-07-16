@@ -99,8 +99,9 @@ internal sealed class JsShape
 /// object operations for specialized storage.
 /// </summary>
 /// <remarks>
-/// Keeping this opt-in explicit lets ordinary and generated JsObject subclasses
-/// retain direct, non-virtual hot paths.
+/// Generic dispatch uses the virtual hooks on every <see cref="JsObject"/>. This
+/// marker only identifies paths where ordinary objects can use specialized
+/// non-virtual fast paths.
 /// </remarks>
 internal interface IExoticJsObject
 {
@@ -167,8 +168,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     /// </summary>
     /// <remarks>
     /// Exotic subclasses must preserve descriptor-store tombstones and overrides
-    /// before synthesizing descriptors for specialized storage and implement
-    /// <see cref="IExoticJsObject"/> to opt generic dispatch into these hooks.
+    /// before synthesizing descriptors for specialized storage.
     /// </remarks>
     internal virtual PropertyDescriptorLookup GetOwnPropertyDescriptor(
         string key,
@@ -204,6 +204,10 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     /// </summary>
     internal virtual bool TryGetOwnPropertyValue(string key, out object? value)
         => TryGetBoxedValue(key, out value);
+
+    /// <summary>Tests specialized backing storage for an own property without reading its value.</summary>
+    internal virtual bool HasOwnPropertyValue(string key)
+        => ContainsKey(key);
 
     /// <summary>
     /// Defines or updates an own property while keeping ordinary backing storage
@@ -251,11 +255,32 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     /// only in descriptor or specialized storage.
     /// </summary>
     /// <remarks>
-    /// <see cref="IExoticJsObject"/> implementations with specialized storage
-    /// must override this method and merge all of their key sources.
+    /// Subclasses with specialized storage must override this method and merge
+    /// all of their key sources.
     /// </remarks>
     internal virtual IEnumerable<string> GetOwnPropertyKeys()
-        => GetOwnPropertyNames();
+    {
+        var keys = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var key in PropertyDescriptorStore.GetOwnKeys(this))
+        {
+            if (seen.Add(key))
+            {
+                keys.Add(key);
+            }
+        }
+
+        foreach (var key in GetOwnPropertyNames())
+        {
+            if (!PropertyDescriptorStore.IsDeleted(this, key) && seen.Add(key))
+            {
+                keys.Add(key);
+            }
+        }
+
+        return keys;
+    }
 
     // -------------------------------------------------------------------------
     // Typed initializer methods used from generated IL (no boxing at call site)

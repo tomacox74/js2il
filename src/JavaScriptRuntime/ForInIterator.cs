@@ -51,7 +51,6 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         _useTypeChain = !_usePrototypeChain
             && !ObjectRuntime.IsOrdinaryObject(root)
             && root is not JavaScriptRuntime.Proxy
-            && root is not JavaScriptRuntime.Array
             && root is not JavaScriptRuntime.TypedArrayBase
             && root is not string
             && root is not IDictionary
@@ -215,13 +214,6 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
         }
 
-        // Arrays can also carry enumerable non-index properties (for example,
-        // RegExp exec metadata such as groups, index, input, and indices).
-        if (target is JavaScriptRuntime.Array)
-        {
-            return JavaScriptRuntime.Object.GetOwnEnumerableKeysInOrder(target);
-        }
-
         // Typed array: enumerate indices
         if (target is JavaScriptRuntime.TypedArrayBase typedArray)
         {
@@ -266,11 +258,6 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
         }
 
         if (target is IDictionary<string, object?> || target is IDictionary)
-        {
-            return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
-        }
-
-        if (target is JavaScriptRuntime.Array)
         {
             return JavaScriptRuntime.Object.GetOwnPropertyKeysInOrder(target);
         }
@@ -356,21 +343,6 @@ public sealed class ForInIterator : IJavaScriptIterator<string>
             if (!presentInDescriptor && !presentInBacking)
                 return false;
             return PropertyDescriptorStore.IsEnumerableOrDefaultTrue(target, key);
-        }
-
-        // JS Array
-        if (target is JavaScriptRuntime.Array jsArr)
-        {
-            if (PropertyDescriptorStore.TryGetOwn(target, key, out var descriptor))
-            {
-                return descriptor.Enumerable;
-            }
-
-            if (!int.TryParse(key, out var idx) || idx < 0)
-            {
-                return false;
-            }
-            return idx < jsArr.Count;
         }
 
         // Typed array

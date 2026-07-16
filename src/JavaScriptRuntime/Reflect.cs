@@ -24,6 +24,18 @@ namespace JavaScriptRuntime
         public static bool defineProperty(object target, object? propertyKey, object? attributes)
             => Object.TryDefineProperty(target, propertyKey, attributes);
 
+        public static object ownKeys(object target)
+        {
+            if (!Proxy.IsObjectLikeValue(target))
+            {
+                throw new TypeError("Reflect.ownKeys target must be an object");
+            }
+
+            return new Array(
+                Object.GetOwnPropertyKeysInOrder(target, includeEncodedSymbolKeys: true)
+                    .Select(Object.ToExternalPropertyKey));
+        }
+
         private static object[] NormalizeArgumentsList(object? argumentsList)
         {
             if (argumentsList is null || argumentsList is JsNull)

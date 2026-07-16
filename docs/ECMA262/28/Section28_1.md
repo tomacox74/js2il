@@ -4,7 +4,7 @@
 
 [Back to Section28](Section28.md) | [Back to Index](../Index.md)
 
-> Last generated (UTC): 2026-06-24T17:00:14Z
+> Last generated (UTC): 2026-07-16T23:24:47Z
 
 | Clause | Title | Status | Link |
 |---:|---|---|---|
@@ -23,7 +23,7 @@
 | 28.1.7 | Reflect.getPrototypeOf ( target ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.getprototypeof) |
 | 28.1.8 | Reflect.has ( target , propertyKey ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.has) |
 | 28.1.9 | Reflect.isExtensible ( target ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.isextensible) |
-| 28.1.10 | Reflect.ownKeys ( target ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.ownkeys) |
+| 28.1.10 | Reflect.ownKeys ( target ) | Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.ownkeys) |
 | 28.1.11 | Reflect.preventExtensions ( target ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.preventextensions) |
 | 28.1.12 | Reflect.set ( target , propertyKey , V [ , receiver ] ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.set) |
 | 28.1.13 | Reflect.setPrototypeOf ( target , proto ) | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-reflect.setprototypeof) |
