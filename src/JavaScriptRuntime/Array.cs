@@ -2340,9 +2340,15 @@ namespace JavaScriptRuntime
 
         public void SetLength(double value, bool throwOnError)
         {
+            if (CanUseDenseMutationFastPath())
+            {
+                SetLengthStorage(ValidateLengthValue(value));
+                return;
+            }
+
             if (CanSetLength(throwOnError))
             {
-                SetValidatedLength(ValidateLengthValue(value), throwOnError);
+                SetValidatedLength(ValidateLengthValue(value), throwOnError, allowDenseFastPath: false);
             }
         }
 
@@ -2350,7 +2356,7 @@ namespace JavaScriptRuntime
         {
             if (CanSetLength(throwOnError))
             {
-                SetValidatedLength(ValidateLengthValue(value), throwOnError);
+                SetValidatedLength(ValidateLengthValue(value), throwOnError, allowDenseFastPath: true);
             }
         }
 
@@ -2369,9 +2375,9 @@ namespace JavaScriptRuntime
             return false;
         }
 
-        private void SetValidatedLength(double newLength, bool throwOnError)
+        private void SetValidatedLength(double newLength, bool throwOnError, bool allowDenseFastPath)
         {
-            if (CanUseDenseMutationFastPath())
+            if (allowDenseFastPath && CanUseDenseMutationFastPath())
             {
                 SetLengthStorage(newLength);
                 return;
