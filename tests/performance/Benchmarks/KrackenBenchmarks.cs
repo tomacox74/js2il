@@ -8,8 +8,8 @@ using YantraJS.Core;
 namespace Benchmarks;
 
 /// <summary>
-/// The Kraken performance benchmarks consist of a the test script and the data script.
-/// compile time and script load time and data load time are all excluded from the measurements.
+/// The Kraken performance benchmarks consist of a test script and a data script.
+/// Compile time, script load time, and data load time are excluded from the measurements.
 /// </summary>
 [MemoryDiagnoser]
 [Config(typeof(FullParamsConfig))]
@@ -19,6 +19,33 @@ namespace Benchmarks;
 [JsonExporterAttribute.FullCompressed]
 public class KrackenBenchmarks
 {
+    public static string? ScenarioFilter { get; set; }
+
+    private static readonly string[] ScenarioScriptNames =
+    [
+        "ai-astar.js",
+        "audio-beat-detection.js",
+        "audio-fft.js"
+    ];
+
+    private const string WorkloadRegistrationScript = """
+        var __jrocKrackenWorkload = null;
+        var __jrocKrackenIterations = 0;
+        var runTest = function(workload, iterations) {
+            __jrocKrackenWorkload = workload;
+            __jrocKrackenIterations = iterations;
+        };
+        """;
+
+    private const string BenchmarkRunnerScript = """
+        function runBenchmark() {
+            for (var i = 0; i < __jrocKrackenIterations; i++) {
+                __jrocKrackenWorkload();
+            }
+            return 'done';
+        }
+        """;
+
     /// <summary>
     /// Jroc compiled and loaded
     /// </summary>
@@ -41,15 +68,17 @@ public class KrackenBenchmarks
     private JSContext? _yantraJsContext;
     private JSValue? _yantraJsRunTest;
 
-    private void SetupJroc(string astarDataScriptContent, string astarTestScriptContent)
+    private void SetupJroc(string dataScriptContent, string testScriptContent)
     {
-        var runTestContent = @"export function runTest() { go(); return 'done'; }";
         var scriptBuilder = new System.Text.StringBuilder();
-        scriptBuilder.Append(astarDataScriptContent);
+        scriptBuilder.Append(dataScriptContent);
         scriptBuilder.AppendLine();
-        scriptBuilder.Append(astarTestScriptContent);
+        scriptBuilder.Append(WorkloadRegistrationScript);
         scriptBuilder.AppendLine();
-        scriptBuilder.Append(runTestContent);
+        scriptBuilder.Append(testScriptContent);
+        scriptBuilder.AppendLine();
+        scriptBuilder.Append("export ");
+        scriptBuilder.Append(BenchmarkRunnerScript);
         var finalScriptContent = scriptBuilder.ToString();
 
         var tmpPath = Path.GetTempPath();
@@ -65,37 +94,34 @@ public class KrackenBenchmarks
         _jrocExports = JsEngine.LoadModule(loadedAssembly.Assembly, artifact.ModuleIds[0]);        
     }
 
-    private void SetupOkojo(string astarDataScriptContent, string astarTestScriptContent)
+    private void SetupOkojo(string dataScriptContent, string testScriptContent)
     {
-        var runTestContent = @"function runTest() { go(); return 'done';}";
-
         var runtime = Okojo.Runtime.JsRuntime.CreateBuilder().Build();
         this._okojoRealm = runtime.MainRealm;
-        _okojoRealm.Execute(astarDataScriptContent);
-        _okojoRealm.Execute(astarTestScriptContent);
-        _okojoRealm.Execute(runTestContent);
+        _okojoRealm.Execute(dataScriptContent);
+        _okojoRealm.Execute(WorkloadRegistrationScript);
+        _okojoRealm.Execute(testScriptContent);
+        _okojoRealm.Execute(BenchmarkRunnerScript);
      
-        this._okojoRunTest = _okojoRealm.Global["runTest"];
+        this._okojoRunTest = _okojoRealm.Global["runBenchmark"];
     }
 
-    private void SetupJint(string astarDataScriptContent, string astarTestScriptContent)
+    private void SetupJint(string dataScriptContent, string testScriptContent)
     {
-        var runTestContent = @"function runTest() { go(); return 'done';}";
-
-        _jintEngine = new Engine(options => options.Strict());
-        _jintEngine.Execute(astarDataScriptContent, "ai-astar-data.js");
-        _jintEngine.Execute(astarTestScriptContent, "ai-astar.js");
-        _jintEngine.Execute(runTestContent, "kracken-run-test.js");
+        _jintEngine = new Engine();
+        _jintEngine.Execute(dataScriptContent, $"{ScriptName}-data.js");
+        _jintEngine.Execute(WorkloadRegistrationScript, "kracken-workload-registration.js");
+        _jintEngine.Execute(testScriptContent, ScriptName);
+        _jintEngine.Execute(BenchmarkRunnerScript, "kracken-benchmark-runner.js");
     }
 
-    private void SetupYantraJs(string astarDataScriptContent, string astarTestScriptContent)
+    private void SetupYantraJs(string dataScriptContent, string testScriptContent)
     {
-        var runTestContent = @"function runTest() { go(); return 'done';}";
-
         var context = new JSContext();
-        context.Eval(astarDataScriptContent, "ai-astar-data.js");
-        context.Eval(astarTestScriptContent, "ai-astar.js");
-        _yantraJsRunTest = context.Eval(runTestContent + "\nrunTest;", "kracken-run-test.js");
+        context.Eval(dataScriptContent, $"{ScriptName}-data.js");
+        context.Eval(WorkloadRegistrationScript, "kracken-workload-registration.js");
+        context.Eval(testScriptContent, ScriptName);
+        _yantraJsRunTest = context.Eval(BenchmarkRunnerScript + "\nrunBenchmark;", "kracken-benchmark-runner.js");
         _yantraJsContext = context;
     }
 
@@ -104,33 +130,41 @@ public class KrackenBenchmarks
 
     public IEnumerable<string> ScriptNames()
     {
-        return new string []
-        {
-            "ai-astar.js"
-        };
-    }
+        var scriptNames = ScenarioScriptNames
+            .Where(MatchesScenarioFilter)
+            .ToArray();
 
+        if (scriptNames.Length == 0)
+        {
+            throw new InvalidOperationException(
+                $"No Kraken benchmark scenario matched '{ScenarioFilter}'.");
+        }
+
+        return scriptNames;
+    }
 
     [GlobalSetup]
     public void Setup()
     {
         var scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scenarios", "kracken-1.1");
-        var astarTestScript = Path.Combine(scriptsDir,  "ai-astar.js");
-        var astarDataScript = Path.Combine(scriptsDir,  "ai-astar-data.js");
-        var astarTestScriptContent = File.ReadAllText(astarTestScript);
-        var astarDataScriptContent = File.ReadAllText(astarDataScript);
+        var testScriptPath = Path.Combine(scriptsDir, ScriptName);
+        var dataScriptPath = Path.Combine(
+            scriptsDir,
+            Path.GetFileNameWithoutExtension(ScriptName) + "-data.js");
+        var testScriptContent = File.ReadAllText(testScriptPath);
+        var dataScriptContent = File.ReadAllText(dataScriptPath);
 
-        SetupJroc(astarDataScriptContent, astarTestScriptContent);
-        SetupOkojo(astarDataScriptContent, astarTestScriptContent);
-        SetupJint(astarDataScriptContent, astarTestScriptContent);
-        SetupYantraJs(astarDataScriptContent, astarTestScriptContent);
+        SetupJroc(dataScriptContent, testScriptContent);
+        SetupOkojo(dataScriptContent, testScriptContent);
+        SetupJint(dataScriptContent, testScriptContent);
+        SetupYantraJs(dataScriptContent, testScriptContent);
     }
 
     [Benchmark(Description = "jroc-execute")]
     public void RunJrocTest()
     {
         dynamic exports = _jrocExports!;
-        var result = exports.runTest();
+        var result = exports.runBenchmark();
         if (result.ToString() != "done")
         {
             throw new InvalidOperationException($"Unexpected result from Jroc test: {result}");
@@ -150,7 +184,7 @@ public class KrackenBenchmarks
     [Benchmark(Description = "jint-execute")]
     public void RunJintTest()
     {
-        var result = _jintEngine!.Invoke("runTest");
+        var result = _jintEngine!.Invoke("runBenchmark");
         if (result.ToString() != "done")
         {
             throw new InvalidOperationException($"Unexpected result from Jint test: {result}");
@@ -166,5 +200,17 @@ public class KrackenBenchmarks
         {
             throw new InvalidOperationException($"Unexpected result from YantraJS test: {result}");
         }
+    }
+
+    private static bool MatchesScenarioFilter(string scriptName)
+    {
+        if (string.IsNullOrWhiteSpace(ScenarioFilter))
+        {
+            return true;
+        }
+
+        var scenarioName = Path.GetFileNameWithoutExtension(scriptName);
+        return string.Equals(scenarioName, ScenarioFilter, StringComparison.Ordinal)
+            || string.Equals(scriptName, ScenarioFilter, StringComparison.Ordinal);
     }
 }

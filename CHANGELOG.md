@@ -10,6 +10,7 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 - runtime: add an explicit, opt-in internal object-operation contract for exotic `JsObject` subclasses, covering own descriptors, values, definitions, writes, deletion, and complete ordered keys while preserving direct hot paths for ordinary/generated objects. Descriptor-store reads retain their shared no-clone contract, canonical array-index parsing is centralized, and focused ordinary-object read/write benchmarks plus an exotic-storage test double prepare the runtime for the phased `Array : JsObject` migration. (#1444, parent #1443)
 - modules: add the Node `util/types` / `node:util/types` subpath as an alias of `util.types`, including Undici-required `isUint8Array` and `isArrayBuffer` predicates for Fetch byte validation and WebSocket ArrayBuffer handling. (#1496)
 - perf/benchmarks: add Jint and YantraJS execution measurements to the Kraken 1.1 `ai-astar` suite. The data and test scripts load during benchmark setup, so each runtime measures only the prepared `runTest()` invocation alongside the existing jroc and Okojo cases.
+- perf/benchmarks: add Kraken 1.1 audio beat-detection and FFT scenarios, using a shared callback-registration harness so each engine measures the registered workload alone. Kraken runs now honor `--scenario`, including branch-comparison workflow dispatches.
 
 ## v0.11.27 - 2026-07-16
 

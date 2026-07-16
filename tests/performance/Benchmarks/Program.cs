@@ -63,10 +63,12 @@ else
         if (!string.IsNullOrWhiteSpace(scenarioFilter))
         {
             JrocPhasedBenchmarks.ScenarioFilter = scenarioFilter;
+            KrackenBenchmarks.ScenarioFilter = scenarioFilter;
         }
         else
         {
             JrocPhasedBenchmarks.ScenarioFilter = null;
+            KrackenBenchmarks.ScenarioFilter = null;
         }
 
         var summaries = switcher.Run(benchmarkArgs);
@@ -89,6 +91,7 @@ Console.WriteLine("  dotnet run -c Release --dispatch # Run late-bound dispatch 
 Console.WriteLine("  dotnet run -c Release --object-operations # Run ordinary-object operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --array-operations # Run dense-array operation microbenchmarks");
 Console.WriteLine("  dotnet run -c Release --phased # Run jroc phased + Jint prepared + Okojo execute comparison");
+Console.WriteLine("  dotnet run -c Release -- --kracken --scenario audio-fft # Run one Kraken scenario");
 Console.WriteLine("  dotnet run -c Release --all    # Run all benchmarks");
 Console.WriteLine("  dotnet run -c Debug -- --dispatch --debug-benchmarks # Allow debugging benchmark code");
 Console.WriteLine("  dotnet run -c Release --validate # Run validation tests");

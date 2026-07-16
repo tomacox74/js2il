@@ -77,10 +77,10 @@ function normalizeScenarioName(input) {
 
 /**
  * Resolves the scenario to a single composed script and an execution mode.
- * - Kracken scenarios (kracken-1.1/<name>.js) are concatenated with their
- *   optional <name>-data.js and wrapped with an exported runTest() that calls
- *   go(), matching KrackenBenchmarks.cs. Mode "calltest": load once, time
- *   repeated runTest() calls.
+ * - Kraken scenarios (kracken-1.1/<name>.js) are concatenated with their
+ *   optional <name>-data.js. Their runTest(workload, iterations) registration
+ *   is captured and invoked by an exported generic benchmark runner. Mode
+ *   "calltest": load once, time repeated runBenchmark() calls.
  * - Plain scenarios (Scenarios/<name>.js) run their workload at module load.
  *   Mode "reload": compile once, time each LoadModule.
  */
@@ -90,8 +90,19 @@ function resolveScenario(name) {
     const dataScript = path.join(krackenDir, `${name}-data.js`);
     const parts = [];
     if (fs.existsSync(dataScript)) parts.push(fs.readFileSync(dataScript, "utf8"));
+    parts.push(`var __jrocKrackenWorkload = null;
+var __jrocKrackenIterations = 0;
+var runTest = function(workload, iterations) {
+  __jrocKrackenWorkload = workload;
+  __jrocKrackenIterations = iterations;
+};`);
     parts.push(fs.readFileSync(krackenScript, "utf8"));
-    parts.push("export function runTest() { go(); return 'done'; }");
+    parts.push(`export function runBenchmark() {
+  for (var i = 0; i < __jrocKrackenIterations; i++) {
+    __jrocKrackenWorkload();
+  }
+  return "done";
+}`);
     return { source: parts.join("\n"), mode: "calltest" };
   }
 
@@ -156,7 +167,7 @@ if (mode == "calltest")
     for (int i = 0; i < iterations; i++)
     {
         var sw = Stopwatch.StartNew();
-        var result = d.runTest();
+        var result = d.runBenchmark();
         sw.Stop();
         Console.WriteLine($"run {i}: {sw.Elapsed.TotalSeconds:F2} s ({result})");
     }

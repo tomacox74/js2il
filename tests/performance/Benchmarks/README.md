@@ -110,10 +110,11 @@ dotnet run -c Release -- --phased --scenario dromaeo-3d-cube
 If any benchmark case fails, the run now exits non-zero and prints the failing benchmark cases instead of silently treating them as successful timings.
 
 #### Kraken Comparison
-Runs the Kraken 1.1 `ai-astar` workload with the test and data scripts loaded during setup, then measures only `runTest()` execution for jroc, Jint, Okojo, and YantraJS:
+Runs the selected Kraken 1.1 workload with its test and data scripts loaded during setup, then measures only its registered `runTest()` callback for jroc, Jint, Okojo, and YantraJS. The local suite includes `ai-astar`, `audio-beat-detection`, and `audio-fft`:
 
 ```powershell
 dotnet run -c Release -- --kracken
+dotnet run -c Release -- --kracken --scenario audio-fft
 ```
 
 #### Branch comparison workflow
