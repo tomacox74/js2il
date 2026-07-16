@@ -1121,6 +1121,11 @@ namespace JavaScriptRuntime
             return base.HasOwnPropertyValue(key);
         }
 
+        internal override object? GetOwnDataPropertyValue(string key, JsPropertyDescriptor descriptor)
+            => string.Equals(key, "length", StringComparison.Ordinal)
+                ? length
+                : descriptor.Value;
+
         internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
         {
             ArgumentNullException.ThrowIfNull(descriptor);

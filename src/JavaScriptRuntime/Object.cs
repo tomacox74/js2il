@@ -3753,6 +3753,12 @@ namespace JavaScriptRuntime
                 return false;
             }
 
+            if (target is JsObject jsObject)
+            {
+                return jsObject.GetOwnPropertyDescriptor(propName, out descriptor)
+                    == PropertyDescriptorLookup.Found;
+            }
+
             if (GlobalThis.IsArrayConstructorValue(target)
                 && string.Equals(propName, "prototype", StringComparison.Ordinal)
                 && PropertyDescriptorStore.TryGetOwn(target, propName, out descriptor!))
@@ -5545,9 +5551,7 @@ namespace JavaScriptRuntime
                 {
                     if (exoticDescriptor.Kind == JsPropertyDescriptorKind.Data)
                     {
-                        return exoticJsObject.TryGetOwnPropertyValue(name, out var currentValue)
-                            ? currentValue
-                            : exoticDescriptor.Value;
+                        return exoticJsObject.GetOwnDataPropertyValue(name, exoticDescriptor);
                     }
 
                     return exoticDescriptor.Get is null || exoticDescriptor.Get is JsNull
