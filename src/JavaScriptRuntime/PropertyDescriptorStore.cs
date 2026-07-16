@@ -327,7 +327,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     }
 
     public static bool TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
-        => CurrentStore.TryGetOwn(target, key, out descriptor);
+        => GetOwnLookup(target, key, out descriptor) == PropertyDescriptorLookup.Found;
 
     /// <summary>
     /// Unified single-probe own lookup (perf #1418). Combines the tombstone check
@@ -336,6 +336,25 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
     /// is shared and must be cloned by callers that mutate it.
     /// </summary>
     internal static PropertyDescriptorLookup GetOwnLookup(object target, string key, out JsPropertyDescriptor descriptor)
+    {
+        if (target is JsObject jsObject && jsObject is IExoticJsObject)
+        {
+            return jsObject.GetOwnPropertyDescriptor(key, out descriptor);
+        }
+
+        return GetOwnLookupCore(target, key, out descriptor);
+    }
+
+    /// <summary>
+    /// Descriptor-store lookup used by the ordinary <see cref="JsObject"/>
+    /// implementation. This deliberately bypasses virtual object operations to
+    /// avoid recursion; exotic subclasses should call it before consulting their
+    /// specialized storage.
+    /// </summary>
+    internal static PropertyDescriptorLookup GetOwnLookupCore(
+        object target,
+        string key,
+        out JsPropertyDescriptor descriptor)
     {
         ValidateTargetAndKey(target, key);
 
@@ -404,7 +423,7 @@ internal sealed class PropertyDescriptorStore : IPropertyDescriptorStore
         => CurrentStore.Clear(target);
 
     public static bool IsEnumerableOrDefaultTrue(object target, string key)
-        => CurrentStore.IsEnumerableOrDefaultTrue(target, key);
+        => !TryGetOwn(target, key, out var descriptor) || descriptor.Enumerable;
 
     bool IPropertyDescriptorStore.TryGetOwn(object target, string key, out JsPropertyDescriptor descriptor)
     {

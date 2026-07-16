@@ -485,16 +485,13 @@ namespace JavaScriptRuntime
 
         private static bool TryGetCanonicalArrayIndexKey(string key, out uint index)
         {
-            if (key is null
-                || IsEncodedSymbolKey(key)
-                || !uint.TryParse(key, out index)
-                || index == uint.MaxValue)
+            if (IsEncodedSymbolKey(key))
             {
                 index = 0;
                 return false;
             }
 
-            return key == index.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+            return CanonicalArrayIndex.TryParse(key, out index);
         }
 
         private static List<string> ReorderOwnKeys(IEnumerable<string> encounteredKeys, bool includeEncodedSymbolKeys)
@@ -549,6 +546,7 @@ namespace JavaScriptRuntime
         {
             var keys = new List<string>();
             var seen = new HashSet<string>(StringComparer.Ordinal);
+            var isExoticObject = ObjectRuntime.IsExoticObject(obj);
 
             static void AddKey(List<string> keys, HashSet<string> seen, string? key)
             {
@@ -563,15 +561,21 @@ namespace JavaScriptRuntime
                 }
             }
 
-            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            if (!isExoticObject)
             {
-                AddKey(keys, seen, key);
+                foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+                {
+                    AddKey(keys, seen, key);
+                }
             }
 
             RuntimeServices.EnsureClassConstructorCoreMetadataProperties(obj);
-            foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+            if (!isExoticObject)
             {
-                AddKey(keys, seen, key);
+                foreach (var key in PropertyDescriptorStore.GetOwnKeys(obj))
+                {
+                    AddKey(keys, seen, key);
+                }
             }
 
             foreach (var key in RuntimeServices.GetLazyClassMethodOwnKeys(obj))
@@ -1467,7 +1471,14 @@ namespace JavaScriptRuntime
                 largeArray.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
             }
 
-            if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
+            if (obj is JsObject jsObject && jsObject is IExoticJsObject)
+            {
+                if (!jsObject.DefineOwnProperty(key, appliedDescriptor))
+                {
+                    throw new TypeError($"Cannot define property: {key}");
+                }
+            }
+            else if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
                 && ObjectRuntime.IsOrdinaryObject(obj))
             {
                 ObjectRuntime.TrySetOwnValue(
@@ -1490,7 +1501,10 @@ namespace JavaScriptRuntime
                 }
             }
 
-            PropertyDescriptorStore.DefineOrUpdate(obj, key, appliedDescriptor);
+            if (obj is not IExoticJsObject)
+            {
+                PropertyDescriptorStore.DefineOrUpdate(obj, key, appliedDescriptor);
+            }
             return obj;
         }
 
@@ -1694,7 +1708,17 @@ namespace JavaScriptRuntime
 
                 desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Configurable = false;
-                PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+                if (obj is JsObject exoticObject && exoticObject is IExoticJsObject)
+                {
+                    if (!exoticObject.DefineOwnProperty(key, desc))
+                    {
+                        throw new TypeError($"Cannot define property: {key}");
+                    }
+                }
+                else
+                {
+                    PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+                }
             }
 
             var state = GetIntegrityState(obj);
@@ -1729,7 +1753,17 @@ namespace JavaScriptRuntime
                 {
                     desc.Writable = false;
                 }
-                PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+                if (obj is JsObject exoticObject && exoticObject is IExoticJsObject)
+                {
+                    if (!exoticObject.DefineOwnProperty(key, desc))
+                    {
+                        throw new TypeError($"Cannot define property: {key}");
+                    }
+                }
+                else
+                {
+                    PropertyDescriptorStore.DefineOrUpdate(obj, key, desc);
+                }
             }
 
             var state = GetIntegrityState(obj);
@@ -2017,20 +2051,31 @@ namespace JavaScriptRuntime
                 }
             }
 
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            var descriptor = new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = enumerable,
                 Configurable = configurable,
                 Get = getter,
                 Set = setter
-            });
+            };
 
-            if (target is IDictionary<string, object?> dict
-                && !PropertyDescriptorStore.HasIntrinsicProperties(target)
-                && !dict.ContainsKey(key))
+            if (target is JsObject jsObject && jsObject is IExoticJsObject)
             {
-                dict[key] = null;
+                if (!jsObject.DefineOwnProperty(key, descriptor))
+                {
+                    throw new TypeError($"Cannot define property: {key}");
+                }
+            }
+            else
+            {
+                PropertyDescriptorStore.DefineOrUpdate(target, key, descriptor);
+                if (target is IDictionary<string, object?> dict
+                    && !PropertyDescriptorStore.HasIntrinsicProperties(target)
+                    && !dict.ContainsKey(key))
+                {
+                    dict[key] = null;
+                }
             }
 
             return null;
@@ -2061,20 +2106,31 @@ namespace JavaScriptRuntime
                 }
             }
 
-            PropertyDescriptorStore.DefineOrUpdate(target, key, new JsPropertyDescriptor
+            var descriptor = new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Accessor,
                 Enumerable = enumerable,
                 Configurable = configurable,
                 Get = getter,
                 Set = setter
-            });
+            };
 
-            if (target is IDictionary<string, object?> dict
-                && !PropertyDescriptorStore.HasIntrinsicProperties(target)
-                && !dict.ContainsKey(key))
+            if (target is JsObject jsObject && jsObject is IExoticJsObject)
             {
-                dict[key] = null;
+                if (!jsObject.DefineOwnProperty(key, descriptor))
+                {
+                    throw new TypeError($"Cannot define property: {key}");
+                }
+            }
+            else
+            {
+                PropertyDescriptorStore.DefineOrUpdate(target, key, descriptor);
+                if (target is IDictionary<string, object?> dict
+                    && !PropertyDescriptorStore.HasIntrinsicProperties(target)
+                    && !dict.ContainsKey(key))
+                {
+                    dict[key] = null;
+                }
             }
 
             return null;
@@ -5482,7 +5538,9 @@ namespace JavaScriptRuntime
             // storage without probing the descriptor store (ConditionalWeakTable).
             // Own misses fall through so prototype-chain and special-name
             // semantics are preserved.
-            if (obj is JsObject plainJsObject && !plainJsObject.HasNonDataDescriptors)
+            if (obj is JsObject plainJsObject
+                && plainJsObject is not IExoticJsObject
+                && !plainJsObject.HasNonDataDescriptors)
             {
                 if (plainJsObject.TryGetBoxedValue(name, out var plainValue))
                 {
@@ -5629,7 +5687,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static void SetPropertyNumber(object? obj, string key, double value)
         {
-            if (obj is JsObject jsObj)
+            if (obj is JsObject jsObj && jsObj is not IExoticJsObject)
             {
                 jsObj.SetNumber(key, value);
                 return;
@@ -5643,7 +5701,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static void SetPropertyBoolean(object? obj, string key, bool value)
         {
-            if (obj is JsObject jsObj)
+            if (obj is JsObject jsObj && jsObj is not IExoticJsObject)
             {
                 jsObj.SetBoolean(key, value);
                 return;
@@ -5657,7 +5715,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static void SetPropertyString(object? obj, string key, string? value)
         {
-            if (obj is JsObject jsObj)
+            if (obj is JsObject jsObj && jsObj is not IExoticJsObject)
             {
                 jsObj.SetString(key, value);
                 return;
@@ -5763,24 +5821,66 @@ namespace JavaScriptRuntime
 
                 desc = PropertyDescriptorStore.CloneDescriptor(desc);
                 desc.Value = value;
-                PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
-                if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
-                    && ObjectRuntime.IsOrdinaryObject(obj))
+                if (obj is JsObject descriptorObject && descriptorObject is IExoticJsObject)
                 {
-                    ObjectRuntime.TrySetOwnValue(obj, name, value);
+                    if (!descriptorObject.DefineOwnProperty(name, desc))
+                    {
+                        if (!throwOnError)
+                        {
+                            return value;
+                        }
+
+                        throw new TypeError($"Cannot assign to property '{name}' of object");
+                    }
                 }
-                else if (obj is IDictionary<string, object?> dictDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
+                else
                 {
-                    dictDesc[name] = value;
+                    PropertyDescriptorStore.DefineOrUpdate(obj, name, desc);
+                    if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
+                        && ObjectRuntime.IsOrdinaryObject(obj))
+                    {
+                        ObjectRuntime.TrySetOwnValue(obj, name, value);
+                    }
+                    else if (obj is IDictionary<string, object?> dictDesc && !PropertyDescriptorStore.HasIntrinsicProperties(obj))
+                    {
+                        dictDesc[name] = value;
+                    }
                 }
                 return value;
             }
 
-            // Ordinary objects use direct JsObject storage.
+            // Exotic JsObject subclasses own their specialized property definition.
+            if (obj is JsObject jsObject && jsObject is IExoticJsObject)
+            {
+                if (!ObjectRuntime.HasOwnValue(jsObject, name)
+                    && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
+                {
+                    return value;
+                }
+
+                if (!jsObject.DefineOwnProperty(name, new JsPropertyDescriptor
+                {
+                    Kind = JsPropertyDescriptorKind.Data,
+                    Value = value,
+                    Writable = true,
+                    Enumerable = true,
+                    Configurable = true
+                }))
+                {
+                    if (!throwOnError)
+                    {
+                        return value;
+                    }
+
+                    throw new TypeError($"Cannot add property '{name}' to object");
+                }
+
+                return value;
+            }
+
+            // Ordinary JsObject subclasses retain the direct non-virtual hot path.
             if (ObjectRuntime.IsOrdinaryObject(obj))
             {
-                // Prototype-setter semantics: if no own property exists, and a prototype accessor
-                // defines a setter, route the assignment to that setter.
                 if (!ObjectRuntime.HasOwnValue(obj, name)
                     && TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
