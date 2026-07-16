@@ -22,29 +22,36 @@ internal class Timers
             delayMs = 0;
         }
 
-        var handle = _scheduler.Schedule(() =>
-        {
-            // Parameter count includes the leading scopes array parameter.
-            var paramCount = del.Method.GetParameters().Length;
-            var expectedArgCount = System.Math.Max(0, paramCount - 1);
-
-            // JS semantics: missing args -> undefined (null); extra args ignored.
-            var invokeArgs = new object[expectedArgCount];
-            for (int i = 0; i < expectedArgCount; i++)
+        var timeout = new Timeout(
+            schedule: action => _scheduler.Schedule(action, TimeSpan.FromMilliseconds(delayMs)),
+            cancel: _scheduler.Cancel,
+            callback: () =>
             {
-                invokeArgs[i] = i < args.Length ? args[i] : null!;
-            }
+                // Parameter count includes the leading scopes array parameter.
+                var paramCount = del.Method.GetParameters().Length;
+                var expectedArgCount = System.Math.Max(0, paramCount - 1);
 
-            // Provide a non-null scopes array; bound closures ignore it.
-            Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
-        }, TimeSpan.FromMilliseconds(delayMs));
+                // JS semantics: missing args -> undefined (null); extra args ignored.
+                var invokeArgs = new object[expectedArgCount];
+                for (int i = 0; i < expectedArgCount; i++)
+                {
+                    invokeArgs[i] = i < args.Length ? args[i] : null!;
+                }
 
-        return handle;
+                // Provide a non-null scopes array; bound closures ignore it.
+                Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+            });
+
+        return timeout.refresh();
     }
 
     public object? clearTimeout(object handle)
     {
-        if (handle != null)
+        if (handle is Timeout timeout)
+        {
+            timeout.Cancel();
+        }
+        else if (handle != null)
         {
             _scheduler.Cancel(handle);
         }
@@ -121,5 +128,79 @@ internal class Timers
             _scheduler.CancelImmediate(handle);
         }
         return null;
+    }
+}
+
+/// <summary>
+/// Node-compatible one-shot timer handle.
+/// </summary>
+public sealed class Timeout
+{
+    private readonly object _syncRoot = new();
+    private readonly Func<Action, object> _schedule;
+    private readonly Action<object> _cancel;
+    private readonly Action _callback;
+    private object? _schedulerHandle;
+    private long _generation;
+    private bool _active;
+
+    internal Timeout(Func<Action, object> schedule, Action<object> cancel, Action callback)
+    {
+        _schedule = schedule;
+        _cancel = cancel;
+        _callback = callback;
+    }
+
+    /// <summary>
+    /// Reschedules this timeout using its original delay and returns the same handle.
+    /// </summary>
+    public Timeout refresh()
+    {
+        lock (_syncRoot)
+        {
+            CancelScheduledHandle();
+            _active = true;
+            var generation = ++_generation;
+            _schedulerHandle = _schedule(() => Invoke(generation));
+        }
+
+        return this;
+    }
+
+    internal void Cancel()
+    {
+        lock (_syncRoot)
+        {
+            _active = false;
+            ++_generation;
+            CancelScheduledHandle();
+        }
+    }
+
+    private void Invoke(long generation)
+    {
+        lock (_syncRoot)
+        {
+            if (!_active || generation != _generation)
+            {
+                return;
+            }
+
+            _active = false;
+            _schedulerHandle = null;
+        }
+
+        _callback();
+    }
+
+    private void CancelScheduledHandle()
+    {
+        if (_schedulerHandle == null)
+        {
+            return;
+        }
+
+        _cancel(_schedulerHandle);
+        _schedulerHandle = null;
     }
 }

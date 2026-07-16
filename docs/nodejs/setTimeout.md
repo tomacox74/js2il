@@ -15,7 +15,7 @@
 
 ## Notes
 
-Schedules a callback to be executed after a specified delay in milliseconds. Returns a timer handle that can be used with clearTimeout.
+Schedules a callback to be executed after a specified delay in milliseconds. Returns a refreshable Timeout handle that can be passed to clearTimeout or restarted with timeout.refresh().
 
 ## Tests
 

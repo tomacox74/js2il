@@ -15,7 +15,7 @@
 
 ## Notes
 
-Cancels a timer that was previously created with setTimeout. Returns undefined (null in .NET).
+Cancels a timer that was previously created with setTimeout, including a refreshable Timeout handle. Returns undefined (null in .NET).
 
 ## Tests
 

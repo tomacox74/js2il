@@ -31,6 +31,9 @@ namespace Jroc.Tests.Node.Timers
         public Task SetTimeout_ZeroDelay_WithArgs() => GenerateTest(nameof(SetTimeout_ZeroDelay_WithArgs));
 
         [Fact]
+        public Task Require_Timers_RefreshableTimeout() => GenerateTest(nameof(Require_Timers_RefreshableTimeout));
+
+        [Fact]
         public Task SetImmediate_ExecutesCallback() => GenerateTest(nameof(SetImmediate_ExecutesCallback));
 
         [Fact]
