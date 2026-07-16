@@ -18,3 +18,5 @@ const timeout = setTimeout(() => {
         console.log(`flushes: ${count}`);
     }
 }, 1);
+
+console.log(`same handle: ${timeout.refresh() === timeout}`);

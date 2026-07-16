@@ -22,7 +22,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22df
+					// Method begins at RVA 0x235f
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -42,7 +42,7 @@
 				.method public hidebysig specialname rtspecialname 
 					instance void .ctor () cil managed 
 				{
-					// Method begins at RVA 0x22e8
+					// Method begins at RVA 0x2368
 					// Header size: 1
 					// Code size: 8 (0x8)
 					.maxstack 8
@@ -60,7 +60,7 @@
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
 			{
-				// Method begins at RVA 0x22d6
+				// Method begins at RVA 0x2356
 				// Header size: 1
 				// Code size: 8 (0x8)
 				.maxstack 8
@@ -86,7 +86,7 @@
 				65 53 63 6f 70 65 54 79 70 65 4d 65 74 61 64 61
 				74 61 54 6f 6b 65 6e 04 00 00 02
 			)
-			// Method begins at RVA 0x21e8
+			// Method begins at RVA 0x2268
 			// Header size: 12
 			// Code size: 206 (0xce)
 			.maxstack 8
@@ -193,7 +193,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x22c2
+			// Method begins at RVA 0x2342
 			// Header size: 1
 			// Code size: 19 (0x13)
 			.maxstack 8
@@ -222,14 +222,18 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 393 (0x189)
+		// Code size: 523 (0x20b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.Require_Timers_RefreshableTimeout/Scope,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object[]
+			[4] object[],
+			[5] object,
+			[6] object,
+			[7] bool,
+			[8] string
 		)
 
 		IL_0000: newobj instance void Modules.Require_Timers_RefreshableTimeout/Scope::.ctor()
@@ -364,7 +368,47 @@
 		IL_0181: ldloc.0
 		IL_0182: ldloc.3
 		IL_0183: stfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
-		IL_0188: ret
+		IL_0188: ldstr "console"
+		IL_018d: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0192: stloc.3
+		IL_0193: ldloc.3
+		IL_0194: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0199: stloc.3
+		IL_019a: ldloc.0
+		IL_019b: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
+		IL_01a0: ldstr "Cannot access 'timeout' before initialization"
+		IL_01a5: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_01aa: stloc.s 5
+		IL_01ac: ldloc.s 5
+		IL_01ae: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_01b3: stloc.s 5
+		IL_01b5: ldloc.s 5
+		IL_01b7: ldstr "refresh"
+		IL_01bc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember0(object, string)
+		IL_01c1: stloc.s 5
+		IL_01c3: ldloc.0
+		IL_01c4: ldfld object Modules.Require_Timers_RefreshableTimeout/Scope::timeout
+		IL_01c9: ldstr "Cannot access 'timeout' before initialization"
+		IL_01ce: call object [JavaScriptRuntime]JavaScriptRuntime.RuntimeServices::EnsureTemporalDeadZoneInitialized(object, string)
+		IL_01d3: stloc.s 6
+		IL_01d5: ldloc.s 5
+		IL_01d7: ldloc.s 6
+		IL_01d9: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_01de: stloc.s 7
+		IL_01e0: ldloc.s 7
+		IL_01e2: box [System.Runtime]System.Boolean
+		IL_01e7: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_01ec: stloc.s 8
+		IL_01ee: ldstr "same handle: "
+		IL_01f3: ldloc.s 8
+		IL_01f5: call string [System.Runtime]System.String::Concat(string, string)
+		IL_01fa: stloc.s 8
+		IL_01fc: ldloc.3
+		IL_01fd: ldstr "log"
+		IL_0202: ldloc.s 8
+		IL_0204: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember1(object, string, object)
+		IL_0209: pop
+		IL_020a: ret
 	} // end of method Require_Timers_RefreshableTimeout::__js_module_init__
 
 } // end of class Modules.Require_Timers_RefreshableTimeout
@@ -376,7 +420,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22f1
+		// Method begins at RVA 0x2371
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

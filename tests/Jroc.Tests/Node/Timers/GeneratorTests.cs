@@ -34,6 +34,9 @@ namespace Jroc.Tests.Node.Timers
         public Task Require_Timers_RefreshableTimeout() => GenerateTest(nameof(Require_Timers_RefreshableTimeout));
 
         [Fact]
+        public Task Timeout_RefreshAfterClear_DoesNotReactivate() => GenerateTest(nameof(Timeout_RefreshAfterClear_DoesNotReactivate));
+
+        [Fact]
         public Task SetImmediate_ExecutesCallback() => GenerateTest(nameof(SetImmediate_ExecutesCallback));
 
         [Fact]

@@ -23,8 +23,8 @@ internal class Timers
         }
 
         var timeout = new Timeout(
-            schedule: action => _scheduler.Schedule(action, TimeSpan.FromMilliseconds(delayMs)),
-            cancel: _scheduler.Cancel,
+            scheduler: _scheduler,
+            delay: TimeSpan.FromMilliseconds(delayMs),
             callback: () =>
             {
                 // Parameter count includes the leading scopes array parameter.
@@ -136,18 +136,19 @@ internal class Timers
 /// </summary>
 public sealed class Timeout
 {
-    private readonly object _syncRoot = new();
-    private readonly Func<Action, object> _schedule;
-    private readonly Action<object> _cancel;
+    private readonly JavaScriptRuntime.EngineCore.IScheduler _scheduler;
+    private readonly TimeSpan _delay;
     private readonly Action _callback;
     private object? _schedulerHandle;
-    private long _generation;
-    private bool _active;
+    private bool _canceled;
 
-    internal Timeout(Func<Action, object> schedule, Action<object> cancel, Action callback)
+    internal Timeout(
+        JavaScriptRuntime.EngineCore.IScheduler scheduler,
+        TimeSpan delay,
+        Action callback)
     {
-        _schedule = schedule;
-        _cancel = cancel;
+        _scheduler = scheduler;
+        _delay = delay;
         _callback = callback;
     }
 
@@ -156,38 +157,28 @@ public sealed class Timeout
     /// </summary>
     public Timeout refresh()
     {
-        lock (_syncRoot)
+        if (_canceled)
         {
-            CancelScheduledHandle();
-            _active = true;
-            var generation = ++_generation;
-            _schedulerHandle = _schedule(() => Invoke(generation));
+            return this;
         }
 
+        CancelScheduledHandle();
+        _schedulerHandle = _scheduler.Schedule(Invoke, _delay);
         return this;
     }
 
     internal void Cancel()
     {
-        lock (_syncRoot)
-        {
-            _active = false;
-            ++_generation;
-            CancelScheduledHandle();
-        }
+        _canceled = true;
+        CancelScheduledHandle();
     }
 
-    private void Invoke(long generation)
+    private void Invoke()
     {
-        lock (_syncRoot)
+        _schedulerHandle = null;
+        if (_canceled)
         {
-            if (!_active || generation != _generation)
-            {
-                return;
-            }
-
-            _active = false;
-            _schedulerHandle = null;
+            return;
         }
 
         _callback();
@@ -200,7 +191,7 @@ public sealed class Timeout
             return;
         }
 
-        _cancel(_schedulerHandle);
+        _scheduler.Cancel(_schedulerHandle);
         _schedulerHandle = null;
     }
 }

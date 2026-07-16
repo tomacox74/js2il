@@ -38,8 +38,12 @@ Schedules a one-shot callback through JROC's Node event loop and returns a refre
 
 ### clearTimeout(timeout)
 
-Cancels an active Timeout handle. Repeated cleanup is safe.
+Cancels an active Timeout handle. Repeated cleanup is safe, and refresh() does not reactivate a canceled handle.
+
+**Tests:**
+- `Jroc.Tests.Node.Timers.ExecutionTests.Timeout_RefreshAfterClear_DoesNotReactivate` (`tests/Jroc.Tests/Node/Timers/ExecutionTests.cs`)
+- `Jroc.Tests.Node.Timers.GeneratorTests.Timeout_RefreshAfterClear_DoesNotReactivate` (`tests/Jroc.Tests/Node/Timers/GeneratorTests.cs`)
 
 ### timeout.refresh()
 
-Restarts an active or completed one-shot timeout using its original delay and returns the same handle.
+Restarts an active or completed one-shot timeout using its original delay and returns the same handle. A handle canceled by clearTimeout() remains canceled.

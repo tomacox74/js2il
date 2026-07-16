@@ -33,14 +33,24 @@
       "kind": "function",
       "status": "supported",
       "docs": "https://nodejs.org/api/timers.html#cleartimeouttimeout",
-      "notes": "Cancels an active Timeout handle. Repeated cleanup is safe."
+      "notes": "Cancels an active Timeout handle. Repeated cleanup is safe, and refresh() does not reactivate a canceled handle.",
+      "tests": [
+        {
+          "name": "Jroc.Tests.Node.Timers.ExecutionTests.Timeout_RefreshAfterClear_DoesNotReactivate",
+          "file": "tests/Jroc.Tests/Node/Timers/ExecutionTests.cs"
+        },
+        {
+          "name": "Jroc.Tests.Node.Timers.GeneratorTests.Timeout_RefreshAfterClear_DoesNotReactivate",
+          "file": "tests/Jroc.Tests/Node/Timers/GeneratorTests.cs"
+        }
+      ]
     },
     {
       "name": "timeout.refresh()",
       "kind": "function",
       "status": "supported",
       "docs": "https://nodejs.org/api/timers.html#timeoutrefresh",
-      "notes": "Restarts an active or completed one-shot timeout using its original delay and returns the same handle."
+      "notes": "Restarts an active or completed one-shot timeout using its original delay and returns the same handle. A handle canceled by clearTimeout() remains canceled."
     }
   ],
   "notes": "Both `timers` and `node:timers` resolve to this module. This focused implementation provides the timeout APIs required by Undici's snapshot recorder; immediate and interval module exports are not yet implemented."
