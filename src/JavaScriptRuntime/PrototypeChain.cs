@@ -59,6 +59,19 @@ public static class PrototypeChain
 
     public static void SetPrototype(object obj, object? prototype)
     {
+        SetPrototypeCore(obj, prototype);
+        if (obj is Array array)
+        {
+            array.DisableDenseGrowthFastPath();
+        }
+        Array.NotifyPrototypeMutation();
+    }
+
+    internal static void InitializePrototype(object obj, object? prototype)
+        => SetPrototypeCore(obj, prototype);
+
+    private static void SetPrototypeCore(object obj, object? prototype)
+    {
         if (obj == null) throw new ArgumentNullException(nameof(obj));
 
         // If someone calls SetPrototype directly, treat it as explicit opt-in.

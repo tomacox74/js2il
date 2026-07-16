@@ -83,7 +83,11 @@ public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable V
 /// Contract: Receiver is a proven Array; Value is the assigned RHS value.
 /// Result (if materialized) is the assigned value.
 /// </summary>
-public record LIRSetJsArrayLength(TempVariable Receiver, TempVariable Value, TempVariable Result) : LIRInstruction;
+public record LIRSetJsArrayLength(
+    TempVariable Receiver,
+    TempVariable Value,
+    TempVariable Result,
+    bool ThrowOnError = true) : LIRInstruction;
 
 /// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Array by numeric index.

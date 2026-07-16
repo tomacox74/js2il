@@ -224,7 +224,7 @@ namespace JavaScriptRuntime
 
         private static ObjectIntegrityState GetIntegrityState(object target) => _integrityStates.GetOrCreateValue(target);
 
-        private static bool IsExtensibleInternal(object target)
+        internal static bool IsExtensibleInternal(object target)
         {
             return !_integrityStates.TryGetValue(target, out var state) || state.Extensible;
         }
@@ -360,9 +360,12 @@ namespace JavaScriptRuntime
             };
         }
 
-        private static JsPropertyDescriptor ApplyRequestedDescriptorToExisting(JsPropertyDescriptor current, RequestedPropertyDescriptor requested)
+        private static bool TryApplyRequestedDescriptorToExisting(
+            JsPropertyDescriptor current,
+            RequestedPropertyDescriptor requested,
+            out JsPropertyDescriptor result)
         {
-            var result = CloneDescriptor(current);
+            result = CloneDescriptor(current);
             var changesKind = requested.IsAccessorDescriptor
                 ? current.Kind != JsPropertyDescriptorKind.Accessor
                 : requested.IsDataDescriptor && current.Kind != JsPropertyDescriptorKind.Data;
@@ -371,17 +374,17 @@ namespace JavaScriptRuntime
             {
                 if (requested.HasConfigurable && requested.Configurable)
                 {
-                    throw new TypeError("Cannot redefine non-configurable property");
+                    return false;
                 }
 
                 if (requested.HasEnumerable && requested.Enumerable != current.Enumerable)
                 {
-                    throw new TypeError("Cannot redefine non-configurable property");
+                    return false;
                 }
 
                 if (changesKind)
                 {
-                    throw new TypeError("Cannot redefine non-configurable property");
+                    return false;
                 }
             }
 
@@ -389,7 +392,7 @@ namespace JavaScriptRuntime
             {
                 if (requested.IsAccessorDescriptor)
                 {
-                    return new JsPropertyDescriptor
+                    result = new JsPropertyDescriptor
                     {
                         Kind = JsPropertyDescriptorKind.Accessor,
                         Enumerable = requested.HasEnumerable ? requested.Enumerable : current.Enumerable,
@@ -397,18 +400,19 @@ namespace JavaScriptRuntime
                         Get = requested.HasGet ? requested.Get : null,
                         Set = requested.HasSet ? requested.Set : null
                     };
+                    return true;
                 }
 
                 if (!current.Configurable && !current.Writable)
                 {
                     if (requested.HasWritable && requested.Writable)
                     {
-                        throw new TypeError("Cannot redefine non-configurable property");
+                        return false;
                     }
 
                     if (requested.HasValue && !Operators.SameValue(current.Value, requested.Value))
                     {
-                        throw new TypeError("Cannot redefine non-configurable property");
+                        return false;
                     }
                 }
 
@@ -432,12 +436,12 @@ namespace JavaScriptRuntime
                     result.Value = requested.Value;
                 }
 
-                return result;
+                return true;
             }
 
             if (requested.IsDataDescriptor)
             {
-                return new JsPropertyDescriptor
+                result = new JsPropertyDescriptor
                 {
                     Kind = JsPropertyDescriptorKind.Data,
                     Enumerable = requested.HasEnumerable ? requested.Enumerable : current.Enumerable,
@@ -445,18 +449,19 @@ namespace JavaScriptRuntime
                     Writable = requested.HasWritable && requested.Writable,
                     Value = requested.HasValue ? requested.Value : null
                 };
+                return true;
             }
 
             if (!current.Configurable)
             {
                 if (requested.HasGet && !ReferenceEquals(current.Get, requested.Get))
                 {
-                    throw new TypeError("Cannot redefine non-configurable property");
+                    return false;
                 }
 
                 if (requested.HasSet && !ReferenceEquals(current.Set, requested.Set))
                 {
-                    throw new TypeError("Cannot redefine non-configurable property");
+                    return false;
                 }
             }
 
@@ -480,7 +485,7 @@ namespace JavaScriptRuntime
                 result.Set = requested.Set;
             }
 
-            return result;
+            return true;
         }
 
         private static bool TryGetCanonicalArrayIndexKey(string key, out uint index)
@@ -1419,6 +1424,16 @@ namespace JavaScriptRuntime
         /// </summary>
         public static object defineProperty(object obj, object? prop, object? attributes)
         {
+            if (!TryDefineProperty(obj, prop, attributes))
+            {
+                throw new TypeError("Cannot define property");
+            }
+
+            return obj;
+        }
+
+        internal static bool TryDefineProperty(object obj, object? prop, object? attributes)
+        {
             if (obj is null || obj is JsNull)
             {
                 throw new TypeError("Cannot convert undefined or null to object");
@@ -1432,6 +1447,7 @@ namespace JavaScriptRuntime
             var key = ToPropertyKeyString(prop);
             InvalidateRegExpWellKnownSymbolFastPath(obj, key);
             var requested = ParseRequestedPropertyDescriptor(attributes!);
+            double? validatedArrayLength = null;
 
             if (obj is JavaScriptRuntime.Proxy proxy)
             {
@@ -1440,42 +1456,51 @@ namespace JavaScriptRuntime
                 {
                     if (!TypeUtilities.ToBoolean(trapResult))
                     {
-                        throw new TypeError("Proxy defineProperty trap returned false");
+                        return false;
                     }
 
-                    return obj;
+                    return true;
                 }
 
                 obj = target;
             }
 
+            if (obj is JavaScriptRuntime.Array
+                && string.Equals(key, "length", StringComparison.Ordinal)
+                && requested.HasValue)
+            {
+                validatedArrayLength = JavaScriptRuntime.Array.ValidateLengthValue(requested.Value);
+            }
+
             if (!IsExtensibleInternal(obj) && !HasOwnProperty(obj, key))
             {
-                throw new TypeError("Cannot define property on non-extensible object");
+                return false;
             }
 
             var hasExistingDescriptor = TryGetOwnPropertyDescriptor(obj, key, out var existingDescriptor);
-            var appliedDescriptor = hasExistingDescriptor
-                ? ApplyRequestedDescriptorToExisting(existingDescriptor, requested)
-                : CreateDescriptorForNewProperty(requested);
-
-            if (obj is JavaScriptRuntime.Array array
-                && ObjectRuntime.TryParseCanonicalIndexString(key, out var arrayIndex)
-                && arrayIndex >= array.Count)
+            JsPropertyDescriptor appliedDescriptor;
+            if (hasExistingDescriptor)
             {
-                array.length = (double)arrayIndex + 1;
+                if (!TryApplyRequestedDescriptorToExisting(existingDescriptor, requested, out appliedDescriptor))
+                {
+                    return false;
+                }
             }
-            else if (obj is JavaScriptRuntime.Array largeArray
-                && ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var largeArrayIndex))
+            else
             {
-                largeArray.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
+                appliedDescriptor = CreateDescriptorForNewProperty(requested);
+            }
+
+            if (validatedArrayLength.HasValue)
+            {
+                appliedDescriptor.Value = validatedArrayLength.Value;
             }
 
             if (obj is JsObject jsObject && jsObject is IExoticJsObject)
             {
                 if (!jsObject.DefineOwnProperty(key, appliedDescriptor))
                 {
-                    throw new TypeError($"Cannot define property: {key}");
+                    return false;
                 }
             }
             else if (!PropertyDescriptorStore.HasIntrinsicProperties(obj)
@@ -1505,7 +1530,7 @@ namespace JavaScriptRuntime
             {
                 PropertyDescriptorStore.DefineOrUpdate(obj, key, appliedDescriptor);
             }
-            return obj;
+            return true;
         }
 
         /// <summary>
@@ -1668,6 +1693,10 @@ namespace JavaScriptRuntime
             }
 
             GetIntegrityState(obj).Extensible = false;
+            if (obj is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
             return obj;
         }
 
@@ -1724,6 +1753,10 @@ namespace JavaScriptRuntime
             var state = GetIntegrityState(obj);
             state.Extensible = false;
             state.Sealed = true;
+            if (obj is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
             return obj;
         }
 
@@ -1770,6 +1803,10 @@ namespace JavaScriptRuntime
             state.Extensible = false;
             state.Sealed = true;
             state.Frozen = true;
+            if (obj is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
             return obj;
         }
 
@@ -5930,25 +5967,10 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            // Arrays / typed arrays: allow ad-hoc properties (arrays are objects in JS).
-            // Numeric index semantics are handled elsewhere; this path covers things like
-            // RegExp exec results setting `match.index` / `match.input`.
-            if (obj is Array || obj is TypedArrayBase)
+            // Typed arrays allow ad-hoc named properties. Array is an exotic
+            // JsObject and is handled by the internal-operation path above.
+            if (obj is TypedArrayBase)
             {
-                if (obj is Array arr && string.Equals(name, "length", StringComparison.Ordinal))
-                {
-                    // Array.length is special: setting it truncates/extends the array.
-                    // This is used heavily by parsers to clear buffers (e.g., buf.length = 0).
-                    arr.length = JavaScriptRuntime.TypeUtilities.ToNumber(value);
-                    return value;
-                }
-
-                if (obj is Array indexedArray
-                    && ObjectRuntime.TryParseCanonicalArrayIndexUInt(name, out var largeArrayIndex))
-                {
-                    indexedArray.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
-                }
-
                 if (TrySetPropertyViaPrototypeOrThrow(obj, name, value, throwOnError))
                 {
                     return value;

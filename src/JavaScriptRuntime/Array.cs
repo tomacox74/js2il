@@ -13,11 +13,18 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : JsObject, IExoticJsObject, IEnumerable<object?>, IDictionary<string, object?>
     {
-        internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
+        [ThreadStatic]
+        private static bool _defaultPrototypeChainHasIndexedProperties;
+        [ThreadStatic]
+        private static long _observedPrototypeMutationVersion;
+        private static long _prototypeMutationVersion;
+        internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly object Hole = new();
+        private const int MaxDenseGap = 1024;
         private readonly List<object?> _items;
         private int _logicalLength;
+        private int _holeCount;
         private double _virtualLength;
 
         internal static ExpandoObject Prototype
@@ -32,6 +39,7 @@ namespace JavaScriptRuntime
 
                 prototype = CreateThreadPrototypeOverride();
                 _threadPrototypeOverrides.Value = prototype;
+                RefreshDefaultPrototypeChainState();
                 return prototype;
             }
         }
@@ -48,6 +56,8 @@ namespace JavaScriptRuntime
         internal static void ResetPrototypeForTests()
         {
             _threadPrototypeOverrides.Value = null;
+            _defaultPrototypeChainHasIndexedProperties = false;
+            _observedPrototypeMutationVersion = Volatile.Read(ref _prototypeMutationVersion);
         }
 
         private static ExpandoObject CreateThreadPrototypeOverride()
@@ -59,7 +69,7 @@ namespace JavaScriptRuntime
 
             if (PrototypeChain.TryGetPrototype(ImmutablePrototype, out var parentPrototype))
             {
-                PrototypeChain.SetPrototype(prototype, parentPrototype);
+                PrototypeChain.InitializePrototype(prototype, parentPrototype);
             }
 
             return prototype;
@@ -182,6 +192,7 @@ namespace JavaScriptRuntime
             while (_items.Count < minCount)
             {
                 _items.Add(Hole);
+                _holeCount++;
             }
         }
 
@@ -826,7 +837,7 @@ namespace JavaScriptRuntime
 
         private void InitializeIntrinsicSurface()
         {
-            PrototypeChain.SetPrototype(this, Prototype);
+            PrototypeChain.InitializePrototype(this, Prototype);
         }
 
         private enum ArrayIteratorKind
@@ -1095,54 +1106,12 @@ namespace JavaScriptRuntime
 
             if (string.Equals(key, "length", StringComparison.Ordinal))
             {
-                if (descriptor.Kind != JsPropertyDescriptorKind.Data)
-                {
-                    return false;
-                }
-
-                length = TypeUtilities.ToNumber(descriptor.Value);
-                if (!IsDefaultLengthDescriptor(descriptor))
-                {
-                    var storedDescriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
-                    storedDescriptor.Value = length;
-                    PropertyDescriptorStore.DefineOrUpdate(this, key, storedDescriptor);
-                }
-
-                return true;
+                return DefineLengthProperty(descriptor);
             }
 
-            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var index))
             {
-                var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
-                if (descriptor.Kind == JsPropertyDescriptorKind.Data
-                    && IsDefaultElementDescriptor(descriptor)
-                    && lookup == PropertyDescriptorLookup.None)
-                {
-                    this[index] = descriptor.Value;
-                    return true;
-                }
-
-                if (descriptor.Kind == JsPropertyDescriptorKind.Data)
-                {
-                    this[index] = descriptor.Value;
-                }
-                else
-                {
-                    if (index >= Count)
-                    {
-                        length = (double)index + 1;
-                    }
-
-                    DeleteOwnIndex(index);
-                }
-
-                PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
-                return true;
-            }
-
-            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var largeIndex))
-            {
-                EnsureLengthAtLeast((double)largeIndex + 1d);
+                return DefineIndexProperty(key, index, descriptor);
             }
 
             return base.DefineOwnProperty(key, descriptor);
@@ -1152,19 +1121,17 @@ namespace JavaScriptRuntime
         {
             if (string.Equals(key, "length", StringComparison.Ordinal))
             {
-                length = TypeUtilities.ToNumber(value);
-                return true;
+                return DefineLengthProperty(CreateLengthDescriptorWithValue(value));
             }
 
             if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
             {
-                this[index] = value;
-                return true;
+                return TrySetIndexValue(index, value, throwOnError: false);
             }
 
             if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var largeIndex))
             {
-                EnsureLengthAtLeast((double)largeIndex + 1d);
+                return DefineIndexProperty(key, largeIndex, CreateElementDescriptor(value));
             }
 
             return base.SetOwnPropertyValue(key, value);
@@ -1177,10 +1144,25 @@ namespace JavaScriptRuntime
                 return false;
             }
 
-            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            if (GetOwnPropertyDescriptor(key, out var descriptor) == PropertyDescriptorLookup.Found
+                && !descriptor.Configurable)
             {
-                DeleteOwnIndex(index);
-                PropertyDescriptorStore.Delete(this, key);
+                return false;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var index))
+            {
+                var storedLookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
+                if (index <= int.MaxValue)
+                {
+                    DeleteOwnIndex((int)index);
+                }
+
+                if (storedLookup == PropertyDescriptorLookup.Found)
+                {
+                    PropertyDescriptorStore.Delete(this, key);
+                }
+
                 return true;
             }
 
@@ -1251,10 +1233,359 @@ namespace JavaScriptRuntime
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Value = length,
-                Writable = true,
+                Writable = IsLengthWritable,
                 Enumerable = false,
                 Configurable = false
             };
+
+        private JsPropertyDescriptor CreateLengthDescriptorWithValue(object? value)
+        {
+            var descriptor = CreateLengthDescriptor();
+            descriptor.Value = value;
+            return descriptor;
+        }
+
+        private bool IsLengthWritable
+        {
+            get
+            {
+                var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, "length", out var descriptor);
+                return lookup != PropertyDescriptorLookup.Found || descriptor.Writable;
+            }
+        }
+
+        private bool DefineLengthProperty(JsPropertyDescriptor descriptor)
+        {
+            if (descriptor.Kind != JsPropertyDescriptorKind.Data
+                || descriptor.Enumerable
+                || descriptor.Configurable)
+            {
+                return false;
+            }
+
+            var newLength = ValidateLengthValue(descriptor.Value);
+            var current = CreateLengthDescriptor();
+            if (!IsCompatibleDescriptor(current, descriptor))
+            {
+                return false;
+            }
+
+            var oldLength = length;
+            if (newLength >= oldLength)
+            {
+                if (newLength > oldLength && !current.Writable)
+                {
+                    return false;
+                }
+
+                SetLengthStorage(newLength);
+                StoreLengthDescriptor(descriptor);
+                return true;
+            }
+
+            if (!current.Writable)
+            {
+                return false;
+            }
+
+            var indicesToDelete = PropertyDescriptorStore.GetOwnKeys(this)
+                .Select(key => ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var index)
+                    ? (IsIndex: true, Index: index, Key: key)
+                    : (IsIndex: false, Index: 0u, Key: key))
+                .Where(entry => entry.IsIndex && entry.Index >= newLength)
+                .OrderByDescending(entry => entry.Index)
+                .ToArray();
+
+            foreach (var entry in indicesToDelete)
+            {
+                if (GetOwnPropertyDescriptor(entry.Key, out var elementDescriptor) == PropertyDescriptorLookup.Found
+                    && !elementDescriptor.Configurable)
+                {
+                    SetLengthStorage((double)entry.Index + 1d);
+                    var failedDescriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                    failedDescriptor.Value = length;
+                    StoreLengthDescriptor(failedDescriptor);
+                    return false;
+                }
+
+                DeleteIndexStorage(entry.Key, entry.Index);
+            }
+
+            SetLengthStorage(newLength);
+            StoreLengthDescriptor(descriptor);
+            return true;
+        }
+
+        private bool DefineIndexProperty(string key, uint index, JsPropertyDescriptor descriptor)
+        {
+            var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out var storedDescriptor);
+            var hasCurrent = lookup == PropertyDescriptorLookup.Found;
+            JsPropertyDescriptor? current = hasCurrent ? storedDescriptor : null;
+
+            if (!hasCurrent && index <= int.MaxValue && HasDenseIndex((int)index))
+            {
+                current = CreateElementDescriptor(_items[(int)index]);
+                hasCurrent = true;
+            }
+
+            if (!hasCurrent && !Object.IsExtensibleInternal(this))
+            {
+                return false;
+            }
+
+            if (current != null && !IsCompatibleDescriptor(current, descriptor))
+            {
+                return false;
+            }
+
+            var oldLength = length;
+            if (index >= oldLength && !IsLengthWritable)
+            {
+                return false;
+            }
+
+            if (index <= int.MaxValue
+                && lookup == PropertyDescriptorLookup.None
+                && descriptor.Kind == JsPropertyDescriptorKind.Data
+                && IsDefaultElementDescriptor(descriptor)
+                && CanStoreDenseIndex(index))
+            {
+                SetDenseIndex((int)index, descriptor.Value);
+            }
+            else
+            {
+                if (index <= int.MaxValue)
+                {
+                    DeleteOwnIndex((int)index);
+                }
+
+                PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
+            }
+
+            if (index >= oldLength)
+            {
+                SetLengthStorage((double)index + 1d);
+                SynchronizeStoredLengthValue();
+            }
+
+            return true;
+        }
+
+        internal bool TrySetIndexValue(int index, object? value, bool throwOnError)
+        {
+            if (index < 0)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                return false;
+            }
+
+            var hasDenseIndex = HasDenseIndex(index);
+            if (!HasNonDataDescriptors && hasDenseIndex)
+            {
+                _items[index] = value;
+                return true;
+            }
+
+            if ((HasNonDataDescriptors || !hasDenseIndex)
+                && PropertyDescriptorStore.HasAny(this))
+            {
+                var descriptorKey = index.ToString(CultureInfo.InvariantCulture);
+                if (PropertyDescriptorStore.GetOwnLookupCore(this, descriptorKey, out _) != PropertyDescriptorLookup.None)
+                {
+                    Object.SetProperty(this, descriptorKey, value, throwOnError);
+                    return true;
+                }
+            }
+
+            if (HasDenseIndex(index))
+            {
+                _items[index] = value;
+                return true;
+            }
+
+            var key = index.ToString(CultureInfo.InvariantCulture);
+            if (Object.TrySetPropertyViaPrototypeOrThrow(this, key, value, throwOnError))
+            {
+                return true;
+            }
+
+            if (!Object.IsExtensibleInternal(this) || index >= length && !IsLengthWritable)
+            {
+                if (throwOnError)
+                {
+                    throw new TypeError($"Cannot add property '{key}' to array");
+                }
+
+                return false;
+            }
+
+            if (CanStoreDenseIndex((uint)index))
+            {
+                SetDenseIndex(index, value);
+                return true;
+            }
+
+            var defined = DefineIndexProperty(key, (uint)index, CreateElementDescriptor(value));
+            if (!defined && throwOnError)
+            {
+                throw new TypeError($"Cannot add property '{key}' to array");
+            }
+
+            return defined;
+        }
+
+        private static bool IsCompatibleDescriptor(
+            JsPropertyDescriptor current,
+            JsPropertyDescriptor descriptor)
+        {
+            if (current.Configurable)
+            {
+                return true;
+            }
+
+            if (descriptor.Configurable
+                || descriptor.Enumerable != current.Enumerable
+                || descriptor.Kind != current.Kind)
+            {
+                return false;
+            }
+
+            if (current.Kind == JsPropertyDescriptorKind.Accessor)
+            {
+                return ReferenceEquals(current.Get, descriptor.Get)
+                    && ReferenceEquals(current.Set, descriptor.Set);
+            }
+
+            if (current.Writable)
+            {
+                return true;
+            }
+
+            return !descriptor.Writable
+                && Operators.SameValue(current.Value, descriptor.Value);
+        }
+
+        internal static double ValidateLengthValue(object? value)
+            => ValidateLengthValue(TypeUtilities.ToNumber(value));
+
+        private static double ValidateLengthValue(double newLength)
+        {
+            if (double.IsNaN(newLength)
+                || double.IsInfinity(newLength)
+                || newLength < 0
+                || newLength >= 4294967296d
+                || global::System.Math.Truncate(newLength) != newLength)
+            {
+                throw new RangeError("Invalid array length");
+            }
+
+            return newLength;
+        }
+
+        private void StoreLengthDescriptor(JsPropertyDescriptor descriptor)
+        {
+            var storedDescriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+            storedDescriptor.Value = length;
+            if (!IsDefaultLengthDescriptor(storedDescriptor)
+                || PropertyDescriptorStore.GetOwnLookupCore(this, "length", out _) == PropertyDescriptorLookup.Found)
+            {
+                PropertyDescriptorStore.DefineOrUpdate(this, "length", storedDescriptor);
+            }
+        }
+
+        private void SynchronizeStoredLengthValue()
+        {
+            if (PropertyDescriptorStore.GetOwnLookupCore(this, "length", out var descriptor)
+                != PropertyDescriptorLookup.Found)
+            {
+                return;
+            }
+
+            descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+            descriptor.Value = length;
+            PropertyDescriptorStore.DefineOrUpdate(this, "length", descriptor);
+        }
+
+        private void DeleteIndexStorage(string key, uint index)
+        {
+            if (index <= int.MaxValue)
+            {
+                DeleteOwnIndex((int)index);
+            }
+
+            if (PropertyDescriptorStore.GetOwnLookupCore(this, key, out _)
+                == PropertyDescriptorLookup.Found)
+            {
+                PropertyDescriptorStore.Delete(this, key);
+            }
+        }
+
+        private void SetDenseIndex(int index, object? value)
+        {
+            if (index == int.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (index < _items.Count)
+            {
+                if (ReferenceEquals(_items[index], Hole))
+                {
+                    _holeCount--;
+                }
+
+                _items[index] = value;
+            }
+            else
+            {
+                EnsureDenseStorage(index + 1);
+                _items[index] = value;
+            }
+
+            if (index >= _logicalLength)
+            {
+                _logicalLength = index + 1;
+            }
+
+            if (index + 1 > _virtualLength)
+            {
+                _virtualLength = index + 1;
+            }
+        }
+
+        private bool CanStoreDenseIndex(uint index)
+            => index < int.MaxValue
+                && index <= (uint)_items.Count + MaxDenseGap;
+
+        private void SetLengthStorage(double newLength)
+        {
+            if (newLength > int.MaxValue)
+            {
+                _virtualLength = newLength;
+                return;
+            }
+
+            var newLengthInt = (int)newLength;
+            if (newLengthInt < _items.Count)
+            {
+                for (var i = newLengthInt; i < _items.Count; i++)
+                {
+                    if (ReferenceEquals(_items[i], Hole))
+                    {
+                        _holeCount--;
+                    }
+                }
+
+                _items.RemoveRange(newLengthInt, _items.Count - newLengthInt);
+            }
+
+            _logicalLength = newLengthInt;
+            _virtualLength = newLengthInt;
+        }
 
         private static bool IsDefaultElementDescriptor(JsPropertyDescriptor descriptor)
             => descriptor.Kind == JsPropertyDescriptorKind.Data
@@ -1268,8 +1599,34 @@ namespace JavaScriptRuntime
                 && !descriptor.Enumerable
                 && !descriptor.Configurable;
 
-        internal bool HasOwnIndex(int index)
+        private bool HasDenseIndex(int index)
             => index >= 0 && index < _items.Count && !ReferenceEquals(_items[index], Hole);
+
+        internal bool HasOwnIndex(int index)
+        {
+            if (index < 0)
+            {
+                return false;
+            }
+
+            var hasDenseIndex = HasDenseIndex(index);
+            if (!HasNonDataDescriptors && hasDenseIndex)
+            {
+                return true;
+            }
+
+            if (PropertyDescriptorStore.HasAny(this))
+            {
+                var key = index.ToString(CultureInfo.InvariantCulture);
+                var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
+                if (lookup != PropertyDescriptorLookup.None)
+                {
+                    return lookup == PropertyDescriptorLookup.Found;
+                }
+            }
+
+            return hasDenseIndex;
+        }
 
         internal IEnumerable<int> GetOwnElementIndices()
         {
@@ -1285,13 +1642,91 @@ namespace JavaScriptRuntime
 
         internal bool DeleteOwnIndex(int index)
         {
-            if (!HasOwnIndex(index))
+            if (!HasDenseIndex(index))
             {
                 return false;
             }
 
             _items[index] = Hole;
+            _holeCount++;
             return true;
+        }
+
+        private bool CanUseDenseMutationFastPath()
+            => (_holeCount & int.MaxValue) == 0
+                && _logicalLength == _items.Count
+                && _virtualLength == _items.Count
+                && !HasNonDataDescriptors;
+
+        internal void DisableDenseGrowthFastPath()
+            => _holeCount |= int.MinValue;
+
+        private bool CanUseDenseGrowthFastPath()
+        {
+            if (!CanUseDenseMutationFastPath() || _holeCount < 0)
+            {
+                return false;
+            }
+
+            var mutationVersion = Volatile.Read(ref _prototypeMutationVersion);
+            if (_observedPrototypeMutationVersion != mutationVersion)
+            {
+                RefreshDefaultPrototypeChainState();
+            }
+
+            return !_defaultPrototypeChainHasIndexedProperties;
+        }
+
+        internal static void NotifyPrototypeMutation()
+            => Interlocked.Increment(ref _prototypeMutationVersion);
+
+        private static void RefreshDefaultPrototypeChainState()
+        {
+            while (true)
+            {
+                var beforeScan = Volatile.Read(ref _prototypeMutationVersion);
+                var hasIndexedProperties = DefaultPrototypeChainHasIndexedProperties();
+                var afterScan = Volatile.Read(ref _prototypeMutationVersion);
+                if (beforeScan == afterScan)
+                {
+                    _defaultPrototypeChainHasIndexedProperties = hasIndexedProperties;
+                    _observedPrototypeMutationVersion = afterScan;
+                    return;
+                }
+            }
+        }
+
+        private static bool DefaultPrototypeChainHasIndexedProperties()
+        {
+            object current = Prototype;
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+            while (visited.Add(current))
+            {
+                foreach (var key in PropertyDescriptorStore.GetOwnKeys(current))
+                {
+                    if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _))
+                    {
+                        return true;
+                    }
+                }
+
+                if (!PrototypeChain.TryGetPrototype(current, out var prototype)
+                    || prototype is null
+                    || prototype is JsNull)
+                {
+                    break;
+                }
+
+                current = prototype;
+            }
+
+            return false;
+        }
+
+        private void SynchronizeDenseLength()
+        {
+            _logicalLength = _items.Count;
+            _virtualLength = _items.Count;
         }
 
         public object? this[int index]
@@ -1303,41 +1738,33 @@ namespace JavaScriptRuntime
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
-                if (index >= _items.Count)
+                if (!HasNonDataDescriptors && HasDenseIndex(index))
                 {
-                    return null;
+                    return _items[index];
                 }
 
-                var value = _items[index];
-                return ReferenceEquals(value, Hole) ? null : value;
+                if (HasNonDataDescriptors && PropertyDescriptorStore.HasAny(this))
+                {
+                    var key = index.ToString(CultureInfo.InvariantCulture);
+                    var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
+                    if (lookup != PropertyDescriptorLookup.None)
+                    {
+                        return Object.GetProperty(this, key);
+                    }
+                }
+
+                if (HasDenseIndex(index))
+                {
+                    return _items[index];
+                }
+
+                return Object.GetProperty(this, index.ToString(CultureInfo.InvariantCulture));
             }
             set
             {
-                if (index < 0)
+                if (!TrySetIndexValue(index, value, throwOnError: true))
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-
-                if (index < _items.Count)
-                {
-                    _items[index] = value;
-                    if (index + 1 > _virtualLength)
-                    {
-                        _virtualLength = index + 1;
-                    }
-                    return;
-                }
-
-                if (index >= _logicalLength)
-                {
-                    _logicalLength = index + 1;
-                }
-
-                EnsureDenseStorage(index + 1);
-                _items[index] = value;
-                if (index + 1 > _virtualLength)
-                {
-                    _virtualLength = index + 1;
+                    throw new TypeError($"Cannot assign to property '{index}' of array");
                 }
             }
         }
@@ -1347,6 +1774,7 @@ namespace JavaScriptRuntime
             EnsureDenseStorage(_logicalLength);
             _items.Add(item);
             _logicalLength = _items.Count;
+            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
         }
 
         public void AddRange(IEnumerable<object?> collection)
@@ -1357,78 +1785,230 @@ namespace JavaScriptRuntime
                 _items.Add(item);
             }
             _logicalLength = _items.Count;
+            _virtualLength = global::System.Math.Max(_virtualLength, _logicalLength);
         }
 
         public void Insert(int index, object? item)
         {
-            EnsureDenseStorage(Count);
-            _items.Insert(index, item);
-            _logicalLength = _items.Count;
+            var currentLength = Count;
+            if (index < 0 || index > currentLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (CanUseDenseGrowthFastPath())
+            {
+                _items.Insert(index, item);
+                SynchronizeDenseLength();
+                return;
+            }
+
+            for (var source = currentLength - 1; source >= index; source--)
+            {
+                var target = source + 1;
+                if (Object.HasPropertyIn((double)source, this))
+                {
+                    TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                }
+                else
+                {
+                    DeleteIndexOrThrow(target);
+                }
+            }
+
+            TrySetIndexValue(index, item, throwOnError: true);
+            SetLength(currentLength + 1, throwOnError: true);
         }
 
         public void InsertRange(int index, IEnumerable<object?> collection)
         {
-            EnsureDenseStorage(Count);
             var items = collection.ToList();
-            _items.InsertRange(index, items);
-            _logicalLength = _items.Count;
+            if (items.Count == 0)
+            {
+                return;
+            }
+
+            var currentLength = Count;
+            if (index < 0 || index > currentLength || items.Count > int.MaxValue - currentLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (CanUseDenseGrowthFastPath())
+            {
+                _items.InsertRange(index, items);
+                SynchronizeDenseLength();
+                return;
+            }
+
+            for (var source = currentLength - 1; source >= index; source--)
+            {
+                var target = source + items.Count;
+                if (Object.HasPropertyIn((double)source, this))
+                {
+                    TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                }
+                else
+                {
+                    DeleteIndexOrThrow(target);
+                }
+            }
+
+            for (var i = 0; i < items.Count; i++)
+            {
+                TrySetIndexValue(index + i, items[i], throwOnError: true);
+            }
+
+            SetLength(currentLength + items.Count, throwOnError: true);
         }
 
         public void RemoveAt(int index)
         {
-            EnsureDenseStorage(Count);
-            _items.RemoveAt(index);
-            _logicalLength = _items.Count;
-            _virtualLength = _logicalLength;
+            var currentLength = Count;
+            if (index < 0 || index >= currentLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (CanUseDenseMutationFastPath())
+            {
+                _items.RemoveAt(index);
+                SynchronizeDenseLength();
+                return;
+            }
+
+            for (var target = index; target < currentLength - 1; target++)
+            {
+                var source = target + 1;
+                if (Object.HasPropertyIn((double)source, this))
+                {
+                    TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                }
+                else
+                {
+                    DeleteIndexOrThrow(target);
+                }
+            }
+
+            DeleteIndexOrThrow(currentLength - 1);
+            SetLength(currentLength - 1, throwOnError: true);
         }
 
         public void RemoveRange(int index, int count)
         {
-            EnsureDenseStorage(Count);
-            _items.RemoveRange(index, count);
-            _logicalLength = _items.Count;
-            _virtualLength = _logicalLength;
+            if (count < 0 || index < 0 || index + count > Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            var currentLength = Count;
+            var newLength = currentLength - count;
+            if (CanUseDenseMutationFastPath())
+            {
+                _items.RemoveRange(index, count);
+                SynchronizeDenseLength();
+                return;
+            }
+
+            for (var target = index; target < newLength; target++)
+            {
+                var source = target + count;
+                if (Object.HasPropertyIn((double)source, this))
+                {
+                    TrySetIndexValue(target, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                }
+                else
+                {
+                    DeleteIndexOrThrow(target);
+                }
+            }
+
+            for (var indexToDelete = currentLength - 1; indexToDelete >= newLength; indexToDelete--)
+            {
+                DeleteIndexOrThrow(indexToDelete);
+            }
+
+            SetLength(newLength, throwOnError: true);
         }
 
         public void Reverse()
         {
-            EnsureDenseStorage(Count);
-            _items.Reverse();
-            _logicalLength = _items.Count;
+            if (CanUseDenseMutationFastPath())
+            {
+                _items.Reverse();
+                return;
+            }
+
+            var len = Count;
+            var middle = len / 2;
+            for (var lower = 0; lower < middle; lower++)
+            {
+                var upper = len - lower - 1;
+                var lowerExists = Object.HasPropertyIn((double)lower, this);
+                var upperExists = Object.HasPropertyIn((double)upper, this);
+                var lowerValue = lowerExists ? ObjectRuntime.GetItem(this, (double)lower) : null;
+                var upperValue = upperExists ? ObjectRuntime.GetItem(this, (double)upper) : null;
+
+                if (lowerExists && upperExists)
+                {
+                    TrySetIndexValue(lower, upperValue, throwOnError: true);
+                    TrySetIndexValue(upper, lowerValue, throwOnError: true);
+                }
+                else if (!lowerExists && upperExists)
+                {
+                    TrySetIndexValue(lower, upperValue, throwOnError: true);
+                    DeleteIndexOrThrow(upper);
+                }
+                else if (lowerExists)
+                {
+                    DeleteIndexOrThrow(lower);
+                    TrySetIndexValue(upper, lowerValue, throwOnError: true);
+                }
+            }
         }
 
         public void Sort(Comparison<object?> comparison)
         {
-            EnsureDenseStorage(Count);
             var presentValues = new List<object?>();
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                if (!ReferenceEquals(_items[i], Hole))
+                if (Object.HasPropertyIn((double)i, this))
                 {
-                    presentValues.Add(_items[i]);
+                    presentValues.Add(ObjectRuntime.GetItem(this, (double)i));
                 }
             }
 
             presentValues.Sort(comparison);
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < Count; i++)
             {
                 if (i < presentValues.Count)
                 {
-                    _items[i] = presentValues[i];
+                    TrySetIndexValue(i, presentValues[i], throwOnError: true);
                 }
                 else
                 {
-                    _items[i] = Hole;
+                    DeleteIndexOrThrow(i);
                 }
             }
-            _logicalLength = _items.Count;
         }
 
         public override void Clear()
         {
-            _items.Clear();
-            _logicalLength = 0;
-            _virtualLength = 0;
+            SetLength(0, throwOnError: true);
+        }
+
+        private void DeleteIndexOrThrow(int index)
+        {
+            var key = index.ToString(CultureInfo.InvariantCulture);
+            if (!DeleteOwnProperty(key))
+            {
+                throw new TypeError($"Cannot delete property '{key}' of array");
+            }
         }
 
         public object?[] ToArray()
@@ -1486,7 +2066,9 @@ namespace JavaScriptRuntime
                 int intIndex = (int)index;
                 if (intIndex >= Count)
                 {
-                    return null; // undefined
+                    return JavaScriptRuntime.ObjectRuntime.GetProperty(
+                        this,
+                        intIndex.ToString(CultureInfo.InvariantCulture));
                 }
 
                 return this[intIndex];
@@ -1744,84 +2326,58 @@ namespace JavaScriptRuntime
         /// </summary>
         public double length
         {
-            get
+            get => global::System.Math.Max(this.Count, _virtualLength);
+            set => SetLength(value, throwOnError: true);
+        }
+
+        public void SetLength(double value, bool throwOnError)
+        {
+            if (CanUseDenseMutationFastPath())
             {
-                return global::System.Math.Max(this.Count, _virtualLength);
+                SetLengthStorage(ValidateLengthValue(value));
+                return;
             }
-            set
+
+            if (CanSetLength(throwOnError))
             {
-                // Minimal JS semantics for setting length:
-                //  - Must be a non-negative integer.
-                //  - Truncates/extends the array.
-                // NOTE: We clamp to int.MaxValue because this runtime is backed by List<T>.
-                double d = value;
-                if (double.IsNaN(d) || double.IsInfinity(d) || d < 0)
-                {
-                    if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
-                    {
-                        System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] invalid length value={d}");
-                        System.Console.WriteLine(Environment.StackTrace);
-                    }
-                    throw new RangeError("Invalid array length");
-                }
-
-                // Per ECMAScript, a non-integer length must throw RangeError.
-                double truncated = global::System.Math.Truncate(d);
-                if (truncated != d)
-                {
-                    if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
-                    {
-                        System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] non-integer length value={d}");
-                        System.Console.WriteLine(Environment.StackTrace);
-                    }
-                    throw new RangeError("Invalid array length");
-                }
-
-                d = truncated;
-                if (d > int.MaxValue)
-                {
-                    if (d >= 4294967296d)
-                    {
-                        if (Environment.GetEnvironmentVariable("JROC_DIAG_ARRAY_LENGTH") == "1")
-                        {
-                            System.Console.WriteLine($"[JROC_DIAG_ARRAY_LENGTH] too-large length value={d}");
-                            System.Console.WriteLine(Environment.StackTrace);
-                        }
-
-                        throw new RangeError("Invalid array length");
-                    }
-
-                    _virtualLength = d;
-                    return;
-                }
-
-                int newLen = (int)d;
-                if (newLen < 0)
-                {
-                    throw new RangeError("Invalid array length");
-                }
-
-                if (newLen < this.Count)
-                {
-                    if (newLen < _items.Count)
-                    {
-                        _items.RemoveRange(newLen, _items.Count - newLen);
-                    }
-                    _logicalLength = newLen;
-                    _virtualLength = newLen;
-                    return;
-                }
-
-                _logicalLength = newLen;
-                _virtualLength = newLen;
+                SetValidatedLength(ValidateLengthValue(value), throwOnError, allowDenseFastPath: false);
             }
         }
 
-        internal void EnsureLengthAtLeast(double length)
+        public void SetLength(object? value, bool throwOnError)
         {
-            if (length > _virtualLength)
+            if (CanSetLength(throwOnError))
             {
-                _virtualLength = length;
+                SetValidatedLength(ValidateLengthValue(value), throwOnError, allowDenseFastPath: true);
+            }
+        }
+
+        private bool CanSetLength(bool throwOnError)
+        {
+            if (!HasNonDataDescriptors || IsLengthWritable)
+            {
+                return true;
+            }
+
+            if (throwOnError)
+            {
+                throw new TypeError("Cannot assign to read only property 'length' of array");
+            }
+
+            return false;
+        }
+
+        private void SetValidatedLength(double newLength, bool throwOnError, bool allowDenseFastPath)
+        {
+            if (allowDenseFastPath && CanUseDenseMutationFastPath())
+            {
+                SetLengthStorage(newLength);
+                return;
+            }
+
+            if (!DefineLengthProperty(CreateLengthDescriptorWithValue(newLength)) && throwOnError)
+            {
+                throw new TypeError("Cannot assign to property 'length' of array");
             }
         }
 
@@ -2835,31 +3391,97 @@ namespace JavaScriptRuntime
                 deleteCount = raw > max ? max : raw;
             }
 
-            // Gather removed elements
-            var removed = new Array(deleteCount);
-            for (int i = 0; i < deleteCount; i++)
+            var insertCount = global::System.Math.Max(args.Length - 2, 0);
+            if (insertCount > int.MaxValue - (len - deleteCount))
             {
-                removed.Add(this[start + i]);
+                throw new RangeError("Invalid array length");
             }
 
-            // Remove them from this array
-            for (int i = 0; i < deleteCount; i++)
+            var newLength = len - deleteCount + insertCount;
+            var canUseDenseFastPath = Count == len
+                && (insertCount <= deleteCount
+                    ? CanUseDenseMutationFastPath()
+                    : CanUseDenseGrowthFastPath());
+            if (canUseDenseFastPath)
             {
-                this.RemoveAt(start);
-            }
-
-            // Insert any additional items starting at index 2
-            int insertCount = global::System.Math.Max(args.Length - 2, 0);
-            if (insertCount > 0)
-            {
-                var toInsert = new System.Collections.Generic.List<object>(insertCount);
-                for (int i = 0; i < insertCount; i++)
+                var removedDense = new Array(deleteCount);
+                for (var i = 0; i < deleteCount; i++)
                 {
-                    toInsert.Add(args[2 + i]);
+                    removedDense._items.Add(_items[start + i]);
                 }
-                this.InsertRange(start, toInsert);
+                removedDense.SynchronizeDenseLength();
+
+                _items.RemoveRange(start, deleteCount);
+                if (insertCount == 1)
+                {
+                    _items.Insert(start, args[2]);
+                }
+                else if (insertCount > 1)
+                {
+                    var insertedItems = new object?[insertCount];
+                    System.Array.Copy(args, 2, insertedItems, 0, insertCount);
+                    _items.InsertRange(start, insertedItems);
+                }
+
+                SynchronizeDenseLength();
+                return removedDense;
             }
 
+            // Gather removed elements, preserving holes.
+            var removed = new Array();
+            removed.length = deleteCount;
+            for (int i = 0; i < deleteCount; i++)
+            {
+                var source = start + i;
+                if (Object.HasPropertyIn((double)source, this))
+                {
+                    removed.TrySetIndexValue(i, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                }
+            }
+
+            if (insertCount < deleteCount)
+            {
+                for (var target = start; target < len - deleteCount; target++)
+                {
+                    var source = target + deleteCount;
+                    var destination = target + insertCount;
+                    if (Object.HasPropertyIn((double)source, this))
+                    {
+                        TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                    }
+                    else
+                    {
+                        DeleteIndexOrThrow(destination);
+                    }
+                }
+
+                for (var indexToDelete = len - 1; indexToDelete >= len - deleteCount + insertCount; indexToDelete--)
+                {
+                    DeleteIndexOrThrow(indexToDelete);
+                }
+            }
+            else if (insertCount > deleteCount)
+            {
+                for (var source = len - 1; source >= start + deleteCount; source--)
+                {
+                    var destination = source - deleteCount + insertCount;
+                    if (Object.HasPropertyIn((double)source, this))
+                    {
+                        TrySetIndexValue(destination, ObjectRuntime.GetItem(this, (double)source), throwOnError: true);
+                    }
+                    else
+                    {
+                        DeleteIndexOrThrow(destination);
+                    }
+                }
+            }
+
+            for (var i = 0; i < insertCount; i++)
+            {
+                TrySetIndexValue(start + i, args[2 + i], throwOnError: true);
+            }
+
+            SetLength(newLength, throwOnError: true);
             return removed;
         }
 
@@ -2972,32 +3594,54 @@ namespace JavaScriptRuntime
         /// </summary>
         public double push(object? item)
         {
-            this.Add(item);
-            return (double)this.Count;
+            var newLength = length;
+            if (newLength < int.MaxValue && CanUseDenseGrowthFastPath())
+            {
+                _items.Add(item);
+                SynchronizeDenseLength();
+                return length;
+            }
+
+            return PushItems(new object?[] { item });
         }
 
         /// <summary>
         /// JavaScript Array.push(...items): appends items to the end and returns the new length.
         /// </summary>
         public double push(object[]? args)
-        {
-            if (args != null)
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
-                    this.Add(args[i]);
-                }
-            }
-            // return new length as a JS number (double)
-            return (double)this.Count;
-        }
+            => PushItems(args);
 
         /// <summary>
         /// Overload without parameters to match potential direct dispatch; returns current length.
         /// </summary>
         public double push()
+            => PushItems(null);
+
+        private double PushItems(object?[]? items)
         {
-            return (double)this.Count;
+            var newLength = length;
+            if (items != null
+                && items.Length > 0
+                && newLength <= int.MaxValue - items.Length
+                && CanUseDenseGrowthFastPath())
+            {
+                _items.AddRange(items);
+                SynchronizeDenseLength();
+                return length;
+            }
+
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    var key = newLength.ToString(CultureInfo.InvariantCulture);
+                    Object.SetProperty(this, key, item, throwOnError: true);
+                    newLength++;
+                }
+            }
+
+            SetLength(newLength, throwOnError: true);
+            return newLength;
         }
 
         /// <summary>
@@ -3006,13 +3650,36 @@ namespace JavaScriptRuntime
         /// </summary>
         public object? pop(object[]? args)
         {
-            if (this.Count == 0)
+            if (CanUseDenseMutationFastPath())
             {
+                if (_items.Count == 0)
+                {
+                    return null;
+                }
+
+                var lastIndex = _items.Count - 1;
+                var denseValue = _items[lastIndex];
+                _items.RemoveAt(lastIndex);
+                SynchronizeDenseLength();
+                return denseValue;
+            }
+
+            var currentLength = length;
+            if (currentLength == 0)
+            {
+                SetLength(0, throwOnError: true);
                 return null; // JS undefined
             }
-            int lastIndex = this.Count - 1;
-            var value = this[lastIndex];
-            this.RemoveAt(lastIndex);
+
+            var newLength = currentLength - 1d;
+            var key = newLength.ToString(CultureInfo.InvariantCulture);
+            var value = Object.GetProperty(this, key);
+            if (!DeleteOwnProperty(key))
+            {
+                throw new TypeError($"Cannot delete property '{key}' of array");
+            }
+
+            SetLength(newLength, throwOnError: true);
             return value;
         }
 
@@ -3048,6 +3715,19 @@ namespace JavaScriptRuntime
         /// </summary>
         public object? shift(object[]? args)
         {
+            if (CanUseDenseMutationFastPath())
+            {
+                if (_items.Count == 0)
+                {
+                    return null;
+                }
+
+                var denseValue = _items[0];
+                _items.RemoveAt(0);
+                SynchronizeDenseLength();
+                return denseValue;
+            }
+
             if (this.Count == 0) return null;
             var v = this[0];
             this.RemoveAt(0);
@@ -3066,11 +3746,7 @@ namespace JavaScriptRuntime
         {
             if (args != null && args.Length > 0)
             {
-                // Insert preserving order
-                for (int i = args.Length - 1; i >= 0; i--)
-                {
-                    this.Insert(0, args[i]);
-                }
+                InsertRange(0, args);
             }
             return (double)this.Count;
         }

@@ -139,5 +139,14 @@ namespace Jroc.Tests.Array
 
         [Fact]
         public Task Array_JsObject_NamedProperties() { var testName = nameof(Array_JsObject_NamedProperties); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Exotic_Property_Descriptors() { var testName = nameof(Array_Exotic_Property_Descriptors); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Exotic_Sloppy_Assignment() { var testName = nameof(Array_Exotic_Sloppy_Assignment); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_DenseFastPath_Guards() { var testName = nameof(Array_DenseFastPath_Guards); return ExecutionTest(testName); }
     }
 }

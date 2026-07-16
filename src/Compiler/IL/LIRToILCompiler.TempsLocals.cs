@@ -1793,13 +1793,27 @@ internal sealed partial class LIRToILCompiler
                         ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
                     }
 
-                    EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
-                    var arrayLengthSetter = _memberRefRegistry.GetOrAddMethod(
+                    var valueStorage = GetTempStorage(setArrayLength.Value);
+                    var hasUnboxedDoubleValue = valueStorage.Kind == ValueStorageKind.UnboxedValue
+                        && valueStorage.ClrType == typeof(double);
+                    if (hasUnboxedDoubleValue)
+                    {
+                        EmitLoadTempAsDouble(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArrayLength.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    ilEncoder.LoadConstantI4(setArrayLength.ThrowOnError ? 1 : 0);
+                    var setArrayLengthMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        "set_length",
-                        parameterTypes: new[] { typeof(double) });
+                        nameof(JavaScriptRuntime.Array.SetLength),
+                        parameterTypes: hasUnboxedDoubleValue
+                            ? new[] { typeof(double), typeof(bool) }
+                            : new[] { typeof(object), typeof(bool) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(arrayLengthSetter);
+                    ilEncoder.Token(setArrayLengthMethod);
 
                     var resultStorage = GetTempStorage(temp);
                     if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))

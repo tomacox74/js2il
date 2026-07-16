@@ -302,7 +302,11 @@ internal static class LIRIntrinsicNormalization
                     && string.Equals(setItemKey, "length", StringComparison.Ordinal))
                 {
                     // Rewrite: SetItem(array, "length", value, result) -> SetJsArrayLength(array, value, result)
-                    methodBody.Instructions[i] = new LIRSetJsArrayLength(setItem.Object, setItem.Value, setItem.Result);
+                    methodBody.Instructions[i] = new LIRSetJsArrayLength(
+                        setItem.Object,
+                        setItem.Value,
+                        setItem.Result,
+                        setItem.ThrowOnError);
                     continue;
                 }
 

@@ -5,6 +5,38 @@ namespace Jroc.Tests.Array;
 public sealed class RuntimeJsObjectInheritanceTests
 {
     [Fact]
+    public void DenseTruncation_DoesNotMaterializeDescriptorState()
+    {
+        var values = Enumerable.Range(0, 4096).Select(value => (object?)(double)value);
+        var truncated = new JavaScriptRuntime.Array(values);
+
+        truncated.length = 0;
+
+        Assert.Equal(0d, truncated.length);
+        Assert.False(PropertyDescriptorStore.HasAny(truncated));
+
+        var drained = new JavaScriptRuntime.Array(values);
+        while (drained.length > 0)
+        {
+            drained.pop();
+        }
+
+        Assert.Equal(0d, drained.length);
+        Assert.False(PropertyDescriptorStore.HasAny(drained));
+    }
+
+    [Fact]
+    public void EmptyAddRange_PreservesVirtualLength()
+    {
+        var array = new JavaScriptRuntime.Array();
+        array.length = 4294967295d;
+
+        array.AddRange(System.Array.Empty<object?>());
+
+        Assert.Equal(4294967295d, array.length);
+    }
+
+    [Fact]
     public void Array_UsesInheritedStorageOnlyForOrdinaryProperties()
     {
         var runtime = RuntimeServices.BuildServiceProvider();

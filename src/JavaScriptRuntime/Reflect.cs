@@ -22,10 +22,7 @@ namespace JavaScriptRuntime
         }
 
         public static bool defineProperty(object target, object? propertyKey, object? attributes)
-        {
-            Object.defineProperty(target, propertyKey, attributes);
-            return true;
-        }
+            => Object.TryDefineProperty(target, propertyKey, attributes);
 
         private static object[] NormalizeArgumentsList(object? argumentsList)
         {

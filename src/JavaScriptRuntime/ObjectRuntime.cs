@@ -1077,22 +1077,11 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    if (TryParseCanonicalArrayIndexUInt(propName, out var largeArrayIndex))
-                    {
-                        array.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
-                    }
-
                     // Non-index keys behave like properties in JS (e.g. "length").
                     return SetProperty(array, propName, value, throwOnError);
                 }
 
-                if (!array.HasOwnIndex(intIndex)
-                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, propName, value, throwOnError))
-                {
-                    return value;
-                }
-
-                array[intIndex] = value!;
+                array.TrySetIndexValue(intIndex, value, throwOnError);
                 return value;
             }
 
@@ -1169,21 +1158,10 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    if (TryParseCanonicalArrayIndexUInt(key, out var largeArrayIndex))
-                    {
-                        array.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
-                    }
-
                     return SetProperty(array, key, value, throwOnError);
                 }
 
-                if (!array.HasOwnIndex(intIndex)
-                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, key, value, throwOnError))
-                {
-                    return value;
-                }
-
-                array[intIndex] = value!;
+                array.TrySetIndexValue(intIndex, value, throwOnError);
                 return value;
             }
 
@@ -1259,28 +1237,10 @@ namespace JavaScriptRuntime
             {
                 if (!isIndex)
                 {
-                    if (TryParseCanonicalArrayIndexUInt(key, out var largeArrayIndex))
-                    {
-                        array.EnsureLengthAtLeast((double)largeArrayIndex + 1d);
-                    }
-
-                    // Common hot path in benchmarks: ret.length = i
-                    if (string.Equals(key, "length", StringComparison.Ordinal))
-                    {
-                        array.length = value;
-                        return value;
-                    }
-
                     return SetProperty(array, key, value, throwOnError);
                 }
 
-                if (!array.HasOwnIndex(intIndex)
-                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, key, value, throwOnError))
-                {
-                    return value;
-                }
-
-                array[intIndex] = value;
+                array.TrySetIndexValue(intIndex, value, throwOnError);
                 return value;
             }
 
@@ -1355,32 +1315,10 @@ namespace JavaScriptRuntime
                 if (!isCanonicalArrayIndex)
                 {
                     var nonCanonicalIndexKey = DotNet2JSConversions.ToString(index);
-                    if (!double.IsNaN(index)
-                        && !double.IsInfinity(index)
-                        && index % 1.0 == 0.0
-                        && index >= 0
-                        && index < 4294967295d)
-                    {
-                        array.EnsureLengthAtLeast(index + 1d);
-                    }
-
                     return SetProperty(array, nonCanonicalIndexKey, value, throwOnError) ?? value;
                 }
 
-                if (!PropertyDescriptorStore.HasAny(array) && array.HasOwnIndex(intIndex))
-                {
-                    array[intIndex] = value;
-                    return value;
-                }
-
-                var canonicalIndexKey = DotNet2JSConversions.ToString(index);
-                if (!array.HasOwnIndex(intIndex)
-                    && JavaScriptRuntime.Object.TrySetPropertyViaPrototypeOrThrow(array, canonicalIndexKey, value, throwOnError))
-                {
-                    return value;
-                }
-
-                array[intIndex] = value;
+                array.TrySetIndexValue(intIndex, value, throwOnError);
                 return value;
             }
 
@@ -1452,9 +1390,7 @@ namespace JavaScriptRuntime
 
             if (receiver is Array jsArray)
             {
-                // Expand with nulls if index >= Count (approximate JS dense array semantics for numeric indexes)
-                while (i >= jsArray.Count) jsArray.Add(null!);
-                jsArray[i] = value;
+                jsArray.TrySetIndexValue(i, value, throwOnError: true);
                 return value;
             }
             if (receiver is TypedArrayBase typedArray)
