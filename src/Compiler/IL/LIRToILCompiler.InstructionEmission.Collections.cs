@@ -643,7 +643,8 @@ internal sealed partial class LIRToILCompiler
                     EmitLoadTemp(arrayAdd.Element, ilEncoder, allocation, methodDescriptor);
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Array),
-                        nameof(JavaScriptRuntime.Array.Add));
+                        nameof(JavaScriptRuntime.Array.Add),
+                        parameterTypes: new[] { typeof(object) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(addMethod);
                     break;

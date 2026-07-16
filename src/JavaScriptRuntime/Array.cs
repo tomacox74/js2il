@@ -11,10 +11,8 @@ using System.Globalization;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
-    public class Array : IEnumerable<object?>
+    public class Array : JsObject, IExoticJsObject, IEnumerable<object?>, IDictionary<string, object?>
     {
-        // Array remains an exotic object with dedicated prototype/element storage until #1443
-        // unifies it with JsObject. These are the only intentional ExpandoObject runtime uses.
         internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
         private static readonly object Hole = new();
@@ -916,7 +914,359 @@ namespace JavaScriptRuntime
             InitializeIntrinsicSurface();
         }
 
-        public int Count => LogicalCount;
+        public new int Count => LogicalCount;
+
+        // Keep the inherited dictionary surface as the named-property storage view,
+        // but never let canonical index or length writes leak into shape slots.
+        public override object? this[string key]
+        {
+            get
+            {
+                if (TryGetDictionaryValue(key, out var value))
+                {
+                    return value;
+                }
+
+                throw new KeyNotFoundException($"Key '{key}' not found.");
+            }
+            set => SetDictionaryValue(key, value);
+        }
+
+        public override void SetNumber(string key, double value)
+            => Object.SetProperty(this, key, value);
+
+        public override void SetBoolean(string key, bool value)
+            => Object.SetProperty(this, key, value);
+
+        public override void SetString(string key, string? value)
+            => Object.SetProperty(this, key, value);
+
+        public override void SetValue(string key, object? value)
+            => Object.SetProperty(this, key, value);
+
+        public override void Add(string key, object? value)
+        {
+            if (ContainsDictionaryKey(key))
+            {
+                throw new ArgumentException($"An item with the same key has already been added: {key}", nameof(key));
+            }
+
+            SetDictionaryValue(key, value);
+        }
+
+        public override bool ContainsKey(string key)
+            => ContainsDictionaryKey(key);
+
+        public override bool Remove(string key)
+            => ContainsDictionaryKey(key) && DeleteOwnProperty(key);
+
+        public override bool TryGetValue(string key, out object? value)
+            => TryGetDictionaryValue(key, out value);
+
+        public override bool Contains(KeyValuePair<string, object?> item)
+            => TryGetDictionaryValue(item.Key, out var value)
+                && EqualityComparer<object?>.Default.Equals(value, item.Value);
+
+        object? IDictionary<string, object?>.this[string key]
+        {
+            get => this[key];
+            set => this[key] = value;
+        }
+
+        void IDictionary<string, object?>.Add(string key, object? value)
+            => Add(key, value);
+
+        bool IDictionary<string, object?>.ContainsKey(string key)
+            => ContainsDictionaryKey(key);
+
+        bool IDictionary<string, object?>.Remove(string key)
+            => Remove(key);
+
+        bool IDictionary<string, object?>.TryGetValue(string key, out object? value)
+            => TryGetDictionaryValue(key, out value);
+
+        void ICollection<KeyValuePair<string, object?>>.Add(KeyValuePair<string, object?> item)
+            => ((IDictionary<string, object?>)this).Add(item.Key, item.Value);
+
+        void ICollection<KeyValuePair<string, object?>>.Clear()
+        {
+            foreach (var key in base.GetOwnPropertyNames().ToArray())
+            {
+                base.DeleteOwnProperty(key);
+            }
+        }
+
+        bool ICollection<KeyValuePair<string, object?>>.Contains(KeyValuePair<string, object?> item)
+            => Contains(item);
+
+        bool ICollection<KeyValuePair<string, object?>>.Remove(KeyValuePair<string, object?> item)
+            => ((ICollection<KeyValuePair<string, object?>>)this).Contains(item)
+                && ((IDictionary<string, object?>)this).Remove(item.Key);
+
+        private bool TryGetDictionaryValue(string key, out object? value)
+        {
+            if (!ContainsDictionaryKey(key))
+            {
+                value = null;
+                return false;
+            }
+
+            value = Object.GetProperty(this, key);
+            return true;
+        }
+
+        private bool ContainsDictionaryKey(string key)
+            => GetOwnPropertyDescriptor(key, out _) == PropertyDescriptorLookup.Found;
+
+        private void SetDictionaryValue(string key, object? value)
+            => Object.SetProperty(this, key, value);
+
+        internal override PropertyDescriptorLookup GetOwnPropertyDescriptor(
+            string key,
+            out JsPropertyDescriptor descriptor)
+        {
+            var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out descriptor);
+            if (lookup == PropertyDescriptorLookup.Deleted)
+            {
+                return lookup;
+            }
+
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                if (lookup == PropertyDescriptorLookup.Found)
+                {
+                    descriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                    descriptor.Value = length;
+                    return lookup;
+                }
+
+                descriptor = CreateLengthDescriptor();
+                return PropertyDescriptorLookup.Found;
+            }
+
+            if (lookup == PropertyDescriptorLookup.Found)
+            {
+                return lookup;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index)
+                && HasOwnIndex(index))
+            {
+                descriptor = CreateElementDescriptor(this[index]);
+                return PropertyDescriptorLookup.Found;
+            }
+
+            if (base.TryGetOwnPropertyValue(key, out var value))
+            {
+                descriptor = CreateElementDescriptor(value);
+                return PropertyDescriptorLookup.Found;
+            }
+
+            descriptor = null!;
+            return PropertyDescriptorLookup.None;
+        }
+
+        internal override bool TryGetOwnPropertyValue(string key, out object? value)
+        {
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                value = length;
+                return true;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            {
+                if (HasOwnIndex(index))
+                {
+                    value = this[index];
+                    return true;
+                }
+
+                value = null;
+                return false;
+            }
+
+            return base.TryGetOwnPropertyValue(key, out value);
+        }
+
+        internal override bool DefineOwnProperty(string key, JsPropertyDescriptor descriptor)
+        {
+            ArgumentNullException.ThrowIfNull(descriptor);
+
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                if (descriptor.Kind != JsPropertyDescriptorKind.Data)
+                {
+                    return false;
+                }
+
+                length = TypeUtilities.ToNumber(descriptor.Value);
+                if (!IsDefaultLengthDescriptor(descriptor))
+                {
+                    var storedDescriptor = PropertyDescriptorStore.CloneDescriptor(descriptor);
+                    storedDescriptor.Value = length;
+                    PropertyDescriptorStore.DefineOrUpdate(this, key, storedDescriptor);
+                }
+
+                return true;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            {
+                var lookup = PropertyDescriptorStore.GetOwnLookupCore(this, key, out _);
+                if (descriptor.Kind == JsPropertyDescriptorKind.Data
+                    && IsDefaultElementDescriptor(descriptor)
+                    && lookup == PropertyDescriptorLookup.None)
+                {
+                    this[index] = descriptor.Value;
+                    return true;
+                }
+
+                if (descriptor.Kind == JsPropertyDescriptorKind.Data)
+                {
+                    this[index] = descriptor.Value;
+                }
+                else
+                {
+                    if (index >= Count)
+                    {
+                        length = (double)index + 1;
+                    }
+
+                    DeleteOwnIndex(index);
+                }
+
+                PropertyDescriptorStore.DefineOrUpdate(this, key, descriptor);
+                return true;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var largeIndex))
+            {
+                EnsureLengthAtLeast((double)largeIndex + 1d);
+            }
+
+            return base.DefineOwnProperty(key, descriptor);
+        }
+
+        internal override bool SetOwnPropertyValue(string key, object? value)
+        {
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                length = TypeUtilities.ToNumber(value);
+                return true;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            {
+                this[index] = value;
+                return true;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var largeIndex))
+            {
+                EnsureLengthAtLeast((double)largeIndex + 1d);
+            }
+
+            return base.SetOwnPropertyValue(key, value);
+        }
+
+        internal override bool DeleteOwnProperty(string key)
+        {
+            if (string.Equals(key, "length", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (ObjectRuntime.TryParseCanonicalIndexString(key, out var index))
+            {
+                DeleteOwnIndex(index);
+                PropertyDescriptorStore.Delete(this, key);
+                return true;
+            }
+
+            return base.DeleteOwnProperty(key);
+        }
+
+        internal override IEnumerable<string> GetOwnPropertyKeys()
+        {
+            var numericKeys = new SortedDictionary<uint, string>();
+            var descriptorKeys = PropertyDescriptorStore.GetOwnKeys(this).ToArray();
+            var backingKeys = base.GetOwnPropertyNames().ToArray();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var index in GetOwnElementIndices())
+            {
+                var key = index.ToString(CultureInfo.InvariantCulture);
+                numericKeys[(uint)index] = key;
+            }
+
+            foreach (var key in descriptorKeys.Concat(backingKeys))
+            {
+                if (ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out var index))
+                {
+                    numericKeys.TryAdd(index, key);
+                }
+            }
+
+            foreach (var key in numericKeys.Values)
+            {
+                seen.Add(key);
+                yield return key;
+            }
+
+            seen.Add("length");
+            yield return "length";
+
+            foreach (var key in descriptorKeys.Concat(backingKeys))
+            {
+                if (!Object.IsEncodedSymbolKey(key)
+                    && !ObjectRuntime.TryParseCanonicalArrayIndexUInt(key, out _)
+                    && seen.Add(key))
+                {
+                    yield return key;
+                }
+            }
+
+            foreach (var key in descriptorKeys.Concat(backingKeys))
+            {
+                if (Object.IsEncodedSymbolKey(key) && seen.Add(key))
+                {
+                    yield return key;
+                }
+            }
+        }
+
+        private static JsPropertyDescriptor CreateElementDescriptor(object? value)
+            => new()
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = value,
+                Writable = true,
+                Enumerable = true,
+                Configurable = true
+            };
+
+        private JsPropertyDescriptor CreateLengthDescriptor()
+            => new()
+            {
+                Kind = JsPropertyDescriptorKind.Data,
+                Value = length,
+                Writable = true,
+                Enumerable = false,
+                Configurable = false
+            };
+
+        private static bool IsDefaultElementDescriptor(JsPropertyDescriptor descriptor)
+            => descriptor.Kind == JsPropertyDescriptorKind.Data
+                && descriptor.Writable
+                && descriptor.Enumerable
+                && descriptor.Configurable;
+
+        private static bool IsDefaultLengthDescriptor(JsPropertyDescriptor descriptor)
+            => descriptor.Kind == JsPropertyDescriptorKind.Data
+                && descriptor.Writable
+                && !descriptor.Enumerable
+                && !descriptor.Configurable;
 
         internal bool HasOwnIndex(int index)
             => index >= 0 && index < _items.Count && !ReferenceEquals(_items[index], Hole);
@@ -1074,7 +1424,7 @@ namespace JavaScriptRuntime
             _logicalLength = _items.Count;
         }
 
-        public void Clear()
+        public override void Clear()
         {
             _items.Clear();
             _logicalLength = 0;
@@ -1092,7 +1442,10 @@ namespace JavaScriptRuntime
             return result;
         }
 
-        public IEnumerator<object?> GetEnumerator()
+        public List<object?> ToList()
+            => new(ToArray());
+
+        public new IEnumerator<object?> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
             {

@@ -753,19 +753,14 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
-            // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            if (IsOrdinaryObject(obj))
-            {
-                return GetProperty(obj, propName)!;
-            }
-
             if (obj is Array array)
             {
                 if (!isIndex)
                 {
                     return GetProperty(array, propName)!;
                 }
-                if (PropertyDescriptorStore.TryGetOwn(array, propName, out _))
+                if (PropertyDescriptorStore.HasAny(array)
+                    && PropertyDescriptorStore.GetOwnLookupCore(array, propName, out _) != PropertyDescriptorLookup.None)
                 {
                     return GetProperty(array, propName)!;
                 }
@@ -774,6 +769,11 @@ namespace JavaScriptRuntime
                     return GetProperty(array, propName)!;
                 }
                 return array[intIndex]!;
+            }
+            // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
+            else if (IsOrdinaryObject(obj))
+            {
+                return GetProperty(obj, propName)!;
             }
             else if (obj is TypedArrayBase typedArray)
             {
@@ -833,22 +833,23 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
-            // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
-            if (IsOrdinaryObject(obj))
-            {
-                var propName = Object.ToPropertyKeyString(index);
-                return GetProperty(obj, propName)!;
-            }
-
             if (obj is Array array)
             {
                 if (!double.IsNaN(index)
                     && !double.IsInfinity(index)
                     && index % 1.0 == 0.0
                     && index >= 0
-                    && index <= int.MaxValue
-                    && !PropertyDescriptorStore.HasAny(array))
+                    && index <= int.MaxValue)
                 {
+                    if (PropertyDescriptorStore.HasAny(array))
+                    {
+                        var arrayIndexKey = intIndex.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+                        if (PropertyDescriptorStore.GetOwnLookupCore(array, arrayIndexKey, out _) != PropertyDescriptorLookup.None)
+                        {
+                            return GetProperty(array, arrayIndexKey)!;
+                        }
+                    }
+
                     if (intIndex >= array.Count)
                     {
                         return null!; // undefined
@@ -856,7 +857,7 @@ namespace JavaScriptRuntime
 
                     if (!array.HasOwnIndex(intIndex))
                     {
-                        var arrayIndexKey = Object.ToPropertyKeyString(index);
+                        var arrayIndexKey = intIndex.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
                         return GetProperty(array, arrayIndexKey)!;
                     }
 
@@ -864,7 +865,7 @@ namespace JavaScriptRuntime
                 }
 
                 var propName = Object.ToPropertyKeyString(index);
-                if (PropertyDescriptorStore.TryGetOwn(array, propName, out _))
+                if (PropertyDescriptorStore.GetOwnLookupCore(array, propName, out _) != PropertyDescriptorLookup.None)
                 {
                     return GetProperty(array, propName)!;
                 }
@@ -873,6 +874,12 @@ namespace JavaScriptRuntime
                     return GetProperty(array, propName)!;
                 }
                 return array[intIndex]!;
+            }
+            // Ordinary object: numeric index coerces to a property-name string per JS ToPropertyKey.
+            else if (IsOrdinaryObject(obj))
+            {
+                var propName = Object.ToPropertyKeyString(index);
+                return GetProperty(obj, propName)!;
             }
             else if (obj is TypedArrayBase typedArray)
             {
@@ -943,15 +950,14 @@ namespace JavaScriptRuntime
                 return JavaScriptRuntime.String.CharToStringFast(str[intIndex]);
             }
 
-            // Ordinary object: key is already a string property.
-            if (IsOrdinaryObject(obj))
-            {
-                return GetProperty(obj, key)!;
-            }
-
             if (obj is Array array)
             {
                 if (!isIndex)
+                {
+                    return GetProperty(array, key)!;
+                }
+                if (PropertyDescriptorStore.HasAny(array)
+                    && PropertyDescriptorStore.GetOwnLookupCore(array, key, out _) != PropertyDescriptorLookup.None)
                 {
                     return GetProperty(array, key)!;
                 }
@@ -960,6 +966,11 @@ namespace JavaScriptRuntime
                     return GetProperty(array, key)!;
                 }
                 return array[intIndex]!;
+            }
+            // Ordinary object: key is already a string property.
+            else if (IsOrdinaryObject(obj))
+            {
+                return GetProperty(obj, key)!;
             }
             else if (obj is TypedArrayBase typedArray)
             {
@@ -1060,11 +1071,6 @@ namespace JavaScriptRuntime
                 return value;
             }
 
-            if (IsOrdinaryObject(obj))
-            {
-                return SetProperty(obj, propName, value, throwOnError);
-            }
-
             // JS Array index assignment
             if (obj is Array array)
             {
@@ -1087,6 +1093,11 @@ namespace JavaScriptRuntime
 
                 array[intIndex] = value!;
                 return value;
+            }
+
+            if (IsOrdinaryObject(obj))
+            {
+                return SetProperty(obj, propName, value, throwOnError);
             }
 
             // Typed arrays: coerce and store when in-bounds
@@ -1152,11 +1163,6 @@ namespace JavaScriptRuntime
 
             bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
 
-            if (IsOrdinaryObject(obj))
-            {
-                return SetProperty(obj, key, value, throwOnError);
-            }
-
             // JS Array index assignment
             if (obj is Array array)
             {
@@ -1178,6 +1184,11 @@ namespace JavaScriptRuntime
 
                 array[intIndex] = value!;
                 return value;
+            }
+
+            if (IsOrdinaryObject(obj))
+            {
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             // Typed arrays: coerce and store when in-bounds
@@ -1242,11 +1253,6 @@ namespace JavaScriptRuntime
 
             bool isIndex = TryParseCanonicalIndexString(key, out int intIndex);
 
-            if (IsOrdinaryObject(obj))
-            {
-                return SetProperty(obj, key, value, throwOnError);
-            }
-
             // JS Array index assignment
             if (obj is Array array)
             {
@@ -1275,6 +1281,11 @@ namespace JavaScriptRuntime
 
                 array[intIndex] = value;
                 return value;
+            }
+
+            if (IsOrdinaryObject(obj))
+            {
+                return SetProperty(obj, key, value, throwOnError);
             }
 
             // Typed arrays: value is already numeric.

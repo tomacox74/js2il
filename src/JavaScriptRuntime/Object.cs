@@ -229,7 +229,7 @@ namespace JavaScriptRuntime
             return !_integrityStates.TryGetValue(target, out var state) || state.Extensible;
         }
 
-        private static bool IsEncodedSymbolKey(string? key)
+        internal static bool IsEncodedSymbolKey(string? key)
         {
             return !string.IsNullOrEmpty(key) && _encodedSymbolKeys.ContainsKey(key);
         }
@@ -585,9 +585,9 @@ namespace JavaScriptRuntime
 
             if (obj is JavaScriptRuntime.Array jsArray)
             {
-                foreach (var index in jsArray.GetOwnElementIndices())
+                foreach (var key in ObjectRuntime.GetOwnKeys(jsArray))
                 {
-                    AddKey(keys, seen, index.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+                    AddKey(keys, seen, key);
                 }
             }
             else if (obj is string str)

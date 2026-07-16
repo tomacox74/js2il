@@ -239,7 +239,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     {
         if (!PropertyDescriptorStore.HasIntrinsicProperties(this))
         {
-            Remove(key);
+            RemoveBoxedValue(key);
         }
 
         PropertyDescriptorStore.Delete(this, key);
@@ -262,28 +262,28 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     // -------------------------------------------------------------------------
 
     /// <summary>Stores a numeric property without boxing the double value.</summary>
-    public void SetNumber(string key, double value)
+    public virtual void SetNumber(string key, double value)
     {
         SetValue(key, JsValue.FromNumber(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores a boolean property without boxing the bool value.</summary>
-    public void SetBoolean(string key, bool value)
+    public virtual void SetBoolean(string key, bool value)
     {
         SetValue(key, JsValue.FromBoolean(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores a string property.</summary>
-    public void SetString(string key, string? value)
+    public virtual void SetString(string key, string? value)
     {
         SetValue(key, JsValue.FromString(value));
         DefineDataDescriptor(key, value);
     }
 
     /// <summary>Stores an arbitrary object value.</summary>
-    public void SetValue(string key, object? value)
+    public virtual void SetValue(string key, object? value)
     {
         SetValue(key, JsValue.FromObject(value));
         DefineDataDescriptor(key, value);
@@ -335,7 +335,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     // Values are converted to/from JsValue at the interface boundary.
     // -------------------------------------------------------------------------
 
-    public object? this[string key]
+    public virtual object? this[string key]
     {
         get => GetValue(key).ToObject();
         set => SetValue(key, JsValue.FromObject(value));
@@ -349,7 +349,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
 
     public bool IsReadOnly => false;
 
-    public void Add(string key, object? value)
+    public virtual void Add(string key, object? value)
     {
         if (ContainsKey(key))
         {
@@ -359,9 +359,12 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
         SetValue(key, JsValue.FromObject(value));
     }
 
-    public bool ContainsKey(string key) => _shape.GetSlot(key) != -1;
+    public virtual bool ContainsKey(string key) => _shape.GetSlot(key) != -1;
 
-    public bool Remove(string key)
+    public virtual bool Remove(string key)
+        => RemoveBoxedValue(key);
+
+    internal bool RemoveBoxedValue(string key)
     {
         var slot = _shape.GetSlot(key);
         if (slot == -1)
@@ -373,7 +376,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
         return true;
     }
 
-    public bool TryGetValue(string key, out object? value)
+    public virtual bool TryGetValue(string key, out object? value)
     {
         if (this.TryGetJsValue(key, out var jv))
         {
@@ -395,7 +398,7 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
         _shape = JsShape.Empty;
     }
 
-    public bool Contains(KeyValuePair<string, object?> item)
+    public virtual bool Contains(KeyValuePair<string, object?> item)
         => _properties is not null
            && TryGetJsValue(item.Key, out var jv)
            && Equals(jv.ToObject(), item.Value);
