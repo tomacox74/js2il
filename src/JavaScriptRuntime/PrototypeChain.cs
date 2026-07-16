@@ -63,6 +63,10 @@ public static class PrototypeChain
     public static void SetPrototype(object obj, object? prototype)
     {
         SetPrototypeCore(obj, prototype);
+        if (obj is Array array)
+        {
+            array.DisableDenseGrowthFastPath();
+        }
         Interlocked.Increment(ref _mutationVersion);
     }
 

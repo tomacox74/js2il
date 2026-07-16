@@ -1693,6 +1693,10 @@ namespace JavaScriptRuntime
             }
 
             GetIntegrityState(obj).Extensible = false;
+            if (obj is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
             return obj;
         }
 
@@ -1749,6 +1753,10 @@ namespace JavaScriptRuntime
             var state = GetIntegrityState(obj);
             state.Extensible = false;
             state.Sealed = true;
+            if (obj is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
             return obj;
         }
 
@@ -1795,6 +1803,10 @@ namespace JavaScriptRuntime
             state.Extensible = false;
             state.Sealed = true;
             state.Frozen = true;
+            if (obj is Array array)
+            {
+                array.DisableDenseGrowthFastPath();
+            }
             return obj;
         }
 

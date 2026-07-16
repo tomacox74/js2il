@@ -15,7 +15,8 @@ namespace JavaScriptRuntime
     {
         internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
         private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
-        private static readonly ThreadLocal<DensePrototypeCache> _densePrototypeCaches = new(() => new());
+        [ThreadStatic]
+        private static DensePrototypeCache? _densePrototypeCache;
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
         private readonly List<object?> _items;
@@ -1638,26 +1639,22 @@ namespace JavaScriptRuntime
         }
 
         private bool CanUseDenseMutationFastPath()
-            => _holeCount == 0
+            => (_holeCount & int.MaxValue) == 0
                 && _logicalLength == _items.Count
                 && _virtualLength == _items.Count
-                && !HasNonDataDescriptors
-                && !PropertyDescriptorStore.HasAny(this);
+                && !HasNonDataDescriptors;
+
+        internal void DisableDenseGrowthFastPath()
+            => _holeCount |= int.MinValue;
 
         private bool CanUseDenseGrowthFastPath()
         {
-            if (!CanUseDenseMutationFastPath() || !Object.IsExtensibleInternal(this))
+            if (!CanUseDenseMutationFastPath() || _holeCount < 0)
             {
                 return false;
             }
 
-            if (!PrototypeChain.TryGetPrototype(this, out var prototype)
-                || !ReferenceEquals(prototype, Prototype))
-            {
-                return false;
-            }
-
-            var cache = _densePrototypeCaches.Value!;
+            var cache = _densePrototypeCache ??= new DensePrototypeCache();
             var descriptorVersion = PropertyDescriptorStore.MutationVersion;
             var prototypeVersion = PrototypeChain.MutationVersion;
             var storeIdentity = PropertyDescriptorStore.CurrentStoreIdentity;
@@ -2309,8 +2306,7 @@ namespace JavaScriptRuntime
 
         private void SetLengthValue(object? value, bool throwOnError)
         {
-            if ((HasNonDataDescriptors || PropertyDescriptorStore.HasAny(this))
-                && !IsLengthWritable)
+            if (HasNonDataDescriptors && !IsLengthWritable)
             {
                 if (throwOnError)
                 {
@@ -3546,6 +3542,14 @@ namespace JavaScriptRuntime
         /// </summary>
         public double push(object? item)
         {
+            var newLength = length;
+            if (newLength < int.MaxValue && CanUseDenseGrowthFastPath())
+            {
+                _items.Add(item);
+                SynchronizeDenseLength();
+                return length;
+            }
+
             return PushItems(new object?[] { item });
         }
 
