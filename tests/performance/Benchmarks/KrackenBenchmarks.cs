@@ -2,6 +2,8 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
 using Jroc;
 using Jroc.Runtime;
+using Jint;
+using YantraJS.Core;
 
 namespace Benchmarks;
 
@@ -27,6 +29,17 @@ public class KrackenBenchmarks
     /// </summary>
     private Okojo.Runtime.JsRealm? _okojoRealm = null;
     private Okojo.JsValue _okojoRunTest;
+
+    /// <summary>
+    /// Jint engine and prepared runTest function.
+    /// </summary>
+    private Engine? _jintEngine = null;
+
+    /// <summary>
+    /// YantraJS context and prepared runTest function.
+    /// </summary>
+    private JSContext? _yantraJsContext;
+    private JSValue? _yantraJsRunTest;
 
     private void SetupJroc(string astarDataScriptContent, string astarTestScriptContent)
     {
@@ -65,6 +78,27 @@ public class KrackenBenchmarks
         this._okojoRunTest = _okojoRealm.Global["runTest"];
     }
 
+    private void SetupJint(string astarDataScriptContent, string astarTestScriptContent)
+    {
+        var runTestContent = @"function runTest() { go(); return 'done';}";
+
+        _jintEngine = new Engine(options => options.Strict());
+        _jintEngine.Execute(astarDataScriptContent, "ai-astar-data.js");
+        _jintEngine.Execute(astarTestScriptContent, "ai-astar.js");
+        _jintEngine.Execute(runTestContent, "kracken-run-test.js");
+    }
+
+    private void SetupYantraJs(string astarDataScriptContent, string astarTestScriptContent)
+    {
+        var runTestContent = @"function runTest() { go(); return 'done';}";
+
+        var context = new JSContext();
+        context.Eval(astarDataScriptContent, "ai-astar-data.js");
+        context.Eval(astarTestScriptContent, "ai-astar.js");
+        _yantraJsRunTest = context.Eval(runTestContent + "\nrunTest;", "kracken-run-test.js");
+        _yantraJsContext = context;
+    }
+
     [ParamsSource(nameof(ScriptNames))]
     public string ScriptName { get; set; } = "";
 
@@ -88,6 +122,8 @@ public class KrackenBenchmarks
 
         SetupJroc(astarDataScriptContent, astarTestScriptContent);
         SetupOkojo(astarDataScriptContent, astarTestScriptContent);
+        SetupJint(astarDataScriptContent, astarTestScriptContent);
+        SetupYantraJs(astarDataScriptContent, astarTestScriptContent);
     }
 
     [Benchmark(Description = "jroc-execute")]
@@ -108,6 +144,27 @@ public class KrackenBenchmarks
         if (result.ToString() != "done")
         {
             throw new InvalidOperationException($"Unexpected result from Okojo test: {result}");
+        }
+    }
+
+    [Benchmark(Description = "jint-execute")]
+    public void RunJintTest()
+    {
+        var result = _jintEngine!.Invoke("runTest");
+        if (result.ToString() != "done")
+        {
+            throw new InvalidOperationException($"Unexpected result from Jint test: {result}");
+        }
+    }
+
+    [Benchmark(Description = "yantrajs-execute")]
+    public void RunYantraJsTest()
+    {
+        var arguments = Arguments.Empty;
+        var result = _yantraJsRunTest!.InvokeFunction(in arguments);
+        if (result.ToString() != "done")
+        {
+            throw new InvalidOperationException($"Unexpected result from YantraJS test: {result}");
         }
     }
 }
