@@ -7,6 +7,9 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 ## Unreleased
 
 - modules: add the Node `util/types` / `node:util/types` subpath as an alias of `util.types`, including Undici-required `isUint8Array` and `isArrayBuffer` predicates for Fetch byte validation and WebSocket ArrayBuffer handling. (#1496)
+
+## v0.11.27 - 2026-07-16
+
 - modules: add the Node `timers` / `node:timers` module with `setTimeout` and `clearTimeout` exports. One-shot timeout handles now support Node-compatible `refresh()` rescheduling, enabling Undici's snapshot-recorder auto-flush path. (#1495)
 - modules: add Node-compatible `buffer` / `node:buffer` module resolution. The module exports the existing `Buffer` constructor plus `isUtf8` and `resolveObjectURL`, enabling Undici's llhttp WASM decoding, SOCKS5 binary protocol handling, and WebSocket UTF-8 validation paths. Buffer views now expose `buffer`, `byteOffset`, and `byteLength` metadata. (#1487)
 - modules: add the Node `console` / `node:console` module with a constructible `Console` export that routes `log`, `warn`, `error`, and `table` output to JROC writable streams. This covers Undici's pending-interceptor table formatter. (#1490)
