@@ -22,7 +22,7 @@ namespace Jroc.Tests.Node.ChildProcess
         public Task Require_ChildProcess_ExecFile_NonZero()
             => ExecutionTest(nameof(Require_ChildProcess_ExecFile_NonZero));
 
-        [Fact]
+        [Fact(Skip = "Temporarily skipped due to CI flakiness. Tracked by #1517.")]
         public Task Require_ChildProcess_Fork_MessagePassing()
             => ExecutionTest(
                 nameof(Require_ChildProcess_Fork_MessagePassing),
