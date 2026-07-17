@@ -65,9 +65,11 @@ function normalizeRuntime(raw) {
     const text = String(raw ?? '').toLowerCase();
     if (text.includes('clearscript')) return 'clearscript';
     if (text.includes('node')) return 'node';
+    if (text.includes('yantra') && text.includes('execute')) return 'yantrajs-execute';
     if (text.includes('yantra')) return 'yantrajs';
     if (text.includes('jint') && text.includes('prepared')) return 'jint-execute-prepared';
     if (text.includes('jint') && text.includes('prepare')) return 'jint-prepare';
+    if (text.includes('jint') && text.includes('execute')) return 'jint-execute';
     if (text.includes('jint')) return 'jint';
     if (text.includes('jroc') && text.includes('execute') && text.includes('pre-compiled')) return 'jroc-execute';
     if (text.includes('jroc') && text.includes('execute') && text.includes('precompiled')) return 'jroc-execute';
@@ -884,7 +886,11 @@ async function main() {
     console.log(`Ingested ${dedupedRows.length} rows to Supabase from '${source}'.`);
 }
 
-main().catch(error => {
-    console.error(error.message);
-    process.exit(1);
-});
+if (require.main === module) {
+    main().catch(error => {
+        console.error(error.message);
+        process.exit(1);
+    });
+}
+
+module.exports = { normalizeRuntime };
