@@ -8,10 +8,6 @@ on:
         description: 'BenchmarkDotNet filter (e.g., *minimal*, *Jint*)'
         required: false
         default: '*'
-      mode:
-        description: 'Benchmark mode (default/phased/all)'
-        required: false
-        default: 'all'
       jroc_package_version:
         description: 'Published Jroc package version to benchmark (for example 0.9.5)'
         required: false
@@ -21,11 +17,25 @@ on:
 
 jobs:
   benchmarkdotnet-suite:
+    name: ${{ matrix.benchmark_name }}
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - benchmark_name: KrackenBenchmarks
+            mode_argument: --kracken
+            artifact_suffix: kracken
+          - benchmark_name: JrocPhasedBenchmarks
+            mode_argument: --phased
+            artifact_suffix: jroc-phased
+          - benchmark_name: JavaScriptRuntimeBenchmarks
+            mode_argument: ''
+            artifact_suffix: javascript-runtime
     
     steps:
       - name: Checkout repository
@@ -183,22 +193,15 @@ jobs:
         id: benchmark
         shell: bash
         env:
-          BENCHMARK_MODE: ${{ github.event.inputs.mode || 'all' }}
+          BENCHMARK_MODE_ARGUMENT: ${{ matrix.mode_argument }}
           BENCHMARK_FILTER: ${{ github.event.inputs.benchmark_filter || '*' }}
         run: |
           set -euo pipefail
           cd tests/performance/Benchmarks
 
-          MODE_ARG=""
-          if [ "$BENCHMARK_MODE" = "phased" ]; then
-            MODE_ARG="--phased"
-          elif [ "$BENCHMARK_MODE" = "all" ]; then
-            MODE_ARG="--all"
-          fi
-
           DOTNET_ARGS=()
-          if [ -n "$MODE_ARG" ]; then
-            DOTNET_ARGS+=("$MODE_ARG")
+          if [ -n "$BENCHMARK_MODE_ARGUMENT" ]; then
+            DOTNET_ARGS+=("$BENCHMARK_MODE_ARGUMENT")
           fi
           DOTNET_ARGS+=(--filter "$BENCHMARK_FILTER" --exporters json)
 
@@ -227,7 +230,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: benchmarkdotnet-results
+          name: benchmarkdotnet-results-${{ matrix.artifact_suffix }}
           path: |
             tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/**/*
           retention-days: 90
@@ -236,7 +239,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: benchmark-summary
+          name: benchmark-summary-${{ matrix.artifact_suffix }}
           path: |
             tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.md
             tests/performance/Benchmarks/BenchmarkDotNet.Artifacts/results/*.html
@@ -276,7 +279,7 @@ jobs:
             
             ---
             *Run on: ${new Date().toISOString()}*
-            *Mode: ${{ github.event.inputs.mode || 'default' }}*
+            *Suite: ${{ matrix.benchmark_name }}*
             *Filter: ${{ github.event.inputs.benchmark_filter || 'all' }}*
             *Full results: [Download artifacts](${context.payload.repository.html_url}/actions/runs/${context.runId})*`;
             
