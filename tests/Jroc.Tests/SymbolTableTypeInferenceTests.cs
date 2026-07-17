@@ -205,6 +205,38 @@ public class SymbolTableTypeInferenceTests
         }
     }
 
+    [Fact]
+    public void SymbolTable_InferTypes_TopLevelNumericVar_ProvesArrayStressLoopBound()
+    {
+        var symbolTable = BuildSymbolTable(@"
+            var ret = [], tmp, num = 100, i = 256;
+            for (var j1 = 0; j1 < i * 15; j1++) {
+                ret = [];
+                ret.length = i;
+            }
+        ");
+
+        var binding = symbolTable.GetBindingInfo("i");
+        Assert.NotNull(binding);
+        Assert.True(binding!.IsStableType);
+        Assert.Equal(typeof(double), binding.ClrType);
+        Assert.True(binding.CanUseUnboxedLocal);
+    }
+
+    [Theory]
+    [InlineData("console.log(i); var i = 256;")]
+    [InlineData("var i = 256; i = 'text';")]
+    [InlineData("var i = 256; function read() { return i; }")]
+    [InlineData("var i = 256; globalThis.i = 'text';")]
+    public void SymbolTable_InferTypes_TopLevelNumericVar_RejectsObservableOrIncompatibleUses(string source)
+    {
+        var symbolTable = BuildSymbolTable(source);
+
+        var binding = symbolTable.GetBindingInfo("i");
+        Assert.NotNull(binding);
+        Assert.False(binding!.CanUseUnboxedLocal);
+    }
+
     [Theory]
     [InlineData("console.log(value); value = 1;")]
     [InlineData("if (flag) value = 1; console.log(value);")]

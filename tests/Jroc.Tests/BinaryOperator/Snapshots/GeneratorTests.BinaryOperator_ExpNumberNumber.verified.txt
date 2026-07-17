@@ -14,7 +14,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x20a5
+			// Method begins at RVA 0x20a7
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -40,12 +40,13 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 75 (0x4b)
 		.maxstack 8
 		.locals init (
 			[0] class Modules.BinaryOperator_ExpNumberNumber/Scope,
-			[1] object,
-			[2] object
+			[1] float64,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Modules.BinaryOperator_ExpNumberNumber/Scope::.ctor()
@@ -54,21 +55,23 @@
 		IL_0007: ldc.r8 2
 		IL_0010: ldc.r8 3
 		IL_0019: call float64 [System.Runtime]System.Math::Pow(float64, float64)
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: stloc.1
-		IL_0024: ldstr "console"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
-		IL_002e: stloc.2
-		IL_002f: ldloc.2
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
-		IL_0035: stloc.2
-		IL_0036: ldloc.2
-		IL_0037: ldstr "log"
-		IL_003c: ldstr "x is"
-		IL_0041: ldloc.1
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
-		IL_0047: pop
-		IL_0048: ret
+		IL_001e: stloc.1
+		IL_001f: ldstr "console"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::GetGlobalBindingValue(string)
+		IL_0029: stloc.2
+		IL_002a: ldloc.2
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.ObjectRuntime::RequireObjectCoercible(object)
+		IL_0030: stloc.2
+		IL_0031: ldloc.1
+		IL_0032: box [System.Runtime]System.Double
+		IL_0037: stloc.3
+		IL_0038: ldloc.2
+		IL_0039: ldstr "log"
+		IL_003e: ldstr "x is"
+		IL_0043: ldloc.3
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember2(object, string, object, object)
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method BinaryOperator_ExpNumberNumber::__js_module_init__
 
 } // end of class Modules.BinaryOperator_ExpNumberNumber
@@ -80,7 +83,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ae
+		// Method begins at RVA 0x20b0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1649,6 +1649,12 @@ namespace Jroc.SymbolTables
                     {
                         MarkNearestArgumentsOwnerScopeAsNeedingArguments(currentScope);
                     }
+
+                    if (currentScope.Kind == ScopeKind.Global
+                        && string.Equals(id.Name, "globalThis", StringComparison.Ordinal))
+                    {
+                        currentScope.UsesGlobalThisValue = true;
+                    }
                     break;
                 case ThisExpression:
                     if (currentScope.Kind == ScopeKind.Global)
