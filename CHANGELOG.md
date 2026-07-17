@@ -6,6 +6,10 @@ For older release lines, browse [`docs/archive/changelog/Index.md`](docs/archive
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.11.28 - 2026-07-17
+
 - runtime: complete the `Array : JsObject` migration. `Array.prototype`, its runtime-local overlay, and `Array.prototype[Symbol.unscopables]` now use ordinary `JsObject` storage, removing the final runtime `ExpandoObject` representation while preserving prototype isolation, descriptors, subclass construction, compiler array intrinsics, reflection, Node inspection, JSON, and dense/sparse array semantics. Runtime architecture documentation now defines `JsObject` as the shared ordinary/exotic object substrate. Hosted comparisons measured precompiled `array-stress` execution 3.6% faster with 1.0% lower allocation and `dromaeo-object-array` execution 0.7% faster with 0.7% higher allocation. Compilation timing was 8.8% and 6.9% slower respectively despite no compiler/codegen changes; compiler allocation changed by less than 1%. (#1448, closes #1443)
 - perf/compiler: specialize provably initialized, uncaptured top-level numeric `var` bindings into unboxed `double` locals. Module-loop arithmetic and comparisons now avoid repeated numeric coercion and boxing, while hoisted reads, incompatible writes, captures, uninitialized declarations, and any `globalThis` observation retain object storage. (#1511, parent #1322)
 - runtime: consolidate generic `JsObject` get/set/has/delete/descriptor/own-key dispatch through virtual internal-operation hooks, removing obsolete parallel `Array` branches while retaining allocation-free numeric index paths. Own-key merging is centralized for ordinary and exotic objects, Array reflection/proxy/`for-in` behavior shares that path, and `Reflect.ownKeys` now exposes ordered string and symbol keys. (#1447, parent #1443)
