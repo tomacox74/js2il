@@ -5,11 +5,13 @@ namespace Jroc.Tests;
 public class GlobalThisTests
 {
     [Fact]
-    public void GlobalObject_AndNonArrayIntrinsicPrototypes_UseJsObjectRepresentation()
+    public void GlobalObject_AndIntrinsicPrototypes_UseJsObjectRepresentation()
     {
         var globalObject = Assert.IsType<GlobalThis>(GlobalThis.globalThis);
 
         Assert.IsAssignableFrom<JsObject>(globalObject);
+        Assert.IsType<JsObject>(JavaScriptRuntime.Array.ImmutablePrototype);
+        Assert.IsType<JsObject>(JavaScriptRuntime.Array.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.String.Prototype);
         Assert.IsType<JsObject>(JavaScriptRuntime.String.StringIteratorPrototype);
         Assert.IsType<JsObject>(RegExp.Prototype);
@@ -55,12 +57,13 @@ public class GlobalThisTests
     }
 
     [Fact]
-    public void NonArrayIntrinsicPrototypeMutations_AreIsolatedBetweenRuntimeStores()
+    public void IntrinsicPrototypeMutations_AreIsolatedBetweenRuntimeStores()
     {
         var firstServiceProvider = RuntimeServices.BuildServiceProvider();
         var secondServiceProvider = RuntimeServices.BuildServiceProvider();
         var prototypes = new object[]
         {
+            JavaScriptRuntime.Array.Prototype,
             JavaScriptRuntime.String.Prototype,
             JavaScriptRuntime.String.StringIteratorPrototype,
             RegExp.Prototype,
