@@ -205,10 +205,6 @@ public class JsObject : DynamicObject, IDictionary<string, object?>
     internal virtual bool TryGetOwnPropertyValue(string key, out object? value)
         => TryGetBoxedValue(key, out value);
 
-    /// <summary>Returns the current value represented by a stored own data descriptor.</summary>
-    internal virtual object? GetOwnDataPropertyValue(string key, JsPropertyDescriptor descriptor)
-        => descriptor.Value;
-
     /// <summary>Tests specialized backing storage for an own property without reading its value.</summary>
     internal virtual bool HasOwnPropertyValue(string key)
         => ContainsKey(key);

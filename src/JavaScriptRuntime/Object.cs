@@ -5543,29 +5543,8 @@ namespace JavaScriptRuntime
             // storage without probing the descriptor store (ConditionalWeakTable).
             // Own misses fall through so prototype-chain and special-name
             // semantics are preserved.
-            if (obj is JsObject exoticJsObject
-                && exoticJsObject is IExoticJsObject)
-            {
-                var lookup = PropertyDescriptorStore.GetOwnLookupCore(exoticJsObject, name, out var exoticDescriptor);
-                if (lookup == PropertyDescriptorLookup.Found)
-                {
-                    if (exoticDescriptor.Kind == JsPropertyDescriptorKind.Data)
-                    {
-                        return exoticJsObject.GetOwnDataPropertyValue(name, exoticDescriptor);
-                    }
-
-                    return exoticDescriptor.Get is null || exoticDescriptor.Get is JsNull
-                        ? null
-                        : InvokeCallable(exoticDescriptor.Get, obj, System.Array.Empty<object>());
-                }
-
-                if (lookup == PropertyDescriptorLookup.None
-                    && exoticJsObject.TryGetOwnPropertyValue(name, out var exoticValue))
-                {
-                    return exoticValue;
-                }
-            }
-            else if (obj is JsObject plainJsObject
+            if (obj is JsObject plainJsObject
+                && plainJsObject is not IExoticJsObject
                 && !plainJsObject.HasNonDataDescriptors)
             {
                 if (plainJsObject.TryGetBoxedValue(name, out var plainValue))
@@ -5629,6 +5608,8 @@ namespace JavaScriptRuntime
             {
                 switch (obj)
                 {
+                    case Array array:
+                        return array.length;
                     case TypedArrayBase typedArray:
                         return typedArray.length;
                     case JavaScriptRuntime.Node.Buffer buffer:
@@ -5646,6 +5627,15 @@ namespace JavaScriptRuntime
             if (TryGetOwnPropertyValue(obj, name, out var ownValue))
             {
                 return ownValue;
+            }
+
+            if (obj is Array indexedArray
+                && ObjectRuntime.TryParseCanonicalIndexString(name, out var arrayIndex))
+            {
+                if (indexedArray.HasOwnIndex(arrayIndex))
+                {
+                    return indexedArray[arrayIndex];
+                }
             }
 
             if (obj is TypedArrayBase indexedTypedArray
