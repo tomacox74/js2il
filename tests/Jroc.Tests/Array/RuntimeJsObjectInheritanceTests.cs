@@ -5,6 +5,26 @@ namespace Jroc.Tests.Array;
 public sealed class RuntimeJsObjectInheritanceTests
 {
     [Fact]
+    public void ArrayPrototypeAndUnscopables_UseJsObjectRepresentation()
+    {
+        JavaScriptRuntime.Array.ResetPrototypeForTests();
+
+        try
+        {
+            var prototype = Assert.IsType<JsObject>(JavaScriptRuntime.Array.Prototype);
+            var unscopables = Assert.IsType<JsObject>(
+                ObjectRuntime.GetItem(prototype, Symbol.unscopables.DebugId));
+
+            Assert.Equal(JsNull.Null, PrototypeChain.GetPrototypeOrNull(unscopables));
+            Assert.Equal(true, ObjectRuntime.GetItem(unscopables, "at"));
+        }
+        finally
+        {
+            JavaScriptRuntime.Array.ResetPrototypeForTests();
+        }
+    }
+
+    [Fact]
     public void DenseTruncation_DoesNotMaterializeDescriptorState()
     {
         var values = Enumerable.Range(0, 4096).Select(value => (object?)(double)value);

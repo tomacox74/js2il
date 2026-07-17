@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,13 +12,13 @@ namespace JavaScriptRuntime
     [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : JsObject, IExoticJsObject, IEnumerable<object?>, IDictionary<string, object?>
     {
-        private static readonly ThreadLocal<ExpandoObject?> _threadPrototypeOverrides = new(() => null);
+        private static readonly ThreadLocal<JsObject?> _threadPrototypeOverrides = new(() => null);
         [ThreadStatic]
         private static bool _defaultPrototypeChainHasIndexedProperties;
         [ThreadStatic]
         private static long _observedPrototypeMutationVersion;
         private static long _prototypeMutationVersion;
-        internal static readonly ExpandoObject ImmutablePrototype = CreatePrototype();
+        internal static readonly JsObject ImmutablePrototype = CreatePrototype();
         private static readonly object Hole = new();
         private const int MaxDenseGap = 1024;
         private readonly List<object?> _items;
@@ -27,7 +26,7 @@ namespace JavaScriptRuntime
         private int _holeCount;
         private double _virtualLength;
 
-        internal static ExpandoObject Prototype
+        internal static JsObject Prototype
         {
             get
             {
@@ -44,13 +43,13 @@ namespace JavaScriptRuntime
             }
         }
 
-        private static ExpandoObject CreatePrototype()
+        private static JsObject CreatePrototype()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var exp = new ExpandoObject();
-            ConfigurePrototype(exp);
-            return exp;
+            var prototype = new JsObject();
+            ConfigurePrototype(prototype);
+            return prototype;
         }
 
         internal static void ResetPrototypeForTests()
@@ -60,11 +59,11 @@ namespace JavaScriptRuntime
             _observedPrototypeMutationVersion = Volatile.Read(ref _prototypeMutationVersion);
         }
 
-        private static ExpandoObject CreateThreadPrototypeOverride()
+        private static JsObject CreateThreadPrototypeOverride()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var prototype = new ExpandoObject();
+            var prototype = new JsObject();
             PropertyDescriptorStore.CopyOwnProperties(ImmutablePrototype, prototype);
 
             if (PrototypeChain.TryGetPrototype(ImmutablePrototype, out var parentPrototype))
@@ -75,27 +74,27 @@ namespace JavaScriptRuntime
             return prototype;
         }
 
-        private static void ConfigurePrototype(ExpandoObject exp)
+        private static void ConfigurePrototype(JsObject prototype)
         {
             var prototypeEntries = (Func<object[], object?[]?, object?>)PrototypeEntries;
             var prototypeKeys = (Func<object[], object?[]?, object?>)PrototypeKeys;
             var prototypeValues = (Func<object[], object?[]?, object?>)PrototypeValues;
-            DefinePrototypeMethod(exp, "join", (Func<object[], object?[]?, object?>)PrototypeJoin, 1);
-            DefinePrototypeMethod(exp, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
-            DefinePrototypeMethod(exp, "push", (Func<object[], object?[]?, object?>)PrototypePush, 1);
-            DefinePrototypeMethod(exp, "reduce", (Func<object[], object?[]?, object?>)PrototypeReduce, 1);
-            DefinePrototypeMethod(exp, "reduceRight", (Func<object[], object?[]?, object?>)PrototypeReduceRight, 1);
-            DefinePrototypeMethod(exp, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
-            DefinePrototypeMethod(exp, "every", (Func<object[], object?[]?, object?>)PrototypeEvery, 1);
-            DefinePrototypeMethod(exp, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
-            DefinePrototypeMethod(exp, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
-            DefinePrototypeMethod(exp, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
-            DefinePrototypeMethod(exp, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
-            DefinePrototypeMethod(exp, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
-            DefinePrototypeMethod(exp, "entries", prototypeEntries, 0);
-            DefinePrototypeMethod(exp, "keys", prototypeKeys, 0);
-            DefinePrototypeMethod(exp, "values", prototypeValues, 0);
-            PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.iterator.DebugId, new JsPropertyDescriptor
+            DefinePrototypeMethod(prototype, "join", (Func<object[], object?[]?, object?>)PrototypeJoin, 1);
+            DefinePrototypeMethod(prototype, "toString", (Func<object[], object?[]?, object?>)PrototypeToString, 0);
+            DefinePrototypeMethod(prototype, "push", (Func<object[], object?[]?, object?>)PrototypePush, 1);
+            DefinePrototypeMethod(prototype, "reduce", (Func<object[], object?[]?, object?>)PrototypeReduce, 1);
+            DefinePrototypeMethod(prototype, "reduceRight", (Func<object[], object?[]?, object?>)PrototypeReduceRight, 1);
+            DefinePrototypeMethod(prototype, "indexOf", (Func<object[], object?[]?, object?>)PrototypeIndexOf, 1);
+            DefinePrototypeMethod(prototype, "every", (Func<object[], object?[]?, object?>)PrototypeEvery, 1);
+            DefinePrototypeMethod(prototype, "some", (Func<object[], object?[]?, object?>)PrototypeSome, 1);
+            DefinePrototypeMethod(prototype, "filter", (Func<object[], object?[]?, object?>)PrototypeFilter, 1);
+            DefinePrototypeMethod(prototype, "map", (Func<object[], object?[]?, object?>)PrototypeMap, 1);
+            DefinePrototypeMethod(prototype, "flat", (Func<object[], object?[]?, object?>)PrototypeFlat, 0);
+            DefinePrototypeMethod(prototype, "at", (Func<object[], object?[]?, object?>)PrototypeAt, 1);
+            DefinePrototypeMethod(prototype, "entries", prototypeEntries, 0);
+            DefinePrototypeMethod(prototype, "keys", prototypeKeys, 0);
+            DefinePrototypeMethod(prototype, "values", prototypeValues, 0);
+            PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.iterator.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -103,7 +102,7 @@ namespace JavaScriptRuntime
                 Writable = true,
                 Value = prototypeValues
             });
-            PropertyDescriptorStore.DefineOrUpdate(exp, Symbol.unscopables.DebugId, new JsPropertyDescriptor
+            PropertyDescriptorStore.DefineOrUpdate(prototype, Symbol.unscopables.DebugId, new JsPropertyDescriptor
             {
                 Kind = JsPropertyDescriptorKind.Data,
                 Enumerable = false,
@@ -113,11 +112,11 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static ExpandoObject CreateArrayPrototypeUnscopables()
+        private static JsObject CreateArrayPrototypeUnscopables()
         {
             using var _ = PropertyDescriptorStore.BeginIntrinsicInitialization();
 
-            var unscopables = new ExpandoObject();
+            var unscopables = new JsObject();
             PrototypeChain.SetPrototype(unscopables, JsNull.Null);
             DefineUnscopable(unscopables, "copyWithin");
             DefineUnscopable(unscopables, "entries");
@@ -138,7 +137,7 @@ namespace JavaScriptRuntime
             return unscopables;
         }
 
-        private static void DefineUnscopable(ExpandoObject unscopables, string propertyName)
+        private static void DefineUnscopable(JsObject unscopables, string propertyName)
         {
             PropertyDescriptorStore.DefineOrUpdate(unscopables, propertyName, new JsPropertyDescriptor
             {
@@ -150,7 +149,7 @@ namespace JavaScriptRuntime
             });
         }
 
-        private static void DefinePrototypeMethod(ExpandoObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
+        private static void DefinePrototypeMethod(JsObject prototype, string name, Func<object[], object?[]?, object?> method, double length)
         {
             JavaScriptRuntime.Function.InitializeFunctionInstance(method, length, name);
             PropertyDescriptorStore.DefineOrUpdate(method, "prototype", new JsPropertyDescriptor
